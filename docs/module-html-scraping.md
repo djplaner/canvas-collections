@@ -5,13 +5,14 @@ Details on the HTML for Canvas' modules page and how canvas-collections will scr
 ## Current structure
 
 Sortable container for all modules
-<div id="context_modules_sortable_container" class="item-group-container">
+```<div id="context_modules_sortable_container" class="item-group-container">```
 
 Then the list of modules
-<div id="context_modules" ... aria-label="Course Modules">
+```<div id="context_modules" ... aria-label="Course Modules">```
 
 Each Individual module
-<div id="context_module_{MODULE_ID}">
+```
+    <div id="context_module_{MODULE_ID}">
      header 
     <div id="{MODULE_ID}" class="ig-header header">
         <h2 class="screenreader-only">{MODULE_TITLE}_</h2>
@@ -56,4 +57,5 @@ Each Individual module
             </li>
         </ul>
     </div>
+    ```
 
