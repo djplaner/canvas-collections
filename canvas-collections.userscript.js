@@ -7,6 +7,7 @@
 // @match        https://lms.griffith.edu.au/*/modules
 // @icon         https://www.google.com/s2/favicons?domain=griffith.edu.au
 // @grant        none
+// @require      https://unpkg.com/adaptivecards/dist/adaptivecards.js
 // ==/UserScript==
 
 const COURSE_ID=ENV.COURSE_ID;
@@ -16,9 +17,179 @@ const COURSE_ID=ENV.COURSE_ID;
 function cc_pageLoaded( label){
     console.log(`canvas-collections: for ${COURSE_ID} was here - ${label}`);
 
+    // extract all module information
     let modules = new cc_CanvasModules();
+    // update the page to add Card Information
+    let view = new cc_CanvasModulesView(modules);
+
+//    view.render();
 }
 
+/****************
+ * CanvasModulesViews - render the updated module information
+ */
+
+class cc_CanvasModulesView {
+
+    /**
+     * @desc insert HTML into Canvas modules page offering different representation of module information
+     * @param modules cc_CanvasModules object containing all info about current pages modules
+     */
+    constructor(modules) {
+        this.modules = modules;
+
+        this.setUpStyles();
+        // element where all the Canvas page content resides
+        // We'll be inserting our content before this
+        let canvasContent = document.getElementById('context_modules');
+
+        if (canvasContent===null) {
+            alert("no content element found");
+        }
+
+        // create the cc-canvas-collections div
+        let ccCanvasCollections = this.createElement('div', 'cc-canvas-collections');
+
+        let simpleTitle = this.createElement('h2', 'cc-canvas-collections-title');
+        simpleTitle.textContent = 'Canvas Collections';
+
+        ccCanvasCollections.appendChild(simpleTitle);
+
+        let card = this.generateCards();
+        ccCanvasCollections.appendChild(card);
+
+        // insert the collections before canvasContent
+        //result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
+        const result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
+
+        // Experiment with MIcrosoft's adaptive cards
+    }
+
+    /**
+     * @desc Kludge to add invidiual CSS entries 
+     * https://somethingididnotknow.wordpress.com/2013/07/01/change-page-styles-with-greasemonkeytampermonkey/
+     * @param string css  - text defining CSSentries
+     */
+
+    addGlobalStyle(css){
+        let head, style;
+        head = document.getElementsByTagName('head')[0];
+        if (!head) { return; }
+        style = document.createElement('style');
+        style.type = 'text/css';
+        style.innerHTML = css.replace(/;/g, ' !important;');
+        head.appendChild(style);
+    }
+
+    /**
+     * @desc Kludge to add CSS to page, TODO find a better way?
+     */
+
+    setUpStyles(){
+        this.addGlobalStyle(`
+        .ac-adaptiveCard {
+            max-width: 450px;
+            margin: 24px;
+            box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px, rgb(0 0 0 / 10%) 0px 0px 3px;
+          }
+        `);
+        this.addGlobalStyle(`
+        .ac-image {
+            max-width: 50px;
+        }`);
+
+    }
+
+    generateCards() {
+        // Author a card
+// In practice you'll probably get this from a service
+// see http://adaptivecards.io/samples/ for inspiration
+var card = {
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "Image",
+            "url": "https://icon-library.com/images/small-icon/small-icon-5.jpg"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Hello **Adaptive Cards!**"
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "Learn more",
+            "url": "http://adaptivecards.io"
+        },
+        {
+            "type": "Action.OpenUrl",
+            "title": "GitHub",
+            "url": "http://github.com/Microsoft/AdaptiveCards"
+        }
+    ]
+};
+
+// Create an AdaptiveCard instance
+var adaptiveCard = new AdaptiveCards.AdaptiveCard();
+
+// Set its hostConfig property unless you want to use the default Host Config
+// Host Config defines the style and behavior of a card
+adaptiveCard.hostConfig = new AdaptiveCards.HostConfig({
+    fontFamily: "Segoe UI, Helvetica Neue, sans-serif"
+    // More host config options
+});
+
+// Set the adaptive card's event handlers. onExecuteAction is invoked
+// whenever an action is clicked in the card
+adaptiveCard.onExecuteAction = function(action) { alert("Ow!"); }
+
+// For markdown support you need a third-party library
+// E.g., to use markdown-it, include in your HTML page:
+//     <script type="text/javascript" src="https://unpkg.com/markdown-it/dist/markdown-it.js"></script>
+// And add this code to replace the default markdown handler:
+//     AdaptiveCards.AdaptiveCard.onProcessMarkdown = function (text, result) {
+//         result.outputHtml = markdownit().render(text);
+//         result.didProcess = true;
+//     };
+
+// Parse the card payload
+adaptiveCard.parse(card);
+
+// Render the card to an HTML element:
+var renderedCard = adaptiveCard.render();
+
+
+        return renderedCard;
+    }
+
+    /**
+     * Create an element with an option css class
+     * @param string tag 
+     * @param string className 
+     * @returns element - created DOM element
+     */
+    createElement(tag, className) {
+        const element = document.createElement(tag)
+        if (className) element.classList.add(className)
+        return element
+    }
+
+    /**
+     * @param string selector 
+     * @returns element - DOM element 
+     */
+    getElement(selector) {
+        const element = document.querySelector(selector)
+
+        return element
+    }
+}
+
+/******************************
+ * CanvasModules - extract all module information
+ */
 class cc_Item {
     /**
      * @descr construct object representing a Canvas module item
@@ -27,14 +198,17 @@ class cc_Item {
      * - title - title of item
      * - itemType - type of item
      * - url - url for item
+     * - about - simple object containing the item's additional information
      * @param DOMelement element - item's DOM element
      */
     constructor(element){
         this.extractId(element);
         this.extractItemTypeAndId(element);
         this.extractTitleAndUrl(element)
+        this.extractAbout(element)
         
-        console.log(`canvas-collection:    -- item ${this.id} '<a href="${this.url}">${this.title}</a>' is ${this.itemType}`);
+        console.log(`canvas-collection:    -- ${this.position}) item ${this.id} '<a href="${this.url}">${this.title}</a>' is ${this.itemType}`);
+        console.log(`canvas-collection:    about ${JSON.stringify(this.about)}`);
     }
 
     /**
@@ -102,6 +276,38 @@ class cc_Item {
         this.typeId = null;
 
     }
+
+    /**
+     * @desc HTML for each item also contains additional information
+     * within span.item_name. Each information is stored in a span with a
+     * class name that labels the information, style="display:none" and values
+     * 
+     * Extract this information and story in the about "object"
+     * 
+     * Includes "position" which is also set at the object level
+     * 
+     * @param DOMElement element - for entire item
+     */
+
+    extractAbout(element){
+        this.about = {};
+        let aboutSpans = element.querySelectorAll('span.item_name > span');
+
+        for (let i=0; i<aboutSpans.length; i++){
+            let span = aboutSpans[i];
+            // only if display is none
+            if (span.style.display==='none'){ 
+                let className = span.className;
+                let value = span.innerText;
+                this.about[className] = value;
+            }
+        }
+        // set position data member if present in about
+        if ( 'position' in this.about ) {
+            this.position = this.about.position;
+        } 
+    }
+
 }
 
 class cc_Module {
