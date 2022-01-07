@@ -2,6 +2,7 @@
 
 Document thinking and experiments with design of the Module cards, including
 - Microsoft's Adaptive Cards
+- Bootstrap
 
 
 ## Microsoft's Adaptive Cards
@@ -17,3 +18,6 @@ i.e. provides a lot of functionality I wasn't thinking of using, without solving
 
 On the plus side, the JSON that is produced could in theory be exported into other platforms that support adaptive cards (e.g. Teams)
 
+## Bootstrap
+
+[Bootstrap's cards](https://getbootstrap.com/docs/4.0/components/card/) provide an apparently reasonably close functional approximation.

@@ -7,10 +7,10 @@
 // @match        https://lms.griffith.edu.au/*/modules
 // @icon         https://www.google.com/s2/favicons?domain=griffith.edu.au
 // @grant        none
-// @require      https://unpkg.com/adaptivecards/dist/adaptivecards.js
 // ==/UserScript==
 
 const COURSE_ID=ENV.COURSE_ID;
+const BOOTSTRAP_CSS_URL='<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">';
 
 // Much code adapted from https://gist.github.com/theotherdy/60ced3e955813861142f60bd3ea70ff4
 
@@ -36,9 +36,8 @@ class cc_CanvasModulesView {
      * @param modules cc_CanvasModules object containing all info about current pages modules
      */
     constructor(modules) {
-        this.modules = modules;
+        this.modules = modules.modules;
 
-        this.setUpStyles();
         // element where all the Canvas page content resides
         // We'll be inserting our content before this
         let canvasContent = document.getElementById('context_modules');
@@ -50,13 +49,13 @@ class cc_CanvasModulesView {
         // create the cc-canvas-collections div
         let ccCanvasCollections = this.createElement('div', 'cc-canvas-collections');
 
-        let simpleTitle = this.createElement('h2', 'cc-canvas-collections-title');
+/*        let simpleTitle = this.createElement('h2', 'cc-canvas-collections-title');
         simpleTitle.textContent = 'Canvas Collections';
 
-        ccCanvasCollections.appendChild(simpleTitle);
+        ccCanvasCollections.appendChild(simpleTitle);*/
 
-        let card = this.generateCards();
-        ccCanvasCollections.appendChild(card);
+        let cards = this.generateCards();
+        ccCanvasCollections.appendChild(cards);
 
         // insert the collections before canvasContent
         //result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
@@ -66,102 +65,52 @@ class cc_CanvasModulesView {
     }
 
     /**
-     * @desc Kludge to add invidiual CSS entries 
-     * https://somethingididnotknow.wordpress.com/2013/07/01/change-page-styles-with-greasemonkeytampermonkey/
-     * @param string css  - text defining CSSentries
+     * @desc generate a DOM element that represents cards for all the modules
+     * Currently hard-coded dumb to do rows of three
+     * @returns DOM element - representing all the cards
      */
+    generateCards() {
 
-    addGlobalStyle(css){
-        let head, style;
-        head = document.getElementsByTagName('head')[0];
-        if (!head) { return; }
-        style = document.createElement('style');
-        style.type = 'text/css';
-        style.innerHTML = css.replace(/;/g, ' !important;');
-        head.appendChild(style);
+        let cardCollection = this.createElement('div', 'cc-canvas-collections-cards');
+        const numModules = this.modules.length;
+        const numRequiredRows = Math.ceil(numModules/3);
+
+        let module = 0;
+        for (let row=0; row<numRequiredRows; row++) {
+            let rowCollection = this.createElement('div', 'row');
+            for (let col=0; col<3; col++) {
+                if (module<numModules) {
+                    let card = this.generateCard(this.modules[module]);
+                    rowCollection.appendChild(card);
+                    module++;
+                }
+            }
+            cardCollection.appendChild(rowCollection);
+        }
+
+        return cardCollection;
     }
 
     /**
-     * @desc Kludge to add CSS to page, TODO find a better way?
+     * @desc generate a DOM element representing a module for insertion into page
+     * @param cc_Module module - object with module data
+     * @returns DOMelement - representing card
      */
+    generateCard(module) {
+        const cardHtml = `
+        <div class="card">
+  <img class="card-img-top" src="https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png" alt="Card image cap">
+  <div class="card-body">
+    <h5 class="card-title">${module.title}</h5>
+    <p class="card-text">This module has ${module.items.length} items in it.</p>
+    <a href="#${module.id}" class="btn btn-primary">Engage</a>
+  </div>
+</div>`;
 
-    setUpStyles(){
-        this.addGlobalStyle(`
-        .ac-adaptiveCard {
-            max-width: 450px;
-            margin: 24px;
-            box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px, rgb(0 0 0 / 10%) 0px 0px 3px;
-          }
-        `);
-        this.addGlobalStyle(`
-        .ac-image {
-            max-width: 50px;
-        }`);
-
-    }
-
-    generateCards() {
-        // Author a card
-// In practice you'll probably get this from a service
-// see http://adaptivecards.io/samples/ for inspiration
-var card = {
-    "type": "AdaptiveCard",
-    "version": "1.0",
-    "body": [
-        {
-            "type": "Image",
-            "url": "https://icon-library.com/images/small-icon/small-icon-5.jpg"
-        },
-        {
-            "type": "TextBlock",
-            "text": "Hello **Adaptive Cards!**"
-        }
-    ],
-    "actions": [
-        {
-            "type": "Action.OpenUrl",
-            "title": "Learn more",
-            "url": "http://adaptivecards.io"
-        },
-        {
-            "type": "Action.OpenUrl",
-            "title": "GitHub",
-            "url": "http://github.com/Microsoft/AdaptiveCards"
-        }
-    ]
-};
-
-// Create an AdaptiveCard instance
-var adaptiveCard = new AdaptiveCards.AdaptiveCard();
-
-// Set its hostConfig property unless you want to use the default Host Config
-// Host Config defines the style and behavior of a card
-adaptiveCard.hostConfig = new AdaptiveCards.HostConfig({
-    fontFamily: "Segoe UI, Helvetica Neue, sans-serif"
-    // More host config options
-});
-
-// Set the adaptive card's event handlers. onExecuteAction is invoked
-// whenever an action is clicked in the card
-adaptiveCard.onExecuteAction = function(action) { alert("Ow!"); }
-
-// For markdown support you need a third-party library
-// E.g., to use markdown-it, include in your HTML page:
-//     <script type="text/javascript" src="https://unpkg.com/markdown-it/dist/markdown-it.js"></script>
-// And add this code to replace the default markdown handler:
-//     AdaptiveCards.AdaptiveCard.onProcessMarkdown = function (text, result) {
-//         result.outputHtml = markdownit().render(text);
-//         result.didProcess = true;
-//     };
-
-// Parse the card payload
-adaptiveCard.parse(card);
-
-// Render the card to an HTML element:
-var renderedCard = adaptiveCard.render();
-
-
-        return renderedCard;
+        // convert cardHtml into DOM element
+        let wrapper = this.createElement('div', 'col-sm');
+        wrapper.innerHTML = cardHtml;
+        return wrapper; 
     }
 
     /**
@@ -383,6 +332,7 @@ class cc_CanvasModules {
 
 (function() {
     'use strict';
+    document.head.insertAdjacentHTML( 'beforeend', BOOTSTRAP_CSS_URL );
 
 
     // Wait for everything to load
