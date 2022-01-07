@@ -49,6 +49,9 @@ class cc_CanvasModulesView {
         // create the cc-canvas-collections div
         let ccCanvasCollections = this.createElement('div', 'cc-canvas-collections');
 
+        let navBar = this.generateNavBar();
+        ccCanvasCollections.appendChild(navBar);
+
 /*        let simpleTitle = this.createElement('h2', 'cc-canvas-collections-title');
         simpleTitle.textContent = 'Canvas Collections';
 
@@ -62,6 +65,32 @@ class cc_CanvasModulesView {
         const result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
 
         // Experiment with MIcrosoft's adaptive cards
+    }
+
+    /**
+     * @desc Based on collections in modules, generate nav bar to select collections
+     * TODO
+     * - Will need to dynamically generate based on collections in Modules
+     * - Add javascript handler to make changes
+     * - Modify other code
+     * @returns DOMelment navBar the dom element for the nav bar
+     */
+    generateNavBar(){
+        let navBar = this.createElement('div', ['nav', 'nav-pills', 'nav-fill']);
+
+        let collections = [ 'Course Content', 'Assessment'];
+
+        for (let collection of collections) {
+            let navClass = ['nav-item', 'nav-link'];
+            if (collection === 'Course Content') {
+                navClass.push( 'active');
+            }
+            let navItem = this.createElement('a', navClass);
+            navItem.setAttribute('href', '#');
+            navItem.textContent = collection;
+            navBar.appendChild(navItem);
+        }
+        return navBar;
     }
 
     /**
@@ -121,7 +150,16 @@ class cc_CanvasModulesView {
      */
     createElement(tag, className) {
         const element = document.createElement(tag)
-        if (className) element.classList.add(className)
+        if (className) {
+            // if className is an array, add each class
+            if (Array.isArray(className)) {
+                for (let c of className) {
+                    element.classList.add(c);
+                }
+            } else {
+                element.classList.add(className)
+            }
+        }
         return element
     }
 
