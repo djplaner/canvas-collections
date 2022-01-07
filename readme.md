@@ -14,8 +14,8 @@ There are two common limitiations to [the vanilla Canvas Modules page](https://c
 
 ## What?
 
-Following experience with the [Card Interface](https://github.com/djplaner/Card-Interface-Tweak) and [examples with Canvas](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/), the canvas-collections Javascript will be able to be embedded in Canvas instance to modify presentation of the Modules page in two ways:
-1. Generate a [card-based user interface](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/);
+Embedded in Canvas, the canvas-collections Javascript will modify presentation of the Modules page in two ways:
+1. Generate a [card-based user interface](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/); and,
 
     Each module represented by a card. The module cards are inserted before the standard Canvas module list. Clicking on a card will take you to the module. Eventually, the cards will support much of [the functionality of the Card Interface](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/) and new Canvas specific functionality.
 
