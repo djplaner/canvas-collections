@@ -1,14 +1,33 @@
 # canvas-collections
 
-JavaScript intended to add enable the creation of "collections" on the [Canvas LMS](https://www.instructure.com/en-au/canvas) Modules page.
+JavaScript intended to support the creation of "collections" of Modules on the [Canvas LMS](https://www.instructure.com/en-au/canvas) Modules page.
 
-Rather than simply all the modules appearing. canvas-collections enable the specification of module collections which can then be used to navigate the modules.
+## Why?
+
+There are two common limitiations to [the vanilla Canvas Modules page](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-are-Modules/ta-p/6):
+1.  [no way to group modules](https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-group-modules-together/m-p/179756/highlight/true#M84951); and,
+
+    For a course with large numbers of modules or which uses modules for very different purposes the inability to group modules is a problem. Available workarounds all [have their limitations](https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-group-modules-together/m-p/179757/highlight/true#M84952) and Instructure ["don't have plans to support nested modules soon"](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383/highlight/true#M50428).
+2.  [a very linear, less than engaging presentation](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/).
+
+    It's not kept up with more contemporary web design. e.g. [Card-Based User Interfaces](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/) which [hundreds of courses across the world](https://djon.es/blog/2021/03/12/reflecting-on-the-spread-of-the-card-interface-for-blackboard-learn/) have found useful in Blackboard using the [Card Interface tweak](https://github.com/djplaner/Card-Interface-Tweak) and which [at least a couple of institutions](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/) have sought to add to the Modules page.
+
+## What?
+
+Following experience with the [Card Interface](https://github.com/djplaner/Card-Interface-Tweak) and [examples with Canvas](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/), the canvas-collections Javascript will be able to be embedded in Canvas instance to modify presentation of the Modules page in two ways:
+1. Generate a [card-based user interface](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/);
+
+    Each module represented by a card. The module cards are inserted before the standard Canvas module list. Clicking on a card will take you to the module. Eventually, the cards will support much of [the functionality of the Card Interface](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/) and new Canvas specific functionality.
+
+2. group Modules into "collections".
+
+    Modules can be grouped into collections (e.g. content, assessment, resources, units etc.). A collections navigation bar will be inserted before the Card interface to select the collection to view. Only the cards and modules for the selected collection will be visible.
 
 ## Status
 
-Currently at the early exploratory stage implementation as a [userscript](https://en.wikipedia.org/wiki/Userscript) for proof of concept.
-
-Currently using JS and bootstrap to generate simplistic cards representing every module on the page
+Early exploratory stage. 
+- Implementation as a [userscript](https://en.wikipedia.org/wiki/Userscript) for proof of concept purposes.  
+- Using bootstrap to generate simplistic cards representing every module on the page and a non-functioning collections navigation bar.
 
 ![Current example](./docs/cards.png?raw=true)
 
