@@ -23,11 +23,14 @@ Following experience with the [Card Interface](https://github.com/djplaner/Card-
 
     Modules can be grouped into collections (e.g. content, assessment, resources, units etc.). A collections navigation bar will be inserted before the Card interface to select the collection to view. Only the cards and modules for the selected collection will be visible.
 
+The long-term plan is that the canvas-collections "architecture" will allow for different interface designs. Not limited to cards and a navigation bar.
+
 ## Status
 
 Early exploratory stage. 
 - Implementation as a [userscript](https://en.wikipedia.org/wiki/Userscript) for proof of concept purposes.  
 - Using bootstrap to generate simplistic cards representing every module on the page and a non-functioning collections navigation bar.
+- No effort whatsoever given to visual design.
 
 ![Current example](./docs/cards.png?raw=true)
 
