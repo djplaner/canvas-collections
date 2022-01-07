@@ -6,10 +6,11 @@ Rather than simply all the modules appearing. canvas-collections enable the spec
 
 ## Status
 
-Currently at the early exploratory stage
-- API versus scraping
+Currently at the early exploratory stage implementation as a [userscript](https://en.wikipedia.org/wiki/Userscript) for proof of concept.
 
-    Apparently the API method relies on features that only work on the web, not mobile? Hence going to go with web scraping. Though that may be more brittle due to Instructure HTML redesigns
+Currently using JS and bootstrap to generate simplistic cards representing every module on the page
+
+![Current example](./docs/cards.png?raw=true)
 
 ## Related work
 
