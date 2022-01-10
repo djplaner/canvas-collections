@@ -12,7 +12,52 @@
 const COURSE_ID=ENV.COURSE_ID;
 const BOOTSTRAP_CSS_URL='<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">';
 
-// Much code adapted from https://gist.github.com/theotherdy/60ced3e955813861142f60bd3ea70ff4
+// Hard code default card values for 1031LAW_3215
+// key is the module name
+
+const DEFAULT_ACTIVE_COLLECTION = 'Content Essentials';
+const COLLECTIONS_DEFAULTS = [
+    "Content Essentials", "Online Workshops", "Assessment Essentials", "Student Support"
+];
+
+const CARD_DEFAULTS = {
+    'Introduction': {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/795/preview',
+        'collection': 'Content Essentials'
+    },
+    'Making and Finding Law': {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/797/preview',
+        'collection': 'Content Essentials'
+    },
+    'Introduction to Legal Theory' : {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/798/preview',
+        'collection': 'Content Essentials'
+    },
+    'Statutory Interpretation': {
+//        'image': 'https://lms.griffith.edu.au/courses/122/files//preview',
+        'collection': 'Content Essentials'
+    },
+    'Statutory Interpretation' : {
+//        'image': 'https://lms.griffith.edu.au/courses/122/files/798/preview',
+        'collection': 'Content Essentials'
+    },
+    'Case Law' : {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/799/preview',
+        'collection': 'Content Essentials'
+    },
+    'The Legal Profession' : {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/796/preview',
+        'collection': 'Content Essentials'
+    },
+    'First Nations People and the Law' : {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/801/preview',
+        'collection': 'Content Essentials'
+    },
+    'Consolidating Knowledge' : {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
+        'collection': 'Content Essentials'
+    },
+};
 
 function cc_pageLoaded( label){
     console.log(`canvas-collections: for ${COURSE_ID} was here - ${label}`);
@@ -78,11 +123,11 @@ class cc_CanvasModulesView {
     generateNavBar(){
         let navBar = this.createElement('div', ['nav', 'nav-pills', 'nav-fill']);
 
-        let collections = [ 'Course Content', 'Assessment'];
+        let collections = COLLECTIONS_DEFAULTS;
 
         for (let collection of collections) {
             let navClass = ['nav-item', 'nav-link'];
-            if (collection === 'Course Content') {
+            if (collection === DEFAULT_ACTIVE_COLLECTION) {
                 navClass.push( 'active');
             }
             let navItem = this.createElement('a', navClass);
@@ -126,9 +171,15 @@ class cc_CanvasModulesView {
      * @returns DOMelement - representing card
      */
     generateCard(module) {
+        let imageUrl = "https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png";
+
+        if ('image' in module){
+            imageUrl = module.image;
+        }
+
         const cardHtml = `
         <div class="card">
-  <img class="card-img-top" src="https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png" alt="Card image cap">
+  <img class="card-img-top" src="${imageUrl}">
   <div class="card-body">
     <h5 class="card-title">${module.title}</h5>
     <p class="card-text">This module has ${module.items.length} items in it.</p>
@@ -304,11 +355,31 @@ class cc_Module {
         this.extractItems(element);
         this.collection = null;
 
+        this.addModuleDefaults();
+
         // TODO 
         // - prerequisites
         // - requirements_message
 
         console.log(`canvas-collections: Module ${this.id} title ${this.title}`);
+    }
+
+    /**
+     * @descr based on the module's title add some default values from HARD_CODE
+     */
+    addModuleDefaults() {
+        // if title not in CARD_DEFAULTS return
+
+        if (! this.title in CARD_DEFAULTS) {
+            return;
+        }
+
+        let defaults = CARD_DEFAULTS[this.title];
+        for (let key in defaults) {
+
+            this[key] = defaults[key];
+        }
+
     }
 
     /**
