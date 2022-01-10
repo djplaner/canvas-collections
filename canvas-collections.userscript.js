@@ -10,7 +10,8 @@
 // ==/UserScript==
 
 const COURSE_ID=ENV.COURSE_ID;
-const BOOTSTRAP_CSS_URL='<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">';
+//const CSS_URL='<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/cards.css" />';
+const CSS_URL='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
 
 // Hard code default card values for 1031LAW_3215
 // key is the module name
@@ -23,38 +24,66 @@ const COLLECTIONS_DEFAULTS = [
 const CARD_DEFAULTS = {
     'Introduction': {
         'image': 'https://lms.griffith.edu.au/courses/122/files/795/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-contain',
+        'num': '1',
+        'description': '<p>Overview of Foundations of Law and My Law Career</p>',
         'collection': 'Content Essentials'
     },
     'Making and Finding Law': {
         'image': 'https://lms.griffith.edu.au/courses/122/files/797/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-cover',
+        'num': '2',
+        'description': 'How law is made - and how to find the law (legislation and case)',
         'collection': 'Content Essentials'
     },
     'Introduction to Legal Theory' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/798/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-cover',
+        'num': '3',
+        'description': '',
         'collection': 'Content Essentials'
     },
     'Statutory Interpretation': {
 //        'image': 'https://lms.griffith.edu.au/courses/122/files//preview',
-        'collection': 'Content Essentials'
-    },
-    'Statutory Interpretation' : {
-//        'image': 'https://lms.griffith.edu.au/courses/122/files/798/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-cover',
+        'num': '4',
+        'description': '<p>How to interpret legislation (i.e. work out what it means)</p>',
         'collection': 'Content Essentials'
     },
     'Case Law' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/799/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-cover',
+        'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
+        'num': '6',
         'collection': 'Content Essentials'
     },
     'The Legal Profession' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/796/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-cover',
+        'num': '7',
+        'description': '<p>Introduction to the legal profession and legal professional ethics.</p>',
         'collection': 'Content Essentials'
     },
     'First Nations People and the Law' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/801/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-cover',
+        'num': '8',
+        'description': '<p>Introduction to First Nations people and the law</p>',
         'collection': 'Content Essentials'
     },
     'Consolidating Knowledge' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-cover',
+        'num': '9',
+        'description': '<p>Revision and preparation for final assessment</p>',
         'collection': 'Content Essentials'
     },
 };
@@ -121,18 +150,29 @@ class cc_CanvasModulesView {
      * @returns DOMelment navBar the dom element for the nav bar
      */
     generateNavBar(){
-        let navBar = this.createElement('div', ['nav', 'nav-pills', 'nav-fill']);
+        let navBar = this.createElement('div', ['flex','justify-between']);
 
         let collections = COLLECTIONS_DEFAULTS;
 
+        let styles = {
+            'active': 'inline-block border border-blue-500 rounded py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white',
+            'inactive': 'inline-block border border-white rounded hover:border-gray-200 text-blue-500 hover:bg-gray-200 py-2 px-4',
+            'disabled': 'inline-block py-2 px-4 text-gray-400 cursor-not-allowed',
+        }
+
         for (let collection of collections) {
-            let navClass = ['nav-item', 'nav-link'];
+            let navClass = ['li', 'mr-4'];
+            let style = 'inactive';
+
             if (collection === DEFAULT_ACTIVE_COLLECTION) {
-                navClass.push( 'active');
+                style='active';
             }
-            let navItem = this.createElement('a', navClass);
-            navItem.setAttribute('href', '#');
-            navItem.textContent = collection;
+
+            let navElement = `
+              <a class="${styles[style]}" href="#">${collection}</a>
+            `;
+            let navItem = this.createElement('li', 'mr-4');
+            navItem.innerHTML = navElement;
             navBar.appendChild(navItem);
         }
         return navBar;
@@ -145,12 +185,21 @@ class cc_CanvasModulesView {
      */
     generateCards() {
 
-        let cardCollection = this.createElement('div', 'cc-canvas-collections-cards');
+//        let cardCollection = this.createElement('div', 'cc-canvas-collections-cards');
+        let cardCollection = this.createElement('div', ['flex','flex-wrap','-m-3']);
+        cardCollection.id ="guCardInterface";
         const numModules = this.modules.length;
-        const numRequiredRows = Math.ceil(numModules/3);
+//        const numRequiredRows = Math.ceil(numModules/3);
 
-        let module = 0;
-        for (let row=0; row<numRequiredRows; row++) {
+        // for each module generate card and append
+        for (let i=0; i<numModules; i++) {
+            let module = this.modules[i];
+            let card = this.generateCard(module);
+            cardCollection.appendChild(card);
+        }
+
+//        let module = 0;
+/*        for (let row=0; row<numRequiredRows; row++) {
             let rowCollection = this.createElement('div', 'row');
             for (let col=0; col<3; col++) {
                 if (module<numModules) {
@@ -159,8 +208,8 @@ class cc_CanvasModulesView {
                     module++;
                 }
             }
-            cardCollection.appendChild(rowCollection);
-        }
+            cardCollection.appendChild(rowCollection); */
+//        }
 
         return cardCollection;
     }
@@ -172,23 +221,67 @@ class cc_CanvasModulesView {
      */
     generateCard(module) {
         let imageUrl = "https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png";
+        let engage = 'Engage';
 
         if ('image' in module){
             imageUrl = module.image;
         }
+        if ('engage' in module){
+            engage = module.engage;
+        }
+        
 
-        const cardHtml = `
-        <div class="card">
-  <img class="card-img-top" src="${imageUrl}">
-  <div class="card-body">
-    <h5 class="card-title">${module.title}</h5>
-    <p class="card-text">This module has ${module.items.length} items in it.</p>
-    <a href="#${module.id}" class="btn btn-primary">Engage</a>
+//        let WIDTH="w-full sm:w-1/2 md:w-1/3";
+        let COMING_SOON="";
+        let LINK_ITEM=`
+        <p>&nbsp;<br /> &nbsp;</p>
+        <div class="p-4 absolute pin-r pin-b">
+           <a href="${module.id}" class="gu-engage"><div class="hover:bg-blue text-blue-dark font-semibold hover:text-white py-2 px-4 border border-blue hover:border-transparent rounded">
+            ${engage}
+        </div></a>
+        </div>
+        `;
+        let EDIT_ITEM="";
+        let REVIEW_ITEM=""
+        let DATE="";
+        let IFRAME="";
+
+        let imageSize = module.imageSize;
+        if (imageSize==="bg-contain") {
+            imageSize="bg-contain bg-no-repeat bg-center"
+        }
+
+//<div class="clickablecard w-full sm:w-1/2 ${WIDTH} flex flex-col p-3">
+        const cardHtml =`
+<div class="hover:outline-none hover:shadow-outline bg-white rounded-lg shadow-lg overflow-hidden flex-1 flex flex-col relative"> <!-- Relative could go -->
+  <a href="#${module.id}" class="cardmainlink"></a>
+  <div class="${imageSize} h-48" style="background-image: url('${imageUrl}'); background-color: rgb(255,255,255)">${IFRAME}
   </div>
-</div>`;
+  ${COMING_SOON}
+  <div class="carddescription p-4 flex-1 flex flex-col">
+    <span class="cardLabel">
+    ${module.label} ${module.num}
+    </span>
+    <h3 class="mb-4 text-2xl">${module.title}</h3>
+    <div class="mb-4 flex-1">
+      ${module.description}
+      
+    </div>
+    <p></p>
+     
+     ${LINK_ITEM}
+     ${REVIEW_ITEM}
+     ${EDIT_ITEM}
+     ${DATE} 
+  </div>
+</div>
+`;
+//</div>
 
         // convert cardHtml into DOM element
-        let wrapper = this.createElement('div', 'col-sm');
+        let wrapper = this.createElement('div', [
+            'clickablecard','w-full','sm:w-1/2','md:w-1/3', 'flex', 'flex-col', 'p-3'
+        ] );
         wrapper.innerHTML = cardHtml;
         return wrapper; 
     }
@@ -441,7 +534,7 @@ class cc_CanvasModules {
 
 (function() {
     'use strict';
-    document.head.insertAdjacentHTML( 'beforeend', BOOTSTRAP_CSS_URL );
+    document.head.insertAdjacentHTML( 'beforeend', CSS_URL );
 
 
     // Wait for everything to load
