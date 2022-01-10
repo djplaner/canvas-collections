@@ -28,7 +28,10 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-contain',
         'num': '1',
         'description': '<p>Overview of Foundations of Law and My Law Career</p>',
-        'collection': 'Content Essentials'
+        'collection': 'Content Essentials',
+        'date': {
+            'label': 'Commencing', 'week': 'Week 1', 'month': 'Jul', 'date': '19'
+        }
     },
     'Making and Finding Law': {
         'image': 'https://lms.griffith.edu.au/courses/122/files/797/preview',
@@ -44,7 +47,10 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '3',
         'description': '',
-        'collection': 'Content Essentials'
+        'collection': 'Content Essentials',
+        'date': {
+            'label': 'Commencing', 'week': 'Week 4', 'month': 'Aug', 'date': '16'
+        }
     },
     'Statutory Interpretation': {
 //        'image': 'https://lms.griffith.edu.au/courses/122/files//preview',
@@ -68,7 +74,10 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '7',
         'description': '<p>Introduction to the legal profession and legal professional ethics.</p>',
-        'collection': 'Content Essentials'
+        'collection': 'Content Essentials',
+        'date': {
+            'label': 'Commencing', 'week': 'Week 10', 'month': 'Sep', 'date': '27'
+        }
     },
     'First Nations People and the Law' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/801/preview',
@@ -229,21 +238,78 @@ class cc_CanvasModulesView {
         if ('engage' in module){
             engage = module.engage;
         }
+
         
 
 //        let WIDTH="w-full sm:w-1/2 md:w-1/3";
         let COMING_SOON="";
         let LINK_ITEM=`
         <p>&nbsp;<br /> &nbsp;</p>
-        <div class="p-4 absolute pin-r pin-b">
-           <a href="${module.id}" class="gu-engage"><div class="hover:bg-blue text-blue-dark font-semibold hover:text-white py-2 px-4 border border-blue hover:border-transparent rounded">
+        <div class="p-4 absolute pin-r pin-b" style="right:0;bottom:0">
+           <a href="#${module.id}" class="gu-engage"><div class="hover:bg-blue-100 text-blue-900 font-semibold hover:text-white py-2 px-4 border border-blue-900 hover:border-transparent rounded">
             ${engage}
         </div></a>
         </div>
         `;
         let EDIT_ITEM="";
         let REVIEW_ITEM=""
-        let DATE="";
+
+        let date = {
+            'label': '', 'week': '', 'time': '', 'month': '', 'date': ''
+        };
+        let dateSet = false;
+
+        // loop thru each element of date
+        for (let key in date) {
+            if ( 'date' in module && key in module.date) {
+                dateSet = true;
+                date[key] = module.date[key];
+            }
+        }
+
+        let week = '';
+        let time = ''
+        if ( dateSet) {
+            if ('week' in module.date) {
+                week = `
+                <div class="bg-yellow-200 text-black py-0"> 
+                ${date.week}
+                </div>
+                `;
+            }
+            if ('time' in module.date){
+                time=`
+                <div class="bg-yellow-200 text-black py-0 text-xs">
+                ${date.time}
+                </div>
+                `;
+            }
+
+        }
+
+
+        let DATE=`
+        <div class="block rounded-t rounded-b overflow-hidden bg-white text-center w-24 absolute"
+            style="right:0;top:0;"
+        >
+          <div class="bg-black text-white py-0 text-xs border-l border-r border-t border-black">
+             ${date.label}
+          </div>
+          ${week}
+          ${time}
+          <div class="bg-red-900 text-white py-0 border-l border-r border-black">
+      	     ${date.month}
+          </div>
+          <div class="pt-1 border-l border-r border-b border-black rounded-b">
+      	     <span class="text-2xl font-bold">${date.date}</span>
+          </div>
+        </div>
+        `;
+        if ( ! dateSet ) {
+            DATE='';
+        }
+
+
         let IFRAME="";
 
         let imageSize = module.imageSize;
