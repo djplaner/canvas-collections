@@ -148,8 +148,7 @@ function cc_pageLoaded( ){
     let modules = new cc_CanvasModules();
     // update the page to add Card Information
     let view = new cc_CanvasModulesView(modules);
-
-//    view.render();
+    view.render();
 }
 
 /**
@@ -158,9 +157,11 @@ function cc_pageLoaded( ){
  */
 
 function cc_collectionClick( collectionName, view){
-    alert(`canvas-collections: collection ${collectionName} was clicked`);
-    console.log('-------------------------- click');
-    console.log(view);
+    // change current collection
+    view.currentCollection = collectionName;
+    // remove div#guCardInterface
+    view.removeCanvasCollectionsView();
+    view.render();
 }
 
 /****************
@@ -174,8 +175,25 @@ class cc_CanvasModulesView {
      * @param modules cc_CanvasModules object containing all info about current pages modules
      */
     constructor(modules) {
-        this.modules = modules.modules;
-        this.currentCollection = modules.currentCollection;
+        this.model = modules;
+        this.modules = this.model.modules;
+        this.currentCollection = this.model.currentCollection;
+    }
+
+    /**
+     * @desc remove the div#cc-canvas-collections from the page
+     */
+
+    removeCanvasCollectionsView() {
+        let canvasCollections = document.getElementById('cc-canvas-collections');
+        canvasCollections.parentNode.removeChild(canvasCollections);
+    }
+
+    /**
+     * @desc render the collections/module information
+     */
+
+    render() {
 
         // element where all the Canvas page content resides
         // We'll be inserting our content before this
@@ -187,6 +205,7 @@ class cc_CanvasModulesView {
 
         // create the cc-canvas-collections div
         let ccCanvasCollections = this.createElement('div', 'cc-canvas-collections');
+        ccCanvasCollections.id = 'cc-canvas-collections';
 
         let navBar = this.generateNavBar();
         ccCanvasCollections.appendChild(navBar);
