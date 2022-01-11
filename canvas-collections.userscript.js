@@ -16,7 +16,8 @@ const CSS_URL='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.cs
 // Hard code default card values for 1031LAW_3215
 // key is the module name
 
-const DEFAULT_ACTIVE_COLLECTION = 'Learning Journey';
+//const DEFAULT_ACTIVE_COLLECTION = 'Learning Journey';
+const DEFAULT_ACTIVE_COLLECTION = 'Assessment Essentials';
 const COLLECTIONS_DEFAULTS = [
     "Learning Journey", "Assessment Essentials", "Online Workshops", "Student Support"
 ];
@@ -161,6 +162,7 @@ class cc_CanvasModulesView {
      */
     constructor(modules) {
         this.modules = modules.modules;
+        this.currentCollection = modules.currentCollection;
 
         // element where all the Canvas page content resides
         // We'll be inserting our content before this
@@ -188,7 +190,37 @@ class cc_CanvasModulesView {
         //result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
         const result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
 
-        // Experiment with MIcrosoft's adaptive cards
+        this.updateCanvasModuleList();
+
+    }
+
+    /**
+     * @desc Modify the Canvas module list DOM to represent collections, including:
+     * - hide modules that aren't part of the current collection
+     * - add the collection name to the module title
+     * 
+     */
+
+    updateCanvasModuleList() {
+        // update the Module titles div#module.id > span.name
+        for ( let numModule in this.modules ) {
+            let aModule = this.modules[numModule];
+            // Find the module's name and it's title dom
+            let divDom = document.querySelector( `div#context_module_${aModule.id}`);
+            let spanDom = divDom.querySelector('span.name');
+
+            // if we found the title, add the collection details
+            if (spanDom) {
+                spanDom.innerHTML = `${spanDom.textContent} - <small>(${aModule.collection})</small>`;
+            } else {
+                console.error(`no span.name found for module ${aModule.title}`);
+            }
+
+            // hide the module if it's not in the current collection
+            if (aModule.collection !== this.currentCollection) {
+                divDom.style.display = 'none';
+            }
+        }
     }
 
     /**
@@ -214,7 +246,7 @@ class cc_CanvasModulesView {
             let navClass = ['li', 'mr-4'];
             let style = 'inactive';
 
-            if (collection === DEFAULT_ACTIVE_COLLECTION) {
+            if (collection === this.currentCollection) {
                 style='active';
             }
 
@@ -244,8 +276,10 @@ class cc_CanvasModulesView {
         // for each module generate card and append
         for (let i=0; i<numModules; i++) {
             let module = this.modules[i];
-            let card = this.generateCard(module);
-            cardCollection.appendChild(card);
+            if ( module.collection===this.currentCollection) {
+                let card = this.generateCard(module);
+                cardCollection.appendChild(card);
+            }
         }
 
 //        let module = 0;
@@ -633,6 +667,8 @@ class cc_CanvasModules {
     constructor( ){
         // get all the div with ids starting with context_module_ within div#context_modules
         this.moduleElements = document.querySelectorAll( 'div#context_modules > div[id^=context_module_]');
+
+        this.currentCollection = DEFAULT_ACTIVE_COLLECTION;
 
         // loop thru each moduleElement and construct a cc_Module object
         this.modules = Array.from( this.moduleElements).map( ( moduleElement) => {
