@@ -139,15 +139,28 @@ const CARD_DEFAULTS = {
     }
 };
 
-function cc_pageLoaded( label){
-    console.log(`canvas-collections: for ${COURSE_ID} was here - ${label}`);
+/**
+ * @descr Basic controller, creates the model and generates the view
+ */
 
+function cc_pageLoaded( ){
     // extract all module information
     let modules = new cc_CanvasModules();
     // update the page to add Card Information
     let view = new cc_CanvasModulesView(modules);
 
 //    view.render();
+}
+
+/**
+ * @desc Handle any clicks on the collections nav bar
+ * @param collectionName string - name of the collection that was clicked on
+ */
+
+function cc_collectionClick( collectionName, view){
+    alert(`canvas-collections: collection ${collectionName} was clicked`);
+    console.log('-------------------------- click');
+    console.log(view);
 }
 
 /****************
@@ -254,6 +267,7 @@ class cc_CanvasModulesView {
               <a class="${styles[style]}" href="#">${collection}</a>
             `;
             let navItem = this.createElement('li', 'mr-4');
+            navItem.onclick = () => cc_collectionClick(collection,this);
             navItem.innerHTML = navElement;
             navBar.appendChild(navItem);
         }
@@ -685,7 +699,7 @@ class cc_CanvasModules {
 
     // Wait for everything to load
     window.addEventListener('load', function(){
-        cc_pageLoaded( "waiting" );
+        cc_pageLoaded(  );
     }, false);
 
 
