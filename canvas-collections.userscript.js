@@ -16,19 +16,33 @@ const CSS_URL='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.cs
 // Hard code default card values for 1031LAW_3215
 // key is the module name
 
-const DEFAULT_ACTIVE_COLLECTION = 'Content Essentials';
+const DEFAULT_ACTIVE_COLLECTION = 'Learning Journey';
 const COLLECTIONS_DEFAULTS = [
-    "Content Essentials", "Online Workshops", "Assessment Essentials", "Student Support"
+    "Learning Journey", "Assessment Essentials", "Online Workshops", "Student Support"
 ];
 
 const CARD_DEFAULTS = {
+    'Welcome' : {
+        'image': 'https://i.ytimg.com/vi/gkdGXFcxHw4/maxresdefault.jpg',
+        'label': '',
+        'imageSize': 'bg-contain',
+        'num': '',
+        'description': `<ul>
+          <li> What will you learn? </li>
+          <li> What do you need to do? </li>
+          <li> How will you show what you've learnt?</li> </ul>`,
+        'collection': 'Learning Journey',
+        'date': {
+            'label': 'Commencing', 'week': 'Week 0', 'month': 'Jul', 'date': '12'
+        }
+    },
     'Introduction': {
         'image': 'https://lms.griffith.edu.au/courses/122/files/795/preview',
         'label': 'Topic',
         'imageSize': 'bg-contain',
         'num': '1',
         'description': '<p>Overview of Foundations of Law and My Law Career</p>',
-        'collection': 'Content Essentials',
+        'collection': 'Learning Journey',
         'date': {
             'label': 'Commencing', 'week': 'Week 1', 'month': 'Jul', 'date': '19'
         }
@@ -39,15 +53,15 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '2',
         'description': 'How law is made - and how to find the law (legislation and case)',
-        'collection': 'Content Essentials'
+        'collection': 'Learning Journey'
     },
     'Introduction to Legal Theory' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/798/preview',
         'label': 'Topic',
-        'imageSize': 'bg-cover',
+        'imageSize': 'bg-contain',
         'num': '3',
         'description': '',
-        'collection': 'Content Essentials',
+        'collection': 'Learning Journey',
         'date': {
             'label': 'Commencing', 'week': 'Week 4', 'month': 'Aug', 'date': '16'
         }
@@ -58,7 +72,7 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '4',
         'description': '<p>How to interpret legislation (i.e. work out what it means)</p>',
-        'collection': 'Content Essentials'
+        'collection': 'Learning Journey'
     },
     'Case Law' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/799/preview',
@@ -66,7 +80,7 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
         'num': '6',
-        'collection': 'Content Essentials'
+        'collection': 'Learning Journey'
     },
     'The Legal Profession' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/796/preview',
@@ -74,7 +88,7 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '7',
         'description': '<p>Introduction to the legal profession and legal professional ethics.</p>',
-        'collection': 'Content Essentials',
+        'collection': 'Learning Journey',
         'date': {
             'label': 'Commencing', 'week': 'Week 10', 'month': 'Sep', 'date': '27'
         }
@@ -85,7 +99,7 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '8',
         'description': '<p>Introduction to First Nations people and the law</p>',
-        'collection': 'Content Essentials'
+        'collection': 'Learning Journey'
     },
     'Consolidating Knowledge' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
@@ -93,8 +107,35 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '9',
         'description': '<p>Revision and preparation for final assessment</p>',
-        'collection': 'Content Essentials'
+        'collection': 'Learning Journey'
     },
+    // Assessment 1031LAW
+    'Accessing Case Law and Legislation' : {
+//        'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
+        'label': 'Assessment',
+//        'imageSize': 'bg-cover',
+        'num': '1',
+        'description': `<p>Complete a 50 minute online exam. Released 9am on Tuesday of 
+        Week 4 and closed at 5pm on Friday of Week 4.</p>`,
+        'collection': 'Assessment Essentials'
+    },
+    'Legislation, Case Law and Statutory Interpretation Assignment' : {
+//        'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
+        'label': 'Assessment',
+  //      'imageSize': 'bg-cover',
+        'num': '2',
+        'description': `<p>Prepare succinct memos explaining and commenting on a piece of legislation and a case
+        respectively, and apply rules of statuory interpretation.</p>`,
+        'collection': 'Assessment Essentials'
+    },
+    'Take-Home Exam' : {
+   //     'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
+        'label': 'Assessment',
+//        'imageSize': 'bg-cover',
+        'num': '3',
+        'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
+        'collection': 'Assessment Essentials'
+    }
 };
 
 function cc_pageLoaded( label){
@@ -312,7 +353,10 @@ class cc_CanvasModulesView {
 
         let IFRAME="";
 
-        let imageSize = module.imageSize;
+        let imageSize = "bg-cover";
+        if ("imageSize" in module ) {
+            imageSize = module.imageSize;
+        }
         if (imageSize==="bg-contain") {
             imageSize="bg-contain bg-no-repeat bg-center"
         }
