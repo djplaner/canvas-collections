@@ -16,8 +16,7 @@ const CSS_URL='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.cs
 // Hard code default card values for 1031LAW_3215
 // key is the module name
 
-//const DEFAULT_ACTIVE_COLLECTION = 'Learning Journey';
-const DEFAULT_ACTIVE_COLLECTION = 'Assessment Essentials';
+const DEFAULT_ACTIVE_COLLECTION = 'Learning Journey';
 const COLLECTIONS_DEFAULTS = [
     "Learning Journey", "Assessment Essentials", "Online Workshops", "Student Support"
 ];
@@ -243,14 +242,20 @@ class cc_CanvasModulesView {
 
             // if we found the title, add the collection details
             if (spanDom) {
-                spanDom.innerHTML = `${spanDom.textContent} - <small>(${aModule.collection})</small>`;
+                // only if the module name isn't already there
+                if (spanDom.textContent.indexOf(`(${aModule.collection})`) === -1) {
+                    spanDom.innerHTML = `${spanDom.textContent} - <small>(${aModule.collection})</small>`;
+                }
             } else {
                 console.error(`no span.name found for module ${aModule.title}`);
             }
 
             // hide the module if it's not in the current collection
+            // but make it's visible otherwise
             if (aModule.collection !== this.currentCollection) {
                 divDom.style.display = 'none';
+            } else {
+                divDom.style.display = 'block';
             }
         }
     }
@@ -306,13 +311,30 @@ class cc_CanvasModulesView {
         const numModules = this.modules.length;
 //        const numRequiredRows = Math.ceil(numModules/3);
 
+        let cardsShown = 0;
+
         // for each module generate card and append
         for (let i=0; i<numModules; i++) {
             let module = this.modules[i];
             if ( module.collection===this.currentCollection) {
                 let card = this.generateCard(module);
                 cardCollection.appendChild(card);
+                cardsShown+=1;
             }
+        }
+
+        // show appropriate message if no cards shown
+        if (cardsShown===0) {
+            let noCards = this.createElement('div', 'cc-canvas-collections-no-cards');
+            // add some padding-left
+            noCards.style.paddingLeft = '2rem';
+            noCards.style.paddingTop = '2rem';
+
+            noCards.innerHTML = `
+            <h3>No matching modules for this collection</h3>
+
+            <p>No modules found in collection ${this.currentCollection}</p>`;
+            cardCollection.appendChild(noCards);
         }
 
 //        let module = 0;
