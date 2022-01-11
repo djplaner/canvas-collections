@@ -5,6 +5,7 @@
 // @description  Enable creation of collection of Canvas modules and alternate representations
 // @author       David Jones
 // @match        https://lms.griffith.edu.au/*/modules
+// @match        https://griffith.instructure.com/*/modules
 // @icon         https://www.google.com/s2/favicons?domain=griffith.edu.au
 // @grant        none
 // ==/UserScript==
@@ -20,6 +21,10 @@ const DEFAULT_ACTIVE_COLLECTION = 'Learning Journey';
 const COLLECTIONS_DEFAULTS = [
     "Learning Journey", "Assessment Essentials", "Online Workshops", "Student Support"
 ];
+
+const META_DATA_FIELDS = [
+    'image', 'label', 'imageSize', 'num', 'description', 'collection'
+]
 
 const CARD_DEFAULTS = {
     'Welcome' : {
@@ -143,10 +148,21 @@ const CARD_DEFAULTS = {
  */
 
 function cc_pageLoaded( ){
+
+    // check queryString for cc-collections
+    // for some reason .search doesn't work on canvas
+    // TODO this is currently not working
+    const location = window.location.href;
+    // extract from location everything after ?
+    const queryString = location.substring(location.indexOf('?') + 1);
+
+    const urlParams = new URLSearchParams(queryString);
+    const collectionsOption = urlParams.get('cc-collections');
+
     // extract all module information
     let modules = new cc_CanvasModules();
     // update the page to add Card Information
-    let view = new cc_CanvasModulesView(modules);
+    let view = new cc_CanvasModulesView(modules,collectionsOption);
     view.render();
 }
 
@@ -173,10 +189,11 @@ class cc_CanvasModulesView {
      * @desc insert HTML into Canvas modules page offering different representation of module information
      * @param modules cc_CanvasModules object containing all info about current pages modules
      */
-    constructor(modules) {
+    constructor(modules,canvasOption='collection') {
         this.model = modules;
         this.modules = this.model.modules;
         this.currentCollection = this.model.currentCollection;
+        this.canvasOption = canvasOption;
     }
 
     /**
@@ -206,8 +223,10 @@ class cc_CanvasModulesView {
         let ccCanvasCollections = this.createElement('div', 'cc-canvas-collections');
         ccCanvasCollections.id = 'cc-canvas-collections';
 
-        let navBar = this.generateNavBar();
-        ccCanvasCollections.appendChild(navBar);
+        if ( location.hostname.match(/griffith\.edu\.au/)) {
+            let navBar = this.generateNavBar();
+            ccCanvasCollections.appendChild(navBar);
+        }
 
 /*        let simpleTitle = this.createElement('h2', 'cc-canvas-collections-title');
         simpleTitle.textContent = 'Canvas Collections';
@@ -221,8 +240,9 @@ class cc_CanvasModulesView {
         //result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
         const result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
 
-        this.updateCanvasModuleList();
-
+        if ( location.hostname.match(/griffith\.edu\.au/)) {
+            this.updateCanvasModuleList();
+        }
     }
 
     /**
@@ -252,10 +272,10 @@ class cc_CanvasModulesView {
 
             // hide the module if it's not in the current collection
             // but make it's visible otherwise
-            if (aModule.collection !== this.currentCollection) {
-                divDom.style.display = 'none';
-            } else {
+            if (aModule.collection === this.currentCollection || this.canvasOption!=='all') {
                 divDom.style.display = 'block';
+            } else {
+                divDom.style.display = 'none';
             }
         }
     }
@@ -316,7 +336,7 @@ class cc_CanvasModulesView {
         // for each module generate card and append
         for (let i=0; i<numModules; i++) {
             let module = this.modules[i];
-            if ( module.collection===this.currentCollection) {
+            if ( module.collection===this.currentCollection || this.canvasOption!=='all') {
                 let card = this.generateCard(module);
                 cardCollection.appendChild(card);
                 cardsShown+=1;
@@ -391,7 +411,7 @@ class cc_CanvasModulesView {
 
         // loop thru each element of date
         for (let key in date) {
-            if ( 'date' in module && key in module.date) {
+            if ( ('date' in module) && (key in module.date)) {
                 dateSet = true;
                 date[key] = module.date[key];
             }
@@ -439,6 +459,17 @@ class cc_CanvasModulesView {
             DATE='';
         }
 
+        // description is set to module description, but add unpublished message
+        // if module is not published
+        const UNPUBLISHED_MESSAGE = `
+        <div class="inline-block bg-yellow-800 text-black text-xs rounded-t rounded-b">
+        This module is <strong>not published</strong>
+        </div>
+        `;
+        let description = module.description;
+        if (!module.published){
+            description = `${description}${UNPUBLISHED_MESSAGE}`
+        }
 
         let IFRAME="";
 
@@ -463,7 +494,7 @@ class cc_CanvasModulesView {
     </span>
     <h3 class="mb-4 text-2xl">${module.title}</h3>
     <div class="mb-4 flex-1">
-      ${module.description}
+      ${description}
       
     </div>
     <p></p>
@@ -538,7 +569,7 @@ class cc_Item {
         this.extractAbout(element)
         
         console.log(`canvas-collection:    -- ${this.position}) item ${this.id} '<a href="${this.url}">${this.title}</a>' is ${this.itemType}`);
-        console.log(`canvas-collection:    about ${JSON.stringify(this.about)}`);
+//        console.log(`canvas-collection:    about ${JSON.stringify(this.about)}`);
     }
 
     /**
@@ -645,6 +676,7 @@ class cc_Module {
         this.extractId(element);
         this.extractTitle(element);
         this.extractItems(element);
+        this.extractPublished(element);
         this.collection = null;
 
         this.addModuleDefaults();
@@ -660,6 +692,18 @@ class cc_Module {
      * @descr based on the module's title add some default values from HARD_CODE
      */
     addModuleDefaults() {
+        // only do this if the current location is griffith.edu.au
+        if (! location.hostname.match(/griffith\.edu\.au/)) {
+            // loop through META_DATA_FIELDS list
+            for (let field of META_DATA_FIELDS) {
+                // if this has no member field
+                if (! (field in this)) {
+                    this[field] = '';
+                }
+            }
+            this
+            return;
+        }
         // if title not in CARD_DEFAULTS return
 
         if (! this.title in CARD_DEFAULTS) {
@@ -716,6 +760,19 @@ class cc_Module {
         }
         this.items = items;
     } 
+
+    /**
+     * @desc set the published status of the module 
+     * - default published==True, look for icon.unpublish value within element
+     * @param DOMElement element
+     */
+    extractPublished(element){
+        this.published = true;
+        let unpublishIcon = element.querySelector('i.unpublish');
+        if (unpublishIcon!==null){
+            this.published = false;
+        }
+    }
 }
 
 class cc_CanvasModules {
