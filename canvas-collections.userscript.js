@@ -272,7 +272,7 @@ class cc_CanvasModulesView {
 
             // hide the module if it's not in the current collection
             // but make it's visible otherwise
-            if (aModule.collection === this.currentCollection || this.canvasOption!=='all') {
+            if (aModule.collection === this.currentCollection || this.canvasOption==='all') {
                 divDom.style.display = 'block';
             } else {
                 divDom.style.display = 'none';
@@ -336,7 +336,7 @@ class cc_CanvasModulesView {
         // for each module generate card and append
         for (let i=0; i<numModules; i++) {
             let module = this.modules[i];
-            if ( module.collection===this.currentCollection || this.canvasOption!=='all') {
+            if ( module.collection===this.currentCollection || this.canvasOption==='all') {
                 let card = this.generateCard(module);
                 cardCollection.appendChild(card);
                 cardsShown+=1;
@@ -462,7 +462,7 @@ class cc_CanvasModulesView {
         // description is set to module description, but add unpublished message
         // if module is not published
         const UNPUBLISHED_MESSAGE = `
-        <div class="inline-block bg-yellow-800 text-black text-xs rounded-t rounded-b">
+        <div class="inline-block bg-yellow-200 text-black text-xs rounded-t rounded-b">
         This module is <strong>not published</strong>
         </div>
         `;
@@ -495,7 +495,6 @@ class cc_CanvasModulesView {
     <h3 class="mb-4 text-2xl">${module.title}</h3>
     <div class="mb-4 flex-1">
       ${description}
-      
     </div>
     <p></p>
      
@@ -689,11 +688,12 @@ class cc_Module {
     }
 
     /**
-     * @descr based on the module's title add some default values from HARD_CODE
+     * @descr based on the module's title add some default values from CARD_DEFAULTS
      */
     addModuleDefaults() {
-        // only do this if the current location is griffith.edu.au
-        if (! location.hostname.match(/griffith\.edu\.au/)) {
+        // only add defaults if the current location is griffith.edu.au and there's
+        // an entry in CARD_DEFAULTS for this module
+        if (! location.hostname.match(/griffith\.edu\.au/) || !(this.title in CARD_DEFAULTS)) {
             // loop through META_DATA_FIELDS list
             for (let field of META_DATA_FIELDS) {
                 // if this has no member field
@@ -701,12 +701,6 @@ class cc_Module {
                     this[field] = '';
                 }
             }
-            this
-            return;
-        }
-        // if title not in CARD_DEFAULTS return
-
-        if (! this.title in CARD_DEFAULTS) {
             return;
         }
 
@@ -768,7 +762,7 @@ class cc_Module {
      */
     extractPublished(element){
         this.published = true;
-        let unpublishIcon = element.querySelector('i.unpublish');
+        let unpublishIcon = element.querySelector('i.icon-unpublish');
         if (unpublishIcon!==null){
             this.published = false;
         }
