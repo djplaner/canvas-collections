@@ -458,20 +458,9 @@ class cc_CanvasModulesView {
         let EDIT_ITEM="";
         let REVIEW_ITEM=""
 
-
-        // description is set to module description, but add unpublished message
-        // if module is not published
-        const UNPUBLISHED_MESSAGE = `
-        <div class="inline-block bg-yellow-200 text-black text-xs rounded-t rounded-b">
-        This module is <strong>not published</strong>
-        </div>
-        `;
         let description = module.description;
-        if (!module.published){
-            description = `${description}${UNPUBLISHED_MESSAGE}`
-        }
 
-
+        let published = this.generatePublishedView(module.published);
 
         let IFRAME="";
 
@@ -504,6 +493,7 @@ class cc_CanvasModulesView {
      ${REVIEW_ITEM}
      ${EDIT_ITEM}
      ${DATE} 
+     ${published}
      ${completion}
   </div>
 </div>
@@ -545,6 +535,29 @@ class cc_CanvasModulesView {
 
         return completionHtml;
     }
+
+    /**
+     * @desc generate html showing if module is unpublished
+     * i.e. only show message if unpublished
+     * @param boolean true iff published
+     * @returns string html empty if published warning if unpublished
+     */
+    generatePublishedView(published) {
+        if (published){
+            return '';
+        }
+
+        let publishedHtml = `
+<span class="bg-red-500 text-white text-xs rounded-full py-1 text-center font-bold"
+     style="width:8em">
+        Unpublished
+</span>
+        `;
+
+        return publishedHtml;
+    }
+
+
 
     /**
      * @desc generate HTML for representing the moduleDate
@@ -922,8 +935,12 @@ class cc_Module {
      */
     extractPublished(element){
         this.published = true;
-        let unpublishIcon = element.querySelector('i.icon-unpublish');
-        if (unpublishIcon!==null){
+        // the icon can be unreliable
+        //let unpublishIcon = element.querySelector('i.icon-unpublish');
+        let unpublish = element.querySelector('span.publish-icon');
+        // is unpublished in the class list
+        if (unpublish!==null && unpublish.classList.contains('unpublished')){
+//        if (unpublishIcon!==null){
             this.published = false;
         }
     }
