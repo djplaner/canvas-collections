@@ -442,6 +442,7 @@ class cc_CanvasModulesView {
         }
 
         
+        const completion = this.generateCompletionView(module.completionStatus)
         const DATE = this.generateDateView(module.date);
 
 //        let WIDTH="w-full sm:w-1/2 md:w-1/3";
@@ -469,6 +470,8 @@ class cc_CanvasModulesView {
         if (!module.published){
             description = `${description}${UNPUBLISHED_MESSAGE}`
         }
+
+
 
         let IFRAME="";
 
@@ -501,6 +504,7 @@ class cc_CanvasModulesView {
      ${REVIEW_ITEM}
      ${EDIT_ITEM}
      ${DATE} 
+     ${completion}
   </div>
 </div>
 `;
@@ -515,6 +519,32 @@ class cc_CanvasModulesView {
     }
 
 
+    /**
+     * @descr generate ribbon/html to add to card to show completion status
+     * @param String completionStatus 
+     * @returns html 
+     */
+    generateCompletionView(completionStatus) {
+        const colour = {
+            'Completed': 'bg-green-500',
+            'In Progress': 'bg-yellow-500',
+            'Locked': 'bg-red-500'
+        }
+
+        if (!(completionStatus in colour) ){
+            return '';
+        }
+
+        const length = completionStatus.length;
+        let completionHtml = `
+  <div  class="${colour[completionStatus]} text-xs rounded-full py-1 text-center font-bold"
+        style="width:${length}em" >
+    <div class="">${completionStatus}</div>
+  </div>
+        `;
+
+        return completionHtml;
+    }
 
     /**
      * @desc generate HTML for representing the moduleDate
@@ -691,7 +721,7 @@ class cc_Item {
         this.extractTitleAndUrl(element)
         this.extractAbout(element)
         
-        console.log(`canvas-collection:    -- ${this.position}) item ${this.id} '<a href="${this.url}">${this.title}</a>' is ${this.itemType}`);
+//        console.log(`canvas-collection:    -- ${this.position}) item ${this.id} '<a href="${this.url}">${this.title}</a>' is ${this.itemType}`);
 //        console.log(`canvas-collection:    about ${JSON.stringify(this.about)}`);
     }
 
@@ -800,6 +830,8 @@ class cc_Module {
         this.extractTitle(element);
         this.extractItems(element);
         this.extractPublished(element);
+        this.extractCompletionStatus(element);
+
         this.collection = null;
         this.options = DEFAULT_VIEW_OPTIONS;
         if (options) {
@@ -895,6 +927,35 @@ class cc_Module {
             this.published = false;
         }
     }
+
+    /**
+     * @desc figure out the modules completion status
+     * - Completed - i.complete_icon is display:visible
+     * - In Progress - i.in_progress_icon is display:visible
+     * - Locked - i.locked_icon is display:visible
+     * @param DOM Element Module dom element
+     */
+    extractCompletionStatus(element){
+        this.completionStatus = '';
+
+        const statusCheck = {
+            'i.complete_icon': 'Completed',
+            'i.in_progress_icon': 'In Progress',
+            'i.locked_icon': 'Locked'
+        }
+
+        for (let key in statusCheck) {
+            let icon = element.querySelector(key);
+            if (icon!==null){
+                // set completionStatus if display is visible
+                let style = window.getComputedStyle(icon);
+                if (style.display!=='none'  ){
+                    this.completionStatus = statusCheck[key];
+                    break;
+                }
+            }
+        }
+    }
 }
 
 class cc_CanvasModules {
@@ -908,6 +969,9 @@ class cc_CanvasModules {
         this.modules = Array.from( this.moduleElements).map( ( moduleElement) => {
             return new cc_Module( moduleElement);
         });
+
+        // simple dump
+        console.log(this.modules);
     }
 }
 
