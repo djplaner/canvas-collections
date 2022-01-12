@@ -14,6 +14,18 @@ const COURSE_ID=ENV.COURSE_ID;
 //const CSS_URL='<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/cards.css" />';
 const CSS_URL='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
 
+const DEFAULT_VIEW_OPTIONS = {
+    // how to view collections: 
+    // - current - show the current collection
+    // - all - show all collections
+    'collectionView': 'current',  
+    // whether to who nav bar
+    'navBar' : true,
+    // whether to update the module title with collection name
+    'updateTitle' : true
+};
+
+
 // Hard code default card values for 1031LAW_3215
 // key is the module name
 
@@ -185,13 +197,24 @@ function cc_pageLoaded( ){
     // extract from location everything after ?
     const queryString = location.substring(location.indexOf('?') + 1);
 
+    // define options
+    let options = DEFAULT_VIEW_OPTIONS;
+
     const urlParams = new URLSearchParams(queryString);
     const collectionsOption = urlParams.get('cc-collections');
+    if (collectionsOption) {
+        options.collectionView = collectionsOption;
+    }
+    if (!window.location.hostname.match(/griffith\.edu\.au/)) {
+        options.collectionView='all';
+        options.navBar = false;
+        options.updateTitle = false;
+    }
 
     // extract all module information
     let modules = new cc_CanvasModules();
     // update the page to add Card Information
-    let view = new cc_CanvasModulesView(modules,collectionsOption);
+    let view = new cc_CanvasModulesView(modules,options);
     view.render();
 }
 
@@ -217,12 +240,17 @@ class cc_CanvasModulesView {
     /**
      * @desc insert HTML into Canvas modules page offering different representation of module information
      * @param modules cc_CanvasModules object containing all info about current pages modules
+     * @param option object - defining how to configure the view
      */
-    constructor(modules,canvasOption='collection') {
+    constructor(modules,options=null) {
         this.model = modules;
         this.modules = this.model.modules;
         this.currentCollection = this.model.currentCollection;
-        this.canvasOption = canvasOption;
+        // default setting
+        this.options = DEFAULT_VIEW_OPTIONS;
+        if (options) {
+            this.options = options;
+        }
     }
 
     /**
@@ -252,15 +280,10 @@ class cc_CanvasModulesView {
         let ccCanvasCollections = this.createElement('div', 'cc-canvas-collections');
         ccCanvasCollections.id = 'cc-canvas-collections';
 
-        if ( location.hostname.match(/griffith\.edu\.au/)) {
+        if ( this.options.navBar ) {
             let navBar = this.generateNavBar();
             ccCanvasCollections.appendChild(navBar);
         }
-
-/*        let simpleTitle = this.createElement('h2', 'cc-canvas-collections-title');
-        simpleTitle.textContent = 'Canvas Collections';
-
-        ccCanvasCollections.appendChild(simpleTitle);*/
 
         let cards = this.generateCards();
         ccCanvasCollections.appendChild(cards);
@@ -269,7 +292,7 @@ class cc_CanvasModulesView {
         //result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
         const result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
 
-        if ( location.hostname.match(/griffith\.edu\.au/)) {
+        if ( this.options.updateTitle) {
             this.updateCanvasModuleList();
         }
     }
@@ -365,7 +388,7 @@ class cc_CanvasModulesView {
         // for each module generate card and append
         for (let i=0; i<numModules; i++) {
             let module = this.modules[i];
-            if ( module.collection===this.currentCollection || this.canvasOption==='all') {
+            if ( module.collection===this.currentCollection || this.options.collectionView==='all') {
                 let card = this.generateCard(module);
                 cardCollection.appendChild(card);
                 cardsShown+=1;
@@ -772,12 +795,16 @@ class cc_Item {
 }
 
 class cc_Module {
-    constructor( element ) {
+    constructor( element, options=null ) {
         this.extractId(element);
         this.extractTitle(element);
         this.extractItems(element);
         this.extractPublished(element);
         this.collection = null;
+        this.options = DEFAULT_VIEW_OPTIONS;
+        if (options) {
+            this.options = options;
+        }
 
         this.addModuleDefaults();
 
