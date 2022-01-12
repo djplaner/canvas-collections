@@ -95,7 +95,12 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
         'num': '6',
-        'collection': 'Learning Journey'
+        'collection': 'Learning Journey',
+        'date': {
+            'label': 'From',
+            'start' : { 'week': '8', 'month': 'Sep', 'date': '13'},
+            'stop': { 'week': '9', 'month': 'Sep', 'date': '24'},
+        }
     },
     'The Legal Profession' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/796/preview',
@@ -114,7 +119,10 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '8',
         'description': '<p>Introduction to First Nations people and the law</p>',
-        'collection': 'Learning Journey'
+        'collection': 'Learning Journey',
+        'date': {
+            'label': 'Commencing', 'week': 'Week 11', 'month': 'Oct', 'date': '4'
+        }
     },
     'Consolidating Knowledge' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
@@ -122,7 +130,10 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '9',
         'description': '<p>Revision and preparation for final assessment</p>',
-        'collection': 'Learning Journey'
+        'collection': 'Learning Journey',
+        'date': {
+            'label': 'Commencing', 'week': 'Week 12', 'month': 'Oct', 'date': '11'
+        }
     },
     // Assessment 1031LAW
     'Accessing Case Law and Legislation' : {
@@ -132,7 +143,12 @@ const CARD_DEFAULTS = {
         'num': '1',
         'description': `<p>Complete a 50 minute online exam. Released 9am on Tuesday of 
         Week 4 and closed at 5pm on Friday of Week 4.</p>`,
-        'collection': 'Assessment Essentials'
+        'collection': 'Assessment Essentials',
+        'date': {
+            'label': 'From',
+            'start' : { 'week': null, 'month': 'Aug', 'date': '17'},
+            'stop': { 'week': null, 'month': 'Aug', 'date': '20'},
+        }
     },
     'Legislation, Case Law and Statutory Interpretation Assignment' : {
 //        'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
@@ -141,7 +157,10 @@ const CARD_DEFAULTS = {
         'num': '2',
         'description': `<p>Prepare succinct memos explaining and commenting on a piece of legislation and a case
         respectively, and apply rules of statuory interpretation.</p>`,
-        'collection': 'Assessment Essentials'
+        'collection': 'Assessment Essentials',
+        'date': {
+            'label': 'Due', 'week': null, 'month': 'Sep', 'date': '27'
+        }
     },
     'Take-Home Exam' : {
    //     'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
@@ -512,6 +531,9 @@ class cc_CanvasModulesView {
                 ${date.week}
                 </div>
                 `;
+                if (moduleDate.week===null) {
+                    week='';
+                }
             }
             if ('time' in moduleDate){
                 time=`
@@ -566,6 +588,9 @@ class cc_CanvasModulesView {
                 Week ${moduleDate.start.week} to ${moduleDate.stop.week}
             </div>
         `;
+        if ( (moduleDate.start.week===null) || (moduleDate.stop.week===null) ) {
+            WEEK='';
+        }
         let DAYS = ``;
 
         let DATE = `
