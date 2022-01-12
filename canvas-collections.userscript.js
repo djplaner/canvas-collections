@@ -58,7 +58,12 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '2',
         'description': 'How law is made - and how to find the law (legislation and case)',
-        'collection': 'Learning Journey'
+        'collection': 'Learning Journey',
+        'date': {
+            'label': 'From',
+            'start' : { 'week': '2', 'month': 'Jul', 'date': '26'},
+            'stop': { 'week': '3', 'month': 'Aug', 'date': '6'},
+        }
     },
     'Introduction to Legal Theory' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/798/preview',
@@ -77,7 +82,12 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '4',
         'description': '<p>How to interpret legislation (i.e. work out what it means)</p>',
-        'collection': 'Learning Journey'
+        'collection': 'Learning Journey',
+        'date': {
+            'label': 'From',
+            'start' : { 'week': '5', 'month': 'Aug', 'date': '23'},
+            'stop': { 'week': '7', 'month': 'Sep', 'date': '10'},
+        }
     },
     'Case Law' : {
         'image': 'https://lms.griffith.edu.au/courses/122/files/799/preview',
@@ -390,6 +400,7 @@ class cc_CanvasModulesView {
         }
 
         
+        const DATE = this.generateDateView(module.date);
 
 //        let WIDTH="w-full sm:w-1/2 md:w-1/3";
         let COMING_SOON="";
@@ -404,60 +415,6 @@ class cc_CanvasModulesView {
         let EDIT_ITEM="";
         let REVIEW_ITEM=""
 
-        let date = {
-            'label': '', 'week': '', 'time': '', 'month': '', 'date': ''
-        };
-        let dateSet = false;
-
-        // loop thru each element of date
-        for (let key in date) {
-            if ( ('date' in module) && (key in module.date)) {
-                dateSet = true;
-                date[key] = module.date[key];
-            }
-        }
-
-        let week = '';
-        let time = ''
-        if ( dateSet) {
-            if ('week' in module.date) {
-                week = `
-                <div class="bg-yellow-200 text-black py-0"> 
-                ${date.week}
-                </div>
-                `;
-            }
-            if ('time' in module.date){
-                time=`
-                <div class="bg-yellow-200 text-black py-0 text-xs">
-                ${date.time}
-                </div>
-                `;
-            }
-
-        }
-
-
-        let DATE=`
-        <div class="block rounded-t rounded-b overflow-hidden bg-white text-center w-24 absolute"
-            style="right:0;top:0;"
-        >
-          <div class="bg-black text-white py-0 text-xs border-l border-r border-t border-black">
-             ${date.label}
-          </div>
-          ${week}
-          ${time}
-          <div class="bg-red-900 text-white py-0 border-l border-r border-black">
-      	     ${date.month}
-          </div>
-          <div class="pt-1 border-l border-r border-b border-black rounded-b">
-      	     <span class="text-2xl font-bold">${date.date}</span>
-          </div>
-        </div>
-        `;
-        if ( ! dateSet ) {
-            DATE='';
-        }
 
         // description is set to module description, but add unpublished message
         // if module is not published
@@ -513,6 +470,125 @@ class cc_CanvasModulesView {
         ] );
         wrapper.innerHTML = cardHtml;
         return wrapper; 
+    }
+
+
+
+    /**
+     * @desc generate HTML for representing the moduleDate
+     * @param object moduleDate - object with date data
+     * @returns string - HTML for representing the moduleDate
+     */
+    generateDateView(moduleDate) {
+
+        // return '' if moduleData undefined
+        if (moduleDate===undefined) {
+            return '';
+        }
+
+        let date = {
+            'label': '', 'week': '', 'time': '', 'month': '', 'date': ''
+        };
+        let dateSet = false;
+
+        if ('start' in moduleDate) {
+            return this.generateDualDate(moduleDate);
+        }
+
+        // loop thru each element of date
+        for (let key in date) {
+            if ( key in moduleDate) {
+                dateSet = true;
+                date[key] = moduleDate[key];
+            }
+        }
+
+        let week = '';
+        let time = ''
+        if ( dateSet) {
+            if ('week' in moduleDate) {
+                week = `
+                <div class="bg-yellow-200 text-black py-0"> 
+                ${date.week}
+                </div>
+                `;
+            }
+            if ('time' in moduleDate){
+                time=`
+                <div class="bg-yellow-200 text-black py-0 text-xs">
+                ${date.time}
+                </div>
+                `;
+            }
+        }
+
+        let DATE=`
+    <div class="block rounded-t rounded-b overflow-hidden bg-white text-center w-24 absolute"
+        style="right:0;top:0;"
+    >
+      <div class="bg-black text-white py-0 text-xs border-l border-r border-t border-black">
+         ${date.label}
+      </div>
+      ${week}
+      ${time}
+      <div class="bg-red-900 text-white py-0 border-l border-r border-black">
+           ${date.month}
+      </div>
+      <div class="pt-1 border-l border-r border-b border-black rounded-b">
+           <span class="text-2xl font-bold">${date.date}</span>
+      </div>
+    </div>
+        `;
+        if ( ! dateSet ) {
+            DATE='';
+        }
+
+        return DATE;
+    }
+
+    /**
+     * @desc generate html to represent a dual date
+     * @param Object moduleDate 
+     * @returns html
+     */
+    generateDualDate(moduleDate) {
+
+        let date = {
+            'label': moduleDate.label, 
+            'monthStart': moduleDate.start.month,
+            'dateStart': moduleDate.start.date,
+            'monthStop': moduleDate.stop.month,
+            'dateStop': moduleDate.stop.date,
+        };
+
+        let WEEK = `
+            <div class="bg-yellow-200 text-black py-0 border-l border-r border-black">
+                Week ${moduleDate.start.week} to ${moduleDate.stop.week}
+            </div>
+        `;
+        let DAYS = ``;
+
+        let DATE = `
+        <div class="block rounded-t rounded-b overflow-hidden bg-white text-center w-24 absolute"
+            style="right:0;top:0">
+                  <div class="bg-black text-white py-0 text-xs border-l border-r border-black">
+                     ${date.label}
+                  </div>
+                  ${WEEK}
+                  <div class="bg-red-900 text-white flex items-stretch py-0 border-l border-r border-black">
+                      <div class="w-1/2 flex-grow">${date.monthStart}</div>
+                      <div class="flex items-stretch border-l border-black flex-grow  -mt-1 -mb-1"></div>
+                      <div class="w-1/2">${date.monthStop}</div>
+                  </div>
+                  <div class="border-l border-r border-b text-center flex border-black items-stretch pt-1 py-0">
+                       <div class="w-1/2 text-2xl flex-grow font-bold">${date.dateStart}</div>
+                       <div class="flex font-bolditems-stretch border-l border-black flex-grow -mt-1"></div>
+                      <div class="w-1/2 text-2xl font-bold">${date.dateStop}</div>
+                  </div>
+                 </div> 
+        `;
+
+        return DATE;
     }
 
     /**
