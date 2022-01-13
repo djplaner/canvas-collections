@@ -30,7 +30,9 @@ The long-term plan is that the canvas-collections "architecture" will allow for 
 Early exploratory stage. 
 - Implementation as a [userscript](https://en.wikipedia.org/wiki/Userscript) for proof of concept purposes.  
 - Hard code card data for a specific course and its collection of modules - for purposes of prototype
+- Picks up some of the Canvas module information (published, completed, in progress, locked)
 - Adopt the tailwind design from the card interface and kludge together sufficient code to get it to work
+- Still a bit flaky due to connection with page events
 
 ![Current example](./docs/cards.png?raw=true)
 
