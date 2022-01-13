@@ -10,7 +10,7 @@ There are two common limitiations to [the vanilla Canvas Modules page](https://c
     For a course with large numbers of modules or which uses modules for very different purposes the inability to group modules is a problem. Available workarounds all [have their limitations](https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-group-modules-together/m-p/179757/highlight/true#M84952) and Instructure ["don't have plans to support nested modules soon"](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383/highlight/true#M50428).
 2.  [a very linear, less than engaging presentation](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/).
 
-    It's not kept up with more contemporary web design. e.g. [Card-Based User Interfaces](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/) which [hundreds of courses across the world](https://djon.es/blog/2021/03/12/reflecting-on-the-spread-of-the-card-interface-for-blackboard-learn/) have found useful in Blackboard using the [Card Interface tweak](https://github.com/djplaner/Card-Interface-Tweak) and which [at least a couple of institutions](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/) have sought to add to the Modules page.
+    The linear "modules uncollapsed" by default approach causes issues (scroll of death) for courses [with "many modules and module items"](https://community.canvaslms.com/t5/Idea-Conversations/Modules-Display-as-Collapsed-by-Default/idi-p/370135). It's not kept up with more contemporary web design. e.g. [Card-Based User Interfaces](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/) which [hundreds of courses across the world](https://djon.es/blog/2021/03/12/reflecting-on-the-spread-of-the-card-interface-for-blackboard-learn/) have found useful in Blackboard using the [Card Interface tweak](https://github.com/djplaner/Card-Interface-Tweak) and which [at least a couple of institutions](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/) have sought to add to the Modules page. 
 
 ## What?
 
@@ -29,8 +29,8 @@ The long-term plan is that the canvas-collections "architecture" will allow for 
 
 Early exploratory stage. 
 - Implementation as a [userscript](https://en.wikipedia.org/wiki/Userscript) for proof of concept purposes.  
-- Using bootstrap to generate simplistic cards representing every module on the page and a non-functioning collections navigation bar.
-- No effort whatsoever given to visual design.
+- Hard code card data for a specific course and its collection of modules - for purposes of prototype
+- Adopt the tailwind design from the card interface and kludge together sufficient code to get it to work
 
 ![Current example](./docs/cards.png?raw=true)
 
