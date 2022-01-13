@@ -34,7 +34,7 @@ Early exploratory stage.
 - Adopt the tailwind design from the card interface and kludge together sufficient code to get it to work
 - Still a bit flaky due to connection with page events
 
-![Current example](./docs/cards.png?raw=true)
+![Current example](./docs/cards.png?)
 
 ## Related work
 
