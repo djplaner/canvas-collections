@@ -1141,7 +1141,12 @@ function canvasCollections() {
 
     // Wait for everything to load
     window.addEventListener('load', function(){
-        let controller = new cc_Controller();
+        // getting very kludgy here, haven't got a good solution...yet #14
+        this.setTimeout(
+            () => {
+                let controller = new cc_Controller();
+            }, 2000
+        );
 
         
     }, false);
