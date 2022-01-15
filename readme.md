@@ -51,10 +51,8 @@ Representation supports
 
 | Default              | Additional configuration |
 :---------------------:|:------------------------:
-![](.docs/default.png?) | ![](.docs/additional.png?)
+![](./docs/default.png?) | ![](./docs/additional.png?)
 
-
-![Current example](./docs/cards.png?)
 
 ## Related work
 
