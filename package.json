@@ -1,0 +1,27 @@
+{
+  "name": "canvas-collections",
+  "version": "0.0.1",
+  "description": "Modify Canvas LMS modules to support collections of modules and their representation",
+  "main": "dist/index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/djplaner/canvas-collections.git"
+  },
+  "keywords": [
+    "canvas",
+    "lms",
+    "modules"
+  ],
+  "author": "David Jones",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/djplaner/canvas-collections/issues"
+  },
+  "homepage": "https://github.com/djplaner/canvas-collections#readme"
+}
