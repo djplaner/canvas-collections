@@ -2,7 +2,8 @@
 
 const COURSE_ID=ENV.COURSE_ID;
 //const CSS_URL='<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/cards.css" />';
-const CSS_URL='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
+const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
+//const CANVAS_COLLECTIONS_CSS='<link href="https://djon.es/gu/canvas/canvas-collections.css" rel="stylesheet">';
 
 const DEFAULT_VIEW_OPTIONS = {
     // how to view collections: 
@@ -339,6 +340,8 @@ class cc_CanvasModulesView {
             if ( module.collection===this.currentCollection || this.options.collectionView==='all') {
                 let card = this.generateCard(module);
                 cardCollection.appendChild(card);
+                // once card is added to DOM, can do further updates
+                this.updateProgress(module,cardCollection);
                 cardsShown+=1;
             }
         }
@@ -372,6 +375,7 @@ class cc_CanvasModulesView {
 
         return cardCollection;
     }
+
 
     /**
      * @desc generate a DOM element representing a module for insertion into page
@@ -420,9 +424,10 @@ class cc_CanvasModulesView {
             imageSize="bg-contain bg-no-repeat bg-center"
         }
 
+
 //<div class="clickablecard w-full sm:w-1/2 ${WIDTH} flex flex-col p-3">
         const cardHtml =`
-<div class="hover:outline-none hover:shadow-outline bg-white rounded-lg shadow-lg overflow-hidden flex-1 flex flex-col relative"> <!-- Relative could go -->
+<div id="cc_module_${module.id}" class="hover:outline-none hover:shadow-outline bg-white rounded-lg shadow-lg overflow-hidden flex-1 flex flex-col relative"> <!-- Relative could go -->
   <a href="#${module.id}" class="cardmainlink"></a>
   <div class="${imageSize} h-48" style="background-image: url('${imageUrl}'); background-color: rgb(255,255,255)">${IFRAME}
   </div>
@@ -435,6 +440,7 @@ class cc_CanvasModulesView {
     <div class="mb-4 flex-1">
       ${description}
     </div>
+    <div class="cc_progress"></div>
     <p></p>
      
      ${LINK_ITEM}
@@ -456,6 +462,38 @@ class cc_CanvasModulesView {
         return wrapper; 
     }
 
+
+    /**
+     * @desc add representation of student's progress to the card
+     * TODO support a circular progress bar as per
+     * - https://www.dottedsquirrel.com/circular-progress-css/
+     * - https://codepen.io/alvaromontoro/pen/LYjZqzP
+     *   Very nice, but breaks
+     * - https://codepen.io/toddscottik/pen/gOpqapg
+     *   Lots of hard coding, too big, 
+     * 
+     * 
+     * @param Object module 
+     * @param cardCollection DOM element containing card collection to date
+     */
+    updateProgress(module,cardCollection) {
+        // no progress if null
+        if (module.percentItemsComplete===null ) {
+            return;
+        }
+        // TODO perhaps handle the case where there are no items to complete
+        // e.g. don't show any progress
+        const options = {
+            size: 50,
+            background: "transparent"
+        };
+        const progress = new CircularProgressBar(module.percentItemsComplete, options);
+        let card = cardCollection.querySelector(`div#cc_module_${module.id}`);
+        let progressDiv = card.querySelector('div.cc_progress');
+        if (progressDiv) {
+            progress.appendTo(progressDiv);
+        }
+    }
 
     /**
      * @descr generate ribbon/html to add to card to show completion status
@@ -795,7 +833,7 @@ class cc_Item {
      * - this.status with the name of the status
      * - this.isComplete with true iff completed
      * @param {*} element 
-     */
+    */
     extractStatus(element){
 
         this.status = null;
@@ -833,6 +871,8 @@ class cc_Module {
         this.extractPublished(element);
         this.extractCompletionStatus(element);
 
+        this.calculateItemProgress();
+
         this.collection = null;
         this.options = DEFAULT_VIEW_OPTIONS;
         if (options) {
@@ -847,6 +887,7 @@ class cc_Module {
 
         console.log(`canvas-collections: Module ${this.id} title ${this.title}`);
     }
+
 
     /**
      * @descr based on the module's title add some default values from CARD_DEFAULTS
@@ -961,6 +1002,29 @@ class cc_Module {
             }
         }
     }
+
+    /**
+     * @desc based on the completion status of items set % of items completed
+     * for the module
+     * 
+     * set this.percentItemsComplete = % of itemsToComplete completed
+     */
+    calculateItemProgress() {
+        // null if there is no item progress in this module
+        this.percentItemsComplete=null;
+        const numItems = this.items.length;
+        // # of items that can be completed are those with item.status!=null
+        const numItemsToComplete = this.items.filter(item => item.status!==null).length;
+        // # of items completed are those with item.isComplete==true
+        const numItemsCompleted = this.items.filter(item => item.isComplete).length;
+
+        if (numItemsToComplete===0 ) {
+            return;
+        }
+
+        this.percentItemsComplete = Math.round(numItemsCompleted / numItemsToComplete * 100);
+
+    }
 }
 
 class cc_CanvasModules {
@@ -1038,11 +1102,13 @@ class cc_Controller {
 
 
 function canvasCollections() {
-    document.head.insertAdjacentHTML( 'beforeend', CSS_URL );
+    document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
 
     // Wait for everything to load
     window.addEventListener('load', function(){
         let controller = new cc_Controller();
+
+        
     }, false);
 
 }

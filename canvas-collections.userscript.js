@@ -8,7 +8,8 @@
 // @match        https://griffith.instructure.com/*/modules
 // @icon         https://www.google.com/s2/favicons?domain=griffith.edu.au
 // @grant        none
-// @require      file://c:\Users\s2986288\code\canvas-collections\lib\index.js
+// @require      https://unpkg.com/circular-progress-bar
+// @require      file://c:\Users\s2986288\code\canvas-collections\src\index.js
 // ==/UserScript==
 /*eslint-env browser*/
 
