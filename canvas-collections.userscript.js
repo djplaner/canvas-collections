@@ -6,6 +6,7 @@
 // @author       David Jones
 // @match        https://lms.griffith.edu.au/*/modules
 // @match        https://griffith.instructure.com/*/modules
+// @match        https://uc.instructure.com/*/modules
 // @icon         https://www.google.com/s2/favicons?domain=griffith.edu.au
 // @grant        none
 // @require      https://unpkg.com/circular-progress-bar

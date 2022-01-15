@@ -49,9 +49,25 @@ Representation supports
     - Display module description
     - Module title modified to include collection name
 
+### Screenshots
+
 | Default              | Additional configuration |
 :---------------------:|:------------------------:
 ![](./docs/default.png?) | ![](./docs/additional.png?)
+
+The _Default_ screenshot (click on it to see a larger version) illustrates canvas-collections working on a standard Canvas modules page. No additional configuration. It is showing the modules page from an instance of the [Growing with Canvas](https://uc.instructure.com/courses/1032076) course.
+
+The _Additional configuration_ screenshot is from a course where additional configuration has provided further information about the modules, including:
+- Which collection a module belongs to
+
+    Four are defined: Learning Journey; Assessment Essentials; Online Workshops; and, Student Support. _Learning Journey_ is currently displayed. The navigation bar above the cards allow navigation to other collections. Only modules belonging to the current collection are visible.
+- Module date information
+- Module label
+
+    Modules within collections can be further distinguished by labels. e.g. the _Welcome_ module has no label. The _Introduction_ module is labelled _Topic 1_.
+- Module description
+
+    To aid learners in understanding the why and what of a module a short description is added to each module.
 
 
 ## Related work
