@@ -51,11 +51,20 @@ Representation supports
 
 ### Screenshots
 
+Click on the screenshots to see larger versions.
+
 | Default              | Additional configuration |
 :---------------------:|:------------------------:
 ![](./docs/default.png?) | ![](./docs/additional.png?)
 
-The _Default_ screenshot (click on it to see a larger version) illustrates canvas-collections working on a standard Canvas modules page. No additional configuration. It is showing the modules page from an instance of the [Growing with Canvas](https://uc.instructure.com/courses/1032076) course.
+The _Default_ screenshot illustrates canvas-collections working on a standard Canvas modules page. No additional configuration. It is showing the modules page from an instance of the [Growing with Canvas](https://uc.instructure.com/courses/1032076) course. It illustrates early representations of standard Canvas functionality, including:
+- Module requirements progress
+
+    Individual Module items can have [completion requirements](https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-add-requirements-to-a-module/ta-p/1131). If added, canvas-collections adds a circular progress bar to the module card illustrating the percentage of requirements completed.
+- Module status
+
+    The combination of [module pre-requisites and requirements](https://ki.instructure.com/courses/192/pages/locking-material-with-requirements-and-prerequisites) combine to indicate whether a module is completed, in progress, locked or....
+
 
 The _Additional configuration_ screenshot is from a course where additional configuration has provided further information about the modules, including:
 - Which collection a module belongs to
