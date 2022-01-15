@@ -4,11 +4,7 @@ Improve the functionality of [Canvas LMS](https://www.instructure.com/en-au/canv
 1. Grouping modules into collections; and,
 2. Flexible and enhanced representations.
 
-{% note %}
-
-**Note:** This project is currently in the early stages of development. Currently only works as [userscript](https://en.wikipedia.org/wiki/User_script).
-
-{% endnote %}
+> **Note:** This project is currently in the early stages of development. Currently only works as [userscript](https://en.wikipedia.org/wiki/User_script).
 
 ## Why?
 
@@ -31,11 +27,7 @@ Embedded in Canvas, the canvas-collections Javascript will modify presentation o
 
     Modules can be grouped into collections (e.g. content, assessment, resources, units etc.). A collections navigation bar will be inserted before the Card interface to select the collection to view. Only the cards and modules for the selected collection will be visible.
 
-{% note %}
-
-**Note:** The card interface is only the first alternate interface. Plans include enabling different types of interfaces (e.g. a table-based interface).
-
-{% endnote %}
+> **Note:** The card interface is only the first alternate interface. Plans include enabling different types of interfaces (e.g. a table-based interface).
 
 The long-term plan is that the canvas-collections "architecture" will allow for different interface designs. Not limited to cards and a navigation bar.
 
