@@ -342,6 +342,7 @@ class cc_CanvasModulesView {
                 cardCollection.appendChild(card);
                 // once card is added to DOM, can do further updates
                 this.updateProgress(module,cardCollection);
+                this.updateImage(module,cardCollection);
                 cardsShown+=1;
             }
         }
@@ -427,20 +428,23 @@ class cc_CanvasModulesView {
 
 //<div class="clickablecard w-full sm:w-1/2 ${WIDTH} flex flex-col p-3">
         const cardHtml =`
-<div id="cc_module_${module.id}" class="hover:outline-none hover:shadow-outline bg-white rounded-lg shadow-lg overflow-hidden flex-1 flex flex-col relative"> <!-- Relative could go -->
+<div id="cc_module_${module.id}" class="hover:outline-none hover:shadow-outline bg-white rounded-lg shadow-lg overflow-hidden flex-1 flex flex-col relative">
   <a href="#${module.id}" class="cardmainlink"></a>
-  <div class="${imageSize} h-48" style="background-image: url('${imageUrl}'); background-color: rgb(255,255,255)">${IFRAME}
+  <div class="cc_module_image ${imageSize} h-48" style="background-image: url('${imageUrl}'); background-color: rgb(255,255,255)">${IFRAME}
   </div>
   ${COMING_SOON}
   <div class="carddescription p-4 flex-1 flex flex-col">
-    <span class="cardLabel">
-    ${module.label} ${module.num}
-    </span>
-    <h3 class="mb-4 text-2xl">${module.title}</h3>
+    <!-- <div class="cc_progress absolute top-0 right-0 p-2"></div> -->
+    <div class=cc_card_label">
+        <div class="cc_progress float-right"></div>
+        <span class="cardLabel">
+        ${module.label} ${module.num}
+        </span>
+        <h3 class="mb-4 text-2xl">${module.title}</h3>
+    </div>
     <div class="mb-4 flex-1">
       ${description}
     </div>
-    <div class="cc_progress"></div>
     <p></p>
      
      ${LINK_ITEM}
@@ -465,13 +469,9 @@ class cc_CanvasModulesView {
 
     /**
      * @desc add representation of student's progress to the card
-     * TODO support a circular progress bar as per
-     * - https://www.dottedsquirrel.com/circular-progress-css/
-     * - https://codepen.io/alvaromontoro/pen/LYjZqzP
-     *   Very nice, but breaks
-     * - https://codepen.io/toddscottik/pen/gOpqapg
-     *   Lots of hard coding, too big, 
-     * 
+     * - use https://github.com/GMartigny/circular-progress-bar
+     * Create the progress bar component, using module.percentItemsComplete
+     * and added it to div.cc_progress in the module's card
      * 
      * @param Object module 
      * @param cardCollection DOM element containing card collection to date
@@ -481,17 +481,52 @@ class cc_CanvasModulesView {
         if (module.percentItemsComplete===null ) {
             return;
         }
-        // TODO perhaps handle the case where there are no items to complete
-        // e.g. don't show any progress
+
+        let valueBackground = "#ccc";
+
+        if (module.percentItemsComplete>=100) {
+            valueBackground = "rgb(16,185,129)";
+        } else if (module.percentItemsComplete<50) {
+            valueBackground = "rgb(245,158,11)";
+        }
+
         const options = {
             size: 50,
-            background: "transparent"
+            background: "#eee",
+            valueBackground: valueBackground,
+            colors: ["#0484d1", "#e53b44", "#2ce8f4", "#ffe762", "#63c64d", "#fb922b"]
         };
         const progress = new CircularProgressBar(module.percentItemsComplete, options);
         let card = cardCollection.querySelector(`div#cc_module_${module.id}`);
         let progressDiv = card.querySelector('div.cc_progress');
         if (progressDiv) {
             progress.appendTo(progressDiv);
+        }
+    }
+
+    /**
+     * @desc If there's no image, remove the div.cc_module_image for the
+     * module's card
+     * @param Object module 
+     * @param DomElement cardCollection 
+     */
+    updateImage(module,cardCollection) {
+
+        // if is an image, don't remove
+        if ( "image" in module && module.image!=="") {
+            return;
+        }
+
+        // if there's a date, don't remove
+        if (module.date!==undefined) {
+            return;
+        }
+
+        let card = cardCollection.querySelector(`div#cc_module_${module.id}`);
+        let imageDiv = card.querySelector('div.cc_module_image');
+        // remove imageDiv
+        if (imageDiv) {
+            imageDiv.remove();
         }
     }
 
