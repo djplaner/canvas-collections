@@ -1,10 +1,16 @@
 # canvas-collections
 
-JavaScript intended to support the creation of "collections" of Modules on the [Canvas LMS](https://www.instructure.com/en-au/canvas) Modules page.
+Improve the functionality of [Canvas LMS](https://www.instructure.com/en-au/canvas) Modules by enabling:
+1. Grouping modules into collections; and,
+2. Flexible and enhanced representations.
+
+{% note %}
+**Note:** This project is currently in the early stages of development. Currently only works as [userscript](https://en.wikipedia.org/wiki/User_script).
+{% endnote %}
 
 ## Why?
 
-There are two common limitiations to [the vanilla Canvas Modules page](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-are-Modules/ta-p/6):
+Two address two known limitiations of [the vanilla Canvas Modules page](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-are-Modules/ta-p/6):
 1.  [no way to group modules](https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-group-modules-together/m-p/179756/highlight/true#M84951); and,
 
     For a course with large numbers of modules or which uses modules for very different purposes the inability to group modules is a problem. Available workarounds all [have their limitations](https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-group-modules-together/m-p/179757/highlight/true#M84952) and Instructure ["don't have plans to support nested modules soon"](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383/highlight/true#M50428).
@@ -22,6 +28,10 @@ Embedded in Canvas, the canvas-collections Javascript will modify presentation o
 2. group Modules into "collections".
 
     Modules can be grouped into collections (e.g. content, assessment, resources, units etc.). A collections navigation bar will be inserted before the Card interface to select the collection to view. Only the cards and modules for the selected collection will be visible.
+
+{% note %}
+**Note:** The card interface is only the first alternate interface. Plans include enabling different types of interfaces (e.g. a table-based interface).
+{% endnote %}
 
 The long-term plan is that the canvas-collections "architecture" will allow for different interface designs. Not limited to cards and a navigation bar.
 
@@ -57,6 +67,8 @@ Click on the screenshots to see larger versions.
 :---------------------:|:------------------------:
 ![](./docs/default.png?) | ![](./docs/additional.png?)
 
+#### About _Default_
+
 The _Default_ screenshot illustrates canvas-collections working on a standard Canvas modules page. No additional configuration. It is showing the modules page from an instance of the [Growing with Canvas](https://uc.instructure.com/courses/1032076) course. It illustrates early representations of standard Canvas functionality, including:
 - Module requirements progress
 
@@ -65,6 +77,7 @@ The _Default_ screenshot illustrates canvas-collections working on a standard Ca
 
     The combination of [module pre-requisites and requirements](https://ki.instructure.com/courses/192/pages/locking-material-with-requirements-and-prerequisites) combine to indicate whether a module is completed, in progress, locked or....
 
+#### About _Additional configuration_
 
 The _Additional configuration_ screenshot is from a course where additional configuration has provided further information about the modules, including:
 - Which collection a module belongs to
