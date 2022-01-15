@@ -9,6 +9,9 @@
 // @icon         https://www.google.com/s2/favicons?domain=griffith.edu.au
 // @grant        none
 // ==/UserScript==
+/*eslint-env browser*/
+
+/* // @require      file://c:\Users\s2986288\code\canvas-collections\tmp.js */
 
 const COURSE_ID=ENV.COURSE_ID;
 //const CSS_URL='<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/cards.css" />';
@@ -1002,9 +1005,6 @@ class cc_CanvasModules {
     window.addEventListener('load', function(){
         cc_pageLoaded(  );
     }, false);
-
-
-
 
 
 })();
