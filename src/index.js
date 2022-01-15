@@ -1,4 +1,5 @@
 
+
 const COURSE_ID=ENV.COURSE_ID;
 //const CSS_URL='<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/cards.css" />';
 const CSS_URL='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
@@ -173,52 +174,6 @@ const CARD_DEFAULTS = {
     }
 };
 
-/**
- * @descr Basic controller, creates the model and generates the view
- */
-
-function cc_pageLoaded( ){
-
-    // check queryString for cc-collections
-    // for some reason .search doesn't work on canvas
-    // TODO this is currently not working
-    const location = window.location.href;
-    // extract from location everything after ?
-    const queryString = location.substring(location.indexOf('?') + 1);
-
-    // define options
-    let options = DEFAULT_VIEW_OPTIONS;
-
-    const urlParams = new URLSearchParams(queryString);
-    const collectionsOption = urlParams.get('cc-collections');
-    if (collectionsOption) {
-        options.collectionView = collectionsOption;
-    }
-    if (!window.location.hostname.match(/griffith\.edu\.au/)) {
-        options.collectionView='all';
-        options.navBar = false;
-        options.updateTitle = false;
-    }
-
-    // extract all module information
-    let modules = new cc_CanvasModules();
-    // update the page to add Card Information
-    let view = new cc_CanvasModulesView(modules,options);
-    view.render();
-}
-
-/**
- * @desc Handle any clicks on the collections nav bar
- * @param collectionName string - name of the collection that was clicked on
- */
-
-function cc_collectionClick( collectionName, view){
-    // change current collection
-    view.currentCollection = collectionName;
-    // remove div#guCardInterface
-    view.removeCanvasCollectionsView();
-    view.render();
-}
 
 /****************
  * CanvasModulesViews - render the updated module information
@@ -229,12 +184,15 @@ class cc_CanvasModulesView {
     /**
      * @desc insert HTML into Canvas modules page offering different representation of module information
      * @param modules cc_CanvasModules object containing all info about current pages modules
+     * @param collectionsClick eventHandler for click on named collection links
      * @param option object - defining how to configure the view
      */
-    constructor(modules,options=null) {
+    constructor(modules,collectionsClick,options=null) {
         this.model = modules;
         this.modules = this.model.modules;
+        this.collectionsClick = collectionsClick;
         this.currentCollection = this.model.currentCollection;
+
         // default setting
         this.options = DEFAULT_VIEW_OPTIONS;
         if (options) {
@@ -352,7 +310,8 @@ class cc_CanvasModulesView {
               <a class="${styles[style]}" href="#">${collection}</a>
             `;
             let navItem = this.createElement('li', 'mr-4');
-            navItem.onclick = () => cc_collectionClick(collection,this);
+            //navItem.onclick = () => cc_collectionClick(collection,this);
+            navItem.onclick = () => this.collectionsClick(collection,this);
             navItem.innerHTML = navElement;
             navBar.appendChild(navItem);
         }
@@ -722,6 +681,8 @@ class cc_Item {
         this.extractItemTypeAndId(element);
         this.extractTitleAndUrl(element)
         this.extractAbout(element)
+
+        this.extractStatus(element)
         
 //        console.log(`canvas-collection:    -- ${this.position}) item ${this.id} '<a href="${this.url}">${this.title}</a>' is ${this.itemType}`);
 //        console.log(`canvas-collection:    about ${JSON.stringify(this.about)}`);
@@ -823,6 +784,44 @@ class cc_Item {
             this.position = this.about.position;
         } 
     }
+
+    /**
+     * @desc Extract the status for a module item from the domelement
+     * div.module-item-status-icon will contain the icon
+     * - completed = i.class="icon-check" title="Completed"
+     * - MarkAsRead = i.class="icon-mark-as-read" title="Must view the page"
+     * 
+     * Set 
+     * - this.status with the name of the status
+     * - this.isComplete with true iff completed
+     * @param {*} element 
+     */
+    extractStatus(element){
+
+        this.status = null;
+        this.isComplete = false;
+        // get the div.module-item-status
+        let statusDiv = element.querySelector('div.module-item-status-icon');
+
+        if (!statusDiv) {
+            console.error("Unable to find statusDiv");
+            console.log(element);
+            return;
+        }
+        // try markAsRead
+        let markAsRead = statusDiv.querySelector('i.icon-mark-as-read');
+        if (markAsRead) {
+            this.status = 'MarkAsRead';
+            return;
+        }
+        // try completed
+        let completed = statusDiv.querySelector('i.icon-check');
+        if (completed) {
+            this.status = 'Completed';
+            this.isComplete = true;
+        }
+    }
+
 
 }
 
@@ -981,13 +980,69 @@ class cc_CanvasModules {
     }
 }
 
+/**
+ * cc_controller.js
+ */
+
+
+ /**
+  * @descr Basic controller, creates the model and generates the view
+  */
+ 
+class cc_Controller {
+ 
+     constructor() {
+ 
+         // check queryString for cc-collections
+         // for some reason .search doesn't work on canvas
+         // TODO this is currently not working
+         const location = window.location.href;
+         // extract from location everything after ?
+         const queryString = location.substring(location.indexOf('?') + 1);
+     
+         // define options
+         let options = DEFAULT_VIEW_OPTIONS;
+     
+         const urlParams = new URLSearchParams(queryString);
+         const collectionsOption = urlParams.get('cc-collections');
+         if (collectionsOption) {
+             options.collectionView = collectionsOption;
+         }
+         if (!window.location.hostname.match(/griffith\.edu\.au/)) {
+             options.collectionView='all';
+             options.navBar = false;
+             options.updateTitle = false;
+         }
+     
+         // extract all module information
+         this.modules = new cc_CanvasModules();
+         // update the page to add Card Information
+         this.view = new cc_CanvasModulesView(this.modules,this.collectionClick,options);
+         this.view.render();
+     }
+     
+     /**
+      * @desc Handle any clicks on the collections nav bar
+      * @param collectionName string - name of the collection that was clicked on
+      */
+     
+     collectionClick( collectionName, view){
+         // change current collection
+         view.currentCollection = collectionName;
+         // remove div#guCardInterface
+         view.removeCanvasCollectionsView();
+         view.render();
+     }
+ }
+
+
 
 function canvasCollections() {
     document.head.insertAdjacentHTML( 'beforeend', CSS_URL );
 
     // Wait for everything to load
     window.addEventListener('load', function(){
-        cc_pageLoaded(  );
+        let controller = new cc_Controller();
     }, false);
 
 }
