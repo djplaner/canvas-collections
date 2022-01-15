@@ -29,10 +29,30 @@ The long-term plan is that the canvas-collections "architecture" will allow for 
 
 Early exploratory stage. 
 - Implementation as a [userscript](https://en.wikipedia.org/wiki/Userscript) for proof of concept purposes.  
-- Hard code card data for a specific course and its collection of modules - for purposes of prototype
-- Picks up some of the Canvas module information (published, completed, in progress, locked)
-- Adopt the tailwind design from the card interface and kludge together sufficient code to get it to work
 - Still a bit flaky due to connection with page events
+
+## Functionality
+
+Support for two broad situation
+1. Default - basic cards added to a standard Canvas Modules page 
+2. Additional configuration - specify additional information for collections and modules to customise representation (currently hard coded in script) 
+
+Representation supports
+- Collections
+    - basic nav bar allowing navigation between different module collections
+    - only modules in the selected collection are visible    
+- Modules
+    - Engage button to go to default Canvas view of module
+    - Showing if a module is completed, in progress, or locked
+    - Circular progress bar illustrating % of items completed (of those that can be completed) 
+    - Display module date
+    - Display module description
+    - Module title modified to include collection name
+
+| Default              | Additional configuration |
+:---------------------:|:------------------------:
+![](.docs/default.png?) | ![](.docs/additional.png?)
+
 
 ![Current example](./docs/cards.png?)
 
