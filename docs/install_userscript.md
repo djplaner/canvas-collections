@@ -2,10 +2,9 @@
 
 > :warning: canvas-collections is still under construction :construction:
 
-If you cannot add Javascript to a Canvas instance, you can still use canvas-collections by installing it as a userscript. The two or three step process - explained below - is:
+If you cannot add Javascript to a Canvas instance, you can still use canvas-collections by installing it as a userscript. The two step process - explained below - is:
 1. Install a userscript manager - for example, [TamperMonkey](https://www.tampermonkey.net/)
 2. Install the canvas-collections userscript
-3. Configure the userscript (optional)
 
 > :question: You install a [userscript manager](https://en.wikipedia.org/wiki/Userscript_manager) into your web browser (not surprisingly) to help manage [userscripts](https://en.wikipedia.org/wiki/Userscript). Small Javascript programs that your browser will run when you view specific web pages. Userscripts customise those web pages to better suit your purposes. e.g. to modify a Canvas modules page to show canvas-collections.
 
