@@ -34,8 +34,9 @@ The long-term plan is that the canvas-collections "architecture" will allow for 
 ## Status
 
 Early exploratory stage. 
-- Implementation as a [userscript](https://en.wikipedia.org/wiki/Userscript) for proof of concept purposes.  
-- Still a bit flaky due to connection with page events
+- Implementation as a [userscript](https://en.wikipedia.org/wiki/Userscript) for proof of concept purposes.
+
+    For those of us who don't yet have permission to add Javascript to Canvas.
 
 ## Functionality
 
