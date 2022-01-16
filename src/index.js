@@ -3,7 +3,7 @@
 const COURSE_ID=ENV.COURSE_ID;
 //const CSS_URL='<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/cards.css" />';
 const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
-//const CANVAS_COLLECTIONS_CSS='<link href="https://djon.es/gu/canvas/canvas-collections.css" rel="stylesheet">';
+const CANVAS_COLLECTIONS_CSS='<link href="https://djon.es/gu/canvas/canvas-collections.css" rel="stylesheet">';
 
 const DEFAULT_VIEW_OPTIONS = {
     // how to view collections: 
@@ -38,7 +38,8 @@ const CARD_DEFAULTS = {
         'description': `<ul>
           <li> What will you learn? </li>
           <li> What do you need to do? </li>
-          <li> How will you show what you've learnt?</li> </ul>`,
+          <li> How will you show what you've learnt?</li> </ul>
+          <p><a href="https://google.com">Google</a>`,
         'collection': 'Learning Journey',
         'date': {
             'label': 'Commencing', 'week': 'Week 0', 'month': 'Jul', 'date': '12'
@@ -241,8 +242,53 @@ class cc_CanvasModulesView {
         //result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
         const result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
 
+        // cards are now in the DOM, do some final updates
+
+        // Make the cards clickable
+        this.stopCardDescriptionPropagation();
+        this.makeCardsClickable();
+
+        // Update the titles of the modules to add the collection name
         if ( this.options.updateTitle) {
             this.updateCanvasModuleList();
+        }
+    }
+
+    /**
+     * @desc prevent links in card description from propagating to the 
+     * cards clickable link
+     */
+
+    stopCardDescriptionPropagation() {
+        // get all the links in .carddescription that are not .gu-engage
+        let links = document.querySelectorAll('.carddescription a:not(.gu-engage)');
+
+        // prevent propagation of the click event on all links
+        for (let i=0; i<links.length; i++) {
+            links[i].addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+    }
+
+    /**
+     * @desc add a click event to each .clickablecard based on their .cardmainlink
+     * child
+     */
+    makeCardsClickable(){
+
+        // get all the clickable cards
+        let cards = document.getElementsByClassName('clickablecard');
+        for (let i=0; i<cards.length; i++) {
+            let card = cards[i];
+
+            // add the event listener
+            card.addEventListener('click', function (event)  {
+                let link = this.querySelector(".cardmainlink");
+                if (link!==null) {
+                    link.click();
+                }
+            });
         }
     }
 
@@ -429,7 +475,7 @@ class cc_CanvasModulesView {
 
 //<div class="clickablecard w-full sm:w-1/2 ${WIDTH} flex flex-col p-3">
         const cardHtml =`
-<div id="cc_module_${module.id}" class="hover:outline-none hover:shadow-outline bg-white rounded-lg shadow-lg overflow-hidden flex-1 flex flex-col relative">
+<div id="cc_module_${module.id}" class="hover:bg-gray-200 bg-white rounded-lg shadow-lg overflow-hidden flex-1 flex flex-col relative">
   <a href="#${module.id}" class="cardmainlink"></a>
   <div class="cc_module_image ${imageSize} h-48" style="background-image: url('${imageUrl}'); background-color: rgb(255,255,255)">${IFRAME}
   </div>
