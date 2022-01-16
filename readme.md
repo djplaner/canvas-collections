@@ -4,7 +4,7 @@ Improve the functionality of [Canvas LMS](https://www.instructure.com/en-au/canv
 1. Grouping modules into collections; and,
 2. Flexible and enhanced representations.
 
-> **Note:** This project is currently in the early stages of development. Currently only works as [userscript](https://en.wikipedia.org/wiki/User_script).
+> **Note:** :warning: This project is currently in the early stages of development :construction:. Currently only works as [userscript](https://en.wikipedia.org/wiki/User_script). To use the project, see the [install as userscript page](./docs/install_userscript.md).
 
 ## Why?
 
