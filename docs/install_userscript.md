@@ -35,4 +35,5 @@ With TamperMonkey installed you can now install [the canvas-collections userscri
 
 If all is working you should somethign like the following image. An image showing TamperMonkey providing you with details of the userscript and asking if you wish to install it.
 
+![](pics/tamperMonkeyInstallCanvasCollections.png)
 
