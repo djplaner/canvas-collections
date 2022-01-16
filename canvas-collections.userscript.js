@@ -9,7 +9,7 @@
 // @icon         https://www.google.com/s2/favicons?domain=griffith.edu.au
 // @grant        none
 // @require      https://unpkg.com/circular-progress-bar
-// @require      file://c:\Users\s2986288\code\canvas-collections\src\index.js
+// @require      file://c:\Users\s2986288\code\canvas-collections\lib\bundle.js
 // ==/UserScript==
 /*eslint-env browser*/
 
@@ -17,6 +17,7 @@
  *   - replace the "@require file:" line above with the following
  */
 /** // @require      https://djon.es/gu/canvas/canvas-collections.js **/
+// // @require      file://c:\Users\s2986288\code\canvas-collections\src\index.js
 
 (function() {
 

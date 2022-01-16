@@ -924,8 +924,6 @@ class cc_Item {
         let statusDiv = element.querySelector('div.module-item-status-icon');
 
         if (!statusDiv) {
-            console.error("Unable to find statusDiv");
-            console.log(element);
             return;
         }
         // try markAsRead
@@ -1199,5 +1197,3 @@ function canvasCollections() {
     }, false);
 
 }
-
-//export default canvasCollections;

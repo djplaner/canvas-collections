@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Modify Canvas LMS modules to support collections of modules and their representation",
   "main": "dist/index.js",
+  "type": "module",
   "directories": {
     "doc": "docs"
   },
@@ -28,6 +29,8 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
-    "eslint": "^8.6.0"
+    "browser-resolve": "^2.0.0",
+    "eslint": "^8.6.0",
+    "esmify": "^2.1.1"
   }
 }
