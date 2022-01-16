@@ -220,8 +220,9 @@ class cc_CanvasModulesView {
         // We'll be inserting our content before this
         let canvasContent = document.getElementById('context_modules');
 
+        // on a canvas page where there are no modules
         if (canvasContent===null) {
-            alert("no content element found");
+            return;
         }
 
         // create the cc-canvas-collections div

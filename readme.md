@@ -100,3 +100,12 @@ The _Additional configuration_ screenshot is from a course where additional conf
 - [Module Ids with JS](https://community.canvaslms.com/t5/Canvas-Question-Forum/Module-ID-s-using-javascript/td-p/224060)
 
     Canvas community post that includes small JS code example using promises etc.
+- [Canvas where am i](https://github.com/msdlt/canvas-where-am-I)
+
+    Does a range of different and neat tweaks
+    - tiles have a drop down box with details of each item (and perhaps a direct link)
+    - adds module/item information to the left hand menu
+    - adds progress icons to the previous/next
+- [Collapse all modules](https://community.canvaslms.com/t5/Canvas-Developers-Group/Collapse-Expand-Modules/ba-p/273122) thread on instructure community around some code shared by an Instructure employee that helps manage collapse all modules
+- [Module filters](https://community.canvaslms.com/t5/Canvas-Developers-Group/Module-Filters/ba-p/278855) - [blog post](https://lyonsinbeta.com/2019/6/experiments-in-product) - JS (from [another instructure employee](https://lyonsinbeta.com/)) to filter items on Modules page. Has some discussion about adding this type of functionality. [github](https://github.com/lyonsinbeta/canvas-module-filters). Doesn't appear to worry/handle dynamic loading of Module cotent
+- [Quick Module Navigation](https://community.canvaslms.com/t5/Canvas-Admin-Blog/Quick-Module-Navigation/ba-p/279697) - JS to enable click on button (on home page) to go directly to appropriate module with other modules collapsed
