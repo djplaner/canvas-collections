@@ -1182,21 +1182,16 @@ class cc_Controller {
 
 
 
-function canvasCollections() {
-    document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
+//function canvasCollections() {
+document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
 
-    cc_helloWorld();
+// Wait for everything to load
+window.addEventListener('load', function(){
+    // getting very kludgy here, haven't got a good solution...yet #14
+    this.setTimeout(
+        () => {
+            let controller = new cc_Controller();
+        }, 2000
+    );
+}, false);
 
-    // Wait for everything to load
-    window.addEventListener('load', function(){
-        // getting very kludgy here, haven't got a good solution...yet #14
-        this.setTimeout(
-            () => {
-                let controller = new cc_Controller();
-            }, 2000
-        );
-
-        
-    }, false);
-
-}

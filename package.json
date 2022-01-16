@@ -11,7 +11,7 @@
     "build": "userscript-builder --mode dev",
     "release:bugfix": "userscript-builder --mode bugfix",
     "release:minor": "userscript-builder --mode minor",
-    "release:major": "userscript-builder --mode major" 
+    "release:major": "userscript-builder --mode major"
   },
   "repository": {
     "type": "git",
@@ -25,15 +25,15 @@
   "author": "David Jones",
   "license": "ISC",
   "userscript": {
-    "entry": "./src/index.js",     
-    "dev": "./dist",               
-    "release": "./release",        
-    "fileName": "canvas-collections.user.js",       
-    "meta": {                   
+    "entry": "./src/index.js",
+    "dev": "./dev",
+    "release": "./release",
+    "fileName": "canvas-collections",
+    "meta": {
       "name": "canvas-collections",
       "namespace": "https://djon.es/",
       "homepage": "https://github.com",
-      "match": "https://*.instructure.com/courses/*",
+      "match": "https://*/courses/*",
       "grant": "none",
       "require": [
         "https://unpkg.com/circular-progress-bar"
@@ -48,6 +48,7 @@
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "browser-resolve": "^2.0.0",
-    "eslint": "^8.6.0"
+    "eslint": "^8.6.0",
+    "userscript-builder": "^0.4.0"
   }
 }

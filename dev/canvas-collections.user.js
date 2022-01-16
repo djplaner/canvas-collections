@@ -5,6 +5,7 @@
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*.instructure.com/courses/*
+// @match        https://lms.griffith.edu.au/courses/*
 // @grant        none
 // @source       https://github.com/djplaner/canvas-collections.git
 // @license      ISC
@@ -1200,7 +1201,6 @@ class cc_Controller {
 
 
 //function canvasCollections() {
-
     document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
 
     cc_helloWorld();
@@ -1208,11 +1208,11 @@ class cc_Controller {
     // Wait for everything to load
     window.addEventListener('load', function(){
         // getting very kludgy here, haven't got a good solution...yet #14
-//        this.setTimeout(
- //           () => {
+        this.setTimeout(
+            () => {
                 let controller = new cc_Controller();
-  //          }, 2000
-   //     );
+            }, 2000
+        );
 
         
     }, false);
