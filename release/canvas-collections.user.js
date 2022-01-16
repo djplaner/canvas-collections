@@ -12,7 +12,6 @@
 // @require      https://unpkg.com/circular-progress-bar
 // ==/UserScript==
 
-// src/view/cc_CanvasModulesView.js
 /****************
  * CanvasModulesViews - render the updated module information
  */
@@ -630,7 +629,6 @@ class cc_CanvasModulesView {
 	}
 }
 
-// src/model/cc_Item.js
 class cc_Item {
 	/**
 	 * @descr construct object representing a Canvas module item
@@ -789,7 +787,6 @@ class cc_Item {
     
 }
 
-// src/model/cc_Module.js
 // Hard code default card values for 1031LAW_3215
 // key is the module name
 
@@ -1114,7 +1111,6 @@ class cc_Module {
 	}
     }
 
-// src/cc_controller.js
 /**
  * cc_controller.js
  */
@@ -1194,7 +1190,6 @@ class cc_Controller {
 	}
 }
 
-// src/index.js
 const COURSE_ID=ENV.COURSE_ID;
 //const CSS_URL='<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/cards.css" />';
 const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
