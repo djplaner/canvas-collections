@@ -1,6 +1,23 @@
+// ==UserScript==
+// @name         canvas-collections
+// @namespace    https://djon.es/
+// @version      0.0.1
+// @description  Modify Canvas LMS modules to support collections of modules and their representation
+// @author       David Jones
+// @match        https://*.instructure.com/courses/*
+// @grant        none
+// @source       https://github.com/djplaner/canvas-collections.git
+// @license      ISC
+// @homepage     https://github.com
+// @require      https://unpkg.com/circular-progress-bar
+// ==/UserScript==
 
-import { cc_helloWorld } from './hello';
+// src/hello.js
+function cc_helloWorld() {
+	console.log("hello world");
+}
 
+// src/index.js
 const COURSE_ID=ENV.COURSE_ID;
 //const CSS_URL='<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/cards.css" />';
 const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
@@ -1182,7 +1199,8 @@ class cc_Controller {
 
 
 
-function canvasCollections() {
+//function canvasCollections() {
+
     document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
 
     cc_helloWorld();
@@ -1190,13 +1208,13 @@ function canvasCollections() {
     // Wait for everything to load
     window.addEventListener('load', function(){
         // getting very kludgy here, haven't got a good solution...yet #14
-        this.setTimeout(
-            () => {
+//        this.setTimeout(
+ //           () => {
                 let controller = new cc_Controller();
-            }, 2000
-        );
+  //          }, 2000
+   //     );
 
         
     }, false);
 
-}
+//}

@@ -1,6 +1,21 @@
+// ==UserScript==
+// @name         canvas-collections
+// @namespace    http://tampermonkey.net/
+// @version      0.0.1
+// @description  Modify Canvas LMS modules to support collections of modules and their representation
+// @author       David Jones
+// @match        http://*/*
+// @grant        none
+// @source       https://github.com/djplaner/canvas-collections.git
+// @license      ISC
+// ==/UserScript==
 
-import { cc_helloWorld } from './hello';
+// src/hello.js
+function cc_helloWorld() {
+	console.log("hello world");
+}
 
+// src/index.js
 const COURSE_ID=ENV.COURSE_ID;
 //const CSS_URL='<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/cards.css" />';
 const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
