@@ -792,7 +792,7 @@ class cc_Item {
 
 const DEFAULT_ACTIVE_COLLECTION = 'Learning Journey';
 const COLLECTIONS_DEFAULTS = [
-    "Learning Journey", "Assessment Essentials", "Online Workshops", "Student Support"
+    "Learning Journey", "Assessment", "Online Workshops", "Student Support"
 ];
 
 const META_DATA_FIELDS = [
@@ -917,7 +917,7 @@ const CARD_DEFAULTS = {
         'num': '1',
         'description': `<p>Complete a 50 minute online exam. Released 9am on Tuesday of 
         Week 4 and closed at 5pm on Friday of Week 4.</p>`,
-        'collection': 'Assessment Essentials',
+        'collection': 'Assessment',
         'date': {
             'label': 'From',
             'start' : { 'week': null, 'month': 'Aug', 'date': '17'},
@@ -931,7 +931,7 @@ const CARD_DEFAULTS = {
         'num': '2',
         'description': `<p>Prepare succinct memos explaining and commenting on a piece of legislation and a case
         respectively, and apply rules of statuory interpretation.</p>`,
-        'collection': 'Assessment Essentials',
+        'collection': 'Assessment',
         'date': {
             'label': 'Due', 'week': null, 'month': 'Sep', 'date': '27'
         }
@@ -942,7 +942,7 @@ const CARD_DEFAULTS = {
 //        'imageSize': 'bg-cover',
         'num': '3',
         'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
-        'collection': 'Assessment Essentials'
+        'collection': 'Assessment'
     }
 };
 

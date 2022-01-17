@@ -5,9 +5,9 @@ import { cc_Item } from './cc_Item.js';
 // Hard code default card values for 1031LAW_3215
 // key is the module name
 
-const DEFAULT_ACTIVE_COLLECTION = 'Learning Journey';
+const DEFAULT_ACTIVE_COLLECTION = 'Study Guide';
 const COLLECTIONS_DEFAULTS = [
-    "Learning Journey", "Assessment Essentials", "Online Workshops", "Student Support"
+    "Study Guide", "Assessment Essentials", "Online Workshops", "Student Support"
 ];
 
 const META_DATA_FIELDS = [
@@ -25,7 +25,7 @@ const CARD_DEFAULTS = {
           <li> What do you need to do? </li>
           <li> How will you show what you've learnt?</li> </ul>
           <p><a href="https://google.com">Google</a>`,
-        'collection': 'Learning Journey',
+        'collection': 'Study Guide',
         'date': {
             'label': 'Commencing', 'week': 'Week 0', 'month': 'Jul', 'date': '12'
         }
@@ -36,7 +36,7 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-contain',
         'num': '1',
         'description': '<p>Overview of Foundations of Law and My Law Career</p>',
-        'collection': 'Learning Journey',
+        'collection': 'Study Guide',
         'date': {
             'label': 'Commencing', 'week': 'Week 1', 'month': 'Jul', 'date': '19'
         }
@@ -47,7 +47,7 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '2',
         'description': 'How law is made - and how to find the law (legislation and case)',
-        'collection': 'Learning Journey',
+        'collection': 'Study Guide',
         'date': {
             'label': 'From',
             'start' : { 'week': '2', 'month': 'Jul', 'date': '26'},
@@ -60,7 +60,7 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-contain',
         'num': '3',
         'description': '',
-        'collection': 'Learning Journey',
+        'collection': 'Study Guide',
         'date': {
             'label': 'Commencing', 'week': 'Week 4', 'month': 'Aug', 'date': '16'
         }
@@ -71,7 +71,7 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '4',
         'description': '<p>How to interpret legislation (i.e. work out what it means)</p>',
-        'collection': 'Learning Journey',
+        'collection': 'Study Guide',
         'date': {
             'label': 'From',
             'start' : { 'week': '5', 'month': 'Aug', 'date': '23'},
@@ -84,7 +84,7 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
         'num': '6',
-        'collection': 'Learning Journey',
+        'collection': 'Study Guide',
         'date': {
             'label': 'From',
             'start' : { 'week': '8', 'month': 'Sep', 'date': '13'},
@@ -97,7 +97,7 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '7',
         'description': '<p>Introduction to the legal profession and legal professional ethics.</p>',
-        'collection': 'Learning Journey',
+        'collection': 'Study Guide',
         'date': {
             'label': 'Commencing', 'week': 'Week 10', 'month': 'Sep', 'date': '27'
         }
@@ -108,7 +108,7 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '8',
         'description': '<p>Introduction to First Nations people and the law</p>',
-        'collection': 'Learning Journey',
+        'collection': 'Study Guide',
         'date': {
             'label': 'Commencing', 'week': 'Week 11', 'month': 'Oct', 'date': '4'
         }
@@ -119,7 +119,7 @@ const CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '9',
         'description': '<p>Revision and preparation for final assessment</p>',
-        'collection': 'Learning Journey',
+        'collection': 'Study Guide',
         'date': {
             'label': 'Commencing', 'week': 'Week 12', 'month': 'Oct', 'date': '11'
         }

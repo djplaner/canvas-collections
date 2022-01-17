@@ -171,7 +171,11 @@ export default class cc_CanvasModulesView {
 	 */
 	generateNavBar(){
 	    let navBar = this.createElement('div', ['flex','justify-between']);
-    
+
+	    navBar.classList.add("p-4");
+	    navBar.classList.add( "border-gray");
+
+
 	    let collections = COLLECTIONS_DEFAULTS;
     
 	    let styles = {
