@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.1.0
+// @version      0.1.1
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -853,7 +853,7 @@ let CARD_DEFAULTS = {
             }
         },
         'Introduction': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/795/preview',
+            'image': 'https://griffith.instructure.com/courses/220/files/114366/preview',
             'label': 'Topic',
             'imageSize': 'bg-contain',
             'num': '1',
@@ -867,7 +867,7 @@ let CARD_DEFAULTS = {
             }
         },
         'Making and Finding Law': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/797/preview',
+            'image': 'https://griffith.instructure.com/courses/220/files/114365/preview',
             'label': 'Topic',
             'imageSize': 'bg-cover',
             'num': '2',
@@ -888,7 +888,7 @@ let CARD_DEFAULTS = {
             }
         },
         'Introduction to Legal Theory': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/798/preview',
+            'image': 'https://griffith.instructure.com/courses/220/files/114369/preview',
             'label': 'Topic',
             'imageSize': 'bg-contain',
             'num': '3',
@@ -902,7 +902,7 @@ let CARD_DEFAULTS = {
             }
         },
         'Statutory Interpretation': {
-            //        'image': 'https://lms.griffith.edu.au/courses/122/files//preview',
+            //        'image': 'https://griffith.instructure.com/courses/220/files//preview',
             'label': 'Topic',
             'imageSize': 'bg-cover',
             'num': '4',
@@ -923,7 +923,7 @@ let CARD_DEFAULTS = {
             }
         },
         'Case Law': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/799/preview',
+            'image': 'https://griffith.instructure.com/courses/220/files/114363/preview',
             'label': 'Topic',
             'imageSize': 'bg-cover',
             'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
@@ -944,7 +944,7 @@ let CARD_DEFAULTS = {
             }
         },
         'The Legal Profession': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/796/preview',
+            'image': 'https://griffith.instructure.com/courses/220/files/114367/preview',
             'label': 'Topic',
             'imageSize': 'bg-cover',
             'num': '7',
@@ -958,7 +958,7 @@ let CARD_DEFAULTS = {
             }
         },
         'First Nations People and the Law': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/801/preview',
+            'image': 'https://griffith.instructure.com/courses/220/files/114368/preview',
             'label': 'Topic',
             'imageSize': 'bg-cover',
             'num': '8',
@@ -972,7 +972,7 @@ let CARD_DEFAULTS = {
             }
         },
         'Consolidating Knowledge': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
+            'image': 'https://griffith.instructure.com/courses/220/files/114364/preview',
             'label': 'Topic',
             'imageSize': 'bg-cover',
             'num': '9',
@@ -987,7 +987,7 @@ let CARD_DEFAULTS = {
         },
         // Assessment 1031LAW
         'Accessing Case Law and Legislation': {
-            //        'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
+            //        'image': 'https://griffith.instructure.com/courses/220/files/800/preview',
             'label': 'Assessment',
             //        'imageSize': 'bg-cover',
             'num': '1',
@@ -1009,7 +1009,7 @@ let CARD_DEFAULTS = {
             }
         },
         'Legislation, Case Law and Statutory Interpretation Assignment': {
-            //        'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
+            //        'image': 'https://griffith.instructure.com/courses/220/files/800/preview',
             'label': 'Assessment',
             //      'imageSize': 'bg-cover',
             'num': '2',
@@ -1024,17 +1024,221 @@ let CARD_DEFAULTS = {
             }
         },
         'Take-Home Exam': {
-            //     'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
+            //     'image': 'https://griffith.instructure.com/courses/220/files/800/preview',
             'label': 'Assessment',
             //        'imageSize': 'bg-cover',
             'num': '3',
             'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
             'collection': 'Assessment Essentials'
         }
+    },
+
+    'https://lms.griffith.edu.au/courses/122': {
+    'CC_COLLECTIONS_DEFAULTS': [
+        "Study Guide", "Assessment Essentials", "Online Workshops", "Student Support"
+    ],
+    'CC_DEFAULT_ACTIVE_COLLECTION': 'Study Guide',
+    'Welcome': {
+        'image': 'https://i.ytimg.com/vi/gkdGXFcxHw4/maxresdefault.jpg',
+        'label': '',
+        'imageSize': 'bg-contain',
+        'num': '',
+        'description': `<ul>
+      <li> What will you learn? </li>
+      <li> What do you need to do? </li>
+      <li> How will you show what you've learnt?</li> </ul>
+      <p><a href="https://google.com">Google</a>`,
+        'collection': 'Study Guide',
+        'date': {
+            'label': 'Commencing',
+            'week': 'Week 0',
+            'month': 'Jul',
+            'date': '12'
+        }
+    },
+    'Introduction': {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/795/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-contain',
+        'num': '1',
+        'description': '<p>Overview of Foundations of Law and My Law Career</p>',
+        'collection': 'Study Guide',
+        'date': {
+            'label': 'Commencing',
+            'week': 'Week 1',
+            'month': 'Jul',
+            'date': '19'
+        }
+    },
+    'Making and Finding Law': {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/797/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-cover',
+        'num': '2',
+        'description': 'How law is made - and how to find the law (legislation and case)',
+        'collection': 'Study Guide',
+        'date': {
+            'label': 'From',
+            'start': {
+                'week': '2',
+                'month': 'Jul',
+                'date': '26'
+            },
+            'stop': {
+                'week': '3',
+                'month': 'Aug',
+                'date': '6'
+            },
+        }
+    },
+    'Introduction to Legal Theory': {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/798/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-contain',
+        'num': '3',
+        'description': '',
+        'collection': 'Study Guide',
+        'date': {
+            'label': 'Commencing',
+            'week': 'Week 4',
+            'month': 'Aug',
+            'date': '16'
+        }
+    },
+    'Statutory Interpretation': {
+        //        'image': 'https://lms.griffith.edu.au/courses/122/files//preview',
+        'label': 'Topic',
+        'imageSize': 'bg-cover',
+        'num': '4',
+        'description': '<p>How to interpret legislation (i.e. work out what it means)</p>',
+        'collection': 'Study Guide',
+        'date': {
+            'label': 'From',
+            'start': {
+                'week': '5',
+                'month': 'Aug',
+                'date': '23'
+            },
+            'stop': {
+                'week': '7',
+                'month': 'Sep',
+                'date': '10'
+            },
+        }
+    },
+    'Case Law': {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/799/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-cover',
+        'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
+        'num': '6',
+        'collection': 'Study Guide',
+        'date': {
+            'label': 'From',
+            'start': {
+                'week': '8',
+                'month': 'Sep',
+                'date': '13'
+            },
+            'stop': {
+                'week': '9',
+                'month': 'Sep',
+                'date': '24'
+            },
+        }
+    },
+    'The Legal Profession': {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/796/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-cover',
+        'num': '7',
+        'description': '<p>Introduction to the legal profession and legal professional ethics.</p>',
+        'collection': 'Study Guide',
+        'date': {
+            'label': 'Commencing',
+            'week': 'Week 10',
+            'month': 'Sep',
+            'date': '27'
+        }
+    },
+    'First Nations People and the Law': {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/801/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-cover',
+        'num': '8',
+        'description': '<p>Introduction to First Nations people and the law</p>',
+        'collection': 'Study Guide',
+        'date': {
+            'label': 'Commencing',
+            'week': 'Week 11',
+            'month': 'Oct',
+            'date': '4'
+        }
+    },
+    'Consolidating Knowledge': {
+        'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
+        'label': 'Topic',
+        'imageSize': 'bg-cover',
+        'num': '9',
+        'description': '<p>Revision and preparation for final assessment</p>',
+        'collection': 'Study Guide',
+        'date': {
+            'label': 'Commencing',
+            'week': 'Week 12',
+            'month': 'Oct',
+            'date': '11'
+        }
+    },
+    // Assessment 1031LAW
+    'Accessing Case Law and Legislation': {
+        //        'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
+        'label': 'Assessment',
+        //        'imageSize': 'bg-cover',
+        'num': '1',
+        'description': `<p>Complete a 50 minute online exam. Released 9am on Tuesday of 
+    Week 4 and closed at 5pm on Friday of Week 4.</p>`,
+        'collection': 'Assessment Essentials',
+        'date': {
+            'label': 'From',
+            'start': {
+                'week': null,
+                'month': 'Aug',
+                'date': '17'
+            },
+            'stop': {
+                'week': null,
+                'month': 'Aug',
+                'date': '20'
+            },
+        }
+    },
+    'Legislation, Case Law and Statutory Interpretation Assignment': {
+        //        'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
+        'label': 'Assessment',
+        //      'imageSize': 'bg-cover',
+        'num': '2',
+        'description': `<p>Prepare succinct memos explaining and commenting on a piece of legislation and a case
+    respectively, and apply rules of statuory interpretation.</p>`,
+        'collection': 'Assessment Essentials',
+        'date': {
+            'label': 'Due',
+            'week': null,
+            'month': 'Sep',
+            'date': '27'
+        }
+    },
+    'Take-Home Exam': {
+        //     'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
+        'label': 'Assessment',
+        //        'imageSize': 'bg-cover',
+        'num': '3',
+        'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
+        'collection': 'Assessment Essentials'
     }
+}
+
 };
 
-CARD_DEFAULTS['https://lms.griffith.edu.au/courses/122'] = CARD_DEFAULTS['https://griffith.instructure.com/courses/220'];
 
 
 class cc_Module {
@@ -1057,9 +1261,12 @@ class cc_Module {
 
         this.courseUrl = location.match(/https:\/\/.*\/courses\/[0-9]*/);
         if (this.courseUrl) {
-            // match with hard code configuration, set data members
-            this.configured = true;
-            this.configuration = CARD_DEFAULTS[this.courseUrl]
+            // if CARD_DEFAULTS has key this.courseUrl we have config
+            if (this.courseUrl in CARD_DEFAULTS) {
+                // match with hard code configuration, set data members
+                this.configured = true;
+                this.configuration = CARD_DEFAULTS[this.courseUrl]
+            }
         }
 
         // by default a module doesn't belong to a collection
