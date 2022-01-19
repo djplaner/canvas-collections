@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.1.1
+// @version      0.1.2
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -91,7 +91,7 @@ class cc_CanvasModulesView {
         ccCanvasCollections.id = 'cc-canvas-collections';
 
         //if (this.options.navBar && this.configured) {
-        if (this.configured) {
+        if (this.configured && this.configuration.CC_COLLECTIONS_DEFAULTS.length>0) {
             let navBar = this.generateNavBar();
             ccCanvasCollections.appendChild(navBar);
         }
@@ -111,7 +111,7 @@ class cc_CanvasModulesView {
 
         // Update the titles of the modules to add the collection name
         //if (this.options.updateTitle) {
-        if (this.configured) {
+        if (this.configured && this.configuration.CC_COLLECTIONS_DEFAULTS.length>0) {
             this.updateCanvasModuleList();
         }
     }
@@ -253,9 +253,9 @@ class cc_CanvasModulesView {
         for (let i = 0; i < numModules; i++) {
             let module = this.modules[i];
             // only show the card if it's in the current collection
-            // or there's no configuration
+            // or there's no configuration, or there's no collections
             //if (module.collection === this.currentCollection || this.options.collectionView === 'all') {
-            if (module.collection === this.currentCollection || ! this.configured) {
+            if (module.collection === this.currentCollection || ! this.configured || this.configuration.CC_COLLECTIONS_DEFAULTS.length === 0) {
                 let card = this.generateCard(module);
                 cardCollection.appendChild(card);
                 // once card is added to DOM, can do further updates
@@ -829,6 +829,72 @@ const META_DATA_FIELDS = [
 //       'canvasId': { card dict }
 
 let CARD_DEFAULTS = {
+    'https://griffith.instructure.com/courses/130': {
+        'CC_COLLECTIONS_DEFAULTS': [ ],
+        'CC_DEFAULT_ACTIVE_COLLECTION': '',
+        'Introduction': {
+            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/introduction.png',
+            'label': '',
+            'imageSize': 'bg-contain',
+            'num': '',
+            'description': `Getting oriented to the Canvas self-paced tutorial!`,
+            'date': { }
+        },
+        ' Planting': {
+            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/planting.png',
+            'label': '',
+            'imageSize': 'bg-contain',
+            'num': '',
+            'description': `Getting oriented to the Canvas self-paced tutorial!`,
+            'collection': 'Study Guide',
+            'date': { }
+        },
+        ' Nurturing': {
+            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/nurturing.png',
+            'label': '',
+            'imageSize': 'bg-contain',
+            'num': '',
+            'description': `Getting oriented to the Canvas self-paced tutorial!`,
+            'collection': 'Study Guide',
+            'date': { }
+        },
+        ' Sprouting': {
+            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/sprouting.png',
+            'label': '',
+            'imageSize': 'bg-contain',
+            'num': '',
+            'description': `Getting oriented to the Canvas self-paced tutorial!`,
+            'collection': 'Study Guide',
+            'date': { }
+        },
+        ' Flowering': {
+            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/flowering.png',
+            'label': '',
+            'imageSize': 'bg-contain',
+            'num': '',
+            'description': `Getting oriented to the Canvas self-paced tutorial!`,
+            'collection': 'Study Guide',
+            'date': { }
+        },
+        ' Harvesting': {
+            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/harvesting.png',
+            'label': '',
+            'imageSize': 'bg-contain',
+            'num': '',
+            'description': `Getting oriented to the Canvas self-paced tutorial!`,
+            'collection': 'Study Guide',
+            'date': { }
+        },
+        ' Completed Growing with Canvas': {
+            'image': 'https://media0.giphy.com/media/xBqg5gAf1xINizpek6/200.gif',
+            'label': '',
+            'imageSize': 'bg-contain',
+            'num': '',
+            'description': `Getting oriented to the Canvas self-paced tutorial!`,
+            'collection': 'Study Guide',
+            'date': { }
+        },
+    },
     'https://griffith.instructure.com/courses/220': {
         'CC_COLLECTIONS_DEFAULTS': [
             "Study Guide", "Assessment Essentials", "Online Workshops", "Student Support"
@@ -1295,7 +1361,10 @@ class cc_Module {
     addModuleDefaults() {
         // only add defaults if there is some configuration for this card
 
-        if (!this.configured || !this.configuration || !(this.title in this.configuration)) {
+        // remove any non-asciis from title
+        let title = this.title.replace(/[^\x00-\x7F]/g, "");
+
+        if (!this.configured || !this.configuration || !(title in this.configuration)) {
             // loop through META_DATA_FIELDS list
             for (let field of META_DATA_FIELDS) {
                 // if this has no member field
@@ -1307,7 +1376,7 @@ class cc_Module {
         }
 
         // we are configured so update the object
-        let defaults = this.configuration[this.title];
+        let defaults = this.configuration[title];
         for (let key in defaults) {
             this[key] = defaults[key];
         }

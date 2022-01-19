@@ -77,7 +77,7 @@ export default class cc_CanvasModulesView {
         ccCanvasCollections.id = 'cc-canvas-collections';
 
         //if (this.options.navBar && this.configured) {
-        if (this.configured) {
+        if (this.configured && this.configuration.CC_COLLECTIONS_DEFAULTS.length>0) {
             let navBar = this.generateNavBar();
             ccCanvasCollections.appendChild(navBar);
         }
@@ -97,7 +97,7 @@ export default class cc_CanvasModulesView {
 
         // Update the titles of the modules to add the collection name
         //if (this.options.updateTitle) {
-        if (this.configured) {
+        if (this.configured && this.configuration.CC_COLLECTIONS_DEFAULTS.length>0) {
             this.updateCanvasModuleList();
         }
     }
@@ -239,9 +239,9 @@ export default class cc_CanvasModulesView {
         for (let i = 0; i < numModules; i++) {
             let module = this.modules[i];
             // only show the card if it's in the current collection
-            // or there's no configuration
+            // or there's no configuration, or there's no collections
             //if (module.collection === this.currentCollection || this.options.collectionView === 'all') {
-            if (module.collection === this.currentCollection || ! this.configured) {
+            if (module.collection === this.currentCollection || ! this.configured || this.configuration.CC_COLLECTIONS_DEFAULTS.length === 0) {
                 let card = this.generateCard(module);
                 cardCollection.appendChild(card);
                 // once card is added to DOM, can do further updates
