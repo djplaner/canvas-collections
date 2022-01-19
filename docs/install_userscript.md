@@ -36,3 +36,9 @@ If all is working you should somethign like the following image. An image showin
 
 ![](pics/tamperMonkeyInstallCanvasCollections.png)
 
+
+## 3. Turning canvas-collections off
+
+There are two ways to prevent canvas-collections from modifying your view of Canvas modules pages:
+- Disable TamperMonkey (or your userscript manager)
+- Disable the canvas-collection userscript

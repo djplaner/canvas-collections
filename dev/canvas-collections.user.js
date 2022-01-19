@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.1.0
+// @version      0.1.1
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -832,6 +832,64 @@ const META_DATA_FIELDS = [
 //       'canvasId': { card dict }
 
 let CARD_DEFAULTS = {
+    'https://griffith.instructure.com/courses/130': {
+        'CC_COLLECTIONS_DEFAULTS': [ ],
+        'CC_DEFAULT_ACTIVE_COLLECTION': '',
+        'Introduction': {
+            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/introduction.png',
+            'label': '',
+            'imageSize': 'bg-contain',
+            'num': '',
+            'description': `Getting oriented to the Canvas self-paced tutorial!`,
+            'collection': 'Study Guide',
+            'date': { }
+        },
+        'Planting': {
+            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/planting.png',
+            'label': '',
+            'imageSize': 'bg-contain',
+            'num': '',
+            'description': `Getting oriented to the Canvas self-paced tutorial!`,
+            'collection': 'Study Guide',
+            'date': { }
+        },
+        'Nurturing': {
+            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/nurturing.png',
+            'label': '',
+            'imageSize': 'bg-contain',
+            'num': '',
+            'description': `Getting oriented to the Canvas self-paced tutorial!`,
+            'collection': 'Study Guide',
+            'date': { }
+        },
+        'Sprouting': {
+            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/sprouting.png',
+            'label': '',
+            'imageSize': 'bg-contain',
+            'num': '',
+            'description': `Getting oriented to the Canvas self-paced tutorial!`,
+            'collection': 'Study Guide',
+            'date': { }
+        },
+        'Flowering': {
+            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/flowering.png',
+            'label': '',
+            'imageSize': 'bg-contain',
+            'num': '',
+            'description': `Getting oriented to the Canvas self-paced tutorial!`,
+            'collection': 'Study Guide',
+            'date': { }
+        },
+        'Harvesting': {
+            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/harvesting.png',
+            'label': '',
+            'imageSize': 'bg-contain',
+            'num': '',
+            'description': `Getting oriented to the Canvas self-paced tutorial!`,
+            'collection': 'Study Guide',
+            'date': { }
+        },
+    },
     'https://griffith.instructure.com/courses/220': {
         'CC_COLLECTIONS_DEFAULTS': [
             "Study Guide", "Assessment Essentials", "Online Workshops", "Student Support"
