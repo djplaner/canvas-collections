@@ -96,7 +96,8 @@ export default class cc_CanvasModulesView {
         this.makeCardsClickable();
 
         // Update the titles of the modules to add the collection name
-        if (this.options.updateTitle) {
+        //if (this.options.updateTitle) {
+        if (this.configured) {
             this.updateCanvasModuleList();
         }
     }
@@ -166,7 +167,8 @@ export default class cc_CanvasModulesView {
 
             // hide the module if it's not in the current collection
             // but make it's visible otherwise
-            if (aModule.collection === this.currentCollection || this.canvasOption === 'all') {
+            //if (aModule.collection === this.currentCollection || this.canvasOption === 'all') {
+            if (aModule.collection === this.currentCollection || ! this.configured) {
                 divDom.style.display = 'block';
             } else {
                 divDom.style.display = 'none';
@@ -236,7 +238,10 @@ export default class cc_CanvasModulesView {
         // for each module generate card and append
         for (let i = 0; i < numModules; i++) {
             let module = this.modules[i];
-            if (module.collection === this.currentCollection || this.options.collectionView === 'all') {
+            // only show the card if it's in the current collection
+            // or there's no configuration
+            //if (module.collection === this.currentCollection || this.options.collectionView === 'all') {
+            if (module.collection === this.currentCollection || ! this.configured) {
                 let card = this.generateCard(module);
                 cardCollection.appendChild(card);
                 // once card is added to DOM, can do further updates
