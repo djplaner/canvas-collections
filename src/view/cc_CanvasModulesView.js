@@ -75,6 +75,7 @@ export default class cc_CanvasModulesView {
             return;
         }
 
+        // only do this if the page has 
         document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
 
         // create the cc-canvas-collections div
