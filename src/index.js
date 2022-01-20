@@ -135,6 +135,10 @@ function canvasCollections() {
         this.setTimeout(
             () => {
                 let controller = new cc_Controller();
+                let collections = document.getElementsByClassName('cc-canvas-collections');
+                if ( collections.length>0 ) {
+                    collections[0].scrollIntoView();
+                }
             }, 2000
         );
     }, false);

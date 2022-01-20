@@ -241,7 +241,7 @@ let CARD_DEFAULTS = {
         },
         // Assessment 1031LAW
         'Accessing Case Law and Legislation': {
-            //        'image': 'https://griffith.instructure.com/courses/220/files/800/preview',
+            'image': 'https://i.ytimg.com/vi/USreSduMgOc/maxresdefault.jpg',
             'label': 'Assessment',
             //        'imageSize': 'bg-cover',
             'num': '1',
@@ -263,7 +263,7 @@ let CARD_DEFAULTS = {
             }
         },
         'Legislation, Case Law and Statutory Interpretation Assignment': {
-            //        'image': 'https://griffith.instructure.com/courses/220/files/800/preview',
+            'image': 'https://blog.ipleaders.in/wp-content/uploads/2019/11/In-Law-Statutory-Interpretation-is-Important.jpg',
             'label': 'Assessment',
             //      'imageSize': 'bg-cover',
             'num': '2',
@@ -278,14 +278,24 @@ let CARD_DEFAULTS = {
             }
         },
         'Take-Home Exam': {
-            //     'image': 'https://griffith.instructure.com/courses/220/files/800/preview',
+            'image': 'https://www.lawyer-monthly.com/Lawyer-Monthly/wp-content/uploads/2017/11/5-Top-Tips-for-Passing-Your-Law-Exams-750x430.jpg',
             'label': 'Assessment',
             //        'imageSize': 'bg-cover',
             'num': '3',
             'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
             'collection': 'Assessment Essentials',
             'date':{}
+        },
+        'Workshop Schedule': {
+            'image': 'https://i0.wp.com/frescopad.com/wp-content/uploads/2020/10/webinar-png.png?resize=387%2C242&ssl=1',
+            'label': '',
+            //        'imageSize': 'bg-cover',
+            'num': '',
+            'description': `<p>Course online workshops: where, when and what for.</p>`,
+            'collection': 'Online Workshops',
+            'date':{}
         }
+
     },
 
     'https://lms.griffith.edu.au/courses/122': {
