@@ -2,6 +2,9 @@
  * CanvasModulesViews - render the updated module information
  */
 
+const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
+
+
 const DEFAULT_VIEW_OPTIONS = {
     // how to view collections: 
     // - current - show the current collection
@@ -71,6 +74,8 @@ export default class cc_CanvasModulesView {
         if (canvasContent === null) {
             return;
         }
+
+        document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
 
         // create the cc-canvas-collections div
         let ccCanvasCollections = this.createElement('div', 'cc-canvas-collections');

@@ -283,7 +283,8 @@ let CARD_DEFAULTS = {
             //        'imageSize': 'bg-cover',
             'num': '3',
             'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
-            'collection': 'Assessment Essentials'
+            'collection': 'Assessment Essentials',
+            'date':{}
         }
     },
 

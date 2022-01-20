@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.1.1
+// @version      0.1.2
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -16,6 +16,9 @@
 /****************
  * CanvasModulesViews - render the updated module information
  */
+
+const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
+
 
 const DEFAULT_VIEW_OPTIONS = {
     // how to view collections: 
@@ -86,6 +89,8 @@ class cc_CanvasModulesView {
         if (canvasContent === null) {
             return;
         }
+
+        document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
 
         // create the cc-canvas-collections div
         let ccCanvasCollections = this.createElement('div', 'cc-canvas-collections');
@@ -1098,7 +1103,8 @@ let CARD_DEFAULTS = {
             //        'imageSize': 'bg-cover',
             'num': '3',
             'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
-            'collection': 'Assessment Essentials'
+            'collection': 'Assessment Essentials',
+            'date':{}
         }
     },
 
@@ -1581,12 +1587,11 @@ class cc_Controller {
 // src/index.js
 const COURSE_ID=ENV.COURSE_ID;
 //const CSS_URL='<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/cards.css" />';
-const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
+//const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
 const CANVAS_COLLECTIONS_CSS='<link href="https://djon.es/gu/canvas/canvas-collections.css" rel="stylesheet">';
 
 
 function canvasCollections() {
-    document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
 
     // Wait for everything to load
     window.addEventListener('load', function(){
