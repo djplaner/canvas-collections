@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.1.2
+// @version      0.2.0
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -90,6 +90,7 @@ class cc_CanvasModulesView {
             return;
         }
 
+        // only do this if the page has 
         document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
 
         // create the cc-canvas-collections div
@@ -1671,7 +1672,7 @@ table {
   
   .ael-reading {
     position: relative;
-    padding: 1rem;
+    padding: 0.25em 2em 0.5em;
     margin: 1rem 2rem;
     max-width: 90ch;
     overflow: initial !important;
@@ -1679,19 +1680,19 @@ table {
   }
   
   .ael-reading:before {
-    position: absolute;
-    top: 0;
-    margin-left: -2.074rem;
-    margin-right: 1.728rem;
-    width: 1.5rem;
+    position: absolute; 
+    top: 0; 
+    margin-top: 10px;
+    margin-left: -4rem;
+    margin-right: 1rem;
+    width: 2rem;
     content: "";
     background: #e6eff5;
     background-image: url("https://app.secure.griffith.edu.au/gois/ultra/icons-regular/reading.svg");
     background-repeat: no-repeat;
     background-position: center;
-    /*padding: 0.579rem;*/
     padding: 1rem;
-    height: calc(100% - 0.579rem - 1.44rem); 
+/*    height: calc(100% - 0.579rem - 1.44rem); */
 
 /*      margin-left: -2rem;
     min-height: 20px;
