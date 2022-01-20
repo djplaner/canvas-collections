@@ -1,6 +1,6 @@
 {
   "name": "canvas-collections",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Modify Canvas LMS modules to support collections of modules and their representation",
   "main": "dist/index.js",
   "type": "module",
