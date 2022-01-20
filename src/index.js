@@ -5,9 +5,128 @@ const COURSE_ID=ENV.COURSE_ID;
 //const CSS_URL='<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/cards.css" />';
 //const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
 const CANVAS_COLLECTIONS_CSS='<link href="https://djon.es/gu/canvas/canvas-collections.css" rel="stylesheet">';
+const CI_CSS=`
+<style type="text/css">
 
+.ael-note:before {
+    position: absolute;
+    top: 0;
+    margin-left: -2.074rem;
+    margin-right: 1.728rem;
+    width: 24px;
+    content: "";
+    background: #ffa423;
+    padding: 0.579rem;
+    padding-top: 1.44rem;
+    height: calc(100% - 0.579rem - 1.44rem); 
+}
+
+.ael-note {
+    position: relative;
+  padding: 0.833rem;
+  margin: 1rem auto;
+  background: #fff6e9;
+  max-width: 90ch;
+  overflow: initial !important;
+}
+
+.ael-note div  {
+    padding-left: 2em !important;
+}
+
+.ael-note > p {
+    margin: 1rem;
+}
+
+.ael-note h5 {
+    margin: 1rem;
+    color: #ffa423;
+    font-weight: 700;    
+}
+
+.ael-table {
+    margin: 2em 0 ;
+    font-size: 0.9em ;
+    font-family: sans-serif ;
+    min-width: 400px ;
+    box-shadow: 0 0 1.5em rgba(0, 0, 0, 0.15) ; 
+}
+
+.ael-table thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+} 
+
+.ael-table th, .ael-table td {
+    padding: 12px 15px !important;
+}
+
+.ael-table tbody tr {
+    border: thin solid #cccccc;
+}
+
+.ael-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.ael-table caption {
+    display: none;
+}
+
+table {
+    border: solid 1px #ff0000;
+    border-collapse: collapse;
+    margin: 20px;
+  }
+  
+  .test table {
+    border: none;
+    text-align: center;
+  }
+  
+  .ael-reading {
+    position: relative;
+    padding: 1rem;
+    margin: 1rem 2rem;
+    max-width: 90ch;
+    overflow: initial !important;
+    background: #e6eff5;
+  }
+  
+  .ael-reading:before {
+    position: absolute;
+    top: 0;
+    margin-left: -2.074rem;
+    margin-right: 1.728rem;
+    width: 1.5rem;
+    content: "";
+    background: #e6eff5;
+    background-image: url("https://app.secure.griffith.edu.au/gois/ultra/icons-regular/reading.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    /*padding: 0.579rem;*/
+    padding: 1rem;
+    height: calc(100% - 0.579rem - 1.44rem); 
+
+/*      margin-left: -2rem;
+    min-height: 20px;
+    background-size: 40px 40px;
+    background-repeat: no-repeat;*/
+  }
+
+
+</style>
+`;
+
+//    background-image: url("https://app.secure.griffith.edu.au/gois/ultra/icons-regular/activity.svg");
 
 function canvasCollections() {
+
+    // add css as first child of div.show-content
+//    showContent = document.querySelector('.show-content');
+ //   showContent.insertAdjacentHTML('afterbegin', CI_CSS);
+    document.head.insertAdjacentHTML( 'beforeend', CI_CSS );
 
     // Wait for everything to load
     window.addEventListener('load', function(){
