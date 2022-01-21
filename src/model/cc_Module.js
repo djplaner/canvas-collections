@@ -88,6 +88,42 @@ let CARD_DEFAULTS = {
             "Study Guide", "Assessment Essentials", "Online Workshops", "Student Support"
         ],
         'CC_DEFAULT_ACTIVE_COLLECTION': 'Study Guide',
+        'COURSE_PROFILES' : [
+            { 
+                'label': '1031LAW - Gold Coast Profile',
+                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122153'
+            },
+            { 
+                'label': '7731LAW - Gold Coast Profile',
+                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122211'
+            },
+            { 
+                'label': '1031LAW - Nathan Profile',
+                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122148'
+            },
+            { 
+                'label': '7731LAW - Nathan Profile',
+                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122210'
+            }
+        ],
+        'HOME_PAGE': `
+        <div id="cc-home-page-nav">
+        <table style="border-collapse: collapse; width: 97.5583%; background-color: #6f767e; border-color: #474747; margin-left: auto; margin-right: auto;" border="1">
+            <tbody>
+                <tr>
+                    <td style="width: 33.2942%; text-align: center;">
+                        <a title="Learning Journey" 
+                            href="https://griffith.instructure.com/courses/919/pages/learning-journey" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/learning-journey" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">O </span>Learning Journey</span></a></td>
+                    <td style="width: 33.2942%; text-align: center;">
+                        <a class="tooltip" id="cc-course-profile" data-tooltip-content="#cc-course-profile-content"
+                            href="https://courseprofile.secure.griffith.edu.au/student_section_loader.php?section=1&profileId=124427" target="_blank" rel="noopener"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">&amp;</span>&nbsp; &nbsp;Course Profile</span></a></td>
+                    <td style="width: 33.2978%; text-align: center;">
+                        <a title="Teaching Team" 
+                            href="https://griffith.instructure.com/courses/919/pages/teaching-team" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/teaching-team" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: webdings;">_</span>&nbsp; Your Teaching Team</span></a></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>`,
         'Welcome': {
             'image': 'https://i.ytimg.com/vi/gkdGXFcxHw4/maxresdefault.jpg',
             'label': '',
@@ -516,6 +552,26 @@ export default class cc_Module {
 
         this.calculateItemProgress();
 
+        this.setConfiguration(options);
+
+
+        this.addModuleDefaults();
+
+        // TODO 
+        // - prerequisites
+        // - requirements_message
+
+/*        console.log('------------------');
+        console.log(`canvas-collections: Module ${this.id} title ${this.title}`);
+        console.log(`--- location is ${location} -- courseUrl is ${this.courseUrl}`);
+        console.log(`--- configured is ${this.configured}`); */
+    }
+
+    /**
+     * @desc Configure the module model based on location, defaults etc
+     * @param {Object} options - configuration options
+     */
+    setConfiguration(options) {
         // this.configured is true if there is some hard wired
         // card configuration content above
         this.configured = false;
@@ -534,25 +590,19 @@ export default class cc_Module {
             }
         }
 
+        // are we one the home page?
+        this.courseHomePage = false;
+        if (location.match(/^https:\/\/.*\/courses\/[0-9]*$/)) {
+            this.courseHomePage = true;
+        }
+
         // by default a module doesn't belong to a collection
         this.collection = null;
         //	    this.options = DEFAULT_VIEW_OPTIONS;
         if (options) {
             this.options = options;
         }
-
-        this.addModuleDefaults();
-
-        // TODO 
-        // - prerequisites
-        // - requirements_message
-
-/*        console.log('------------------');
-        console.log(`canvas-collections: Module ${this.id} title ${this.title}`);
-        console.log(`--- location is ${location} -- courseUrl is ${this.courseUrl}`);
-        console.log(`--- configured is ${this.configured}`); */
     }
-
 
     /**
      * @descr based on the module's title add some default values from this.configuration

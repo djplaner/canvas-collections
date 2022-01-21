@@ -3,7 +3,15 @@
  */
 
 const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
-
+const TOOLTIPSTER_CSS=`
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/4.2.8/css/tooltipster.bundle.css" />';
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/4.2.8/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css" />
+`;
+/*const TIPPY_JS = `
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+`
+*/
 
 const DEFAULT_VIEW_OPTIONS = {
     // how to view collections: 
@@ -77,6 +85,7 @@ export default class cc_CanvasModulesView {
 
         // only do this if the page has 
         document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
+        document.head.insertAdjacentHTML( 'beforeend', TOOLTIPSTER_CSS );
 
         // create the cc-canvas-collections div
         let ccCanvasCollections = this.createElement('div', 'cc-canvas-collections');
@@ -87,6 +96,8 @@ export default class cc_CanvasModulesView {
             let navBar = this.generateNavBar();
             ccCanvasCollections.appendChild(navBar);
         }
+
+        this.addHomePageNav();
 
         let cards = this.generateCards();
         ccCanvasCollections.appendChild(cards);
@@ -106,6 +117,55 @@ export default class cc_CanvasModulesView {
         if (this.configured && this.configuration.CC_COLLECTIONS_DEFAULTS.length>0) {
             this.updateCanvasModuleList();
         }
+    }
+
+    /**
+     * @desc Add configured HTML nav bar to top of home page, if home page
+     */
+    addHomePageNav() {
+        if ( this.modules.length===0 || ! this.modules[0].courseHomePage || 
+             ! ('HOME_PAGE' in this.configuration)) {
+            return;
+        }
+
+//        document.getElementById('content').insertAdjacentHTML( 'afterbegin', TIPPY_JS );
+
+        // insert HOME_PAGE nav at top of content
+//        let homePageNav = this.createElement('div', 'cc-home-page-nav');
+        let content = document.getElementById('content');
+        //let content = document.getElementById('context-modules');
+        if (content) {
+            content.insertAdjacentHTML( 
+                'afterbegin', this.configuration['HOME_PAGE']);
+            if ( 'COURSE_PROFILES' in this.configuration) {
+                // loop thru COURSE_PROFILES adding items to html list
+                let profiles = this.configuration['COURSE_PROFILES'];
+                let links = '';
+                for (let i = 0; i < profiles.length; i++) {
+                    links += `
+                        <li> <a href="${profiles[i].url}">
+                            ${profiles[i].label}
+                        </a> </li>
+                    `;
+                }
+                let html = `
+                <div class="cc-tooltip-content" style="display:none;">
+                    <div id="cc-course-profile-content">
+                    <p>Select the relevant coure profile</p>
+                    <ul>
+                    ${links}
+                    </ul>
+                    </div>
+                </div>
+                `;
+
+                content.insertAdjacentHTML( 'beforeend', html );
+                // add html to pro
+/*                tippy('#cc-course-profile', {
+                    content: html
+                });*/
+            }
+        } 
     }
 
     /**

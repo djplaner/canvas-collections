@@ -135,10 +135,23 @@ function canvasCollections() {
         this.setTimeout(
             () => {
                 let controller = new cc_Controller();
-                let collections = document.getElementsByClassName('cc-canvas-collections');
+                // scroll to top of canvas collections
+                /*let collections = document.getElementsByClassName('cc-canvas-collections');
+                let collections = document.getElementsByClassName('content');
                 if ( collections.length>0 ) {
                     collections[0].scrollIntoView();
+                }*/
+                // scroll to top of canvas content div#content
+                let content = document.getElementById('content');
+                if ( content ) {
+                    content.scrollIntoView();
                 }
+                $('.tooltip').tooltipster({
+                    interactive: true,
+                    contentAsHtml: true,
+                    theme: 'shadow'
+                }
+                );
             }, 2000
         );
     }, false);

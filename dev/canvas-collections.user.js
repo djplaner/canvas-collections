@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.2.1
+// @version      0.2.3
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -18,7 +18,15 @@
  */
 
 const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
-
+const TOOLTIPSTER_CSS=`
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/4.2.8/css/tooltipster.bundle.css" />';
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/4.2.8/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css" />
+`;
+/*const TIPPY_JS = `
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+`
+*/
 
 const DEFAULT_VIEW_OPTIONS = {
     // how to view collections: 
@@ -92,6 +100,7 @@ class cc_CanvasModulesView {
 
         // only do this if the page has 
         document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
+        document.head.insertAdjacentHTML( 'beforeend', TOOLTIPSTER_CSS );
 
         // create the cc-canvas-collections div
         let ccCanvasCollections = this.createElement('div', 'cc-canvas-collections');
@@ -102,6 +111,8 @@ class cc_CanvasModulesView {
             let navBar = this.generateNavBar();
             ccCanvasCollections.appendChild(navBar);
         }
+
+        this.addHomePageNav();
 
         let cards = this.generateCards();
         ccCanvasCollections.appendChild(cards);
@@ -121,6 +132,55 @@ class cc_CanvasModulesView {
         if (this.configured && this.configuration.CC_COLLECTIONS_DEFAULTS.length>0) {
             this.updateCanvasModuleList();
         }
+    }
+
+    /**
+     * @desc Add configured HTML nav bar to top of home page, if home page
+     */
+    addHomePageNav() {
+        if ( this.modules.length===0 || ! this.modules[0].courseHomePage || 
+             ! ('HOME_PAGE' in this.configuration)) {
+            return;
+        }
+
+//        document.getElementById('content').insertAdjacentHTML( 'afterbegin', TIPPY_JS );
+
+        // insert HOME_PAGE nav at top of content
+//        let homePageNav = this.createElement('div', 'cc-home-page-nav');
+        let content = document.getElementById('content');
+        //let content = document.getElementById('context-modules');
+        if (content) {
+            content.insertAdjacentHTML( 
+                'afterbegin', this.configuration['HOME_PAGE']);
+            if ( 'COURSE_PROFILES' in this.configuration) {
+                // loop thru COURSE_PROFILES adding items to html list
+                let profiles = this.configuration['COURSE_PROFILES'];
+                let links = '';
+                for (let i = 0; i < profiles.length; i++) {
+                    links += `
+                        <li> <a href="${profiles[i].url}">
+                            ${profiles[i].label}
+                        </a> </li>
+                    `;
+                }
+                let html = `
+                <div class="cc-tooltip-content" style="display:none;">
+                    <div id="cc-course-profile-content">
+                    <p>Select the relevant coure profile</p>
+                    <ul>
+                    ${links}
+                    </ul>
+                    </div>
+                </div>
+                `;
+
+                content.insertAdjacentHTML( 'beforeend', html );
+                // add html to pro
+/*                tippy('#cc-course-profile', {
+                    content: html
+                });*/
+            }
+        } 
     }
 
     /**
@@ -909,6 +969,42 @@ let CARD_DEFAULTS = {
             "Study Guide", "Assessment Essentials", "Online Workshops", "Student Support"
         ],
         'CC_DEFAULT_ACTIVE_COLLECTION': 'Study Guide',
+        'COURSE_PROFILES' : [
+            { 
+                'label': '1031LAW - Gold Coast Profile',
+                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122153'
+            },
+            { 
+                'label': '7731LAW - Gold Coast Profile',
+                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122211'
+            },
+            { 
+                'label': '1031LAW - Nathan Profile',
+                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122148'
+            },
+            { 
+                'label': '7731LAW - Nathan Profile',
+                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122210'
+            }
+        ],
+        'HOME_PAGE': `
+        <div id="cc-home-page-nav">
+        <table style="border-collapse: collapse; width: 97.5583%; background-color: #6f767e; border-color: #474747; margin-left: auto; margin-right: auto;" border="1">
+            <tbody>
+                <tr>
+                    <td style="width: 33.2942%; text-align: center;">
+                        <a title="Learning Journey" 
+                            href="https://griffith.instructure.com/courses/919/pages/learning-journey" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/learning-journey" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">O </span>Learning Journey</span></a></td>
+                    <td style="width: 33.2942%; text-align: center;">
+                        <a class="tooltip" id="cc-course-profile" data-tooltip-content="#cc-course-profile-content"
+                            href="https://courseprofile.secure.griffith.edu.au/student_section_loader.php?section=1&profileId=124427" target="_blank" rel="noopener"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">&amp;</span>&nbsp; &nbsp;Course Profile</span></a></td>
+                    <td style="width: 33.2978%; text-align: center;">
+                        <a title="Teaching Team" 
+                            href="https://griffith.instructure.com/courses/919/pages/teaching-team" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/teaching-team" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: webdings;">_</span>&nbsp; Your Teaching Team</span></a></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>`,
         'Welcome': {
             'image': 'https://i.ytimg.com/vi/gkdGXFcxHw4/maxresdefault.jpg',
             'label': '',
@@ -1337,6 +1433,26 @@ class cc_Module {
 
         this.calculateItemProgress();
 
+        this.setConfiguration(options);
+
+
+        this.addModuleDefaults();
+
+        // TODO 
+        // - prerequisites
+        // - requirements_message
+
+/*        console.log('------------------');
+        console.log(`canvas-collections: Module ${this.id} title ${this.title}`);
+        console.log(`--- location is ${location} -- courseUrl is ${this.courseUrl}`);
+        console.log(`--- configured is ${this.configured}`); */
+    }
+
+    /**
+     * @desc Configure the module model based on location, defaults etc
+     * @param {Object} options - configuration options
+     */
+    setConfiguration(options) {
         // this.configured is true if there is some hard wired
         // card configuration content above
         this.configured = false;
@@ -1355,25 +1471,19 @@ class cc_Module {
             }
         }
 
+        // are we one the home page?
+        this.courseHomePage = false;
+        if (location.match(/^https:\/\/.*\/courses\/[0-9]*$/)) {
+            this.courseHomePage = true;
+        }
+
         // by default a module doesn't belong to a collection
         this.collection = null;
         //	    this.options = DEFAULT_VIEW_OPTIONS;
         if (options) {
             this.options = options;
         }
-
-        this.addModuleDefaults();
-
-        // TODO 
-        // - prerequisites
-        // - requirements_message
-
-/*        console.log('------------------');
-        console.log(`canvas-collections: Module ${this.id} title ${this.title}`);
-        console.log(`--- location is ${location} -- courseUrl is ${this.courseUrl}`);
-        console.log(`--- configured is ${this.configured}`); */
     }
-
 
     /**
      * @descr based on the module's title add some default values from this.configuration
@@ -1730,10 +1840,23 @@ function canvasCollections() {
         this.setTimeout(
             () => {
                 let controller = new cc_Controller();
-                let collections = document.getElementsByClassName('cc-canvas-collections');
+                // scroll to top of canvas collections
+                /*let collections = document.getElementsByClassName('cc-canvas-collections');
+                let collections = document.getElementsByClassName('content');
                 if ( collections.length>0 ) {
                     collections[0].scrollIntoView();
+                }*/
+                // scroll to top of canvas content div#content
+                let content = document.getElementById('content');
+                if ( content ) {
+                    content.scrollIntoView();
                 }
+                $('.tooltip').tooltipster({
+                    interactive: true,
+                    contentAsHtml: true,
+                    theme: 'shadow'
+                }
+                );
             }, 2000
         );
     }, false);
