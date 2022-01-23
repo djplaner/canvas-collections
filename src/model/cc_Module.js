@@ -6,7 +6,7 @@ import { cc_Item } from './cc_Item.js';
 // Hard code default card values for 1031LAW_3215
 // key is the module name
 
-const DEFAULT_ACTIVE_COLLECTION = 'Study Guide';
+const DEFAULT_ACTIVE_COLLECTION = 'Topics';
 
 const META_DATA_FIELDS = [
     'image', 'label', 'imageSize', 'num', 'description', 'collection'
@@ -34,7 +34,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Nurturing': {
@@ -43,7 +43,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Sprouting': {
@@ -52,7 +52,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Flowering': {
@@ -61,7 +61,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Harvesting': {
@@ -70,7 +70,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Completed Growing with Canvas': {
@@ -79,16 +79,16 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
     },
     'https://griffith.instructure.com/courses/220': {
         'CC_COLLECTIONS_DEFAULTS': [
-            "Study Guide", "Assessment Essentials", "Online Workshops", "Student Support"
+            "Topics", "Assessment", "Online Workshops", "Student Support"
         ],
-        'CC_DEFAULT_ACTIVE_COLLECTION': 'Study Guide',
-        'LEARNING_JOURNEY': 'https://griffith.instructure.com/courses/220/modules',
+        'CC_DEFAULT_ACTIVE_COLLECTION': 'Topics',
+        'LEARNING_JOURNEY': 'https://griffith.instructure.com/courses/220/pages/learning-journey',
         'TEACHING_TEAM' : 'hello',
         'COURSE_PROFILES' : [
             { 
@@ -115,7 +115,7 @@ let CARD_DEFAULTS = {
                 <tr>
                     <td style="width: 33.2942%; text-align: center;">
                         <a class="tooltip" title="Learning Journey" data-tooltip-content="#cc-learning-journey-content"
-                            href="" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/learning-journey" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">O </span>Learning Journey</span></a></td>
+                            href="https://griffith.instructure.com/courses/220/pages/learning-journey" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/learning-journey" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">O </span>Learning Journey</span></a></td>
                     <td style="width: 33.2942%; text-align: center;">
                         <span class="tooltip" id="cc-course-profile" data-tooltip-content="#cc-course-profile-content"
                             href="" rel="noopener"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">&amp;</span>&nbsp; &nbsp;Course Profile</span></span></td>
@@ -136,7 +136,7 @@ let CARD_DEFAULTS = {
           <li> What do you need to do? </li>
           <li> How will you show what you've learnt?</li> </ul>
           <p><a href="https://google.com">Google</a>`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 0',
@@ -150,7 +150,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '1',
             'description': '<p>Overview of Foundations of Law and My Law Career</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 1',
@@ -164,7 +164,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '2',
             'description': 'How law is made - and how to find the law (legislation and case)',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'From',
                 'start': {
@@ -185,7 +185,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '3',
             'description': '',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 4',
@@ -199,7 +199,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '4',
             'description': '<p>How to interpret legislation (i.e. work out what it means)</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'From',
                 'start': {
@@ -220,7 +220,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
             'num': '6',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'From',
                 'start': {
@@ -241,7 +241,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '7',
             'description': '<p>Introduction to the legal profession and legal professional ethics.</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 10',
@@ -255,7 +255,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '8',
             'description': '<p>Introduction to First Nations people and the law</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 11',
@@ -269,7 +269,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '9',
             'description': '<p>Revision and preparation for final assessment</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 12',
@@ -285,7 +285,7 @@ let CARD_DEFAULTS = {
             'num': '1',
             'description': `<p>Complete a 50 minute online exam. Released 9am on Tuesday of 
         Week 4 and closed at 5pm on Friday of Week 4.</p>`,
-            'collection': 'Assessment Essentials',
+            'collection': 'Assessment',
             'date': {
                 'label': 'From',
                 'start': {
@@ -307,7 +307,7 @@ let CARD_DEFAULTS = {
             'num': '2',
             'description': `<p>Prepare succinct memos explaining and commenting on a piece of legislation and a case
         respectively, and apply rules of statuory interpretation.</p>`,
-            'collection': 'Assessment Essentials',
+            'collection': 'Assessment',
             'date': {
                 'label': 'Due',
                 'week': null,
@@ -321,8 +321,20 @@ let CARD_DEFAULTS = {
             //        'imageSize': 'bg-cover',
             'num': '3',
             'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
-            'collection': 'Assessment Essentials',
-            'date':{}
+            'collection': 'Assessment',
+            'date': {
+                'label': 'From',
+                'start': {
+                    'week': null,
+                    'month': 'Oct',
+                    'date': '21'
+                },
+                'stop': {
+                    'week': null,
+                    'month': 'Oct',
+                    'date': '30'
+                },
+            }
         },
         'Workshop Schedule': {
             'image': 'https://i0.wp.com/frescopad.com/wp-content/uploads/2020/10/webinar-png.png?resize=387%2C242&ssl=1',
@@ -346,9 +358,9 @@ let CARD_DEFAULTS = {
 
     'https://lms.griffith.edu.au/courses/122': {
     'CC_COLLECTIONS_DEFAULTS': [
-        "Study Guide", "Assessment Essentials", "Online Workshops", "Student Support"
+        "Topics", "Assessment", "Online Workshops", "Student Support"
     ],
-    'CC_DEFAULT_ACTIVE_COLLECTION': 'Study Guide',
+    'CC_DEFAULT_ACTIVE_COLLECTION': 'Topics',
     'Welcome': {
         'image': 'https://i.ytimg.com/vi/gkdGXFcxHw4/maxresdefault.jpg',
         'label': '',
@@ -359,7 +371,7 @@ let CARD_DEFAULTS = {
       <li> What do you need to do? </li>
       <li> How will you show what you've learnt?</li> </ul>
       <p><a href="https://google.com">Google</a>`,
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 0',
@@ -373,7 +385,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-contain',
         'num': '1',
         'description': '<p>Overview of Foundations of Law and My Law Career</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 1',
@@ -387,7 +399,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '2',
         'description': 'How law is made - and how to find the law (legislation and case)',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'From',
             'start': {
@@ -408,7 +420,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-contain',
         'num': '3',
         'description': '',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 4',
@@ -422,7 +434,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '4',
         'description': '<p>How to interpret legislation (i.e. work out what it means)</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'From',
             'start': {
@@ -443,7 +455,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
         'num': '6',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'From',
             'start': {
@@ -464,7 +476,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '7',
         'description': '<p>Introduction to the legal profession and legal professional ethics.</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 10',
@@ -478,7 +490,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '8',
         'description': '<p>Introduction to First Nations people and the law</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 11',
@@ -492,7 +504,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '9',
         'description': '<p>Revision and preparation for final assessment</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 12',
@@ -508,7 +520,7 @@ let CARD_DEFAULTS = {
         'num': '1',
         'description': `<p>Complete a 50 minute online exam. Released 9am on Tuesday of 
     Week 4 and closed at 5pm on Friday of Week 4.</p>`,
-        'collection': 'Assessment Essentials',
+        'collection': 'Assessment',
         'date': {
             'label': 'From',
             'start': {
@@ -530,7 +542,7 @@ let CARD_DEFAULTS = {
         'num': '2',
         'description': `<p>Prepare succinct memos explaining and commenting on a piece of legislation and a case
     respectively, and apply rules of statuory interpretation.</p>`,
-        'collection': 'Assessment Essentials',
+        'collection': 'Assessment',
         'date': {
             'label': 'Due',
             'week': null,
@@ -544,7 +556,7 @@ let CARD_DEFAULTS = {
         //        'imageSize': 'bg-cover',
         'num': '3',
         'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
-        'collection': 'Assessment Essentials'
+        'collection': 'Assessment'
     }
 }
 

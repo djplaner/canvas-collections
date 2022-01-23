@@ -142,10 +142,19 @@ function canvasCollections() {
                 if ( collections.length>0 ) {
                     collections[0].scrollIntoView();
                 }*/
-                // scroll to top of canvas content div#content
-                let content = document.getElementById('content');
-                if ( content ) {
-                    content.scrollIntoView();
+                // scroll to top of canvas content div#content, but only if current
+                // url does not include [0-9]/modules#[0-9]
+                if ( !/[0-9]\/modules#[0-9]/.test(window.location.href) ) {
+                    let content = document.getElementById('content');
+                    if ( content ) {
+                        content.scrollIntoView();
+                    }
+                } else {
+                    // scroll the module into view
+                    // get id for module all numbers from current url after #
+                    let moduleId = window.location.href.match(/[0-9]\/modules#([0-9]+)/)[1];
+                    let module = document.getElementById(moduleId);
+                    module.scrollIntoView(true);
                 }
             }, 2000
         );

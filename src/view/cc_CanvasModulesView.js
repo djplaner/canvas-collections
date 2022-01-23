@@ -21,7 +21,9 @@ const DEFAULT_VIEW_OPTIONS = {
     // whether to who nav bar
     'navBar': true,
     // whether to update the module title with collection name
-    'updateTitle': true
+    'updateTitle': true,
+    // should we scroll to the top of the content?
+    'scrollToTop': true
 };
 
 
@@ -292,10 +294,14 @@ export default class cc_CanvasModulesView {
             // hide the module if it's not in the current collection
             // but make it's visible otherwise
             //if (aModule.collection === this.currentCollection || this.canvasOption === 'all') {
+
             if (aModule.collection === this.currentCollection || ! this.configured) {
                 divDom.style.display = 'block';
             } else {
-                divDom.style.display = 'none';
+                // don't hide any if we're looking specifically for a module
+                if ( !/[0-9]\/modules#[0-9]/.test(window.location.href) ) {
+                    divDom.style.display = 'none';
+                }
             }
         }
     }

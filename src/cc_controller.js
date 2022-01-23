@@ -77,7 +77,7 @@ export default class cc_Controller {
 
         const urlParams = new URLSearchParams(queryString);
 
-
+        // set the view
         const viewOption = urlParams.get('cc-view');
 
         if (SUPPORTED_VIEWS.includes(viewOption)) {

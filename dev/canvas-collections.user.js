@@ -36,7 +36,9 @@ const DEFAULT_VIEW_OPTIONS = {
     // whether to who nav bar
     'navBar': true,
     // whether to update the module title with collection name
-    'updateTitle': true
+    'updateTitle': true,
+    // should we scroll to the top of the content?
+    'scrollToTop': true
 };
 
 
@@ -307,10 +309,14 @@ class cc_CanvasModulesView {
             // hide the module if it's not in the current collection
             // but make it's visible otherwise
             //if (aModule.collection === this.currentCollection || this.canvasOption === 'all') {
+
             if (aModule.collection === this.currentCollection || ! this.configured) {
                 divDom.style.display = 'block';
             } else {
-                divDom.style.display = 'none';
+                // don't hide any if we're looking specifically for a module
+                if ( !/[0-9]\/modules#[0-9]/.test(window.location.href) ) {
+                    divDom.style.display = 'none';
+                }
             }
         }
     }
@@ -793,7 +799,7 @@ class cc_CanvasModulesView {
 class cc_LearningJourneyView {
 
 	/**
-	 * @desc insert HTML into Canvas modules page offering different representation of module information
+	 * insert HTML into Canvas modules page offering different representation of module information
 	 * @param modules cc_CanvasModules object containing all info about current pages modules
 	 * @param option object - defining how to configure the view
 	 */
@@ -801,6 +807,14 @@ class cc_LearningJourneyView {
         console.log("Show the learning journey view");
     }
 
+
+    /**
+     * Add a tabular view of the modules and items
+     */
+    render() {
+        
+
+    }
    
 }
 
@@ -967,7 +981,7 @@ class cc_Item {
 // Hard code default card values for 1031LAW_3215
 // key is the module name
 
-const DEFAULT_ACTIVE_COLLECTION = 'Study Guide';
+const DEFAULT_ACTIVE_COLLECTION = 'Topics';
 
 const META_DATA_FIELDS = [
     'image', 'label', 'imageSize', 'num', 'description', 'collection'
@@ -995,7 +1009,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Nurturing': {
@@ -1004,7 +1018,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Sprouting': {
@@ -1013,7 +1027,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Flowering': {
@@ -1022,7 +1036,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Harvesting': {
@@ -1031,7 +1045,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Completed Growing with Canvas': {
@@ -1040,16 +1054,16 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
     },
     'https://griffith.instructure.com/courses/220': {
         'CC_COLLECTIONS_DEFAULTS': [
-            "Study Guide", "Assessment Essentials", "Online Workshops", "Student Support"
+            "Topics", "Assessment", "Online Workshops", "Student Support"
         ],
-        'CC_DEFAULT_ACTIVE_COLLECTION': 'Study Guide',
-        'LEARNING_JOURNEY': 'https://griffith.instructure.com/courses/220/modules',
+        'CC_DEFAULT_ACTIVE_COLLECTION': 'Topics',
+        'LEARNING_JOURNEY': 'https://griffith.instructure.com/courses/220/pages/learning-journey',
         'TEACHING_TEAM' : 'hello',
         'COURSE_PROFILES' : [
             { 
@@ -1076,7 +1090,7 @@ let CARD_DEFAULTS = {
                 <tr>
                     <td style="width: 33.2942%; text-align: center;">
                         <a class="tooltip" title="Learning Journey" data-tooltip-content="#cc-learning-journey-content"
-                            href="" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/learning-journey" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">O </span>Learning Journey</span></a></td>
+                            href="https://griffith.instructure.com/courses/220/pages/learning-journey" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/learning-journey" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">O </span>Learning Journey</span></a></td>
                     <td style="width: 33.2942%; text-align: center;">
                         <span class="tooltip" id="cc-course-profile" data-tooltip-content="#cc-course-profile-content"
                             href="" rel="noopener"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">&amp;</span>&nbsp; &nbsp;Course Profile</span></span></td>
@@ -1097,7 +1111,7 @@ let CARD_DEFAULTS = {
           <li> What do you need to do? </li>
           <li> How will you show what you've learnt?</li> </ul>
           <p><a href="https://google.com">Google</a>`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 0',
@@ -1111,7 +1125,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '1',
             'description': '<p>Overview of Foundations of Law and My Law Career</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 1',
@@ -1125,7 +1139,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '2',
             'description': 'How law is made - and how to find the law (legislation and case)',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'From',
                 'start': {
@@ -1146,7 +1160,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '3',
             'description': '',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 4',
@@ -1160,7 +1174,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '4',
             'description': '<p>How to interpret legislation (i.e. work out what it means)</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'From',
                 'start': {
@@ -1181,7 +1195,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
             'num': '6',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'From',
                 'start': {
@@ -1202,7 +1216,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '7',
             'description': '<p>Introduction to the legal profession and legal professional ethics.</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 10',
@@ -1216,7 +1230,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '8',
             'description': '<p>Introduction to First Nations people and the law</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 11',
@@ -1230,7 +1244,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '9',
             'description': '<p>Revision and preparation for final assessment</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 12',
@@ -1246,7 +1260,7 @@ let CARD_DEFAULTS = {
             'num': '1',
             'description': `<p>Complete a 50 minute online exam. Released 9am on Tuesday of 
         Week 4 and closed at 5pm on Friday of Week 4.</p>`,
-            'collection': 'Assessment Essentials',
+            'collection': 'Assessment',
             'date': {
                 'label': 'From',
                 'start': {
@@ -1268,7 +1282,7 @@ let CARD_DEFAULTS = {
             'num': '2',
             'description': `<p>Prepare succinct memos explaining and commenting on a piece of legislation and a case
         respectively, and apply rules of statuory interpretation.</p>`,
-            'collection': 'Assessment Essentials',
+            'collection': 'Assessment',
             'date': {
                 'label': 'Due',
                 'week': null,
@@ -1282,8 +1296,20 @@ let CARD_DEFAULTS = {
             //        'imageSize': 'bg-cover',
             'num': '3',
             'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
-            'collection': 'Assessment Essentials',
-            'date':{}
+            'collection': 'Assessment',
+            'date': {
+                'label': 'From',
+                'start': {
+                    'week': null,
+                    'month': 'Oct',
+                    'date': '21'
+                },
+                'stop': {
+                    'week': null,
+                    'month': 'Oct',
+                    'date': '30'
+                },
+            }
         },
         'Workshop Schedule': {
             'image': 'https://i0.wp.com/frescopad.com/wp-content/uploads/2020/10/webinar-png.png?resize=387%2C242&ssl=1',
@@ -1307,9 +1333,9 @@ let CARD_DEFAULTS = {
 
     'https://lms.griffith.edu.au/courses/122': {
     'CC_COLLECTIONS_DEFAULTS': [
-        "Study Guide", "Assessment Essentials", "Online Workshops", "Student Support"
+        "Topics", "Assessment", "Online Workshops", "Student Support"
     ],
-    'CC_DEFAULT_ACTIVE_COLLECTION': 'Study Guide',
+    'CC_DEFAULT_ACTIVE_COLLECTION': 'Topics',
     'Welcome': {
         'image': 'https://i.ytimg.com/vi/gkdGXFcxHw4/maxresdefault.jpg',
         'label': '',
@@ -1320,7 +1346,7 @@ let CARD_DEFAULTS = {
       <li> What do you need to do? </li>
       <li> How will you show what you've learnt?</li> </ul>
       <p><a href="https://google.com">Google</a>`,
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 0',
@@ -1334,7 +1360,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-contain',
         'num': '1',
         'description': '<p>Overview of Foundations of Law and My Law Career</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 1',
@@ -1348,7 +1374,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '2',
         'description': 'How law is made - and how to find the law (legislation and case)',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'From',
             'start': {
@@ -1369,7 +1395,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-contain',
         'num': '3',
         'description': '',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 4',
@@ -1383,7 +1409,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '4',
         'description': '<p>How to interpret legislation (i.e. work out what it means)</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'From',
             'start': {
@@ -1404,7 +1430,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
         'num': '6',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'From',
             'start': {
@@ -1425,7 +1451,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '7',
         'description': '<p>Introduction to the legal profession and legal professional ethics.</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 10',
@@ -1439,7 +1465,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '8',
         'description': '<p>Introduction to First Nations people and the law</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 11',
@@ -1453,7 +1479,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '9',
         'description': '<p>Revision and preparation for final assessment</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 12',
@@ -1469,7 +1495,7 @@ let CARD_DEFAULTS = {
         'num': '1',
         'description': `<p>Complete a 50 minute online exam. Released 9am on Tuesday of 
     Week 4 and closed at 5pm on Friday of Week 4.</p>`,
-        'collection': 'Assessment Essentials',
+        'collection': 'Assessment',
         'date': {
             'label': 'From',
             'start': {
@@ -1491,7 +1517,7 @@ let CARD_DEFAULTS = {
         'num': '2',
         'description': `<p>Prepare succinct memos explaining and commenting on a piece of legislation and a case
     respectively, and apply rules of statuory interpretation.</p>`,
-        'collection': 'Assessment Essentials',
+        'collection': 'Assessment',
         'date': {
             'label': 'Due',
             'week': null,
@@ -1505,7 +1531,7 @@ let CARD_DEFAULTS = {
         //        'imageSize': 'bg-cover',
         'num': '3',
         'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
-        'collection': 'Assessment Essentials'
+        'collection': 'Assessment'
     }
 }
 
@@ -1795,7 +1821,7 @@ class cc_Controller {
 
         const urlParams = new URLSearchParams(queryString);
 
-
+        // set the view
         const viewOption = urlParams.get('cc-view');
 
         if (SUPPORTED_VIEWS.includes(viewOption)) {
@@ -1973,10 +1999,19 @@ function canvasCollections() {
                 if ( collections.length>0 ) {
                     collections[0].scrollIntoView();
                 }*/
-                // scroll to top of canvas content div#content
-                let content = document.getElementById('content');
-                if ( content ) {
-                    content.scrollIntoView();
+                // scroll to top of canvas content div#content, but only if current
+                // url does not include [0-9]/modules#[0-9]
+                if ( !/[0-9]\/modules#[0-9]/.test(window.location.href) ) {
+                    let content = document.getElementById('content');
+                    if ( content ) {
+                        content.scrollIntoView();
+                    }
+                } else {
+                    // scroll the module into view
+                    // get id for module all numbers from current url after #
+                    let moduleId = window.location.href.match(/[0-9]\/modules#([0-9]+)/)[1];
+                    let module = document.getElementById(moduleId);
+                    module.scrollIntoView(true);
                 }
             }, 2000
         );
