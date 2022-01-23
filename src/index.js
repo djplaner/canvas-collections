@@ -161,7 +161,7 @@ $(document).ready( function() {
             $('.tooltip').tooltipster({
                     interactive: true,
                     contentAsHtml: true,
-                    theme: 'shadow'
+                    theme: 'tooltipster-shadow'
                 }
             );
         }

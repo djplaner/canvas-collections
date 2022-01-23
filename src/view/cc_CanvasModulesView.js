@@ -173,7 +173,7 @@ export default class cc_CanvasModulesView {
             }
             let html = `
             <div id="cc-course-profile-content">
-                <p>Select the relevant coure profile</p>
+                <p>Click on your course profile</p>
                 <ul>
                 ${links}
                 </ul>

@@ -188,7 +188,7 @@ class cc_CanvasModulesView {
             }
             let html = `
             <div id="cc-course-profile-content">
-                <p>Select the relevant coure profile</p>
+                <p>Click on your course profile</p>
                 <ul>
                 ${links}
                 </ul>
@@ -1019,6 +1019,7 @@ let CARD_DEFAULTS = {
         ],
         'CC_DEFAULT_ACTIVE_COLLECTION': 'Study Guide',
         'LEARNING_JOURNEY': 'https://griffith.instructure.com/courses/220/modules',
+        'TEACHING_TEAM' : 'hello',
         'COURSE_PROFILES' : [
             { 
                 'label': '1031LAW - Gold Coast Profile',
@@ -1043,13 +1044,13 @@ let CARD_DEFAULTS = {
             <tbody>
                 <tr>
                     <td style="width: 33.2942%; text-align: center;">
-                        <a title="Learning Journey" id="cc-learning-journey-content"
-                            href="https://griffith.instructure.com/courses/919/pages/learning-journey" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/learning-journey" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">O </span>Learning Journey</span></a></td>
+                        <a class="tooltip" title="Learning Journey" data-tooltip-content="#cc-learning-journey-content"
+                            href="" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/learning-journey" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">O </span>Learning Journey</span></a></td>
                     <td style="width: 33.2942%; text-align: center;">
-                        <a class="tooltip" id="cc-course-profile" data-tooltip-content="#cc-course-profile-content"
-                            href="https://courseprofile.secure.griffith.edu.au/student_section_loader.php?section=1&profileId=124427" target="_blank" rel="noopener"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">&amp;</span>&nbsp; &nbsp;Course Profile</span></a></td>
+                        <span class="tooltip" id="cc-course-profile" data-tooltip-content="#cc-course-profile-content"
+                            href="" rel="noopener"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">&amp;</span>&nbsp; &nbsp;Course Profile</span></span></td>
                     <td style="width: 33.2978%; text-align: center;">
-                        <a title="Teaching Team" id="cc-teaching-team-content"
+                        <a class="tooltip" title="Teaching Team" data-tooltip-content="#cc-teaching-team-content"
                             href="https://griffith.instructure.com/courses/919/pages/teaching-team" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/teaching-team" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: webdings;">_</span>&nbsp; Your Teaching Team</span></a></td>
                 </tr>
             </tbody>
@@ -1916,7 +1917,7 @@ $(document).ready( function() {
             $('.tooltip').tooltipster({
                     interactive: true,
                     contentAsHtml: true,
-                    theme: 'shadow'
+                    theme: 'tooltipster-shadow'
                 }
             );
         }
