@@ -137,35 +137,84 @@ export default class cc_CanvasModulesView {
         if (content) {
             content.insertAdjacentHTML( 
                 'afterbegin', this.configuration['HOME_PAGE']);
-            if ( 'COURSE_PROFILES' in this.configuration) {
-                // loop thru COURSE_PROFILES adding items to html list
-                let profiles = this.configuration['COURSE_PROFILES'];
-                let links = '';
-                for (let i = 0; i < profiles.length; i++) {
-                    links += `
-                        <li> <a href="${profiles[i].url}">
-                            ${profiles[i].label}
-                        </a> </li>
-                    `;
-                }
-                let html = `
-                <div class="cc-tooltip-content" style="display:none;">
-                    <div id="cc-course-profile-content">
-                    <p>Select the relevant coure profile</p>
-                    <ul>
-                    ${links}
-                    </ul>
-                    </div>
-                </div>
-                `;
 
-                content.insertAdjacentHTML( 'beforeend', html );
-                // add html to pro
-/*                tippy('#cc-course-profile', {
-                    content: html
-                });*/
-            }
+            // add the cc-tooltip-content div at end of content
+            let toolTipContent = `
+            <div id="cc-tooltip-content" style="display:none;">
+            </div>
+            `
+            content.insertAdjacentHTML( 'beforeend', toolTipContent );
+
+            let tooltipContent = document.getElementById('cc-tooltip-content');
+            
+            // add the tooltips for the learning journey elements
+            this.addCourseProfileTips(tooltipContent);
+            this.addLearningJourneyTips(tooltipContent);
+            this.addTeachingTeamTips(tooltipContent);
         } 
+    }
+
+    /**
+     * @desc Add tooltips to course profile links
+     * @param tooltipContent the div to which the tooltips will be added
+     */
+
+    addCourseProfileTips( tooltipContent) {
+        if ( 'COURSE_PROFILES' in this.configuration) {
+            // loop thru COURSE_PROFILES adding items to html list
+            let profiles = this.configuration['COURSE_PROFILES'];
+            let links = '';
+            for (let i = 0; i < profiles.length; i++) {
+                links += `
+                    <li> <a href="${profiles[i].url}">
+                        ${profiles[i].label}
+                    </a> </li>
+                `;
+            }
+            let html = `
+            <div id="cc-course-profile-content">
+                <p>Select the relevant coure profile</p>
+                <ul>
+                ${links}
+                </ul>
+            </div>
+            `;
+
+            tooltipContent.insertAdjacentHTML( 'beforeend', html );
+        }
+    }
+
+    /**
+     * @desc Add tooltips to learning journey links
+     * @param {Object} tooltipContent 
+     */
+    addLearningJourneyTips( tooltipContent) {
+        if ( 'LEARNING_JOURNEY' in this.configuration) {
+            let html=`
+            <div id="cc-learning-journey-content">
+             What will you learn in this course?<br />
+             What will you need to do?<br />
+             How will you show your learning?
+             </div>
+            `;
+
+            tooltipContent.insertAdjacentHTML( 'beforeend', html );
+        }
+    }
+
+    /**
+     * @desc Add tooltips to teaching team links
+     * @param {Object} tooltipContent - dom element for div 
+     */
+    addTeachingTeamTips( tooltipContent) {
+        if ( 'TEACHING_TEAM' in this.configuration) {
+            let html=`
+            <div id="cc-teaching-team-content">
+            Meet the course teaching team.
+            </div>
+            `;
+            tooltipContent.insertAdjacentHTML( 'beforeend', html );
+        }
     }
 
     /**

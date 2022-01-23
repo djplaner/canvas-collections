@@ -146,15 +146,24 @@ function canvasCollections() {
                 if ( content ) {
                     content.scrollIntoView();
                 }
-                $('.tooltip').tooltipster({
-                    interactive: true,
-                    contentAsHtml: true,
-                    theme: 'shadow'
-                }
-                );
             }, 2000
         );
     }, false);
 }
 
 canvasCollections();
+$(document).ready( function() {
+
+    let checkExist = setInterval(function() {
+        if ($('.tooltip').length) {
+           console.log("TOOLTIP Exists!");
+           clearInterval(checkExist);
+            $('.tooltip').tooltipster({
+                    interactive: true,
+                    contentAsHtml: true,
+                    theme: 'shadow'
+                }
+            );
+        }
+     }, 500);
+});
