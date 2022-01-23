@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.2.3
+// @version      0.3.0
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -17,7 +17,15 @@
  */
 
 const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
-
+const TOOLTIPSTER_CSS=`
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/4.2.8/css/tooltipster.bundle.css" />';
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/4.2.8/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css" />
+`;
+/*const TIPPY_JS = `
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+`
+*/
 
 const DEFAULT_VIEW_OPTIONS = {
     // how to view collections: 
@@ -27,7 +35,9 @@ const DEFAULT_VIEW_OPTIONS = {
     // whether to who nav bar
     'navBar': true,
     // whether to update the module title with collection name
-    'updateTitle': true
+    'updateTitle': true,
+    // should we scroll to the top of the content?
+    'scrollToTop': true
 };
 
 
@@ -91,6 +101,7 @@ class cc_CanvasModulesView {
 
         // only do this if the page has 
         document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
+        document.head.insertAdjacentHTML( 'beforeend', TOOLTIPSTER_CSS );
 
         // create the cc-canvas-collections div
         let ccCanvasCollections = this.createElement('div', 'cc-canvas-collections');
@@ -101,6 +112,8 @@ class cc_CanvasModulesView {
             let navBar = this.generateNavBar();
             ccCanvasCollections.appendChild(navBar);
         }
+
+        this.addHomePageNav();
 
         let cards = this.generateCards();
         ccCanvasCollections.appendChild(cards);
@@ -119,6 +132,113 @@ class cc_CanvasModulesView {
         //if (this.options.updateTitle) {
         if (this.configured && this.configuration.CC_COLLECTIONS_DEFAULTS.length>0) {
             this.updateCanvasModuleList();
+        }
+    }
+
+    /**
+     * @desc Add configured HTML nav bar to top of home page, if home page
+     */
+    addHomePageNav() {
+        // don't do this if 
+        // - there's already a div#cc-home-page-nav
+        // - no modules
+        // - no home page defined
+        // - ??
+        if (
+                document.getElementById('cc-home-page-nav') || 
+                this.modules.length===0 || 
+                ! this.modules[0].courseHomePage || 
+                ! ('HOME_PAGE' in this.configuration)
+            ) {
+            return;
+        }
+
+//        document.getElementById('content').insertAdjacentHTML( 'afterbegin', TIPPY_JS );
+
+        // insert HOME_PAGE nav at top of content
+//        let homePageNav = this.createElement('div', 'cc-home-page-nav');
+        let content = document.getElementById('content');
+        //let content = document.getElementById('context-modules');
+        if (content) {
+            content.insertAdjacentHTML( 
+                'afterbegin', this.configuration['HOME_PAGE']);
+
+            // add the cc-tooltip-content div at end of content
+            let toolTipContent = `
+            <div id="cc-tooltip-content" style="display:none;">
+            </div>
+            `
+            content.insertAdjacentHTML( 'beforeend', toolTipContent );
+
+            let tooltipContent = document.getElementById('cc-tooltip-content');
+            
+            // add the tooltips for the learning journey elements
+            this.addCourseProfileTips(tooltipContent);
+            this.addLearningJourneyTips(tooltipContent);
+            this.addTeachingTeamTips(tooltipContent);
+        } 
+    }
+
+    /**
+     * @desc Add tooltips to course profile links
+     * @param tooltipContent the div to which the tooltips will be added
+     */
+
+    addCourseProfileTips( tooltipContent) {
+        if ( 'COURSE_PROFILES' in this.configuration) {
+            // loop thru COURSE_PROFILES adding items to html list
+            let profiles = this.configuration['COURSE_PROFILES'];
+            let links = '';
+            for (let i = 0; i < profiles.length; i++) {
+                links += `
+                    <li> <a href="${profiles[i].url}" style="text-decoration: underline">
+                        ${profiles[i].label}
+                    </a> </li>
+                `;
+            }
+            let html = `
+            <div id="cc-course-profile-content" style="padding:0.5em;">
+                <p>Click on your course profile</p>
+                <ul style="list-style-type: circle;font-size: small; margin: 0.5em; list-style-position:inside" >
+                ${links}
+                </ul>
+            </div>
+            `;
+
+            tooltipContent.insertAdjacentHTML( 'beforeend', html );
+        }
+    }
+
+    /**
+     * @desc Add tooltips to learning journey links
+     * @param {Object} tooltipContent 
+     */
+    addLearningJourneyTips( tooltipContent) {
+        if ( 'LEARNING_JOURNEY' in this.configuration) {
+            let html=`
+            <div id="cc-learning-journey-content" style="font-size:small;padding:.5em">
+             What will you learn in this course?<br />
+             What will you need to do?<br />
+             How will you show your learning?
+             </div>
+            `;
+
+            tooltipContent.insertAdjacentHTML( 'beforeend', html );
+        }
+    }
+
+    /**
+     * @desc Add tooltips to teaching team links
+     * @param {Object} tooltipContent - dom element for div 
+     */
+    addTeachingTeamTips( tooltipContent) {
+        if ( 'TEACHING_TEAM' in this.configuration) {
+            let html=`
+            <div id="cc-teaching-team-content" style="font-size:small;padding:.5em;">
+            Meet and contact your teachers.
+            </div>
+            `;
+            tooltipContent.insertAdjacentHTML( 'beforeend', html );
         }
     }
 
@@ -188,10 +308,14 @@ class cc_CanvasModulesView {
             // hide the module if it's not in the current collection
             // but make it's visible otherwise
             //if (aModule.collection === this.currentCollection || this.canvasOption === 'all') {
+
             if (aModule.collection === this.currentCollection || ! this.configured) {
                 divDom.style.display = 'block';
             } else {
-                divDom.style.display = 'none';
+                // don't hide any if we're looking specifically for a module
+                if ( !/[0-9]\/modules#[0-9]/.test(window.location.href) ) {
+                    divDom.style.display = 'none';
+                }
             }
         }
     }
@@ -663,6 +787,35 @@ class cc_CanvasModulesView {
     }
 }
 
+/**
+ * cc_LearningJourneyView
+ * - implement a tabular view of a course's modules and items
+ */
+
+
+
+class cc_LearningJourneyView {
+
+	/**
+	 * insert HTML into Canvas modules page offering different representation of module information
+	 * @param modules cc_CanvasModules object containing all info about current pages modules
+	 * @param option object - defining how to configure the view
+	 */
+	constructor(modules, options = null) {
+        console.log("Show the learning journey view");
+    }
+
+
+    /**
+     * Add a tabular view of the modules and items
+     */
+    render() {
+        
+
+    }
+   
+}
+
 class cc_Item {
 	/**
 	 * @descr construct object representing a Canvas module item
@@ -824,7 +977,7 @@ class cc_Item {
 // Hard code default card values for 1031LAW_3215
 // key is the module name
 
-const DEFAULT_ACTIVE_COLLECTION = 'Study Guide';
+const DEFAULT_ACTIVE_COLLECTION = 'Topics';
 
 const META_DATA_FIELDS = [
     'image', 'label', 'imageSize', 'num', 'description', 'collection'
@@ -852,7 +1005,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Nurturing': {
@@ -861,7 +1014,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Sprouting': {
@@ -870,7 +1023,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Flowering': {
@@ -879,7 +1032,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Harvesting': {
@@ -888,7 +1041,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
         ' Completed Growing with Canvas': {
@@ -897,15 +1050,53 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '',
             'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': { }
         },
     },
     'https://griffith.instructure.com/courses/220': {
         'CC_COLLECTIONS_DEFAULTS': [
-            "Study Guide", "Assessment Essentials", "Online Workshops", "Student Support"
+            "Topics", "Assessment", "Online Workshops", "Student Support"
         ],
-        'CC_DEFAULT_ACTIVE_COLLECTION': 'Study Guide',
+        'CC_DEFAULT_ACTIVE_COLLECTION': 'Topics',
+        'LEARNING_JOURNEY': 'https://griffith.instructure.com/courses/220/pages/learning-journey',
+        'TEACHING_TEAM' : 'hello',
+        'COURSE_PROFILES' : [
+            { 
+                'label': '1031LAW - Gold Coast Profile',
+                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122153'
+            },
+            { 
+                'label': '7731LAW - Gold Coast Profile',
+                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122211'
+            },
+            { 
+                'label': '1031LAW - Nathan Profile',
+                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122148'
+            },
+            { 
+                'label': '7731LAW - Nathan Profile',
+                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122210'
+            }
+        ],
+        'HOME_PAGE': `
+        <div id="cc-home-page-nav">
+        <table style="border-collapse: collapse; width: 97.5583%; background-color: #6f767e; border-color: #474747; margin-left: auto; margin-right: auto;" border="1">
+            <tbody>
+                <tr>
+                    <td style="width: 33.2942%; text-align: center;">
+                        <a class="tooltip" title="Learning Journey" data-tooltip-content="#cc-learning-journey-content"
+                            href="https://griffith.instructure.com/courses/220/pages/learning-journey" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/learning-journey" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">O </span>Learning Journey</span></a></td>
+                    <td style="width: 33.2942%; text-align: center;">
+                        <span class="tooltip" id="cc-course-profile" data-tooltip-content="#cc-course-profile-content"
+                            href="" rel="noopener"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">&amp;</span>&nbsp; &nbsp;Course Profile</span></span></td>
+                    <td style="width: 33.2978%; text-align: center;">
+                        <a class="tooltip" title="Teaching Team" data-tooltip-content="#cc-teaching-team-content"
+                            href="https://griffith.instructure.com/courses/220/pages/your-teaching-team?module_item_id=35489" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/teaching-team" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: webdings;">_</span>&nbsp; Your Teaching Team</span></a></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>`,
         'Welcome': {
             'image': 'https://i.ytimg.com/vi/gkdGXFcxHw4/maxresdefault.jpg',
             'label': '',
@@ -916,7 +1107,7 @@ let CARD_DEFAULTS = {
           <li> What do you need to do? </li>
           <li> How will you show what you've learnt?</li> </ul>
           <p><a href="https://google.com">Google</a>`,
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 0',
@@ -930,7 +1121,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '1',
             'description': '<p>Overview of Foundations of Law and My Law Career</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 1',
@@ -944,7 +1135,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '2',
             'description': 'How law is made - and how to find the law (legislation and case)',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'From',
                 'start': {
@@ -965,7 +1156,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-contain',
             'num': '3',
             'description': '',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 4',
@@ -979,7 +1170,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '4',
             'description': '<p>How to interpret legislation (i.e. work out what it means)</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'From',
                 'start': {
@@ -1000,7 +1191,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
             'num': '6',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'From',
                 'start': {
@@ -1021,7 +1212,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '7',
             'description': '<p>Introduction to the legal profession and legal professional ethics.</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 10',
@@ -1035,7 +1226,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '8',
             'description': '<p>Introduction to First Nations people and the law</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 11',
@@ -1049,7 +1240,7 @@ let CARD_DEFAULTS = {
             'imageSize': 'bg-cover',
             'num': '9',
             'description': '<p>Revision and preparation for final assessment</p>',
-            'collection': 'Study Guide',
+            'collection': 'Topics',
             'date': {
                 'label': 'Commencing',
                 'week': 'Week 12',
@@ -1065,7 +1256,7 @@ let CARD_DEFAULTS = {
             'num': '1',
             'description': `<p>Complete a 50 minute online exam. Released 9am on Tuesday of 
         Week 4 and closed at 5pm on Friday of Week 4.</p>`,
-            'collection': 'Assessment Essentials',
+            'collection': 'Assessment',
             'date': {
                 'label': 'From',
                 'start': {
@@ -1087,7 +1278,7 @@ let CARD_DEFAULTS = {
             'num': '2',
             'description': `<p>Prepare succinct memos explaining and commenting on a piece of legislation and a case
         respectively, and apply rules of statuory interpretation.</p>`,
-            'collection': 'Assessment Essentials',
+            'collection': 'Assessment',
             'date': {
                 'label': 'Due',
                 'week': null,
@@ -1101,8 +1292,20 @@ let CARD_DEFAULTS = {
             //        'imageSize': 'bg-cover',
             'num': '3',
             'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
-            'collection': 'Assessment Essentials',
-            'date':{}
+            'collection': 'Assessment',
+            'date': {
+                'label': 'From',
+                'start': {
+                    'week': null,
+                    'month': 'Oct',
+                    'date': '21'
+                },
+                'stop': {
+                    'week': null,
+                    'month': 'Oct',
+                    'date': '30'
+                },
+            }
         },
         'Workshop Schedule': {
             'image': 'https://i0.wp.com/frescopad.com/wp-content/uploads/2020/10/webinar-png.png?resize=387%2C242&ssl=1',
@@ -1112,15 +1315,23 @@ let CARD_DEFAULTS = {
             'description': `<p>Course online workshops: where, when and what for.</p>`,
             'collection': 'Online Workshops',
             'date':{}
+        }, 
+        'Teaching Team': {
+            'image': 'https://s18670.pcdn.co/wp-content/uploads/2013/12/build-the-perfect-teacher-team.tmb-570.jpg',
+            'label': '',
+            //        'imageSize': 'bg-cover',
+            'num': '',
+            'description': `<p>Meet and contact your teachers.</p>`,
+            'collection': 'Student Support',
+            'date':{}
         }
-
     },
 
     'https://lms.griffith.edu.au/courses/122': {
     'CC_COLLECTIONS_DEFAULTS': [
-        "Study Guide", "Assessment Essentials", "Online Workshops", "Student Support"
+        "Topics", "Assessment", "Online Workshops", "Student Support"
     ],
-    'CC_DEFAULT_ACTIVE_COLLECTION': 'Study Guide',
+    'CC_DEFAULT_ACTIVE_COLLECTION': 'Topics',
     'Welcome': {
         'image': 'https://i.ytimg.com/vi/gkdGXFcxHw4/maxresdefault.jpg',
         'label': '',
@@ -1131,7 +1342,7 @@ let CARD_DEFAULTS = {
       <li> What do you need to do? </li>
       <li> How will you show what you've learnt?</li> </ul>
       <p><a href="https://google.com">Google</a>`,
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 0',
@@ -1145,7 +1356,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-contain',
         'num': '1',
         'description': '<p>Overview of Foundations of Law and My Law Career</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 1',
@@ -1159,7 +1370,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '2',
         'description': 'How law is made - and how to find the law (legislation and case)',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'From',
             'start': {
@@ -1180,7 +1391,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-contain',
         'num': '3',
         'description': '',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 4',
@@ -1194,7 +1405,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '4',
         'description': '<p>How to interpret legislation (i.e. work out what it means)</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'From',
             'start': {
@@ -1215,7 +1426,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
         'num': '6',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'From',
             'start': {
@@ -1236,7 +1447,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '7',
         'description': '<p>Introduction to the legal profession and legal professional ethics.</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 10',
@@ -1250,7 +1461,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '8',
         'description': '<p>Introduction to First Nations people and the law</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 11',
@@ -1264,7 +1475,7 @@ let CARD_DEFAULTS = {
         'imageSize': 'bg-cover',
         'num': '9',
         'description': '<p>Revision and preparation for final assessment</p>',
-        'collection': 'Study Guide',
+        'collection': 'Topics',
         'date': {
             'label': 'Commencing',
             'week': 'Week 12',
@@ -1280,7 +1491,7 @@ let CARD_DEFAULTS = {
         'num': '1',
         'description': `<p>Complete a 50 minute online exam. Released 9am on Tuesday of 
     Week 4 and closed at 5pm on Friday of Week 4.</p>`,
-        'collection': 'Assessment Essentials',
+        'collection': 'Assessment',
         'date': {
             'label': 'From',
             'start': {
@@ -1302,7 +1513,7 @@ let CARD_DEFAULTS = {
         'num': '2',
         'description': `<p>Prepare succinct memos explaining and commenting on a piece of legislation and a case
     respectively, and apply rules of statuory interpretation.</p>`,
-        'collection': 'Assessment Essentials',
+        'collection': 'Assessment',
         'date': {
             'label': 'Due',
             'week': null,
@@ -1316,7 +1527,7 @@ let CARD_DEFAULTS = {
         //        'imageSize': 'bg-cover',
         'num': '3',
         'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
-        'collection': 'Assessment Essentials'
+        'collection': 'Assessment'
     }
 }
 
@@ -1334,6 +1545,26 @@ class cc_Module {
 
         this.calculateItemProgress();
 
+        this.setConfiguration(options);
+
+
+        this.addModuleDefaults();
+
+        // TODO 
+        // - prerequisites
+        // - requirements_message
+
+/*        console.log('------------------');
+        console.log(`canvas-collections: Module ${this.id} title ${this.title}`);
+        console.log(`--- location is ${location} -- courseUrl is ${this.courseUrl}`);
+        console.log(`--- configured is ${this.configured}`); */
+    }
+
+    /**
+     * @desc Configure the module model based on location, defaults etc
+     * @param {Object} options - configuration options
+     */
+    setConfiguration(options) {
         // this.configured is true if there is some hard wired
         // card configuration content above
         this.configured = false;
@@ -1352,25 +1583,19 @@ class cc_Module {
             }
         }
 
+        // are we one the home page?
+        this.courseHomePage = false;
+        if (location.match(/^https:\/\/.*\/courses\/[0-9]*$/)) {
+            this.courseHomePage = true;
+        }
+
         // by default a module doesn't belong to a collection
         this.collection = null;
         //	    this.options = DEFAULT_VIEW_OPTIONS;
         if (options) {
             this.options = options;
         }
-
-        this.addModuleDefaults();
-
-        // TODO 
-        // - prerequisites
-        // - requirements_message
-
-/*        console.log('------------------');
-        console.log(`canvas-collections: Module ${this.id} title ${this.title}`);
-        console.log(`--- location is ${location} -- courseUrl is ${this.courseUrl}`);
-        console.log(`--- configured is ${this.configured}`); */
     }
-
 
     /**
      * @descr based on the module's title add some default values from this.configuration
@@ -1523,6 +1748,8 @@ class cc_Module {
 
 
 
+const SUPPORTED_VIEWS = [ 'lj'];
+
 class cc_CanvasModules {
 	constructor( ){
 	    // get all the div with ids starting with context_module_ within div#context_modules
@@ -1554,28 +1781,62 @@ class cc_Controller {
 	    // TODO this is currently not working
 	    const location = window.location.href;
 	    // extract from location everything after ?
-	    const queryString = location.substring(location.indexOf('?') + 1);
 	
 	    // define options
-	    let options = DEFAULT_VIEW_OPTIONS;
-	
-	    const urlParams = new URLSearchParams(queryString);
-	    const collectionsOption = urlParams.get('cc-collections');
-	    if (collectionsOption) {
-		options.collectionView = collectionsOption;
-	    }
-	    if (!window.location.hostname.match(/griffith\.edu\.au/)) {
-		options.collectionView='all';
-		options.navBar = false;
-		options.updateTitle = false;
-	    }
+	    this.OPTIONS = DEFAULT_VIEW_OPTIONS;
+
+        this.checkQueryString();
+
 	
 	    // extract all module information
 	    this.modules = new cc_CanvasModules();
 	    // update the page to add Card Information
-	    this.view = new cc_CanvasModulesView(this.modules,this.collectionClick,options);
+
+        // factory analogy kludge
+        if (this.OPTIONS.collectionView==="lj") {
+            this.view = new cc_LearningJourneyView(this.modules,this.OPTIONS);
+        } else {
+	        this.view = new cc_CanvasModulesView(this.modules,this.collectionClick,this.OPTIONS);
+        }
 	    this.view.render();
 	}
+
+    /**
+     * @descr Check queryString and set any options
+     */
+    checkQueryString() {
+        // if we're not griffith sites, do some default stuff
+        if (!window.location.hostname.match(/griffith\.edu\.au/)) {
+		    this.OPTIONS.collectionView='all';
+		    this.OPTIONS.navBar = false;
+		    this.OPTIONS.updateTitle = false;
+	    }
+
+        let queryString = window.location.search;
+
+        const urlParams = new URLSearchParams(queryString);
+
+        // set the view
+        const viewOption = urlParams.get('cc-view');
+
+        if (SUPPORTED_VIEWS.includes(viewOption)) {
+	        // Learning Journey view is only set iff
+	        // - queryString contains ?lj=true
+	        // - current page is a Canvas modules page
+
+            if (viewOption === 'lj') {
+                // does current url include courses/[0-9]+/modules?
+                if (window.location.href.match(/courses\/[0-9]+\/modules/)) {
+                    this.OPTIONS.collectionView = viewOption;
+                }
+            } else {
+                this.OPTIONS.collectionView = viewOption;
+            }
+        }
+
+
+    }
+
 	
 	/**
 	 * @desc Handle any clicks on the collections nav bar
@@ -1650,6 +1911,7 @@ const CI_CSS=`
 
 .ael-table th, .ael-table td {
     padding: 12px 15px !important;
+    vertical-align: top;
 }
 
 .ael-table tbody tr {
@@ -1725,9 +1987,25 @@ function canvasCollections() {
         this.setTimeout(
             () => {
                 let controller = new cc_Controller();
-                let collections = document.getElementsByClassName('cc-canvas-collections');
+                // scroll to top of canvas collections
+                /*let collections = document.getElementsByClassName('cc-canvas-collections');
+                let collections = document.getElementsByClassName('content');
                 if ( collections.length>0 ) {
                     collections[0].scrollIntoView();
+                }*/
+                // scroll to top of canvas content div#content, but only if current
+                // url does not include [0-9]/modules#[0-9]
+                if ( !/[0-9]\/modules#[0-9]/.test(window.location.href) ) {
+                    let content = document.getElementById('content');
+                    if ( content ) {
+                        content.scrollIntoView();
+                    }
+                } else {
+                    // scroll the module into view
+                    // get id for module all numbers from current url after #
+                    let moduleId = window.location.href.match(/[0-9]\/modules#([0-9]+)/)[1];
+                    let module = document.getElementById(moduleId);
+                    module.scrollIntoView(true);
                 }
             }, 2000
         );
@@ -1735,3 +2013,19 @@ function canvasCollections() {
 }
 
 canvasCollections();
+$(document).ready( function() {
+
+    let checkExist = setInterval(function() {
+        if ($('.tooltip').length) {
+           console.log("TOOLTIP Exists!");
+           clearInterval(checkExist);
+            $('.tooltip').tooltipster({
+                    interactive: true,
+                    contentAsHtml: true,
+                    theme: 'tooltipster-shadow',
+                    position: 'bottom'
+                }
+            );
+        }
+     }, 500);
+});
