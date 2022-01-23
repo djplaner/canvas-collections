@@ -60,6 +60,7 @@ const CI_CSS=`
 
 .ael-table th, .ael-table td {
     padding: 12px 15px !important;
+    vertical-align: top;
 }
 
 .ael-table tbody tr {
@@ -161,7 +162,8 @@ $(document).ready( function() {
             $('.tooltip').tooltipster({
                     interactive: true,
                     contentAsHtml: true,
-                    theme: 'tooltipster-shadow'
+                    theme: 'tooltipster-shadow',
+                    position: 'bottom'
                 }
             );
         }

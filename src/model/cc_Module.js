@@ -121,7 +121,7 @@ let CARD_DEFAULTS = {
                             href="" rel="noopener"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">&amp;</span>&nbsp; &nbsp;Course Profile</span></span></td>
                     <td style="width: 33.2978%; text-align: center;">
                         <a class="tooltip" title="Teaching Team" data-tooltip-content="#cc-teaching-team-content"
-                            href="https://griffith.instructure.com/courses/919/pages/teaching-team" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/teaching-team" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: webdings;">_</span>&nbsp; Your Teaching Team</span></a></td>
+                            href="https://griffith.instructure.com/courses/220/pages/your-teaching-team?module_item_id=35489" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/teaching-team" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: webdings;">_</span>&nbsp; Your Teaching Team</span></a></td>
                 </tr>
             </tbody>
         </table>
@@ -332,8 +332,16 @@ let CARD_DEFAULTS = {
             'description': `<p>Course online workshops: where, when and what for.</p>`,
             'collection': 'Online Workshops',
             'date':{}
+        }, 
+        'Teaching Team': {
+            'image': 'https://s18670.pcdn.co/wp-content/uploads/2013/12/build-the-perfect-teacher-team.tmb-570.jpg',
+            'label': '',
+            //        'imageSize': 'bg-cover',
+            'num': '',
+            'description': `<p>Meet and contact your teachers.</p>`,
+            'collection': 'Student Support',
+            'date':{}
         }
-
     },
 
     'https://lms.griffith.edu.au/courses/122': {

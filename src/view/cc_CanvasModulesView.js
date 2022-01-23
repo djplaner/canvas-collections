@@ -123,8 +123,17 @@ export default class cc_CanvasModulesView {
      * @desc Add configured HTML nav bar to top of home page, if home page
      */
     addHomePageNav() {
-        if ( this.modules.length===0 || ! this.modules[0].courseHomePage || 
-             ! ('HOME_PAGE' in this.configuration)) {
+        // don't do this if 
+        // - there's already a div#cc-home-page-nav
+        // - no modules
+        // - no home page defined
+        // - ??
+        if (
+                document.getElementById('cc-home-page-nav') || 
+                this.modules.length===0 || 
+                ! this.modules[0].courseHomePage || 
+                ! ('HOME_PAGE' in this.configuration)
+            ) {
             return;
         }
 
@@ -166,15 +175,15 @@ export default class cc_CanvasModulesView {
             let links = '';
             for (let i = 0; i < profiles.length; i++) {
                 links += `
-                    <li> <a href="${profiles[i].url}">
+                    <li> <a href="${profiles[i].url}" style="text-decoration: underline">
                         ${profiles[i].label}
                     </a> </li>
                 `;
             }
             let html = `
-            <div id="cc-course-profile-content">
+            <div id="cc-course-profile-content" style="padding:0.5em;">
                 <p>Click on your course profile</p>
-                <ul>
+                <ul style="list-style-type: circle;font-size: small; margin: 0.5em; list-style-position:inside" >
                 ${links}
                 </ul>
             </div>
@@ -191,7 +200,7 @@ export default class cc_CanvasModulesView {
     addLearningJourneyTips( tooltipContent) {
         if ( 'LEARNING_JOURNEY' in this.configuration) {
             let html=`
-            <div id="cc-learning-journey-content">
+            <div id="cc-learning-journey-content" style="font-size:small;padding:.5em">
              What will you learn in this course?<br />
              What will you need to do?<br />
              How will you show your learning?
@@ -209,8 +218,8 @@ export default class cc_CanvasModulesView {
     addTeachingTeamTips( tooltipContent) {
         if ( 'TEACHING_TEAM' in this.configuration) {
             let html=`
-            <div id="cc-teaching-team-content">
-            Meet the course teaching team.
+            <div id="cc-teaching-team-content" style="font-size:small;padding:.5em;">
+            Meet and contact your teachers.
             </div>
             `;
             tooltipContent.insertAdjacentHTML( 'beforeend', html );

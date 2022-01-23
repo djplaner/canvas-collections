@@ -138,8 +138,17 @@ class cc_CanvasModulesView {
      * @desc Add configured HTML nav bar to top of home page, if home page
      */
     addHomePageNav() {
-        if ( this.modules.length===0 || ! this.modules[0].courseHomePage || 
-             ! ('HOME_PAGE' in this.configuration)) {
+        // don't do this if 
+        // - there's already a div#cc-home-page-nav
+        // - no modules
+        // - no home page defined
+        // - ??
+        if (
+                document.getElementById('cc-home-page-nav') || 
+                this.modules.length===0 || 
+                ! this.modules[0].courseHomePage || 
+                ! ('HOME_PAGE' in this.configuration)
+            ) {
             return;
         }
 
@@ -181,15 +190,15 @@ class cc_CanvasModulesView {
             let links = '';
             for (let i = 0; i < profiles.length; i++) {
                 links += `
-                    <li> <a href="${profiles[i].url}">
+                    <li> <a href="${profiles[i].url}" style="text-decoration: underline">
                         ${profiles[i].label}
                     </a> </li>
                 `;
             }
             let html = `
-            <div id="cc-course-profile-content">
+            <div id="cc-course-profile-content" style="padding:0.5em;">
                 <p>Click on your course profile</p>
-                <ul>
+                <ul style="list-style-type: circle;font-size: small; margin: 0.5em; list-style-position:inside" >
                 ${links}
                 </ul>
             </div>
@@ -206,7 +215,7 @@ class cc_CanvasModulesView {
     addLearningJourneyTips( tooltipContent) {
         if ( 'LEARNING_JOURNEY' in this.configuration) {
             let html=`
-            <div id="cc-learning-journey-content">
+            <div id="cc-learning-journey-content" style="font-size:small;padding:.5em">
              What will you learn in this course?<br />
              What will you need to do?<br />
              How will you show your learning?
@@ -224,8 +233,8 @@ class cc_CanvasModulesView {
     addTeachingTeamTips( tooltipContent) {
         if ( 'TEACHING_TEAM' in this.configuration) {
             let html=`
-            <div id="cc-teaching-team-content">
-            Meet the course teaching team.
+            <div id="cc-teaching-team-content" style="font-size:small;padding:.5em;">
+            Meet and contact your teachers.
             </div>
             `;
             tooltipContent.insertAdjacentHTML( 'beforeend', html );
@@ -1051,7 +1060,7 @@ let CARD_DEFAULTS = {
                             href="" rel="noopener"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">&amp;</span>&nbsp; &nbsp;Course Profile</span></span></td>
                     <td style="width: 33.2978%; text-align: center;">
                         <a class="tooltip" title="Teaching Team" data-tooltip-content="#cc-teaching-team-content"
-                            href="https://griffith.instructure.com/courses/919/pages/teaching-team" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/teaching-team" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: webdings;">_</span>&nbsp; Your Teaching Team</span></a></td>
+                            href="https://griffith.instructure.com/courses/220/pages/your-teaching-team?module_item_id=35489" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/teaching-team" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: webdings;">_</span>&nbsp; Your Teaching Team</span></a></td>
                 </tr>
             </tbody>
         </table>
@@ -1262,8 +1271,16 @@ let CARD_DEFAULTS = {
             'description': `<p>Course online workshops: where, when and what for.</p>`,
             'collection': 'Online Workshops',
             'date':{}
+        }, 
+        'Teaching Team': {
+            'image': 'https://s18670.pcdn.co/wp-content/uploads/2013/12/build-the-perfect-teacher-team.tmb-570.jpg',
+            'label': '',
+            //        'imageSize': 'bg-cover',
+            'num': '',
+            'description': `<p>Meet and contact your teachers.</p>`,
+            'collection': 'Student Support',
+            'date':{}
         }
-
     },
 
     'https://lms.griffith.edu.au/courses/122': {
@@ -1816,6 +1833,7 @@ const CI_CSS=`
 
 .ael-table th, .ael-table td {
     padding: 12px 15px !important;
+    vertical-align: top;
 }
 
 .ael-table tbody tr {
@@ -1917,7 +1935,8 @@ $(document).ready( function() {
             $('.tooltip').tooltipster({
                     interactive: true,
                     contentAsHtml: true,
-                    theme: 'tooltipster-shadow'
+                    theme: 'tooltipster-shadow',
+                    position: 'bottom'
                 }
             );
         }
