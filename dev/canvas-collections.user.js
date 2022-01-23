@@ -782,6 +782,28 @@ class cc_CanvasModulesView {
     }
 }
 
+// src/view/cc_LearningJourneyView.js
+/**
+ * cc_LearningJourneyView
+ * - implement a tabular view of a course's modules and items
+ */
+
+
+
+class cc_LearningJourneyView {
+
+	/**
+	 * @desc insert HTML into Canvas modules page offering different representation of module information
+	 * @param modules cc_CanvasModules object containing all info about current pages modules
+	 * @param option object - defining how to configure the view
+	 */
+	constructor(modules, options = null) {
+        console.log("Show the learning journey view");
+    }
+
+   
+}
+
 // src/model/cc_Item.js
 class cc_Item {
 	/**
@@ -1705,6 +1727,8 @@ class cc_Module {
 
 
 
+const SUPPORTED_VIEWS = [ 'lj'];
+
 class cc_CanvasModules {
 	constructor( ){
 	    // get all the div with ids starting with context_module_ within div#context_modules
@@ -1736,28 +1760,62 @@ class cc_Controller {
 	    // TODO this is currently not working
 	    const location = window.location.href;
 	    // extract from location everything after ?
-	    const queryString = location.substring(location.indexOf('?') + 1);
 	
 	    // define options
-	    let options = DEFAULT_VIEW_OPTIONS;
-	
-	    const urlParams = new URLSearchParams(queryString);
-	    const collectionsOption = urlParams.get('cc-collections');
-	    if (collectionsOption) {
-		options.collectionView = collectionsOption;
-	    }
-	    if (!window.location.hostname.match(/griffith\.edu\.au/)) {
-		options.collectionView='all';
-		options.navBar = false;
-		options.updateTitle = false;
-	    }
+	    this.OPTIONS = DEFAULT_VIEW_OPTIONS;
+
+        this.checkQueryString();
+
 	
 	    // extract all module information
 	    this.modules = new cc_CanvasModules();
 	    // update the page to add Card Information
-	    this.view = new cc_CanvasModulesView(this.modules,this.collectionClick,options);
+
+        // factory analogy kludge
+        if (this.OPTIONS.collectionView==="lj") {
+            this.view = new cc_LearningJourneyView(this.modules,this.OPTIONS);
+        } else {
+	        this.view = new cc_CanvasModulesView(this.modules,this.collectionClick,this.OPTIONS);
+        }
 	    this.view.render();
 	}
+
+    /**
+     * @descr Check queryString and set any options
+     */
+    checkQueryString() {
+        // if we're not griffith sites, do some default stuff
+        if (!window.location.hostname.match(/griffith\.edu\.au/)) {
+		    this.OPTIONS.collectionView='all';
+		    this.OPTIONS.navBar = false;
+		    this.OPTIONS.updateTitle = false;
+	    }
+
+        let queryString = window.location.search;
+
+        const urlParams = new URLSearchParams(queryString);
+
+
+        const viewOption = urlParams.get('cc-view');
+
+        if (SUPPORTED_VIEWS.includes(viewOption)) {
+	        // Learning Journey view is only set iff
+	        // - queryString contains ?lj=true
+	        // - current page is a Canvas modules page
+
+            if (viewOption === 'lj') {
+                // does current url include courses/[0-9]+/modules?
+                if (window.location.href.match(/courses\/[0-9]+\/modules/)) {
+                    this.OPTIONS.collectionView = viewOption;
+                }
+            } else {
+                this.OPTIONS.collectionView = viewOption;
+            }
+        }
+
+
+    }
+
 	
 	/**
 	 * @desc Handle any clicks on the collections nav bar
