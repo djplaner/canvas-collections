@@ -424,6 +424,7 @@ export default class cc_CanvasModulesView {
         if ('image' in module) {
             imageUrl = module.image;
         }
+        // set the "text" for the engage button
         if ('engage' in module) {
             engage = module.engage;
         }
@@ -442,6 +443,12 @@ export default class cc_CanvasModulesView {
 	    </div></a>
 	    </div>
 	    `;
+
+        if ('noEngage' in module && module.noEngage) {
+            LINK_ITEM = `
+            `;
+        }
+
         let EDIT_ITEM = "";
         let REVIEW_ITEM = ""
 

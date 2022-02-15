@@ -16,12 +16,17 @@ export default class cc_CanvasModules {
 	    // get all the div with ids starting with context_module_ within div#context_modules
 	    this.moduleElements = document.querySelectorAll( 'div#context_modules > div[id^=context_module_]');
     
-	    this.currentCollection = DEFAULT_ACTIVE_COLLECTION;
     
 	    // loop thru each moduleElement and construct a cc_Module object
 	    this.modules = Array.from( this.moduleElements).map( ( moduleElement) => {
-		return new cc_Module( moduleElement);
+			return new cc_Module( moduleElement);
 	    });
+
+		// set currentCollection to the default (if there is one)
+		if ( this.modules.length>0) {
+			this.currentCollection = this.modules[0].currentCollection;
+		}
+//	    this.currentCollection = DEFAULT_ACTIVE_COLLECTION;
     
 	    // simple dump
 	    console.log(this.modules);
