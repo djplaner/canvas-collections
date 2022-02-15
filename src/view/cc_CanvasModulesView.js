@@ -270,6 +270,7 @@ export default class cc_CanvasModulesView {
      * @desc Modify the Canvas module list DOM to represent collections, including:
      * - hide modules that aren't part of the current collection
      * - add the collection name to the module title
+     * - and also those that have noEngage
      * 
      */
 
@@ -297,6 +298,9 @@ export default class cc_CanvasModulesView {
 
             if (aModule.collection === this.currentCollection || ! this.configured) {
                 divDom.style.display = 'block';
+                if ( 'noEngage' in aModule && aModule.noEngage) {
+                    divDom.style.display = 'none';
+                }
             } else {
                 // don't hide any if we're looking specifically for a module
                 if ( !/[0-9]\/modules#[0-9]/.test(window.location.href) ) {
