@@ -558,7 +558,182 @@ let CARD_DEFAULTS = {
         'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
         'collection': 'Assessment'
     }
+},
+    'https://lms.griffith.edu.au/courses/252': {
+    'CC_COLLECTIONS_DEFAULTS': [
+        "Content", "Assessment"
+    ],
+    'CC_DEFAULT_ACTIVE_COLLECTION': 'Content',
+    'Classical Approaches to Organisational Communication': {
+        'image': 'https://knowledge.insead.edu/sites/www.insead.edu/files/images/2017/05/virtues_of_unintelligent_organisation_design.jpg',
+        'label': 'Module',
+        'imageSize': 'bg-contain',
+        'num': '1',
+        'description': ``,
+        'collection': 'Content',
+        'date': {
+            'label': '',
+            'week': 'Week 1',
+            'month': 'Nov',
+            'date': '7'
+        }
+    },
+    'Systems and Cultural Approaches': {
+        'image': 'https://sloanreview.mit.edu/wp-content/uploads/2019/10/GEN-Korman-Corporate-Culture-Business-Management-System-1200x627-1-1200x627.jpg',
+        'label': 'Module',
+        'imageSize': 'bg-contain',
+        'num': '2',
+        'description': ``,
+        'collection': 'Content',
+        'date': {
+            'label': '',
+            'week': 'Week 2',
+            'month': 'Nov',
+            'date': '14'
+        }
+    },
+    'Human Relations and Human Resource Approaches': {
+        'image': 'https://www.timeshighereducation.com/unijobs/getasset/68fdfdc4-4442-449a-8ad5-2a994eff3e57/',
+        'label': 'Module',
+        'imageSize': 'bg-contain',
+        'num': '3',
+        'description': ``,
+        'collection': 'Content',
+        'date': {
+            'label': '',
+            'week': 'Week 3',
+            'month': 'Nov',
+            'date': '21'
+        }
+    },
+    'Applying Theory to Employing Staff': {
+        'image': 'https://coincentral.com/wp-content/uploads/2018/07/manager-308474_1280.png',
+        'label': 'Module',
+        'imageSize': 'bg-contain',
+        'num': '4',
+        'description': ``,
+        'collection': 'Content',
+        'date': {
+            'label': '',
+            'week': 'Week 4',
+            'month': 'Nov',
+            'date': '28'
+        }
+    },
+    'Decision-making Processes': {
+        'image': 'https://d2slcw3kip6qmk.cloudfront.net/marketing/blog/2019Q2/decision-making/decision-making-techniques-header@2x.png',
+        'label': 'Module',
+        'imageSize': 'bg-contain',
+        'num': '5',
+        'description': ``,
+        'collection': 'Content',
+        'date': {
+            'label': '',
+            'week': 'Week 5',
+            'month': 'Dec',
+            'date': '5'
+        }
+    },
+    'Conflict': {
+        'image': 'https://blog-cdn.reedsy.com/directories/admin/featured_image/281/types-of-conflict-f4b75d.jpg',
+        'label': 'Module',
+        'imageSize': 'bg-contain',
+        'num': '6',
+        'description': ``,
+        'collection': 'Content',
+        'date': {
+            'label': '',
+            'week': 'Week 6',
+            'month': 'Dec',
+            'date': '12'
+        }
+    },
+    'Emotion within Organisations': {
+        'image': 'https://www.paulekman.com/wp-content/uploads/2018/07/PAFF_040918_emotionspectrum2-609x419-1280x720.jpg',
+        'label': 'Module',
+        'imageSize': 'bg-contain',
+        'num': '7',
+        'description': ``,
+        'collection': 'Content',
+        'date': {
+            'label': '',
+            'week': 'Week 7',
+            'month': 'Dec',
+            'date': '19'
+        }
+    },
+    'Diversity Management': {
+        'image': 'https://www.nortonrosefulbright.com/-/media/images/nrf/about/diversity/racial-ethnic-cultural-diversity.jpg?revision=d888db4f-751d-4796-863f-961beadd9120&w=820&hash=52BC12A2795F4D420140A53701D07F4C',
+        'label': 'Module',
+        'imageSize': 'bg-contain',
+        'num': '8',
+        'description': ``,
+        'collection': 'Content',
+        'date': {
+            'label': '',
+            'week': 'Week 8',
+            'month': 'Jan',
+            'date': '9'
+        }
+    },
+    'Diversity Management continued...': {
+        'image': 'https://www.aauw.org/app/uploads/2020/11/dimensions-of-diversity-900x700-01_900x700_acf_cropped.png',
+        'label': 'Module',
+        'imageSize': 'bg-contain',
+        'num': '9',
+        'description': ``,
+        'collection': 'Content',
+        'date': {
+            'label': '',
+            'week': 'Week 9',
+            'month': 'Jan',
+            'date': '16'
+        }
+    },
+    'Communication and Technology': {
+        'image': 'https://www.training.com.au/wp-content/uploads/career-in-technology-feature.png',
+        'label': 'Module',
+        'imageSize': 'bg-contain',
+        'num': '10',
+        'description': ``,
+        'collection': 'Content',
+        'date': {
+            'label': '',
+            'week': 'Week 10',
+            'month': 'Jan',
+            'date': '23'
+        }
+    },
+    'Globalisation and Organisational Communication': {
+        'image': 'https://voxeu.org/sites/default/files/cover_images/blog_review/AdobeStock_167753719.jpeg',
+        'label': 'Module',
+        'imageSize': 'bg-contain',
+        'num': '11',
+        'description': ``,
+        'collection': 'Content',
+        'date': {
+            'label': '',
+            'week': 'Week 11',
+            'month': 'Jan',
+            'date': '30'
+        }
+    },
+    'The Global Work Environment': {
+        'image': 'https://www.ceps.eu/wp-content/uploads/2016/11/GlobalisationPub1-1300x731.jpg',
+        'label': 'Module',
+        'imageSize': 'bg-contain',
+        'num': '12',
+        'description': ``,
+        'collection': 'Content',
+        'date': {
+            'label': '',
+            'week': 'Week 12',
+            'month': 'Feb',
+            'date': '6'
+        }
+    },
 }
+
 
 };
 
