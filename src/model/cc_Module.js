@@ -561,7 +561,7 @@ let CARD_DEFAULTS = {
     },
     'https://lms.griffith.edu.au/courses/252': {
         'CC_COLLECTIONS_DEFAULTS': [
-            "Content", "Assessment", "Your Teaching Team"
+            "Content", "Assessment", "Your Teaching Team", "Student Support"
         ],
         'CC_DEFAULT_ACTIVE_COLLECTION': 'Content',
         'Welcome and Introduction to the Course': {
@@ -812,7 +812,7 @@ let CARD_DEFAULTS = {
             'noEngage' : true
         },
         'Griffith (OUA) Services': {
-            'image': '',
+            'image': 'https://news.griffith.edu.au/wp-content/uploads/2013/01/Open-Universities-Australia-OUA_large.gif',
             'label': '',
             'num': '',
             'description': `

@@ -1,18 +1,3 @@
-// ==UserScript==
-// @name         canvas-collections
-// @namespace    https://djon.es/
-// @version      0.3.0
-// @description  Modify Canvas LMS modules to support collections of modules and their representation
-// @author       David Jones
-// @match        https://*/courses/*
-// @grant        none
-// @source       https://github.com/djplaner/canvas-collections.git
-// @license      ISC
-// @homepage     https://github.com
-// @require      https://unpkg.com/circular-progress-bar
-// ==/UserScript==
-
-// src/view/cc_CanvasModulesView.js
 /****************
  * CanvasModulesViews - render the updated module information
  */
@@ -799,7 +784,6 @@ class cc_CanvasModulesView {
     }
 }
 
-// src/view/cc_LearningJourneyView.js
 /**
  * cc_LearningJourneyView
  * - implement a tabular view of a course's modules and items
@@ -829,7 +813,6 @@ class cc_LearningJourneyView {
    
 }
 
-// src/model/cc_Item.js
 class cc_Item {
 	/**
 	 * @descr construct object representing a Canvas module item
@@ -988,7 +971,6 @@ class cc_Item {
     
 }
 
-// src/model/cc_Module.js
 // Hard code default card values for 1031LAW_3215
 // key is the module name
 
@@ -2030,7 +2012,6 @@ class cc_Module {
     }
 }
 
-// src/cc_controller.js
 /**
  * cc_controller.js
  */
@@ -2151,7 +2132,6 @@ class cc_Controller {
 	}
 }
 
-// src/index.js
 const COURSE_ID=ENV.COURSE_ID;
 //const CSS_URL='<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/cards.css" />';
 //const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
