@@ -30,7 +30,7 @@ Each web browser’s browser extension installation process will be a little dif
 
 ## 2. Install canvas-collections userscript
 
-With TamperMonkey installed you can now install [the canvas-collections userscript](https://github.com/djplaner/canvas-collections/raw/main/release/canvas-collections.user.js). Just click on that link.
+With TamperMonkey installed you can now install [the canvas-collections userscript](https://github.com/djplaner/canvas-collections/raw/main/release/canvas-collections.live.user.js). Just click on that link.
 
 If all is working you should somethign like the following image. An image showing TamperMonkey providing you with details of the userscript and asking if you wish to install it.
 
