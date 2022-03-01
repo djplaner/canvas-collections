@@ -1,7 +1,3 @@
-/****************
- * CanvasModulesViews - render the updated module information
- */
-
 const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
 const TOOLTIPSTER_CSS=`
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/4.2.8/css/tooltipster.bundle.css" />';
