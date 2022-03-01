@@ -134,7 +134,7 @@ export default class cc_CanvasModulesView {
                 document.getElementById('cc-home-page-nav') || 
                 this.modules.length===0 || 
                 ! this.modules[0].courseHomePage || 
-                ! ('HOME_PAGE' in this.configuration)
+                ! (this.configuration!==null && 'HOME_PAGE' in this.configuration)
             ) {
             return;
         }

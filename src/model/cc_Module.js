@@ -833,9 +833,10 @@ let CARD_DEFAULTS = {
             },
             'noEngage': true
         },
-        'https://lms-dev.griffith.edu.au/courses/138': {
+    },
+    'https://lms-dev.griffith.edu.au/courses/138': {
             'CC_COLLECTIONS_DEFAULTS': [
-                "Co/ntent", "Assessment", "Your Teaching Team", "Student Support"
+                "Content", "Assessment", "Your Teaching Team", "Student Support"
             ],
             'CC_DEFAULT_ACTIVE_COLLECTION': 'Content',
             'Welcome and Introduction to the Course': {
@@ -1107,7 +1108,6 @@ let CARD_DEFAULTS = {
                 },
                 'noEngage': true
             },
-        }
     }
 };
 
@@ -1146,7 +1146,7 @@ export default class cc_Module {
         // this.configured is true if there is some hard wired
         // card configuration content above
         this.configured = false;
-        this.configuration = null;
+        this.configuration = {};
 
         // extract https://hostname/courses/[0-9]* from location
         let location = window.location.href;

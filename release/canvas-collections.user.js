@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.5.0
+// @version      0.5.1
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -148,7 +148,7 @@ class cc_CanvasModulesView {
                 document.getElementById('cc-home-page-nav') || 
                 this.modules.length===0 || 
                 ! this.modules[0].courseHomePage || 
-                ! ('HOME_PAGE' in this.configuration)
+                ! (this.configuration!==null && 'HOME_PAGE' in this.configuration)
             ) {
             return;
         }
@@ -1815,9 +1815,10 @@ let CARD_DEFAULTS = {
             },
             'noEngage': true
         },
-        'https://lms-dev.griffith.edu.au/courses/138': {
+    },
+    'https://lms-dev.griffith.edu.au/courses/138': {
             'CC_COLLECTIONS_DEFAULTS': [
-                "Co/ntent", "Assessment", "Your Teaching Team", "Student Support"
+                "Content", "Assessment", "Your Teaching Team", "Student Support"
             ],
             'CC_DEFAULT_ACTIVE_COLLECTION': 'Content',
             'Welcome and Introduction to the Course': {
@@ -2089,7 +2090,6 @@ let CARD_DEFAULTS = {
                 },
                 'noEngage': true
             },
-        }
     }
 };
 
@@ -2128,7 +2128,7 @@ class cc_Module {
         // this.configured is true if there is some hard wired
         // card configuration content above
         this.configured = false;
-        this.configuration = null;
+        this.configuration = {};
 
         // extract https://hostname/courses/[0-9]* from location
         let location = window.location.href;
