@@ -4,7 +4,11 @@ Improve the functionality of [Canvas LMS](https://www.instructure.com/en-au/canv
 1. Grouping modules into collections; and,
 2. Flexible and enhanced representations.
 
-> **Note:** :warning: This project is currently in the early stages of development :construction:. Currently only works as [userscript](https://en.wikipedia.org/wiki/User_script). To use the project, see the [install as userscript page](./docs/install_userscript.md).
+**Note:** :warning: This project is currently in the early stages of development :construction:. It is known to work as both a userscript and injected into a Canvas instance. Currently, canvas-collections will
+- Add default cards on the module page of any Canvas course.
+- Add specific cards and collections to Canvas courses using hard-coded configuration.
+
+
 
 ## Why?
 
@@ -33,10 +37,12 @@ The long-term plan is that the canvas-collections "architecture" will allow for 
 
 ## Status
 
-Early exploratory stage. 
-- Implementation as a [userscript](https://en.wikipedia.org/wiki/Userscript) for proof of concept purposes.
+You can use canvas-collection in two ways:
 
-    For those of us who don't yet have permission to add Javascript to Canvas.
+1. Individually, as a [userscript](https://en.wikipedia.org/wiki/User_script). 
+  Used for development and experimentation. You run canvas-collections in your web browser and it only impacts what you see. See the [install as userscript page](./docs/install_userscript.md) for how.
+2. Institutionally, by including it in Canvas.
+  If you wanted to use canvas-collections in production (not currently recommended). You us [the Canvas theme editor]() to include the canvas-collections Javascript (either the [minimised](https://raw.githubusercontent.com/djplaner/canvas-collections/main/release/canvas-collections.min.js) or [unminimised](https://raw.githubusercontent.com/djplaner/canvas-collections/main/release/canvas-collections.js) versions) in your Canvas instance.
 
 ## Functionality
 
