@@ -833,10 +833,282 @@ let CARD_DEFAULTS = {
             },
             'noEngage': true
         },
-
+        'https://lms-dev.griffith.edu.au/courses/138': {
+            'CC_COLLECTIONS_DEFAULTS': [
+                "Co/ntent", "Assessment", "Your Teaching Team", "Student Support"
+            ],
+            'CC_DEFAULT_ACTIVE_COLLECTION': 'Content',
+            'Welcome and Introduction to the Course': {
+                'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
+                'label': '',
+                'imageSize': 'bg-contain',
+                'num': '',
+                'description': `<p>Why, how and what you will be learning in this course? How wil you demonstrate your learning? How will you be supported?`,
+                'collection': 'Content',
+                'date': {
+                    'label': 'Before',
+                    'week': 'Week 1',
+                    'month': 'Nov',
+                    'date': '7'
+                }
+            },
+            'Classical Approaches to Organisational Communication': {
+                'image': 'https://knowledge.insead.edu/sites/www.insead.edu/files/images/2017/05/virtues_of_unintelligent_organisation_design.jpg',
+                'label': 'Module',
+                'imageSize': 'bg-contain',
+                'num': '1',
+                'description': ``,
+                'collection': 'Content',
+                'date': {
+                    'label': '',
+                    'week': 'Week 1',
+                    'month': 'Nov',
+                    'date': '7'
+                }
+            },
+            'Systems and Cultural Approaches': {
+                'image': 'https://sloanreview.mit.edu/wp-content/uploads/2019/10/GEN-Korman-Corporate-Culture-Business-Management-System-1200x627-1-1200x627.jpg',
+                'label': 'Module',
+                'imageSize': 'bg-contain',
+                'num': '2',
+                'description': ``,
+                'collection': 'Content',
+                'date': {
+                    'label': '',
+                    'week': 'Week 2',
+                    'month': 'Nov',
+                    'date': '14'
+                }
+            },
+            'Human Relations and Human Resource Approaches': {
+                'image': 'https://www.timeshighereducation.com/unijobs/getasset/68fdfdc4-4442-449a-8ad5-2a994eff3e57/',
+                'label': 'Module',
+                'imageSize': 'bg-contain',
+                'num': '3',
+                'description': ``,
+                'collection': 'Content',
+                'date': {
+                    'label': '',
+                    'week': 'Week 3',
+                    'month': 'Nov',
+                    'date': '21'
+                }
+            },
+            'Applying Theory to Employing Staff': {
+                'image': 'https://coincentral.com/wp-content/uploads/2018/07/manager-308474_1280.png',
+                'label': 'Module',
+                'imageSize': 'bg-contain',
+                'num': '4',
+                'description': ``,
+                'collection': 'Content',
+                'date': {
+                    'label': '',
+                    'week': 'Week 4',
+                    'month': 'Nov',
+                    'date': '28'
+                }
+            },
+            'Decision-making Processes': {
+                'image': 'https://d2slcw3kip6qmk.cloudfront.net/marketing/blog/2019Q2/decision-making/decision-making-techniques-header@2x.png',
+                'label': 'Module',
+                'imageSize': 'bg-contain',
+                'num': '5',
+                'description': ``,
+                'collection': 'Content',
+                'date': {
+                    'label': '',
+                    'week': 'Week 5',
+                    'month': 'Dec',
+                    'date': '5'
+                }
+            },
+            'Conflict': {
+                'image': 'https://blog-cdn.reedsy.com/directories/admin/featured_image/281/types-of-conflict-f4b75d.jpg',
+                'label': 'Module',
+                'imageSize': 'bg-contain',
+                'num': '6',
+                'description': ``,
+                'collection': 'Content',
+                'date': {
+                    'label': '',
+                    'week': 'Week 6',
+                    'month': 'Dec',
+                    'date': '12'
+                }
+            },
+            'Emotion within Organisations': {
+                'image': 'https://www.paulekman.com/wp-content/uploads/2018/07/PAFF_040918_emotionspectrum2-609x419-1280x720.jpg',
+                'label': 'Module',
+                'imageSize': 'bg-contain',
+                'num': '7',
+                'description': ``,
+                'collection': 'Content',
+                'date': {
+                    'label': '',
+                    'week': 'Week 7',
+                    'month': 'Dec',
+                    'date': '19'
+                }
+            },
+            'Diversity Management': {
+                'image': 'https://www.nortonrosefulbright.com/-/media/images/nrf/about/diversity/racial-ethnic-cultural-diversity.jpg?revision=d888db4f-751d-4796-863f-961beadd9120&w=820&hash=52BC12A2795F4D420140A53701D07F4C',
+                'label': 'Module',
+                'imageSize': 'bg-contain',
+                'num': '8',
+                'description': ``,
+                'collection': 'Content',
+                'date': {
+                    'label': '',
+                    'week': 'Week 8',
+                    'month': 'Jan',
+                    'date': '9'
+                }
+            },
+            'Diversity Management continued...': {
+                'image': 'https://www.aauw.org/app/uploads/2020/11/dimensions-of-diversity-900x700-01_900x700_acf_cropped.png',
+                'label': 'Module',
+                'imageSize': 'bg-contain',
+                'num': '9',
+                'description': ``,
+                'collection': 'Content',
+                'date': {
+                    'label': '',
+                    'week': 'Week 9',
+                    'month': 'Jan',
+                    'date': '16'
+                }
+            },
+            'Communication and Technology': {
+                'image': 'https://www.training.com.au/wp-content/uploads/career-in-technology-feature.png',
+                'label': 'Module',
+                'imageSize': 'bg-contain',
+                'num': '10',
+                'description': ``,
+                'collection': 'Content',
+                'date': {
+                    'label': '',
+                    'week': 'Week 10',
+                    'month': 'Jan',
+                    'date': '23'
+                }
+            },
+            'Globalisation and Organisational Communication': {
+                'image': 'https://voxeu.org/sites/default/files/cover_images/blog_review/AdobeStock_167753719.jpeg',
+                'label': 'Module',
+                'imageSize': 'bg-contain',
+                'num': '11',
+                'description': ``,
+                'collection': 'Content',
+                'date': {
+                    'label': '',
+                    'week': 'Week 11',
+                    'month': 'Jan',
+                    'date': '30'
+                }
+            },
+            'The Global Work Environment': {
+                'image': 'https://www.ceps.eu/wp-content/uploads/2016/11/GlobalisationPub1-1300x731.jpg',
+                'label': 'Module',
+                'imageSize': 'bg-contain',
+                'num': '12',
+                'description': ``,
+                'collection': 'Content',
+                'date': {
+                    'label': '',
+                    'week': 'Week 12',
+                    'month': 'Feb',
+                    'date': '6'
+                }
+            },
+            'Independent Learning Tasks': {
+                'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
+                'label': 'Assessment',
+                'num': '1',
+                'description': `<p>Throughout the course complete tasks and post your response to a discussion forum.  Comment on the work of your peers. Submit a Word document with your contributions by the due date.`,
+                'collection': 'Assessment',
+                'date': {
+                    'label': 'Due 5pm',
+                    'week': 'Week 11',
+                    'month': 'Jan',
+                    'date': '30'
+                }
+            },
+            'Short Essay': {
+                'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
+                'collection': 'Assessment',
+                'label': 'Assessment',
+                'num': '2',
+                'description': '<p>&nbsp;</p>',
+                'date': {
+                    'label': 'Due 5pm',
+                    'week': 'Week 7',
+                    'month': 'Dec',
+                    'date': '19'
+                }
+            },
+            'Major report: Diversity Management Plan': {
+                'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
+                'label': 'Assessment',
+                'num': '3',
+                'description': `<p>&nbsp;</p>`,
+                'collection': 'Assessment',
+                'date': {
+                    'label': 'Due 5pm',
+                    'week': 'Week 13',
+                    'month': 'Feb',
+                    'date': '13'
+                }
+            },
+            'Dr Bridget Backhaus': {
+                'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHXhIO4un0S_zx_2J6JlfxSVa4LPYcfe3jTUjaCTxoWu1sCVMLjcl4kJwtrmd-L1lFxyg&usqp=CAU',
+                'label': 'Unit Convenor',
+                'num': '',
+                'description': `<p>While I am very happy for students to contact me if they have 
+                questions about the course content, extensions or other unit-related topics, the 
+                first point of contact should be your tutor. If you need to contact me, please 
+                <a href="mailto:b.backhaus@griffith.edu.au">send me an email</a>.</p>
+                `,
+                'collection': 'Your Teaching Team',
+                'date': {
+                },
+                'noEngage' : true
+            },
+            'Annette Hurley': {
+                'image': '',
+                'label': 'Unit Tutor',
+                'num': '',
+                'description': `<p><strong>Email:</strong> 
+                <a href="mailto:annette.hurley@griffith.edu.au">annette.hurley@griffith.edu.au</a></p>
+                `,
+                'collection': 'Your Teaching Team',
+                'date': {
+                }, 
+                'noEngage' : true
+            },
+            'Griffith (OUA) Services': {
+                'image': 'https://news.griffith.edu.au/wp-content/uploads/2013/01/Open-Universities-Australia-OUA_large.gif',
+                'label': '',
+                'num': '',
+                'description': `
+                <p>Contact Griffith (OUA) Services for student administration queries.</p>
+                <p>As Open Universities Australia students it is your responsibility to be 
+                aware of all the university’s student policies and procedures as well as your 
+                rights and responsibilities.</p>
+                <p>
+                Email oua.programsupport@griffith.edu.au<br /> 
+                Work Phone 1800 154 055<br /> 
+                Office Location Student Administration, Community Place (L04) 1.13, Logan Campus, Griffith University, University Drive, MEADOWBROOK, QLD 4131<br /> 
+                Personal Link 
+                <a href="http://www.griffith.edu.au/open-universities-australia">http://www.griffith.edu.au/open-universities-australia</a>
+                </p>
+                `,
+                'collection': 'Your Teaching Team',
+                'date': {
+                },
+                'noEngage': true
+            },
+        }
     }
-
-
 };
 
 
