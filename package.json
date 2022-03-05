@@ -32,7 +32,7 @@
     "meta": {
       "name": "canvas-collections",
       "namespace": "https://djon.es/",
-      "homepage": "https://github.com",
+      "homepage": "https://github.com/djplaner/canvas-collections/tree/main#canvas-collections",
       "match": "https://*/courses/*",
       "grant": "none",
       "require": [
