@@ -188,7 +188,10 @@ input:checked + .cc-slider:before {
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
 		    <!-- i class="icon-mini-arrow-right"></i --> Canvas Collections
-			<i class="icon-mini-question-solid"></i>
+			<a target="_blank"
+			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
+			   <i class="icon-question"></i>
+		   </a>
 		  </div>
 		<label class="cc-switch">
 		    <input type="checkbox" class="cc-toggle-checkbox" id="cc-switch">
