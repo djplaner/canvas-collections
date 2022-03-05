@@ -12,6 +12,243 @@
 // @require      https://unpkg.com/circular-progress-bar
 // ==/UserScript==
 
+// src/Configuration/cc_ConfigurationModel.js
+/**
+ * cc_ConfigurationModel.js
+ * Hold the cc data structure and provide data methods required for configuration
+ * - isOn - true iff cc is on
+ * 
+ */
+
+class cc_ConfigurationModel {
+
+	constructor(controller) {
+		DEBUG && console.log('-------------- cc_ConfigurationModel.constructor()');
+
+		this.controller = controller;
+		this.isOn = false;
+	}
+
+}
+
+// src/cc_View.js
+/**
+ * cc_View.js - parent view class for cc 
+ * - placeholder for any generic methods
+ * 
+ */
+
+
+
+class cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		this.model = model;
+		this.controller = controller;
+	}
+}
+
+// src/Configuration/cc_ConfigurationView.js
+/**
+ * cc_ConfigurationView.js 
+ * Update Canvas display (only on modules pages with edit mode on) to show
+ * - title for cc
+ * - switch to turn on/off
+ * - drop down arrow to show the configuration dialog
+ * - TODO: configuration dialog
+ *  
+ */
+
+
+
+class cc_ConfigurationView extends cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		super( model, controller );
+	}
+
+	/**
+	 * @descr Modify the canvas page to show the cc title, switch, and drop arrow.
+	 * Set up the click handlers for the switch and drop arrow.
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- cc_ConfigurationView.display()');
+
+		// Add the cc configuration bundle
+		this.addCcBundle();
+	}
+
+	/**
+	 * @descr Add the cc configuration bundle to the canvas page.
+	 * Currently placed to the left of the "Student View" button at the top of page
+	 */
+	addCcBundle() {
+
+		// inject the switch script tag into the canvas page, just after start of body
+		const SL_SWITCH_HTML = `
+		 <style>
+		 /* The switch - the box around the slider */
+.cc-switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+/*  width: 1em; */
+  height: 17px;
+  margin-top: .75rem;
+  margin-right: 0.5rem
+}
+
+/* Hide default HTML checkbox */
+.cc-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.cc-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.cc-slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .cc-slider {
+  background-color: #328c04;
+}
+
+input:focus + .cc-slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .cc-slider:before {
+  -webkit-transform: translateX(13px);
+  -ms-transform: translateX(13px);
+  transform: translateX(13px);
+}
+
+/* Rounded sliders */
+.cc-slider.cc-round {
+  border-radius: 17px;
+}
+
+.cc-slider.cc-round:before {
+  border-radius: 50%;
+}
+
+.cc-switch-container {
+	background-color: #f5f5f5;
+	border: 1px solid #c7cdd1;
+	color: var(--ic-brand-font-color-dark);
+	display: flex;
+	position:relative;
+}
+
+.cc-switch-title {
+	margin: 0.5rem
+}
+
+		 </style>
+			`;
+		
+		const body = document.querySelector('div#application');
+		body.insertAdjacentHTML('afterbegin', SL_SWITCH_HTML);
+
+		const cc_on = "on";
+		// Try the Canvas switch way first
+		const CC_BUNDLE_HTML = `
+		<div class="cc-switch-container">
+		  <div class="cc-switch-title">
+		    <!-- i class="icon-mini-arrow-right"></i --> Canvas Collections
+			<i class="icon-mini-question-solid"></i>
+		  </div>
+		<label class="cc-switch">
+		    <input type="checkbox" class="cc-toggle-checkbox" id="cc-switch">
+			<span class="cc-slider cc-round"></span>
+		</label>
+	   </div>
+		`;
+
+	   // find a#easy_student_view
+	   // insert before a#easy_student_view
+	   let easy_student_view = document.querySelector('a#easy_student_view');
+	   if (easy_student_view) {
+			easy_student_view.insertAdjacentHTML('afterend', CC_BUNDLE_HTML);
+		} else {
+			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
+		}
+	}
+
+}
+
+// src/Configuration/cc_ConfigurationController.js
+/**
+ * @class cc_ConfigurationController
+ * @classdesc Controller showing cc configuration. Consists of 2 main parts
+ * - cc title and switch
+ *   Components include
+ *   - "Canvas Collections" title and help tooltip
+ *   - a switch to enable/disable
+ *   - a drop down arrow to show the configuration dialog
+ * - cc configuration dialog
+ *   Method for user to
+ *   - see some sort of summary of collections, modules
+ *   - change the representation of cc: just collections, collections+representation
+ *   - ?? whether to show "other" modules not belonging to collections
+ *   - add or remove collections
+ *   - change the order of collections
+ * 
+ */
+
+
+
+
+
+class cc_ConfigurationController {
+
+	/**
+	 * @descr Initialise the controller
+	 */
+	constructor(controller) {
+		DEBUG && console.log('-------------- cc_ConfigurationController.constructor()');
+
+		this.parentController = controller;
+		this.model = new cc_ConfigurationModel(this);
+		this.view = new cc_ConfigurationView(this.model, this);
+
+		this.view.display();
+	}
+
+}
+
 // src/cc_Controller.js
 /**
  * @class cc_Controller
@@ -26,6 +263,10 @@
 //import { cc_CanvasModules } from './model/cc_CanvasModules.js'; 
 //import { cc_CanvasModulesView } from './view/cc_CanvasModulesView.js';
 //import { cc_LearningJourneyView } from './view/cc_LearningJourneyView.js';
+
+
+//import { cc_EditController } from './Edit/cc_EditController.js';
+//import { cc_ViewController } from './View/cc_ViewController.js';
 
 //import { cc_Module} from './model/cc_Module.js';
 
@@ -181,14 +422,14 @@ class cc_Controller {
 				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - config');
 				// now based on the configuration show the rest of the cc interface
 				this.showConfiguration();
-				this.showCollectionsEditMode();
+				this.showEdit();
 
 			}
 		} else {
 			// students only see stuff if there is a config
 			if (this.cc_configuration!==null) {
 				DEBUG && console.log('-------------- cc_Controller.execute() Students Mode - config');
-				this.showCollectionsStudentMode();
+				this.showStudent();
 			}
 		}
 	}
@@ -198,23 +439,26 @@ class cc_Controller {
 	 */
 	showConfiguration() {
 		DEBUG && console.log('-------------- cc_Controller.showConfiguration()');
-
+		this.configurationController = new cc_ConfigurationController(this);
 	}
 
 	/**
 	 * @descr Show the cc interface for edit mode
 	 */
 
-	showCollectionsEditMode() {
-		DEBUG && console.log('-------------- cc_Controller.showCollectionsEditMode()');
-
+	showEdit() {
+		DEBUG && console.log('-------------- cc_Controller.showCollectionsEdit()');
+//		this.editController = new cc_EditController(this);
+//		this.editController.execute();
 	}
 
 	/**
 	 * @descr Show the cc interface for students mode
 	 */
-	showCollectionsStudentMode() {
+	showStudent() {
 		DEBUG && console.log('-------------- cc_Controller.showCollectionsStudentMode()');
+//		this.studentController = new cc_StudentController(this);
+//		this.studentController.execute();
 	}
 
     /**

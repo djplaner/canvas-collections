@@ -12,6 +12,10 @@
 //import { cc_CanvasModulesView } from './view/cc_CanvasModulesView.js';
 //import { cc_LearningJourneyView } from './view/cc_LearningJourneyView.js';
 
+import { cc_ConfigurationController} from './Configuration/cc_ConfigurationController.js';
+//import { cc_EditController } from './Edit/cc_EditController.js';
+//import { cc_ViewController } from './View/cc_ViewController.js';
+
 //import { cc_Module} from './model/cc_Module.js';
 
 //const DEBUG=false;
@@ -166,14 +170,14 @@ export default class cc_Controller {
 				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - config');
 				// now based on the configuration show the rest of the cc interface
 				this.showConfiguration();
-				this.showCollectionsEditMode();
+				this.showEdit();
 
 			}
 		} else {
 			// students only see stuff if there is a config
 			if (this.cc_configuration!==null) {
 				DEBUG && console.log('-------------- cc_Controller.execute() Students Mode - config');
-				this.showCollectionsStudentMode();
+				this.showStudent();
 			}
 		}
 	}
@@ -183,23 +187,26 @@ export default class cc_Controller {
 	 */
 	showConfiguration() {
 		DEBUG && console.log('-------------- cc_Controller.showConfiguration()');
-
+		this.configurationController = new cc_ConfigurationController(this);
 	}
 
 	/**
 	 * @descr Show the cc interface for edit mode
 	 */
 
-	showCollectionsEditMode() {
-		DEBUG && console.log('-------------- cc_Controller.showCollectionsEditMode()');
-
+	showEdit() {
+		DEBUG && console.log('-------------- cc_Controller.showCollectionsEdit()');
+//		this.editController = new cc_EditController(this);
+//		this.editController.execute();
 	}
 
 	/**
 	 * @descr Show the cc interface for students mode
 	 */
-	showCollectionsStudentMode() {
+	showStudent() {
 		DEBUG && console.log('-------------- cc_Controller.showCollectionsStudentMode()');
+//		this.studentController = new cc_StudentController(this);
+//		this.studentController.execute();
 	}
 
     /**

@@ -59,7 +59,7 @@
 
 In each state there may be input elements, these will need to have event handlers that connect back to the controller and/or views (controller probably). 
 
-1. Intitial
+1. Configuration
     - edit only view 
     - shows the capability for canvas-collections to be turned on 
     - but not currently turned on
