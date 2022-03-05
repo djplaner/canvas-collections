@@ -41,40 +41,117 @@ class cc_Controller {
 		DEBUG && console.log('-------------- cc_Controller.constructor()');
     
 		// Use document location to set various values controlling operation
-		this.setLocation();
+		this.setContext();
 
 		DEBUG && console.log(`cc_Controller: location = ${location}`);
 		DEBUG && console.log(`cc_Controller: courseId = ${this.courseId}`);
 		DEBUG && console.log(`cc_Controller: modulesPage = ${this.modulesPage}`);
 		DEBUG && console.log(`cc_Controller: homeModulesPage = ${this.homeModulesPage}`);
+		DEBUG && console.log(`cc_Controller: editMode = ${this.editMode}`);
 	
 		// TODO: extract any additional parameters in the query string
         // this.checkQueryString();
 
-		// if cc should run, request cc_config.json which will then call this.execute
+		this.configFileDetails = null;
+		this.cc_configuration = null;
+
+		// if cc should run, try to get the config
         if (this.modulesPage || this.homeModulesPage) {
 			this.setCsrfToken();
 			DEBUG && console.log(`cc_Controller: csrf = ${this.csrf}`);
 
-			this.requestConfig();
+			this.requestConfigFileId();
 		} 
 	}
 
 	/**
-	 * @descr Request cc_config.json file from Canvas files area of current course, will call this.execute on response
-	 * - Needs to search for cc_config.json to get id, then
-	 * - get the file
+	 * @descr Request the file id for the cc_config.json file
+	 * - If successful then request the file contents
+	 * - if not, call execute with no config
 	 */
-	requestConfig() { 
+	requestConfigFileId() { 
 
 		let callUrl = `/api/v1/courses/${this.courseId}/files?` + new URLSearchParams(
 			{'search_term': 'cc_config.json'});
 
 		DEBUG && console.log(`cc_Controller: requestConfig: callUrl = ${callUrl}`);
 
-//		fetch()
+		fetch(callUrl, { 
+			method: 'GET', credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRF-Token": this.csrfToken,
+            }
+        }) 
+        .then(this.status) 
+        .then((response) => { 
+            return response.json(); 
+        }) 
+        .then((json) => {
+			DEBUG && console.log(`cc_Controller: requestConfig: json = ${JSON.stringify(json)}`);
 
-		this.execute();
+			if (json.length===0) {
+				DEBUG && console.log(`cc_Controller: requestConfig: no config file found`);
+			} else if (json.length===1) {
+				this.configFileDetails = json[0];
+			    this.requestConfigFileContent();
+			} else { 
+				DEBUG && console.log(`cc_Controller: requestConfig: more than one (${json.length}) config file found`);
+			} 
+        })			
+		.catch((error) => {
+			console.log(`cc_Controller: requestConfig: error = `);
+			console.log(error);
+		}, false );
+	}
+
+	/**
+	 * @descr Request the config file, called only after requestConfigFileId is successful in
+	 * setting this.configDetails to json (e.g. below). Request the content of this file, if the
+	 * file itself is json
+	 * {
+	 *   "id":210137, "uuid":"wyuY3tKLdqWIR2tMbhqsteIjime1vVNhIUrFnPDS",
+	 *   "folder_id":177, "display_name":"cc_config.json", "filename":"cc_config.json",
+	 *   "upload_status":"success","content-type":"application/json",
+	 *   "url":"https://lms.griffith.edu.au/files/210137/download?download_frd=1","size":684,
+	 *   "created_at":"2022-03-05T03:27:56Z","updated_at":"2022-03-05T03:27:56Z",
+	 *   "unlock_at":null,"locked":false,"hidden":false,"lock_at":null,"hidden_for_user":false,
+	 *   "thumbnail_url":null,"modified_at":"2022-03-05T03:27:56Z","mime_class":"file",
+	 *   "media_entry_id":null,"locked_for_user":false} 
+	 */
+
+	requestConfigFileContent() {
+		DEBUG && console.log(`cc_Controller: requestConfigFileContent: for ${this.configFileDetails.id}`);
+
+		if (this.configFileDetails['content-type']!=='application/json') {
+			DEBUG && console.log(`cc_Controller: requestConfigFile: not json`);
+			return;
+		}
+
+		//-- get the file contents
+		let callUrl = this.configFileDetails.url;
+
+		DEBUG && console.log(
+			`cc_Controller: requestConfigFileContent: callUrl = ${callUrl}`);
+
+		fetch(callUrl, { 
+			method: 'GET', 
+		} )
+        .then(this.status) 
+        .then((response) => { 
+            return response.json(); 
+        }) 
+        .then((json) => {
+			DEBUG && console.log(`cc_Controller: requestConfigFileContent: json = ${JSON.stringify(json)}`);
+
+			this.cc_configuration = json;
+			this.execute();
+        })			
+		.catch((error) => {
+			console.log(`cc_Controller: requestConfigFileContent: error = ${error}`);
+		}, false );
+
 	}
 
 	/**
@@ -83,7 +160,61 @@ class cc_Controller {
 	 */
 
 	execute() {
+		// do some final checks to make sure we don't run when not required
+        if (!this.modulesPage && !this.homeModulesPage) {
+			DEBUG && console.log('-------------- cc_Controller.execute() ERROR SHOULDN"T BE RUNNING');
+			return;
+		}
+
 		DEBUG && console.log('-------------- cc_Controller.execute()');
+		console.log(this.cc_configuration);
+
+		//-- figure out what to do
+
+		if ( this.editMode ) {
+			if (this.cc_configuration===null) {
+				// no configuration - show the cc interface with option to create one
+				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - no config');
+				this.showConfiguration();
+			} else {
+				// configuration - show the cc interface 
+				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - config');
+				// now based on the configuration show the rest of the cc interface
+				this.showConfiguration();
+				this.showCollectionsEditMode();
+
+			}
+		} else {
+			// students only see stuff if there is a config
+			if (this.cc_configuration!==null) {
+				DEBUG && console.log('-------------- cc_Controller.execute() Students Mode - config');
+				this.showCollectionsStudentMode();
+			}
+		}
+	}
+
+	/**
+	 * @descr Show the cc configuration interface at the top of the page
+	 */
+	showConfiguration() {
+		DEBUG && console.log('-------------- cc_Controller.showConfiguration()');
+
+	}
+
+	/**
+	 * @descr Show the cc interface for edit mode
+	 */
+
+	showCollectionsEditMode() {
+		DEBUG && console.log('-------------- cc_Controller.showCollectionsEditMode()');
+
+	}
+
+	/**
+	 * @descr Show the cc interface for students mode
+	 */
+	showCollectionsStudentMode() {
+		DEBUG && console.log('-------------- cc_Controller.showCollectionsStudentMode()');
 	}
 
     /**
@@ -119,8 +250,9 @@ class cc_Controller {
 	 * - modulesPage - true iff the current page is a Canvas modules page
 	 * - homeModulesPage - true iff the current page is a Canvas course home page with modules 
 	 * - courseId - the canvas course id
+	 * - editMode - true iff not in student view
 	 */
-	setLocation() {
+	setContext() {
 	    const location = window.location.href;
 
 		// courseId
@@ -143,6 +275,9 @@ class cc_Controller {
 		// - div#context_modules is present
 		regEx = new RegExp(`courses/${courseId}$`);
 		this.homeModulesPage = regEx.test(location) && (document.getElementById('context_modules')!==null);
+
+		// editMode true iff a#easy_student_view exists
+		this.editMode = (document.getElementById('easy_student_view')!==null);
 	}
 
 
