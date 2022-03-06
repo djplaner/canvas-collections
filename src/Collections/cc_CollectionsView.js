@@ -21,6 +21,7 @@
 import { cc_View } from '../cc_View.js';
 
 import { cc_NavView } from './cc_NavView.js';
+import { cc_CardsView } from './cc_CardsView.js';
 
 export default class cc_CollectionsView extends cc_View {
 
@@ -33,7 +34,7 @@ export default class cc_CollectionsView extends cc_View {
 		super( model, controller );
 
 		this.navView = new cc_NavView( model, controller );
-//		this.representationView = new cc_RepresentationView( model, controller );
+		this.representationView = new cc_CardsView( model, controller );
 	}
 
 	/**
@@ -51,9 +52,8 @@ export default class cc_CollectionsView extends cc_View {
 		// TODO call other views to display the collections
 		this.navView.display();
 
-//		this.representationView.display();
 
-
+		this.representationView.display();
 	}
 
 	/**

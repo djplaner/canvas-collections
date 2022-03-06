@@ -33,7 +33,7 @@ export default class cc_NavView extends cc_View {
 //		let html ='<h1> Hello from NavView </h1>';
 
 		let navBar = this.generateNavBar();
-		div.insertAdjacentElement('afterbegin', navBar);
+		div.insertAdjacentElement('beforeend', navBar);
 
 		// add html to div#cc-canvas-collections
 //		div.insertAdjacentHTML('afterbegin', html);

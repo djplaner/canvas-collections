@@ -1,6 +1,7 @@
 /**
  * cc_CardsView.js 
  * - insert the cards for the current collection
+ * - initially trying to use the Canvas cards
  *  
  */
 
@@ -16,6 +17,7 @@ export default class cc_CardsView extends cc_View {
 	constructor( model, controller ) {
 		super( model, controller );
 
+		this.currentCollection = this.model.getCurrentCollection();
 	}
 
 	/**
@@ -30,113 +32,68 @@ export default class cc_CardsView extends cc_View {
 		// generate the HTML
 //		let html ='<h1> Hello from CardsView </h1>';
 
-		let navBar = this.generateNavBar();
-		div.insertAdjacentElement('afterbegin', navBar);
+		let cards = this.generateCards();
+		div.insertAdjacentElement('beforeend', cards);
 
 		// add html to div#cc-canvas-collections
 //		div.insertAdjacentHTML('afterbegin', html);
 	}
 
-	generateNavBar() { 
-		let navBar = document.createElement('div');
-		navBar.className = 'cc-nav';
+	generateCards() { 
 
-//		const collectionNames = this.model.getCollectionNames();
+        let cardContainer = document.createElement('div');
+		cardContainer.class = "DashboardCard_Container";
+		cardContainer.style = "display:block";
 
-		const navBarStyles = `
-		<style>
-.cc-content {
-    clear:both;
-}
+		let box = document.createElement('div');
+		box.className = 'ic-DashboardCard__box__container';
 
-.cc-nav { 
-    font-size: small;
-}
+		cardContainer.appendChild(box);
 
-.cc-nav ul  {
-	list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden ;
-    background-color: #eee; 
-    width:100%;
-}
-
-li.cc-active {
-    background-color: var(--ic-brand-button--primary-bgd);
-    /* font-weight: bold; */
-}
-
-li.cc-active a {
-	color: var(--ic-brand-button--primary-text) !important;
-}
-
-li.cc-close {
-    float: right !important;
-    border-right: none !important;
-}
-
-.cc-nav ul li {
-    float:left;
-    border-right: 1px solid #000;
-}
-
-li.cc-active a {
-  /*  color: black !important; */
-}
-
-li.cc-nav a {
-    display: block;
-    padding: 0.5em;
-    text-align: center;
-    text-decoration: none;
-    color: #2d3b45;  
-}
-
-.cc-nav li a:hover {
-    background-color: #111;
-}
-
-.cc-nav li:nth-child(4) {
-    border-right: none;
-}
-</style>
-		`;
-
-		// insert styles in navBar
-		navBar.insertAdjacentHTML('afterbegin', navBarStyles);
 
 		let count = 0;
-		let navList = document.createElement('ul');
-        for (let collection of this.model.getCollectionNames()) {
-            let navClass = ['li', 'mr-4'];
-            let style = 'cc-nav';
+        for (let module of this.model.getModulesCollections()) {
 
+			console.log(module);
 
-            let navElement = `
-		  <a href="#">${collection}</a>
-		`;
-            let navItem = document.createElement('li');
-			navItem.className = "cc-nav";
+			if ( module.collection !== this.currentCollection ) {
+				// not the right collection, skip this one
+				continue;
+			}
 
-			// set the active navigation item if currentCollection is defined and matches OR
-			// currentCollection is undefined and we're at the first one
-            if ( 
-				( collection === this.currentCollection) || 
-			    ( this.currentCollection === undefined && count===0 )
-			 ) {
-                navItem.classList.add('cc-active');
-            }
-			count+=1;
-
-            //navItem.onclick = () => cc_collectionClick(collection,this);
-            navItem.onclick = () => this.collectionsClick(collection, this);
-            navItem.innerHTML = navElement;
-            navList.appendChild(navItem);
+			let cardHtml = `
+<div class="ic-DashboardCard" aria-label="Module ${module.name}" style="opacity:1;">
+  <div class="ic-DashboardCard__header">
+    <span class="screenreader-only">Module image for ${module.name}</span>
+	<div class="ic-DashboardCard__header_image" style="background-image: url(${module.image});">
+	  <div class="ic-DashboardCard__header__hero" aria-hidden="true" 
+	     style="background-color: rgb(152,108,22); opacity:0.6;">
+	  </div>
+	</div>
+	<a href="#module_${module.id}" class="ic-DashboardCard__link">
+	  <div class="ic-DashboardCard__header__content">
+	    <h3 class="ic-DashbaordCard__header-title ellipsis" title="${module.name}">
+		  ${module.name}
+		</h3>
+	    <div class="ic-DashboardCard__header__subtitle ellipsis" title="TODO SOME LABEL">
+		  Some label #1
+		</div>
+		<div class="ic-DashboardCard__header-term ellipsis" title="${module.description}">
+		  ${module.description}
+		</div>
+	  </div>
+	</a>
+	<div>
+       <!-- the date stuff could go here -->
+	</div>
+  </div>
+  <nav class="ic-DashboardCard__action-container" aria-label="Actions for ${module.name}"></nav>
+</div>
+			`;
+		    box.insertAdjacentHTML('beforeend', cardHtml);
         }
-		navBar.appendChild(navList);
 
-		return navBar;
+		return cardContainer;
 	}
 }
 

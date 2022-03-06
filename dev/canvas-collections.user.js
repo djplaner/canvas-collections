@@ -282,11 +282,58 @@ class cc_CollectionsModel {
 		this.controller = controller;
 		this.cc_configuration = this.controller.parentController.cc_configuration;
 
+		// merge the Canvas module and Collections configurations
+		this.createModuleCollections();
+
 		this.currentCollection = 'Assessment';
 	}
 
 	getCollectionNames() {
 		return this.cc_configuration.CC_COLLECTIONS_DEFAULTS;
+	}
+
+	/**
+	 * @descr Create this.moduleCollections that is a list of dicts for modules including
+	 * both the Canvas module information and the cc module information
+	 */
+	createModuleCollections() {
+		DEBUG && console.log('-------------- cc_CollectionsModel.createModuleCollections()');
+		// an array of dicts
+		let canvasModules = this.controller.parentController.moduleDetails;
+		// dict of dicts with some keyed on the names of modules
+		let ccModules = this.cc_configuration;
+
+		this.modulesCollections = [];
+		// loop thru canvasModules 
+		for (let i = 0; i < canvasModules.length; i++) {
+			let details = {}
+			// loop thu all the keys in current canvas modules
+			for (let key in canvasModules[i]) {
+				details[key] = canvasModules[i][key];
+			}
+			// get the matching ccModules
+			let ccModule = ccModules[canvasModules[i].name];
+			if (ccModule) {
+				// loop thru all the keys in ccModule
+				for (let key in ccModule) {
+					details[key] = ccModule[key];
+				}
+			}
+			this.modulesCollections.push(details);
+		}
+		console.log(this.modulesCollections);
+	}
+
+	getModules() {
+		return this.controller.parentController.moduleDetails;
+	}
+
+	getModulesCollections() {
+		return this.modulesCollections;
+	}
+
+	getCurrentCollection() {
+		return this.currentCollection;
 	}
 
 }
@@ -327,7 +374,7 @@ class cc_NavView extends cc_View {
 //		let html ='<h1> Hello from NavView </h1>';
 
 		let navBar = this.generateNavBar();
-		div.insertAdjacentElement('afterbegin', navBar);
+		div.insertAdjacentElement('beforeend', navBar);
 
 		// add html to div#cc-canvas-collections
 //		div.insertAdjacentHTML('afterbegin', html);
@@ -435,6 +482,106 @@ li.cc-nav a {
 	}
 }
 
+// src/Collections/cc_CardsView.js
+/**
+ * cc_CardsView.js 
+ * - insert the cards for the current collection
+ * - initially trying to use the Canvas cards
+ *  
+ */
+
+
+
+class cc_CardsView extends cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		super( model, controller );
+
+		this.currentCollection = this.model.getCurrentCollection();
+	}
+
+	/**
+	 * @descr insert a nav bar based on current collections
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- cc_CardsView.display()');
+		let div = document.getElementById('cc-canvas-collections');
+
+
+		// generate the HTML
+//		let html ='<h1> Hello from CardsView </h1>';
+
+		let cards = this.generateCards();
+		div.insertAdjacentElement('beforeend', cards);
+
+		// add html to div#cc-canvas-collections
+//		div.insertAdjacentHTML('afterbegin', html);
+	}
+
+	generateCards() { 
+
+        let cardContainer = document.createElement('div');
+		cardContainer.class = "DashboardCard_Container";
+		cardContainer.style = "display:block";
+
+		let box = document.createElement('div');
+		box.className = 'ic-DashboardCard__box__container';
+
+		cardContainer.appendChild(box);
+
+
+		let count = 0;
+        for (let module of this.model.getModulesCollections()) {
+
+			console.log(module);
+
+			if ( module.collection !== this.currentCollection ) {
+				// not the right collection, skip this one
+				continue;
+			}
+
+			let cardHtml = `
+<div class="ic-DashboardCard" aria-label="Module ${module.name}" style="opacity:1;">
+  <div class="ic-DashboardCard__header">
+    <span class="screenreader-only">Module image for ${module.name}</span>
+	<div class="ic-DashboardCard__header_image" style="background-image: url(${module.image});">
+	  <div class="ic-DashboardCard__header__hero" aria-hidden="true" 
+	     style="background-color: rgb(152,108,22); opacity:0.6;">
+	  </div>
+	</div>
+	<a href="#module_${module.id}" class="ic-DashboardCard__link">
+	  <div class="ic-DashboardCard__header__content">
+	    <h3 class="ic-DashbaordCard__header-title ellipsis" title="${module.name}">
+		  ${module.name}
+		</h3>
+	    <div class="ic-DashboardCard__header__subtitle ellipsis" title="TODO SOME LABEL">
+		  Some label #1
+		</div>
+		<div class="ic-DashboardCard__header-term ellipsis" title="${module.description}">
+		  ${module.description}
+		</div>
+	  </div>
+	</a>
+	<div>
+       <!-- the date stuff could go here -->
+	</div>
+  </div>
+  <nav class="ic-DashboardCard__action-container" aria-label="Actions for ${module.name}"></nav>
+</div>
+			`;
+		    box.insertAdjacentHTML('beforeend', cardHtml);
+        }
+
+		return cardContainer;
+	}
+}
+
 // src/Collections/cc_CollectionsView.js
 /**
  * cc_CollectionsView.js 
@@ -460,6 +607,7 @@ li.cc-nav a {
 
 
 
+
 class cc_CollectionsView extends cc_View {
 
 	/**
@@ -471,7 +619,7 @@ class cc_CollectionsView extends cc_View {
 		super( model, controller );
 
 		this.navView = new cc_NavView( model, controller );
-//		this.representationView = new cc_RepresentationView( model, controller );
+		this.representationView = new cc_CardsView( model, controller );
 	}
 
 	/**
@@ -489,9 +637,8 @@ class cc_CollectionsView extends cc_View {
 		// TODO call other views to display the collections
 		this.navView.display();
 
-//		this.representationView.display();
 
-
+		this.representationView.display();
 	}
 
 	/**
