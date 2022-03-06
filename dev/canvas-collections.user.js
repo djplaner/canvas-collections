@@ -403,11 +403,47 @@ class cc_Controller {
 			DEBUG && console.log(`cc_Controller: requestConfigFileContent: json = ${JSON.stringify(json)}`);
 
 			this.cc_configuration = json;
+			this.requestModuleInformation();
+        })			
+		.catch((error) => {
+			console.log(`cc_Controller: requestConfigFileContent: error = ${error}`);
+		}, false );
+
+	}
+
+	/**
+	 * @descr Generate API request for all information of course's modules
+	 */
+	requestModuleInformation() {
+		DEBUG && console.log(`cc_Controller: requestModuleInformation: for ${this.courseId}`);
+
+		let callUrl = `/api/v1/courses/${this.courseId}/modules`;
+
+		DEBUG && console.log(`cc_Controller: requestModuleInformation: callUrl = ${callUrl}`);
+
+		fetch(callUrl, { 
+			method: 'GET', credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRF-Token": this.csrfToken,
+            }
+        }) 
+        .then(this.status) 
+        .then((response) => { 
+            return response.json(); 
+        }) 
+        .then((json) => {
+			DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(json)}`);
+
+			this.moduleDetails = json;
+			// cc is now on, because we have all the data
 			this.ccOn = true;
 			this.execute();
         })			
 		.catch((error) => {
-			console.log(`cc_Controller: requestConfigFileContent: error = ${error}`);
+			console.log(`cc_Controller: requestModuleInformation: error = `);
+			console.log(error);
 		}, false );
 
 	}
@@ -446,7 +482,7 @@ class cc_Controller {
 			// students only see stuff if there is a config
 			if (this.cc_configuration!==null) {
 				DEBUG && console.log('-------------- cc_Controller.execute() Students Mode - config');
-				this.showStudent();
+				this.showCollections();
 			}
 		}
 	}
@@ -460,22 +496,20 @@ class cc_Controller {
 	}
 
 	/**
-	 * @descr Show the cc interface for edit mode
+	 * @descr Update the Canvas modules display to include cc edit functionality
 	 */
 
 	showEdit() {
 		DEBUG && console.log('-------------- cc_Controller.showCollectionsEdit()');
 //		this.editController = new cc_EditController(this);
-//		this.editController.execute();
 	}
 
 	/**
-	 * @descr Show the cc interface for students mode
+	 * @descr Insert the collections view before (or perhaps eventually instead) of the Canvas modules view
 	 */
-	showStudent() {
+	showCollections() {
 		DEBUG && console.log('-------------- cc_Controller.showCollectionsStudentMode()');
-//		this.studentController = new cc_StudentController(this);
-//		this.studentController.execute();
+		this.collectionsController = new cc_CollectionsController(this);
 	}
 
     /**
