@@ -1,14 +1,12 @@
 /**
- * cc_NavView.js 
- * - insert the navigation elements into div#cc-canvas-collections 
- * - initially just a simple navBar
- * - TODO better and more varied representations
+ * cc_CardsView.js 
+ * - insert the cards for the current collection
  *  
  */
 
 import { cc_View } from '../cc_View.js';
 
-export default class cc_NavView extends cc_View {
+export default class cc_CardsView extends cc_View {
 
 	/**
 	 * @descr Initialise the view
@@ -25,12 +23,12 @@ export default class cc_NavView extends cc_View {
 	 */
 
 	display() {
-		DEBUG && console.log('-------------- cc_NavView.display()');
+		DEBUG && console.log('-------------- cc_CardsView.display()');
 		let div = document.getElementById('cc-canvas-collections');
 
 
 		// generate the HTML
-//		let html ='<h1> Hello from NavView </h1>';
+//		let html ='<h1> Hello from CardsView </h1>';
 
 		let navBar = this.generateNavBar();
 		div.insertAdjacentElement('afterbegin', navBar);
@@ -43,6 +41,7 @@ export default class cc_NavView extends cc_View {
 		let navBar = document.createElement('div');
 		navBar.className = 'cc-nav';
 
+//		const collectionNames = this.model.getCollectionNames();
 
 		const navBarStyles = `
 		<style>
@@ -123,8 +122,8 @@ li.cc-nav a {
 			// set the active navigation item if currentCollection is defined and matches OR
 			// currentCollection is undefined and we're at the first one
             if ( 
-				( collection === this.model.currentCollection) || 
-			    ( this.model.currentCollection === undefined && count===0 )
+				( collection === this.currentCollection) || 
+			    ( this.currentCollection === undefined && count===0 )
 			 ) {
                 navItem.classList.add('cc-active');
             }

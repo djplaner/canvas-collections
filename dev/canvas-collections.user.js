@@ -281,6 +281,8 @@ class cc_CollectionsModel {
 
 		this.controller = controller;
 		this.cc_configuration = this.controller.parentController.cc_configuration;
+
+		this.currentCollection = 'Assessment';
 	}
 
 	getCollectionNames() {
@@ -335,7 +337,6 @@ class cc_NavView extends cc_View {
 		let navBar = document.createElement('div');
 		navBar.className = 'cc-nav';
 
-//		const collectionNames = this.model.getCollectionNames();
 
 		const navBarStyles = `
 		<style>
@@ -416,8 +417,8 @@ li.cc-nav a {
 			// set the active navigation item if currentCollection is defined and matches OR
 			// currentCollection is undefined and we're at the first one
             if ( 
-				( collection === this.currentCollection) || 
-			    ( this.currentCollection === undefined && count===0 )
+				( collection === this.model.currentCollection) || 
+			    ( this.model.currentCollection === undefined && count===0 )
 			 ) {
                 navItem.classList.add('cc-active');
             }

@@ -12,6 +12,8 @@ export default class cc_CollectionsModel {
 
 		this.controller = controller;
 		this.cc_configuration = this.controller.parentController.cc_configuration;
+
+		this.currentCollection = 'Assessment';
 	}
 
 	getCollectionNames() {
