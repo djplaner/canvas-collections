@@ -17,4 +17,6 @@ export default class cc_View {
 		this.model = model;
 		this.controller = controller;
 	}
+
+
 }

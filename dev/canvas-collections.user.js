@@ -60,6 +60,8 @@ class cc_View {
 		this.model = model;
 		this.controller = controller;
 	}
+
+
 }
 
 // src/Configuration/cc_ConfigurationView.js
@@ -264,6 +266,289 @@ class cc_ConfigurationController {
 
 }
 
+// src/Collections/cc_CollectionsModel.js
+/**
+ * cc_CollectionsModel.js
+ * Hold the cc data structure and provide data methods required for configuration
+ * - isOn - true iff cc is on
+ * 
+ */
+
+class cc_CollectionsModel {
+
+	constructor(controller) {
+		DEBUG && console.log('-------------- cc_CollectionsModel.constructor()');
+
+		this.controller = controller;
+		this.cc_configuration = this.controller.parentController.cc_configuration;
+	}
+
+	getCollectionNames() {
+		return this.cc_configuration.CC_COLLECTIONS_DEFAULTS;
+	}
+
+}
+
+// src/Collections/cc_NavView.js
+/**
+ * cc_NavView.js 
+ * - insert the navigation elements into div#cc-canvas-collections 
+ * - initially just a simple navBar
+ * - TODO better and more varied representations
+ *  
+ */
+
+
+
+class cc_NavView extends cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		super( model, controller );
+
+	}
+
+	/**
+	 * @descr insert a nav bar based on current collections
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- cc_NavView.display()');
+		let div = document.getElementById('cc-canvas-collections');
+
+
+		// generate the HTML
+//		let html ='<h1> Hello from NavView </h1>';
+
+		let navBar = this.generateNavBar();
+		div.insertAdjacentElement('afterbegin', navBar);
+
+		// add html to div#cc-canvas-collections
+//		div.insertAdjacentHTML('afterbegin', html);
+	}
+
+	generateNavBar() { 
+		let navBar = document.createElement('div');
+		navBar.className = 'cc-nav';
+
+//		const collectionNames = this.model.getCollectionNames();
+
+		const navBarStyles = `
+		<style>
+.cc-content {
+    clear:both;
+}
+
+.cc-nav { 
+    font-size: small;
+}
+
+.cc-nav ul  {
+	list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden ;
+    background-color: #eee; 
+    width:100%;
+}
+
+li.cc-active {
+    background-color: var(--ic-brand-button--primary-bgd);
+    /* font-weight: bold; */
+}
+
+li.cc-active a {
+	color: var(--ic-brand-button--primary-text) !important;
+}
+
+li.cc-close {
+    float: right !important;
+    border-right: none !important;
+}
+
+.cc-nav ul li {
+    float:left;
+    border-right: 1px solid #000;
+}
+
+li.cc-active a {
+  /*  color: black !important; */
+}
+
+li.cc-nav a {
+    display: block;
+    padding: 0.5em;
+    text-align: center;
+    text-decoration: none;
+    color: #2d3b45;  
+}
+
+.cc-nav li a:hover {
+    background-color: #111;
+}
+
+.cc-nav li:nth-child(4) {
+    border-right: none;
+}
+</style>
+		`;
+
+		// insert styles in navBar
+		navBar.insertAdjacentHTML('afterbegin', navBarStyles);
+
+		let count = 0;
+		let navList = document.createElement('ul');
+        for (let collection of this.model.getCollectionNames()) {
+            let navClass = ['li', 'mr-4'];
+            let style = 'cc-nav';
+
+
+            let navElement = `
+		  <a href="#">${collection}</a>
+		`;
+            let navItem = document.createElement('li');
+			navItem.className = "cc-nav";
+
+			// set the active navigation item if currentCollection is defined and matches OR
+			// currentCollection is undefined and we're at the first one
+            if ( 
+				( collection === this.currentCollection) || 
+			    ( this.currentCollection === undefined && count===0 )
+			 ) {
+                navItem.classList.add('cc-active');
+            }
+			count+=1;
+
+            //navItem.onclick = () => cc_collectionClick(collection,this);
+            navItem.onclick = () => this.collectionsClick(collection, this);
+            navItem.innerHTML = navElement;
+            navList.appendChild(navItem);
+        }
+		navBar.appendChild(navList);
+
+		return navBar;
+	}
+}
+
+// src/Collections/cc_CollectionsView.js
+/**
+ * cc_CollectionsView.js 
+ * Has to make three changes to the Canvas modules page
+ * 1. show the list of collections
+ * 2. show the alternate represenction of collection's modules
+ * 3. modify the Canvas modules display
+ * 
+ * Each of 2 & 3 (maybe 1 later) can vary depending on the model
+ * - 2 will change if a different representation (cards or table) is selected
+ * - 2 will also change for staff, who may see additional information
+ * - 3 will change if editMode
+ * 
+ * The collections view current added to a div#cc-canvas-collections that is inserted before
+ * the Canvas module list. Intent is that
+ * - this view inserts the collections view into the DOM (initially hidden)
+ * - other views then modify that div appropriately
+ * - when finished this view makes the DOM visible
+ *  
+ */
+
+
+
+
+
+class cc_CollectionsView extends cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		super( model, controller );
+
+		this.navView = new cc_NavView( model, controller );
+//		this.representationView = new cc_RepresentationView( model, controller );
+	}
+
+	/**
+	 * @descr Modify the canvas page to show the cc title, switch, and drop arrow.
+	 * Set up the click handlers for the switch and drop arrow.
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- cc_CollectionsView.display()');
+
+		// create an empty cc-collections-div, ready for other views to modify
+		this.removeCanvasCollectionsDiv();
+		this.addCanvasCollectionsDiv();
+
+		// TODO call other views to display the collections
+		this.navView.display();
+
+//		this.representationView.display();
+
+
+	}
+
+	/**
+	 * @descr Add the cc configuration bundle to the canvas page.
+	 */
+
+	addCanvasCollectionsDiv() {
+        let ccCanvasCollections = document.createElement('div');
+        ccCanvasCollections.id = 'cc-canvas-collections';
+		// set to hidden
+		//ccCanvasCollections.style.display = 'none';
+
+		let canvasContent = document.getElementById('context_modules');
+		const result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
+	}
+
+	/**
+	 * @descr remove div#cc-canvas-collections from the canvas page, if exists
+	 */
+
+	removeCanvasCollectionsDiv() {
+		let canvasCollections = document.getElementById('cc-canvas-collections');
+		if (canvasCollections) {
+			canvasCollections.parentNode.removeChild(canvasCollections);
+		}
+	}
+}
+
+// src/Collections/cc_CollectionsController.js
+/**
+ * @class cc_CollectionsController
+ * @classdesc Controller for generating the collections view, including
+ * - navigation between and display of collection
+ * - alternate representation of the modules
+ * - modification/replacement of the Canvas modules information
+ */
+
+
+
+
+
+class cc_CollectionsController {
+
+	/**
+	 * @descr Initialise the controller
+	 */
+	constructor(controller) {
+		DEBUG && console.log('-------------- cc_CollectionsController.constructor()');
+
+		this.parentController = controller;
+		this.model = new cc_CollectionsModel(this);
+		this.view = new cc_CollectionsView(this.model, this);
+
+		this.view.display();
+	}
+
+}
+
 // src/cc_Controller.js
 /**
  * @class cc_Controller
@@ -280,7 +565,7 @@ class cc_ConfigurationController {
 //import { cc_LearningJourneyView } from './view/cc_LearningJourneyView.js';
 
 
-//import { cc_EditController } from './Edit/cc_EditController.js';
+
 //import { cc_ViewController } from './View/cc_ViewController.js';
 
 //import { cc_Module} from './model/cc_Module.js';
@@ -475,7 +760,7 @@ class cc_Controller {
 				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - config');
 				// now based on the configuration show the rest of the cc interface
 				this.showConfiguration();
-				this.showEdit();
+				this.showCollections();
 
 			}
 		} else {
@@ -493,15 +778,6 @@ class cc_Controller {
 	showConfiguration() {
 		DEBUG && console.log('-------------- cc_Controller.showConfiguration()');
 		this.configurationController = new cc_ConfigurationController(this);
-	}
-
-	/**
-	 * @descr Update the Canvas modules display to include cc edit functionality
-	 */
-
-	showEdit() {
-		DEBUG && console.log('-------------- cc_Controller.showCollectionsEdit()');
-//		this.editController = new cc_EditController(this);
 	}
 
 	/**

@@ -13,7 +13,7 @@
 //import { cc_LearningJourneyView } from './view/cc_LearningJourneyView.js';
 
 import { cc_ConfigurationController} from './Configuration/cc_ConfigurationController.js';
-//import { cc_EditController } from './Edit/cc_EditController.js';
+import { cc_CollectionsController } from './Collections/cc_CollectionsController.js';
 //import { cc_ViewController } from './View/cc_ViewController.js';
 
 //import { cc_Module} from './model/cc_Module.js';
@@ -208,7 +208,7 @@ export default class cc_Controller {
 				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - config');
 				// now based on the configuration show the rest of the cc interface
 				this.showConfiguration();
-				this.showEdit();
+				this.showCollections();
 
 			}
 		} else {
@@ -226,15 +226,6 @@ export default class cc_Controller {
 	showConfiguration() {
 		DEBUG && console.log('-------------- cc_Controller.showConfiguration()');
 		this.configurationController = new cc_ConfigurationController(this);
-	}
-
-	/**
-	 * @descr Update the Canvas modules display to include cc edit functionality
-	 */
-
-	showEdit() {
-		DEBUG && console.log('-------------- cc_Controller.showCollectionsEdit()');
-//		this.editController = new cc_EditController(this);
 	}
 
 	/**
