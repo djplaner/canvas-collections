@@ -37,6 +37,7 @@ export default class cc_Controller {
 		DEBUG && console.log(`cc_Controller: modulesPage = ${this.modulesPage}`);
 		DEBUG && console.log(`cc_Controller: homeModulesPage = ${this.homeModulesPage}`);
 		DEBUG && console.log(`cc_Controller: editMode = ${this.editMode}`);
+		DEBUG && console.log(`cc_Controller: ccOn = ${this.ccOn}`);
 	
 		// TODO: extract any additional parameters in the query string
         // this.checkQueryString();
@@ -135,6 +136,7 @@ export default class cc_Controller {
 			DEBUG && console.log(`cc_Controller: requestConfigFileContent: json = ${JSON.stringify(json)}`);
 
 			this.cc_configuration = json;
+			this.ccOn = true;
 			this.execute();
         })			
 		.catch((error) => {
@@ -270,6 +272,10 @@ export default class cc_Controller {
 
 		// editMode true iff a#easy_student_view exists
 		this.editMode = (document.getElementById('easy_student_view')!==null);
+
+		// won't be on until the config file is found
+		this.ccOn = false;
+
 	}
 
 

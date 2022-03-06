@@ -11,7 +11,16 @@ export default class cc_ConfigurationModel {
 		DEBUG && console.log('-------------- cc_ConfigurationModel.constructor()');
 
 		this.controller = controller;
-		this.isOn = false;
+	}
+
+	/**
+	 * @descr return true iff cc is on
+	 */
+
+	isOn() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.isOn() - ${this.controller.parentController.ccOn}`);
+		console.log(this.controller);
+		return this.controller.parentController.ccOn;
 	}
 
 }

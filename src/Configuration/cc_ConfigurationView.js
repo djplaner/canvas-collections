@@ -126,19 +126,22 @@ input:checked + .cc-slider:before {
 		const body = document.querySelector('div#application');
 		body.insertAdjacentHTML('afterbegin', SL_SWITCH_HTML);
 
-		const cc_on = "on";
+		let cc_on = "";
+		if (this.model.isOn()) {
+			cc_on = "checked";
+		}
 		// Try the Canvas switch way first
 		const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
-		    <!-- i class="icon-mini-arrow-right"></i --> Canvas Collections
+		    <!-- i class="icon-mini-arrow-right"></i --> <small>Canvas Collections</small>
 			<a target="_blank"
 			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
 			   <i class="icon-question"></i>
 		   </a>
 		  </div>
 		<label class="cc-switch">
-		    <input type="checkbox" class="cc-toggle-checkbox" id="cc-switch">
+		    <input type="checkbox" class="cc-toggle-checkbox" id="cc-switch" ${cc_on}>
 			<span class="cc-slider cc-round"></span>
 		</label>
 	   </div>

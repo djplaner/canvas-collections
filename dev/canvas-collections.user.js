@@ -26,7 +26,16 @@ class cc_ConfigurationModel {
 		DEBUG && console.log('-------------- cc_ConfigurationModel.constructor()');
 
 		this.controller = controller;
-		this.isOn = false;
+	}
+
+	/**
+	 * @descr return true iff cc is on
+	 */
+
+	isOn() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.isOn() - ${this.controller.parentController.ccOn}`);
+		console.log(this.controller);
+		return this.controller.parentController.ccOn;
 	}
 
 }
@@ -182,19 +191,22 @@ input:checked + .cc-slider:before {
 		const body = document.querySelector('div#application');
 		body.insertAdjacentHTML('afterbegin', SL_SWITCH_HTML);
 
-		const cc_on = "on";
+		let cc_on = "";
+		if (this.model.isOn()) {
+			cc_on = "checked";
+		}
 		// Try the Canvas switch way first
 		const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
-		    <!-- i class="icon-mini-arrow-right"></i --> Canvas Collections
+		    <!-- i class="icon-mini-arrow-right"></i --> <small>Canvas Collections</small>
 			<a target="_blank"
 			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
 			   <i class="icon-question"></i>
 		   </a>
 		  </div>
 		<label class="cc-switch">
-		    <input type="checkbox" class="cc-toggle-checkbox" id="cc-switch">
+		    <input type="checkbox" class="cc-toggle-checkbox" id="cc-switch" ${cc_on}>
 			<span class="cc-slider cc-round"></span>
 		</label>
 	   </div>
@@ -292,6 +304,7 @@ class cc_Controller {
 		DEBUG && console.log(`cc_Controller: modulesPage = ${this.modulesPage}`);
 		DEBUG && console.log(`cc_Controller: homeModulesPage = ${this.homeModulesPage}`);
 		DEBUG && console.log(`cc_Controller: editMode = ${this.editMode}`);
+		DEBUG && console.log(`cc_Controller: ccOn = ${this.ccOn}`);
 	
 		// TODO: extract any additional parameters in the query string
         // this.checkQueryString();
@@ -390,6 +403,7 @@ class cc_Controller {
 			DEBUG && console.log(`cc_Controller: requestConfigFileContent: json = ${JSON.stringify(json)}`);
 
 			this.cc_configuration = json;
+			this.ccOn = true;
 			this.execute();
         })			
 		.catch((error) => {
@@ -525,6 +539,10 @@ class cc_Controller {
 
 		// editMode true iff a#easy_student_view exists
 		this.editMode = (document.getElementById('easy_student_view')!==null);
+
+		// won't be on until the config file is found
+		this.ccOn = false;
+
 	}
 
 
