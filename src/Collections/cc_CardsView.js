@@ -41,15 +41,100 @@ export default class cc_CardsView extends cc_View {
 
 	generateCards() { 
 
+		const collectionStyles = `
+		<style>
+			.cc-collection-container {
+				display: block;
+			}
+
+			.cc-card {
+				box-sizing: border-box;
+				box-shadow: 0 2px 5px rgba(0,0,0,.3);
+				border-radius: 4px;
+				overflow: hidden;
+				background: #fff;
+				width: 262px;
+				display: inline-block;
+				vertical-align: top;
+				margin: 36px 0 0 36px;
+			}
+
+			.cc-card-header {
+				position: relative;
+				cursor: pointer;
+				box-sizing: border-box;
+			}
+
+			.screenreader-only {
+				border: 0;
+				clip: rect(0 0 0 0);
+				height: 1px;
+				margin: -1px;
+				overflow: hidden;
+				padding: 0;
+				position: absolute;
+				width: 1px;
+				transform: translatez(0);
+			}
+
+			.cc-card-header-image {
+				background-size: cover;
+				background-position: center center;
+				background-repeat: no-repeat;
+			}
+
+			.cc-card-header-hero {
+				box-sizing: border-box;
+				height: 146px;
+				border: 1px solid rgb(0,0,0,.1);
+			}
+
+			.cc-card-link {
+				color: var(--ic-link-color);
+				text-decision: none;
+			}
+
+			.cc-card-header-content {
+				box-sizing: border-box;
+				padding: 12px 18px 0;
+				background: #ffff;
+			}
+
+			.cc-card-header-title {
+				transition: all .2s ease-out;
+				transform: translate3d(0,0,0);
+				padding: 0;
+				margin: 0;
+				line-height: 1.3;
+				font-size: 0.875rem;
+				font-weight: bold;
+			}
+
+			.cc-ellipsis {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			cc-card-header-subtitle {
+				color: var(--ic-brand-font-color-dark-ligtened-30);
+				line-height: 1.3;
+				padding:0;
+				margin-top: 4px
+			}
+
+			cc-card-header-term {
+				line-height: 1.3;
+				font-size: 12px;
+				height: 1rem;
+			}
+		`;
+
         let cardContainer = document.createElement('div');
-		cardContainer.class = "DashboardCard_Container";
-		cardContainer.style = "display:block";
+		cardContainer.class = "cc-collection-container";
 
-		let box = document.createElement('div');
-		box.className = 'ic-DashboardCard__box__container';
-
-		cardContainer.appendChild(box);
-
+		// insert styles into cardContainer
+		cardContainer.insertAdjacentHTML('afterbegin', collectionStyles);
 
 		let count = 0;
         for (let module of this.model.getModulesCollections()) {
@@ -62,23 +147,22 @@ export default class cc_CardsView extends cc_View {
 			}
 
 			let cardHtml = `
-<div class="ic-DashboardCard" aria-label="Module ${module.name}" style="opacity:1;">
-  <div class="ic-DashboardCard__header">
+<div class="cc-card" aria-label="Module ${module.name}" style="opacity:1;">
+  <div class="cc-card-header">
     <span class="screenreader-only">Module image for ${module.name}</span>
-	<div class="ic-DashboardCard__header_image" style="background-image: url(${module.image});">
-	  <div class="ic-DashboardCard__header__hero" aria-hidden="true" 
+	<div class="cc-card-header-image" style="background-image: url('${module.image}');">
+	  <div class="cc-card-header-hero" aria-hidden="true" 
 	     style="background-color: rgb(152,108,22); opacity:0.6;">
 	  </div>
 	</div>
-	<a href="#module_${module.id}" class="ic-DashboardCard__link">
-	  <div class="ic-DashboardCard__header__content">
-	    <h3 class="ic-DashbaordCard__header-title ellipsis" title="${module.name}">
+	<a href="#module_${module.id}" class="cc-card-link">
+	  <div class="cc-card-header-content">
+	    <h3 class="cc-card-header-title cc-ellipsis" title="${module.name}">
 		  ${module.name}
 		</h3>
-	    <div class="ic-DashboardCard__header__subtitle ellipsis" title="TODO SOME LABEL">
-		  Some label #1
+	    <div class="cc-card-header-subtitle cc-ellipsis" title="TODO SOME LABEL">
 		</div>
-		<div class="ic-DashboardCard__header-term ellipsis" title="${module.description}">
+		<div class="cc-card-header-term ellipsis" title="${module.description}">
 		  ${module.description}
 		</div>
 	  </div>
@@ -90,7 +174,7 @@ export default class cc_CardsView extends cc_View {
   <nav class="ic-DashboardCard__action-container" aria-label="Actions for ${module.name}"></nav>
 </div>
 			`;
-		    box.insertAdjacentHTML('beforeend', cardHtml);
+		    cardContainer.insertAdjacentHTML('beforeend', cardHtml);
         }
 
 		return cardContainer;

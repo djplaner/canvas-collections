@@ -16,7 +16,7 @@ export default class cc_CollectionsModel {
 		// merge the Canvas module and Collections configurations
 		this.createModuleCollections();
 
-		this.currentCollection = 'Assessment';
+		this.currentCollection = 'Content';
 	}
 
 	getCollectionNames() {
