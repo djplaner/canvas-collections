@@ -44,7 +44,9 @@ export default class cc_CardsView extends cc_View {
 		const collectionStyles = `
 		<style>
 			.cc-collection-container {
-				display: block;
+				display: flex;
+				flex-wrap: wrap;
+				margin: -.75rem;
 			}
 
 			.cc-card {
@@ -53,10 +55,13 @@ export default class cc_CardsView extends cc_View {
 				border-radius: 4px;
 				overflow: hidden;
 				background: #fff;
-				width: 262px;
+				max-width: 33.3%;
 				display: inline-block;
 				vertical-align: top;
+				padding: .75rem;
 				margin: 36px 0 0 36px;
+				flex-direction: column;
+				display: flex;
 			}
 
 			.cc-card-header {
