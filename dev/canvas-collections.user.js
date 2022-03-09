@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.5.0
+// @version      0.5.1
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -1550,7 +1550,7 @@ let CARD_DEFAULTS = {
             "Content", "Assessment", "Your Teaching Team", "Student Support"
         ],
         'CC_DEFAULT_ACTIVE_COLLECTION': 'Content',
-        'Welcome and Introduction to the Course': {
+        'Welcome and Getting Started': {
             'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
             'label': '',
             'imageSize': 'bg-contain',

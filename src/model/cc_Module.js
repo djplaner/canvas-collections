@@ -564,7 +564,7 @@ let CARD_DEFAULTS = {
             "Content", "Assessment", "Your Teaching Team", "Student Support"
         ],
         'CC_DEFAULT_ACTIVE_COLLECTION': 'Content',
-        'Welcome and Introduction to the Course': {
+        'Welcome and Getting Started': {
             'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
             'label': '',
             'imageSize': 'bg-contain',
