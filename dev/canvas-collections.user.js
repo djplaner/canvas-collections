@@ -472,7 +472,9 @@ li.cc-nav a {
 			count+=1;
 
             //navItem.onclick = () => cc_collectionClick(collection,this);
-            navItem.onclick = () => this.collectionsClick(collection, this);
+			// TODO probably shouldn't be on this view the click? SHouldn't it be the
+			// controller?, 
+            //navItem.onclick = () => this.collectionsClick(collection, this);
             navItem.innerHTML = navElement;
             navList.appendChild(navItem);
         }
@@ -791,29 +793,28 @@ class cc_CollectionsController {
  * @class cc_Controller
  * @classdesc Contoller factory for canvas collections. Draws on document.url and any cc configuration to 
  * create and call the appropriate controller(s). Possibilities include
- * 1. Initial - set up the main cc on/off configuration view
- * 2. Edit - modify Canvas Modules page that is in edit mode
- * 3. View - modify Canvas Modules page that is in view mode 
+ * - showConfiguration 
+ *   - update Modules page to show configuration interface
+ *   - only in staff view
+ * - showCollections 
+ *   - update Modules page to show the collections and their representations
+ *   - in both staff and student view
  */
 
 
-//import { cc_CanvasModules } from './model/cc_CanvasModules.js'; 
-//import { cc_CanvasModulesView } from './view/cc_CanvasModulesView.js';
-//import { cc_LearningJourneyView } from './view/cc_LearningJourneyView.js';
 
 
 
-//import { cc_ViewController } from './View/cc_ViewController.js';
-
-//import { cc_Module} from './model/cc_Module.js';
-
-//const DEBUG=false;
 const DEBUG=true;
 
 class cc_Controller {
 
 	/**
-	 * @descr Initialise the controller by 1) identifying the document url; 2) if appropriate requestion cc_config.json
+	 * @descr Set up the controller factory and do its thing 
+	 * 1) identify the document url; 
+	 * 2) request the cc_config.json (async, through a few callbacks)
+	 * 3) Get all the module information for the course
+	 * 4) execute the appropriate controller based on config
 	 */
 	constructor() {
 		DEBUG && console.log('-------------- cc_Controller.constructor()');
@@ -1075,7 +1076,7 @@ class cc_Controller {
 		this.courseId = courseId;
 
 		// modulesPage true if location ends with courses/${courseId}/modules
-		let regEx = new RegExp(`courses/${courseId}/modules$`);
+		let regEx = new RegExp(`courses/${courseId}/modules#*$`);
 		this.modulesPage = regEx.test(location);
 
 		// homeModulesPage true iff

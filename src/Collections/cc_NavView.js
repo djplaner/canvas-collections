@@ -131,7 +131,9 @@ li.cc-nav a {
 			count+=1;
 
             //navItem.onclick = () => cc_collectionClick(collection,this);
-            navItem.onclick = () => this.collectionsClick(collection, this);
+			// TODO probably shouldn't be on this view the click? SHouldn't it be the
+			// controller?, 
+            //navItem.onclick = () => this.collectionsClick(collection, this);
             navItem.innerHTML = navElement;
             navList.appendChild(navItem);
         }
