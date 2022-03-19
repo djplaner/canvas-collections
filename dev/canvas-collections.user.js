@@ -285,11 +285,26 @@ class cc_CollectionsModel {
 		// merge the Canvas module and Collections configurations
 		this.createModuleCollections();
 
-		this.currentCollection = 'Content';
+		// if currentCollection is undefined set it to the default
+		if ( this.currentCollection === undefined ) {
+			this.currentCollection = this.getDefaultCollection()
+		}
+	}
+
+	getDefaultCollection() {
+		return this.cc_configuration.DEFAULT_ACTIVE_COLLECTION;
+	}
+
+	setCurrentCollection(newCollection) {
+		this.currentCollection = newCollection;
+	}
+
+	getCurrentCollection() {
+		return this.currentCollection;
 	}
 
 	getCollectionNames() {
-		return this.cc_configuration.CC_COLLECTIONS_DEFAULTS;
+		return this.cc_configuration.COLLECTIONS;
 	}
 
 	/**
@@ -471,7 +486,7 @@ li.cc-nav a {
             }
 			count+=1;
 
-            //navItem.onclick = () => cc_collectionClick(collection,this);
+            navItem.onclick = (event) => this.controller.navigateCollections(event);
 			// TODO probably shouldn't be on this view the click? SHouldn't it be the
 			// controller?, 
             //navItem.onclick = () => this.collectionsClick(collection, this);
@@ -542,11 +557,12 @@ class cc_CardsView extends cc_View {
 				border-radius: 4px;
 				overflow: hidden;
 				background: #fff;
-				max-width: 33.3%;
+				max-width: 30%;
+				width: 30%;
 				display: inline-block;
 				vertical-align: top;
 				padding: .75rem;
-				margin: 36px 0 0 36px;
+				margin: 1em 0 0 1em;
 				flex-direction: column;
 				display: flex;
 			}
@@ -577,7 +593,7 @@ class cc_CardsView extends cc_View {
 
 			.cc-card-header-hero {
 				box-sizing: border-box;
-				height: 146px;
+				height: 10rem;
 				border: 1px solid rgb(0,0,0,.1);
 			}
 
@@ -588,8 +604,9 @@ class cc_CardsView extends cc_View {
 
 			.cc-card-header-content {
 				box-sizing: border-box;
-				padding: 12px 18px 0;
+				padding: 1em 0 0.5em 0;
 				background: #ffff;
+				color: #000000;
 			}
 
 			.cc-card-header-title {
@@ -598,53 +615,55 @@ class cc_CardsView extends cc_View {
 				padding: 0;
 				margin: 0;
 				line-height: 1.3;
-				font-size: 0.875rem;
+				font-size: 1.1rem;
 				font-weight: bold;
 			}
 
 			.cc-ellipsis {
-				white-space: nowrap;
+				flex: 1 1 auto;
+				/*white-space: nowrap;
 				overflow: hidden;
-				text-overflow: ellipsis;
+				text-overflow: ellipsis; */
 			}
 
 			cc-card-header-subtitle {
-				color: var(--ic-brand-font-color-dark-ligtened-30);
+				color: var(--ic-brand-font-color-dark-lightened-30);
 				line-height: 1.3;
 				padding:0;
 				margin-top: 4px
 			}
 
-			cc-card-header-term {
+			cc-card-header-description {
 				line-height: 1.3;
-				font-size: 12px;
+				font-size: 0.9rem;
 				height: 1rem;
 			}
 		`;
 
         let cardContainer = document.createElement('div');
-		cardContainer.class = "cc-collection-container";
+		cardContainer.classList.add("cc-collection-container");
 
 		// insert styles into cardContainer
 		cardContainer.insertAdjacentHTML('afterbegin', collectionStyles);
 
 		let count = 0;
+
+		const currentCollection = this.model.getCurrentCollection();
         for (let module of this.model.getModulesCollections()) {
 
 			console.log(module);
 
-			if ( module.collection !== this.currentCollection ) {
+			if ( module.collection !== currentCollection ) {
 				// not the right collection, skip this one
 				continue;
 			}
 
 			let cardHtml = `
-<div class="cc-card" aria-label="Module ${module.name}" style="opacity:1;">
+<div class="cc-card" aria-label="Module ${module.name}">
   <div class="cc-card-header">
     <span class="screenreader-only">Module image for ${module.name}</span>
 	<div class="cc-card-header-image" style="background-image: url('${module.image}');">
-	  <div class="cc-card-header-hero" aria-hidden="true" 
-	     style="background-color: rgb(152,108,22); opacity:0.6;">
+	  <div class="cc-card-header-hero" aria-hidden="true">
 	  </div>
 	</div>
 	<a href="#module_${module.id}" class="cc-card-link">
@@ -654,7 +673,7 @@ class cc_CardsView extends cc_View {
 		</h3>
 	    <div class="cc-card-header-subtitle cc-ellipsis" title="TODO SOME LABEL">
 		</div>
-		<div class="cc-card-header-term ellipsis" title="${module.description}">
+		<div class="cc-card-header-description">
 		  ${module.description}
 		</div>
 	  </div>
@@ -785,6 +804,29 @@ class cc_CollectionsController {
 
 		this.view.display();
 	}
+
+	/**
+	 * @descr Handle a click on the collection navigration bar
+	 * 
+	 * @param {Event} event - the click event
+	 */
+	 navigateCollections(event) {
+		DEBUG && console.log('-------------- cc_CollectionsController.navigateCollections()');
+
+		DEBUG && console.log(event);
+		DEBUG && console.log(`currentCollection: ${this.model.getCurrentCollection()}`);
+		DEBUG && console.log(`event innerText ${event.target.innerText}`);
+
+		let newCollection = event.target.innerText;
+		// clicked on the current collection do nothing
+		if (newCollection === this.model.getCurrentCollection()) {
+			return;
+		} 
+		// change to the new collection
+		this.model.setCurrentCollection(newCollection);
+		this.view.display();
+	 }
+
 
 }
 

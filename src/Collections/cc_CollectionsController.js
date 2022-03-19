@@ -25,4 +25,27 @@ export default class cc_CollectionsController {
 		this.view.display();
 	}
 
+	/**
+	 * @descr Handle a click on the collection navigration bar
+	 * 
+	 * @param {Event} event - the click event
+	 */
+	 navigateCollections(event) {
+		DEBUG && console.log('-------------- cc_CollectionsController.navigateCollections()');
+
+		DEBUG && console.log(event);
+		DEBUG && console.log(`currentCollection: ${this.model.getCurrentCollection()}`);
+		DEBUG && console.log(`event innerText ${event.target.innerText}`);
+
+		let newCollection = event.target.innerText;
+		// clicked on the current collection do nothing
+		if (newCollection === this.model.getCurrentCollection()) {
+			return;
+		} 
+		// change to the new collection
+		this.model.setCurrentCollection(newCollection);
+		this.view.display();
+	 }
+
+
 }

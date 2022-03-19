@@ -16,11 +16,26 @@ export default class cc_CollectionsModel {
 		// merge the Canvas module and Collections configurations
 		this.createModuleCollections();
 
-		this.currentCollection = 'Content';
+		// if currentCollection is undefined set it to the default
+		if ( this.currentCollection === undefined ) {
+			this.currentCollection = this.getDefaultCollection()
+		}
+	}
+
+	getDefaultCollection() {
+		return this.cc_configuration.DEFAULT_ACTIVE_COLLECTION;
+	}
+
+	setCurrentCollection(newCollection) {
+		this.currentCollection = newCollection;
+	}
+
+	getCurrentCollection() {
+		return this.currentCollection;
 	}
 
 	getCollectionNames() {
-		return this.cc_configuration.CC_COLLECTIONS_DEFAULTS;
+		return this.cc_configuration.COLLECTIONS;
 	}
 
 	/**
