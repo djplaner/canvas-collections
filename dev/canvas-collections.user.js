@@ -171,20 +171,38 @@ class cc_ConfigurationView extends cc_View {
 	showConfig() {
 		const configDivHtml = `
 		<style>
+		    #cc-config-wrapper {
+				display: block;
+				border-bottom: 1px solid #c7cdd1
+			}
+
 			#cc-config {
 				float: right;
-				border-bottom: 1px solid #c7cdd1;
+				max-width: 50%;
+				margin-top: -1em;
+				margin-right: 10em;
+				background-color: #f5f5f5;
 			}
+
 			</style>
-		<div id="cc-config" class="border border-trbl">
-		  <h3>Configure Canvas Collections</h3>
+		<div id="cc-config-wrapper">
+			<div id="cc-config">
+		  		<h3>Configure Canvas Collections</h3>
+			</div>
 		</div>
 		`
+
+		// remove the border at the bottom of Canvas top nav bar
 		const toggleAndCrumbs = document.getElementsByClassName('ic-app-nav-toggle-and-crumbs')[0];
 		if (toggleAndCrumbs) {
 			// change toggleAndCrumbs border-bottom style to none
 			toggleAndCrumbs.style.borderBottom = 'none';
 			toggleAndCrumbs.insertAdjacentHTML('afterEnd', configDivHtml);
+		}
+		// remove the bottom border from div.cc-switch-container
+		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
+		if (ccSwitchContainer) {
+			ccSwitchContainer.style.borderBottom = 'none';
 		}
 
 	}
@@ -202,6 +220,13 @@ class cc_ConfigurationView extends cc_View {
 				toggleAndCrumbs.style.borderBottom = '1px solid #c7cdd1';
 			}
 		}
+
+		// add the bottom border from div.cc-switch-container
+		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
+		if (ccSwitchContainer) {
+			ccSwitchContainer.style.borderBottom = '1px solid #c7cdd1';
+		}
+
 	}
 
 	/**
