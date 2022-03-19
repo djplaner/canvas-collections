@@ -35,4 +35,29 @@ export default class cc_ConfigurationController {
 		this.view.display();
 	}
 
+	/**
+	 * @descr When the use toggles the configShowSwitch
+	 * - update the icon being shown for the switch
+	 * - update the indication of whether config is being shown
+	 * - redisplay the cc configuration
+	 * @param {*} event 
+	 */
+
+	toggleConfigShowSwitch(event) {
+		DEBUG && console.log('-------------- cc_ConfigurationController.toggleConfigShowSwitch()');
+
+		// get the class for the event.target element
+		const className = event.target.className;
+
+		let status = this.model.getConfigShowClass();
+
+		let newClass = this.model.getOtherConfigShowClass(className);
+
+		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
+
+		this.model.setConfigShowClass(newClass);
+
+		this.view.display();
+	}
+
 }

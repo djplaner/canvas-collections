@@ -285,7 +285,7 @@ export default class cc_Controller {
 		this.courseId = courseId;
 
 		// modulesPage true if location ends with courses/${courseId}/modules
-		let regEx = new RegExp(`courses/${courseId}/modules#*$`);
+		let regEx = new RegExp(`courses/${courseId}/modules(#*|#[^/]+)$`);
 		this.modulesPage = regEx.test(location);
 
 		// homeModulesPage true iff

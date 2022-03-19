@@ -17,8 +17,8 @@ export default class cc_ConfigurationView extends cc_View {
 	 * @param {Object} model
 	 * @param {Object} controller
 	 */
-	constructor( model, controller ) {
-		super( model, controller );
+	constructor(model, controller) {
+		super(model, controller);
 	}
 
 	/**
@@ -31,6 +31,59 @@ export default class cc_ConfigurationView extends cc_View {
 
 		// Add the cc configuration bundle
 		this.addCcBundle();
+
+		if (this.model.getConfigShowing()) {
+			this.showConfig();
+		} else {
+			this.removeConfig();
+		}
+		// get the config show class
+		const configShowClass = this.model.getConfigShowClass();
+		// set i#configShowSwitch to the config show class
+		const configShowSwitch = document.getElementById('configShowSwitch');
+		if (configShowSwitch) {
+			configShowSwitch.className = configShowClass;
+		}
+
+	}
+
+	/**
+	 * @descr Add the div#cc-config to the end of div.ic-app-nav-toggle-and-crumbs
+	 */
+	showConfig() {
+		const configDivHtml = `
+		<style>
+			#cc-config {
+				float: right;
+				border-bottom: 1px solid #c7cdd1;
+			}
+			</style>
+		<div id="cc-config" class="border border-trbl">
+		  <h3>Configure Canvas Collections</h3>
+		</div>
+		`
+		const toggleAndCrumbs = document.getElementsByClassName('ic-app-nav-toggle-and-crumbs')[0];
+		if (toggleAndCrumbs) {
+			// change toggleAndCrumbs border-bottom style to none
+			toggleAndCrumbs.style.borderBottom = 'none';
+			toggleAndCrumbs.insertAdjacentHTML('afterEnd', configDivHtml);
+		}
+
+	}
+
+
+	/**
+	 * @descr Remove the div#cc-config from the end of div.ic-app-nav-toggle-and-crumbs, if it exists
+	 */
+	removeConfig() {
+		const configDiv = document.getElementById('cc-config');
+		if (configDiv) {
+			configDiv.remove();
+			const toggleAndCrumbs = document.getElementsByClassName('ic-app-nav-toggle-and-crumbs')[0];
+			if (toggleAndCrumbs) {
+				toggleAndCrumbs.style.borderBottom = '1px solid #c7cdd1';
+			}
+		}
 	}
 
 	/**
@@ -38,6 +91,18 @@ export default class cc_ConfigurationView extends cc_View {
 	 * Currently placed to the left of the "Student View" button at the top of page
 	 */
 	addCcBundle() {
+		// get div.cc-switch-container
+		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
+		if (ccSwitchContainer) {
+			return;
+		}
+
+		/*
+		30px - 2em
+		17px - 1.2em
+		13px - 1rem
+
+		*/
 
 		// inject the switch script tag into the canvas page, just after start of body
 		const SL_SWITCH_HTML = `
@@ -46,9 +111,8 @@ export default class cc_ConfigurationView extends cc_View {
 .cc-switch {
   position: relative;
   display: inline-block;
-  width: 30px;
-/*  width: 1em; */
-  height: 17px;
+  width: 2rem; 
+  height: 1.2rem;
   margin-top: .75rem;
   margin-right: 0.5rem
 }
@@ -76,8 +140,8 @@ export default class cc_ConfigurationView extends cc_View {
 .cc-slider:before {
   position: absolute;
   content: "";
-  height: 13px;
-  width: 13px;
+  height: 0.9rem;
+  width: 0.9rem;
   left: 2px;
   bottom: 2px;
   background-color: white;
@@ -94,14 +158,14 @@ input:focus + .cc-slider {
 }
 
 input:checked + .cc-slider:before {
-  -webkit-transform: translateX(13px);
-  -ms-transform: translateX(13px);
-  transform: translateX(13px);
+  -webkit-transform: translateX(1rem);
+  -ms-transform: translateX(1rem);
+  transform: translateX(1rem);
 }
 
 /* Rounded sliders */
 .cc-slider.cc-round {
-  border-radius: 17px;
+  border-radius: 1.1rem;
 }
 
 .cc-slider.cc-round:before {
@@ -122,7 +186,7 @@ input:checked + .cc-slider:before {
 
 		 </style>
 			`;
-		
+
 		const body = document.querySelector('div#application');
 		body.insertAdjacentHTML('afterbegin', SL_SWITCH_HTML);
 
@@ -134,7 +198,7 @@ input:checked + .cc-slider:before {
 		const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
-		    <!-- i class="icon-mini-arrow-right"></i --> <small>Canvas Collections</small>
+		    <i id="configShowSwitch" class="icon-mini-arrow-right"></i> <small>Canvas Collections</small>
 			<a target="_blank"
 			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
 			   <i class="icon-question"></i>
@@ -147,11 +211,15 @@ input:checked + .cc-slider:before {
 	   </div>
 		`;
 
-	   // find a#easy_student_view
-	   // insert before a#easy_student_view
-	   let easy_student_view = document.querySelector('a#easy_student_view');
-	   if (easy_student_view) {
+
+		// find a#easy_student_view
+		// insert before a#easy_student_view
+		let easy_student_view = document.querySelector('a#easy_student_view');
+		if (easy_student_view) {
 			easy_student_view.insertAdjacentHTML('afterend', CC_BUNDLE_HTML);
+			// add event handler to i#configShowSwitch
+			const configShowSwitch = document.getElementById('configShowSwitch');
+			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
 		} else {
 			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
 		}
