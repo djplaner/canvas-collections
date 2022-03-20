@@ -72,7 +72,7 @@ export default class cc_ConfigurationController {
 		const className = event.target.className;
 		let idString = event.target.id;
 		// match cc-module-config-(\d+)-switch and extract the number
-		const moduleId = idString.match(/cc-module-config-(\d+)-switch/)[1];
+		const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-switch/)[1]);
 
 //		let status = this.model.getModuleConfigClass(moduleId);
 
@@ -81,6 +81,7 @@ export default class cc_ConfigurationController {
 //		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
 
 		this.model.setModuleConfigClass(moduleId,className);
+
 
 		this.view.display();
 	}

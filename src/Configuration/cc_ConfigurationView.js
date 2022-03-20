@@ -46,6 +46,12 @@ export default class cc_ConfigurationView extends cc_View {
 		}
 
 		// add the configuration interfaces for individual modules
+		// remove all the div.cc-module-config 
+		let divs = document.querySelectorAll('div.cc-module-config');
+		divs.forEach( (div) => {
+			div.remove();
+		});
+
 		this.addModuleConfiguration();
 	}
 
@@ -66,13 +72,17 @@ export default class cc_ConfigurationView extends cc_View {
 			const id = moduleHeader.id;
 			const moduleDetail = moduleDetails[id];
 
-			// if moduleDetail attribute configClass is undefined, set it to icon-mini-arrow-right
-			if (moduleDetail.configClass===undefined) {
-				moduleDetail.configClass = 'icon-mini-arrow-right';
+			if (moduleDetail===undefined) {
+				continue;
+			}
+
+			// does moduleDetail have property configClass
+			if (!("configClass" in moduleDetail)) {
+				moduleDetail['configClass'] = 'icon-mini-arrow-right';
 			}
 
 			const moduleConfigHtml = `
-		<div class="cc-module-config border border-trbl" id="cc-module-config-4980">
+		<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
       		<span>
 			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
 			  Canvas Collections Configuration</span>

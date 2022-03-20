@@ -78,9 +78,9 @@ export default class cc_ConfigurationModel {
 
 		// set the configClass attribute of the found object to newClass
 		if (newClass==="icon-mini-arrow-down") {
-			module.configClass = "icon-mini-arrow-right";
+			module['configClass'] = "icon-mini-arrow-right";
 		} else {
-			module.configClass = "icon-mini-arrow-down";
+			module['configClass'] = "icon-mini-arrow-down";
 		}
 	}
 

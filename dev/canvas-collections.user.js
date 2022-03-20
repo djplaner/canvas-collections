@@ -93,9 +93,9 @@ class cc_ConfigurationModel {
 
 		// set the configClass attribute of the found object to newClass
 		if (newClass==="icon-mini-arrow-down") {
-			module.configClass = "icon-mini-arrow-right";
+			module['configClass'] = "icon-mini-arrow-right";
 		} else {
-			module.configClass = "icon-mini-arrow-down";
+			module['configClass'] = "icon-mini-arrow-down";
 		}
 	}
 
@@ -261,6 +261,12 @@ class cc_ConfigurationView extends cc_View {
 		}
 
 		// add the configuration interfaces for individual modules
+		// remove all the div.cc-module-config 
+		let divs = document.querySelectorAll('div.cc-module-config');
+		divs.forEach( (div) => {
+			div.remove();
+		});
+
 		this.addModuleConfiguration();
 	}
 
@@ -281,13 +287,17 @@ class cc_ConfigurationView extends cc_View {
 			const id = moduleHeader.id;
 			const moduleDetail = moduleDetails[id];
 
-			// if moduleDetail attribute configClass is undefined, set it to icon-mini-arrow-right
-			if (moduleDetail.configClass===undefined) {
-				moduleDetail.configClass = 'icon-mini-arrow-right';
+			if (moduleDetail===undefined) {
+				continue;
+			}
+
+			// does moduleDetail have property configClass
+			if (!("configClass" in moduleDetail)) {
+				moduleDetail['configClass'] = 'icon-mini-arrow-right';
 			}
 
 			const moduleConfigHtml = `
-		<div class="cc-module-config border border-trbl" id="cc-module-config-4980">
+		<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
       		<span>
 			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
 			  Canvas Collections Configuration</span>
@@ -855,7 +865,7 @@ class cc_ConfigurationController {
 		const className = event.target.className;
 		let idString = event.target.id;
 		// match cc-module-config-(\d+)-switch and extract the number
-		const moduleId = idString.match(/cc-module-config-(\d+)-switch/)[1];
+		const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-switch/)[1]);
 
 //		let status = this.model.getModuleConfigClass(moduleId);
 
@@ -864,6 +874,7 @@ class cc_ConfigurationController {
 //		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
 
 		this.model.setModuleConfigClass(moduleId,className);
+
 
 		this.view.display();
 	}
@@ -1859,14 +1870,14 @@ class cc_Controller {
 	 * - there is a third step
 	 * @param {Json} response 
 	 */
-	saveConfigFile(response) {
+/*	saveConfigFile(response) {
 		DEBUG && console.log('-------------- cc_Controller.saveConfigFile()');
 		console.log(response);
 
 
 		// do the third step
 	}
-	
+*/	
 }
 
 // src/index.js
