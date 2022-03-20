@@ -46,8 +46,57 @@ class cc_ConfigurationModel {
 		return this.controller.parentController.ccOn;
 	}
 
+	turnOn() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOn()`);
+		this.controller.parentController.ccOn = true;
+		this.controller.parentController.cc_configuration.STATUS==="on";
+	}
+
+	turnOff() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOff()`);
+		this.controller.parentController.ccOn = false;
+		this.controller.parentController.cc_configuration.STATUS==="off";
+	}
+
 	getConfigShowing() {
 		return this.configShowing;
+	}
+
+	getModuleDetails() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getModuleDetails()`);
+		const moduleDetails = this.controller.parentController.moduleDetails;
+		// map array of objects moduleDetails into hash keyed on id attribute
+		const moduleDetailsHash = moduleDetails.reduce(
+			(accumulator, module) => {
+				accumulator[module.id] = module;
+				return accumulator;
+			},
+			{}
+		);
+
+		return moduleDetailsHash; //this.controller.parentController.moduleDetails;
+	}
+
+	/**
+	 * Set the configClass attribute of the opposite of given moduleId to newClass
+	 * @param {integer} moduleId 
+	 * @param {string} newClass 
+	 */
+	setModuleConfigClass(moduleId, newClass) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.setModuleConfigClass() - ${moduleId} ${newClass}`);
+
+		// find the object in the array this.controller.parentController.moduleDetails that 
+		// has the id matching moduleId
+		const module = this.controller.parentController.moduleDetails.find(
+			(module) => module.id===moduleId
+		);
+
+		// set the configClass attribute of the found object to newClass
+		if (newClass==="icon-mini-arrow-down") {
+			module.configClass = "icon-mini-arrow-right";
+		} else {
+			module.configClass = "icon-mini-arrow-down";
+		}
 	}
 
 	/**
@@ -211,6 +260,52 @@ class cc_ConfigurationView extends cc_View {
 			configShowSwitch.className = configShowClass;
 		}
 
+		// add the configuration interfaces for individual modules
+		this.addModuleConfiguration();
+	}
+
+	/**
+	 * @descr Add the CC configuration interface to each module
+	 * - source of module information
+	 */
+
+	addModuleConfiguration() {
+
+		const moduleDetails = this.model.getModuleDetails();
+
+		// loop through all the div.ig-header elements
+		const moduleHeaders = document.getElementsByClassName('ig-header');
+		// for each
+		for (let i = 0; i < moduleHeaders.length; i++) {
+			const moduleHeader = moduleHeaders[i];
+			const id = moduleHeader.id;
+			const moduleDetail = moduleDetails[id];
+
+			// if moduleDetail attribute configClass is undefined, set it to icon-mini-arrow-right
+			if (moduleDetail.configClass===undefined) {
+				moduleDetail.configClass = 'icon-mini-arrow-right';
+			}
+
+			const moduleConfigHtml = `
+		<div class="cc-module-config border border-trbl" id="cc-module-config-4980">
+      		<span>
+			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
+			  Canvas Collections Configuration</span>
+  		</div>`;
+
+			// TO DO check that the id matches on of the module ids in data structure
+
+			// insert moduleConfigHtml afterend of moduleHeader
+			moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
+
+			// add a click handler for i#cc-module-config-${id}-switch
+			const moduleConfigSwitch = document.getElementById(`cc-module-config-${id}-switch`);
+			if (moduleConfigSwitch) {
+				moduleConfigSwitch.onclick = (event) => this.controller.toggleModuleConfigSwitch(event);
+				// and update the class appropriately
+				moduleConfigSwitch.className = moduleDetail.configClass;
+			}
+		}
 	}
 
 	/**
@@ -477,7 +572,7 @@ class cc_ConfigurationView extends cc_View {
 			// TODO add event handlers for the up and down buttons
 
 			// set input#cc-config-collection-${collectionName}-default to checked
-			if ( defaultCollection === collectionName ) {
+			if (defaultCollection === collectionName) {
 				const defaultCheckbox = document.getElementById(`cc-config-collection-${collectionName}-default`);
 				if (defaultCheckbox) {
 					defaultCheckbox.checked = true;
@@ -493,19 +588,19 @@ class cc_ConfigurationView extends cc_View {
 			}
 
 			// if we're the first collection, remove i#cc-collection-${collectionName}-up
-			if (count===0) {
+			if (count === 0) {
 				const upButton = document.getElementById(`cc-collection-${collectionName}-up`);
 				if (upButton) {
 					upButton.remove();
 				}
-			} else if (count===numCollections-1) {
+			} else if (count === numCollections - 1) {
 				// if we're the last collection, remove i#cc-collection-${collectionName}-down
 				const downButton = document.getElementById(`cc-collection-${collectionName}-down`);
 				if (downButton) {
 					downButton.remove();
 				}
 			}
-			count+=1;
+			count += 1;
 		});
 
 	}
@@ -630,6 +725,15 @@ input:checked + .cc-slider:before {
 	margin: 0.5rem
 }
 
+/* styles for the module configs */
+		    .cc-module-config {
+				padding-left: 0.5em;
+				font-size: smaller;
+				margin:0;
+				font-weight: bold;
+			}
+
+
 		 </style>
 			`;
 
@@ -666,6 +770,9 @@ input:checked + .cc-slider:before {
 			// add event handler to i#configShowSwitch
 			const configShowSwitch = document.getElementById('configShowSwitch');
 			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
+			// add event handler of input#cc-switch
+			const ccSwitch = document.getElementById('cc-switch');
+			ccSwitch.onchange = (event) => this.controller.toggleOffOnSwitch(event);
 		} else {
 			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
 		}
@@ -691,6 +798,7 @@ input:checked + .cc-slider:before {
  *   - change the order of collections
  * 
  */
+
 
 
 
@@ -734,6 +842,60 @@ class cc_ConfigurationController {
 		this.model.setConfigShowClass(newClass);
 
 		this.view.display();
+	}
+
+	/**
+	 * Reveal or hid the module configuration div based on click
+	 * @param {*} event 
+	 */
+	toggleModuleConfigSwitch(event) {
+		DEBUG && console.log('-------------- cc_ConfigurationController.toggleModuleConfigSwitch()');
+
+		// get the class for the event.target element
+		const className = event.target.className;
+		let idString = event.target.id;
+		// match cc-module-config-(\d+)-switch and extract the number
+		const moduleId = idString.match(/cc-module-config-(\d+)-switch/)[1];
+
+//		let status = this.model.getModuleConfigClass(moduleId);
+
+//		let newClass = this.model.getOtherConfigShowClass(className);
+
+//		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
+
+		this.model.setModuleConfigClass(moduleId,className);
+
+		this.view.display();
+	}
+
+
+	/**
+	 * Turn cc on or off.
+	 * - if currently on 
+	 *   - set ccOn to off 
+	 *   - remove ???
+	 * - if currently off
+	 *   - set ccOn to off
+	 *   - add back ??
+	 * @param {*} event 
+	 */
+
+	toggleOffOnSwitch(event) {
+		DEBUG && console.log('-------------- cc_ConfigurationController.toggleOffOnSwitch()');
+		const checked = event.target.checked;
+
+		const currentlyOn = this.model.isOn();
+
+		DEBUG && console.log(`currently on ${currentlyOn} and checked is ${checked}`);
+
+		if (checked) {
+			this.model.turnOn();
+			this.parentController.execute();
+		} else {
+			this.model.turnOff();
+			this.parentController.turnOff();
+		}
+		this.parentController.saveConfig();
 	}
 
 }
@@ -1440,6 +1602,7 @@ class cc_Controller {
 			DEBUG && console.log(`cc_Controller: requestConfigFileContent: json = ${JSON.stringify(json)}`);
 
 			this.cc_configuration = json;
+			this.ccOn = this.cc_configuration.STATUS==="on";
 			this.requestModuleInformation();
         })			
 		.catch((error) => {
@@ -1474,8 +1637,6 @@ class cc_Controller {
 			DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(json)}`);
 
 			this.moduleDetails = json;
-			// cc is now on, because we have all the data
-			this.ccOn = true;
 			this.execute();
         })			
 		.catch((error) => {
@@ -1512,15 +1673,31 @@ class cc_Controller {
 				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - config');
 				// now based on the configuration show the rest of the cc interface
 				this.showConfiguration();
-				this.showCollections();
+				// only show collections if cc is turned on
+				if (this.ccOn) {
+					this.showCollections();
+				}
 
 			}
 		} else {
 			// students only see stuff if there is a config
 			if (this.cc_configuration!==null) {
 				DEBUG && console.log('-------------- cc_Controller.execute() Students Mode - config');
-				this.showCollections();
+				if (this.ccOn) {
+					this.showCollections();
+				}
 			}
+		}
+	}
+
+	/**
+	 * @descr Do the reverse of execute, depending on configuration remove the cc interface
+	 * Currently, this is just removing div#cc-canvas-collections
+	 */
+	turnOff() {
+		let cc_canvas_collection = document.getElementById('cc-canvas-collections');
+		if (cc_canvas_collection) {
+			cc_canvas_collection.parentNode.removeChild(cc_canvas_collection);
 		}
 	}
 
@@ -1626,19 +1803,70 @@ class cc_Controller {
 		}
 	}
 
-	
 	/**
-	 * @desc Handle any clicks on the collections nav bar
-	 * @param collectionName string - name of the collection that was clicked on
+	 * @descr Update the cc_config.json file in the Canvas Files area
+	 * configFileDetails has details about the configuration file
+	 *   .id .filename .content-type .folder_id 
+	 * - File Uploads https://canvas.instructure.com/doc/api/file.file_uploads.html
 	 */
+	saveConfig() {
+		return;
+		DEBUG && console.log('-------------- cc_Controller.saveConfig()');
+		console.log(this.configFileDetails);
+
+		// generate JSON string from config object
+		const configString = JSON.stringify(this.cc_configuration);
+		// get num bytes in config string
+		const numBytes = configString.length;
+
+		// POST
+		// /api/v1/courses/:course_id/files
+		let callUrl = `/api/v1/courses/${this.courseId}/files`;
+
+		fetch(callUrl, { 
+			method: 'POST', 
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRF-Token": this.csrfToken
+            },
+            body: JSON.stringify({				
+				'name': this.configFileDetails.filename,
+				'parent_folder_id': this.configFileDetails.folder_id,
+				'content_type': this.configFileDetails.content_type,
+				'on_duplicate': 'overwrite',
+				'size': numBytes
+			})
+		})
+        .then(this.status) 
+        .then((response) => { 
+            return response.json(); 
+        }) 
+        .then((json) => {
+			DEBUG && console.log(`cc_Controller: save config: json = ${JSON.stringify(json)}`);
+			this.saveConfigFile(json);
+        })			
+		.catch((error) => {
+			console.log(`cc_Controller: saveConfig: error = ${error}`);
+		}, false );
+
+
+		// Response will incude various information that needs to be processed
+	}
+
+	/**
+	 * Do the second step in the Canvas file upload process, upload the file data
+	 * - there is a third step
+	 * @param {Json} response 
+	 */
+	saveConfigFile(response) {
+		DEBUG && console.log('-------------- cc_Controller.saveConfigFile()');
+		console.log(response);
+
+
+		// do the third step
+	}
 	
-	/*collectionClick( collectionName, view){
-	    // change current collection
-	    view.currentCollection = collectionName;
-	    // remove div#guCardInterface
-	    view.removeCanvasCollectionsView();
-	    view.render();
-	} */
 }
 
 // src/index.js

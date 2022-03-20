@@ -135,6 +135,7 @@ export default class cc_Controller {
 			DEBUG && console.log(`cc_Controller: requestConfigFileContent: json = ${JSON.stringify(json)}`);
 
 			this.cc_configuration = json;
+			this.ccOn = this.cc_configuration.STATUS==="on";
 			this.requestModuleInformation();
         })			
 		.catch((error) => {
@@ -169,8 +170,6 @@ export default class cc_Controller {
 			DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(json)}`);
 
 			this.moduleDetails = json;
-			// cc is now on, because we have all the data
-			this.ccOn = true;
 			this.execute();
         })			
 		.catch((error) => {
@@ -207,15 +206,31 @@ export default class cc_Controller {
 				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - config');
 				// now based on the configuration show the rest of the cc interface
 				this.showConfiguration();
-				this.showCollections();
+				// only show collections if cc is turned on
+				if (this.ccOn) {
+					this.showCollections();
+				}
 
 			}
 		} else {
 			// students only see stuff if there is a config
 			if (this.cc_configuration!==null) {
 				DEBUG && console.log('-------------- cc_Controller.execute() Students Mode - config');
-				this.showCollections();
+				if (this.ccOn) {
+					this.showCollections();
+				}
 			}
+		}
+	}
+
+	/**
+	 * @descr Do the reverse of execute, depending on configuration remove the cc interface
+	 * Currently, this is just removing div#cc-canvas-collections
+	 */
+	turnOff() {
+		let cc_canvas_collection = document.getElementById('cc-canvas-collections');
+		if (cc_canvas_collection) {
+			cc_canvas_collection.parentNode.removeChild(cc_canvas_collection);
 		}
 	}
 
@@ -321,17 +336,68 @@ export default class cc_Controller {
 		}
 	}
 
-	
 	/**
-	 * @desc Handle any clicks on the collections nav bar
-	 * @param collectionName string - name of the collection that was clicked on
+	 * @descr Update the cc_config.json file in the Canvas Files area
+	 * configFileDetails has details about the configuration file
+	 *   .id .filename .content-type .folder_id 
+	 * - File Uploads https://canvas.instructure.com/doc/api/file.file_uploads.html
 	 */
-	
-	/*collectionClick( collectionName, view){
-	    // change current collection
-	    view.currentCollection = collectionName;
-	    // remove div#guCardInterface
-	    view.removeCanvasCollectionsView();
-	    view.render();
-	} */
+	saveConfig() {
+		return;
+		DEBUG && console.log('-------------- cc_Controller.saveConfig()');
+		console.log(this.configFileDetails);
+
+		// generate JSON string from config object
+		const configString = JSON.stringify(this.cc_configuration);
+		// get num bytes in config string
+		const numBytes = configString.length;
+
+		// POST
+		// /api/v1/courses/:course_id/files
+		let callUrl = `/api/v1/courses/${this.courseId}/files`;
+
+		fetch(callUrl, { 
+			method: 'POST', 
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRF-Token": this.csrfToken
+            },
+            body: JSON.stringify({				
+				'name': this.configFileDetails.filename,
+				'parent_folder_id': this.configFileDetails.folder_id,
+				'content_type': this.configFileDetails.content_type,
+				'on_duplicate': 'overwrite',
+				'size': numBytes
+			})
+		})
+        .then(this.status) 
+        .then((response) => { 
+            return response.json(); 
+        }) 
+        .then((json) => {
+			DEBUG && console.log(`cc_Controller: save config: json = ${JSON.stringify(json)}`);
+			this.saveConfigFile(json);
+        })			
+		.catch((error) => {
+			console.log(`cc_Controller: saveConfig: error = ${error}`);
+		}, false );
+
+
+		// Response will incude various information that needs to be processed
+	}
+
+	/**
+	 * Do the second step in the Canvas file upload process, upload the file data
+	 * - there is a third step
+	 * @param {Json} response 
+	 */
+/*	saveConfigFile(response) {
+		DEBUG && console.log('-------------- cc_Controller.saveConfigFile()');
+		console.log(response);
+
+
+		// do the third step
+	}
+*/	
 }

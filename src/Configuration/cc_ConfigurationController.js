@@ -20,6 +20,7 @@
 import { cc_ConfigurationModel } from './cc_ConfigurationModel.js';
 import { cc_ConfigurationView } from './cc_ConfigurationView.js';
 
+
 export default class cc_ConfigurationController {
 
 	/**
@@ -58,6 +59,60 @@ export default class cc_ConfigurationController {
 		this.model.setConfigShowClass(newClass);
 
 		this.view.display();
+	}
+
+	/**
+	 * Reveal or hid the module configuration div based on click
+	 * @param {*} event 
+	 */
+	toggleModuleConfigSwitch(event) {
+		DEBUG && console.log('-------------- cc_ConfigurationController.toggleModuleConfigSwitch()');
+
+		// get the class for the event.target element
+		const className = event.target.className;
+		let idString = event.target.id;
+		// match cc-module-config-(\d+)-switch and extract the number
+		const moduleId = idString.match(/cc-module-config-(\d+)-switch/)[1];
+
+//		let status = this.model.getModuleConfigClass(moduleId);
+
+//		let newClass = this.model.getOtherConfigShowClass(className);
+
+//		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
+
+		this.model.setModuleConfigClass(moduleId,className);
+
+		this.view.display();
+	}
+
+
+	/**
+	 * Turn cc on or off.
+	 * - if currently on 
+	 *   - set ccOn to off 
+	 *   - remove ???
+	 * - if currently off
+	 *   - set ccOn to off
+	 *   - add back ??
+	 * @param {*} event 
+	 */
+
+	toggleOffOnSwitch(event) {
+		DEBUG && console.log('-------------- cc_ConfigurationController.toggleOffOnSwitch()');
+		const checked = event.target.checked;
+
+		const currentlyOn = this.model.isOn();
+
+		DEBUG && console.log(`currently on ${currentlyOn} and checked is ${checked}`);
+
+		if (checked) {
+			this.model.turnOn();
+			this.parentController.execute();
+		} else {
+			this.model.turnOff();
+			this.parentController.turnOff();
+		}
+		this.parentController.saveConfig();
 	}
 
 }

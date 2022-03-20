@@ -31,8 +31,57 @@ export default class cc_ConfigurationModel {
 		return this.controller.parentController.ccOn;
 	}
 
+	turnOn() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOn()`);
+		this.controller.parentController.ccOn = true;
+		this.controller.parentController.cc_configuration.STATUS==="on";
+	}
+
+	turnOff() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOff()`);
+		this.controller.parentController.ccOn = false;
+		this.controller.parentController.cc_configuration.STATUS==="off";
+	}
+
 	getConfigShowing() {
 		return this.configShowing;
+	}
+
+	getModuleDetails() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getModuleDetails()`);
+		const moduleDetails = this.controller.parentController.moduleDetails;
+		// map array of objects moduleDetails into hash keyed on id attribute
+		const moduleDetailsHash = moduleDetails.reduce(
+			(accumulator, module) => {
+				accumulator[module.id] = module;
+				return accumulator;
+			},
+			{}
+		);
+
+		return moduleDetailsHash; //this.controller.parentController.moduleDetails;
+	}
+
+	/**
+	 * Set the configClass attribute of the opposite of given moduleId to newClass
+	 * @param {integer} moduleId 
+	 * @param {string} newClass 
+	 */
+	setModuleConfigClass(moduleId, newClass) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.setModuleConfigClass() - ${moduleId} ${newClass}`);
+
+		// find the object in the array this.controller.parentController.moduleDetails that 
+		// has the id matching moduleId
+		const module = this.controller.parentController.moduleDetails.find(
+			(module) => module.id===moduleId
+		);
+
+		// set the configClass attribute of the found object to newClass
+		if (newClass==="icon-mini-arrow-down") {
+			module.configClass = "icon-mini-arrow-right";
+		} else {
+			module.configClass = "icon-mini-arrow-down";
+		}
 	}
 
 	/**

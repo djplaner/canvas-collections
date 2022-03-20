@@ -45,6 +45,52 @@ export default class cc_ConfigurationView extends cc_View {
 			configShowSwitch.className = configShowClass;
 		}
 
+		// add the configuration interfaces for individual modules
+		this.addModuleConfiguration();
+	}
+
+	/**
+	 * @descr Add the CC configuration interface to each module
+	 * - source of module information
+	 */
+
+	addModuleConfiguration() {
+
+		const moduleDetails = this.model.getModuleDetails();
+
+		// loop through all the div.ig-header elements
+		const moduleHeaders = document.getElementsByClassName('ig-header');
+		// for each
+		for (let i = 0; i < moduleHeaders.length; i++) {
+			const moduleHeader = moduleHeaders[i];
+			const id = moduleHeader.id;
+			const moduleDetail = moduleDetails[id];
+
+			// if moduleDetail attribute configClass is undefined, set it to icon-mini-arrow-right
+			if (moduleDetail.configClass===undefined) {
+				moduleDetail.configClass = 'icon-mini-arrow-right';
+			}
+
+			const moduleConfigHtml = `
+		<div class="cc-module-config border border-trbl" id="cc-module-config-4980">
+      		<span>
+			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
+			  Canvas Collections Configuration</span>
+  		</div>`;
+
+			// TO DO check that the id matches on of the module ids in data structure
+
+			// insert moduleConfigHtml afterend of moduleHeader
+			moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
+
+			// add a click handler for i#cc-module-config-${id}-switch
+			const moduleConfigSwitch = document.getElementById(`cc-module-config-${id}-switch`);
+			if (moduleConfigSwitch) {
+				moduleConfigSwitch.onclick = (event) => this.controller.toggleModuleConfigSwitch(event);
+				// and update the class appropriately
+				moduleConfigSwitch.className = moduleDetail.configClass;
+			}
+		}
 	}
 
 	/**
@@ -311,7 +357,7 @@ export default class cc_ConfigurationView extends cc_View {
 			// TODO add event handlers for the up and down buttons
 
 			// set input#cc-config-collection-${collectionName}-default to checked
-			if ( defaultCollection === collectionName ) {
+			if (defaultCollection === collectionName) {
 				const defaultCheckbox = document.getElementById(`cc-config-collection-${collectionName}-default`);
 				if (defaultCheckbox) {
 					defaultCheckbox.checked = true;
@@ -327,19 +373,19 @@ export default class cc_ConfigurationView extends cc_View {
 			}
 
 			// if we're the first collection, remove i#cc-collection-${collectionName}-up
-			if (count===0) {
+			if (count === 0) {
 				const upButton = document.getElementById(`cc-collection-${collectionName}-up`);
 				if (upButton) {
 					upButton.remove();
 				}
-			} else if (count===numCollections-1) {
+			} else if (count === numCollections - 1) {
 				// if we're the last collection, remove i#cc-collection-${collectionName}-down
 				const downButton = document.getElementById(`cc-collection-${collectionName}-down`);
 				if (downButton) {
 					downButton.remove();
 				}
 			}
-			count+=1;
+			count += 1;
 		});
 
 	}
@@ -464,6 +510,15 @@ input:checked + .cc-slider:before {
 	margin: 0.5rem
 }
 
+/* styles for the module configs */
+		    .cc-module-config {
+				padding-left: 0.5em;
+				font-size: smaller;
+				margin:0;
+				font-weight: bold;
+			}
+
+
 		 </style>
 			`;
 
@@ -500,6 +555,9 @@ input:checked + .cc-slider:before {
 			// add event handler to i#configShowSwitch
 			const configShowSwitch = document.getElementById('configShowSwitch');
 			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
+			// add event handler of input#cc-switch
+			const ccSwitch = document.getElementById('cc-switch');
+			ccSwitch.onchange = (event) => this.controller.toggleOffOnSwitch(event);
 		} else {
 			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
 		}
