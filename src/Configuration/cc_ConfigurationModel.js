@@ -28,7 +28,6 @@ export default class cc_ConfigurationModel {
 
 	isOn() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.isOn() - ${this.controller.parentController.ccOn}`);
-		console.log(this.controller);
 		return this.controller.parentController.ccOn;
 	}
 
@@ -72,6 +71,19 @@ export default class cc_ConfigurationModel {
 		}
 
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.setConfigShowClass() - ${newClass} change to - ${this.configShowing}`);
+	}
+
+	/**
+	 * @descr return an array of existing collection names
+	 */
+
+	getExistingCollectionNames() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getExistingCollectionNames()`);
+		console.log(this.controller.parentController.cc_configuration);
+		// show the keys for the cc_configuration object
+		console.log("keys");
+		console.log(Object.keys(this.controller.parentController.cc_configuration));
+		return;
 	}
 
 }

@@ -43,7 +43,6 @@ class cc_ConfigurationModel {
 
 	isOn() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.isOn() - ${this.controller.parentController.ccOn}`);
-		console.log(this.controller);
 		return this.controller.parentController.ccOn;
 	}
 
@@ -87,6 +86,19 @@ class cc_ConfigurationModel {
 		}
 
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.setConfigShowClass() - ${newClass} change to - ${this.configShowing}`);
+	}
+
+	/**
+	 * @descr return an array of existing collection names
+	 */
+
+	getExistingCollectionNames() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getExistingCollectionNames()`);
+		console.log(this.controller.parentController.cc_configuration);
+		// show the keys for the cc_configuration object
+		console.log("keys");
+		console.log(Object.keys(this.controller.parentController.cc_configuration));
+		return;
 	}
 
 }
@@ -288,6 +300,19 @@ class cc_ConfigurationView extends cc_View {
 		if (ccSwitchContainer) {
 			ccSwitchContainer.style.borderBottom = 'none';
 		}
+
+		// add in the details of the existing collections
+		this.showExistingCollections();
+
+	}
+
+	/**
+	 * @descr Fill div#cc-config-existing-collections with a div.cc-existing-collection for each
+	 * of the existing collections
+	 */
+	showExistingCollections() {
+		DEBUG && console.log('cc_configugurationView::showExistingCollections()');
+		const existingCollectionNames = this.model.getExistingCollectionNames();
 
 	}
 

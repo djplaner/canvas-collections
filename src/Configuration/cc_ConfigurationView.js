@@ -171,6 +171,19 @@ export default class cc_ConfigurationView extends cc_View {
 			ccSwitchContainer.style.borderBottom = 'none';
 		}
 
+		// add in the details of the existing collections
+		this.showExistingCollections();
+
+	}
+
+	/**
+	 * @descr Fill div#cc-config-existing-collections with a div.cc-existing-collection for each
+	 * of the existing collections
+	 */
+	showExistingCollections() {
+		DEBUG && console.log('cc_configugurationView::showExistingCollections()');
+		const existingCollectionNames = this.model.getExistingCollectionNames();
+
 	}
 
 
