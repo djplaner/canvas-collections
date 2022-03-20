@@ -232,6 +232,23 @@ export default class cc_Controller {
 		if (cc_canvas_collection) {
 			cc_canvas_collection.parentNode.removeChild(cc_canvas_collection);
 		}
+
+		// remove all the div.cc-module-config 
+		let moduleConfigs = document.querySelectorAll('div.cc-module-config');
+		moduleConfigs.forEach( (moduleConfig) => {
+			moduleConfig.remove();
+		});
+
+		// remove div#cc-config-wrapper
+		let cc_config_wrapper = document.getElementById('cc-config-wrapper');
+		if (cc_config_wrapper) {
+			cc_config_wrapper.remove();
+			// put the border-bottom back on div.cc-switch-container
+			let cc_switch_container = document.querySelector('div.cc-switch-container');
+			if (cc_switch_container) {
+				cc_switch_container.style.borderBottom = '1px solid #c7cdd1';
+			}
+		}
 	}
 
 	/**

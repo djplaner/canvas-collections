@@ -243,6 +243,7 @@ export default class cc_ConfigurationView extends cc_View {
 	 */
 	showConfig() {
 		const configDivHtml = `
+		<div id="cc-config-wrapper">
 		<style>
 		    #cc-config-wrapper {
 				display: block;
@@ -349,7 +350,6 @@ export default class cc_ConfigurationView extends cc_View {
 
 			</style>
 
-		<div id="cc-config-wrapper">
 			<div id="cc-config">
 			 	<div class="cc-box-header">
 		  		  <p>Configure Canvas Collections</p>

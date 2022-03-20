@@ -474,6 +474,7 @@ class cc_ConfigurationView extends cc_View {
 	 */
 	showConfig() {
 		const configDivHtml = `
+		<div id="cc-config-wrapper">
 		<style>
 		    #cc-config-wrapper {
 				display: block;
@@ -580,7 +581,6 @@ class cc_ConfigurationView extends cc_View {
 
 			</style>
 
-		<div id="cc-config-wrapper">
 			<div id="cc-config">
 			 	<div class="cc-box-header">
 		  		  <p>Configure Canvas Collections</p>
@@ -1428,17 +1428,18 @@ class cc_CardsView extends cc_View {
 				text-overflow: ellipsis; */
 			}
 
-			cc-card-header-subtitle {
+			.cc-card-header-subtitle {
 				color: var(--ic-brand-font-color-dark-lightened-30);
 				line-height: 1.3;
 				padding:0;
-				margin-top: 4px
+				margin-top: 0.2rem 
 			}
 
-			cc-card-header-description {
+			.cc-card-header-description {
 				line-height: 1.3;
-				font-size: 0.9rem;
+				font-size: 0.8rem;
 				height: 1rem;
+				font-weight: normal;
 			}
 		`;
 
@@ -1457,7 +1458,14 @@ class cc_CardsView extends cc_View {
 
 			if ( module.collection !== currentCollection ) {
 				// not the right collection, skip this one
+				// set the Canvas module div to display:none
+				// find div.context_module with data-module-id="${module.id}"
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				contextModule.style.display = 'none';
 				continue;
+			} else {
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				contextModule.style.display = 'block';
 			}
 
 			let cardHtml = `
@@ -1866,6 +1874,23 @@ class cc_Controller {
 		let cc_canvas_collection = document.getElementById('cc-canvas-collections');
 		if (cc_canvas_collection) {
 			cc_canvas_collection.parentNode.removeChild(cc_canvas_collection);
+		}
+
+		// remove all the div.cc-module-config 
+		let moduleConfigs = document.querySelectorAll('div.cc-module-config');
+		moduleConfigs.forEach( (moduleConfig) => {
+			moduleConfig.remove();
+		});
+
+		// remove div#cc-config-wrapper
+		let cc_config_wrapper = document.getElementById('cc-config-wrapper');
+		if (cc_config_wrapper) {
+			cc_config_wrapper.remove();
+			// put the border-bottom back on div.cc-switch-container
+			let cc_switch_container = document.querySelector('div.cc-switch-container');
+			if (cc_switch_container) {
+				cc_switch_container.style.borderBottom = '1px solid #c7cdd1';
+			}
 		}
 	}
 
