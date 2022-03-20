@@ -79,11 +79,47 @@ export default class cc_ConfigurationModel {
 
 	getExistingCollectionNames() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getExistingCollectionNames()`);
-		console.log(this.controller.parentController.cc_configuration);
+//		console.log(this.controller.parentController.cc_configuration);
 		// show the keys for the cc_configuration object
-		console.log("keys");
-		console.log(Object.keys(this.controller.parentController.cc_configuration));
-		return;
+	 	return Object.keys(this.controller.parentController.cc_configuration.COLLECTIONS);
 	}
 
+	/**
+	 * @descr return an integer count of the number of modules that belong to a collection
+	 * @param {String} collectionName
+	 */
+
+	getModuleCount(collectionName) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getModuleCount()`);
+		const modules = this.controller.parentController.cc_configuration.MODULES;
+
+		// filter modules to return only objects with collection==collectionName
+		//const collectionModules = modules.filter(module => module.collection===collectionName);
+		const collectionModules = Object.keys(modules).filter(
+			(module) => modules[module].collection===collectionName
+			);
+
+		return collectionModules.length;
+	}
+
+	/**
+	 * @returns {String} - Name of default active collection
+	 */
+
+	getDefaultCollection() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getDefaultCollection()`);
+		return this.controller.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION;
+	}
+
+	/**
+	 * return the representation for the given collectionName
+	 * @param {String} collectionName 
+	 * @returns {String} - Name of representation
+	 */
+	getCollectionRepresentation(collectionName) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getCollectionRepresentation()`);
+		console.log(
+			`representation is ${this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation}`);
+		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation;
+	}
 }

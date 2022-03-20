@@ -35,7 +35,7 @@ export default class cc_CollectionsModel {
 	}
 
 	getCollectionNames() {
-		return this.cc_configuration.COLLECTIONS;
+		return Object.keys(this.cc_configuration.COLLECTIONS);
 	}
 
 	/**
@@ -47,7 +47,7 @@ export default class cc_CollectionsModel {
 		// an array of dicts
 		let canvasModules = this.controller.parentController.moduleDetails;
 		// dict of dicts with some keyed on the names of modules
-		let ccModules = this.cc_configuration;
+		let ccModules = this.cc_configuration.MODULES;
 
 		this.modulesCollections = [];
 		// loop thru canvasModules 

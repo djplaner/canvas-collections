@@ -71,6 +71,7 @@ export default class cc_ConfigurationView extends cc_View {
 				margin-top: -1em;
 				margin-right: 10em;
 				margin-bottom: 1em;
+				padding-bottom: 0.5em;
 				background-color: #f5f5f5;
 			}
 
@@ -111,7 +112,58 @@ export default class cc_ConfigurationView extends cc_View {
 				transform: translateX(-50%);
 			}
 
+			.cc-existing-collection {
+				font-size: 0.8em;
+				font-weight: normal;
+				padding-left: 0.5em;
+			}
+
+			.cc-existing-collection label {
+				font-size: 0.8em;
+			}
+
+			.cc-existing-collection select {
+				font-size: 0.8em;
+				width: 7rem;
+				height: 2rem;
+			}
+
+			.cc-existing-collection p {
+				margin-top: 0.2em;
+				margin-bottom: 0.2em;
+			}
+		
+			.cc-config-collection {
+				padding-top: 0.5em;
+				padding-left: 0.5em;
+			}
+
+			.cc-config-collection label {
+				font-size: 0.8em;
+			}
+
+			.cc-config-collection input {
+				font-size: 0.8em;
+			}
+
+			.cc-config-collection button {
+				font-size: 0.8em;
+				padding: 0.5em 1em;
+			}
+			.cc-config-collection select {
+				font-size: 0.8em;
+				width: 7rem;
+				height: 2rem;
+			}
+
+			.cc-collection-representation {
+				display: flex;
+				align-items: center;
+				justify-content: space-around;
+			}
+
 			</style>
+
 		<div id="cc-config-wrapper">
 			<div id="cc-config">
 			 	<div class="cc-box-header">
@@ -124,10 +176,20 @@ export default class cc_ConfigurationView extends cc_View {
 					</div>
 					<div id="cc-config-new-collection">
 						<p>Add a new collection</p>
-						<div class="ic-Form-control" style="display:float">
+						<div class="cc-config-collection border border-trbl">
+						<div class="ic-Form-control" style="margin-bottom: 0px">
 						  	<input type="text" id="cc-config-new-collection-name" 
 							   placeholder="Name for new collection">
 						</div>
+
+						<div class="cc-collection-representation">
+							<label for="cc-collection-newRepresentation">Representation</label>
+							<select id="cc-collection-newRepresentation">
+								<option id="cc-collection-newRepresentation-cards" value="cards">Cards</option>
+								<option id="cc-collection-newRpresentation-table" value="table">Table</option>
+							</select>
+						</div>
+
 						<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
 							<div class="ic-Checkbox-group">
 								<div class="ic-Form-control ic-Form-control--checkbox">
@@ -151,6 +213,7 @@ export default class cc_ConfigurationView extends cc_View {
 							</div>
 							<button class="btn btn-primary" id="cc-config-new-collection-button">Add</button>
 						</fieldset>
+					</div>
 					</div>
 				  </div>
 				</div>
@@ -184,6 +247,101 @@ export default class cc_ConfigurationView extends cc_View {
 		DEBUG && console.log('cc_configugurationView::showExistingCollections()');
 		const existingCollectionNames = this.model.getExistingCollectionNames();
 
+		DEBUG && console.log(existingCollectionNames);
+
+		// get div#cc-config-existing-collections
+		const existingCollectionsDiv = document.getElementById('cc-config-existing-collections');
+
+		const numCollections = existingCollectionNames.length;
+		let count = 0;
+		const defaultCollection = this.model.getDefaultCollection();
+
+		// for each collection add a div.cc-existing-collection
+		existingCollectionNames.forEach(collectionName => {
+			const moduleCount = this.model.getModuleCount(collectionName);
+			const moduleName = `module${moduleCount !== 1 ? 's' : ''}`;
+			const divExistingCollection = `
+			<div class="cc-existing-collection border border-trbl" id="cc-collection-${collectionName}">
+				<p>${collectionName} - (${moduleCount} ${moduleName})
+				<span class="cc-collection-move">
+				<i class="icon-arrow-up" id="cc-collection-${collectionName}-up"></i>
+				<i class="icon-arrow-down" id="cc-collection-${collectionName}-down"></i>
+				</p>
+
+				<div class="cc-collection-representation">
+					<label for="cc-collection-${collectionName}-representation">Representation</label>
+				 	<select id="cc-collection-${collectionName}-representation">
+						<option id="cc-collection-${collectionName}-representation-cards" value="cards">Cards</option>
+						<option id="cc-collection-${collectionName}-representation-table" value="table">Table</option>
+					</select>
+				</div>
+
+				<!-- put the options -->
+				<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+					<div class="ic-Checkbox-group">
+						<div class="ic-Form-control ic-Form-control--checkbox">
+							<input type="checkbox" id="cc-config-collection-${collectionName}-default">
+							<label class="ic-Label" for="cc-config-collection-${collectionName}-default">
+								Default collection?
+							</label>
+						</div>
+						<div class="ic-Form-control ic-Form-control--checkbox">
+							<input type="checkbox" id="cc-config-collection-${collectionName}-all">
+							<label class="ic-Label" for="cc-config-collection-${collectionName}-all">
+								Include all modules?
+							</label>
+						</div>
+						<div class="ic-Form-control ic-Form-control--checkbox">
+							<input type="checkbox" id="cc-config-collection-${collectionName}-unallocated">
+							<label class="ic-Label" for="cc-config-collection-${collectionName}-unallocated">
+								Include modules without a collection?
+							</label>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			`;
+
+
+			// add the div.cc-existing-collection to div#cc-config-existing-collections
+			existingCollectionsDiv.insertAdjacentHTML('beforeEnd', divExistingCollection);
+
+			// TODO add an event handler for clicking the options
+
+			// TODO add event handlers for the up and down buttons
+
+			// set input#cc-config-collection-${collectionName}-default to checked
+			if ( defaultCollection === collectionName ) {
+				const defaultCheckbox = document.getElementById(`cc-config-collection-${collectionName}-default`);
+				if (defaultCheckbox) {
+					defaultCheckbox.checked = true;
+				}
+			}
+
+			// select the right representation
+			const representation = this.model.getCollectionRepresentation(collectionName);
+			// set option#cc-collection-${collectionName}-representation-${representation} to selected
+			const representationOption = document.getElementById(`cc-collection-${collectionName}-representation-${representation}`);
+			if (representationOption) {
+				representationOption.selected = true;
+			}
+
+			// if we're the first collection, remove i#cc-collection-${collectionName}-up
+			if (count===0) {
+				const upButton = document.getElementById(`cc-collection-${collectionName}-up`);
+				if (upButton) {
+					upButton.remove();
+				}
+			} else if (count===numCollections-1) {
+				// if we're the last collection, remove i#cc-collection-${collectionName}-down
+				const downButton = document.getElementById(`cc-collection-${collectionName}-down`);
+				if (downButton) {
+					downButton.remove();
+				}
+			}
+			count+=1;
+		});
+
 	}
 
 
@@ -191,7 +349,7 @@ export default class cc_ConfigurationView extends cc_View {
 	 * @descr Remove the div#cc-config from the end of div.ic-app-nav-toggle-and-crumbs, if it exists
 	 */
 	removeConfig() {
-		const configDiv = document.getElementById('cc-config');
+		const configDiv = document.getElementById('cc-config-wrapper');
 		if (configDiv) {
 			configDiv.remove();
 			const toggleAndCrumbs = document.getElementsByClassName('ic-app-nav-toggle-and-crumbs')[0];
