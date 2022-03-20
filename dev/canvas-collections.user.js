@@ -167,6 +167,16 @@ class cc_ConfigurationModel {
 	}
 
 	/**
+	 * @descr get the object representing the CC configuration for the given module name
+	 * @params {String} moduleName
+	 * @returns {Object} - the object representing the CC configuration for the given module id
+	 */
+
+	getModuleConfiguration(moduleName) {
+		return this.controller.parentController.cc_configuration.MODULES[moduleName];
+	}
+
+	/**
 	 * @returns {String} - Name of default active collection
 	 */
 
@@ -185,6 +195,12 @@ class cc_ConfigurationModel {
 		console.log(
 			`representation is ${this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation}`);
 		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation;
+	}
+
+	getCollections() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getCollections()`);
+		// return the keys for the cc_configuration.COLLECTIONS object
+		return Object.keys(this.controller.parentController.cc_configuration.COLLECTIONS);
 	}
 }
 
@@ -291,9 +307,13 @@ class cc_ConfigurationView extends cc_View {
 				continue;
 			}
 
+			let showConfigHtml = '';
 			// does moduleDetail have property configClass
 			if (!("configClass" in moduleDetail)) {
 				moduleDetail['configClass'] = 'icon-mini-arrow-right';
+			} else if (moduleDetail['configClass'] === 'icon-mini-arrow-down') {
+				// do nothing
+				showConfigHtml = this.showModuleConfig(moduleDetail);
 			}
 
 			const moduleConfigHtml = `
@@ -301,6 +321,7 @@ class cc_ConfigurationView extends cc_View {
       		<span>
 			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
 			  Canvas Collections Configuration</span>
+			  ${showConfigHtml}
   		</div>`;
 
 			// TO DO check that the id matches on of the module ids in data structure
@@ -316,6 +337,130 @@ class cc_ConfigurationView extends cc_View {
 				moduleConfigSwitch.className = moduleDetail.configClass;
 			}
 		}
+	}
+
+	/**
+	 * @descr generate the div.cc-module-config-details for the module
+	 * @param {Object} moduleDetail
+	 * @returns {string} html
+	 */
+
+	showModuleConfig(moduleDetail) {
+		DEBUG && console.log('-------------- cc_ConfigurationView.showModuleConfig()');
+		console.log(moduleDetail);
+
+		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.name);
+		console.log('---- configuration');
+		console.log(moduleConfig);
+
+		const date = "";
+
+		// get list of collections
+		const collections = this.model.getCollections();
+		let collectionsOptions = '';
+		for (let i = 0; i < collections.length; i++) {
+			let selected = '';
+			const collection = collections[i];
+			if (collection===moduleConfig.collection) {
+				selected='selected';
+			}
+			collectionsOptions += `<option value="${collection}" ${selected}>${collection}</option>`;
+		}
+		
+		let showConfigHtml = `
+		<style>
+		   .cc-collection-representation label {
+			   width: 5rem;
+			   font-size: 0.8rem;
+		   }
+		   .cc-collection-representation input {
+			   font-size: 0.8rem;
+		   }
+		   .cc-module-config-detail {
+			   padding-top: 0.5rem;
+		   }
+		   .cc-preview-container {
+			   display:flex;
+			   flex-wrap: wrap;
+			   width: 100%;
+		   }
+
+		   .cc-preview-container .cc-card {
+			   min-width: 50%;
+		   }
+		</style>
+
+		<div class="cc-module-config-detail">
+			<div>
+				<div class="cc-collection-representation">
+					<label for="cc-collection-representation-${moduleDetail.id}-collection">Collection</label>
+					<select id="cc-module-config-${moduleDetail.id}-collection">
+					  ${collectionsOptions}
+					</select>
+				</div>
+				<div class="cc-collection-representation">
+				    <label for="cc-module-config-${moduleDetail.id}-label">Label</label>
+					<input type="text" id="cc-module-config-${moduleDetail.id}-label" 
+						value="${moduleConfig.label}" />
+					<br clear="all" />
+				    <label for="cc-module-config-${moduleDetail.id}-number">Number</label>
+					<input type="text" id="cc-module-config-${moduleDetail.id}-number" 
+					     value="${moduleConfig.num}" />
+					<br clear="all" />
+				    <label for="cc-module-config-${moduleDetail.id}-date">Date</label>
+					<input type="text" id="cc-module-config-${moduleDetail.id}-date" 
+					      value="${date}">
+					<br clear="all" />
+				    <label for="cc-module-config-${moduleDetail.id}-description">Description</label>
+					<textarea id="cc-module-config-${moduleDetail.id}-description">${moduleConfig.description}</textarea>
+				</div>
+		    </div>
+			<div>
+				<div class="cc-collection-representation">
+					<label for="cc-collection-representation-${moduleDetail.id}-imageSize">Image size</label>
+					<input id="cc-module-config-${moduleDetail.id}-imageSize" value="${moduleConfig.imageSize}">
+					<br clear="all" />
+					<label for="cc-collection-representation-${moduleDetail.id}-imageUrl">Image URL</label>
+					<input type="text" id="cc-module-config-${moduleDetail.id}-imageUrl" 
+					        value="${moduleConfig.image}">
+				</div>
+				<div class="cc-module-config-imagePreview">
+				  <div class="cc-preview-container">
+					<div class="cc-card" aria-label="Preview">
+  						<div class="cc-card-header">
+							<div class="cc-card-header-image" 
+							     style="background-image:url('${moduleConfig.image}');">
+								<div class="cc-card-header-hero" aria-hidden="true"></div>
+	  						</div>
+		   				    <a href="#module_${moduleDetail.id}" class="cc-card-link">
+	  							<div class="cc-card-header-content">
+	    							<h3 class="cc-card-header-title cc-ellipsis" title="${moduleDetail.name}">
+									  ${moduleDetail.name}
+									</h3>
+	    							<div class="cc-card-header-subtitle cc-ellipsis">
+									</div>
+									<div class="cc-card-header-description">
+										${moduleConfig.description}
+									</div>
+	  							</div>
+							</a>	
+						</div>
+					</div>
+				  </div>
+				</div>
+		    </div>
+		</div>	
+		`;
+
+		// TODO
+		// - display:none cc-module-config-image if there is no image
+		// - set the options for select#cc-module-config-${moduleDetail.id}-collection
+		// - set onClick for select#cc-module-config-${moduleDetail.id}-collection
+		// - set the options for select#cc-module-config-${moduleDetail.id}-imageSize
+		// - set onClick for select#cc-module-config-${moduleDetail.id}-imageSize
+		// - all the other event handlers
+
+		return showConfigHtml;
 	}
 
 	/**
@@ -742,6 +887,18 @@ input:checked + .cc-slider:before {
 				margin:0;
 				font-weight: bold;
 			}
+
+
+			.cc-module-config-detail {  
+				display: grid; 
+				grid-template-columns: 1fr 1fr; 
+				grid-template-rows: 1fr; 
+				gap: 0px 1em; 
+				grid-auto-flow: row; 
+				grid-template-areas: ". .";
+				height: 100%;
+			}
+
 
 
 		 </style>

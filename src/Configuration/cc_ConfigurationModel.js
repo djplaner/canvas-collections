@@ -152,6 +152,16 @@ export default class cc_ConfigurationModel {
 	}
 
 	/**
+	 * @descr get the object representing the CC configuration for the given module name
+	 * @params {String} moduleName
+	 * @returns {Object} - the object representing the CC configuration for the given module id
+	 */
+
+	getModuleConfiguration(moduleName) {
+		return this.controller.parentController.cc_configuration.MODULES[moduleName];
+	}
+
+	/**
 	 * @returns {String} - Name of default active collection
 	 */
 
@@ -170,5 +180,11 @@ export default class cc_ConfigurationModel {
 		console.log(
 			`representation is ${this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation}`);
 		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation;
+	}
+
+	getCollections() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getCollections()`);
+		// return the keys for the cc_configuration.COLLECTIONS object
+		return Object.keys(this.controller.parentController.cc_configuration.COLLECTIONS);
 	}
 }
