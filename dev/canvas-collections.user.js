@@ -167,6 +167,12 @@ class cc_ConfigurationView extends cc_View {
 
 	/**
 	 * @descr Add the div#cc-config to the end of div.ic-app-nav-toggle-and-crumbs
+	 * Config should allow for
+	 * - Choosing default initial collection
+	 * - adding or removing collections from the list
+	 * - the order of collections
+	 * - choosing the representation for collections
+	 * - whether to include the "All" and "None" collections?
 	 */
 	showConfig() {
 		const configDivHtml = `
@@ -178,16 +184,94 @@ class cc_ConfigurationView extends cc_View {
 
 			#cc-config {
 				float: right;
+				display: block;
 				max-width: 50%;
 				margin-top: -1em;
 				margin-right: 10em;
+				margin-bottom: 1em;
 				background-color: #f5f5f5;
+			}
+
+			.cc-box-header {
+				padding-left: 0.5em;
+			}
+
+			.cc-box-header p {
+				font-size: 1.1em;
+				font-weight: bold;
+			}
+
+			.cc-box-body {
+				width: 500px;
+				padding-left: 0.5em;
+				padding-bottom: 1.em;
+			}
+
+			#cc-config-body {  display: grid; 
+				grid-template-columns: 1fr 1fr; 
+				grid-template-rows: 1fr; 
+				gap: 0px 1em; 
+				grid-auto-flow: row; 
+				grid-template-areas: ". .";
+				height: 100%;
+			}
+
+			#cc-config-body p {
+				font-size: 0.9em;
+				font-weight: bold;
+			}
+
+			#cc-config-new-collection {
+			}
+
+			#cc-config-new-collection-button {
+				left: 50%;
+				transform: translateX(-50%);
 			}
 
 			</style>
 		<div id="cc-config-wrapper">
 			<div id="cc-config">
-		  		<h3>Configure Canvas Collections</h3>
+			 	<div class="cc-box-header">
+		  		  <p>Configure Canvas Collections</p>
+				</div>
+			    <div class="cc-box-body">
+				  <div id="cc-config-body">
+				    <div id="cc-config-existing-collections">
+						<p>Existing collections</p>
+					</div>
+					<div id="cc-config-new-collection">
+						<p>Add a new collection</p>
+						<div class="ic-Form-control" style="display:float">
+						  	<input type="text" id="cc-config-new-collection-name" 
+							   placeholder="Name for new collection">
+						</div>
+						<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+							<div class="ic-Checkbox-group">
+								<div class="ic-Form-control ic-Form-control--checkbox">
+									<input type="checkbox" id="cc-config-new-collection-default">
+									<label class="ic-Label" for="cc-config-new-collection-default">
+										<small>Default collection?</small>
+									</label>
+								</div>
+								<div class="ic-Form-control ic-Form-control--checkbox">
+									<input type="checkbox" id="cc-config-new-collection-all">
+									<label class="ic-Label" for="cc-config-new-collection-all">
+										<small>Include all modules?</small>
+									</label>
+								</div>
+								<div class="ic-Form-control ic-Form-control--checkbox">
+									<input type="checkbox" id="cc-config-new-collection-unallocated">
+									<label class="ic-Label" for="cc-config-new-collection-unallocated">
+										<small>Include modules without a collection?</small>
+									</label>
+								</div>
+							</div>
+							<button class="btn btn-primary" id="cc-config-new-collection-button">Add</button>
+						</fieldset>
+					</div>
+				  </div>
+				</div>
 			</div>
 		</div>
 		`
