@@ -22,20 +22,33 @@ Two address two known limitiations of [the vanilla Canvas Modules page](https://
 
 ## What?
 
-Embedded in Canvas, the canvas-collections Javascript will modify presentation of the Modules page in two ways:
-1. Generate a [card-based user interface](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/); and,
+Embedded in Canvas, the canvas-collections Javascript aims to provide two additional functions to the standard Canvas Modules page:
+1. Enable modules to be grouped into _Collections_; and,
+2. Allow collections to use different _Representations_.
 
-    Each module represented by a card. The module cards are inserted before the standard Canvas module list. Clicking on a card will take you to the module. Eventually, the cards will support much of [the functionality of the Card Interface](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/) and new Canvas specific functionality.
+### Collections
 
-2. group Modules into "collections".
+Modules are the standard Canvas way to organise sequences of information. Modules can be designed for different purposes (e.g. content, assessment, resources, etc.). Canvas groups all modules on the same page. Allowing no distinction. Resulting in the modules page containing a long list of modules for different purposes. Decreasing findability.
 
-    Modules can be grouped into collections (e.g. content, assessment, resources, units etc.). A collections navigation bar will be inserted before the Card interface to select the collection to view. Only the cards and modules for the selected collection will be visible.
+canvas-collections will allow modules to be grouped into different _collections_ as fits the design of the course. A navigation interface will allow the learner to navigate between different collections of modules. Only the modules for the selected collection will be visible. For example, the following image shows a Canvas course modules page with two collections: _Study Guide_ and _Assessment_. _Study Guide_ is the currently selected collection and hence only modules in that collection are visible.
 
-> **Note:** The card interface is only the first alternate interface. Plans include enabling different types of interfaces (e.g. a table-based interface).
+![](docs/pics/early-collections.png)
 
-The long-term plan is that the canvas-collections "architecture" will allow for different interface designs. Not limited to cards and a navigation bar.
+### Representations
+
+The standard Canvas modules page shows a list of every module. This is [known to be problematic](https://community.canvaslms.com/t5/Idea-Conversations/Modules-Display-as-Collapsed-by-Default/idi-p/370135) where there are numerous modules. Gaining and understanding of the available modules and navigating between them becomes overwhelming. This has led many teachers to designing their own solutions.
+
+canvas-collections will automatically generate different representations for modules. Whether all of the modules or just the modules in a particular collection. The initial representation will be a card-based representation. A representation illustrated in the image above. 
+
+Each module is represented by a card that can be customised to represent the module and its purpose. The module cards are inserted before the standard Canvas module list. Clicking on a card will take you to the module. Eventually, the cards will support much of [the functionality of the Card Interface](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/) and new Canvas specific functionality.
+
+The following image illustrates a table-based representation. This is the next planned representation.
+
+![](docs/pics/table-representation.png)
 
 ## Status
+
+> :warning: canvas-collections is still under development. Not yet ready for significant use.
 
 You can use canvas-collection in two ways:
 
@@ -44,25 +57,7 @@ You can use canvas-collection in two ways:
 2. Institutionally, by including it in Canvas.
   If you wanted to use canvas-collections in production (not currently recommended). You us [the Canvas theme editor]() to include the canvas-collections Javascript (either the [minimised](https://raw.githubusercontent.com/djplaner/canvas-collections/main/release/canvas-collections.min.js) or [unminimised](https://raw.githubusercontent.com/djplaner/canvas-collections/main/release/canvas-collections.js) versions) in your Canvas instance.
 
-## Functionality
-
-Support for two broad situation
-1. Default - basic cards added to a standard Canvas Modules page 
-2. Additional configuration - specify additional information for collections and modules to customise representation (currently hard coded in script) 
-
-Representation supports
-- Collections
-    - basic nav bar allowing navigation between different module collections
-    - only modules in the selected collection are visible    
-- Modules
-    - Engage button to go to default Canvas view of module
-    - Showing if a module is completed, in progress, or locked
-    - Circular progress bar illustrating % of items completed (of those that can be completed) 
-    - Display module date
-    - Display module description
-    - Module title modified to include collection name
-
-### Screenshots
+### Additional Screenshots
 
 Click on the screenshots to see larger versions.
 
