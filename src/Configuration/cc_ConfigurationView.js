@@ -684,6 +684,7 @@ input:checked + .cc-slider:before {
 		const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
+		    <!-- button id="cc-file-test">File Test</button -->
 		    <i id="configShowSwitch" class="icon-mini-arrow-right"></i> <small>Canvas Collections</small>
 			<a target="_blank"
 			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
@@ -703,15 +704,33 @@ input:checked + .cc-slider:before {
 		let easy_student_view = document.querySelector('a#easy_student_view');
 		if (easy_student_view) {
 			easy_student_view.insertAdjacentHTML('afterend', CC_BUNDLE_HTML);
+
+
 			// add event handler to i#configShowSwitch
 			const configShowSwitch = document.getElementById('configShowSwitch');
 			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
 			// add event handler of input#cc-switch
 			const ccSwitch = document.getElementById('cc-switch');
 			ccSwitch.onchange = (event) => this.controller.toggleOffOnSwitch(event);
+
+	//		const fileTest = document.getElementById('cc-file-test');
+//			fileTest.onclick = (event) => this.fileTest();
+
+			// remove the configShowSwitch if no ccIsOn
+			if ( ! this.model.isOn()) {
+				configShowSwitch.remove();
+			}
 		} else {
 			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
 		}
+	}
+
+	/**
+	 * Simple harness to test for file creation 
+	 */
+
+	fileTest(event) {
+		console.log("---------------------- fileTest clicked");
 	}
 
 }

@@ -915,6 +915,7 @@ input:checked + .cc-slider:before {
 		const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
+		    <!-- button id="cc-file-test">File Test</button -->
 		    <i id="configShowSwitch" class="icon-mini-arrow-right"></i> <small>Canvas Collections</small>
 			<a target="_blank"
 			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
@@ -934,15 +935,33 @@ input:checked + .cc-slider:before {
 		let easy_student_view = document.querySelector('a#easy_student_view');
 		if (easy_student_view) {
 			easy_student_view.insertAdjacentHTML('afterend', CC_BUNDLE_HTML);
+
+
 			// add event handler to i#configShowSwitch
 			const configShowSwitch = document.getElementById('configShowSwitch');
 			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
 			// add event handler of input#cc-switch
 			const ccSwitch = document.getElementById('cc-switch');
 			ccSwitch.onchange = (event) => this.controller.toggleOffOnSwitch(event);
+
+	//		const fileTest = document.getElementById('cc-file-test');
+//			fileTest.onclick = (event) => this.fileTest();
+
+			// remove the configShowSwitch if no ccIsOn
+			if ( ! this.model.isOn()) {
+				configShowSwitch.remove();
+			}
 		} else {
 			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
 		}
+	}
+
+	/**
+	 * Simple harness to test for file creation 
+	 */
+
+	fileTest(event) {
+		console.log("---------------------- fileTest clicked");
 	}
 
 }
@@ -1689,10 +1708,14 @@ class cc_Controller {
 
 		// if cc should run, try to get the config
         if (this.modulesPage || this.homeModulesPage) {
+			// proposed "command" change
+			
+
+			//-- original get data chain commencing
 			this.setCsrfToken();
 			DEBUG && console.log(`cc_Controller: csrf = ${this.csrf}`);
 
-			this.requestConfigFileId();
+			this.requestConfigFileId(); 
 		} 
 	}
 
@@ -1840,6 +1863,12 @@ class cc_Controller {
 		//-- figure out what to do
 
 		if ( this.editMode ) {
+			// show the configShowSwitch if it's there
+			const configShowSwitch = document.getElementById('configShowSwitch');
+			if (configShowSwitch) {
+				configShowSwitch.style.display = 'inline-block';
+			}
+
 			if (this.cc_configuration===null) {
 				// no configuration - show the cc interface with option to create one
 				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - no config');
@@ -1891,6 +1920,11 @@ class cc_Controller {
 			if (cc_switch_container) {
 				cc_switch_container.style.borderBottom = '1px solid #c7cdd1';
 			}
+		}
+		const configShowSwitch = document.getElementById('configShowSwitch');
+		// set configShowSwitch to display:none
+		if (configShowSwitch) {
+			configShowSwitch.style.display = 'none';
 		}
 	}
 

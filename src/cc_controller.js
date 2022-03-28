@@ -46,10 +46,14 @@ export default class cc_Controller {
 
 		// if cc should run, try to get the config
         if (this.modulesPage || this.homeModulesPage) {
+			// proposed "command" change
+			
+
+			//-- original get data chain commencing
 			this.setCsrfToken();
 			DEBUG && console.log(`cc_Controller: csrf = ${this.csrf}`);
 
-			this.requestConfigFileId();
+			this.requestConfigFileId(); 
 		} 
 	}
 
@@ -197,6 +201,12 @@ export default class cc_Controller {
 		//-- figure out what to do
 
 		if ( this.editMode ) {
+			// show the configShowSwitch if it's there
+			const configShowSwitch = document.getElementById('configShowSwitch');
+			if (configShowSwitch) {
+				configShowSwitch.style.display = 'inline-block';
+			}
+
 			if (this.cc_configuration===null) {
 				// no configuration - show the cc interface with option to create one
 				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - no config');
@@ -248,6 +258,11 @@ export default class cc_Controller {
 			if (cc_switch_container) {
 				cc_switch_container.style.borderBottom = '1px solid #c7cdd1';
 			}
+		}
+		const configShowSwitch = document.getElementById('configShowSwitch');
+		// set configShowSwitch to display:none
+		if (configShowSwitch) {
+			configShowSwitch.style.display = 'none';
 		}
 	}
 
