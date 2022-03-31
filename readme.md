@@ -16,6 +16,8 @@ To address two known limitiations of [the vanilla Canvas Modules page](https://c
 
 These limitations negatively impact students' ability to understand and navigate Canvas Modules.
 
+The [related work section below](#related-work) provides links to related work by others in the Canvas community.
+
 ### No way to group modules
 
 All Canvas modules are shown on the one page. There is no way to group them for different purposes or to break up the long list of modules. The need to group modules has been identified multiple times since 2015 in Canvas community forums.  Available workarounds all [have their limitations](https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-group-modules-together/m-p/179757/highlight/true#M84952). Instructure ["don't have plans to support nested modules soon"](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383/highlight/true#M50428). 
