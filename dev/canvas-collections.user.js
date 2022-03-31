@@ -1816,7 +1816,7 @@ class cc_Controller {
 	requestModuleInformation() {
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: for ${this.courseId}`);
 
-		let callUrl = `/api/v1/courses/${this.courseId}/modules`;
+		let callUrl = `/api/v1/courses/${this.courseId}/modules?per_page=500,include=items,content_details`;
 
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: callUrl = ${callUrl}`);
 

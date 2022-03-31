@@ -154,7 +154,7 @@ export default class cc_Controller {
 	requestModuleInformation() {
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: for ${this.courseId}`);
 
-		let callUrl = `/api/v1/courses/${this.courseId}/modules`;
+		let callUrl = `/api/v1/courses/${this.courseId}/modules?per_page=500,include=items,content_details`;
 
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: callUrl = ${callUrl}`);
 
@@ -174,6 +174,8 @@ export default class cc_Controller {
 			DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(json)}`);
 
 			this.moduleDetails = json;
+			// TODO call https://canvas.instructure.com/doc/api/modules.html#method.context_module_items_api.index
+			// the list module items API for each module
 			this.execute();
         })			
 		.catch((error) => {
