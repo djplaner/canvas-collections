@@ -20,8 +20,8 @@
 
 import { cc_View } from '../cc_View.js';
 
-import { cc_NavView } from './cc_NavView.js';
-import { cc_CardsView } from './cc_CardsView.js';
+import { cc_NavView } from './NavView.js';
+import { cc_CardsView } from './CardsView.js';
 
 export default class cc_CollectionsView extends cc_View {
 

@@ -12,7 +12,7 @@
 
 
 import { cc_ConfigurationController} from './Configuration/cc_ConfigurationController.js';
-import { cc_CollectionsController } from './Collections/cc_CollectionsController.js';
+import { cc_CollectionsController } from './Collections/CollectionsController.js';
 
 const DEBUG=true;
 

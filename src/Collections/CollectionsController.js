@@ -7,8 +7,8 @@
  */
 
 
-import { cc_CollectionsModel } from './cc_CollectionsModel.js';
-import { cc_CollectionsView } from './cc_CollectionsView.js';
+import { cc_CollectionsModel } from './CollectionsModel.js';
+import { cc_CollectionsView } from './CollectionsView.js';
 
 export default class cc_CollectionsController {
 
