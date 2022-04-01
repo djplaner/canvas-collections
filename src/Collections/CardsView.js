@@ -7,7 +7,7 @@
 
 import { cc_View } from '../cc_View.js';
 
-export default class cc_CardsView extends cc_View {
+export default class CardsView extends cc_View {
 
 	/**
 	 * @descr Initialise the view

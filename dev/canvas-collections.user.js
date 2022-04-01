@@ -1087,7 +1087,7 @@ class cc_ConfigurationController {
 
 }
 
-// src/Collections/cc_CollectionsModel.js
+// src/Collections/CollectionsModel.js
 /**
  * cc_CollectionsModel.js
  * Hold the cc data structure and provide data methods required for configuration
@@ -1174,7 +1174,7 @@ class cc_CollectionsModel {
 
 }
 
-// src/Collections/cc_NavView.js
+// src/Collections/NavView.js
 /**
  * cc_NavView.js 
  * - insert the navigation elements into div#cc-canvas-collections 
@@ -1320,7 +1320,7 @@ li.cc-nav a {
 	}
 }
 
-// src/Collections/cc_CardsView.js
+// src/Collections/CardsView.js
 /**
  * cc_CardsView.js 
  * - insert the cards for the current collection
@@ -1330,7 +1330,7 @@ li.cc-nav a {
 
 
 
-class cc_CardsView extends cc_View {
+class CardsView extends cc_View {
 
 	/**
 	 * @descr Initialise the view
@@ -1521,7 +1521,7 @@ class cc_CardsView extends cc_View {
 	}
 }
 
-// src/Collections/cc_CollectionsView.js
+// src/Collections/CollectionsView.js
 /**
  * cc_CollectionsView.js 
  * Has to make three changes to the Canvas modules page
@@ -1606,7 +1606,7 @@ class cc_CollectionsView extends cc_View {
 	}
 }
 
-// src/Collections/cc_CollectionsController.js
+// src/Collections/CollectionsController.js
 /**
  * @class cc_CollectionsController
  * @classdesc Controller for generating the collections view, including
@@ -1836,6 +1836,8 @@ class cc_Controller {
 			DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(json)}`);
 
 			this.moduleDetails = json;
+			// TODO call https://canvas.instructure.com/doc/api/modules.html#method.context_module_items_api.index
+			// the list module items API for each module
 			this.execute();
         })			
 		.catch((error) => {
