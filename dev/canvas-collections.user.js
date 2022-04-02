@@ -1095,10 +1095,10 @@ class cc_ConfigurationController {
  * 
  */
 
-class cc_CollectionsModel {
+class CollectionsModel {
 
 	constructor(controller) {
-		DEBUG && console.log('-------------- cc_CollectionsModel.constructor()');
+		DEBUG && console.log('-------------- CollectionsModel.constructor()');
 
 		this.controller = controller;
 		this.cc_configuration = this.controller.parentController.cc_configuration;
@@ -1120,12 +1120,21 @@ class cc_CollectionsModel {
 		this.currentCollection = newCollection;
 	}
 
+	getCollections() {
+		// return the keys from the COLLECTIONS object
+		return Object.keys(this.cc_configuration.COLLECTIONS);
+	}
+
 	getCurrentCollection() {
 		return this.currentCollection;
 	}
 
 	getCurrentCollectionRepresentation() {
 		return this.cc_configuration.COLLECTIONS[this.currentCollection].representation;
+	}
+
+	getCollectionRepresentation(collection) {
+		return this.cc_configuration.COLLECTIONS[collection].representation;
 	}
 
 	getCollectionNames() {
@@ -1324,7 +1333,7 @@ li.cc-nav a {
 	}
 }
 
-// src/Collections/CardsView.js
+// src/Collections/Views/Cards.js
 /**
  * cc_CardsView.js 
  * - insert the cards for the current collection
@@ -1525,6 +1534,46 @@ class CardsView extends cc_View {
 	}
 }
 
+// src/Collections/Views/Table.js
+/**
+ * Table.js 
+ * - implement a table view for a Canvas Collection  
+ */
+
+
+
+class TableView extends cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		super( model, controller );
+
+		this.currentCollection = this.model.getCurrentCollection();
+	}
+
+	/**
+	 * @descr insert a nav bar based on current collections
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- TableView.display()');
+		let div = document.getElementById('cc-canvas-collections');
+
+
+		// create a simple message div element
+		let message = document.createElement('div');
+		message.className = 'cc-message';
+		message.innerHTML = '<h1> Hello from TableView </h1>';
+
+		div.insertAdjacentElement('beforeend', message);
+
+	}
+}
+
 // src/Collections/CollectionsViewFactory.js
 /**
  * CollectionsViewFactory.js
@@ -1533,8 +1582,10 @@ class CardsView extends cc_View {
 
 
 
+
 const VIEWS = {
-	CardsView
+	CardsView,
+	TableView
 }
 
 class CollectionsViewFactory {
@@ -1586,7 +1637,7 @@ class CollectionsViewFactory {
 
 
 
-class cc_CollectionsView extends cc_View {
+class CollectionsView extends cc_View {
 
 	/**
 	 * @descr Initialise the view
@@ -1597,11 +1648,21 @@ class cc_CollectionsView extends cc_View {
 		super( model, controller );
 
 		this.navView = new NavView( model, controller );
-		this.representationView = new CardsView( model, controller );
+//		this.representationView = new CardsView( model, controller );
 
 		const currentCollectionView = model.getCurrentCollectionRepresentation();
-		// this.model.cc_configuration.COLLECTIONS[currentCollection].representation
-		// TODO should this be creating one view for each of the collections
+
+		// creating representation object for each of the collections
+		const collections = model.getCollections();
+		// loop thru each collection
+		this.representations = {};
+		for (let collection of collections) {
+			// create a representation view for each collection
+			const representation = model.getCollectionRepresentation(collection);
+			this.representations[collection] = CollectionsViewFactory.createView(representation, model, controller);
+			// add to the collectionViews array
+		}
+
 
 		/*this.representationView = CollectionsViewFactory.createView( 
 			currentCollectionView, model, controller 
@@ -1624,7 +1685,9 @@ class cc_CollectionsView extends cc_View {
 		this.navView.display();
 
 
-		this.representationView.display();
+		// display the current collection using its representation
+		this.representations[this.model.getCurrentCollection()].display();
+	//	this.representationView.display();
 	}
 
 	/**
@@ -1675,8 +1738,8 @@ class cc_CollectionsController {
 		DEBUG && console.log('-------------- cc_CollectionsController.constructor()');
 
 		this.parentController = controller;
-		this.model = new cc_CollectionsModel(this);
-		this.view = new cc_CollectionsView(this.model, this);
+		this.model = new CollectionsModel(this);
+		this.view = new CollectionsView(this.model, this);
 
 		this.view.display();
 	}

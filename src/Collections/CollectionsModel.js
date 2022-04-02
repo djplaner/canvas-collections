@@ -43,6 +43,10 @@ export default class CollectionsModel {
 		return this.cc_configuration.COLLECTIONS[this.currentCollection].representation;
 	}
 
+	getCollectionRepresentation(collection) {
+		return this.cc_configuration.COLLECTIONS[collection].representation;
+	}
+
 	getCollectionNames() {
 		return Object.keys(this.cc_configuration.COLLECTIONS);
 	}

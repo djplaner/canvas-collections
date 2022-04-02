@@ -42,12 +42,12 @@ export default class CollectionsView extends cc_View {
 		// creating representation object for each of the collections
 		const collections = model.getCollections();
 		// loop thru each collection
-		this.representations = [];
+		this.representations = {};
 		for (let collection of collections) {
 			// create a representation view for each collection
-			const representationView = CollectionsViewFactory.create(collection, model, controller);
+			const representation = model.getCollectionRepresentation(collection);
+			this.representations[collection] = CollectionsViewFactory.createView(representation, model, controller);
 			// add to the collectionViews array
-			this.representations.push(representationView);
 		}
 
 
@@ -73,7 +73,7 @@ export default class CollectionsView extends cc_View {
 
 
 		// display the current collection using its representation
-		this.representation[this.model.getCurrentCollection()].display();
+		this.representations[this.model.getCurrentCollection()].display();
 	//	this.representationView.display();
 	}
 
