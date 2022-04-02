@@ -6,11 +6,13 @@
 import { CardsView } from "./Views/Cards.js";
 import { TableView } from "./Views/Table.js";
 import { CollectionOnlyView } from "./Views/CollectionOnly.js";
+import { GriffithCardsView } from "./Views/GriffithCards.js";
 
 const VIEWS = {
 	CardsView,
 	TableView,
-	CollectionOnlyView
+	CollectionOnlyView,
+	GriffithCardsView
 }
 
 export default class CollectionsViewFactory {
