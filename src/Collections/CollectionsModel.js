@@ -39,6 +39,10 @@ export default class CollectionsModel {
 		return this.currentCollection;
 	}
 
+	getCurrentCollectionDescription() {
+		return this.cc_configuration.COLLECTIONS[this.currentCollection].description;
+	}
+
 	getCurrentCollectionRepresentation() {
 		return this.cc_configuration.COLLECTIONS[this.currentCollection].representation;
 	}

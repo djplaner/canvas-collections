@@ -5,10 +5,12 @@
 
 import { CardsView } from "./Views/Cards.js";
 import { TableView } from "./Views/Table.js";
+import { CollectionOnlyView } from "./Views/CollectionOnly.js";
 
 const VIEWS = {
 	CardsView,
-	TableView
+	TableView,
+	CollectionOnlyView
 }
 
 export default class CollectionsViewFactory {
