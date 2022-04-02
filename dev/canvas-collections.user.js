@@ -1372,6 +1372,11 @@ class CardsView extends cc_View {
 		// generate the HTML
 //		let html ='<h1> Hello from CardsView </h1>';
 
+		const description = this.model.getCurrentCollectionDescription();
+		const descriptionHtml = `<div class="cc-description">${description}</div>`;
+
+		div.insertAdjacentHTML('beforeend', descriptionHtml);
+
 		let cards = this.generateCards();
 		div.insertAdjacentElement('beforeend', cards);
 
@@ -1479,8 +1484,10 @@ class CardsView extends cc_View {
 			}
 		`;
 
+
         let cardContainer = document.createElement('div');
 		cardContainer.classList.add("cc-collection-container");
+
 
 		// insert styles into cardContainer
 		cardContainer.insertAdjacentHTML('afterbegin', collectionStyles);
@@ -1609,14 +1616,12 @@ class CollectionOnlyView extends cc_View {
 		DEBUG && console.log('-------------- TableView.display()');
 		let div = document.getElementById('cc-canvas-collections');
 
-		description = this.model.getCurrentDescription();
+		const description = this.model.getCurrentCollectionDescription();
 
 		// create a simple message div element
 		let message = document.createElement('div');
 		message.className = 'cc-message';
-		message.innerHTML = `<h1> Hello from TableView </h1>
-		${description}
-		`;
+		message.innerHTML = description;
 
 		div.insertAdjacentElement('beforeend', message);
 

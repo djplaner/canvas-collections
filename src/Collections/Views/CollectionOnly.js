@@ -28,14 +28,12 @@ export default class CollectionOnlyView extends cc_View {
 		DEBUG && console.log('-------------- TableView.display()');
 		let div = document.getElementById('cc-canvas-collections');
 
-		description = this.model.getCurrentDescription();
+		const description = this.model.getCurrentCollectionDescription();
 
 		// create a simple message div element
 		let message = document.createElement('div');
 		message.className = 'cc-message';
-		message.innerHTML = `<h1> Hello from TableView </h1>
-		${description}
-		`;
+		message.innerHTML = description;
 
 		div.insertAdjacentElement('beforeend', message);
 

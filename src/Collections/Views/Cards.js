@@ -32,6 +32,11 @@ export default class CardsView extends cc_View {
 		// generate the HTML
 //		let html ='<h1> Hello from CardsView </h1>';
 
+		const description = this.model.getCurrentCollectionDescription();
+		const descriptionHtml = `<div class="cc-description">${description}</div>`;
+
+		div.insertAdjacentHTML('beforeend', descriptionHtml);
+
 		let cards = this.generateCards();
 		div.insertAdjacentElement('beforeend', cards);
 
@@ -139,8 +144,10 @@ export default class CardsView extends cc_View {
 			}
 		`;
 
+
         let cardContainer = document.createElement('div');
 		cardContainer.classList.add("cc-collection-container");
+
 
 		// insert styles into cardContainer
 		cardContainer.insertAdjacentHTML('afterbegin', collectionStyles);
