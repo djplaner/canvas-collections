@@ -24,7 +24,7 @@ export default class GriffithCardsView extends cc_View {
 	 */
 
 	display() {
-		DEBUG && console.log('-------------- TableView.display()');
+		DEBUG && console.log('-------------- GriffithCardsView.display()');
 		let div = document.getElementById('cc-canvas-collections');
 
 
@@ -39,20 +39,25 @@ export default class GriffithCardsView extends cc_View {
 		const cards = this.generateCards();
 
 		div.insertAdjacentElement('beforeend', message);
+		div.insertAdjacentElement('beforeend', cards);
 
 	}
 
 	generateCards() {
 		DEBUG && console.log('-------------- griffithCardsView.generateCards()');
 
-        let cardCollection = this.createElement('div', ['flex', 'flex-wrap', '-m-3']);
+		// create cardCollection div element
+		let cardCollection = document.createElement('div');
+		// set the cardCollection classlist
+		cardCollection.classList.add('flex', 'flex-wrap', '-m-3');
         cardCollection.id = "guCardInterface";
-        const numModules = this.modules.length;
+
+//        const numModules = this.modules.length;
         //        const numRequiredRows = Math.ceil(numModules/3);
 
-        let cardsShown = 0;
+//        let cardsShown = 0;
 
-		let count = 0;
+	//	let count = 0;
 
 		const currentCollection = this.model.getCurrentCollection();
         for (let module of this.model.getModulesCollections()) {
@@ -70,7 +75,7 @@ export default class GriffithCardsView extends cc_View {
 			}
 
 			const card = this.generateCard( module );
-			cardCollection.insertAdjacentElement('beforeend', cardHtml);
+			cardCollection.insertAdjacentElement('beforeend', card);
         }
 
 		return cardCollection;
@@ -105,6 +110,8 @@ export default class GriffithCardsView extends cc_View {
 		const DATE = "";
 		const published = "";
 		const completion = "";
+		const IFRAME="";
+		const EDIT_ITEM="";
 
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="hover:bg-gray-200 bg-white rounded-lg shadow-lg overflow-hidden flex-1 flex flex-col relative">
@@ -137,9 +144,8 @@ export default class GriffithCardsView extends cc_View {
     `;
 
         // convert cardHtml into DOM element
-        let wrapper = this.createElement('div', [
-            'clickablecard', 'w-full', 'sm:w-1/2', 'md:w-1/3', 'flex', 'flex-col', 'p-3'
-        ]);
+		let wrapper = document.createElement('div');
+		wrapper.classList.add('clickablecard', 'w-full', 'sm:w-1/2', 'md:w-1/3', 'flex', 'flex-col', 'p-3');
         wrapper.innerHTML = cardHtml;
         return wrapper;
 	}
