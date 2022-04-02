@@ -1672,6 +1672,9 @@ class GriffithCardsView extends cc_View {
 		div.insertAdjacentElement('beforeend', message);
 		div.insertAdjacentElement('beforeend', cards);
 
+		this.stopCardDescriptionPropagation();
+		this.makeCardsClickable();
+
 	}
 
 	generateCards() {
@@ -1682,6 +1685,16 @@ class GriffithCardsView extends cc_View {
 		// set the cardCollection classlist
 		cardCollection.classList.add('flex', 'flex-wrap', '-m-3');
         cardCollection.id = "guCardInterface";
+
+		const cardStyles = `
+		<style>
+	    .cc-card-description a {
+			text-decoration: underline;
+		}
+		</style>`;	
+
+		cardCollection.innerHTML = cardStyles;
+
 
 //        const numModules = this.modules.length;
         //        const numRequiredRows = Math.ceil(numModules/3);
@@ -1713,18 +1726,24 @@ class GriffithCardsView extends cc_View {
 	}
 
 
-	generateCard( module ) { 
-        let imageUrl = "https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png";
-        let engage = 'Engage';
-
+	generateCardImageUrl( module ) {
+	    let imageUrl = "https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png";
         if ('image' in module) {
             imageUrl = module.image;
         }
+		return imageUrl;
+	}
+
+	generateCardEngage( module ) {
+        let engage = 'Engage';
         // set the "text" for the engage button
         if ('engage' in module) {
             engage = module.engage;
         }
+		return engage;
+	}
 
+	generateCardImageSize( module ) {
 		let imageSize = "bg-cover";
         if ("imageSize" in module) {
             imageSize = module.imageSize;
@@ -1732,34 +1751,81 @@ class GriffithCardsView extends cc_View {
         if (imageSize === "bg-contain") {
             imageSize = "bg-contain bg-no-repeat bg-center"
         }
+		return imageSize;
+	}
+
+	generateCardLinkItem( module ) {
+		const engage = this.generateCardEngage( module ); 
+		let LINK_ITEM = `
+	    <p>&nbsp;<br /> &nbsp;</p>
+	    <div class="p-4 absolute pin-r pin-b" style="right:0;bottom:0">
+	       <a href="#${module.id}" class="gu-engage"><div class="hover:bg-blue-300 hover:text-white hover:no-underline text-blue-900 font-semibold hover:text-white py-2 px-4 border border-blue-900 hover:border-transparent rounded">
+		${engage}
+	    </div></a>
+	    </div>
+	    `;
+
+        if ('noEngage' in module && module.noEngage) {
+            LINK_ITEM = `
+            `;
+        }
+
+		return LINK_ITEM;
+	}
+
+   /**
+     * @desc generate html showing if module is unpublished
+     * i.e. only show message if unpublished
+     * @param boolean true iff published
+     * @returns string html empty if published warning if unpublished
+     */
+    generateCardPublished(module) {
+        if (module.published) {
+            return '';
+        }
+
+        let publishedHtml = `
+    <span class="bg-red-500 text-white text-xs rounded-full py-1 text-center font-bold"
+	 style="width:8em">
+	    Unpublished
+    </span>
+	    `;
+
+        return publishedHtml;
+    }
+
+	generateCard( module ) { 
+		const imageUrl = this.generateCardImageUrl( module );
+		const imageSize = this.generateCardImageSize( module );
+
+		const LINK_ITEM = this.generateCardLinkItem( module );
+		const published = this.generateCardPublished( module );
 
 		const description = module.description;
 
 		const COMING_SOON = "";
-		const LINK_ITEM = "";
 		const REVIEW_ITEM = "";
 		const DATE = "";
-		const published = "";
 		const completion = "";
 		const IFRAME="";
 		const EDIT_ITEM="";
 
 		const cardHtml = `
-    <div id="cc_module_${module.id}" class="hover:bg-gray-200 bg-white rounded-lg shadow-lg overflow-hidden flex-1 flex flex-col relative">
+    <div id="cc_module_${module.id}" class="hover:bg-gray-200 hover:shadow-outline bg-white rounded-lg shadow-lg overflow-hidden flex-1 flex flex-col relative">
       <a href="#${module.id}" class="cardmainlink"></a>
       <div class="cc_module_image ${imageSize} h-48" style="background-image: url('${imageUrl}'); background-color: rgb(255,255,255)">${IFRAME}
       </div>
       ${COMING_SOON}
-      <div class="carddescription p-4 flex-1 flex flex-col">
+      <div class="carddescription p-4 flex-1 flex flex-col hover:cursor-pointer">
 	<!-- <div class="cc_progress absolute top-0 right-0 p-2"></div> -->
 	<div class=cc_card_label">
 	    <div class="cc_progress float-right"></div>
 	    <span class="cardLabel">
 	    ${module.label} ${module.num}
 	    </span>
-	    <h3 class="mb-4 text-2xl">${module.title}</h3>
+	    <h3 class="mb-4 text-2xl">${module.name}</h3>
 	</div>
-	<div class="mb-4 flex-1">
+	<div class="cc-card-description mb-4 flex-1">
 	  ${description}
 	</div>
 	<p></p>
@@ -1776,10 +1842,51 @@ class GriffithCardsView extends cc_View {
 
         // convert cardHtml into DOM element
 		let wrapper = document.createElement('div');
-		wrapper.classList.add('clickablecard', 'w-full', 'sm:w-1/2', 'md:w-1/3', 'flex', 'flex-col', 'p-3');
+		wrapper.classList.add(
+			'clickablecard', 'w-full', 'sm:w-1/2', 'md:w-1/3', 'flex', 'flex-col', 'p-3',
+			'hover:cursor-pointer');
         wrapper.innerHTML = cardHtml;
         return wrapper;
 	}
+
+	/**
+     * @desc prevent links in card description from propagating to the 
+     * cards clickable link
+     */
+
+    stopCardDescriptionPropagation() {
+        // get all the links in .carddescription that are not .gu-engage
+        let links = document.querySelectorAll('.carddescription a:not(.gu-engage)');
+
+        // prevent propagation of the click event on all links
+        for (let i = 0; i < links.length; i++) {
+            links[i].addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+        }
+    }
+
+    /**
+     * @desc add a click event to each .clickablecard based on their .cardmainlink
+     * child
+     */
+    makeCardsClickable() {
+
+        // get all the clickable cards
+        let cards = document.getElementsByClassName('clickablecard');
+        for (let i = 0; i < cards.length; i++) {
+            let card = cards[i];
+
+            // add the event listener
+            card.addEventListener('click', function (event) {
+                let link = this.querySelector(".cardmainlink");
+                if (link !== null) {
+                    link.click();
+                }
+            });
+        }
+    }
+
 }
 
 // src/Collections/CollectionsViewFactory.js
@@ -2138,7 +2245,7 @@ class cc_Controller {
 	requestModuleInformation() {
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: for ${this.courseId}`);
 
-		let callUrl = `/api/v1/courses/${this.courseId}/modules?per_page=500,include=items,content_details`;
+		let callUrl = `/api/v1/courses/${this.courseId}/modules?include=items&per_page=500`;
 
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: callUrl = ${callUrl}`);
 
