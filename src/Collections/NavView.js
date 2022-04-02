@@ -8,7 +8,7 @@
 
 import { cc_View } from '../cc_View.js';
 
-export default class cc_NavView extends cc_View {
+export default class NavView extends cc_View {
 
 	/**
 	 * @descr Initialise the view

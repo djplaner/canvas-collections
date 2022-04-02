@@ -7,8 +7,8 @@
  */
 
 
-import { cc_CollectionsModel } from './CollectionsModel.js';
-import { cc_CollectionsView } from './CollectionsView.js';
+import { CollectionsModel } from './CollectionsModel.js';
+import { CollectionsView } from './CollectionsView.js';
 
 export default class cc_CollectionsController {
 
@@ -19,8 +19,8 @@ export default class cc_CollectionsController {
 		DEBUG && console.log('-------------- cc_CollectionsController.constructor()');
 
 		this.parentController = controller;
-		this.model = new cc_CollectionsModel(this);
-		this.view = new cc_CollectionsView(this.model, this);
+		this.model = new CollectionsModel(this);
+		this.view = new CollectionsView(this.model, this);
 
 		this.view.display();
 	}

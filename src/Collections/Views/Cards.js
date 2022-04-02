@@ -5,7 +5,7 @@
  *  
  */
 
-import { cc_View } from '../cc_View.js';
+import { cc_View } from '../../cc_View.js';
 
 export default class CardsView extends cc_View {
 

@@ -20,10 +20,11 @@
 
 import { cc_View } from '../cc_View.js';
 
-import { cc_NavView } from './NavView.js';
-import { cc_CardsView } from './CardsView.js';
+import { NavView } from './NavView.js';
+import { CardsView } from './Views/Cards.js';
+import { CollectionsViewFactory } from './CollectionsViewFactory.js';
 
-export default class cc_CollectionsView extends cc_View {
+export default class CollectionsView extends cc_View {
 
 	/**
 	 * @descr Initialise the view
@@ -33,8 +34,26 @@ export default class cc_CollectionsView extends cc_View {
 	constructor( model, controller ) {
 		super( model, controller );
 
-		this.navView = new cc_NavView( model, controller );
-		this.representationView = new cc_CardsView( model, controller );
+		this.navView = new NavView( model, controller );
+//		this.representationView = new CardsView( model, controller );
+
+		const currentCollectionView = model.getCurrentCollectionRepresentation();
+
+		// creating representation object for each of the collections
+		const collections = model.getCollections();
+		// loop thru each collection
+		this.representations = [];
+		for (let collection of collections) {
+			// create a representation view for each collection
+			const representationView = CollectionsViewFactory.create(collection, model, controller);
+			// add to the collectionViews array
+			this.representations.push(representationView);
+		}
+
+
+		/*this.representationView = CollectionsViewFactory.createView( 
+			currentCollectionView, model, controller 
+			); */
 	}
 
 	/**
@@ -53,7 +72,9 @@ export default class cc_CollectionsView extends cc_View {
 		this.navView.display();
 
 
-		this.representationView.display();
+		// display the current collection using its representation
+		this.representation[this.model.getCurrentCollection()].display();
+	//	this.representationView.display();
 	}
 
 	/**

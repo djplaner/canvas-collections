@@ -5,10 +5,10 @@
  * 
  */
 
-export default class cc_CollectionsModel {
+export default class CollectionsModel {
 
 	constructor(controller) {
-		DEBUG && console.log('-------------- cc_CollectionsModel.constructor()');
+		DEBUG && console.log('-------------- CollectionsModel.constructor()');
 
 		this.controller = controller;
 		this.cc_configuration = this.controller.parentController.cc_configuration;
@@ -30,8 +30,17 @@ export default class cc_CollectionsModel {
 		this.currentCollection = newCollection;
 	}
 
+	getCollections() {
+		// return the keys from the COLLECTIONS object
+		return Object.keys(this.cc_configuration.COLLECTIONS);
+	}
+
 	getCurrentCollection() {
 		return this.currentCollection;
+	}
+
+	getCurrentCollectionRepresentation() {
+		return this.cc_configuration.COLLECTIONS[this.currentCollection].representation;
 	}
 
 	getCollectionNames() {

@@ -1124,6 +1124,10 @@ class cc_CollectionsModel {
 		return this.currentCollection;
 	}
 
+	getCurrentCollectionRepresentation() {
+		return this.cc_configuration.COLLECTIONS[this.currentCollection].representation;
+	}
+
 	getCollectionNames() {
 		return Object.keys(this.cc_configuration.COLLECTIONS);
 	}
@@ -1185,7 +1189,7 @@ class cc_CollectionsModel {
 
 
 
-class cc_NavView extends cc_View {
+class NavView extends cc_View {
 
 	/**
 	 * @descr Initialise the view
@@ -1521,6 +1525,40 @@ class CardsView extends cc_View {
 	}
 }
 
+// src/Collections/CollectionsViewFactory.js
+/**
+ * CollectionsViewFactory.js
+ * - Factory class for creating different views for collections
+ */
+
+
+
+const VIEWS = {
+	CardsView
+}
+
+class CollectionsViewFactory {
+
+	/**
+	 * Generate the right type of collections view object
+	 * @param {String} viewType 
+	 * @param {CollectionsModel} model 
+	 * @param {CollectionsController} controller 
+	 */
+	static createView( viewType, model, controller) {
+
+		// add "View" to end of viewType iff not already there
+		if (viewType.endsWith(-4) !== 'View') {
+			viewType += 'View';
+		}
+
+		const viewCreator = VIEWS[viewType];
+		const view = viewCreator ? new viewCreator(model, controller) : null;
+
+		return view;
+	}
+}
+
 // src/Collections/CollectionsView.js
 /**
  * cc_CollectionsView.js 
@@ -1547,6 +1585,7 @@ class CardsView extends cc_View {
 
 
 
+
 class cc_CollectionsView extends cc_View {
 
 	/**
@@ -1557,8 +1596,16 @@ class cc_CollectionsView extends cc_View {
 	constructor( model, controller ) {
 		super( model, controller );
 
-		this.navView = new cc_NavView( model, controller );
-		this.representationView = new cc_CardsView( model, controller );
+		this.navView = new NavView( model, controller );
+		this.representationView = new CardsView( model, controller );
+
+		const currentCollectionView = model.getCurrentCollectionRepresentation();
+		// this.model.cc_configuration.COLLECTIONS[currentCollection].representation
+		// TODO should this be creating one view for each of the collections
+
+		/*this.representationView = CollectionsViewFactory.createView( 
+			currentCollectionView, model, controller 
+			); */
 	}
 
 	/**
