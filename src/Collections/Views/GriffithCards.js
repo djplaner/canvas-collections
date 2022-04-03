@@ -35,6 +35,8 @@ export default class GriffithCardsView extends cc_View {
 
 		const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
 		document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
+		const PROGRESS_BAR_JS='<script src="https://unpkg.com/circular-progress-bar@2.1.0/public/circular-progress-bar.min.js"></script>';
+		document.body.insertAdjacentHTML( 'afterbegin', PROGRESS_BAR_JS);
 
 		const cards = this.generateCards();
 
@@ -112,7 +114,7 @@ export default class GriffithCardsView extends cc_View {
 		const COMING_SOON = "";
 		const REVIEW_ITEM = "";
 		const DATE = "";
-		const completion = this.generateCardCompletion( module );
+//		const completion = this.generateCardCompletion( module );
 		const IFRAME="";
 		const EDIT_ITEM="";
 
@@ -123,8 +125,8 @@ export default class GriffithCardsView extends cc_View {
       </div>
       ${COMING_SOON}
       <div class="carddescription p-4 flex-1 flex flex-col hover:cursor-pointer">
-	<!-- <div class="cc_progress absolute top-0 right-0 p-2"></div> -->
 	<div class=cc_card_label">
+	<div class="cc_progress absolute bottom-0 left-0 p-2"></div>
 	    <div class="cc_progress float-right"></div>
 	    <span class="cardLabel">
 	    ${module.label} ${module.num}
@@ -141,7 +143,6 @@ export default class GriffithCardsView extends cc_View {
 	 ${EDIT_ITEM}
 	 ${DATE} 
 	 ${published}
-	 ${completion}
       </div>
     </div>
     `;
@@ -152,20 +153,49 @@ export default class GriffithCardsView extends cc_View {
 			'clickablecard', 'w-full', 'sm:w-1/2', 'md:w-1/3', 'flex', 'flex-col', 'p-3',
 			'hover:cursor-pointer');
         wrapper.innerHTML = cardHtml;
+
+		const progress = this.getCardProgressElement( module );
+		if ( progress ) {
+			// find div.cc_progress in wrapper
+			const progressDiv = wrapper.querySelector('.cc_progress');
+			if ( progressDiv ) { 
+				//progressDiv.insertAdjacentElement('beforeend', progress);
+				progress.appendTo(progressDiv);
+			}
+		}
+
         return wrapper;
 	}
 
     /**
      * @descr generate ribbon/html to add to card to show completion status
+	 * Can be 
+	 * - Completed - cc_itemsCompleted defined & numRequired == numCompleted
+	 * - In Progress - cc_itemsCompleted defined & numCompleted < numRequired
+	 * - Locked - Unsure how this happens
+	 * - nothing/empty - cc_itemsCompleted is undefined (and absence of any locked info)
      * @param String completionStatus 
      * @returns html 
      */
     generateCardCompletion(module) {
+		DEBUG && console.log("----------- griffithCardsView.generateCardCompletion()");
+
         const colour = {
             'Completed': 'bg-green-500',
             'In Progress': 'bg-yellow-500',
             'Locked': 'bg-red-500'
         }
+
+		// return if module.cc_itemsCompleted is undefined
+		if ( module.cc_itemsCompleted === undefined ) {
+			return '';
+		}
+
+		let completionStatus = 'In Progress';
+
+		if ( module.cc_itemsCompleted.numCompleted===module.cc_itemsCompleted.numRequired ) {
+			completionStatus = 'Completed';
+		}
 
         if (!(completionStatus in colour)) {
             return '';
@@ -180,6 +210,38 @@ export default class GriffithCardsView extends cc_View {
 	    `;
 
         return completionHtml;
+    }
+
+		/**
+     * If module has completion requirements return a progress bar element
+     * - use https://github.com/GMartigny/circular-progress-bar
+     * 
+     * @param Object module 
+	 * @returns DOM element representing progress bar
+     */
+    getCardProgressElement(module) {
+		if ( module.cc_itemsCompleted === undefined ) {
+			return undefined;
+		}
+
+		const percentComplete = (100*module.cc_itemsCompleted.numCompleted) / module.cc_itemsCompleted.numRequired ;
+
+        let valueBackground = "#ccc";
+
+        if (percentComplete >= 100) {
+            valueBackground = "rgb(16,185,129)";
+        } else if (percentComplete < 50) {
+            valueBackground = "rgb(245,158,11)";
+        }
+
+        const options = {
+            size: 50,
+            background: "#eee",
+            valueBackground: valueBackground,
+            colors: ["#0484d1", "#e53b44", "#2ce8f4", "#ffe762", "#63c64d", "#fb922b"]
+        };
+        const progress = new CircularProgressBar(percentComplete, options);
+		return progress;
     }
 
 	generateCardImageUrl( module ) {
@@ -236,7 +298,7 @@ export default class GriffithCardsView extends cc_View {
      * @returns string html empty if published warning if unpublished
      */
     generateCardPublished(module) {
-        if (module.published) {
+        if (module.published || module.published === undefined) {
             return '';
         }
 
@@ -248,33 +310,6 @@ export default class GriffithCardsView extends cc_View {
 	    `;
 
         return publishedHtml;
-    }
-
-    /**
-     * @descr generate ribbon/html to add to card to show completion status
-     * @param String completionStatus 
-     * @returns html 
-     */
-    generateCardCompletion(completionStatus) {
-        const colour = {
-            'Completed': 'bg-green-500',
-            'In Progress': 'bg-yellow-500',
-            'Locked': 'bg-red-500'
-        }
-
-        if (!(completionStatus in colour)) {
-            return '';
-        }
-
-        const length = completionStatus.length;
-        let completionHtml = `
-      <div  class="${colour[completionStatus]} text-xs rounded-full py-1 text-center font-bold"
-	    style="width:${length}em" >
-	<div class="">${completionStatus}</div>
-      </div>
-	    `;
-
-        return completionHtml;
     }
 
 
