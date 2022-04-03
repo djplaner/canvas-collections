@@ -82,9 +82,50 @@ export default class CollectionsModel {
 					details[key] = ccModule[key];
 				}
 			}
+			// calculate the module completion status
+			details.cc_itemsCompleted = this.getItemsCompleted(details);
+
 			this.modulesCollections.push(details);
 		}
 		console.log(this.modulesCollections);
+	}
+
+	/**
+	 * Examine each of the module's items. Count the number with completion_requirement
+	 * @param {Object} module - an object representing content of a module
+	 * @returns {Object} .numRequired .numCompleted
+	 *         undefined if no items for compeletion_requirements
+	 */
+
+	getItemsCompleted( module ) {
+		let itemsCompleted = {
+			numRequired: 0,
+			numCompleted: 0
+		};
+
+		// if the module doesn't have an items attribute, return undefined
+		if ( !module.items ) {
+			return undefined;
+		}
+
+		// loop thru the items
+		for (let i = 0; i < module.items.length; i++) {
+			let item = module.items[i];
+			// if the item has a completion_requirement, increment the count
+			if ( item.completion_requirement ) {
+				itemsCompleted.numRequired++;
+				// if the item has a completion_requirement and is completed, increment the count
+				if ( item.completion_requirement.completed ) {
+					itemsCompleted.numCompleted++;
+				}
+			}
+		}
+
+		// if itemsComplete.numRequires is 0, return undefined
+		if ( itemsCompleted.numRequired === 0 ) {
+			return undefined;
+		}
+		return itemsCompleted;
 	}
 
 	getModules() {

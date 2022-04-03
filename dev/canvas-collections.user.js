@@ -1172,9 +1172,50 @@ class CollectionsModel {
 					details[key] = ccModule[key];
 				}
 			}
+			// calculate the module completion status
+			details.cc_itemsCompleted = this.getItemsCompleted(details);
+
 			this.modulesCollections.push(details);
 		}
 		console.log(this.modulesCollections);
+	}
+
+	/**
+	 * Examine each of the module's items. Count the number with completion_requirement
+	 * @param {Object} module - an object representing content of a module
+	 * @returns {Object} .numRequired .numCompleted
+	 *         undefined if no items for compeletion_requirements
+	 */
+
+	getItemsCompleted( module ) {
+		let itemsCompleted = {
+			numRequired: 0,
+			numCompleted: 0
+		};
+
+		// if the module doesn't have an items attribute, return undefined
+		if ( !module.items ) {
+			return undefined;
+		}
+
+		// loop thru the items
+		for (let i = 0; i < module.items.length; i++) {
+			let item = module.items[i];
+			// if the item has a completion_requirement, increment the count
+			if ( item.completion_requirement ) {
+				itemsCompleted.numRequired++;
+				// if the item has a completion_requirement and is completed, increment the count
+				if ( item.completion_requirement.completed ) {
+					itemsCompleted.numCompleted++;
+				}
+			}
+		}
+
+		// if itemsComplete.numRequires is 0, return undefined
+		if ( itemsCompleted.numRequired === 0 ) {
+			return undefined;
+		}
+		return itemsCompleted;
 	}
 
 	getModules() {
@@ -1725,6 +1766,67 @@ class GriffithCardsView extends cc_View {
 		return cardCollection;
 	}
 
+	/**
+	 * Harness to generate HTML for a single card. Calls various other functions
+	 * to get various component
+	 * @param {Object} module 
+	 * @returns {DOMElement} for a single card
+	 */
+	generateCard( module ) { 
+		const imageUrl = this.generateCardImageUrl( module );
+		const imageSize = this.generateCardImageSize( module );
+
+		const LINK_ITEM = this.generateCardLinkItem( module );
+		const published = this.generateCardPublished( module );
+
+		const description = module.description;
+
+		const COMING_SOON = "";
+		const REVIEW_ITEM = "";
+		const DATE = "";
+		const completion = "";
+		const IFRAME="";
+		const EDIT_ITEM="";
+
+		const cardHtml = `
+    <div id="cc_module_${module.id}" class="hover:bg-gray-200 hover:shadow-outline bg-white rounded shadow-lg overflow-hidden flex-1 flex flex-col relative">
+      <a href="#${module.id}" class="cardmainlink"></a>
+      <div class="cc_module_image ${imageSize} h-48" style="background-image: url('${imageUrl}'); background-color: rgb(255,255,255)">${IFRAME}
+      </div>
+      ${COMING_SOON}
+      <div class="carddescription p-4 flex-1 flex flex-col hover:cursor-pointer">
+	<!-- <div class="cc_progress absolute top-0 right-0 p-2"></div> -->
+	<div class=cc_card_label">
+	    <div class="cc_progress float-right"></div>
+	    <span class="cardLabel">
+	    ${module.label} ${module.num}
+	    </span>
+	    <h3 class="mb-4 text-2xl">${module.name}</h3>
+	</div>
+	<div class="cc-card-description mb-4 flex-1">
+	  ${description}
+	</div>
+	<p></p>
+	 
+	 ${LINK_ITEM}
+	 ${REVIEW_ITEM}
+	 ${EDIT_ITEM}
+	 ${DATE} 
+	 ${published}
+	 ${completion}
+      </div>
+    </div>
+    `;
+
+        // convert cardHtml into DOM element
+		let wrapper = document.createElement('div');
+		wrapper.classList.add(
+			'clickablecard', 'w-full', 'sm:w-1/2', 'md:w-1/3', 'flex', 'flex-col', 'p-3',
+			'hover:cursor-pointer');
+        wrapper.innerHTML = cardHtml;
+        return wrapper;
+	}
+
 
 	generateCardImageUrl( module ) {
 	    let imageUrl = "https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png";
@@ -1794,60 +1896,33 @@ class GriffithCardsView extends cc_View {
         return publishedHtml;
     }
 
-	generateCard( module ) { 
-		const imageUrl = this.generateCardImageUrl( module );
-		const imageSize = this.generateCardImageSize( module );
+    /**
+     * @descr generate ribbon/html to add to card to show completion status
+     * @param String completionStatus 
+     * @returns html 
+     */
+    generateCardCompletion(completionStatus) {
+        const colour = {
+            'Completed': 'bg-green-500',
+            'In Progress': 'bg-yellow-500',
+            'Locked': 'bg-red-500'
+        }
 
-		const LINK_ITEM = this.generateCardLinkItem( module );
-		const published = this.generateCardPublished( module );
+        if (!(completionStatus in colour)) {
+            return '';
+        }
 
-		const description = module.description;
-
-		const COMING_SOON = "";
-		const REVIEW_ITEM = "";
-		const DATE = "";
-		const completion = "";
-		const IFRAME="";
-		const EDIT_ITEM="";
-
-		const cardHtml = `
-    <div id="cc_module_${module.id}" class="hover:bg-gray-200 hover:shadow-outline bg-white rounded-lg shadow-lg overflow-hidden flex-1 flex flex-col relative">
-      <a href="#${module.id}" class="cardmainlink"></a>
-      <div class="cc_module_image ${imageSize} h-48" style="background-image: url('${imageUrl}'); background-color: rgb(255,255,255)">${IFRAME}
+        const length = completionStatus.length;
+        let completionHtml = `
+      <div  class="${colour[completionStatus]} text-xs rounded-full py-1 text-center font-bold"
+	    style="width:${length}em" >
+	<div class="">${completionStatus}</div>
       </div>
-      ${COMING_SOON}
-      <div class="carddescription p-4 flex-1 flex flex-col hover:cursor-pointer">
-	<!-- <div class="cc_progress absolute top-0 right-0 p-2"></div> -->
-	<div class=cc_card_label">
-	    <div class="cc_progress float-right"></div>
-	    <span class="cardLabel">
-	    ${module.label} ${module.num}
-	    </span>
-	    <h3 class="mb-4 text-2xl">${module.name}</h3>
-	</div>
-	<div class="cc-card-description mb-4 flex-1">
-	  ${description}
-	</div>
-	<p></p>
-	 
-	 ${LINK_ITEM}
-	 ${REVIEW_ITEM}
-	 ${EDIT_ITEM}
-	 ${DATE} 
-	 ${published}
-	 ${completion}
-      </div>
-    </div>
-    `;
+	    `;
 
-        // convert cardHtml into DOM element
-		let wrapper = document.createElement('div');
-		wrapper.classList.add(
-			'clickablecard', 'w-full', 'sm:w-1/2', 'md:w-1/3', 'flex', 'flex-col', 'p-3',
-			'hover:cursor-pointer');
-        wrapper.innerHTML = cardHtml;
-        return wrapper;
-	}
+        return completionHtml;
+    }
+
 
 	/**
      * @desc prevent links in card description from propagating to the 
