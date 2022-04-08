@@ -1232,7 +1232,7 @@ class CollectionsModel {
 
 }
 
-// src/Collections/NavView.js
+// src/Collections/NavViewWF.js
 /**
  * cc_NavView.js 
  * - insert the navigation elements into div#cc-canvas-collections 
@@ -1295,16 +1295,18 @@ class NavView extends cc_View {
     padding: 0;
     overflow: hidden ;
     background-color: #eee; 
-    width:100%;
+	display: table;
+	table-layout: fixed;
+	width: 100%
 }
 
-li.cc-active {
-    background-color: var(--ic-brand-button--primary-bgd);
+/*li.cc-active {
+    background-color: var(--ic-brand-button--primary-bgd); 
     /* font-weight: bold; */
-}
+}*/
 
 li.cc-active a {
-	color: var(--ic-brand-button--primary-text) !important;
+	color: var(--ic-brand-button--primary-text) !important; 
 }
 
 li.cc-close {
@@ -1313,8 +1315,10 @@ li.cc-close {
 }
 
 .cc-nav ul li {
-    float:left;
-    border-right: 1px solid #000;
+	display: table-cell;
+	width: 100%;
+ /*   border-right: 1px solid #000; */
+	float: none;
 }
 
 li.cc-active a {
@@ -1323,14 +1327,24 @@ li.cc-active a {
 
 li.cc-nav a {
     display: block;
-    padding: 0.5em;
-    text-align: center;
+    text-align: center !important;
     text-decoration: none;
     color: #2d3b45;  
+	padding: 24px 16px !important;
+	box-sizing: border-box;
+	font-size: 20px;
+	transition: background 0.3s linear 0s !important;
 }
 
 .cc-nav li a:hover {
-    background-color: #111;
+ /*   background-color: #111; */
+    background-color: var(--ic-brand-button--primary-bgd); 
+	border-top: 4px solid var(--ic-brand-button--primary-bgd); */
+	  color: rgb(255, 255, 255) !important;
+  background: rgba(51, 51, 51, 0.9) !important;
+  text-decoration: none !important;
+  color: rgb(255, 255, 255) !important;
+/*  border-top: 4px solid #c12525; */
 }
 
 .cc-nav li:nth-child(4) {
@@ -1348,10 +1362,17 @@ li.cc-nav a {
             let navClass = ['li', 'mr-4'];
             let style = 'cc-nav';
 
+			// get the collection details for this collection
+			// KLUDGE TODO fix this up
+			let collectionDetails = this.model.cc_configuration.COLLECTIONS[collection];
+			let icon = "";
+			if (collectionDetails.icon!=="") {
+				icon = `<i class="${collectionDetails.icon}"></i>`;
+			}
+			//console.log(collectionDetails);
 
-            let navElement = `
-		  <a href="#">${collection}</a>
-		`;
+
+            let navElement = `<a href="#">${icon} ${collection}</a> `;
             let navItem = document.createElement('li');
 			navItem.className = "cc-nav";
 
@@ -1705,15 +1726,15 @@ class GriffithCardsView extends cc_View {
 		// create a simple message div element
 		let message = document.createElement('div');
 		message.className = 'cc-message';
-		message.innerHTML = '<h1> Hello from GriffithCardsView </h1>';
+		message.innerHTML = '';
 
 		const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
 		document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
 		const PROGRESS_BAR_JS='<script src="https://unpkg.com/circular-progress-bar@2.1.0/public/circular-progress-bar.min.js"></script>';
 		document.body.insertAdjacentHTML( 'afterbegin', PROGRESS_BAR_JS);
-/*		const UNIVERSITY_DATE_JS='<script type="module" src="https://rawcdn.githack.com/djplaner/university-date-calendar/2dfeb8cc7c7f96b1cf2b3297d1779f969a7bf54f/university-date-calendar.js"></script>';
+		const UNIVERSITY_DATE_JS='<script type="module" src="https://rawcdn.githack.com/djplaner/university-date-calendar/2dfeb8cc7c7f96b1cf2b3297d1779f969a7bf54f/university-date-calendar.js"></script>';
 		document.body.insertAdjacentHTML( 'afterbegin', UNIVERSITY_DATE_JS);
-*/
+
 		const cards = this.generateCards();
 
 		div.insertAdjacentElement('beforeend', message);
@@ -1722,11 +1743,11 @@ class GriffithCardsView extends cc_View {
 		this.stopCardDescriptionPropagation();
 		this.makeCardsClickable();
 
-		if (typeof window.UniversityDateCalendarBroker !== 'undefined' ) {
+/*		if (typeof window.UniversityDateCalendarBroker !== 'undefined' ) {
 			this.calendarBroker = window.UniversityDateCalendarBroker.requestAvailability();
 		} else {
 			this.calendarBroker = new UniversityDateCalendarBroker();
-		}
+		} */
 	}
 
 	generateCards() {
@@ -1799,6 +1820,11 @@ class GriffithCardsView extends cc_View {
 		const IFRAME="";
 		const EDIT_ITEM="";
 
+		let CARD_LABEL = "";
+		if (module.label && module.num ) {
+	    	CARD_LABEL = `${module.label} ${module.num}`;
+		}
+
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="hover:bg-gray-200 hover:shadow-outline bg-white rounded shadow-lg overflow-hidden flex-1 flex flex-col relative">
       <a href="#${module.id}" class="cardmainlink"></a>
@@ -1810,7 +1836,7 @@ class GriffithCardsView extends cc_View {
 	<div class="cc_progress absolute bottom-0 left-0 p-2"></div>
 	    <div class="cc_progress float-right"></div>
 	    <span class="cardLabel">
-	    ${module.label} ${module.num}
+		${CARD_LABEL}
 	    </span>
 	    <h3 class="mb-4 text-2xl">${module.name}</h3>
 	</div>
@@ -2221,6 +2247,9 @@ class cc_CollectionsController {
 		DEBUG && console.log(`event innerText ${event.target.innerText}`);
 
 		let newCollection = event.target.innerText;
+		// trim newCollection
+		newCollection = newCollection.trim();
+		
 		// clicked on the current collection do nothing
 		if (newCollection === this.model.getCurrentCollection()) {
 			return;

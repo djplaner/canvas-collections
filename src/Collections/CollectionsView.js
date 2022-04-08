@@ -20,7 +20,7 @@
 
 import { cc_View } from '../cc_View.js';
 
-import { NavView } from './NavView.js';
+import { NavView } from './NavViewWF.js';
 import { CardsView } from './Views/Cards.js';
 import { CollectionsViewFactory } from './CollectionsViewFactory.js';
 

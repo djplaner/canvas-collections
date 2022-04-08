@@ -38,6 +38,9 @@ export default class cc_CollectionsController {
 		DEBUG && console.log(`event innerText ${event.target.innerText}`);
 
 		let newCollection = event.target.innerText;
+		// trim newCollection
+		newCollection = newCollection.trim();
+		
 		// clicked on the current collection do nothing
 		if (newCollection === this.model.getCurrentCollection()) {
 			return;
