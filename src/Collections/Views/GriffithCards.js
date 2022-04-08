@@ -68,6 +68,9 @@ export default class GriffithCardsView extends cc_View {
 
 		const cardStyles = `
 		<style>
+		#guCardInterface { 
+			margin-top: 0.5em;
+		}
 	    .cc-card-description a {
 			text-decoration: underline;
 		}

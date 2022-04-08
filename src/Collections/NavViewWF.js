@@ -65,13 +65,14 @@ export default class NavView extends cc_View {
 	width: 100%
 }
 
-/*li.cc-active {
-    background-color: var(--ic-brand-button--primary-bgd); 
-    /* font-weight: bold; */
-}*/
+li.cc-active {
+    background-color: var(--ic-brand-button--primary-bgd) !important; 
+    font-weight: bold; 
+}
 
 li.cc-active a {
 	color: var(--ic-brand-button--primary-text) !important; 
+	border-top: 4px solid var(--ic-brand-button--primary-bgd) !important; 
 }
 
 li.cc-close {
@@ -86,18 +87,15 @@ li.cc-close {
 	float: none;
 }
 
-li.cc-active a {
-  /*  color: black !important; */
-}
-
 li.cc-nav a {
     display: block;
     text-align: center !important;
     text-decoration: none;
     color: #2d3b45;  
-	padding: 24px 16px !important;
+	padding: 1em 0.8em !important;
+	border-top: 4px solid #eee; 
 	box-sizing: border-box;
-	font-size: 20px;
+	font-size: 1.2em;
 	transition: background 0.3s linear 0s !important;
 }
 

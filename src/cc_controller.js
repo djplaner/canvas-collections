@@ -322,11 +322,15 @@ export default class cc_Controller {
 	setContext() {
 	    const location = window.location.href;
 
+		// replace # at end of string
+		this.documentUrl = window.location.href;
+		this.documentUrl = this.documentUrl.replace(/#$/, '');
+
 		// courseId
 		// Following adapted from https://github.com/msdlt/canvas-where-am-I	
 		let courseId = ENV.COURSE_ID || ENV.course_id;
 		if (!courseId) {
-			var urlPartIncludingCourseId = window.location.href.split("courses/")[1];
+			let urlPartIncludingCourseId = this.documentUrl.split("courses/")[1];
 			if (urlPartIncludingCourseId) {
 				courseId = urlPartIncludingCourseId.split("/")[0];
 			}
@@ -335,13 +339,13 @@ export default class cc_Controller {
 
 		// modulesPage true if location ends with courses/${courseId}/modules
 		let regEx = new RegExp(`courses/${courseId}/modules(#*|#[^/]+)$`);
-		this.modulesPage = regEx.test(location);
+		this.modulesPage = regEx.test(this.documentUrl);
 
 		// homeModulesPage true iff
 		// - location ends with courses/${courseId}
 		// - div#context_modules is present
 		regEx = new RegExp(`courses/${courseId}$`);
-		this.homeModulesPage = regEx.test(location) && (document.getElementById('context_modules')!==null);
+		this.homeModulesPage = regEx.test(this.documentUrl) && (document.getElementById('context_modules')!==null);
 
 		// editMode true iff a#easy_student_view exists
 		this.editMode = (document.getElementById('easy_student_view')!==null);
