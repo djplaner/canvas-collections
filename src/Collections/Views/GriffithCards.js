@@ -6,7 +6,7 @@
 
 import { cc_View } from '../../cc_View.js';
 
-//import { UniversityDateCalendarBroker } from 'https://raw.githack.com/djplaner/university-date-calendar/master/university-date-calendar.js';
+import { UniversityDateCalendar } from '../../university-date-calendar.js';
 
 export default class GriffithCardsView extends cc_View {
 
@@ -29,6 +29,7 @@ export default class GriffithCardsView extends cc_View {
 		DEBUG && console.log('-------------- GriffithCardsView.display()');
 		let div = document.getElementById('cc-canvas-collections');
 
+		this.calendar = new UniversityDateCalendar();
 
 		// create a simple message div element
 		let message = document.createElement('div');
@@ -39,8 +40,8 @@ export default class GriffithCardsView extends cc_View {
 		document.head.insertAdjacentHTML('beforeend', TAILWIND_CSS);
 		const PROGRESS_BAR_JS = '<script src="https://unpkg.com/circular-progress-bar@2.1.0/public/circular-progress-bar.min.js"></script>';
 		document.body.insertAdjacentHTML('afterbegin', PROGRESS_BAR_JS);
-		const UNIVERSITY_DATE_JS = '<script type="module" src="https://rawcdn.githack.com/djplaner/university-date-calendar/2dfeb8cc7c7f96b1cf2b3297d1779f969a7bf54f/university-date-calendar.js"></script>';
-		document.body.insertAdjacentHTML('afterbegin', UNIVERSITY_DATE_JS);
+//		const UNIVERSITY_DATE_JS = '<script type="module" src="https://raw.githack.com/djplaner/university-date-calendar/master/university-date-calendar.js"></script>';
+//		document.body.insertAdjacentHTML('afterbegin', UNIVERSITY_DATE_JS);
 
 		const cards = this.generateCards();
 
@@ -49,6 +50,7 @@ export default class GriffithCardsView extends cc_View {
 
 		this.stopCardDescriptionPropagation();
 		this.makeCardsClickable();
+
 
 		/*		if (typeof window.UniversityDateCalendarBroker !== 'undefined' ) {
 					this.calendarBroker = window.UniversityDateCalendarBroker.requestAvailability();
