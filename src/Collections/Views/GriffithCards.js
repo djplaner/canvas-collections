@@ -38,8 +38,8 @@ export default class GriffithCardsView extends cc_View {
 		message.className = 'cc-message';
 		message.innerHTML = '';
 
-		const TAILWIND_CSS = '<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
-		document.head.insertAdjacentHTML('beforeend', TAILWIND_CSS);
+//		const TAILWIND_CSS = '<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
+//		document.head.insertAdjacentHTML('beforeend', TAILWIND_CSS);
 		const PROGRESS_BAR_JS = '<script src="https://unpkg.com/circular-progress-bar@2.1.0/public/circular-progress-bar.min.js"></script>';
 		document.body.insertAdjacentHTML('afterbegin', PROGRESS_BAR_JS);
 //		const UNIVERSITY_DATE_JS = '<script type="module" src="https://raw.githack.com/djplaner/university-date-calendar/master/university-date-calendar.js"></script>';
@@ -115,8 +115,8 @@ export default class GriffithCardsView extends cc_View {
 
 		.cc-card-image {
 			background-repeat: no-repeat;
+			background-position: center;
 			background-size: cover;
-			/* background-size: contain; */
 			height: 10rem;
 			border-radius: 0.5rem 0.5rem 0 0;
 		}
@@ -317,7 +317,7 @@ export default class GriffithCardsView extends cc_View {
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
       <a href="#${module.id}" class="cardmainlink"></a>
-      <div class="cc-card-image ${imageSize}" style="background-image: url('${imageUrl}')">
+      <div class="cc-card-image" style="${imageSize} background-image: url('${imageUrl}')">
 	    ${IFRAME}
       </div>
       ${DATE_WIDGET}
@@ -582,13 +582,21 @@ export default class GriffithCardsView extends cc_View {
 		return engage;
 	}
 
+	/**
+	 * module.imageSize will contain user spec for sizing the background image for a card
+	 * Options are
+	 * - bg-contain
+	 * - bg-cover
+	 * These need to be supplemented 
+	 * @param {Object} module 
+	 * @returns 
+	 */
 	generateCardImageSize(module) {
-		let imageSize = "bg-cover";
-		if ("imageSize" in module) {
-			imageSize = module.imageSize;
-		}
-		if (imageSize === "bg-contain") {
-			imageSize = "bg-contain bg-no-repeat bg-center";
+		let imageSize = "";
+		if ("imageSize" in module && module.imageSize!=="" ) {
+			if (module.imageSize === "bg-contain") {
+				imageSize = "background-size: contain !important; background-repeat: no-repeat; background-position: center;";
+			}
 		}
 		return imageSize;
 	}
