@@ -2421,12 +2421,8 @@ class GriffithCardsView extends cc_View {
 		message.className = 'cc-message';
 		message.innerHTML = '';
 
-//		const TAILWIND_CSS = '<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
-//		document.head.insertAdjacentHTML('beforeend', TAILWIND_CSS);
 		const PROGRESS_BAR_JS = '<script src="https://unpkg.com/circular-progress-bar@2.1.0/public/circular-progress-bar.min.js"></script>';
 		document.body.insertAdjacentHTML('afterbegin', PROGRESS_BAR_JS);
-//		const UNIVERSITY_DATE_JS = '<script type="module" src="https://raw.githack.com/djplaner/university-date-calendar/master/university-date-calendar.js"></script>';
-//		document.body.insertAdjacentHTML('afterbegin', UNIVERSITY_DATE_JS);
 
 		const cards = this.generateCards();
 
@@ -2699,7 +2695,7 @@ class GriffithCardsView extends cc_View {
 
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
-      <a href="#${module.id}" class="cardmainlink"></a>
+      <a href="#${module.id}" class="cc-card-link"></a>
       <div class="cc-card-image" style="${imageSize} background-image: url('${imageUrl}')">
 	    ${IFRAME}
       </div>
@@ -3048,13 +3044,13 @@ class GriffithCardsView extends cc_View {
 	makeCardsClickable() {
 
 		// get all the clickable cards
-		let cards = document.getElementsByClassName('clickablecard');
+		let cards = document.getElementsByClassName('cc-clickable-card');
 		for (let i = 0; i < cards.length; i++) {
 			let card = cards[i];
 
 			// add the event listener
 			card.addEventListener('click', function (event) {
-				let link = this.querySelector(".cardmainlink");
+				let link = this.querySelector(".cc-card-link");
 				if (link !== null) {
 					link.click();
 				}

@@ -312,7 +312,7 @@ export default class GriffithCardsView extends cc_View {
 
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
-      <a href="#${module.id}" class="cardmainlink"></a>
+      <a href="#${module.id}" class="cc-card-link"></a>
       <div class="cc-card-image" style="${imageSize} background-image: url('${imageUrl}')">
 	    ${IFRAME}
       </div>
@@ -661,13 +661,13 @@ export default class GriffithCardsView extends cc_View {
 	makeCardsClickable() {
 
 		// get all the clickable cards
-		let cards = document.getElementsByClassName('clickablecard');
+		let cards = document.getElementsByClassName('cc-clickable-card');
 		for (let i = 0; i < cards.length; i++) {
 			let card = cards[i];
 
 			// add the event listener
 			card.addEventListener('click', function (event) {
-				let link = this.querySelector(".cardmainlink");
+				let link = this.querySelector(".cc-card-link");
 				if (link !== null) {
 					link.click();
 				}
