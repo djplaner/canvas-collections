@@ -2617,6 +2617,8 @@ class GriffithCardsView extends cc_View {
 			border-left-width: 1px;
 			border-right-width: 1px;
 			border-top-width: 1px;
+			font-size: 0.9rem;
+			line-height: 1rem;
 		}
 
 		.cc-card-date-date {
@@ -2628,8 +2630,7 @@ class GriffithCardsView extends cc_View {
 			border-bottom-right-radius: 0.25rem;
 			border-bottom-left-radius: 0.25rem;
 			border-color: black;
-			font-size: 1.2rem;
-			line-height: 1.5rem;
+			font-size: 0.9rem;
 			font-weight: bold;
 			line-height: 1rem;
 		}
@@ -2790,7 +2791,7 @@ class GriffithCardsView extends cc_View {
 			const actualDate = this.calendar.getDate(firstDate.WEEK);
 			// actualDate { date/month/year }
 			firstDate.DATE = actualDate.date;
-			firstDate.MONTH = actualDate.MONTH;
+			firstDate.MONTH = actualDate.month;
 		}
 
 		// no date information defined, no date widget
@@ -2811,7 +2812,7 @@ class GriffithCardsView extends cc_View {
              ${firstDate.DATE_LABEL}
           </div>
 		  <div class="cc-card-date-week">
-          	${firstDate.WEEK}
+          	Week ${firstDate.WEEK}
 		  </div>
 		  <div class="cc-card-date-time">
           ${firstDate.TIME}
@@ -2828,9 +2829,18 @@ class GriffithCardsView extends cc_View {
 		`;
 
 		// TODO remove the elements that aren't needed
-
-
-		return singleDateHtml;
+		// Convert singleDateHtml to dom element
+		let element = new DOMParser().parseFromString(singleDateHtml, 'text/html').body.firstChild;
+		if (firstDate.TIME==="") {
+			// remove the div.cc-card-date-time from element
+			element.removeChild(element.querySelector('.cc-card-date-time'));
+		}
+		if (firstDate.WEEK==="" ) {
+			// remove the div.cc-card-date-week from element
+			element.removeChild(element.querySelector('.cc-card-date-week'));
+		}
+		// return element converted to string
+		return element.outerHTML;
 	}
 
 	generateDualDate( module, firstDate ) {
