@@ -2459,7 +2459,7 @@ class GriffithCardsView extends cc_View {
 			padding: 0.75rem;
 			flex-direction: column;
 			display: flex;
-			width: 33.33%;
+			width: 30%;
 		}
 
 		@media (max-width:640px) {
@@ -2805,9 +2805,7 @@ class GriffithCardsView extends cc_View {
 		}
 
 		const singleDateHtml = `
-		<!-- <div class="block rounded-t rounded-b overflow-hidden bg-white text-center w-24 absolute pin-t pin-r"> -->
 		<div class="cc-card-date">
-          <!-- <div class="bg-black text-white py-1 text-xs border-l border-r border-t border-black"> -->
 		  <div class="cc-card-date-label">
              ${firstDate.DATE_LABEL}
           </div>
@@ -2818,11 +2816,9 @@ class GriffithCardsView extends cc_View {
           ${firstDate.TIME}
 		  </div>
 		  <div class="cc-card-date-month">
-          <!-- div class="bg-red text-white py-1 border-l border-r border-black"> -->
       	     ${firstDate.MONTH}
           </div>
 		  <div class="cc-card-date-date">
-          <!-- div class="pt-1 border-l border-r border-b border-black rounded-b" -->
       	     ${firstDate.DATE}
           </div>
         </div>

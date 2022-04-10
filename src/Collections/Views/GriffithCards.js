@@ -38,12 +38,8 @@ export default class GriffithCardsView extends cc_View {
 		message.className = 'cc-message';
 		message.innerHTML = '';
 
-//		const TAILWIND_CSS = '<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
-//		document.head.insertAdjacentHTML('beforeend', TAILWIND_CSS);
 		const PROGRESS_BAR_JS = '<script src="https://unpkg.com/circular-progress-bar@2.1.0/public/circular-progress-bar.min.js"></script>';
 		document.body.insertAdjacentHTML('afterbegin', PROGRESS_BAR_JS);
-//		const UNIVERSITY_DATE_JS = '<script type="module" src="https://raw.githack.com/djplaner/university-date-calendar/master/university-date-calendar.js"></script>';
-//		document.body.insertAdjacentHTML('afterbegin', UNIVERSITY_DATE_JS);
 
 		const cards = this.generateCards();
 
@@ -76,7 +72,7 @@ export default class GriffithCardsView extends cc_View {
 			padding: 0.75rem;
 			flex-direction: column;
 			display: flex;
-			width: 33.33%;
+			width: 30%;
 		}
 
 		@media (max-width:640px) {
@@ -422,9 +418,7 @@ export default class GriffithCardsView extends cc_View {
 		}
 
 		const singleDateHtml = `
-		<!-- <div class="block rounded-t rounded-b overflow-hidden bg-white text-center w-24 absolute pin-t pin-r"> -->
 		<div class="cc-card-date">
-          <!-- <div class="bg-black text-white py-1 text-xs border-l border-r border-t border-black"> -->
 		  <div class="cc-card-date-label">
              ${firstDate.DATE_LABEL}
           </div>
@@ -435,11 +429,9 @@ export default class GriffithCardsView extends cc_View {
           ${firstDate.TIME}
 		  </div>
 		  <div class="cc-card-date-month">
-          <!-- div class="bg-red text-white py-1 border-l border-r border-black"> -->
       	     ${firstDate.MONTH}
           </div>
 		  <div class="cc-card-date-date">
-          <!-- div class="pt-1 border-l border-r border-b border-black rounded-b" -->
       	     ${firstDate.DATE}
           </div>
         </div>
