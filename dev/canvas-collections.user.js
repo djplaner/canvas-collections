@@ -1,508 +1,2734 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.5.1
+// @version      0.7.1
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
 // @grant        none
 // @source       https://github.com/djplaner/canvas-collections.git
 // @license      ISC
-// @homepage     https://github.com
+// @homepage     https://github.com/djplaner/canvas-collections/tree/main#canvas-collections
 // @require      https://unpkg.com/circular-progress-bar
 // ==/UserScript==
 
-// src/view/cc_CanvasModulesView.js
-/****************
- * CanvasModulesViews - render the updated module information
+// src/Configuration/cc_ConfigurationModel.js
+/**
+ * cc_ConfigurationModel.js
+ * Hold the cc data structure and provide data methods required for configuration
+ * - isOn - true iff cc is on
+ * 
  */
 
-const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
-const TOOLTIPSTER_CSS=`
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/4.2.8/css/tooltipster.bundle.css" />';
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/4.2.8/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css" />
-`;
-/*const TIPPY_JS = `
-<script src="https://unpkg.com/@popperjs/core@2"></script>
-<script src="https://unpkg.com/tippy.js@6"></script>
-`
-*/
+class cc_ConfigurationModel {
 
-const DEFAULT_VIEW_OPTIONS = {
-    // how to view collections: 
-    // - current - show the current collection
-    // - all - show all collections
-    'collectionView': 'current',
-    // whether to who nav bar
-    'navBar': true,
-    // whether to update the module title with collection name
-    'updateTitle': true,
-    // should we scroll to the top of the content?
-    'scrollToTop': true
+
+	constructor(controller) {
+		DEBUG && console.log('-------------- cc_ConfigurationModel.constructor()');
+
+		this.controller = controller;
+
+		this.configShowing = false;
+
+		this.CONFIG_SHOW_ICONS = {
+			true: 'icon-mini-arrow-down',
+			false: 'icon-mini-arrow-right'
+		}
+
+	}
+
+	/**
+	 * @descr return true iff cc is on
+	 */
+
+	isOn() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.isOn() - ${this.controller.parentController.ccOn}`);
+		return this.controller.parentController.ccOn;
+	}
+
+	turnOn() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOn()`);
+		this.controller.parentController.ccOn = true;
+		this.controller.parentController.cc_configuration.STATUS==="on";
+	}
+
+	turnOff() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOff()`);
+		this.controller.parentController.ccOn = false;
+		this.controller.parentController.cc_configuration.STATUS==="off";
+	}
+
+	getConfigShowing() {
+		return this.configShowing;
+	}
+
+	getModuleDetails() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getModuleDetails()`);
+		const moduleDetails = this.controller.parentController.moduleDetails;
+		// map array of objects moduleDetails into hash keyed on id attribute
+		const moduleDetailsHash = moduleDetails.reduce(
+			(accumulator, module) => {
+				accumulator[module.id] = module;
+				return accumulator;
+			},
+			{}
+		);
+
+		return moduleDetailsHash; //this.controller.parentController.moduleDetails;
+	}
+
+	/**
+	 * Set the configClass attribute of the opposite of given moduleId to newClass
+	 * @param {integer} moduleId 
+	 * @param {string} newClass 
+	 */
+	setModuleConfigClass(moduleId, newClass) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.setModuleConfigClass() - ${moduleId} ${newClass}`);
+
+		// find the object in the array this.controller.parentController.moduleDetails that 
+		// has the id matching moduleId
+		const module = this.controller.parentController.moduleDetails.find(
+			(module) => module.id===moduleId
+		);
+
+		// set the configClass attribute of the found object to newClass
+		if (newClass==="icon-mini-arrow-down") {
+			module['configClass'] = "icon-mini-arrow-right";
+		} else {
+			module['configClass'] = "icon-mini-arrow-down";
+		}
+	}
+
+	/**
+	 * Translate between the boolean this.configShowing and the actual class name for
+	 * the icon to display
+	 * @returns String - name of class for current configShowing
+	 */
+	getConfigShowClass() {
+		return this.CONFIG_SHOW_ICONS[this.configShowing];
+	}
+
+	/**
+	 * @descr given a class name for configSwitch, return the other class
+	 */
+	getOtherConfigShowClass(className) {
+		// find the index of CONFIG_SHOW_ICONS that matches newClass
+
+		if ( this.CONFIG_SHOW_ICONS[false]===className ) {
+			return this.CONFIG_SHOW_ICONS[true];
+		} else {
+			return this.CONFIG_SHOW_ICONS[false];
+		}
+	}
+
+	/**
+	 * set configShowing to true or false based on the value of newClass and which index
+	 * of CONFIG_SHOW_ICONS it matches
+	 * @param {*} newClass 
+	 */
+	setConfigShowClass(newClass) {
+		// find the index of CONFIG_SHOW_ICONS that matches newClass
+		if (this.CONFIG_SHOW_ICONS[false]===newClass) {
+			this.configShowing = false;
+		} else {
+			this.configShowing = true;
+		}
+
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.setConfigShowClass() - ${newClass} change to - ${this.configShowing}`);
+	}
+
+	/**
+	 * @descr return an array of existing collection names
+	 */
+
+	getExistingCollectionNames() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getExistingCollectionNames()`);
+//		console.log(this.controller.parentController.cc_configuration);
+		// show the keys for the cc_configuration object
+	 	return Object.keys(this.controller.parentController.cc_configuration.COLLECTIONS);
+	}
+
+	/**
+	 * @descr return an integer count of the number of modules that belong to a collection
+	 * @param {String} collectionName
+	 */
+
+	getModuleCount(collectionName) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getModuleCount()`);
+		const modules = this.controller.parentController.cc_configuration.MODULES;
+
+		// filter modules to return only objects with collection==collectionName
+		//const collectionModules = modules.filter(module => module.collection===collectionName);
+		const collectionModules = Object.keys(modules).filter(
+			(module) => modules[module].collection===collectionName
+			);
+
+		return collectionModules.length;
+	}
+
+	/**
+	 * @descr get the object representing the CC configuration for the given module name
+	 * @params {String} moduleName
+	 * @returns {Object} - the object representing the CC configuration for the given module id
+	 */
+
+	getModuleConfiguration(moduleName) {
+		return this.controller.parentController.cc_configuration.MODULES[moduleName];
+	}
+
+	/**
+	 * @returns {String} - Name of default active collection
+	 */
+
+	getDefaultCollection() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getDefaultCollection()`);
+		return this.controller.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION;
+	}
+
+	/**
+	 * return the representation for the given collectionName
+	 * @param {String} collectionName 
+	 * @returns {String} - Name of representation
+	 */
+	getCollectionRepresentation(collectionName) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getCollectionRepresentation()`);
+		console.log(
+			`representation is ${this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation}`);
+		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation;
+	}
+
+	getCollections() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getCollections()`);
+		// return the keys for the cc_configuration.COLLECTIONS object
+		return Object.keys(this.controller.parentController.cc_configuration.COLLECTIONS);
+	}
+}
+
+// src/cc_View.js
+/**
+ * cc_View.js - parent view class for cc 
+ * - placeholder for any generic methods
+ * 
+ */
+
+
+
+class cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		this.model = model;
+		this.controller = controller;
+	}
+
+
+}
+
+// src/Configuration/cc_ConfigurationView.js
+/**
+ * cc_ConfigurationView.js 
+ * Update Canvas display (only on modules pages with edit mode on) to show
+ * - title for cc
+ * - switch to turn on/off
+ * - drop down arrow to show the configuration dialog
+ * - TODO: configuration dialog
+ *  
+ */
+
+
+
+const CC_VERSION="0.7.1";
+
+class cc_ConfigurationView extends cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor(model, controller) {
+		super(model, controller);
+	}
+
+	/**
+	 * @descr Modify the canvas page to show the cc title, switch, and drop arrow.
+	 * Set up the click handlers for the switch and drop arrow.
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- cc_ConfigurationView.display()');
+
+		// Add the cc configuration bundle
+		this.addCcBundle();
+
+		if (this.model.getConfigShowing()) {
+			this.showConfig();
+		} else {
+			this.removeConfig();
+		}
+		// get the config show class
+		const configShowClass = this.model.getConfigShowClass();
+		// set i#configShowSwitch to the config show class
+		const configShowSwitch = document.getElementById('configShowSwitch');
+		if (configShowSwitch) {
+			configShowSwitch.className = configShowClass;
+		}
+
+		// add the configuration interfaces for individual modules
+		// remove all the div.cc-module-config 
+		let divs = document.querySelectorAll('div.cc-module-config');
+		divs.forEach( (div) => {
+			div.remove();
+		});
+
+		this.addModuleConfiguration();
+	}
+
+	/**
+	 * @descr Add the CC configuration interface to each module
+	 * - source of module information
+	 */
+
+	addModuleConfiguration() {
+
+		const moduleDetails = this.model.getModuleDetails();
+
+		// loop through all the div.ig-header elements
+		const moduleHeaders = document.getElementsByClassName('ig-header');
+		// for each
+		for (let i = 0; i < moduleHeaders.length; i++) {
+			const moduleHeader = moduleHeaders[i];
+			const id = moduleHeader.id;
+			const moduleDetail = moduleDetails[id];
+
+			if (moduleDetail===undefined) {
+				continue;
+			}
+
+			let showConfigHtml = '';
+			// does moduleDetail have property configClass
+			if (!("configClass" in moduleDetail)) {
+				moduleDetail['configClass'] = 'icon-mini-arrow-right';
+			} else if (moduleDetail['configClass'] === 'icon-mini-arrow-down') {
+				// do nothing
+				showConfigHtml = this.showModuleConfig(moduleDetail);
+			}
+
+			const moduleConfigHtml = `
+		<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
+      		<span>
+			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
+			  Canvas Collections Configuration</span>
+			  ${showConfigHtml}
+  		</div>`;
+
+			// TO DO check that the id matches on of the module ids in data structure
+
+			// insert moduleConfigHtml afterend of moduleHeader
+			moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
+
+			// add a click handler for i#cc-module-config-${id}-switch
+			const moduleConfigSwitch = document.getElementById(`cc-module-config-${id}-switch`);
+			if (moduleConfigSwitch) {
+				moduleConfigSwitch.onclick = (event) => this.controller.toggleModuleConfigSwitch(event);
+				// and update the class appropriately
+				moduleConfigSwitch.className = moduleDetail.configClass;
+			}
+		}
+	}
+
+	/**
+	 * @descr generate the div.cc-module-config-details for the module
+	 * @param {Object} moduleDetail
+	 * @returns {string} html
+	 */
+
+	showModuleConfig(moduleDetail) {
+		DEBUG && console.log('-------------- cc_ConfigurationView.showModuleConfig()');
+		console.log(moduleDetail);
+
+		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.name);
+		console.log('---- configuration');
+		console.log(moduleConfig);
+
+		const date = "";
+
+		// get list of collections
+		const collections = this.model.getCollections();
+		let collectionsOptions = '';
+		for (let i = 0; i < collections.length; i++) {
+			let selected = '';
+			const collection = collections[i];
+			if (collection===moduleConfig.collection) {
+				selected='selected';
+			}
+			collectionsOptions += `<option value="${collection}" ${selected}>${collection}</option>`;
+		}
+		
+		let showConfigHtml = `
+		<style>
+		   .cc-collection-representation label {
+			   width: 5rem;
+			   font-size: 0.8rem;
+		   }
+		   .cc-collection-representation input {
+			   font-size: 0.8rem;
+		   }
+		   .cc-module-config-detail {
+			   padding-top: 0.5rem;
+		   }
+		   .cc-preview-container {
+			   display:flex;
+			   flex-wrap: wrap;
+			   width: 100%;
+		   }
+
+		   .cc-preview-container .cc-card {
+			   min-width: 50%;
+		   }
+		</style>
+
+		<div class="cc-module-config-detail">
+			<div>
+				<div class="cc-collection-representation">
+					<label for="cc-collection-representation-${moduleDetail.id}-collection">Collection</label>
+					<select id="cc-module-config-${moduleDetail.id}-collection">
+					  ${collectionsOptions}
+					</select>
+				</div>
+				<div class="cc-collection-representation">
+				    <label for="cc-module-config-${moduleDetail.id}-label">Label</label>
+					<input type="text" id="cc-module-config-${moduleDetail.id}-label" 
+						value="${moduleConfig.label}" />
+					<br clear="all" />
+				    <label for="cc-module-config-${moduleDetail.id}-number">Number</label>
+					<input type="text" id="cc-module-config-${moduleDetail.id}-number" 
+					     value="${moduleConfig.num}" />
+					<br clear="all" />
+				    <label for="cc-module-config-${moduleDetail.id}-date">Date</label>
+					<input type="text" id="cc-module-config-${moduleDetail.id}-date" 
+					      value="${date}">
+					<br clear="all" />
+				    <label for="cc-module-config-${moduleDetail.id}-description">Description</label>
+					<textarea id="cc-module-config-${moduleDetail.id}-description">${moduleConfig.description}</textarea>
+				</div>
+		    </div>
+			<div>
+				<div class="cc-collection-representation">
+					<label for="cc-collection-representation-${moduleDetail.id}-imageSize">Image size</label>
+					<input id="cc-module-config-${moduleDetail.id}-imageSize" value="${moduleConfig.imageSize}">
+					<br clear="all" />
+					<label for="cc-collection-representation-${moduleDetail.id}-imageUrl">Image URL</label>
+					<input type="text" id="cc-module-config-${moduleDetail.id}-imageUrl" 
+					        value="${moduleConfig.image}">
+				</div>
+				<div class="cc-module-config-imagePreview">
+				  <div class="cc-preview-container">
+					<div class="cc-card" aria-label="Preview">
+  						<div class="cc-card-header">
+							<div class="cc-card-header-image" 
+							     style="background-image:url('${moduleConfig.image}');">
+								<div class="cc-card-header-hero" aria-hidden="true"></div>
+	  						</div>
+		   				    <a href="#module_${moduleDetail.id}" class="cc-card-link">
+	  							<div class="cc-card-header-content">
+	    							<h3 class="cc-card-header-title cc-ellipsis" title="${moduleDetail.name}">
+									  ${moduleDetail.name}
+									</h3>
+	    							<div class="cc-card-header-subtitle cc-ellipsis">
+									</div>
+									<div class="cc-card-header-description">
+										${moduleConfig.description}
+									</div>
+	  							</div>
+							</a>	
+						</div>
+					</div>
+				  </div>
+				</div>
+		    </div>
+		</div>	
+		`;
+
+		// TODO
+		// - display:none cc-module-config-image if there is no image
+		// - set the options for select#cc-module-config-${moduleDetail.id}-collection
+		// - set onClick for select#cc-module-config-${moduleDetail.id}-collection
+		// - set the options for select#cc-module-config-${moduleDetail.id}-imageSize
+		// - set onClick for select#cc-module-config-${moduleDetail.id}-imageSize
+		// - all the other event handlers
+
+		return showConfigHtml;
+	}
+
+	/**
+	 * @descr Add the div#cc-config to the end of div.ic-app-nav-toggle-and-crumbs
+	 * Config should allow for
+	 * - Choosing default initial collection
+	 * - adding or removing collections from the list
+	 * - the order of collections
+	 * - choosing the representation for collections
+	 * - whether to include the "All" and "None" collections?
+	 */
+	showConfig() {
+		const configDivHtml = `
+		<div id="cc-config-wrapper">
+		<style>
+		    #cc-config-wrapper {
+				display: block;
+				border-bottom: 1px solid #c7cdd1
+			}
+
+			#cc-config {
+				float: right;
+				display: block;
+				max-width: 50%;
+				margin-top: -1em;
+				margin-right: 10em;
+				margin-bottom: 1em;
+				padding-bottom: 0.5em;
+				background-color: #f5f5f5;
+			}
+
+			.cc-box-header {
+				padding-left: 0.5em;
+			}
+
+			.cc-box-header p {
+				font-size: 1.1em;
+				font-weight: bold;
+			}
+
+			.cc-box-body {
+				width: 500px;
+				padding-left: 0.5em;
+				padding-bottom: 1.em;
+			}
+
+			#cc-config-body {  display: grid; 
+				grid-template-columns: 1fr 1fr; 
+				grid-template-rows: 1fr; 
+				gap: 0px 1em; 
+				grid-auto-flow: row; 
+				grid-template-areas: ". .";
+				height: 100%;
+			}
+
+			#cc-config-body p {
+				font-size: 0.9em;
+				font-weight: bold;
+			}
+
+			#cc-config-new-collection {
+			}
+
+			#cc-config-new-collection-button {
+				left: 50%;
+				transform: translateX(-50%);
+			}
+
+			.cc-existing-collection {
+				font-size: 0.8em;
+				font-weight: normal;
+				padding-left: 0.5em;
+			}
+
+			.cc-existing-collection label {
+				font-size: 0.8em;
+			}
+
+			.cc-existing-collection select {
+				font-size: 0.8em;
+				width: 7rem;
+				height: 2rem;
+			}
+
+			.cc-existing-collection p {
+				margin-top: 0.2em;
+				margin-bottom: 0.2em;
+			}
+		
+			.cc-config-collection {
+				padding-top: 0.5em;
+				padding-left: 0.5em;
+			}
+
+			.cc-config-collection label {
+				font-size: 0.8em;
+			}
+
+			.cc-config-collection input {
+				font-size: 0.8em;
+			}
+
+			.cc-config-collection button {
+				font-size: 0.8em;
+				padding: 0.5em 1em;
+			}
+			.cc-config-collection select {
+				font-size: 0.8em;
+				width: 7rem;
+				height: 2rem;
+			}
+
+			.cc-collection-representation {
+				display: flex;
+				align-items: center;
+				justify-content: space-around;
+			}
+
+			.cc-version {
+				font-size: 50%;
+				font-weight: normal;
+			}
+
+			</style>
+
+			<div id="cc-config">
+			 	<div class="cc-box-header">
+		  		  <p>Configure Canvas Collections
+						<span class="cc-version">(v${CC_VERSION})</span>
+						</p>
+				</div>
+			    <div class="cc-box-body">
+				  <div id="cc-config-body">
+				    <div id="cc-config-existing-collections">
+						<p>
+						Existing collections 
+						</p>
+					</div>
+					<div id="cc-config-new-collection">
+						<p>Add a new collection</p>
+						<div class="cc-config-collection border border-trbl">
+						<div class="ic-Form-control" style="margin-bottom: 0px">
+						  	<input type="text" id="cc-config-new-collection-name" 
+							   placeholder="Name for new collection">
+						</div>
+
+						<div class="cc-collection-representation">
+							<label for="cc-collection-newRepresentation">Representation</label>
+							<select id="cc-collection-newRepresentation">
+								<option id="cc-collection-newRepresentation-cards" value="cards">Cards</option>
+								<option id="cc-collection-newRpresentation-table" value="table">Table</option>
+							</select>
+						</div>
+
+						<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+							<div class="ic-Checkbox-group">
+								<div class="ic-Form-control ic-Form-control--checkbox">
+									<input type="checkbox" id="cc-config-new-collection-default">
+									<label class="ic-Label" for="cc-config-new-collection-default">
+										<small>Default collection?</small>
+									</label>
+								</div>
+								<div class="ic-Form-control ic-Form-control--checkbox">
+									<input type="checkbox" id="cc-config-new-collection-all">
+									<label class="ic-Label" for="cc-config-new-collection-all">
+										<small>Include all modules?</small>
+									</label>
+								</div>
+								<div class="ic-Form-control ic-Form-control--checkbox">
+									<input type="checkbox" id="cc-config-new-collection-unallocated">
+									<label class="ic-Label" for="cc-config-new-collection-unallocated">
+										<small>Include modules without a collection?</small>
+									</label>
+								</div>
+							</div>
+							<button class="btn btn-primary" id="cc-config-new-collection-button">Add</button>
+						</fieldset>
+					</div>
+					</div>
+				  </div>
+				</div>
+			</div>
+		</div>
+		`
+
+		// remove the border at the bottom of Canvas top nav bar
+		const toggleAndCrumbs = document.getElementsByClassName('ic-app-nav-toggle-and-crumbs')[0];
+		if (toggleAndCrumbs) {
+			// change toggleAndCrumbs border-bottom style to none
+			toggleAndCrumbs.style.borderBottom = 'none';
+			toggleAndCrumbs.insertAdjacentHTML('afterEnd', configDivHtml);
+		}
+		// remove the bottom border from div.cc-switch-container
+		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
+		if (ccSwitchContainer) {
+			ccSwitchContainer.style.borderBottom = 'none';
+		}
+
+		// add in the details of the existing collections
+		this.showExistingCollections();
+
+	}
+
+	/**
+	 * @descr Fill div#cc-config-existing-collections with a div.cc-existing-collection for each
+	 * of the existing collections
+	 */
+	showExistingCollections() {
+		DEBUG && console.log('cc_configugurationView::showExistingCollections()');
+		const existingCollectionNames = this.model.getExistingCollectionNames();
+
+		DEBUG && console.log(existingCollectionNames);
+
+		// get div#cc-config-existing-collections
+		const existingCollectionsDiv = document.getElementById('cc-config-existing-collections');
+
+		const numCollections = existingCollectionNames.length;
+		let count = 0;
+		const defaultCollection = this.model.getDefaultCollection();
+
+		// for each collection add a div.cc-existing-collection
+		existingCollectionNames.forEach(collectionName => {
+			const moduleCount = this.model.getModuleCount(collectionName);
+			const moduleName = `module${moduleCount !== 1 ? 's' : ''}`;
+			const divExistingCollection = `
+			<div class="cc-existing-collection border border-trbl" id="cc-collection-${collectionName}">
+				<p>${collectionName} - (${moduleCount} ${moduleName})
+				<span class="cc-collection-move">
+				<i class="icon-arrow-up" id="cc-collection-${collectionName}-up"></i>
+				<i class="icon-arrow-down" id="cc-collection-${collectionName}-down"></i>
+				</p>
+
+				<div class="cc-collection-representation">
+					<label for="cc-collection-${collectionName}-representation">Representation</label>
+				 	<select id="cc-collection-${collectionName}-representation">
+						<option id="cc-collection-${collectionName}-representation-cards" value="cards">Cards</option>
+						<option id="cc-collection-${collectionName}-representation-table" value="table">Table</option>
+					</select>
+				</div>
+
+				<!-- put the options -->
+				<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+					<div class="ic-Checkbox-group">
+						<div class="ic-Form-control ic-Form-control--checkbox">
+							<input type="checkbox" id="cc-config-collection-${collectionName}-default">
+							<label class="ic-Label" for="cc-config-collection-${collectionName}-default">
+								Default collection?
+							</label>
+						</div>
+						<div class="ic-Form-control ic-Form-control--checkbox">
+							<input type="checkbox" id="cc-config-collection-${collectionName}-all">
+							<label class="ic-Label" for="cc-config-collection-${collectionName}-all">
+								Include all modules?
+							</label>
+						</div>
+						<div class="ic-Form-control ic-Form-control--checkbox">
+							<input type="checkbox" id="cc-config-collection-${collectionName}-unallocated">
+							<label class="ic-Label" for="cc-config-collection-${collectionName}-unallocated">
+								Include modules without a collection?
+							</label>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			`;
+
+
+			// add the div.cc-existing-collection to div#cc-config-existing-collections
+			existingCollectionsDiv.insertAdjacentHTML('beforeEnd', divExistingCollection);
+
+			// TODO add an event handler for clicking the options
+
+			// TODO add event handlers for the up and down buttons
+
+			// set input#cc-config-collection-${collectionName}-default to checked
+			if (defaultCollection === collectionName) {
+				const defaultCheckbox = document.getElementById(`cc-config-collection-${collectionName}-default`);
+				if (defaultCheckbox) {
+					defaultCheckbox.checked = true;
+				}
+			}
+
+			// select the right representation
+			const representation = this.model.getCollectionRepresentation(collectionName);
+			// set option#cc-collection-${collectionName}-representation-${representation} to selected
+			const representationOption = document.getElementById(`cc-collection-${collectionName}-representation-${representation}`);
+			if (representationOption) {
+				representationOption.selected = true;
+			}
+
+			// if we're the first collection, remove i#cc-collection-${collectionName}-up
+			if (count === 0) {
+				const upButton = document.getElementById(`cc-collection-${collectionName}-up`);
+				if (upButton) {
+					upButton.remove();
+				}
+			} else if (count === numCollections - 1) {
+				// if we're the last collection, remove i#cc-collection-${collectionName}-down
+				const downButton = document.getElementById(`cc-collection-${collectionName}-down`);
+				if (downButton) {
+					downButton.remove();
+				}
+			}
+			count += 1;
+		});
+
+	}
+
+
+	/**
+	 * @descr Remove the div#cc-config from the end of div.ic-app-nav-toggle-and-crumbs, if it exists
+	 */
+	removeConfig() {
+		const configDiv = document.getElementById('cc-config-wrapper');
+		if (configDiv) {
+			configDiv.remove();
+			const toggleAndCrumbs = document.getElementsByClassName('ic-app-nav-toggle-and-crumbs')[0];
+			if (toggleAndCrumbs) {
+				toggleAndCrumbs.style.borderBottom = '1px solid #c7cdd1';
+			}
+		}
+
+		// add the bottom border from div.cc-switch-container
+		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
+		if (ccSwitchContainer) {
+			ccSwitchContainer.style.borderBottom = '1px solid #c7cdd1';
+		}
+
+	}
+
+	/**
+	 * @descr Add the cc configuration bundle to the canvas page.
+	 * Currently placed to the left of the "Student View" button at the top of page
+	 */
+	addCcBundle() {
+		// get div.cc-switch-container
+		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
+		if (ccSwitchContainer) {
+			return;
+		}
+
+		/*
+		30px - 2em
+		17px - 1.2em
+		13px - 1rem
+
+		*/
+
+		// inject the switch script tag into the canvas page, just after start of body
+		const SL_SWITCH_HTML = `
+		 <style>
+		 /* The switch - the box around the slider */
+.cc-switch {
+  position: relative;
+  display: inline-block;
+  width: 2rem; 
+  height: 1.2rem;
+  margin-top: .75rem;
+  margin-right: 0.5rem
+}
+
+/* Hide default HTML checkbox */
+.cc-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.cc-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.cc-slider:before {
+  position: absolute;
+  content: "";
+  height: 0.9rem;
+  width: 0.9rem;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .cc-slider {
+  background-color: #328c04;
+}
+
+input:focus + .cc-slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .cc-slider:before {
+  -webkit-transform: translateX(1rem);
+  -ms-transform: translateX(1rem);
+  transform: translateX(1rem);
+}
+
+/* Rounded sliders */
+.cc-slider.cc-round {
+  border-radius: 1.1rem;
+}
+
+.cc-slider.cc-round:before {
+  border-radius: 50%;
+}
+
+.cc-switch-container {
+	background-color: #f5f5f5;
+	border: 1px solid #c7cdd1;
+	color: var(--ic-brand-font-color-dark);
+	display: flex;
+	position:relative;
+}
+
+.cc-switch-title {
+	margin: 0.5rem
+}
+
+/* styles for the module configs */
+		    .cc-module-config {
+				padding-left: 0.5em;
+				font-size: smaller;
+				margin:0;
+				font-weight: bold;
+			}
+
+
+			.cc-module-config-detail {  
+				display: grid; 
+				grid-template-columns: 1fr 1fr; 
+				grid-template-rows: 1fr; 
+				gap: 0px 1em; 
+				grid-auto-flow: row; 
+				grid-template-areas: ". .";
+				height: 100%;
+			}
+
+
+
+		 </style>
+			`;
+
+		const body = document.querySelector('div#application');
+		body.insertAdjacentHTML('afterbegin', SL_SWITCH_HTML);
+
+		let cc_on = "";
+		if (this.model.isOn()) {
+			cc_on = "checked";
+		}
+		// Try the Canvas switch way first
+		const CC_BUNDLE_HTML = `
+		<div class="cc-switch-container">
+		  <div class="cc-switch-title">
+		    <i id="configShowSwitch" class="icon-mini-arrow-right"></i> <small>Canvas Collections</small>
+			<a target="_blank"
+			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
+			   <i class="icon-question"></i>
+		   </a>
+		  </div>
+		<label class="cc-switch">
+		    <input type="checkbox" class="cc-toggle-checkbox" id="cc-switch" ${cc_on}>
+			<span class="cc-slider cc-round"></span>
+		</label>
+	   </div>
+		`;
+
+
+		// find a#easy_student_view
+		// insert before a#easy_student_view
+		let easy_student_view = document.querySelector('a#easy_student_view');
+		if (easy_student_view) {
+			easy_student_view.insertAdjacentHTML('afterend', CC_BUNDLE_HTML);
+
+
+			// add event handler to i#configShowSwitch
+			const configShowSwitch = document.getElementById('configShowSwitch');
+			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
+			// add event handler of input#cc-switch
+			const ccSwitch = document.getElementById('cc-switch');
+			ccSwitch.onchange = (event) => this.controller.toggleOffOnSwitch(event);
+
+	//		const fileTest = document.getElementById('cc-file-test');
+//			fileTest.onclick = (event) => this.fileTest();
+
+			// remove the configShowSwitch if no ccIsOn
+			if ( ! this.model.isOn()) {
+				configShowSwitch.remove();
+			}
+		} else {
+			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
+		}
+	}
+
+	/**
+	 * Simple harness to test for file creation 
+	 */
+
+	fileTest(event) {
+		console.log("---------------------- fileTest clicked");
+	}
+
+}
+
+// src/Configuration/cc_ConfigurationController.js
+/**
+ * @class cc_ConfigurationController
+ * @classdesc Controller showing cc configuration. Consists of 2 main parts
+ * - cc title and switch
+ *   Components include
+ *   - "Canvas Collections" title and help tooltip
+ *   - a switch to enable/disable
+ *   - a drop down arrow to show the configuration dialog
+ * - cc configuration dialog
+ *   Method for user to
+ *   - see some sort of summary of collections, modules
+ *   - change the representation of cc: just collections, collections+representation
+ *   - ?? whether to show "other" modules not belonging to collections
+ *   - add or remove collections
+ *   - change the order of collections
+ * 
+ */
+
+
+
+
+
+
+class cc_ConfigurationController {
+
+	/**
+	 * @descr Initialise the controller
+	 */
+	constructor(controller) {
+		DEBUG && console.log('-------------- cc_ConfigurationController.constructor()');
+
+		this.parentController = controller;
+		this.model = new cc_ConfigurationModel(this);
+		this.view = new cc_ConfigurationView(this.model, this);
+
+		this.view.display();
+	}
+
+	/**
+	 * @descr When the use toggles the configShowSwitch
+	 * - update the icon being shown for the switch
+	 * - update the indication of whether config is being shown
+	 * - redisplay the cc configuration
+	 * @param {*} event 
+	 */
+
+	toggleConfigShowSwitch(event) {
+		DEBUG && console.log('-------------- cc_ConfigurationController.toggleConfigShowSwitch()');
+
+		// get the class for the event.target element
+		const className = event.target.className;
+
+		let status = this.model.getConfigShowClass();
+
+		let newClass = this.model.getOtherConfigShowClass(className);
+
+		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
+
+		this.model.setConfigShowClass(newClass);
+
+		this.view.display();
+	}
+
+	/**
+	 * Reveal or hid the module configuration div based on click
+	 * @param {*} event 
+	 */
+	toggleModuleConfigSwitch(event) {
+		DEBUG && console.log('-------------- cc_ConfigurationController.toggleModuleConfigSwitch()');
+
+		// get the class for the event.target element
+		const className = event.target.className;
+		let idString = event.target.id;
+		// match cc-module-config-(\d+)-switch and extract the number
+		const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-switch/)[1]);
+
+//		let status = this.model.getModuleConfigClass(moduleId);
+
+//		let newClass = this.model.getOtherConfigShowClass(className);
+
+//		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
+
+		this.model.setModuleConfigClass(moduleId,className);
+
+
+		this.view.display();
+	}
+
+
+	/**
+	 * Turn cc on or off.
+	 * - if currently on 
+	 *   - set ccOn to off 
+	 *   - remove ???
+	 * - if currently off
+	 *   - set ccOn to off
+	 *   - add back ??
+	 * @param {*} event 
+	 */
+
+	toggleOffOnSwitch(event) {
+		DEBUG && console.log('-------------- cc_ConfigurationController.toggleOffOnSwitch()');
+		const checked = event.target.checked;
+
+		const currentlyOn = this.model.isOn();
+
+		DEBUG && console.log(`currently on ${currentlyOn} and checked is ${checked}`);
+
+		if (checked) {
+			this.model.turnOn();
+			this.parentController.execute();
+		} else {
+			this.model.turnOff();
+			this.parentController.turnOff();
+		}
+		this.parentController.saveConfig();
+	}
+
+}
+
+// src/Collections/CollectionsModel.js
+/**
+ * cc_CollectionsModel.js
+ * Hold the cc data structure and provide data methods required for configuration
+ * - isOn - true iff cc is on
+ * 
+ */
+
+class CollectionsModel {
+
+	constructor(controller) {
+		DEBUG && console.log('-------------- CollectionsModel.constructor()');
+
+		this.controller = controller;
+		this.cc_configuration = this.controller.parentController.cc_configuration;
+
+		// merge the Canvas module and Collections configurations
+		this.createModuleCollections();
+
+		// if currentCollection is undefined set it to the default
+		if ( this.currentCollection === undefined ) {
+			this.currentCollection = this.getDefaultCollection()
+		}
+	}
+
+	getDefaultCollection() {
+		return this.cc_configuration.DEFAULT_ACTIVE_COLLECTION;
+	}
+
+	setCurrentCollection(newCollection) {
+		this.currentCollection = newCollection;
+	}
+
+	getCollections() {
+		// return the keys from the COLLECTIONS object
+		return Object.keys(this.cc_configuration.COLLECTIONS);
+	}
+
+	getCurrentCollection() {
+		return this.currentCollection;
+	}
+
+	getCurrentCollectionDescription() {
+		return this.cc_configuration.COLLECTIONS[this.currentCollection].description;
+	}
+
+	getCurrentCollectionRepresentation() {
+		return this.cc_configuration.COLLECTIONS[this.currentCollection].representation;
+	}
+
+	getCollectionRepresentation(collection) {
+		return this.cc_configuration.COLLECTIONS[collection].representation;
+	}
+
+	getCollectionNames() {
+		return Object.keys(this.cc_configuration.COLLECTIONS);
+	}
+
+	/**
+	 * @descr Create this.moduleCollections that is a list of dicts for modules including
+	 * both the Canvas module information and the cc module information
+	 */
+	createModuleCollections() {
+		DEBUG && console.log('-------------- cc_CollectionsModel.createModuleCollections()');
+		// an array of dicts
+		let canvasModules = this.controller.parentController.moduleDetails;
+		// dict of dicts with some keyed on the names of modules
+		let ccModules = this.cc_configuration.MODULES;
+
+		this.modulesCollections = [];
+		// loop thru canvasModules 
+		for (let i = 0; i < canvasModules.length; i++) {
+			let details = {}
+			// loop thu all the keys in current canvas modules
+			for (let key in canvasModules[i]) {
+				details[key] = canvasModules[i][key];
+			}
+			// get the matching ccModules
+			let ccModule = ccModules[canvasModules[i].name];
+			if (ccModule) {
+				// loop thru all the keys in ccModule
+				for (let key in ccModule) {
+					details[key] = ccModule[key];
+				}
+			}
+			// calculate the module completion status
+			details.cc_itemsCompleted = this.getItemsCompleted(details);
+
+			this.modulesCollections.push(details);
+		}
+		console.log(this.modulesCollections);
+	}
+
+	/**
+	 * Examine each of the module's items. Count the number with completion_requirement
+	 * @param {Object} module - an object representing content of a module
+	 * @returns {Object} .numRequired .numCompleted
+	 *         undefined if no items for compeletion_requirements
+	 */
+
+	getItemsCompleted( module ) {
+		let itemsCompleted = {
+			numRequired: 0,
+			numCompleted: 0
+		};
+
+		// if the module doesn't have an items attribute, return undefined
+		if ( !module.items ) {
+			return undefined;
+		}
+
+		// loop thru the items
+		for (let i = 0; i < module.items.length; i++) {
+			let item = module.items[i];
+			// if the item has a completion_requirement, increment the count
+			if ( item.completion_requirement ) {
+				itemsCompleted.numRequired++;
+				// if the item has a completion_requirement and is completed, increment the count
+				if ( item.completion_requirement.completed ) {
+					itemsCompleted.numCompleted++;
+				}
+			}
+		}
+
+		// if itemsComplete.numRequires is 0, return undefined
+		if ( itemsCompleted.numRequired === 0 ) {
+			return undefined;
+		}
+		return itemsCompleted;
+	}
+
+	getModules() {
+		return this.controller.parentController.moduleDetails;
+	}
+
+	getModulesCollections() {
+		return this.modulesCollections;
+	}
+
+	getCurrentCollection() {
+		return this.currentCollection;
+	}
+
+}
+
+// src/Collections/NavViewWF.js
+/**
+ * cc_NavView.js 
+ * - insert the navigation elements into div#cc-canvas-collections 
+ * - initially just a simple navBar
+ * - TODO better and more varied representations
+ *  
+ */
+
+
+
+class NavView extends cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		super( model, controller );
+
+	}
+
+	/**
+	 * @descr insert a nav bar based on current collections
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- cc_NavView.display()');
+		let div = document.getElementById('cc-canvas-collections');
+
+
+		// generate the HTML
+//		let html ='<h1> Hello from NavView </h1>';
+
+		let navBar = this.generateNavBar();
+		div.insertAdjacentElement('beforeend', navBar);
+
+		// add html to div#cc-canvas-collections
+//		div.insertAdjacentHTML('afterbegin', html);
+	}
+
+	generateNavBar() { 
+		let navBar = document.createElement('div');
+		navBar.className = 'cc-nav';
+
+
+		const navBarStyles = `
+		<style>
+.cc-content {
+    clear:both;
+}
+
+.cc-nav { 
+    font-size: small;
+}
+
+.cc-nav ul  {
+	list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden ;
+    background-color: #eee; 
+	display: table;
+	table-layout: fixed;
+	width: 100%
+}
+
+li.cc-active {
+    background-color: var(--ic-brand-button--primary-bgd) !important; 
+    font-weight: bold; 
+}
+
+li.cc-active a {
+	color: var(--ic-brand-button--primary-text) !important; 
+	border-top: 4px solid var(--ic-brand-button--primary-bgd) !important; 
+}
+
+li.cc-close {
+    float: right !important;
+    border-right: none !important;
+}
+
+.cc-nav ul li {
+	display: table-cell;
+	width: 100%;
+ /*   border-right: 1px solid #000; */
+	float: none;
+}
+
+li.cc-nav a {
+    display: block;
+    text-align: center !important;
+    text-decoration: none;
+    color: #2d3b45;  
+	padding: 1em 0.8em !important;
+	border-top: 4px solid #eee; 
+	box-sizing: border-box;
+	font-size: 1.2em;
+	transition: background 0.3s linear 0s !important;
+}
+
+.cc-nav li a:hover {
+ /*   background-color: #111; */
+    background-color: var(--ic-brand-button--primary-bgd); 
+	border-top: 4px solid var(--ic-brand-button--primary-bgd); */
+	  color: rgb(255, 255, 255) !important;
+  background: rgba(51, 51, 51, 0.9) !important;
+  text-decoration: none !important;
+  color: rgb(255, 255, 255) !important;
+/*  border-top: 4px solid #c12525; */
+}
+
+.cc-nav li:nth-child(4) {
+    border-right: none;
+}
+</style>
+		`;
+
+		// insert styles in navBar
+		navBar.insertAdjacentHTML('afterbegin', navBarStyles);
+
+		let count = 0;
+		let navList = document.createElement('ul');
+        for (let collection of this.model.getCollectionNames()) {
+            let navClass = ['li', 'mr-4'];
+            let style = 'cc-nav';
+
+			// get the collection details for this collection
+			// KLUDGE TODO fix this up
+			let collectionDetails = this.model.cc_configuration.COLLECTIONS[collection];
+			let icon = "";
+			if (collectionDetails.icon!=="") {
+				icon = `<i class="${collectionDetails.icon}"></i>`;
+			}
+			//console.log(collectionDetails);
+
+
+            let navElement = `<a href="#">${icon} ${collection}</a> `;
+            let navItem = document.createElement('li');
+			navItem.className = "cc-nav";
+
+			// set the active navigation item if currentCollection is defined and matches OR
+			// currentCollection is undefined and we're at the first one
+            if ( 
+				( collection === this.model.currentCollection) || 
+			    ( this.model.currentCollection === undefined && count===0 )
+			 ) {
+                navItem.classList.add('cc-active');
+            }
+			count+=1;
+
+            navItem.onclick = (event) => this.controller.navigateCollections(event);
+			// TODO probably shouldn't be on this view the click? SHouldn't it be the
+			// controller?, 
+            //navItem.onclick = () => this.collectionsClick(collection, this);
+            navItem.innerHTML = navElement;
+            navList.appendChild(navItem);
+        }
+		navBar.appendChild(navList);
+
+		return navBar;
+	}
+}
+
+// src/Collections/Views/Cards.js
+/**
+ * cc_CardsView.js 
+ * - insert the cards for the current collection
+ * - initially trying to use the Canvas cards
+ *  
+ */
+
+
+
+class CardsView extends cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		super( model, controller );
+
+		this.currentCollection = this.model.getCurrentCollection();
+	}
+
+	/**
+	 * @descr insert a nav bar based on current collections
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- cc_CardsView.display()');
+		let div = document.getElementById('cc-canvas-collections');
+
+
+		// generate the HTML
+//		let html ='<h1> Hello from CardsView </h1>';
+
+		const description = this.model.getCurrentCollectionDescription();
+		const descriptionHtml = `<div class="cc-description">${description}</div>`;
+
+		div.insertAdjacentHTML('beforeend', descriptionHtml);
+
+		let cards = this.generateCards();
+		div.insertAdjacentElement('beforeend', cards);
+
+		// add html to div#cc-canvas-collections
+//		div.insertAdjacentHTML('afterbegin', html);
+	}
+
+	generateCards() { 
+
+		const collectionStyles = `
+		<style>
+			.cc-collection-container {
+				display: flex;
+				flex-wrap: wrap;
+				margin: -.75rem;
+			}
+
+			.cc-card {
+				box-sizing: border-box;
+				box-shadow: 0 2px 5px rgba(0,0,0,.3);
+				border-radius: 4px;
+				overflow: hidden;
+				background: #fff;
+				max-width: 30%;
+				width: 30%;
+				display: inline-block;
+				vertical-align: top;
+				padding: .75rem;
+				margin: 1em 0 0 1em;
+				flex-direction: column;
+				display: flex;
+			}
+
+			.cc-card-header {
+				position: relative;
+				cursor: pointer;
+				box-sizing: border-box;
+			}
+
+			.screenreader-only {
+				border: 0;
+				clip: rect(0 0 0 0);
+				height: 1px;
+				margin: -1px;
+				overflow: hidden;
+				padding: 0;
+				position: absolute;
+				width: 1px;
+				transform: translatez(0);
+			}
+
+			.cc-card-header-image {
+				background-size: cover;
+				background-position: center center;
+				background-repeat: no-repeat;
+			}
+
+			.cc-card-header-hero {
+				box-sizing: border-box;
+				height: 10rem;
+				border: 1px solid rgb(0,0,0,.1);
+			}
+
+			.cc-card-link {
+				color: var(--ic-link-color);
+				text-decision: none;
+			}
+
+			.cc-card-header-content {
+				box-sizing: border-box;
+				padding: 1em 0 0.5em 0;
+				background: #ffff;
+				color: #000000;
+			}
+
+			.cc-card-header-title {
+				transition: all .2s ease-out;
+				transform: translate3d(0,0,0);
+				padding: 0;
+				margin: 0;
+				line-height: 1.3;
+				font-size: 1.1rem;
+				font-weight: bold;
+			}
+
+			.cc-ellipsis {
+				flex: 1 1 auto;
+				/*white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis; */
+			}
+
+			.cc-card-header-subtitle {
+				color: var(--ic-brand-font-color-dark-lightened-30);
+				line-height: 1.3;
+				padding:0;
+				margin-top: 0.2rem 
+			}
+
+			.cc-card-header-description {
+				line-height: 1.3;
+				font-size: 0.8rem;
+				height: 1rem;
+				font-weight: normal;
+			}
+		`;
+
+
+        let cardContainer = document.createElement('div');
+		cardContainer.classList.add("cc-collection-container");
+
+
+		// insert styles into cardContainer
+		cardContainer.insertAdjacentHTML('afterbegin', collectionStyles);
+
+		let count = 0;
+
+		const currentCollection = this.model.getCurrentCollection();
+        for (let module of this.model.getModulesCollections()) {
+
+			console.log(module);
+
+			if ( module.collection !== currentCollection ) {
+				// not the right collection, skip this one
+				// set the Canvas module div to display:none
+				// find div.context_module with data-module-id="${module.id}"
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				contextModule.style.display = 'none';
+				continue;
+			} else {
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				contextModule.style.display = 'block';
+			}
+
+			let cardHtml = `
+<div class="cc-card" aria-label="Module ${module.name}">
+  <div class="cc-card-header">
+    <span class="screenreader-only">Module image for ${module.name}</span>
+	<div class="cc-card-header-image" style="background-image: url('${module.image}');">
+	  <div class="cc-card-header-hero" aria-hidden="true">
+	  </div>
+	</div>
+	<a href="#module_${module.id}" class="cc-card-link">
+	  <div class="cc-card-header-content">
+	    <h3 class="cc-card-header-title cc-ellipsis" title="${module.name}">
+		  ${module.name}
+		</h3>
+	    <div class="cc-card-header-subtitle cc-ellipsis" title="TODO SOME LABEL">
+		</div>
+		<div class="cc-card-header-description">
+		  ${module.description}
+		</div>
+	  </div>
+	</a>
+	<div>
+       <!-- the date stuff could go here -->
+	</div>
+  </div>
+  <nav class="ic-DashboardCard__action-container" aria-label="Actions for ${module.name}"></nav>
+</div>
+			`;
+		    cardContainer.insertAdjacentHTML('beforeend', cardHtml);
+        }
+
+		return cardContainer;
+	}
+}
+
+// src/Collections/Views/Table.js
+/**
+ * Table.js 
+ * - implement a table view for a Canvas Collection  
+ */
+
+
+
+class TableView extends cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		super( model, controller );
+
+		this.currentCollection = this.model.getCurrentCollection();
+	}
+
+	/**
+	 * @descr insert a nav bar based on current collections
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- TableView.display()');
+		let div = document.getElementById('cc-canvas-collections');
+
+
+		// create a simple message div element
+		let message = document.createElement('div');
+		message.className = 'cc-message';
+		message.innerHTML = '<h1> Hello from TableView </h1>';
+
+		div.insertAdjacentElement('beforeend', message);
+
+	}
+}
+
+// src/Collections/Views/CollectionOnly.js
+/**
+ * CollectionOly.js 
+ * - implement a view that simply shows the collections
+ * - TODO perhaps with the option of showing the HTML description
+ *   for the collection
+ */
+
+
+
+class CollectionOnlyView extends cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		super( model, controller );
+
+		this.currentCollection = this.model.getCurrentCollection();
+	}
+
+	/**
+	 * @descr insert a nav bar based on current collections
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- TableView.display()');
+		let div = document.getElementById('cc-canvas-collections');
+
+		const description = this.model.getCurrentCollectionDescription();
+
+		// create a simple message div element
+		let message = document.createElement('div');
+		message.className = 'cc-message';
+		message.innerHTML = description;
+
+		div.insertAdjacentElement('beforeend', message);
+
+	}
+}
+
+// src/university-date-calendar.js
+/**
+ * @license
+ * Copyright 2019 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+/* jshint esversion: 6 */
+
+// Calendar for Griffith University
+// Period is represented by a four digit number - an STRM
+// XYYP 
+// - X is the type of offering
+//   - 2 indicates OUA course
+//   - 3 indicates normal Griffith course
+// - YY is the year (last two digits) 
+//   - 19 is 2019
+//   - 21 is 2021
+// - P is the particular period for the offering
+//   - OUA has study periods
+//     - 1 = period 1 
+//     - 3 = period 2
+//     - 5 = period 3
+//     - 7 = period 4
+//   - Griffith has 3 trimesters
+//     - 1 = T1
+//     - 5 = T2
+//     - 8 = T3
+// courseCode_STRM_mode
+// default period is the current main trimester
+const DEFAULT_PERIOD = '3221';
+
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+  "Aug", "Sep", "Oct", "Nov", "Dec", 
+];
+
+/* Griffith Calendar Term dates
+ * 2021
+ * - OUA Study Periods 1-4
+ *   2211, 2213 2215 2217
+ * - GU T1, T2, T3
+ *   3211 3215 3218
+ * - QCM T1 T2
+ *   3211QCM 3215QCM
+ * 2020
+ * - OUA Study Periods 1-4
+ *   2201 2203 2205 2207
+ * - GU T1, T2, T3
+ *   3201 3205 3208
+ * 2019
+ * - OUA SP 3, 4
+ *   2195 2197
+ * - GU T1, T2, T3
+ *   3191 3195 319
+ */
+
+const CALENDAR = {
+  '3221': {
+    0: { start: "2022-03-07", stop: "2022-03-13" },
+    1: { start: "2022-03-14", stop: "2022-03-20" },
+    2: { start: "2022-03-21", stop: "2022-03-28" },
+    3: { start: "2022-03-28", stop: "2022-04-03" },
+    4: { start: "2022-04-04", stop: "2022-04-10" },
+    5: { start: "2022-04-18", stop: "2022-04-24" },
+    6: { start: "2022-04-25", stop: "2022-05-01" },
+    7: { start: "2022-05-02", stop: "2022-05-08" },
+    8: { start: "2022-05-09", stop: "2022-05-15" },
+    9: { start: "2022-05-16", stop: "2022-05-22" },
+    10: { start: "2022-05-23", stop: "2022-05-29" },
+    11: { start: "2022-05-30", stop: "2022-06-05" },
+    12: { start: "2022-06-06", stop: "2022-06-12" },
+    13: { start: "2022-06-13", stop: "2022-06-19" },
+    14: { start: "2022-06-20", stop: "2022-06-26" },
+    15: { start: "2022-06-27", stop: "2022-07-03" },
+    exam: { start: "2022-06-13", stop: "2022-06-25" },
+  },
+  '3221QCM': {
+    0: { start: "2022-02-21", stop: "2022-02-27" },
+    1: { start: "2022-02-28", stop: "2022-03-06" },
+    2: { start: "2022-03-07", stop: "2022-03-13" },
+    3: { start: "2022-03-14", stop: "2022-03-20" },
+    4: { start: "2022-03-21", stop: "2022-03-27" },
+    5: { start: "2022-03-28", stop: "2022-04-03" },
+    6: { start: "2022-04-04", stop: "2022-04-10" },
+    7: { start: "2022-04-18", stop: "2022-04-24" },
+    8: { start: "2022-04-25", stop: "2022-05-01" },
+    9: { start: "2022-05-09", stop: "2022-05-15" },
+    10: { start: "2022-05-16", stop: "2022-05-22" },
+    11: { start: "2022-05-23", stop: "2022-05-29" },
+    12: { start: "2022-05-30", stop: "2022-06-05" },
+    13: { start: "2022-06-06", stop: "2022-06-12" },
+    14: { start: "2022-06-13", stop: "2022-06-19" },
+    15: { start: "2022-06-20", stop: "2022-07-26" },
+    exam: { start: "2022-06-13", stop: "2022-06-25" },
+  },
+  '3225': {
+    0: { start: "2022-07-11", stop: "2022-07-17" },
+    1: { start: "2022-07-18", stop: "2022-07-24" },
+    2: { start: "2022-07-25", stop: "2022-07-31" },
+    3: { start: "2022-08-01", stop: "2022-08-07" },
+    4: { start: "2022-08-08", stop: "2022-08-14" },
+    5: { start: "2022-08-22", stop: "2022-08-28" },
+    6: { start: "2022-08-29", stop: "2022-09-04" },
+    7: { start: "2022-09-05", stop: "2022-09-11" },
+    8: { start: "2022-09-12", stop: "2022-09-18" },
+    9: { start: "2022-09-19", stop: "2022-09-25" },
+    10: { start: "2022-09-26", stop: "2022-10-02" },
+    11: { start: "2022-10-03", stop: "2022-10-09" },
+    12: { start: "2022-10-10", stop: "2022-10-16" },
+    13: { start: "2022-10-17", stop: "2022-10-23" },
+    14: { start: "2022-10-24", stop: "2022-10-30" },
+    15: { start: "2022-10-31", stop: "2022-11-06" },
+    exam: { start: "2022-10-20", stop: "2022-10-29" },
+  },
+  '3225QCM': {
+    0: { start: "2022-07-18", stop: "2022-07-24" },
+    1: { start: "2022-07-25", stop: "2022-07-31" },
+    2: { start: "2022-08-01", stop: "2022-08-07" },
+    3: { start: "2022-08-08", stop: "2022-08-14" },
+    4: { start: "2022-08-15", stop: "2022-08-21" },
+    5: { start: "2022-08-22", stop: "2022-08-28" },
+    6: { start: "2022-09-05", stop: "2022-09-11" },
+    7: { start: "2022-09-12", stop: "2022-09-18" },
+    8: { start: "2022-09-19", stop: "2022-09-25" },
+    9: { start: "2022-10-03", stop: "2022-10-09" },
+    10: { start: "2022-10-10", stop: "2022-10-16" },
+    11: { start: "2022-10-17", stop: "2022-10-23" },
+    12: { start: "2022-10-24", stop: "2022-10-30" },
+    13: { start: "2022-10-31", stop: "2022-11-06" },
+    14: { start: "2022-11-07", stop: "2022-11-13" },
+    15: { start: "2022-11-14", stop: "2022-07-20" },
+    exam: { start: "2022-11-07", stop: "2022-11-19" },
+  },
+  3228: {
+    0: { start: "2022-10-31", stop: "2022-11-06" },
+    1: { start: "2022-11-07", stop: "2022-11-13" },
+    2: { start: "2022-11-14", stop: "2022-11-20" },
+    3: { start: "2022-11-21", stop: "2022-11-27" },
+    4: { start: "2022-11-28", stop: "2022-12-04" },
+    5: { start: "2022-12-05", stop: "2022-12-11" },
+    6: { start: "2022-12-12", stop: "2022-12-18" },
+    7: { start: "2022-12-19", stop: "2022-12-25" },
+    8: { start: "2023-01-09", stop: "2023-01-15" },
+    9: { start: "2023-01-16", stop: "2023-01-22" },
+    10: { start: "2023-01-23", stop: "2023-01-29" },
+    11: { start: "2023-01-30", stop: "2023-02-05" },
+    12: { start: "2023-02-06", stop: "2023-02-12" },
+    13: { start: "2023-02-13", stop: "2023-02-19" },
+    14: { start: "2023-02-20", stop: "2023-02-26" },
+    15: { start: "2023-02-27", stop: "2023-03-05" },
+    //    exam: { start: "2023-02-17", stop: "2023-02-26" },
+  },
+  2211: {
+    0: { start: '2021-02-22', stop: '2021-02-28' },
+    1: { start: '2021-03-01', stop: '2021-03-07' },
+    2: { start: '2021-03-08', stop: '2021-03-14' },
+    3: { start: '2021-03-15', stop: '2021-03-21' },
+    4: { start: '2021-03-22', stop: '2021-03-28' },
+    5: { start: '2021-03-29', stop: '2021-04-04' },
+    6: { start: '2021-04-05', stop: '2021-04-11' },
+    7: { start: '2021-04-12', stop: '2021-04-18' },
+    8: { start: '2021-04-19', stop: '2021-04-25' },
+    9: { start: '2021-04-26', stop: '2021-05-02' },
+    10: { start: '2021-05-03', stop: '2021-05-09' },
+    11: { start: '2021-05-10', stop: '2021-05-16' },
+    12: { start: '2021-05-17', stop: '2021-05-23' },
+    13: { start: '2021-05-24', stop: '2021-05-30' },
+    14: { start: '2021-05-31', stop: '2021-06-06' },
+    exam: { start: '2021-05-31', stop: '2021-06-06' },
+  },
+  2213: {
+    1: { start: '2021-05-31', stop: '2021-06-06' },
+    2: { start: '2021-06-07', stop: '2021-06-13' },
+    3: { start: '2021-06-14', stop: '2021-06-20' },
+    4: { start: '2021-06-21', stop: '2021-06-27' },
+    5: { start: '2021-06-28', stop: '2021-07-04' },
+    6: { start: '2021-07-05', stop: '2021-07-11' },
+    7: { start: '2021-07-12', stop: '2021-07-18' },
+    8: { start: '2021-07-19', stop: '2021-07-25' },
+    9: { start: '2021-07-26', stop: '2021-08-01' },
+    10: { start: '2021-08-02', stop: '2021-08-08' },
+    11: { start: '2021-08-09', stop: '2021-08-15' },
+    12: { start: '2021-08-16', stop: '2021-08-22' },
+    13: { start: '2021-08-23', stop: '2021-08-29' },
+    exam: { start: '2021-08-30', stop: '2021-09-05' },
+  },
+  2215: {
+    0: { start: '2021-08-23', stop: '2021-08-29' },
+    1: { start: '2021-08-30', stop: '2021-09-05' },
+    2: { start: '2021-09-06', stop: '2021-09-12' },
+    3: { start: '2021-09-13', stop: '2021-09-19' },
+    4: { start: '2021-09-20', stop: '2021-09-26' },
+    5: { start: '2021-09-27', stop: '2021-10-03' },
+    6: { start: '2021-10-04', stop: '2021-10-10' },
+    7: { start: '2021-10-11', stop: '2021-10-17' },
+    8: { start: '2021-10-18', stop: '2021-10-24' },
+    9: { start: '2021-10-25', stop: '2021-10-31' },
+    10: { start: '2021-11-01', stop: '2021-11-07' },
+    11: { start: '2021-11-08', stop: '2021-11-14' },
+    12: { start: '2021-11-15', stop: '2021-11-21' },
+    13: { start: '2021-11-22', stop: '2021-11-28' },
+    exam: { start: '2021-11-29', stop: '2021-12-05' },
+  },
+  2217: {
+    0: { start: '2021-11-22', stop: '2021-11-28' },
+    1: { start: '2021-11-29', stop: '2021-12-05' },
+    2: { start: '2021-12-06', stop: '2021-12-12' },
+    3: { start: '2021-12-13', stop: '2021-12-19' },
+    4: { start: '2021-12-20', stop: '2021-12-26' },
+    5: { start: '2021-12-27', stop: '2022-01-02' },
+    6: { start: '2022-01-03', stop: '2022-01-09' },
+    7: { start: '2022-01-10', stop: '2022-01-16' },
+    8: { start: '2022-01-17', stop: '2022-01-23' },
+    9: { start: '2022-01-24', stop: '2022-01-30' },
+    10: { start: '2022-01-31', stop: '2022-02-06' },
+    11: { start: '2022-02-07', stop: '2022-02-13' },
+    12: { start: '2022-02-14', stop: '2022-02-20' },
+    13: { start: '2022-02-21', stop: '2022-02-27' },
+    exam: { start: '2022-02-28', stop: '2022-03-04' },
+  },
+  3218: {
+    0: { start: '2021-11-01', stop: '2021-11-07' },
+    1: { start: '2021-11-08', stop: '2021-11-14' },
+    2: { start: '2021-11-15', stop: '2021-11-21' },
+    3: { start: '2021-11-22', stop: '2021-11-28' },
+    4: { start: '2021-11-29', stop: '2021-12-05' },
+    5: { start: '2021-12-06', stop: '2021-12-12' },
+    6: { start: '2021-12-13', stop: '2021-12-19' },
+    7: { start: '2021-12-20', stop: '2021-12-26' },
+    8: { start: '2022-01-10', stop: '2022-01-16' },
+    9: { start: '2022-01-17', stop: '2022-01-23' },
+    10: { start: '2022-01-24', stop: '2022-01-30' },
+    11: { start: '2022-01-31', stop: '2022-02-06' },
+    12: { start: '2022-02-07', stop: '2022-02-13' },
+    13: { start: '2022-02-14', stop: '2022-02-20' },
+    14: { start: '2022-02-21', stop: '2022-02-27' },
+    15: { start: '2022-02-28', stop: '2022-03-06' },
+    exam: { start: '2022-02-17', stop: '2022-02-26' },
+  },
+  3215: {
+    0: { start: '2021-07-12', stop: '2021-07-18' },
+    1: { start: '2021-07-19', stop: '2021-07-25' },
+    2: { start: '2021-07-26', stop: '2021-08-01' },
+    3: { start: '2021-08-02', stop: '2021-08-08' },
+    4: { start: '2021-08-16', stop: '2021-08-22' },
+    5: { start: '2021-08-23', stop: '2021-08-29' },
+    6: { start: '2021-08-30', stop: '2021-09-05' },
+    7: { start: '2021-09-06', stop: '2021-09-12' },
+    8: { start: '2021-09-13', stop: '2021-09-19' },
+    9: { start: '2021-09-20', stop: '2021-09-26' },
+    10: { start: '2021-09-27', stop: '2021-10-03' },
+    11: { start: '2021-10-04', stop: '2021-10-10' },
+    12: { start: '2021-10-11', stop: '2021-10-17' },
+    13: { start: '2021-10-18', stop: '2021-10-24' },
+    14: { start: '2021-10-25', stop: '2021-10-31' },
+    15: { start: '2021-11-01', stop: '2021-11-07' },
+    exam: { start: '2021-10-21', stop: '2021-10-31' },
+  },
+  3211: {
+    0: { start: '2021-03-01', stop: '2021-03-07' },
+    1: { start: '2021-03-08', stop: '2021-03-14' },
+    2: { start: '2021-03-15', stop: '2021-03-21' },
+    3: { start: '2021-03-22', stop: '2021-03-28' },
+    4: { start: '2021-03-29', stop: '2021-04-04' },
+    5: { start: '2021-04-12', stop: '2021-04-18' },
+    6: { start: '2021-04-19', stop: '2021-04-25' },
+    7: { start: '2021-04-26', stop: '2021-05-02' },
+    8: { start: '2021-05-03', stop: '2021-05-09' },
+    9: { start: '2021-05-10', stop: '2021-05-16' },
+    10: { start: '2021-05-17', stop: '2021-05-23' },
+    11: { start: '2021-05-24', stop: '2021-05-30' },
+    12: { start: '2021-05-31', stop: '2021-06-06' },
+    13: { start: '2021-06-07', stop: '2021-06-13' },
+    14: { start: '2021-06-14', stop: '2021-06-20' },
+    15: { start: '2021-06-21', stop: '2021-06-27' },
+    exam: { start: '2021-06-10', stop: '2021-06-19' },
+  },
+  '3215QCM': {
+    0: { start: '2021-07-12', stop: '2021-07-18' },
+    1: { start: '2021-07-19', stop: '2021-07-25' },
+    2: { start: '2021-07-26', stop: '2021-08-01' },
+    3: { start: '2021-08-02', stop: '2021-08-08' },
+    4: { start: '2021-08-09', stop: '2021-08-15' },
+    5: { start: '2021-08-16', stop: '2021-08-22' },
+    6: { start: '2021-08-30', stop: '2021-09-05' },
+    7: { start: '2021-09-06', stop: '2021-09-12' },
+    8: { start: '2021-09-13', stop: '2021-09-19' },
+    9: { start: '2021-09-20', stop: '2021-09-26' },
+    10: { start: '2021-10-04', stop: '2021-10-10' },
+    11: { start: '2021-10-11', stop: '2021-10-17' },
+    12: { start: '2021-10-18', stop: '2021-10-24' },
+    13: { start: '2021-10-25', stop: '2021-10-31' },
+    14: { start: '2021-11-01', stop: '2021-11-07' },
+    15: { start: '2021-11-08', stop: '2021-11-14' },
+    exam: { start: '2021-10-30', stop: '2021-11-13' },
+  },
+  '3211QCM': {
+    0: { start: '2021-02-22', stop: '2021-02-28' },
+    1: { start: '2021-03-01', stop: '2021-03-07' },
+    2: { start: '2021-03-08', stop: '2021-03-14' },
+    3: { start: '2021-03-15', stop: '2021-03-21' },
+    4: { start: '2021-03-22', stop: '2021-03-29' },
+    5: { start: '2021-03-29', stop: '2021-04-04' },
+    6: { start: '2021-04-12', stop: '2021-04-18' },
+    7: { start: '2021-04-19', stop: '2021-04-25' },
+    8: { start: '2021-04-26', stop: '2021-05-02' },
+    9: { start: '2021-05-10', stop: '2021-05-16' },
+    10: { start: '2021-05-17', stop: '2021-05-23' },
+    11: { start: '2021-05-24', stop: '2021-05-30' },
+    12: { start: '2021-05-31', stop: '2021-06-06' },
+    13: { start: '2021-06-07', stop: '2021-03-13' },
+    14: { start: '2021-06-14', stop: '2021-03-20' },
+    15: { start: '2021-06-21', stop: '2021-03-26' },
+    exam: { start: '2021-06-12', stop: '2021-06-26' },
+  },
+
+  2201: {
+    0: { start: '2020-02-24', stop: '2020-03-01' },
+    1: { start: '2020-03-02', stop: '2020-03-08' },
+    2: { start: '2020-03-09', stop: '2020-03-15' },
+    3: { start: '2020-03-16', stCop: '2020-03-22' },
+    4: { start: '2020-03-23', stop: '2020-03-29' },
+    5: { start: '2020-03-30', stop: '2020-04-05' },
+    6: { start: '2020-04-06', stop: '2020-04-12' },
+    7: { start: '2020-04-13', stop: '2020-04-19' },
+    8: { start: '2020-04-20', stop: '2020-04-26' },
+    9: { start: '2020-04-27', stop: '2020-05-03' },
+    10: { start: '2020-05-04', stop: '2020-05-10' },
+    11: { start: '2020-05-11', stop: '2020-05-17' },
+    12: { start: '2020-05-18', stop: '2020-05-24' },
+    13: { start: '2020-05-25', stop: '2020-05-31' },
+    14: { start: '2020-06-01', stop: '2020-06-05' },
+    exam: { start: '2020-06-01', stop: '2020-06-05' },
+  },
+  2203: {
+    0: { start: '2020-05-25', stop: '2020-05-31' },
+    1: { start: '2020-06-01', stop: '2020-06-07' },
+    2: { start: '2020-06-08', stop: '2020-06-14' },
+    3: { start: '2020-06-15', stop: '2020-06-21' },
+    4: { start: '2020-06-22', stop: '2020-06-28' },
+    5: { start: '2020-06-29', stop: '2020-07-05' },
+    6: { start: '2020-07-06', stop: '2020-07-12' },
+    7: { start: '2020-07-13', stop: '2020-07-19' },
+    8: { start: '2020-07-20', stop: '2020-07-26' },
+    9: { start: '2020-07-27', stop: '2020-08-02' },
+    10: { start: '2020-08-03', stop: '2020-08-09' },
+    11: { start: '2020-08-10', stop: '2020-05-17' },
+    12: { start: '2020-08-17', stop: '2020-05-24' },
+    13: { start: '2020-08-24', stop: '2020-05-31' },
+    14: { start: '2020-08-31', stop: '2020-09-06' },
+    exam: { start: '2020-08-31', stop: '2020-09-04' },
+  },
+  2205: {
+    0: { start: '2020-08-24', stop: '2020-09-30' },
+    1: { start: '2020-08-31', stop: '2020-09-06' },
+    2: { start: '2020-09-07', stop: '2020-09-13' },
+    3: { start: '2020-09-14', stop: '2020-09-20' },
+    4: { start: '2020-09-21', stop: '2020-09-27' },
+    5: { start: '2020-09-28', stop: '2020-10-04' },
+    6: { start: '2020-10-05', stop: '2020-10-11' },
+    7: { start: '2020-10-12', stop: '2020-10-19' },
+    8: { start: '2020-10-19', stop: '2020-10-25' },
+    9: { start: '2020-10-26', stop: '2020-11-01' },
+    10: { start: '2020-11-02', stop: '2020-11-08' },
+    11: { start: '2020-11-09', stop: '2020-11-15' },
+    12: { start: '2020-11-16', stop: '2020-11-22' },
+    13: { start: '2020-11-23', stop: '2020-11-29' },
+    14: { start: '2020-11-30', stop: '2020-12-06' },
+    15: { start: '2020-12-07', stop: '2020-12-13' },
+    exam: { start: '2020-12-07', stop: '2020-12-13' },
+  },
+  2207: {
+    0: { start: '2020-11-23', stop: '2020-11-29' },
+    1: { start: '2020-11-30', stop: '2020-12-06' },
+    2: { start: '2020-12-07', stop: '2020-12-13' },
+    3: { start: '2020-12-14', stop: '2020-12-20' },
+    4: { start: '2020-12-21', stop: '2020-12-27' },
+    5: { start: '2020-12-28', stop: '2021-01-03' },
+    6: { start: '2021-01-04', stop: '2021-01-10' },
+    7: { start: '2021-01-11', stop: '2021-01-17' },
+    8: { start: '2021-01-18', stop: '2021-01-24' },
+    9: { start: '2021-01-25', stop: '2021-01-31' },
+    10: { start: '2021-02-01', stop: '2021-02-07' },
+    11: { start: '2021-02-08', stop: '2021-02-14' },
+    12: { start: '2021-02-15', stop: '2021-02-21' },
+    13: { start: '2021-02-22', stop: '2021-02-28' },
+    14: { start: '2021-03-01', stop: '2021-03-07' },
+    15: { start: '2021-03-08', stop: '2021-03-14' },
+    exam: { start: '2021-03-01', stop: '2021-03-07' },
+  },
+  3208: {
+    0: { start: '2020-10-26', stop: '2020-11-01' },
+    1: { start: '2020-11-02', stop: '2020-11-08' },
+    2: { start: '2020-11-09', stop: '2020-11-15' },
+    3: { start: '2020-11-16', stop: '2020-11-22' },
+    4: { start: '2020-11-23', stop: '2020-11-29' },
+    5: { start: '2020-11-30', stop: '2020-12-06' },
+    6: { start: '2020-12-07', stop: '2020-12-13' },
+    7: { start: '2020-12-14', stop: '2020-12-20' },
+    8: { start: '2021-01-04', stop: '2021-01-10' },
+    9: { start: '2021-01-11', stop: '2021-01-17' },
+    10: { start: '2021-01-18', stop: '2021-01-24' },
+    11: { start: '2021-01-25', stop: '2021-01-31' },
+    12: { start: '2021-02-01', stop: '2021-02-07' },
+    13: { start: '2021-02-08', stop: '2021-02-14' },
+    exam: { start: '2021-02-08', stop: '2021-02-20' },
+  },
+  3205: {
+    0: { start: '2020-07-06', stop: '2020-07-12' },
+    1: { start: '2020-07-13', stop: '2020-07-19' },
+    2: { start: '2020-07-20', stop: '2020-08-26' },
+    3: { start: '2020-07-27', stop: '2020-08-02' },
+    4: { start: '2020-08-03', stop: '2020-08-16' },
+    5: { start: '2020-08-17', stop: '2020-08-23' },
+    6: { start: '2020-08-24', stop: '2020-08-30' },
+    7: { start: '2020-08-31', stop: '2020-09-06' },
+    8: { start: '2020-09-07', stop: '2020-09-13' },
+    9: { start: '2020-09-14', stop: '2020-09-20' },
+    10: { start: '2020-09-21', stop: '2020-09-27' },
+    11: { start: '2020-09-28', stop: '2020-10-04' },
+    12: { start: '2020-10-05', stop: '2020-10-11' },
+    13: { start: '2020-10-12', stop: '2020-10-18' },
+    14: { start: '2020-10-19', stop: '2020-10-25' },
+    15: { start: '2020-10-27', stop: '2020-11-01' },
+    exam: { start: '2020-10-12', stop: '2020-10-18' },
+  },
+  3201: {
+    0: { start: '2020-02-17', stop: '2020-02-23' },
+    1: { start: '2020-02-24', stop: '2020-03-01' },
+    2: { start: '2020-03-02', stop: '2020-03-08' },
+    3: { start: '2020-03-09', stop: '2020-03-15' },
+    4: { start: '2020-03-16', stop: '2020-03-22' },
+    5: { start: '2020-03-23', stop: '2020-03-29' },
+    6: { start: '2020-03-30', stop: '2020-04-05' },
+    7: { start: '2020-04-13', stop: '2020-04-19' },
+    8: { start: '2020-04-20', stop: '2020-04-26' },
+    9: { start: '2020-04-27', stop: '2020-05-03' },
+    10: { start: '2020-05-04', stop: '2020-05-10' },
+    11: { start: '2020-05-11', stop: '2020-05-17' },
+    12: { start: '2020-05-18', stop: '2020-05-24' },
+    13: { start: '2020-05-25', stop: '2020-05-31' },
+    exam: { start: '2020-06-01', stop: '2020-06-07' },
+  },
+  3198: {
+    0: { start: '2019-10-21', stop: '2019-10-27' },
+    1: { start: '2019-10-28', stop: '2019-11-03' },
+    2: { start: '2019-11-04', stop: '2019-11-10' },
+    3: { start: '2019-11-11', stop: '2019-11-17' },
+    4: { start: '2019-11-18', stop: '2019-11-24' },
+    5: { start: '2019-11-25', stop: '2019-12-1' },
+    6: { start: '2019-12-02', stop: '2019-12-08' },
+    7: { start: '2019-12-09', stop: '2019-12-15' },
+    8: { start: '2019-12-16', stop: '2019-12-22' },
+    9: { start: '2020-01-06', stop: '2020-01-12' },
+    10: { start: '2020-01-13', stop: '2020-01-19' },
+    11: { start: '2020-01-20', stop: '2020-01-26' },
+    12: { start: '2020-01-27', stop: '2020-02-02' },
+    13: { start: '2020-02-03', stop: '2020-02-09' },
+    exam: { start: '2020-02-06', stop: '2020-02-15' },
+  },
+  2197: {
+    0: { start: '2019-11-18', stop: '2019-11-24' },
+    1: { start: '2019-11-25', stop: '2019-12-01' },
+    2: { start: '2019-12-02', stop: '2019-12-08' },
+    3: { start: '2019-12-09', stop: '2019-12-15' },
+    4: { start: '2019-12-16', stop: '2019-12-22' },
+    5: { start: '2019-12-23', stop: '2019-09-29' },
+    6: { start: '2019-12-30', stop: '2020-01-05' },
+    7: { start: '2020-01-06', stop: '2020-01-12' },
+    8: { start: '2020-01-13', stop: '2020-01-19' },
+    9: { start: '2020-01-20', stop: '2020-01-26' },
+    10: { start: '2020-01-27', stop: '2020-02-02' },
+    11: { start: '2020-02-03', stop: '2020-02-09' },
+    12: { start: '2020-02-10', stop: '2020-02-16' },
+    13: { start: '2019-02-17', stop: '2020-02-23' },
+    14: { start: '2020-02-24', stop: '2020-03-01' },
+    15: { start: '2020-03-02', stop: '2020-03-08' },
+  },
+  2195: {
+    0: { start: '2019-08-19', stop: '2019-09-25' },
+    1: { start: '2019-08-26', stop: '2019-09-01' },
+    2: { start: '2019-09-02', stop: '2019-09-18' },
+    3: { start: '2019-09-09', stop: '2019-09-15' },
+    4: { start: '2019-09-16', stop: '2019-09-22' },
+    5: { start: '2019-09-23', stop: '2019-09-29' },
+    6: { start: '2019-09-30', stop: '2019-10-06' },
+    7: { start: '2019-10-07', stop: '2019-10-13' },
+    8: { start: '2019-10-14', stop: '2019-08-20' },
+    9: { start: '2019-10-21', stop: '2019-10-27' },
+    10: { start: '2019-10-28', stop: '2019-11-03' },
+    11: { start: '2019-11-04', stop: '2019-11-10' },
+    12: { start: '2019-11-11', stop: '2019-11-17' },
+    13: { start: '2019-11-18', stop: '2019-11-24' },
+    14: { start: '2019-11-25', stop: '2019-12-01' },
+    15: { start: '2019-10-07', stop: '2019-10-13' },
+  },
+  3195: {
+    0: { start: '2019-07-01', stop: '2019-07-07' },
+    1: { start: '2019-07-08', stop: '2019-07-14' },
+    2: { start: '2019-07-15', stop: '2019-07-21' },
+    3: { start: '2019-07-22', stop: '2019-07-28' },
+    4: { start: '2019-07-29', stop: '2019-08-04' },
+    5: { start: '2019-08-05', stop: '2019-08-11' },
+    6: { start: '2019-08-19', stop: '2019-08-25' },
+    7: { start: '2019-08-26', stop: '2019-09-01' },
+    8: { start: '2019-09-02', stop: '2019-09-08' },
+    9: { start: '2019-09-09', stop: '2019-09-15' },
+    10: { start: '2019-09-16', stop: '2019-09-22' },
+    11: { start: '2019-09-23', stop: '2019-09-29' },
+    12: { start: '2019-09-30', stop: '2019-10-06' },
+    13: { start: '2019-10-07', stop: '2019-10-13' },
+    14: { start: '2019-10-14', stop: '2019-10-20' },
+    15: { start: '2019-10-21', stop: '2019-10-27' },
+    exam: { start: '2019-10-10', stop: '2019-10-19' },
+  },
+  3191: {
+    0: { start: '2019-02-18', stop: '2019-02-24' },
+    1: { start: '2019-02-25', stop: '2019-03-03' },
+    2: { start: '2019-03-04', stop: '2019-03-10' },
+    3: { start: '2019-03-11', stop: '2019-03-17' },
+    4: { start: '2019-03-18', stop: '2019-03-24' },
+    5: { start: '2019-03-25', stop: '2019-03-31' },
+    6: { start: '2019-04-01', stop: '2019-04-07' },
+    7: { start: '2019-04-08', stop: '2019-04-14' },
+    8: { start: '2019-04-22', stop: '2019-04-28' },
+    9: { start: '2019-04-29', stop: '2019-05-05' },
+    10: { start: '2019-05-06', stop: '2019-05-12' },
+    11: { start: '2019-05-13', stop: '2019-05-19' },
+    12: { start: '2019-05-20', stop: '2019-05-26' },
+    13: { start: '2019-05-27', stop: '2019-06-02' },
+    14: { start: '2019-06-03', stop: '2019-06-09' },
+    15: { start: '2019-06-10', stop: '2019-06-17' },
+    exam: { start: '2019-05-30', stop: '2019-06-08' },
+  },
 };
 
 
-class cc_CanvasModulesView {
+class UniversityDateCalendar {
+  constructor() {
+    if (UniversityDateCalendar._instance) {
+      return UniversityDateCalendar._instance;
+    }
+    UniversityDateCalendar._instance = this;
+    this.defaultPeriod = DEFAULT_PERIOD;
+  }
 
-    /**
-     * @desc insert HTML into Canvas modules page offering different representation of module information
-     * @param modules cc_CanvasModules object containing all info about current pages modules
-     * @param collectionsClick eventHandler for click on named collection links
-     * @param option object - defining how to configure the view
-     */
-    constructor(modules, collectionsClick, options = null) {
-        this.model = modules;
-        this.modules = this.model.modules;
-        this.collectionsClick = collectionsClick;
-        this.currentCollection = this.model.currentCollection;
-
-        // update view configuration, if modules[0] is configured
-        this.configuration = null;
-        this.configured = false;
-        if (this.modules.length > 0 && this.modules[0].configured) {
-            this.configuration = this.modules[0].configuration;
-            this.configured = true;
-            console.log(this.configuration);
-            this.collections = this.configuration['CC_COLLECTIONS_DEFAULTS'];
-            this.defaultActiveCollection = this.configuration['CC_DEFAULT_ACTIVE_COLLECTION'];
-        }
-        console.log('-------------------- VIEW');
-        console.log(`configured is ${this.configured}`);
-
-        // default setting
-        this.options = DEFAULT_VIEW_OPTIONS;
-        if (options) {
-            this.options = options;
-        }
+  /**
+   * @function getWeekDetails
+   * @param {String} period
+   * @param {String} week
+   * @returns {Object} the correct start/stop dates for the givern period/week
+   * null if doesn't exist
+   */
+  getWeekDetails(week, period=this.defaultPeriod) {
+    // if week is a string starting with "Week" remove
+    // the Week and convert number of integer
+    if (typeof week === 'string' && week.startsWith('Week')) {
+      week = parseInt(week.substring(4));
+    }
+    // only proceed if the period and week are in the CALENDAR
+    if (!(period in CALENDAR)) {
+      return null;
+    } else if (!(week in CALENDAR[period])) {
+      return null;
     }
 
-    /**
-     * @desc remove the div#cc-canvas-collections from the page
-     */
+    return CALENDAR[period][week];
+  }
 
-    removeCanvasCollectionsView() {
-        let canvasCollections = document.getElementById('cc-canvas-collections');
-        canvasCollections.parentNode.removeChild(canvasCollections);
+  /**
+   * Adaptation of the Card Interface getTermDate
+   * @param {Integer} week - week of university term
+   * @param {Boolean} startWeek - if true, returns the start date of the week
+   * @param {String} dayOfWeek - specify the day to return
+   * @returns {Object} specifying the day, month, year of the week
+   */
+  getDate( week, startWeek=true, dayOfWeek="Monday" ) {
+    let date = {
+      date: "", month: "", week: week, year: 0
+    };
+
+    // lowercase dayOfWeek
+    dayOfWeek = dayOfWeek.toLowerCase();
+
+    // get the details for the given week
+    let weekDetails = this.getWeekDetails(week);
+
+    // if no details for the week, return empty date
+    if (weekDetails === null) {
+      return date;
+    }
+    // weekDetails/date format
+    // 0: { start: "2022-03-07", stop: "2022-03-13" },
+
+    let d = new Date(weekDetails.start);
+
+    const dayToNum = {
+      tuesday: 1, tue: 1, wednesday: 2, wed: 2, thursday: 3, thu: 3,
+      friday: 4, fri: 4, saturday: 5, sat: 5, sunday: 6, sun: 6,
+    };
+
+    if (dayOfWeek!=="monday") {
+      date.day = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.substring(1, 3);
+      if (dayOfWeek in dayToNum) {
+        d.setDate(d.getDate() + dayToNum[dayOfWeek.toLowerCase()]);
+      }
     }
 
-    /**
-     * @desc render the collections/module information
-     */
+    date.month = MONTHS[d.getMonth()];
+    date.date = d.getDate();
+    date.year = d.getFullYear();
 
-    render() {
+  return date;
 
-        // element where all the Canvas page content resides
-        // We'll be inserting our content before this
-        let canvasContent = document.getElementById('context_modules');
 
-        // on a canvas page where there are no modules
-        if (canvasContent === null) {
-            return;
-        }
+  }
 
-        // only do this if the page has 
-        document.head.insertAdjacentHTML( 'beforeend', TAILWIND_CSS );
-        document.head.insertAdjacentHTML( 'beforeend', TOOLTIPSTER_CSS );
+  /**
+   * getCurrentPeriod
+   * @returns value matching the current period for a GU blackboard site
+   * If unable figure out the title, return default period
+   */
 
-        // create the cc-canvas-collections div
-        let ccCanvasCollections = this.createElement('div', 'cc-canvas-collections');
-        ccCanvasCollections.id = 'cc-canvas-collections';
-
-        //if (this.options.navBar && this.configured) {
-        if (this.configured && this.configuration.CC_COLLECTIONS_DEFAULTS.length>0) {
-            let navBar = this.generateNavBar();
-            ccCanvasCollections.appendChild(navBar);
-        }
-
-        this.addHomePageNav();
-
-        let cards = this.generateCards();
-        ccCanvasCollections.appendChild(cards);
-
-        // insert the collections before canvasContent
-        //result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
-        const result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
-
-        // cards are now in the DOM, do some final updates
-
-        // Make the cards clickable
-        this.stopCardDescriptionPropagation();
-        this.makeCardsClickable();
-
-        // Update the titles of the modules to add the collection name
-        //if (this.options.updateTitle) {
-        if (this.configured && this.configuration.CC_COLLECTIONS_DEFAULTS.length>0) {
-            this.updateCanvasModuleList();
-        }
+  getCurrentPeriod() {
+    // GU current period should be in the courseMenu_link element
+    const titleElement = document.getElementById('courseMenu_link');
+    if (titleElement === null) {
+      return this.defaultPeriod;
     }
+    // the title attribute contains a string with the period (in the courseId)
+    const courseTitle = titleElement.getAttribute('title');
 
-    /**
-     * @desc Add configured HTML nav bar to top of home page, if home page
-     */
-    addHomePageNav() {
-        // don't do this if 
-        // - there's already a div#cc-home-page-nav
-        // - no modules
-        // - no home page defined
-        // - ??
-        if (
-                document.getElementById('cc-home-page-nav') || 
-                this.modules.length===0 || 
-                ! this.modules[0].courseHomePage || 
-                ! (this.configuration!==null && 'HOME_PAGE' in this.configuration)
-            ) {
-            return;
+    // get the course id (incl. period) will be in brackets
+    let m = courseTitle.match(/^.*\((.+)\)/);
+    let id;
+    let breakIdRe;
+
+    // we found a course Id (something in brackets), try to get the STRM value
+    if (m) {
+      id = m[1];
+      // break the course Id up into its components
+      // courseCode_STRM_mode
+
+      // Look for OUA Courses e.g. COM10_2211_OT
+      breakIdRe = new RegExp(
+        '^([A-Z]+[0-9]+)_([0-9][0-9][0-9][0-9])_([A-Z][A-Z])$'
+      );
+      m = id.match(breakIdRe);
+
+      // found an actual course site (rather than org site)
+      if (m) {
+        return m[2];
+      }
+
+      // Look for GU mode-based course e.g. 1511QCM_3211_SB
+      breakIdRe = new RegExp(
+        '^([0-9]+[A-Z]+)_([0-9][0-9][0-9][0-9])_([A-Z][A-Z])$'
+      );
+      m = id.match(breakIdRe);
+
+      // found an actual course site (rather than org site)
+      if (m) {
+        // but is it a QCM course
+        if (m[1].includes('QCM')) {
+          return m[2] + 'QCM';
         }
+        return m[2];
+      }
 
-//        document.getElementById('content').insertAdjacentHTML( 'afterbegin', TIPPY_JS );
+      // Look for joined GU course e.g. 1511QCM_3211
+      breakIdRe = new RegExp('^([0-9]+[A-Z]+)_([0-9][0-9][0-9][0-9])$');
 
-        // insert HOME_PAGE nav at top of content
-//        let homePageNav = this.createElement('div', 'cc-home-page-nav');
-        let content = document.getElementById('content');
-        //let content = document.getElementById('context-modules');
-        if (content) {
-            content.insertAdjacentHTML( 
-                'afterbegin', this.configuration['HOME_PAGE']);
+      m = id.match(breakIdRe);
 
-            // add the cc-tooltip-content div at end of content
-            let toolTipContent = `
-            <div id="cc-tooltip-content" style="display:none;">
-            </div>
-            `
-            content.insertAdjacentHTML( 'beforeend', toolTipContent );
+      if (m) {
+        return m[2];
+      }
 
-            let tooltipContent = document.getElementById('cc-tooltip-content');
-            
-            // add the tooltips for the learning journey elements
-            this.addCourseProfileTips(tooltipContent);
-            this.addLearningJourneyTips(tooltipContent);
-            this.addTeachingTeamTips(tooltipContent);
-        } 
+      // Look for year long QCM courses e.g. 3526QCM_Y1_3211_SB
+      breakIdRe = new RegExp(
+        '^([0-9]+[A-Z]+)_(Y[0-9])_([0-9][0-9][0-9][0-9])_([A-Z][A-Z])$'
+      );
+
+      m = id.match(breakIdRe);
+      if (m) {
+        return m[3];
+      }
     }
+    return this.defaultPeriod;
+  }
+}
 
-    /**
-     * @desc Add tooltips to course profile links
-     * @param tooltipContent the div to which the tooltips will be added
-     */
+// node_modules/circular-progress-bar/public/circular-progress-bar.min.js
+window.CircularProgressBar=function(t){var e={};function n(i){if(e[i])return e[i].exports;var r=e[i]={i:i,l:!1,exports:{}};return t[i].call(r.exports,r,r.exports,n),r.l=!0,r.exports}return n.m=t,n.c=e,n.d=function(t,e,i){n.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:i})},n.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},n.t=function(t,e){if(1&e&&(t=n(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var i=Object.create(null);if(n.r(i),Object.defineProperty(i,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var r in t)n.d(i,r,function(e){return t[e]}.bind(null,r));return i},n.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},n.p="",n(n.s=1)}([function(t,e,n){t.exports=function(){"use strict";const t=function(t,e){const n="number"==typeof t?{value:t}:t;Object.entries(n).map(([t,n])=>e(n,t))};function e(t,e){this.start=new Date/1e3,this.time=e,this.from=t,this.current=t,this.to=t,this.speed=0}return e.prototype.get=function(t){const e=t/1e3-this.start;if(e<0)throw new Error("Cannot read in the past");return e>=this.time?this.to:this.to-((t,e,n,i)=>(e*n+2*t)/n**3*i**3+-(2*e*n+3*t)/n**2*i**2+e*i+t)(this.to-this.from,this.speed,this.time,e)},e.prototype.getSpeed=function(t){const e=t/1e3-this.start;return e>=this.time?0:((t,e,n,i)=>(e*n+2*t)/n**3*3*i**2+-(2*e*n+3*t)/n**2*2*i+e)(this.to-this.from,this.speed,this.time,e)},e.prototype.set=function(t,e){const n=new Date,i=this.get(n);return this.speed=this.getSpeed(n),this.start=n/1e3,this.from=i,this.to=t,e&&(this.time=e),i},function(n,i=300){return"number"==typeof n&&(n={value:n}),t(n,(t,r)=>{const o=new e(t,i/1e3);Object.defineProperty(n,"_"+r,{value:o}),Object.defineProperty(n,r,{get:()=>o.get(new Date),set:t=>o.set(t),enumerable:!0})}),Object.defineProperty(n,"get",{get:()=>function(t="value",e=new Date){return this["_"+t].get(e)}}),Object.defineProperty(n,"set",{get:()=>function(e,n=0){t(e,(t,e)=>{this["_"+e].set(t,n/1e3)})}}),n}}()},function(t,e,n){"use strict";n.r(e),n.d(e,"default",(function(){return f}));var i=n(0),r=n.n(i);n(2);const o=(t,e)=>{Object.keys(e).forEach(n=>t.style[n]=e[n])},s=Symbol("_values"),a=Symbol("_interpolated"),c=Symbol("_text"),u=Symbol("_update"),l=Symbol("_lastUpdate"),h=Symbol("_animationFrame");class f{constructor(t=0,e){this.options={...f.defaultOptions,...e},this.node=document.createElement("div"),this.node.className="circular-progress-bar",o(this.node,{width:`${this.options.size}px`,height:`${this.options.size}px`});const n=document.createElement("div");n.className="circular-progress-bar_value";const i=(100-this.options.barsWidth)/100*this.options.size;o(n,{background:this.options.valueBackground,width:`${i}px`,height:`${i}px`,top:`${this.options.barsWidth/2}%`,left:`${this.options.barsWidth/2}%`}),this.node.appendChild(n),this[c]=document.createElement("div"),this[c].className="circular-progress-bar_value_text",o(this[c],{lineHeight:`${i}px`,fontSize:`${i/3}px`}),n.appendChild(this[c]);const s=Array.isArray(t)?t:[t];this[a]=r()(s),this[u]=this[u].bind(this),this.values=s}get value(){return this.values[0]}get values(){return this[s]}set value(t){this.values=[t]}set values(t){if(this[s]=t,t.length!==this[a].length){const e=new Date,n=this[a].map((t,e)=>this[a][`_${e}`]);for(;n.length&&0===n[n.length-1].get(e);)n.length-=1;const{length:i}=n;this[a]=r()(new Array(Math.max(i,t.length)).fill(0));for(let t=0;t<i;++t){const i=n[t],r=this[a][`_${t}`];r.time=0,r.to=i.get(e)}t.push(...new Array(Math.max(0,i-t.length)).fill(0))}this[a].set(t,this.options.transitionTime),this[l]=performance.now(),this[h]=this[u](0);const e=this[s].reduce((t,e)=>t+e,0);let n="";if(e>=this.options.max&&this.options.valueWhenDone)n=this.options.valueWhenDone;else{let t=this.values.length>1?e:this.values[0];"%"===this.options.valueUnit&&(t/=this.options.max/100),n=`${t.toFixed(this.options.valueDecimals)}${this.options.valueUnit}`}this.options.showValue&&(this[c].textContent=n)}appendTo(t){t.appendChild(this.node)}remove(){this.node.remove()}static get defaultOptions(){return{size:150,barsWidth:20,max:100,showValue:!0,valueDecimals:0,valueUnit:"%",valueBackground:"#333",colors:["#0484d1","#e53b44","#2ce8f4","#ffe762","#63c64d","#fb922b"],background:"rgba(0, 0, 0, .3)",transitionTime:500,valueWhenDone:null}}}f.prototype[u]=function(t){if(t>this[l]+this.options.transitionTime)return;this[h]&&cancelAnimationFrame(this[h]),this[h]=requestAnimationFrame(this[u]);let e=0;const n=this[a].map((t,n)=>{const i=t/this.options.max*100;if(i<.1)return null;const r=`${o=this.options.colors,s=n,o[s%o.length]} ${e}% ${e+i}%`;var o,s;return e+=i+.1,r}).filter(t=>t);e<100&&n.push(`transparent ${e}% 100%`),this.node.style.background=`conic-gradient(${n.join(",")}) ${this.options.background}`}},function(t,e,n){var i=n(3),r=n(4);"string"==typeof(r=r.__esModule?r.default:r)&&(r=[[t.i,r,""]]);var o={insert:"head",singleton:!1},s=(i(r,o),r.locals?r.locals:{});t.exports=s},function(t,e,n){"use strict";var i,r=function(){return void 0===i&&(i=Boolean(window&&document&&document.all&&!window.atob)),i},o=function(){var t={};return function(e){if(void 0===t[e]){var n=document.querySelector(e);if(window.HTMLIFrameElement&&n instanceof window.HTMLIFrameElement)try{n=n.contentDocument.head}catch(t){n=null}t[e]=n}return t[e]}}(),s=[];function a(t){for(var e=-1,n=0;n<s.length;n++)if(s[n].identifier===t){e=n;break}return e}function c(t,e){for(var n={},i=[],r=0;r<t.length;r++){var o=t[r],c=e.base?o[0]+e.base:o[0],u=n[c]||0,l="".concat(c," ").concat(u);n[c]=u+1;var h=a(l),f={css:o[1],media:o[2],sourceMap:o[3]};-1!==h?(s[h].references++,s[h].updater(f)):s.push({identifier:l,updater:v(f,e),references:1}),i.push(l)}return i}function u(t){var e=document.createElement("style"),i=t.attributes||{};if(void 0===i.nonce){var r=n.nc;r&&(i.nonce=r)}if(Object.keys(i).forEach((function(t){e.setAttribute(t,i[t])})),"function"==typeof t.insert)t.insert(e);else{var s=o(t.insert||"head");if(!s)throw new Error("Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.");s.appendChild(e)}return e}var l,h=(l=[],function(t,e){return l[t]=e,l.filter(Boolean).join("\n")});function f(t,e,n,i){var r=n?"":i.media?"@media ".concat(i.media," {").concat(i.css,"}"):i.css;if(t.styleSheet)t.styleSheet.cssText=h(e,r);else{var o=document.createTextNode(r),s=t.childNodes;s[e]&&t.removeChild(s[e]),s.length?t.insertBefore(o,s[e]):t.appendChild(o)}}function p(t,e,n){var i=n.css,r=n.media,o=n.sourceMap;if(r?t.setAttribute("media",r):t.removeAttribute("media"),o&&btoa&&(i+="\n/*# sourceMappingURL=data:application/json;base64,".concat(btoa(unescape(encodeURIComponent(JSON.stringify(o))))," */")),t.styleSheet)t.styleSheet.cssText=i;else{for(;t.firstChild;)t.removeChild(t.firstChild);t.appendChild(document.createTextNode(i))}}var d=null,m=0;function v(t,e){var n,i,r;if(e.singleton){var o=m++;n=d||(d=u(e)),i=f.bind(null,n,o,!1),r=f.bind(null,n,o,!0)}else n=u(e),i=p.bind(null,n,e),r=function(){!function(t){if(null===t.parentNode)return!1;t.parentNode.removeChild(t)}(n)};return i(t),function(e){if(e){if(e.css===t.css&&e.media===t.media&&e.sourceMap===t.sourceMap)return;i(t=e)}else r()}}t.exports=function(t,e){(e=e||{}).singleton||"boolean"==typeof e.singleton||(e.singleton=r());var n=c(t=t||[],e);return function(t){if(t=t||[],"[object Array]"===Object.prototype.toString.call(t)){for(var i=0;i<n.length;i++){var r=a(n[i]);s[r].references--}for(var o=c(t,e),u=0;u<n.length;u++){var l=a(n[u]);0===s[l].references&&(s[l].updater(),s.splice(l,1))}n=o}}}},function(t,e,n){(e=n(5)(!1)).push([t.i,".circular-progress-bar {\n  display: inline-block;\n  border-radius: 50%;\n}\n.circular-progress-bar .circular-progress-bar_value {\n  position: relative;\n  display: inline-block;\n  border-radius: 50%;\n}\n.circular-progress-bar .circular-progress-bar_value .circular-progress-bar_value_text {\n  text-align: center;\n  font-family: monospace;\n  color: #fff;\n  mix-blend-mode: difference;\n}\n",""]),t.exports=e},function(t,e,n){"use strict";t.exports=function(t){var e=[];return e.toString=function(){return this.map((function(e){var n=function(t,e){var n=t[1]||"",i=t[3];if(!i)return n;if(e&&"function"==typeof btoa){var r=(s=i,a=btoa(unescape(encodeURIComponent(JSON.stringify(s)))),c="sourceMappingURL=data:application/json;charset=utf-8;base64,".concat(a),"/*# ".concat(c," */")),o=i.sources.map((function(t){return"/*# sourceURL=".concat(i.sourceRoot||"").concat(t," */")}));return[n].concat(o).concat([r]).join("\n")}var s,a,c;return[n].join("\n")}(e,t);return e[2]?"@media ".concat(e[2]," {").concat(n,"}"):n})).join("")},e.i=function(t,n,i){"string"==typeof t&&(t=[[null,t,""]]);var r={};if(i)for(var o=0;o<this.length;o++){var s=this[o][0];null!=s&&(r[s]=!0)}for(var a=0;a<t.length;a++){var c=[].concat(t[a]);i&&r[c[0]]||(n&&(c[2]?c[2]="".concat(n," and ").concat(c[2]):c[2]=n),e.push(c))}},e}}]).default;
 
-    addCourseProfileTips( tooltipContent) {
-        if ( 'COURSE_PROFILES' in this.configuration) {
-            // loop thru COURSE_PROFILES adding items to html list
-            let profiles = this.configuration['COURSE_PROFILES'];
-            let links = '';
-            for (let i = 0; i < profiles.length; i++) {
-                links += `
-                    <li> <a href="${profiles[i].url}" style="text-decoration: underline">
-                        ${profiles[i].label}
-                    </a> </li>
-                `;
-            }
-            let html = `
-            <div id="cc-course-profile-content" style="padding:0.5em;">
-                <p>Click on your course profile</p>
-                <ul style="list-style-type: circle;font-size: small; margin: 0.5em; list-style-position:inside" >
-                ${links}
-                </ul>
-            </div>
-            `;
-
-            tooltipContent.insertAdjacentHTML( 'beforeend', html );
-        }
-    }
-
-    /**
-     * @desc Add tooltips to learning journey links
-     * @param {Object} tooltipContent 
-     */
-    addLearningJourneyTips( tooltipContent) {
-        if ( 'LEARNING_JOURNEY' in this.configuration) {
-            let html=`
-            <div id="cc-learning-journey-content" style="font-size:small;padding:.5em">
-             What will you learn in this course?<br />
-             What will you need to do?<br />
-             How will you show your learning?
-             </div>
-            `;
-
-            tooltipContent.insertAdjacentHTML( 'beforeend', html );
-        }
-    }
-
-    /**
-     * @desc Add tooltips to teaching team links
-     * @param {Object} tooltipContent - dom element for div 
-     */
-    addTeachingTeamTips( tooltipContent) {
-        if ( 'TEACHING_TEAM' in this.configuration) {
-            let html=`
-            <div id="cc-teaching-team-content" style="font-size:small;padding:.5em;">
-            Meet and contact your teachers.
-            </div>
-            `;
-            tooltipContent.insertAdjacentHTML( 'beforeend', html );
-        }
-    }
-
-    /**
-     * @desc prevent links in card description from propagating to the 
-     * cards clickable link
-     */
-
-    stopCardDescriptionPropagation() {
-        // get all the links in .carddescription that are not .gu-engage
-        let links = document.querySelectorAll('.carddescription a:not(.gu-engage)');
-
-        // prevent propagation of the click event on all links
-        for (let i = 0; i < links.length; i++) {
-            links[i].addEventListener('click', function (e) {
-                e.stopPropagation();
-            });
-        }
-    }
-
-    /**
-     * @desc add a click event to each .clickablecard based on their .cardmainlink
-     * child
-     */
-    makeCardsClickable() {
-
-        // get all the clickable cards
-        let cards = document.getElementsByClassName('clickablecard');
-        for (let i = 0; i < cards.length; i++) {
-            let card = cards[i];
-
-            // add the event listener
-            card.addEventListener('click', function (event) {
-                let link = this.querySelector(".cardmainlink");
-                if (link !== null) {
-                    link.click();
-                }
-            });
-        }
-    }
-
-    /**
-     * @desc Modify the Canvas module list DOM to represent collections, including:
-     * - hide modules that aren't part of the current collection
-     * - add the collection name to the module title
-     * - and also those that have noEngage
-     * 
-     */
-
-    updateCanvasModuleList() {
-        // update the Module titles div#module.id > span.name
-        for (let numModule in this.modules) {
-            let aModule = this.modules[numModule];
-            // Find the module's name and it's title dom
-            let divDom = document.querySelector(`div#context_module_${aModule.id}`);
-            let spanDom = divDom.querySelector('span.name');
-
-            // if we found the title, add the collection details
-            if (spanDom) {
-                // only if the module name isn't already there
-                if (spanDom.textContent.indexOf(`(${aModule.collection})`) === -1) {
-                    spanDom.innerHTML = `${spanDom.textContent} - <small>(${aModule.collection})</small>`;
-                }
-            } else {
-                console.error(`no span.name found for module ${aModule.title}`);
-            }
-
-            // hide the module if it's not in the current collection
-            // but make it's visible otherwise
-            //if (aModule.collection === this.currentCollection || this.canvasOption === 'all') {
-
-            if (aModule.collection === this.currentCollection || ! this.configured) {
-                divDom.style.display = 'block';
-                if ( 'noEngage' in aModule && aModule.noEngage) {
-                    divDom.style.display = 'none';
-                }
-            } else {
-                // don't hide any if we're looking specifically for a module
-                if ( !/[0-9]\/modules#[0-9]/.test(window.location.href) ) {
-                    divDom.style.display = 'none';
-                }
-            }
-        }
-    }
-
-    /**
-     * @desc Based on collections in modules, generate nav bar to select collections
-     * TODO
-     * - Will need to dynamically generate based on collections in Modules
-     * - Add javascript handler to make changes
-     * - Modify other code
-     * @returns DOMelment navBar the dom element for the nav bar
-     */
-    generateNavBar() {
-        console.log('XXXXXXXXXXXXXXXXX nav bar');
-        let navBar = this.createElement('div', ['flex', 'justify-between']);
-
-        navBar.classList.add("p-4");
-        navBar.classList.add("border-gray");
+// src/Collections/Views/GriffithCards.js
+/**
+ * GriffithCards.js 
+ * - implement a view for a Canvas Collection implementing the Card Interface
+ *   functionality
+ */
 
 
-//        let collections = COLLECTIONS_DEFAULTS;
 
-        let styles = {
-            'active': 'inline-block border border-blue-500 rounded py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white',
-            'inactive': 'inline-block border border-white rounded hover:border-gray-200 text-blue-500 hover:bg-gray-200 py-2 px-4',
-            'disabled': 'inline-block py-2 px-4 text-gray-400 cursor-not-allowed',
-        }
 
-        for (let collection of this.collections) {
-            let navClass = ['li', 'mr-4'];
-            let style = 'inactive';
 
-            if (collection === this.currentCollection) {
-                style = 'active';
-            }
 
-            let navElement = `
-		  <a class="${styles[style]}" href="#">${collection}</a>
-		`;
-            let navItem = this.createElement('li', 'mr-4');
-            //navItem.onclick = () => cc_collectionClick(collection,this);
-            navItem.onclick = () => this.collectionsClick(collection, this);
-            navItem.innerHTML = navElement;
-            navBar.appendChild(navItem);
-        }
-        return navBar;
-    }
 
-    /**
-     * @desc generate a DOM element that represents cards for all the modules
-     * Currently hard-coded dumb to do rows of three
-     * @returns DOM element - representing all the cards
-     */
-    generateCards() {
+const DEFAULT_DATE_LABEL="Commencing";
 
-        //        let cardCollection = this.createElement('div', 'cc-canvas-collections-cards');
-        let cardCollection = this.createElement('div', ['flex', 'flex-wrap', '-m-3']);
-        cardCollection.id = "guCardInterface";
-        const numModules = this.modules.length;
-        //        const numRequiredRows = Math.ceil(numModules/3);
+class GriffithCardsView extends cc_View {
 
-        let cardsShown = 0;
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor(model, controller) {
+		super(model, controller);
 
-        // for each module generate card and append
-        for (let i = 0; i < numModules; i++) {
-            let module = this.modules[i];
-            // only show the card if it's in the current collection
-            // or there's no configuration, or there's no collections
-            //if (module.collection === this.currentCollection || this.options.collectionView === 'all') {
-            if (module.collection === this.currentCollection || ! this.configured || this.configuration.CC_COLLECTIONS_DEFAULTS.length === 0) {
-                let card = this.generateCard(module);
-                cardCollection.appendChild(card);
-                // once card is added to DOM, can do further updates
-                this.updateProgress(module, cardCollection);
-                this.updateImage(module, cardCollection);
-                cardsShown += 1;
-            }
-        }
+		this.currentCollection = this.model.getCurrentCollection();
+	}
 
-        // show appropriate message if no cards shown
-        if (cardsShown === 0) {
-            let noCards = this.createElement('div', 'cc-canvas-collections-no-cards');
-            // add some padding-left
-            noCards.style.paddingLeft = '2rem';
-            noCards.style.paddingTop = '2rem';
+	/**
+	 * @descr insert a nav bar based on current collections
+	 */
 
-            noCards.innerHTML = `
-		<h3>No matching modules for this collection</h3>
-    
-		<p>No modules found in collection ${this.currentCollection}</p>`;
-            cardCollection.appendChild(noCards);
-        }
+	display() {
+		DEBUG && console.log('-------------- GriffithCardsView.display()');
+		let div = document.getElementById('cc-canvas-collections');
 
-        //        let module = 0;
-        /*        for (let row=0; row<numRequiredRows; row++) {
-		let rowCollection = this.createElement('div', 'row');
-		for (let col=0; col<3; col++) {
-		    if (module<numModules) {
-			let card = this.generateCard(this.modules[module]);
-			rowCollection.appendChild(card);
-			module++;
-		    }
+		this.calendar = new UniversityDateCalendar();
+
+		// create a simple message div element
+		let message = document.createElement('div');
+		message.className = 'cc-message';
+		message.innerHTML = '';
+
+		const PROGRESS_BAR_JS = '<script src="https://unpkg.com/circular-progress-bar@2.1.0/public/circular-progress-bar.min.js"></script>';
+		document.body.insertAdjacentHTML('afterbegin', PROGRESS_BAR_JS);
+
+		const cards = this.generateCards();
+
+		div.insertAdjacentElement('beforeend', message);
+		div.insertAdjacentElement('beforeend', cards);
+
+		this.stopCardDescriptionPropagation();
+		this.makeCardsClickable();
+	}
+
+	generateCards() {
+		DEBUG && console.log('-------------- griffithCardsView.generateCards()');
+
+		// create cardCollection div element
+		let cardCollection = document.createElement('div');
+		// set the cardCollection classlist
+		//cardCollection.classList.add('flex', 'flex-wrap', '-m-3');
+		cardCollection.id = "cc-card-interface";
+
+		const cardStyles = `
+		<style>
+		#cc-card-interface { 
+			margin-top: 0.5em !important;
+			flex-wrap: wrap;
+			display: flex;
+			margin: -0.75rem
 		}
-		cardCollection.appendChild(rowCollection); */
-        //        }
 
-        return cardCollection;
-    }
+		.cc-clickable-card {
+			padding: 0.75rem;
+			flex-direction: column;
+			display: flex;
+			width: 30%;
+		}
+
+		@media (max-width:640px) {
+			.cc-clickable-card {
+				width: 50%
+			}
+		}
+
+		@media (max-width:480px) {
+			.cc-clickable-card {
+				width:100%;
+			}
+		}
+
+		.cc-clickable-card:hover {
+			cursor: pointer;
+			opacity: 0.8;
+		}
+
+		.cc-card {
+			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1), 0 4px 6px -4px rgb(0 0 0/ 0.1);
+			background-color: #fff;
+/*			border: 1px solid #000; */
+			border-radius: 0.5rem;
+			overflow: hidden;
+			flex-direction: column;
+			flex: 1 1 0%;
+			display: flex;
+			position:relative;
+		}
+
+		.cc-card:hover{
+			background-color: #f5f5f5;
+			box-shadow: none;
+		}
+
+		.cc-card-image {
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			height: 10rem;
+			border-radius: 0.5rem 0.5rem 0 0;
+		}
+
+		.cc-card-content {
+			padding: 0.5rem;
+			flex: 1 1 0%;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.cc-card-content:hover {
+			cursor: pointer;
+		}
+
+		.cc-card-description {
+			font-size: 0.75rem;
+		}
+
+	    .cc-card-description a {
+			text-decoration: underline;
+			flex: 1 1 0%;
+			font-size: 0.8em;
+			margin-bottom: 1rem;
+		}
+
+		.cc-progress {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			padding: 0.5em;
+		}
+
+		.cc-card-title {
+			font-size: 1rem;
+			font-weight: bold;
+		}
+
+		.cc-card-label {
+			font-size: 0.9rem;
+			margin-bottom: 1rem;
+		}
+
+		.cc-card-engage {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			padding: 1rem;
+		}
+
+		.cc-card-engage-button {
+			padding-top: 0.5rem;
+			padding-bottom: 0.5rem;
+			padding-left: 1rem;
+			padding-right: 1rem;
+			color: rgba(30,58,138,1);
+			border-style: solid;
+			border-width: 1px;
+			border-radius: 0.25rem;
+			border-color: rgba(30,58,138,1);
+		}
+
+		.cc-card-engage-button:hover {
+			background-color: rgba(30,58,138,1);
+			color: white;
+			text-decoration: none !important;
+			border: transparent;
+			border-radius: 0.25rem;
+		}
+
+		.cc-card-date {
+			text-align: center;
+			background-color: #f5f5f5;
+			border-radius: 0.25rem;
+			overflow: hidden;
+			width: 5rem;
+			display:block;
+			position: absolute;
+			top: 0;
+			right: 0;
+		}
+
+		.cc-card-date-label { 
+			color: white;
+			font-size: 0.75rem;
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+			background-color: black;
+			border-color: black;
+			border-left-width: 1px;
+			border-right-width: 1px;
+			border-top-width: 1px;
+		}
+
+		.cc-card-date-week {
+			color: black;
+			background-color: #fff9c2;
+			font-size: 0.75rem;
+			padding-top: 0.15rem;
+		}
+
+		.cc-card-date-time {
+			font-size: 0.75rem;
+			color: black;
+			background-color: #fff382;	
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+		}
+
+		.cc-card-date-month {
+			color: white;
+			background-color: red;
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+			border-color: black;
+			border-left-width: 1px;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			font-size: 0.9rem;
+			line-height: 1rem;
+		}
+
+		.cc-card-date-date {
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+			border-left-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			border-bottom-right-radius: 0.25rem;
+			border-bottom-left-radius: 0.25rem;
+			border-color: black;
+			font-size: 0.9rem;
+			font-weight: bold;
+			line-height: 1rem;
+		}
+
+		.cc-progress {
+			float: right;
+		}
+		</style>`;
+
+		cardCollection.innerHTML = cardStyles;
 
 
-    /**
-     * @desc generate a DOM element representing a module for insertion into page
-     * @param cc_Module module - object with module data
-     * @returns DOMelement - representing card
-     */
-    generateCard(module) {
-        let imageUrl = "https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png";
-        let engage = 'Engage';
+		//        const numModules = this.modules.length;
+		//        const numRequiredRows = Math.ceil(numModules/3);
 
-        if ('image' in module) {
-            imageUrl = module.image;
-        }
-        // set the "text" for the engage button
-        if ('engage' in module) {
-            engage = module.engage;
-        }
+		//        let cardsShown = 0;
 
+		//	let count = 0;
 
-        const completion = this.generateCompletionView(module.completionStatus)
-        const DATE = this.generateDateView(module.date);
+		const currentCollection = this.model.getCurrentCollection();
+		for (let module of this.model.getModulesCollections()) {
+			DEBUG && console.log(module);
+			if (module.collection !== currentCollection) {
+				// not the right collection, skip this one
+				// set the Canvas module div to display:none
+				// find div.context_module with data-module-id="${module.id}"
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				contextModule.style.display = 'none';
+				continue;
+			} else {
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				contextModule.style.display = 'block';
+			}
 
-        //        let WIDTH="w-full sm:w-1/2 md:w-1/3";
-        let COMING_SOON = "";
-        let LINK_ITEM = `
-	    <p>&nbsp;<br /> &nbsp;</p>
-	    <div class="p-4 absolute pin-r pin-b" style="right:0;bottom:0">
-	       <a href="#${module.id}" class="gu-engage"><div class="hover:bg-blue-100 text-blue-900 font-semibold hover:text-white py-2 px-4 border border-blue-900 hover:border-transparent rounded">
-		${engage}
-	    </div></a>
-	    </div>
-	    `;
+			const card = this.generateCard(module);
+			cardCollection.insertAdjacentElement('beforeend', card);
+		}
 
-        if ('noEngage' in module && module.noEngage) {
-            LINK_ITEM = `
-            `;
-        }
+		return cardCollection;
+	}
 
-        let EDIT_ITEM = "";
-        let REVIEW_ITEM = ""
+	/**
+	 * Harness to generate HTML for a single card. Calls various other functions
+	 * to get various component
+	 * @param {Object} module 
+	 * @returns {DOMElement} for a single card
+	 */
+	generateCard(module) {
+		const imageUrl = this.generateCardImageUrl(module);
+		const imageSize = this.generateCardImageSize(module);
 
-        let description = module.description;
+		const LINK_ITEM = this.generateCardLinkItem(module);
+		const published = this.generateCardPublished(module);
 
-        let published = this.generatePublishedView(module.published);
+		const DATE_WIDGET = this.generateCardDate(module);
 
-        let IFRAME = "";
+		const description = module.description;
 
-        let imageSize = "bg-cover";
-        if ("imageSize" in module) {
-            imageSize = module.imageSize;
-        }
-        if (imageSize === "bg-contain") {
-            imageSize = "bg-contain bg-no-repeat bg-center"
-        }
+		const COMING_SOON = "";
+		const REVIEW_ITEM = "";
+		const DATE = "";
+		//		const completion = this.generateCardCompletion( module );
+		const IFRAME = "";
+		const EDIT_ITEM = "";
 
+		let CARD_LABEL = "";
+		if (module.label && module.num) {
+			CARD_LABEL = `${module.label} ${module.num}`;
+		}
 
-        //<div class="clickablecard w-full sm:w-1/2 ${WIDTH} flex flex-col p-3">
-        const cardHtml = `
-    <div id="cc_module_${module.id}" class="hover:bg-gray-200 bg-white rounded-lg shadow-lg overflow-hidden flex-1 flex flex-col relative">
-      <a href="#${module.id}" class="cardmainlink"></a>
-      <div class="cc_module_image ${imageSize} h-48" style="background-image: url('${imageUrl}'); background-color: rgb(255,255,255)">${IFRAME}
+		const cardHtml = `
+    <div id="cc_module_${module.id}" class="cc-card">
+      <a href="#${module.id}" class="cc-card-link"></a>
+      <div class="cc-card-image" style="${imageSize} background-image: url('${imageUrl}')">
+	    ${IFRAME}
       </div>
+      ${DATE_WIDGET}
       ${COMING_SOON}
-      <div class="carddescription p-4 flex-1 flex flex-col">
-	<!-- <div class="cc_progress absolute top-0 right-0 p-2"></div> -->
-	<div class=cc_card_label">
-	    <div class="cc_progress float-right"></div>
-	    <span class="cardLabel">
-	    ${module.label} ${module.num}
+      <div class="cc-card-content">
+	<div class=cc-card-label">
+	    <h3 class="cc-card-title">${module.name}</h3>
+	    <span class="cc-card-label">
+		${CARD_LABEL}
 	    </span>
-	    <h3 class="mb-4 text-2xl">${module.title}</h3>
 	</div>
-	<div class="mb-4 flex-1">
+      <div class="cc-card-description">
 	  ${description}
 	</div>
 	<p></p>
@@ -512,1883 +2738,857 @@ class cc_CanvasModulesView {
 	 ${EDIT_ITEM}
 	 ${DATE} 
 	 ${published}
-	 ${completion}
+	 <div class="cc-progress"></div>
       </div>
     </div>
     `;
-        //</div>
 
-        // convert cardHtml into DOM element
-        let wrapper = this.createElement('div', [
-            'clickablecard', 'w-full', 'sm:w-1/2', 'md:w-1/3', 'flex', 'flex-col', 'p-3'
-        ]);
-        wrapper.innerHTML = cardHtml;
-        return wrapper;
-    }
+		// convert cardHtml into DOM element
+		let wrapper = document.createElement('div');
+		wrapper.classList.add( 'cc-clickable-card');
+		/*, 'w-full', 'sm:w-1/2', 'md:w-1/3', 'flex', 'flex-col', 'p-3',
+			'hover:cursor-pointer'); */
+		wrapper.innerHTML = cardHtml;
+
+		const progress = this.getCardProgressElement(module);
+		if (progress) {
+			// find div.cc_progress in wrapper
+			const progressDiv = wrapper.querySelector('.cc-progress');
+			if (progressDiv) {
+				//progressDiv.insertAdjacentElement('beforeend', progress);
+				progress.appendTo(progressDiv);
+			}
+		}
+
+		return wrapper;
+	}
+
+	/**
+	 * Generate the HTML for the date widget, features include
+	 * - single date or date period
+	 * - university week date
+	 * - specific date
+	 * - optional time
+	 * @param {Object} module 
+	 */
+	generateCardDate( module ) {
+		/* date information in 
+		   All attributes are optional
+		   module.date {
+
+			label:
+			week:  
+			day:
+			month:
+			date:
+			endDate: { repeat all of first date, except label}
+		} */
+
+		// if module has no property date, return empty string
+		if (!module.date) {
+			return "";
+		}
+
+		let firstDate = {};
+
+		firstDate.DATE_LABEL = module.date.label || DEFAULT_DATE_LABEL;
+
+		firstDate.WEEK = module.date.week || "";
+		firstDate.DAY = module.date.day || ""; // is this the right default
+		// Week needs more work to add the the day and string "Week"
+		// Also it should be HTML
+
+		firstDate.TIME = module.date.time || "";
+
+		firstDate.MONTH = module.date.month || "";
+		firstDate.DATE = module.date.date || "";
+
+		// With week defined, we need to calculate MONTH and DATE based
+		// on university trimester
+		if (firstDate.WEEK!=="") {
+			// TODO should check for a day, if we wish to get the day
+			let actualDate = {};
+			if (firstDate.DAY==="") {
+				// no special day specified, just get the start of the week
+				actualDate = this.calendar.getDate(firstDate.WEEK);
+			} else {
+				// need go get the date for a particular day
+				actualDate = this.calendar.getDate(firstDate.WEEK, false, firstDate.DAY);	
+			}
+			// actualDate { date/month/year }
+			firstDate.DATE = actualDate.date;
+			firstDate.MONTH = actualDate.month;
+		}
+
+		// no date information defined, no date widget
+		if ( firstDate.WEEK==="" && firstDate.TIME=== "" && 
+				firstDate.MONTH === "" && firstDate.DATE === "") {
+			return "";
+		}
+
+		if (module.endDate) {
+			return this.generateDualDate(module, firstDate);
+		}
+
+		const singleDateHtml = `
+		<div class="cc-card-date">
+		  <div class="cc-card-date-label">
+             ${firstDate.DATE_LABEL}
+          </div>
+		  <div class="cc-card-date-week">
+          	${firstDate.DAY} Week ${firstDate.WEEK}
+		  </div>
+		  <div class="cc-card-date-time">
+          ${firstDate.TIME}
+		  </div>
+		  <div class="cc-card-date-month">
+      	     ${firstDate.MONTH}
+          </div>
+		  <div class="cc-card-date-date">
+      	     ${firstDate.DATE}
+          </div>
+        </div>
+		`;
+
+		// TODO remove the elements that aren't needed
+		// Convert singleDateHtml to dom element
+		let element = new DOMParser().parseFromString(singleDateHtml, 'text/html').body.firstChild;
+		if (firstDate.TIME==="") {
+			// remove the div.cc-card-date-time from element
+			element.removeChild(element.querySelector('.cc-card-date-time'));
+		}
+		if (firstDate.WEEK==="" ) {
+			// remove the div.cc-card-date-week from element
+			element.removeChild(element.querySelector('.cc-card-date-week'));
+		}
+		// return element converted to string
+		return element.outerHTML;
+	}
+
+	generateDualDate( module, firstDate ) {
 
 
-    /**
-     * @desc add representation of student's progress to the card
-     * - use https://github.com/GMartigny/circular-progress-bar
-     * Create the progress bar component, using module.percentItemsComplete
-     * and added it to div.cc_progress in the module's card
-     * 
-     * @param Object module 
-     * @param cardCollection DOM element containing card collection to date
-     */
-    updateProgress(module, cardCollection) {
-        // no progress if null
-        if (module.percentItemsComplete === null) {
-            return;
-        }
+		const dualDateHtml = `
+<div class="block rounded-t rounded-b overflow-hidden bg-white text-center w-24 absolute pin-t pin-r">
+          <div class="bg-black text-white py-1 text-xs border-l border-r border-black">
+             {DATE_LABEL}
+          </div>
+          {WEEK}
+          {DAYS}
+          {TIME}
+          <div class="bg-red text-white flex items-stretch py-1 border-l border-r border-black">
+              <div class="w-1/2 flex-grow">{MONTH_START}</div>
+              <div class="flex items-stretch border-l border-black flex-grow  -mt-1 -mb-1"></div>
+              <div class="w-1/2">{MONTH_STOP}</div>
+          </div>
+          <div class="border-l border-r border-b text-center flex border-black items-stretch pt-1">
+      	     <div class="w-1/2 text-2xl flex-grow font-bold">{DATE_START}</div>
+      	     <div class="flex font-bolditems-stretch border-l border-black flex-grow -mt-1"></div>
+              <div class="w-1/2 text-2xl font-bold">{DATE_STOP}</div>
+          </div>
+         </div> 
+`; 
 
-        let valueBackground = "#ccc";
+		return dualDateHtml;
 
-        if (module.percentItemsComplete >= 100) {
-            valueBackground = "rgb(16,185,129)";
-        } else if (module.percentItemsComplete < 50) {
-            valueBackground = "rgb(245,158,11)";
-        }
+	}
 
-        const options = {
-            size: 50,
-            background: "#eee",
-            valueBackground: valueBackground,
-            colors: ["#0484d1", "#e53b44", "#2ce8f4", "#ffe762", "#63c64d", "#fb922b"]
-        };
-        const progress = new CircularProgressBar(module.percentItemsComplete, options);
-        let card = cardCollection.querySelector(`div#cc_module_${module.id}`);
-        let progressDiv = card.querySelector('div.cc_progress');
-        if (progressDiv) {
-            progress.appendTo(progressDiv);
-        }
-    }
+	/**
+	 * @descr generate ribbon/html to add to card to show completion status
+	 * Can be 
+	 * - Completed - cc_itemsCompleted defined & numRequired == numCompleted
+	 * - In Progress - cc_itemsCompleted defined & numCompleted < numRequired
+	 * - Locked - Unsure how this happens
+	 * - nothing/empty - cc_itemsCompleted is undefined (and absence of any locked info)
+	 * @param String completionStatus 
+	 * @returns html 
+	 */
+	generateCardCompletion(module) {
+		DEBUG && console.log("----------- griffithCardsView.generateCardCompletion()");
 
-    /**
-     * @desc If there's no image, remove the div.cc_module_image for the
-     * module's card
-     * @param Object module 
-     * @param DomElement cardCollection 
-     */
-    updateImage(module, cardCollection) {
+		const colour = {
+			'Completed': 'bg-green-500',
+			'In Progress': 'bg-yellow-500',
+			'Locked': 'bg-red-500'
+		};
 
-        // if is an image, don't remove
-        if ("image" in module && module.image !== "") {
-            return;
-        }
+		// return if module.cc_itemsCompleted is undefined
+		if (module.cc_itemsCompleted === undefined) {
+			return '';
+		}
 
-        // if there's a date, don't remove
-        if (module.date !== undefined) {
-            return;
-        }
+		let completionStatus = 'In Progress';
 
-        let card = cardCollection.querySelector(`div#cc_module_${module.id}`);
-        let imageDiv = card.querySelector('div.cc_module_image');
-        // remove imageDiv
-        if (imageDiv) {
-            imageDiv.remove();
-        }
-    }
+		if (module.cc_itemsCompleted.numCompleted === module.cc_itemsCompleted.numRequired) {
+			completionStatus = 'Completed';
+		}
 
-    /**
-     * @descr generate ribbon/html to add to card to show completion status
-     * @param String completionStatus 
-     * @returns html 
-     */
-    generateCompletionView(completionStatus) {
-        const colour = {
-            'Completed': 'bg-green-500',
-            'In Progress': 'bg-yellow-500',
-            'Locked': 'bg-red-500'
-        }
+		if (!(completionStatus in colour)) {
+			return '';
+		}
 
-        if (!(completionStatus in colour)) {
-            return '';
-        }
-
-        const length = completionStatus.length;
-        let completionHtml = `
+		const length = completionStatus.length;
+		let completionHtml = `
       <div  class="${colour[completionStatus]} text-xs rounded-full py-1 text-center font-bold"
 	    style="width:${length}em" >
 	<div class="">${completionStatus}</div>
       </div>
 	    `;
 
-        return completionHtml;
-    }
+		return completionHtml;
+	}
 
-    /**
-     * @desc generate html showing if module is unpublished
-     * i.e. only show message if unpublished
-     * @param boolean true iff published
-     * @returns string html empty if published warning if unpublished
-     */
-    generatePublishedView(published) {
-        if (published) {
-            return '';
-        }
+	/**
+ * If module has completion requirements return a progress bar element
+ * - use https://github.com/GMartigny/circular-progress-bar
+ * 
+ * @param Object module 
+ * @returns DOM element representing progress bar
+ */
+	getCardProgressElement(module) {
+		if (module.cc_itemsCompleted === undefined) {
+			return undefined;
+		}
 
-        let publishedHtml = `
+		const percentComplete = (100 * module.cc_itemsCompleted.numCompleted) / module.cc_itemsCompleted.numRequired;
+
+		let valueBackground = "#ccc";
+
+		if (percentComplete >= 100) {
+			valueBackground = "rgb(16,185,129)";
+		} else if (percentComplete < 50) {
+			valueBackground = "rgb(245,158,11)";
+		}
+
+		const options = {
+			size: 50,
+			background: "#eee",
+			valueBackground: valueBackground,
+			colors: ["#0484d1", "#e53b44", "#2ce8f4", "#ffe762", "#63c64d", "#fb922b"]
+		};
+		const progress = new CircularProgressBar(percentComplete, options);
+		return progress;
+	}
+
+	generateCardImageUrl(module) {
+		let imageUrl = "https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png";
+		if ('image' in module) {
+			imageUrl = module.image;
+		}
+		return imageUrl;
+	}
+
+	generateCardEngage(module) {
+		let engage = 'Engage';
+		// set the "text" for the engage button
+		if ('engage' in module) {
+			engage = module.engage;
+		}
+		return engage;
+	}
+
+	/**
+	 * module.imageSize will contain user spec for sizing the background image for a card
+	 * Options are
+	 * - bg-contain
+	 * - bg-cover
+	 * These need to be supplemented 
+	 * @param {Object} module 
+	 * @returns 
+	 */
+	generateCardImageSize(module) {
+		let imageSize = "";
+		if ("imageSize" in module && module.imageSize!=="" ) {
+			if (module.imageSize === "bg-contain") {
+				imageSize = "background-size: contain !important; background-repeat: no-repeat; background-position: center;";
+			}
+		}
+		return imageSize;
+	}
+
+	generateCardLinkItem(module) {
+		const engage = this.generateCardEngage(module);
+		let LINK_ITEM = `
+	    <p>&nbsp;<br /> &nbsp;</p>
+	  <!--  <div class="p-4 absolute pin-r pin-b" style="right:0;bottom:0"> -->
+		<div class="cc-card-engage">
+	       <a href="#${module.id}" class="gu-engage">
+<!--		     <div class="hover:bg-blue-300 hover:text-white hover:no-underline text-blue-900 font-semibold hover:text-white py-2 px-4 border border-blue-900 hover:border-transparent rounded"> -->
+			 <div class="cc-card-engage-button">
+			   ${engage}
+	         </div></a>
+	    </div>
+	    `;
+
+		if ('noEngage' in module && module.noEngage) {
+			LINK_ITEM = `
+            `;
+		}
+
+		return LINK_ITEM;
+	}
+
+	/**
+	  * @desc generate html showing if module is unpublished
+	  * i.e. only show message if unpublished
+	  * @param boolean true iff published
+	  * @returns string html empty if published warning if unpublished
+	  */
+	generateCardPublished(module) {
+		if (module.published || module.published === undefined) {
+			return '';
+		}
+
+		let publishedHtml = `
     <span class="bg-red-500 text-white text-xs rounded-full py-1 text-center font-bold"
 	 style="width:8em">
 	    Unpublished
     </span>
 	    `;
 
-        return publishedHtml;
-    }
-
-
-
-    /**
-     * @desc generate HTML for representing the moduleDate
-     * @param object moduleDate - object with date data
-     * @returns string - HTML for representing the moduleDate
-     */
-    generateDateView(moduleDate) {
-
-        // return '' if moduleData undefined
-        if (moduleDate === undefined) {
-            return '';
-        }
-
-        let date = {
-            'label': '',
-            'week': '',
-            'time': '',
-            'month': '',
-            'date': ''
-        };
-        let dateSet = false;
-
-        if ('start' in moduleDate) {
-            return this.generateDualDate(moduleDate);
-        }
-
-        // loop thru each element of date
-        for (let key in date) {
-            if (key in moduleDate) {
-                dateSet = true;
-                date[key] = moduleDate[key];
-            }
-        }
-
-        let week = '';
-        let time = ''
-        if (dateSet) {
-            if ('week' in moduleDate) {
-                week = `
-		    <div class="bg-yellow-200 text-black py-0"> 
-		    ${date.week}
-		    </div>
-		    `;
-                if (moduleDate.week === null) {
-                    week = '';
-                }
-            }
-            if ('time' in moduleDate) {
-                time = `
-		    <div class="bg-yellow-200 text-black py-0 text-xs">
-		    ${date.time}
-		    </div>
-		    `;
-            }
-        }
-
-        let DATE = `
-	<div class="block rounded-t rounded-b overflow-hidden bg-white text-center w-24 absolute"
-	    style="right:0;top:0;"
-	>
-	  <div class="bg-black text-white py-0 text-xs border-l border-r border-t border-black">
-	     ${date.label}
-	  </div>
-	  ${week}
-	  ${time}
-	  <div class="bg-red-900 text-white py-0 border-l border-r border-black">
-	       ${date.month}
-	  </div>
-	  <div class="pt-1 border-l border-r border-b border-black rounded-b">
-	       <span class="text-2xl font-bold">${date.date}</span>
-	  </div>
-	</div>
-	    `;
-        if (!dateSet) {
-            DATE = '';
-        }
-
-        return DATE;
-    }
-
-    /**
-     * @desc generate html to represent a dual date
-     * @param Object moduleDate 
-     * @returns html
-     */
-    generateDualDate(moduleDate) {
-
-        let date = {
-            'label': moduleDate.label,
-            'monthStart': moduleDate.start.month,
-            'dateStart': moduleDate.start.date,
-            'monthStop': moduleDate.stop.month,
-            'dateStop': moduleDate.stop.date,
-        };
-
-        let WEEK = `
-		<div class="bg-yellow-200 text-black py-0 border-l border-r border-black">
-		    Week ${moduleDate.start.week} to ${moduleDate.stop.week}
-		</div>
-	    `;
-        if ((moduleDate.start.week === null) || (moduleDate.stop.week === null)) {
-            WEEK = '';
-        }
-        let DAYS = ``;
-
-        let DATE = `
-	    <div class="block rounded-t rounded-b overflow-hidden bg-white text-center w-24 absolute"
-		style="right:0;top:0">
-		      <div class="bg-black text-white py-0 text-xs border-l border-r border-black">
-			 ${date.label}
-		      </div>
-		      ${WEEK}
-		      <div class="bg-red-900 text-white flex items-stretch py-0 border-l border-r border-black">
-			  <div class="w-1/2 flex-grow">${date.monthStart}</div>
-			  <div class="flex items-stretch border-l border-black flex-grow  -mt-1 -mb-1"></div>
-			  <div class="w-1/2">${date.monthStop}</div>
-		      </div>
-		      <div class="border-l border-r border-b text-center flex border-black items-stretch pt-1 py-0">
-			   <div class="w-1/2 text-2xl flex-grow font-bold">${date.dateStart}</div>
-			   <div class="flex font-bolditems-stretch border-l border-black flex-grow -mt-1"></div>
-			  <div class="w-1/2 text-2xl font-bold">${date.dateStop}</div>
-		      </div>
-		     </div> 
-	    `;
-
-        return DATE;
-    }
-
-    /**
-     * Create an element with an option css class
-     * @param string tag 
-     * @param string className 
-     * @returns element - created DOM element
-     */
-    createElement(tag, className) {
-        const element = document.createElement(tag)
-        if (className) {
-            // if className is an array, add each class
-            if (Array.isArray(className)) {
-                for (let c of className) {
-                    element.classList.add(c);
-                }
-            } else {
-                element.classList.add(className)
-            }
-        }
-        return element
-    }
-
-    /**
-     * @param string selector 
-     * @returns element - DOM element 
-     */
-    getElement(selector) {
-        const element = document.querySelector(selector)
-
-        return element
-    }
-}
-
-// src/view/cc_LearningJourneyView.js
-/**
- * cc_LearningJourneyView
- * - implement a tabular view of a course's modules and items
- */
-
-
-
-class cc_LearningJourneyView {
-
-	/**
-	 * insert HTML into Canvas modules page offering different representation of module information
-	 * @param modules cc_CanvasModules object containing all info about current pages modules
-	 * @param option object - defining how to configure the view
-	 */
-	constructor(modules, options = null) {
-        console.log("Show the learning journey view");
-    }
-
-
-    /**
-     * Add a tabular view of the modules and items
-     */
-    render() {
-        
-
-    }
-   
-}
-
-// src/model/cc_Item.js
-class cc_Item {
-	/**
-	 * @descr construct object representing a Canvas module item
-	 * Data members includes
-	 * - id - unique id for item
-	 * - title - title of item
-	 * - itemType - type of item
-	 * - url - url for item
-	 * - about - simple object containing the item's additional information
-	 * @param DOMelement element - item's DOM element
-	 */
-	constructor(element){
-	    this.extractId(element);
-	    this.extractItemTypeAndId(element);
-	    this.extractTitleAndUrl(element)
-	    this.extractAbout(element)
-    
-	    this.extractStatus(element)
-	    
-    //        console.log(`canvas-collection:    -- ${this.position}) item ${this.id} '<a href="${this.url}">${this.title}</a>' is ${this.itemType}`);
-    //        console.log(`canvas-collection:    about ${JSON.stringify(this.about)}`);
+		return publishedHtml;
 	}
-    
+
+
 	/**
-	 * @desc Item's id is DOM element id = "context_module_item_" + id 
-	 * @param DOMElement element - for entire item
+	 * @desc prevent links in card description from propagating to the 
+	 * cards clickable link
 	 */
-	extractId(element){
-	    this.id = null;
-	    // get dom element id
-	    let id = element.id;
-	    // extract id from context_module_item_ + id
-	    const regex = /context_module_item_(\d+)/;
-	    let match = id.match(regex);
-	    if (match) {
-		this.id = parseInt(match[1]);
-	    }
-	}
-    
-	/**
-	 * @desc Set the item's title specified in DOM element a.title innerText
-	 * - Except if itemType is SubHeader - which has no link span.title innerText
-	 * @param DOMEelement element 
-	 */
-	extractTitleAndUrl(element){
-	    this.title = null;
-	    this.url = null
-	    let titleLink = element.querySelector('a.title');
-	    if (titleLink!==null){
-		this.title = titleLink.innerText;
-		this.url = titleLink.href;
-	    }
-    
-	    // if still null, might be subHeader, try span.title
-	    let subHeaderTitle = element.querySelector('span.title');
-	    if (subHeaderTitle!==null){
-		this.title = subHeaderTitle.innerText;
-	    }
-	}
-    
-	/**
-	 * @desc Item's type defined by Canvas
-	 * https://canvas.instructure.com/doc/api/modules.html#method.context_module_items_api.create
-	 * But class name will be slightly different. Also includes an "id" for the type
-	 * API type / class name / type id
-	 * 
-	 * File / attachment / Attachment_786
-	 * Page / wiki_page / WikiPage_466
-	 * Discussion / discussion_topic / DiscussionTopic_\d+
-	 * Quiz 
-	 * Assignment / assignment / Assignment_\d+
-	 * ExternalTool / content_external_tool / ContentExternalTool_\d+
-	 * ExternalUrl / external_url / ExternalUrl_\d+
-	 * SubHeader / context_module_sub_header / ContextModuleSubHeader_\d+
-	 * 
-	 * ?? / lti-quiz / Assignment_\d+
-	 * 
-	 * Will be one of the class attributes - but may not use exactly these names
-	 * @param DOMElement element - for entire item
-	 */
-	extractItemTypeAndId(element){
-	    let classes = element.classList;
-    
-    
-	    this.itemType = classes;
-	    this.typeId = null;
-    
-	}
-    
-	/**
-	 * @desc HTML for each item also contains additional information
-	 * within span.item_name. Each information is stored in a span with a
-	 * class name that labels the information, style="display:none" and values
-	 * 
-	 * Extract this information and story in the about "object"
-	 * 
-	 * Includes "position" which is also set at the object level
-	 * 
-	 * @param DOMElement element - for entire item
-	 */
-    
-	extractAbout(element){
-	    this.about = {};
-	    let aboutSpans = element.querySelectorAll('span.item_name > span');
-    
-	    for (let i=0; i<aboutSpans.length; i++){
-		let span = aboutSpans[i];
-		// only if display is none
-		if (span.style.display==='none'){ 
-		    let className = span.className;
-		    let value = span.innerText;
-		    this.about[className] = value;
+
+	stopCardDescriptionPropagation() {
+		// get all the links in .carddescription that are not .gu-engage
+		let links = document.querySelectorAll('.carddescription a:not(.gu-engage)');
+
+		// prevent propagation of the click event on all links
+		for (let i = 0; i < links.length; i++) {
+			links[i].addEventListener('click', function (e) {
+				e.stopPropagation();
+			});
 		}
-	    }
-	    // set position data member if present in about
-	    if ( 'position' in this.about ) {
-		this.position = this.about.position;
-	    } 
 	}
-    
+
 	/**
-	 * @desc Extract the status for a module item from the domelement
-	 * div.module-item-status-icon will contain the icon
-	 * - completed = i.class="icon-check" title="Completed"
-	 * - MarkAsRead = i.class="icon-mark-as-read" title="Must view the page"
-	 * 
-	 * Set 
-	 * - this.status with the name of the status
-	 * - this.isComplete with true iff completed
-	 * @param {*} element 
-	*/
-	extractStatus(element){
-    
-	    this.status = null;
-	    this.isComplete = false;
-	    // get the div.module-item-status
-	    let statusDiv = element.querySelector('div.module-item-status-icon');
-    
-	    if (!statusDiv) {
-		return;
-	    }
-	    // try markAsRead
-	    let markAsRead = statusDiv.querySelector('i.icon-mark-as-read');
-	    if (markAsRead) {
-		this.status = 'MarkAsRead';
-		return;
-	    }
-	    // try completed
-	    let completed = statusDiv.querySelector('i.icon-check');
-	    if (completed) {
-		this.status = 'Completed';
-		this.isComplete = true;
-	    }
-	}
-    
-    
-}
+	 * @desc add a click event to each .clickablecard based on their .cardmainlink
+	 * child
+	 */
+	makeCardsClickable() {
 
-// src/model/cc_Module.js
-// Hard code default card values for 1031LAW_3215
-// key is the module name
+		// get all the clickable cards
+		let cards = document.getElementsByClassName('cc-clickable-card');
+		for (let i = 0; i < cards.length; i++) {
+			let card = cards[i];
 
-const DEFAULT_ACTIVE_COLLECTION = 'Topics';
-
-const META_DATA_FIELDS = [
-    'image', 'label', 'imageSize', 'num', 'description', 'collection', 'noEngage'
-]
-
-// Hard coded card values dict of dicts
-// {
-//       'canvasId': { card dict }
-
-let CARD_DEFAULTS = {
-    'https://griffith.instructure.com/courses/130': {
-        'CC_COLLECTIONS_DEFAULTS': [],
-        'CC_DEFAULT_ACTIVE_COLLECTION': '',
-        'Introduction': {
-            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/introduction.png',
-            'label': '',
-            'imageSize': 'bg-contain',
-            'num': '',
-            'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'date': {}
-        },
-        ' Planting': {
-            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/planting.png',
-            'label': '',
-            'imageSize': 'bg-contain',
-            'num': '',
-            'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Topics',
-            'date': {}
-        },
-        ' Nurturing': {
-            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/nurturing.png',
-            'label': '',
-            'imageSize': 'bg-contain',
-            'num': '',
-            'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Topics',
-            'date': {}
-        },
-        ' Sprouting': {
-            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/sprouting.png',
-            'label': '',
-            'imageSize': 'bg-contain',
-            'num': '',
-            'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Topics',
-            'date': {}
-        },
-        ' Flowering': {
-            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/flowering.png',
-            'label': '',
-            'imageSize': 'bg-contain',
-            'num': '',
-            'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Topics',
-            'date': {}
-        },
-        ' Harvesting': {
-            'image': 'https://s3.amazonaws.com/SSL_Assets/learning_services/Growing+with+Canvas/home-page-images/harvesting.png',
-            'label': '',
-            'imageSize': 'bg-contain',
-            'num': '',
-            'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Topics',
-            'date': {}
-        },
-        ' Completed Growing with Canvas': {
-            'image': 'https://media0.giphy.com/media/xBqg5gAf1xINizpek6/200.gif',
-            'label': '',
-            'imageSize': 'bg-contain',
-            'num': '',
-            'description': `Getting oriented to the Canvas self-paced tutorial!`,
-            'collection': 'Topics',
-            'date': {}
-        },
-    },
-    'https://griffith.instructure.com/courses/220': {
-        'CC_COLLECTIONS_DEFAULTS': [
-            "Topics", "Assessment", "Online Workshops", "Student Support"
-        ],
-        'CC_DEFAULT_ACTIVE_COLLECTION': 'Topics',
-        'LEARNING_JOURNEY': 'https://griffith.instructure.com/courses/220/pages/learning-journey',
-        'TEACHING_TEAM': 'hello',
-        'COURSE_PROFILES': [
-            {
-                'label': '1031LAW - Gold Coast Profile',
-                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122153'
-            },
-            {
-                'label': '7731LAW - Gold Coast Profile',
-                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122211'
-            },
-            {
-                'label': '1031LAW - Nathan Profile',
-                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122148'
-            },
-            {
-                'label': '7731LAW - Nathan Profile',
-                'url': 'https://courseprofile.secure.griffith.edu.au/section1.php?profileId=122210'
-            }
-        ],
-        'HOME_PAGE': `
-        <div id="cc-home-page-nav">
-        <table style="border-collapse: collapse; width: 97.5583%; background-color: #6f767e; border-color: #474747; margin-left: auto; margin-right: auto;" border="1">
-            <tbody>
-                <tr>
-                    <td style="width: 33.2942%; text-align: center;">
-                        <a class="tooltip" title="Learning Journey" data-tooltip-content="#cc-learning-journey-content"
-                            href="https://griffith.instructure.com/courses/220/pages/learning-journey" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/learning-journey" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">O </span>Learning Journey</span></a></td>
-                    <td style="width: 33.2942%; text-align: center;">
-                        <span class="tooltip" id="cc-course-profile" data-tooltip-content="#cc-course-profile-content"
-                            href="" rel="noopener"><span style="color: #ffffff;"><span style="font-family: wingdings, 'zapf dingbats';">&amp;</span>&nbsp; &nbsp;Course Profile</span></span></td>
-                    <td style="width: 33.2978%; text-align: center;">
-                        <a class="tooltip" title="Teaching Team" data-tooltip-content="#cc-teaching-team-content"
-                            href="https://griffith.instructure.com/courses/220/pages/your-teaching-team?module_item_id=35489" data-api-endpoint="https://griffith.instructure.com/api/v1/courses/919/pages/teaching-team" data-api-returntype="Page"><span style="color: #ffffff;"><span style="font-family: webdings;">_</span>&nbsp; Your Teaching Team</span></a></td>
-                </tr>
-            </tbody>
-        </table>
-        </div>`,
-        'Welcome': {
-            'image': 'https://i.ytimg.com/vi/gkdGXFcxHw4/maxresdefault.jpg',
-            'label': '',
-            'imageSize': 'bg-contain',
-            'num': '',
-            'description': `<ul>
-          <li> What will you learn? </li>
-          <li> What do you need to do? </li>
-          <li> How will you show what you've learnt?</li> </ul>
-          <p><a href="https://google.com">Google</a>`,
-            'collection': 'Topics',
-            'date': {
-                'label': 'Commencing',
-                'week': 'Week 0',
-                'month': 'Jul',
-                'date': '12'
-            }
-        },
-        'Introduction': {
-            'image': 'https://griffith.instructure.com/courses/220/files/114366/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-contain',
-            'num': '1',
-            'description': '<p>Overview of Foundations of Law and My Law Career</p>',
-            'collection': 'Topics',
-            'date': {
-                'label': 'Commencing',
-                'week': 'Week 1',
-                'month': 'Jul',
-                'date': '19'
-            }
-        },
-        'Making and Finding Law': {
-            'image': 'https://griffith.instructure.com/courses/220/files/114365/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-cover',
-            'num': '2',
-            'description': 'How law is made - and how to find the law (legislation and case)',
-            'collection': 'Topics',
-            'date': {
-                'label': 'From',
-                'start': {
-                    'week': '2',
-                    'month': 'Jul',
-                    'date': '26'
-                },
-                'stop': {
-                    'week': '3',
-                    'month': 'Aug',
-                    'date': '6'
-                },
-            }
-        },
-        'Introduction to Legal Theory': {
-            'image': 'https://griffith.instructure.com/courses/220/files/114369/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-contain',
-            'num': '3',
-            'description': '',
-            'collection': 'Topics',
-            'date': {
-                'label': 'Commencing',
-                'week': 'Week 4',
-                'month': 'Aug',
-                'date': '16'
-            }
-        },
-        'Statutory Interpretation': {
-            //        'image': 'https://griffith.instructure.com/courses/220/files//preview',
-            'label': 'Topic',
-            'imageSize': 'bg-cover',
-            'num': '4',
-            'description': '<p>How to interpret legislation (i.e. work out what it means)</p>',
-            'collection': 'Topics',
-            'date': {
-                'label': 'From',
-                'start': {
-                    'week': '5',
-                    'month': 'Aug',
-                    'date': '23'
-                },
-                'stop': {
-                    'week': '7',
-                    'month': 'Sep',
-                    'date': '10'
-                },
-            }
-        },
-        'Case Law': {
-            'image': 'https://griffith.instructure.com/courses/220/files/114363/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-cover',
-            'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
-            'num': '6',
-            'collection': 'Topics',
-            'date': {
-                'label': 'From',
-                'start': {
-                    'week': '8',
-                    'month': 'Sep',
-                    'date': '13'
-                },
-                'stop': {
-                    'week': '9',
-                    'month': 'Sep',
-                    'date': '24'
-                },
-            }
-        },
-        'The Legal Profession': {
-            'image': 'https://griffith.instructure.com/courses/220/files/114367/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-cover',
-            'num': '7',
-            'description': '<p>Introduction to the legal profession and legal professional ethics.</p>',
-            'collection': 'Topics',
-            'date': {
-                'label': 'Commencing',
-                'week': 'Week 10',
-                'month': 'Sep',
-                'date': '27'
-            }
-        },
-        'First Nations People and the Law': {
-            'image': 'https://griffith.instructure.com/courses/220/files/114368/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-cover',
-            'num': '8',
-            'description': '<p>Introduction to First Nations people and the law</p>',
-            'collection': 'Topics',
-            'date': {
-                'label': 'Commencing',
-                'week': 'Week 11',
-                'month': 'Oct',
-                'date': '4'
-            }
-        },
-        'Consolidating Knowledge': {
-            'image': 'https://griffith.instructure.com/courses/220/files/114364/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-cover',
-            'num': '9',
-            'description': '<p>Revision and preparation for final assessment</p>',
-            'collection': 'Topics',
-            'date': {
-                'label': 'Commencing',
-                'week': 'Week 12',
-                'month': 'Oct',
-                'date': '11'
-            }
-        },
-        // Assessment 1031LAW
-        'Accessing Case Law and Legislation': {
-            'image': 'https://i.ytimg.com/vi/USreSduMgOc/maxresdefault.jpg',
-            'label': 'Assessment',
-            //        'imageSize': 'bg-cover',
-            'num': '1',
-            'description': `<p>Complete a 50 minute online exam. Released 9am on Tuesday of 
-        Week 4 and closed at 5pm on Friday of Week 4.</p>`,
-            'collection': 'Assessment',
-            'date': {
-                'label': 'From',
-                'start': {
-                    'week': null,
-                    'month': 'Aug',
-                    'date': '17'
-                },
-                'stop': {
-                    'week': null,
-                    'month': 'Aug',
-                    'date': '20'
-                },
-            }
-        },
-        'Legislation, Case Law and Statutory Interpretation Assignment': {
-            'image': 'https://blog.ipleaders.in/wp-content/uploads/2019/11/In-Law-Statutory-Interpretation-is-Important.jpg',
-            'label': 'Assessment',
-            //      'imageSize': 'bg-cover',
-            'num': '2',
-            'description': `<p>Prepare succinct memos explaining and commenting on a piece of legislation and a case
-        respectively, and apply rules of statuory interpretation.</p>`,
-            'collection': 'Assessment',
-            'date': {
-                'label': 'Due',
-                'week': null,
-                'month': 'Sep',
-                'date': '27'
-            }
-        },
-        'Take-Home Exam': {
-            'image': 'https://www.lawyer-monthly.com/Lawyer-Monthly/wp-content/uploads/2017/11/5-Top-Tips-for-Passing-Your-Law-Exams-750x430.jpg',
-            'label': 'Assessment',
-            //        'imageSize': 'bg-cover',
-            'num': '3',
-            'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
-            'collection': 'Assessment',
-            'date': {
-                'label': 'From',
-                'start': {
-                    'week': null,
-                    'month': 'Oct',
-                    'date': '21'
-                },
-                'stop': {
-                    'week': null,
-                    'month': 'Oct',
-                    'date': '30'
-                },
-            }
-        },
-        'Workshop Schedule': {
-            'image': 'https://i0.wp.com/frescopad.com/wp-content/uploads/2020/10/webinar-png.png?resize=387%2C242&ssl=1',
-            'label': '',
-            //        'imageSize': 'bg-cover',
-            'num': '',
-            'description': `<p>Course online workshops: where, when and what for.</p>`,
-            'collection': 'Online Workshops',
-            'date': {}
-        },
-        'Teaching Team': {
-            'image': 'https://s18670.pcdn.co/wp-content/uploads/2013/12/build-the-perfect-teacher-team.tmb-570.jpg',
-            'label': '',
-            //        'imageSize': 'bg-cover',
-            'num': '',
-            'description': `<p>Meet and contact your teachers.</p>`,
-            'collection': 'Student Support',
-            'date': {}
-        }
-    },
-
-    'https://lms.griffith.edu.au/courses/122': {
-        'CC_COLLECTIONS_DEFAULTS': [
-            "Topics", "Assessment", "Online Workshops", "Student Support"
-        ],
-        'CC_DEFAULT_ACTIVE_COLLECTION': 'Topics',
-        'Welcome': {
-            'image': 'https://i.ytimg.com/vi/gkdGXFcxHw4/maxresdefault.jpg',
-            'label': '',
-            'imageSize': 'bg-contain',
-            'num': '',
-            'description': `<ul>
-      <li> What will you learn? </li>
-      <li> What do you need to do? </li>
-      <li> How will you show what you've learnt?</li> </ul>
-      <p><a href="https://google.com">Google</a>`,
-            'collection': 'Topics',
-            'date': {
-                'label': 'Commencing',
-                'week': 'Week 0',
-                'month': 'Jul',
-                'date': '12'
-            }
-        },
-        'Introduction': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/795/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-contain',
-            'num': '1',
-            'description': '<p>Overview of Foundations of Law and My Law Career</p>',
-            'collection': 'Topics',
-            'date': {
-                'label': 'Commencing',
-                'week': 'Week 1',
-                'month': 'Jul',
-                'date': '19'
-            }
-        },
-        'Making and Finding Law': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/797/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-cover',
-            'num': '2',
-            'description': 'How law is made - and how to find the law (legislation and case)',
-            'collection': 'Topics',
-            'date': {
-                'label': 'From',
-                'start': {
-                    'week': '2',
-                    'month': 'Jul',
-                    'date': '26'
-                },
-                'stop': {
-                    'week': '3',
-                    'month': 'Aug',
-                    'date': '6'
-                },
-            }
-        },
-        'Introduction to Legal Theory': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/798/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-contain',
-            'num': '3',
-            'description': '',
-            'collection': 'Topics',
-            'date': {
-                'label': 'Commencing',
-                'week': 'Week 4',
-                'month': 'Aug',
-                'date': '16'
-            }
-        },
-        'Statutory Interpretation': {
-            //        'image': 'https://lms.griffith.edu.au/courses/122/files//preview',
-            'label': 'Topic',
-            'imageSize': 'bg-cover',
-            'num': '4',
-            'description': '<p>How to interpret legislation (i.e. work out what it means)</p>',
-            'collection': 'Topics',
-            'date': {
-                'label': 'From',
-                'start': {
-                    'week': '5',
-                    'month': 'Aug',
-                    'date': '23'
-                },
-                'stop': {
-                    'week': '7',
-                    'month': 'Sep',
-                    'date': '10'
-                },
-            }
-        },
-        'Case Law': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/799/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-cover',
-            'description': '<p>How to read and understand case law (i.e. written judgements)</p>',
-            'num': '6',
-            'collection': 'Topics',
-            'date': {
-                'label': 'From',
-                'start': {
-                    'week': '8',
-                    'month': 'Sep',
-                    'date': '13'
-                },
-                'stop': {
-                    'week': '9',
-                    'month': 'Sep',
-                    'date': '24'
-                },
-            }
-        },
-        'The Legal Profession': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/796/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-cover',
-            'num': '7',
-            'description': '<p>Introduction to the legal profession and legal professional ethics.</p>',
-            'collection': 'Topics',
-            'date': {
-                'label': 'Commencing',
-                'week': 'Week 10',
-                'month': 'Sep',
-                'date': '27'
-            }
-        },
-        'First Nations People and the Law': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/801/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-cover',
-            'num': '8',
-            'description': '<p>Introduction to First Nations people and the law</p>',
-            'collection': 'Topics',
-            'date': {
-                'label': 'Commencing',
-                'week': 'Week 11',
-                'month': 'Oct',
-                'date': '4'
-            }
-        },
-        'Consolidating Knowledge': {
-            'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
-            'label': 'Topic',
-            'imageSize': 'bg-cover',
-            'num': '9',
-            'description': '<p>Revision and preparation for final assessment</p>',
-            'collection': 'Topics',
-            'date': {
-                'label': 'Commencing',
-                'week': 'Week 12',
-                'month': 'Oct',
-                'date': '11'
-            }
-        },
-        // Assessment 1031LAW
-        'Accessing Case Law and Legislation': {
-            //        'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
-            'label': 'Assessment',
-            //        'imageSize': 'bg-cover',
-            'num': '1',
-            'description': `<p>Complete a 50 minute online exam. Released 9am on Tuesday of 
-    Week 4 and closed at 5pm on Friday of Week 4.</p>`,
-            'collection': 'Assessment',
-            'date': {
-                'label': 'From',
-                'start': {
-                    'week': null,
-                    'month': 'Aug',
-                    'date': '17'
-                },
-                'stop': {
-                    'week': null,
-                    'month': 'Aug',
-                    'date': '20'
-                },
-            }
-        },
-        'Legislation, Case Law and Statutory Interpretation Assignment': {
-            //        'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
-            'label': 'Assessment',
-            //      'imageSize': 'bg-cover',
-            'num': '2',
-            'description': `<p>Prepare succinct memos explaining and commenting on a piece of legislation and a case
-    respectively, and apply rules of statuory interpretation.</p>`,
-            'collection': 'Assessment',
-            'date': {
-                'label': 'Due',
-                'week': null,
-                'month': 'Sep',
-                'date': '27'
-            }
-        },
-        'Take-Home Exam': {
-            //     'image': 'https://lms.griffith.edu.au/courses/122/files/800/preview',
-            'label': 'Assessment',
-            //        'imageSize': 'bg-cover',
-            'num': '3',
-            'description': `<p>Complete a 2 hour open-book take home exam with both short-answer and hypothetical questions.</p>`,
-            'collection': 'Assessment'
-        }
-    },
-    'https://lms.griffith.edu.au/courses/252': {
-        'CC_COLLECTIONS_DEFAULTS': [
-            "Content", "Assessment", "Your Teaching Team", "Student Support"
-        ],
-        'CC_DEFAULT_ACTIVE_COLLECTION': 'Content',
-        'Welcome and Getting Started': {
-            'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
-            'label': '',
-            'imageSize': 'bg-contain',
-            'num': '',
-            'description': `<p>Why, how and what you will be learning in this course? How wil you demonstrate your learning? How will you be supported?`,
-            'collection': 'Content',
-            'date': {
-                'label': 'Before',
-                'week': 'Week 1',
-                'month': 'Nov',
-                'date': '7'
-            }
-        },
-        'Classical Approaches to Organisational Communication': {
-            'image': 'https://knowledge.insead.edu/sites/www.insead.edu/files/images/2017/05/virtues_of_unintelligent_organisation_design.jpg',
-            'label': 'Module',
-            'imageSize': 'bg-contain',
-            'num': '1',
-            'description': ``,
-            'collection': 'Content',
-            'date': {
-                'label': '',
-                'week': 'Week 1',
-                'month': 'Nov',
-                'date': '7'
-            }
-        },
-        'Systems and Cultural Approaches': {
-            'image': 'https://sloanreview.mit.edu/wp-content/uploads/2019/10/GEN-Korman-Corporate-Culture-Business-Management-System-1200x627-1-1200x627.jpg',
-            'label': 'Module',
-            'imageSize': 'bg-contain',
-            'num': '2',
-            'description': ``,
-            'collection': 'Content',
-            'date': {
-                'label': '',
-                'week': 'Week 2',
-                'month': 'Nov',
-                'date': '14'
-            }
-        },
-        'Human Relations and Human Resource Approaches': {
-            'image': 'https://www.timeshighereducation.com/unijobs/getasset/68fdfdc4-4442-449a-8ad5-2a994eff3e57/',
-            'label': 'Module',
-            'imageSize': 'bg-contain',
-            'num': '3',
-            'description': ``,
-            'collection': 'Content',
-            'date': {
-                'label': '',
-                'week': 'Week 3',
-                'month': 'Nov',
-                'date': '21'
-            }
-        },
-        'Applying Theory to Employing Staff': {
-            'image': 'https://coincentral.com/wp-content/uploads/2018/07/manager-308474_1280.png',
-            'label': 'Module',
-            'imageSize': 'bg-contain',
-            'num': '4',
-            'description': ``,
-            'collection': 'Content',
-            'date': {
-                'label': '',
-                'week': 'Week 4',
-                'month': 'Nov',
-                'date': '28'
-            }
-        },
-        'Decision-making Processes': {
-            'image': 'https://d2slcw3kip6qmk.cloudfront.net/marketing/blog/2019Q2/decision-making/decision-making-techniques-header@2x.png',
-            'label': 'Module',
-            'imageSize': 'bg-contain',
-            'num': '5',
-            'description': ``,
-            'collection': 'Content',
-            'date': {
-                'label': '',
-                'week': 'Week 5',
-                'month': 'Dec',
-                'date': '5'
-            }
-        },
-        'Conflict': {
-            'image': 'https://blog-cdn.reedsy.com/directories/admin/featured_image/281/types-of-conflict-f4b75d.jpg',
-            'label': 'Module',
-            'imageSize': 'bg-contain',
-            'num': '6',
-            'description': ``,
-            'collection': 'Content',
-            'date': {
-                'label': '',
-                'week': 'Week 6',
-                'month': 'Dec',
-                'date': '12'
-            }
-        },
-        'Emotion within Organisations': {
-            'image': 'https://www.paulekman.com/wp-content/uploads/2018/07/PAFF_040918_emotionspectrum2-609x419-1280x720.jpg',
-            'label': 'Module',
-            'imageSize': 'bg-contain',
-            'num': '7',
-            'description': ``,
-            'collection': 'Content',
-            'date': {
-                'label': '',
-                'week': 'Week 7',
-                'month': 'Dec',
-                'date': '19'
-            }
-        },
-        'Diversity Management': {
-            'image': 'https://www.nortonrosefulbright.com/-/media/images/nrf/about/diversity/racial-ethnic-cultural-diversity.jpg?revision=d888db4f-751d-4796-863f-961beadd9120&w=820&hash=52BC12A2795F4D420140A53701D07F4C',
-            'label': 'Module',
-            'imageSize': 'bg-contain',
-            'num': '8',
-            'description': ``,
-            'collection': 'Content',
-            'date': {
-                'label': '',
-                'week': 'Week 8',
-                'month': 'Jan',
-                'date': '9'
-            }
-        },
-        'Diversity Management continued...': {
-            'image': 'https://www.aauw.org/app/uploads/2020/11/dimensions-of-diversity-900x700-01_900x700_acf_cropped.png',
-            'label': 'Module',
-            'imageSize': 'bg-contain',
-            'num': '9',
-            'description': ``,
-            'collection': 'Content',
-            'date': {
-                'label': '',
-                'week': 'Week 9',
-                'month': 'Jan',
-                'date': '16'
-            }
-        },
-        'Communication and Technology': {
-            'image': 'https://www.training.com.au/wp-content/uploads/career-in-technology-feature.png',
-            'label': 'Module',
-            'imageSize': 'bg-contain',
-            'num': '10',
-            'description': ``,
-            'collection': 'Content',
-            'date': {
-                'label': '',
-                'week': 'Week 10',
-                'month': 'Jan',
-                'date': '23'
-            }
-        },
-        'Globalisation and Organisational Communication': {
-            'image': 'https://voxeu.org/sites/default/files/cover_images/blog_review/AdobeStock_167753719.jpeg',
-            'label': 'Module',
-            'imageSize': 'bg-contain',
-            'num': '11',
-            'description': ``,
-            'collection': 'Content',
-            'date': {
-                'label': '',
-                'week': 'Week 11',
-                'month': 'Jan',
-                'date': '30'
-            }
-        },
-        'The Global Work Environment': {
-            'image': 'https://www.ceps.eu/wp-content/uploads/2016/11/GlobalisationPub1-1300x731.jpg',
-            'label': 'Module',
-            'imageSize': 'bg-contain',
-            'num': '12',
-            'description': ``,
-            'collection': 'Content',
-            'date': {
-                'label': '',
-                'week': 'Week 12',
-                'month': 'Feb',
-                'date': '6'
-            }
-        },
-        'Independent Learning Tasks': {
-            'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
-            'label': 'Assessment',
-            'num': '1',
-            'description': `<p>Throughout the course complete tasks and post your response to a discussion forum.  Comment on the work of your peers. Submit a Word document with your contributions by the due date.`,
-            'collection': 'Assessment',
-            'date': {
-                'label': 'Due 5pm',
-                'week': 'Week 11',
-                'month': 'Jan',
-                'date': '30'
-            }
-        },
-        'Short Essay': {
-            'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
-            'collection': 'Assessment',
-            'label': 'Assessment',
-            'num': '2',
-            'description': '<p>&nbsp;</p>',
-            'date': {
-                'label': 'Due 5pm',
-                'week': 'Week 7',
-                'month': 'Dec',
-                'date': '19'
-            }
-        },
-        'Major report: Diversity Management Plan': {
-            'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
-            'label': 'Assessment',
-            'num': '3',
-            'description': `<p>&nbsp;</p>`,
-            'collection': 'Assessment',
-            'date': {
-                'label': 'Due 5pm',
-                'week': 'Week 13',
-                'month': 'Feb',
-                'date': '13'
-            }
-        },
-        'Dr Bridget Backhaus': {
-            'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHXhIO4un0S_zx_2J6JlfxSVa4LPYcfe3jTUjaCTxoWu1sCVMLjcl4kJwtrmd-L1lFxyg&usqp=CAU',
-            'label': 'Unit Convenor',
-            'num': '',
-            'description': `<p>While I am very happy for students to contact me if they have 
-            questions about the course content, extensions or other unit-related topics, the 
-            first point of contact should be your tutor. If you need to contact me, please 
-            <a href="mailto:b.backhaus@griffith.edu.au">send me an email</a>.</p>
-            `,
-            'collection': 'Your Teaching Team',
-            'date': {
-            },
-            'noEngage' : true
-        },
-        'Annette Hurley': {
-            'image': '',
-            'label': 'Unit Tutor',
-            'num': '',
-            'description': `<p><strong>Email:</strong> 
-            <a href="mailto:annette.hurley@griffith.edu.au">annette.hurley@griffith.edu.au</a></p>
-            `,
-            'collection': 'Your Teaching Team',
-            'date': {
-            }, 
-            'noEngage' : true
-        },
-        'Griffith (OUA) Services': {
-            'image': 'https://news.griffith.edu.au/wp-content/uploads/2013/01/Open-Universities-Australia-OUA_large.gif',
-            'label': '',
-            'num': '',
-            'description': `
-            <p>Contact Griffith (OUA) Services for student administration queries.</p>
-            <p>As Open Universities Australia students it is your responsibility to be 
-            aware of all the university’s student policies and procedures as well as your 
-            rights and responsibilities.</p>
-            <p>
-            Email oua.programsupport@griffith.edu.au<br /> 
-            Work Phone 1800 154 055<br /> 
-            Office Location Student Administration, Community Place (L04) 1.13, Logan Campus, Griffith University, University Drive, MEADOWBROOK, QLD 4131<br /> 
-            Personal Link 
-            <a href="http://www.griffith.edu.au/open-universities-australia">http://www.griffith.edu.au/open-universities-australia</a>
-            </p>
-            `,
-            'collection': 'Your Teaching Team',
-            'date': {
-            },
-            'noEngage': true
-        },
-    },
-    'https://lms-dev.griffith.edu.au/courses/138': {
-            'CC_COLLECTIONS_DEFAULTS': [
-                "Content", "Assessment", "Your Teaching Team", "Student Support"
-            ],
-            'CC_DEFAULT_ACTIVE_COLLECTION': 'Content',
-            'Welcome and Introduction to the Course': {
-                'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
-                'label': '',
-                'imageSize': 'bg-contain',
-                'num': '',
-                'description': `<p>Why, how and what you will be learning in this course? How wil you demonstrate your learning? How will you be supported?`,
-                'collection': 'Content',
-                'date': {
-                    'label': 'Before',
-                    'week': 'Week 1',
-                    'month': 'Nov',
-                    'date': '7'
-                }
-            },
-            'Classical Approaches to Organisational Communication': {
-                'image': 'https://knowledge.insead.edu/sites/www.insead.edu/files/images/2017/05/virtues_of_unintelligent_organisation_design.jpg',
-                'label': 'Module',
-                'imageSize': 'bg-contain',
-                'num': '1',
-                'description': ``,
-                'collection': 'Content',
-                'date': {
-                    'label': '',
-                    'week': 'Week 1',
-                    'month': 'Nov',
-                    'date': '7'
-                }
-            },
-            'Systems and Cultural Approaches': {
-                'image': 'https://sloanreview.mit.edu/wp-content/uploads/2019/10/GEN-Korman-Corporate-Culture-Business-Management-System-1200x627-1-1200x627.jpg',
-                'label': 'Module',
-                'imageSize': 'bg-contain',
-                'num': '2',
-                'description': ``,
-                'collection': 'Content',
-                'date': {
-                    'label': '',
-                    'week': 'Week 2',
-                    'month': 'Nov',
-                    'date': '14'
-                }
-            },
-            'Human Relations and Human Resource Approaches': {
-                'image': 'https://www.timeshighereducation.com/unijobs/getasset/68fdfdc4-4442-449a-8ad5-2a994eff3e57/',
-                'label': 'Module',
-                'imageSize': 'bg-contain',
-                'num': '3',
-                'description': ``,
-                'collection': 'Content',
-                'date': {
-                    'label': '',
-                    'week': 'Week 3',
-                    'month': 'Nov',
-                    'date': '21'
-                }
-            },
-            'Applying Theory to Employing Staff': {
-                'image': 'https://coincentral.com/wp-content/uploads/2018/07/manager-308474_1280.png',
-                'label': 'Module',
-                'imageSize': 'bg-contain',
-                'num': '4',
-                'description': ``,
-                'collection': 'Content',
-                'date': {
-                    'label': '',
-                    'week': 'Week 4',
-                    'month': 'Nov',
-                    'date': '28'
-                }
-            },
-            'Decision-making Processes': {
-                'image': 'https://d2slcw3kip6qmk.cloudfront.net/marketing/blog/2019Q2/decision-making/decision-making-techniques-header@2x.png',
-                'label': 'Module',
-                'imageSize': 'bg-contain',
-                'num': '5',
-                'description': ``,
-                'collection': 'Content',
-                'date': {
-                    'label': '',
-                    'week': 'Week 5',
-                    'month': 'Dec',
-                    'date': '5'
-                }
-            },
-            'Conflict': {
-                'image': 'https://blog-cdn.reedsy.com/directories/admin/featured_image/281/types-of-conflict-f4b75d.jpg',
-                'label': 'Module',
-                'imageSize': 'bg-contain',
-                'num': '6',
-                'description': ``,
-                'collection': 'Content',
-                'date': {
-                    'label': '',
-                    'week': 'Week 6',
-                    'month': 'Dec',
-                    'date': '12'
-                }
-            },
-            'Emotion within Organisations': {
-                'image': 'https://www.paulekman.com/wp-content/uploads/2018/07/PAFF_040918_emotionspectrum2-609x419-1280x720.jpg',
-                'label': 'Module',
-                'imageSize': 'bg-contain',
-                'num': '7',
-                'description': ``,
-                'collection': 'Content',
-                'date': {
-                    'label': '',
-                    'week': 'Week 7',
-                    'month': 'Dec',
-                    'date': '19'
-                }
-            },
-            'Diversity Management': {
-                'image': 'https://www.nortonrosefulbright.com/-/media/images/nrf/about/diversity/racial-ethnic-cultural-diversity.jpg?revision=d888db4f-751d-4796-863f-961beadd9120&w=820&hash=52BC12A2795F4D420140A53701D07F4C',
-                'label': 'Module',
-                'imageSize': 'bg-contain',
-                'num': '8',
-                'description': ``,
-                'collection': 'Content',
-                'date': {
-                    'label': '',
-                    'week': 'Week 8',
-                    'month': 'Jan',
-                    'date': '9'
-                }
-            },
-            'Diversity Management continued...': {
-                'image': 'https://www.aauw.org/app/uploads/2020/11/dimensions-of-diversity-900x700-01_900x700_acf_cropped.png',
-                'label': 'Module',
-                'imageSize': 'bg-contain',
-                'num': '9',
-                'description': ``,
-                'collection': 'Content',
-                'date': {
-                    'label': '',
-                    'week': 'Week 9',
-                    'month': 'Jan',
-                    'date': '16'
-                }
-            },
-            'Communication and Technology': {
-                'image': 'https://www.training.com.au/wp-content/uploads/career-in-technology-feature.png',
-                'label': 'Module',
-                'imageSize': 'bg-contain',
-                'num': '10',
-                'description': ``,
-                'collection': 'Content',
-                'date': {
-                    'label': '',
-                    'week': 'Week 10',
-                    'month': 'Jan',
-                    'date': '23'
-                }
-            },
-            'Globalisation and Organisational Communication': {
-                'image': 'https://voxeu.org/sites/default/files/cover_images/blog_review/AdobeStock_167753719.jpeg',
-                'label': 'Module',
-                'imageSize': 'bg-contain',
-                'num': '11',
-                'description': ``,
-                'collection': 'Content',
-                'date': {
-                    'label': '',
-                    'week': 'Week 11',
-                    'month': 'Jan',
-                    'date': '30'
-                }
-            },
-            'The Global Work Environment': {
-                'image': 'https://www.ceps.eu/wp-content/uploads/2016/11/GlobalisationPub1-1300x731.jpg',
-                'label': 'Module',
-                'imageSize': 'bg-contain',
-                'num': '12',
-                'description': ``,
-                'collection': 'Content',
-                'date': {
-                    'label': '',
-                    'week': 'Week 12',
-                    'month': 'Feb',
-                    'date': '6'
-                }
-            },
-            'Independent Learning Tasks': {
-                'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
-                'label': 'Assessment',
-                'num': '1',
-                'description': `<p>Throughout the course complete tasks and post your response to a discussion forum.  Comment on the work of your peers. Submit a Word document with your contributions by the due date.`,
-                'collection': 'Assessment',
-                'date': {
-                    'label': 'Due 5pm',
-                    'week': 'Week 11',
-                    'month': 'Jan',
-                    'date': '30'
-                }
-            },
-            'Short Essay': {
-                'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
-                'collection': 'Assessment',
-                'label': 'Assessment',
-                'num': '2',
-                'description': '<p>&nbsp;</p>',
-                'date': {
-                    'label': 'Due 5pm',
-                    'week': 'Week 7',
-                    'month': 'Dec',
-                    'date': '19'
-                }
-            },
-            'Major report: Diversity Management Plan': {
-                'image': 'https://www.altview.ca/wp-content/uploads/2018/08/20180510143149-Under-Construction-Sign.png',
-                'label': 'Assessment',
-                'num': '3',
-                'description': `<p>&nbsp;</p>`,
-                'collection': 'Assessment',
-                'date': {
-                    'label': 'Due 5pm',
-                    'week': 'Week 13',
-                    'month': 'Feb',
-                    'date': '13'
-                }
-            },
-            'Dr Bridget Backhaus': {
-                'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHXhIO4un0S_zx_2J6JlfxSVa4LPYcfe3jTUjaCTxoWu1sCVMLjcl4kJwtrmd-L1lFxyg&usqp=CAU',
-                'label': 'Unit Convenor',
-                'num': '',
-                'description': `<p>While I am very happy for students to contact me if they have 
-                questions about the course content, extensions or other unit-related topics, the 
-                first point of contact should be your tutor. If you need to contact me, please 
-                <a href="mailto:b.backhaus@griffith.edu.au">send me an email</a>.</p>
-                `,
-                'collection': 'Your Teaching Team',
-                'date': {
-                },
-                'noEngage' : true
-            },
-            'Annette Hurley': {
-                'image': '',
-                'label': 'Unit Tutor',
-                'num': '',
-                'description': `<p><strong>Email:</strong> 
-                <a href="mailto:annette.hurley@griffith.edu.au">annette.hurley@griffith.edu.au</a></p>
-                `,
-                'collection': 'Your Teaching Team',
-                'date': {
-                }, 
-                'noEngage' : true
-            },
-            'Griffith (OUA) Services': {
-                'image': 'https://news.griffith.edu.au/wp-content/uploads/2013/01/Open-Universities-Australia-OUA_large.gif',
-                'label': '',
-                'num': '',
-                'description': `
-                <p>Contact Griffith (OUA) Services for student administration queries.</p>
-                <p>As Open Universities Australia students it is your responsibility to be 
-                aware of all the university’s student policies and procedures as well as your 
-                rights and responsibilities.</p>
-                <p>
-                Email oua.programsupport@griffith.edu.au<br /> 
-                Work Phone 1800 154 055<br /> 
-                Office Location Student Administration, Community Place (L04) 1.13, Logan Campus, Griffith University, University Drive, MEADOWBROOK, QLD 4131<br /> 
-                Personal Link 
-                <a href="http://www.griffith.edu.au/open-universities-australia">http://www.griffith.edu.au/open-universities-australia</a>
-                </p>
-                `,
-                'collection': 'Your Teaching Team',
-                'date': {
-                },
-                'noEngage': true
-            },
-    }
-};
-
-
-
-class cc_Module {
-    constructor(element, options = null) {
-        this.extractId(element);
-        this.extractTitle(element);
-        this.extractItems(element);
-        this.extractPublished(element);
-        this.extractCompletionStatus(element);
-
-        this.calculateItemProgress();
-
-        this.setConfiguration(options);
-
-
-        this.addModuleDefaults();
-
-        // TODO 
-        // - prerequisites
-        // - requirements_message
-
-        /*        console.log('------------------');
-                console.log(`canvas-collections: Module ${this.id} title ${this.title}`);
-                console.log(`--- location is ${location} -- courseUrl is ${this.courseUrl}`);
-                console.log(`--- configured is ${this.configured}`); */
-    }
-
-    /**
-     * @desc Configure the module model based on location, defaults etc
-     * @param {Object} options - configuration options
-     */
-    setConfiguration(options) {
-        // this.configured is true if there is some hard wired
-        // card configuration content above
-        this.configured = false;
-        this.configuration = {};
-
-        // extract https://hostname/courses/[0-9]* from location
-        let location = window.location.href;
-
-        this.courseUrl = location.match(/https:\/\/.*\/courses\/[0-9]*/);
-        if (this.courseUrl) {
-            // if CARD_DEFAULTS has key this.courseUrl we have config
-            if (this.courseUrl in CARD_DEFAULTS) {
-                // match with hard code configuration, set data members
-                this.configured = true;
-                this.configuration = CARD_DEFAULTS[this.courseUrl];
-                this.currentCollection = CARD_DEFAULTS[this.courseUrl].CC_DEFAULT_ACTIVE_COLLECTION;
-            }
-        }
-
-        // are we one the home page?
-        this.courseHomePage = false;
-        if (location.match(/^https:\/\/.*\/courses\/[0-9]*$/)) {
-            this.courseHomePage = true;
-        }
-
-        // by default a module doesn't belong to a collection
-        this.collection = null;
-        //	    this.options = DEFAULT_VIEW_OPTIONS;
-        if (options) {
-            this.options = options;
-        }
-    }
-
-    /**
-     * @descr based on the module's title add some default values from this.configuration
-     */
-    addModuleDefaults() {
-        // only add defaults if there is some configuration for this card
-
-        // remove any non-asciis from title
-        let title = this.title.replace(/[^\x00-\x7F]/g, "");
-
-        if (!this.configured || !this.configuration || !(title in this.configuration)) {
-            // loop through META_DATA_FIELDS list
-            for (let field of META_DATA_FIELDS) {
-                // if this has no member field
-                if (!(field in this)) {
-                    this[field] = '';
-                }
-            }
-            return;
-        }
-
-        // we are configured so update the object
-        let defaults = this.configuration[title];
-        for (let key in defaults) {
-            this[key] = defaults[key];
-        }
-    }
-
-    /**
-     * @desc Return the id of the module as specified in attribute data-module-id
-     * @param DOMElement element - the module dom element
-     */
-    extractId(element) {
-        this.id = null;
-        // attribute data-module-id contains the id
-        let id = element.getAttribute('data-module-id');
-        if (id !== null) {
-            this.id = parseInt(id);
-        }
-    }
-
-    /**
-     * @desc Return the title of the module - look for span.name value within element
-     * @param {*} element 
-     */
-    extractTitle(element) {
-        this.title = null;
-        let nameSpan = element.querySelector('span.name');
-        if (nameSpan !== null) {
-            this.title = nameSpan.innerText;
-        }
-    }
-
-    /**
-     * @desc generate an array of cc_Item objects for the module from 
-     * div#context_module_content_ID > ul.context_module_items
-     * @param DOMElement element 
-     * @returns array of cc_Item objects
-     */
-    extractItems(element) {
-        let items = [];
-        let itemList = element.querySelector('ul.context_module_items');
-        if (itemList !== null) {
-            let itemElements = itemList.querySelectorAll('li.context_module_item');
-            for (let itemElement of itemElements) {
-                items.push(new cc_Item(itemElement));
-            }
-        }
-        this.items = items;
-    }
-
-    /**
-     * @desc set the published status of the module 
-     * - default published==True, look for icon.unpublish value within element
-     * @param DOMElement element
-     */
-    extractPublished(element) {
-        this.published = true;
-        // the icon can be unreliable
-        //let unpublishIcon = element.querySelector('i.icon-unpublish');
-        let unpublish = element.querySelector('span.publish-icon');
-        // is unpublished in the class list
-        if (unpublish !== null && unpublish.classList.contains('unpublished')) {
-            //        if (unpublishIcon!==null){
-            this.published = false;
-        }
-    }
-
-    /**
-     * @desc figure out the modules completion status
-     * - Completed - i.complete_icon is display:visible
-     * - In Progress - i.in_progress_icon is display:visible
-     * - Locked - i.locked_icon is display:visible
-     * @param DOM Element Module dom element
-     */
-    extractCompletionStatus(element) {
-        this.completionStatus = '';
-
-        const statusCheck = {
-            'i.complete_icon': 'Completed',
-            'i.in_progress_icon': 'In Progress',
-            'i.locked_icon': 'Locked'
-        }
-
-        for (let key in statusCheck) {
-            let icon = element.querySelector(key);
-            if (icon !== null) {
-                // set completionStatus if display is visible
-                let style = window.getComputedStyle(icon);
-                if (style.display !== 'none') {
-                    this.completionStatus = statusCheck[key];
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * @desc based on the completion status of items set % of items completed
-     * for the module
-     * 
-     * set this.percentItemsComplete = % of itemsToComplete completed
-     */
-    calculateItemProgress() {
-        // null if there is no item progress in this module
-        this.percentItemsComplete = null;
-        const numItems = this.items.length;
-        // # of items that can be completed are those with item.status!=null
-        const numItemsToComplete = this.items.filter(item => item.status !== null).length;
-        // # of items completed are those with item.isComplete==true
-        const numItemsCompleted = this.items.filter(item => item.isComplete).length;
-
-        if (numItemsToComplete === 0) {
-            return;
-        }
-
-        this.percentItemsComplete = Math.round(numItemsCompleted / numItemsToComplete * 100);
-
-    }
-}
-
-// src/cc_controller.js
-/**
- * cc_controller.js
- */
-
-
-//import { cc_CanvasModules } from './model/cc_CanvasModules.js'; 
-
-
-
-
-
-const SUPPORTED_VIEWS = [ 'lj'];
-
-class cc_CanvasModules {
-	constructor( ){
-	    // get all the div with ids starting with context_module_ within div#context_modules
-	    this.moduleElements = document.querySelectorAll( 'div#context_modules > div[id^=context_module_]');
-    
-    
-	    // loop thru each moduleElement and construct a cc_Module object
-	    this.modules = Array.from( this.moduleElements).map( ( moduleElement) => {
-			return new cc_Module( moduleElement);
-	    });
-
-		// set currentCollection to the default (if there is one)
-		if ( this.modules.length>0) {
-			this.currentCollection = this.modules[0].currentCollection;
+			// add the event listener
+			card.addEventListener('click', function (event) {
+				let link = this.querySelector(".cc-card-link");
+				if (link !== null) {
+					link.click();
+				}
+			});
 		}
-//	    this.currentCollection = DEFAULT_ACTIVE_COLLECTION;
-    
-	    // simple dump
-	    console.log(this.modules);
+	}
+
+}
+
+// src/Collections/CollectionsViewFactory.js
+/**
+ * CollectionsViewFactory.js
+ * - Factory class for creating different views for collections
+ */
+
+
+
+
+
+
+const VIEWS = {
+	CardsView,
+	TableView,
+	CollectionOnlyView,
+	GriffithCardsView
+}
+
+class CollectionsViewFactory {
+
+	/**
+	 * Generate the right type of collections view object
+	 * @param {String} viewType 
+	 * @param {CollectionsModel} model 
+	 * @param {CollectionsController} controller 
+	 */
+	static createView( viewType, model, controller) {
+
+		// add "View" to end of viewType iff not already there
+		if (viewType.endsWith(-4) !== 'View') {
+			viewType += 'View';
+		}
+
+		const viewCreator = VIEWS[viewType];
+		const view = viewCreator ? new viewCreator(model, controller) : null;
+
+		return view;
 	}
 }
 
-
+// src/Collections/CollectionsView.js
 /**
- * @descr Basic controller, creates the model and generates the view
+ * cc_CollectionsView.js 
+ * Has to make three changes to the Canvas modules page
+ * 1. show the list of collections
+ * 2. show the alternate represenction of collection's modules
+ * 3. modify the Canvas modules display
+ * 
+ * Each of 2 & 3 (maybe 1 later) can vary depending on the model
+ * - 2 will change if a different representation (cards or table) is selected
+ * - 2 will also change for staff, who may see additional information
+ * - 3 will change if editMode
+ * 
+ * The collections view current added to a div#cc-canvas-collections that is inserted before
+ * the Canvas module list. Intent is that
+ * - this view inserts the collections view into the DOM (initially hidden)
+ * - other views then modify that div appropriately
+ * - when finished this view makes the DOM visible
+ *  
  */
+
+
+
+
+
+
+
+class CollectionsView extends cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		super( model, controller );
+
+		this.navView = new NavView( model, controller );
+//		this.representationView = new CardsView( model, controller );
+
+		const currentCollectionView = model.getCurrentCollectionRepresentation();
+
+		// creating representation object for each of the collections
+		const collections = model.getCollections();
+		// loop thru each collection
+		this.representations = {};
+		for (let collection of collections) {
+			// create a representation view for each collection
+			const representation = model.getCollectionRepresentation(collection);
+			this.representations[collection] = CollectionsViewFactory.createView(representation, model, controller);
+			// add to the collectionViews array
+		}
+
+
+		/*this.representationView = CollectionsViewFactory.createView( 
+			currentCollectionView, model, controller 
+			); */
+	}
+
+	/**
+	 * @descr Modify the canvas page to show the cc title, switch, and drop arrow.
+	 * Set up the click handlers for the switch and drop arrow.
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- cc_CollectionsView.display()');
+
+		// create an empty cc-collections-div, ready for other views to modify
+		this.removeCanvasCollectionsDiv();
+		this.addCanvasCollectionsDiv();
+
+		// TODO call other views to display the collections
+		this.navView.display();
+
+
+		// display the current collection using its representation
+		this.representations[this.model.getCurrentCollection()].display();
+	//	this.representationView.display();
+	}
+
+	/**
+	 * @descr Add the cc configuration bundle to the canvas page.
+	 */
+
+	addCanvasCollectionsDiv() {
+        let ccCanvasCollections = document.createElement('div');
+        ccCanvasCollections.id = 'cc-canvas-collections';
+		// set to hidden
+		//ccCanvasCollections.style.display = 'none';
+
+		let canvasContent = document.getElementById('context_modules');
+		const result = canvasContent.insertBefore(ccCanvasCollections, canvasContent.firstChild);
+	}
+
+	/**
+	 * @descr remove div#cc-canvas-collections from the canvas page, if exists
+	 */
+
+	removeCanvasCollectionsDiv() {
+		let canvasCollections = document.getElementById('cc-canvas-collections');
+		if (canvasCollections) {
+			canvasCollections.parentNode.removeChild(canvasCollections);
+		}
+	}
+}
+
+// src/Collections/CollectionsController.js
+/**
+ * @class cc_CollectionsController
+ * @classdesc Controller for generating the collections view, including
+ * - navigation between and display of collection
+ * - alternate representation of the modules
+ * - modification/replacement of the Canvas modules information
+ */
+
+
+
+
+
+class cc_CollectionsController {
+
+	/**
+	 * @descr Initialise the controller
+	 */
+	constructor(controller) {
+		DEBUG && console.log('-------------- cc_CollectionsController.constructor()');
+
+		this.parentController = controller;
+		this.model = new CollectionsModel(this);
+		this.view = new CollectionsView(this.model, this);
+
+		this.view.display();
+	}
+
+	/**
+	 * @descr Handle a click on the collection navigration bar
+	 * 
+	 * @param {Event} event - the click event
+	 */
+	 navigateCollections(event) {
+		DEBUG && console.log('-------------- cc_CollectionsController.navigateCollections()');
+
+		DEBUG && console.log(event);
+		DEBUG && console.log(`currentCollection: ${this.model.getCurrentCollection()}`);
+		DEBUG && console.log(`event innerText ${event.target.innerText}`);
+
+		let newCollection = event.target.innerText;
+		// trim newCollection
+		newCollection = newCollection.trim();
+		
+		// clicked on the current collection do nothing
+		if (newCollection === this.model.getCurrentCollection()) {
+			return;
+		} 
+		// change to the new collection
+		this.model.setCurrentCollection(newCollection);
+		this.view.display();
+	 }
+
+
+}
+
+// src/cc_Controller.js
+/**
+ * @class cc_Controller
+ * @classdesc Contoller factory for canvas collections. Draws on document.url and any cc configuration to 
+ * create and call the appropriate controller(s). Possibilities include
+ * - showConfiguration 
+ *   - update Modules page to show configuration interface
+ *   - only in staff view
+ * - showCollections 
+ *   - update Modules page to show the collections and their representations
+ *   - in both staff and student view
+ */
+
+
+
+
+
+const DEBUG=true;
 
 class cc_Controller {
 
+	/**
+	 * @descr Set up the controller factory and do its thing 
+	 * 1) identify the document url; 
+	 * 2) request the cc_config.json (async, through a few callbacks)
+	 * 3) Get all the module information for the course
+	 * 4) execute the appropriate controller based on config
+	 */
 	constructor() {
+		DEBUG && console.log('-------------- cc_Controller.constructor()');
     
-	    // check queryString for cc-collections
-	    // for some reason .search doesn't work on canvas
-	    // TODO this is currently not working
-	    const location = window.location.href;
-	    // extract from location everything after ?
+		// Use document location to set various values controlling operation
+		this.setContext();
+
+		DEBUG && console.log(`cc_Controller: location = ${location}`);
+		DEBUG && console.log(`cc_Controller: courseId = ${this.courseId}`);
+		DEBUG && console.log(`cc_Controller: modulesPage = ${this.modulesPage}`);
+		DEBUG && console.log(`cc_Controller: homeModulesPage = ${this.homeModulesPage}`);
+		DEBUG && console.log(`cc_Controller: editMode = ${this.editMode}`);
+		DEBUG && console.log(`cc_Controller: ccOn = ${this.ccOn}`);
 	
-	    // define options
-	    this.OPTIONS = DEFAULT_VIEW_OPTIONS;
+		// TODO: extract any additional parameters in the query string
+        // this.checkQueryString();
 
-        this.checkQueryString();
+		this.configFileDetails = null;
+		this.cc_configuration = null;
 
-	
-	    // extract all module information
-	    this.modules = new cc_CanvasModules();
-	    // update the page to add Card Information
+		// if cc should run, try to get the config
+        if (this.modulesPage || this.homeModulesPage) {
+			// proposed "command" change
+			
 
-        // factory analogy kludge
-        if (this.OPTIONS.collectionView==="lj") {
-            this.view = new cc_LearningJourneyView(this.modules,this.OPTIONS);
-        } else {
-	        this.view = new cc_CanvasModulesView(this.modules,this.collectionClick,this.OPTIONS);
-        }
-	    this.view.render();
+			//-- original get data chain commencing
+			this.setCsrfToken();
+			DEBUG && console.log(`cc_Controller: csrf = ${this.csrf}`);
+
+			this.requestConfigFileId(); 
+		} 
+	}
+
+	/**
+	 * @descr Request the file id for the cc_config.json file
+	 * - If successful then request the file contents
+	 * - if not, call execute with no config
+	 */
+	requestConfigFileId() { 
+
+		let callUrl = `/api/v1/courses/${this.courseId}/files?` + new URLSearchParams(
+			{'search_term': 'cc_config.json'});
+
+		DEBUG && console.log(`cc_Controller: requestConfig: callUrl = ${callUrl}`);
+
+		fetch(callUrl, { 
+			method: 'GET', credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRF-Token": this.csrfToken,
+            }
+        }) 
+        .then(this.status) 
+        .then((response) => { 
+            return response.json(); 
+        }) 
+        .then((json) => {
+			DEBUG && console.log(`cc_Controller: requestConfig: json = ${JSON.stringify(json)}`);
+
+			if (json.length===0) {
+				DEBUG && console.log(`cc_Controller: requestConfig: no config file found`);
+			} else if (json.length===1) {
+				this.configFileDetails = json[0];
+			    this.requestConfigFileContent();
+			} else { 
+				DEBUG && console.log(`cc_Controller: requestConfig: more than one (${json.length}) config file found`);
+			} 
+        })			
+		.catch((error) => {
+			console.log(`cc_Controller: requestConfig: error = `);
+			console.log(error);
+		}, false );
+	}
+
+	/**
+	 * @descr Request the config file, called only after requestConfigFileId is successful in
+	 * setting this.configDetails to json (e.g. below). Request the content of this file, if the
+	 * file itself is json
+	 * {
+	 *   "id":210137, "uuid":"wyuY3tKLdqWIR2tMbhqsteIjime1vVNhIUrFnPDS",
+	 *   "folder_id":177, "display_name":"cc_config.json", "filename":"cc_config.json",
+	 *   "upload_status":"success","content-type":"application/json",
+	 *   "url":"https://lms.griffith.edu.au/files/210137/download?download_frd=1","size":684,
+	 *   "created_at":"2022-03-05T03:27:56Z","updated_at":"2022-03-05T03:27:56Z",
+	 *   "unlock_at":null,"locked":false,"hidden":false,"lock_at":null,"hidden_for_user":false,
+	 *   "thumbnail_url":null,"modified_at":"2022-03-05T03:27:56Z","mime_class":"file",
+	 *   "media_entry_id":null,"locked_for_user":false} 
+	 */
+
+	requestConfigFileContent() {
+		DEBUG && console.log(`cc_Controller: requestConfigFileContent: for ${this.configFileDetails.id}`);
+
+		if (this.configFileDetails['content-type']!=='application/json') {
+			DEBUG && console.log(`cc_Controller: requestConfigFile: not json`);
+			return;
+		}
+
+		//-- get the file contents
+		let callUrl = this.configFileDetails.url;
+
+		DEBUG && console.log(
+			`cc_Controller: requestConfigFileContent: callUrl = ${callUrl}`);
+
+		fetch(callUrl, { 
+			method: 'GET', 
+		} )
+        .then(this.status) 
+        .then((response) => { 
+            return response.json(); 
+        }) 
+        .then((json) => {
+			DEBUG && console.log(`cc_Controller: requestConfigFileContent: json = ${JSON.stringify(json)}`);
+
+			this.cc_configuration = json;
+			this.ccOn = this.cc_configuration.STATUS==="on";
+			this.requestModuleInformation();
+        })			
+		.catch((error) => {
+			console.log(`cc_Controller: requestConfigFileContent: error = ${error}`);
+		}, false );
+
+	}
+
+	/**
+	 * @descr Generate API request for all information of course's modules
+	 */
+	requestModuleInformation() {
+		DEBUG && console.log(`cc_Controller: requestModuleInformation: for ${this.courseId}`);
+
+		let callUrl = `/api/v1/courses/${this.courseId}/modules?include=items&per_page=500`;
+
+		DEBUG && console.log(`cc_Controller: requestModuleInformation: callUrl = ${callUrl}`);
+
+		fetch(callUrl, { 
+			method: 'GET', credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRF-Token": this.csrfToken,
+            }
+        }) 
+        .then(this.status) 
+        .then((response) => { 
+            return response.json(); 
+        }) 
+        .then((json) => {
+			DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(json)}`);
+
+			this.moduleDetails = json;
+			// TODO call https://canvas.instructure.com/doc/api/modules.html#method.context_module_items_api.index
+			// the list module items API for each module
+			this.execute();
+        })			
+		.catch((error) => {
+			console.log(`cc_Controller: requestModuleInformation: error = `);
+			console.log(error);
+		}, false );
+
+	}
+
+	/**
+	 * @descr Figure out which controller(s) need to be created and run, based on URL and config
+	 * TODO: this should only be called as a result of the API returning the JSON (or failing to do so)
+	 */
+
+	execute() {
+		// do some final checks to make sure we don't run when not required
+        if (!this.modulesPage && !this.homeModulesPage) {
+			DEBUG && console.log('-------------- cc_Controller.execute() ERROR SHOULDN"T BE RUNNING');
+			return;
+		}
+
+		DEBUG && console.log('-------------- cc_Controller.execute()');
+		console.log(this.cc_configuration);
+
+		//-- figure out what to do
+
+		if ( this.editMode ) {
+			// show the configShowSwitch if it's there
+			const configShowSwitch = document.getElementById('configShowSwitch');
+			if (configShowSwitch) {
+				configShowSwitch.style.display = 'inline-block';
+			}
+
+			if (this.cc_configuration===null) {
+				// no configuration - show the cc interface with option to create one
+				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - no config');
+				this.showConfiguration();
+			} else {
+				// configuration - show the cc interface 
+				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - config');
+				// now based on the configuration show the rest of the cc interface
+				this.showConfiguration();
+				// only show collections if cc is turned on
+				if (this.ccOn) {
+					this.showCollections();
+				}
+
+			}
+		} else {
+			// students only see stuff if there is a config
+			if (this.cc_configuration!==null) {
+				DEBUG && console.log('-------------- cc_Controller.execute() Students Mode - config');
+				if (this.ccOn) {
+					this.showCollections();
+				}
+			}
+		}
+	}
+
+	/**
+	 * @descr Do the reverse of execute, depending on configuration remove the cc interface
+	 * Currently, this is just removing div#cc-canvas-collections
+	 */
+	turnOff() {
+		let cc_canvas_collection = document.getElementById('cc-canvas-collections');
+		if (cc_canvas_collection) {
+			cc_canvas_collection.parentNode.removeChild(cc_canvas_collection);
+		}
+
+		// remove all the div.cc-module-config 
+		let moduleConfigs = document.querySelectorAll('div.cc-module-config');
+		moduleConfigs.forEach( (moduleConfig) => {
+			moduleConfig.remove();
+		});
+
+		// remove div#cc-config-wrapper
+		let cc_config_wrapper = document.getElementById('cc-config-wrapper');
+		if (cc_config_wrapper) {
+			cc_config_wrapper.remove();
+			// put the border-bottom back on div.cc-switch-container
+			let cc_switch_container = document.querySelector('div.cc-switch-container');
+			if (cc_switch_container) {
+				cc_switch_container.style.borderBottom = '1px solid #c7cdd1';
+			}
+		}
+		const configShowSwitch = document.getElementById('configShowSwitch');
+		// set configShowSwitch to display:none
+		if (configShowSwitch) {
+			configShowSwitch.style.display = 'none';
+		}
+	}
+
+	/**
+	 * @descr Show the cc configuration interface at the top of the page
+	 */
+	showConfiguration() {
+		DEBUG && console.log('-------------- cc_Controller.showConfiguration()');
+		this.configurationController = new cc_ConfigurationController(this);
+	}
+
+	/**
+	 * @descr Insert the collections view before (or perhaps eventually instead) of the Canvas modules view
+	 */
+	showCollections() {
+		DEBUG && console.log('-------------- cc_Controller.showCollectionsStudentMode()');
+		this.collectionsController = new cc_CollectionsController(this);
 	}
 
     /**
      * @descr Check queryString and set any options
      */
     checkQueryString() {
-        // if we're not griffith sites, do some default stuff
-        if (!window.location.hostname.match(/griffith\.edu\.au/)) {
-		    this.OPTIONS.collectionView='all';
-		    this.OPTIONS.navBar = false;
-		    this.OPTIONS.updateTitle = false;
-	    }
+        /*let queryString = window.location.search;
 
-        let queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString); */
 
-        const urlParams = new URLSearchParams(queryString);
-
-        // set the view
-        const viewOption = urlParams.get('cc-view');
+        // OLD check for cc-view - this will be in JSON from now on
+        /*const viewOption = urlParams.get('cc-view');
 
         if (SUPPORTED_VIEWS.includes(viewOption)) {
 	        // Learning Journey view is only set iff
@@ -2403,201 +3603,144 @@ class cc_Controller {
             } else {
                 this.OPTIONS.collectionView = viewOption;
             }
-        }
-
-
+        } */
     }
 
-	
+
 	/**
-	 * @desc Handle any clicks on the collections nav bar
-	 * @param collectionName string - name of the collection that was clicked on
+	 * @descr using the location of the current page to set various values
+	 * - modulesPage - true iff the current page is a Canvas modules page
+	 * - homeModulesPage - true iff the current page is a Canvas course home page with modules 
+	 * - courseId - the canvas course id
+	 * - editMode - true iff not in student view
 	 */
-	
-	collectionClick( collectionName, view){
-	    // change current collection
-	    view.currentCollection = collectionName;
-	    // remove div#guCardInterface
-	    view.removeCanvasCollectionsView();
-	    view.render();
+	setContext() {
+	    const location = window.location.href;
+
+		// replace # at end of string
+		this.documentUrl = window.location.href;
+		this.documentUrl = this.documentUrl.replace(/#$/, '');
+
+		// courseId
+		// Following adapted from https://github.com/msdlt/canvas-where-am-I	
+		let courseId = ENV.COURSE_ID || ENV.course_id;
+		if (!courseId) {
+			let urlPartIncludingCourseId = this.documentUrl.split("courses/")[1];
+			if (urlPartIncludingCourseId) {
+				courseId = urlPartIncludingCourseId.split("/")[0];
+			}
+		}
+		this.courseId = courseId;
+
+		// modulesPage true if location ends with courses/${courseId}/modules
+		let regEx = new RegExp(`courses/${courseId}/modules(#*|#[^/]+)$`);
+		this.modulesPage = regEx.test(this.documentUrl);
+
+		// homeModulesPage true iff
+		// - location ends with courses/${courseId}
+		// - div#context_modules is present
+		regEx = new RegExp(`courses/${courseId}$`);
+		this.homeModulesPage = regEx.test(this.documentUrl) && (document.getElementById('context_modules')!==null);
+
+		// editMode true iff a#easy_student_view exists
+		this.editMode = (document.getElementById('easy_student_view')!==null);
+
+		// won't be on until the config file is found
+		this.ccOn = false;
+
 	}
+
+
+	/**
+	 * Following adapted from https://github.com/msdlt/canvas-where-am-I
+	 * Function which returns csrf_token from cookie see: 
+	 * https://community.canvaslms.com/thread/22500-mobile-javascript-development
+	 */
+	setCsrfToken() {
+		let csrfRegex = new RegExp('^_csrf_token=(.*)$');
+		let cookies = document.cookie.split(';');
+		for (let i = 0; i < cookies.length; i++) {
+			let cookie = cookies[i].trim();
+			let match = csrfRegex.exec(cookie);
+			if (match) {
+				this.csrf = decodeURIComponent(match[1]);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * @descr Update the cc_config.json file in the Canvas Files area
+	 * configFileDetails has details about the configuration file
+	 *   .id .filename .content-type .folder_id 
+	 * - File Uploads https://canvas.instructure.com/doc/api/file.file_uploads.html
+	 */
+	saveConfig() {
+		return;
+		DEBUG && console.log('-------------- cc_Controller.saveConfig()');
+		console.log(this.configFileDetails);
+
+		// generate JSON string from config object
+		const configString = JSON.stringify(this.cc_configuration);
+		// get num bytes in config string
+		const numBytes = configString.length;
+
+		// POST
+		// /api/v1/courses/:course_id/files
+		let callUrl = `/api/v1/courses/${this.courseId}/files`;
+
+		fetch(callUrl, { 
+			method: 'POST', 
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRF-Token": this.csrfToken
+            },
+            body: JSON.stringify({				
+				'name': this.configFileDetails.filename,
+				'parent_folder_id': this.configFileDetails.folder_id,
+				'content_type': this.configFileDetails.content_type,
+				'on_duplicate': 'overwrite',
+				'size': numBytes
+			})
+		})
+        .then(this.status) 
+        .then((response) => { 
+            return response.json(); 
+        }) 
+        .then((json) => {
+			DEBUG && console.log(`cc_Controller: save config: json = ${JSON.stringify(json)}`);
+			this.saveConfigFile(json);
+        })			
+		.catch((error) => {
+			console.log(`cc_Controller: saveConfig: error = ${error}`);
+		}, false );
+
+
+		// Response will incude various information that needs to be processed
+	}
+
+	/**
+	 * Do the second step in the Canvas file upload process, upload the file data
+	 * - there is a third step
+	 * @param {Json} response 
+	 */
+/*	saveConfigFile(response) {
+		DEBUG && console.log('-------------- cc_Controller.saveConfigFile()');
+		console.log(response);
+
+
+		// do the third step
+	}
+*/	
 }
 
 // src/index.js
-const COURSE_ID=ENV.COURSE_ID;
-//const CSS_URL='<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/cards.css" />';
-//const TAILWIND_CSS='<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">';
-const CANVAS_COLLECTIONS_CSS='<link href="https://djon.es/gu/canvas/canvas-collections.css" rel="stylesheet">';
-const CI_CSS=`
-<style type="text/css">
-
-.ael-note:before {
-    position: absolute;
-    top: 0;
-    margin-left: -2.074rem;
-    margin-right: 1.728rem;
-    width: 24px;
-    content: "";
-    background: #ffa423;
-    padding: 0.579rem;
-    padding-top: 1.44rem;
-    height: calc(100% - 0.579rem - 1.44rem); 
-}
-
-.ael-note {
-    position: relative;
-  padding: 0.833rem;
-  margin: 1rem auto;
-  background: #fff6e9;
-  max-width: 90ch;
-  overflow: initial !important;
-}
-
-.ael-note div  {
-    padding-left: 2em !important;
-}
-
-.ael-note > p {
-    margin: 1rem;
-}
-
-.ael-note h5 {
-    margin: 1rem;
-    color: #ffa423;
-    font-weight: 700;    
-}
-
-.ael-table {
-    margin: 2em 0 ;
-    font-size: 0.9em ;
-    font-family: sans-serif ;
-    min-width: 400px ;
-    box-shadow: 0 0 1.5em rgba(0, 0, 0, 0.15) ; 
-}
-
-.ael-table thead tr {
-    background-color: #009879;
-    color: #ffffff;
-    text-align: left;
-} 
-
-.ael-table th, .ael-table td {
-    padding: 12px 15px !important;
-    vertical-align: top;
-}
-
-.ael-table tbody tr {
-    border: thin solid #cccccc;
-}
-
-.ael-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-}
-
-.ael-table caption {
-    display: none;
-}
-
-table {
-    border: solid 1px #ff0000;
-    border-collapse: collapse;
-    margin: 20px;
-  }
-  
-  .test table {
-    border: none;
-    text-align: center;
-  }
-  
-  .ael-reading {
-    position: relative;
-    padding: 0.25em 2em 0.5em;
-    margin: 1rem 2rem;
-    max-width: 90ch;
-    overflow: initial !important;
-    background: #e6eff5;
-  }
-  
-  .ael-reading:before {
-    position: absolute; 
-    top: 0; 
-    margin-top: 10px;
-    margin-left: -4rem;
-    margin-right: 1rem;
-    width: 2rem;
-    content: "";
-    background: #e6eff5;
-    background-image: url("https://app.secure.griffith.edu.au/gois/ultra/icons-regular/reading.svg");
-    background-repeat: no-repeat;
-    background-position: center;
-    padding: 1rem;
-/*    height: calc(100% - 0.579rem - 1.44rem); */
-
-/*      margin-left: -2rem;
-    min-height: 20px;
-    background-size: 40px 40px;
-    background-repeat: no-repeat;*/
-  }
+/**
+ * Entry point for Canvas Collection
+ * - instatiate and use the cc_Controller
+ */
 
 
-</style>
-`;
 
-//    background-image: url("https://app.secure.griffith.edu.au/gois/ultra/icons-regular/activity.svg");
-
-function canvasCollections() {
-
-    // add css as first child of div.show-content
-//    showContent = document.querySelector('.show-content');
- //   showContent.insertAdjacentHTML('afterbegin', CI_CSS);
-    document.head.insertAdjacentHTML( 'beforeend', CI_CSS );
-
-    // Wait for everything to load
-    window.addEventListener('load', function(){
-        // getting very kludgy here, haven't got a good solution...yet #14
-        // - module content is dynamically loaded, wait (dumbly) for it to finish
-        this.setTimeout(
-            () => {
-                let controller = new cc_Controller();
-                // scroll to top of canvas collections
-                /*let collections = document.getElementsByClassName('cc-canvas-collections');
-                let collections = document.getElementsByClassName('content');
-                if ( collections.length>0 ) {
-                    collections[0].scrollIntoView();
-                }*/
-                // scroll to top of canvas content div#content, but only if current
-                // url does not include [0-9]/modules#[0-9]
-                if ( !/[0-9]\/modules#[0-9]/.test(window.location.href) ) {
-                    let content = document.getElementById('content');
-                    if ( content ) {
-                        content.scrollIntoView();
-                    }
-                } else {
-                    // scroll the module into view
-                    // get id for module all numbers from current url after #
-                    let moduleId = window.location.href.match(/[0-9]\/modules#([0-9]+)/)[1];
-                    let module = document.getElementById(moduleId);
-                    module.scrollIntoView(true);
-                }
-            }, 2000
-        );
-    }, false);
-}
-
-canvasCollections();
-$(document).ready( function() {
-
-    let checkExist = setInterval(function() {
-        if ($('.tooltip').length) {
-           console.log("TOOLTIP Exists!");
-           clearInterval(checkExist);
-            $('.tooltip').tooltipster({
-                    interactive: true,
-                    contentAsHtml: true,
-                    theme: 'tooltipster-shadow',
-                    position: 'bottom'
-                }
-            );
-        }
-     }, 500);
-});
+let controller = new cc_Controller();

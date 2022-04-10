@@ -16,23 +16,27 @@ To address two known limitiations of [the vanilla Canvas Modules page](https://c
 
 These limitations negatively impact students' ability to understand and navigate Canvas Modules.
 
-The [related work section below](#related-work) provides links to related work by others in the Canvas community.
+Two address two known limitiations of [the vanilla Canvas Modules page](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-are-Modules/ta-p/6):
+1.  [no way to group modules](https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-group-modules-together/m-p/179757/highlight/true#M84952); and,
+2.  [a very linear, less than engaging presentation](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/).
+
+The combination of these limitations leads to various issues the negatively impact students' ability to understand and navigate Canvas Modules.
 
 ### No way to group modules
 
-All Canvas modules are shown on the one page. There is no way to group them for different purposes or to break up the long list of modules. The need to group modules has been identified multiple times since 2015 in Canvas community forums.  Available workarounds all [have their limitations](https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-group-modules-together/m-p/179757/highlight/true#M84952). Instructure ["don't have plans to support nested modules soon"](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383/highlight/true#M50428). 
+For a course with large numbers of modules or which uses modules for very different purposes the inability to group modules is a problem. Available workarounds all [have their limitations](https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-group-modules-together/m-p/179757/highlight/true#M84952) and Instructure ["don't have plans to support nested modules soon"](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383/highlight/true#M50428). Even though the need for this has been identified multiple times since 2015 by numerous Canvas users.
 
 ### Less than engaging presentation
 
-All Canvas modules are shown sequentially one after the other using a nicely designed textual representation.Problems with this include:
+The Canvas modules page shows each module and their items in sequence one one page. Problems with this include:
 
 - scroll of death for courses [with "many modules and module items"](https://community.canvaslms.com/t5/Idea-Conversations/Modules-Display-as-Collapsed-by-Default/idi-p/370135); 
 - a less engaging presentation that has not kept up with contemporary web design; and,
 - an assumption that one style of representation will be sufficient for all purposes.
 
-On the broader web [card-based User Interfaces](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/) are now common place and seen as a more visually engaging representation for related items. Card-based user interfacesl have been found useful in learning and teaching. Used by [hundreds of courses across the world on Blackboard](https://djon.es/blog/2021/03/12/reflecting-on-the-spread-of-the-card-interface-for-blackboard-learn/) and [at least a couple of institutions](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/) have sought to add this approach to Canvas.
+For example, [Card-Based User Interfaces](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/) are now common place and more visually engaging. Such interfaces have been used by [hundreds of courses across the world on Blackboard](https://djon.es/blog/2021/03/12/reflecting-on-the-spread-of-the-card-interface-for-blackboard-learn/) and [at least a couple of institutions](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/) have sought to add this approach to Canvas.
 
-While card-based user interfaces may be visually appealing, they may not be applicable to every purpose. There maybe situations where tabular or kanban representations may be more appropriate.
+While card-based user interfaces may be visually appealing, they may not be applicable to every purpose.
 
 ## What?
 
