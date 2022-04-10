@@ -10,6 +10,8 @@
 
 import { cc_View } from '../cc_View.js';
 
+const CC_VERSION="0.7.1";
+
 export default class cc_ConfigurationView extends cc_View {
 
 	/**
@@ -348,16 +350,25 @@ export default class cc_ConfigurationView extends cc_View {
 				justify-content: space-around;
 			}
 
+			.cc-version {
+				font-size: 50%;
+				font-weight: normal;
+			}
+
 			</style>
 
 			<div id="cc-config">
 			 	<div class="cc-box-header">
-		  		  <p>Configure Canvas Collections</p>
+		  		  <p>Configure Canvas Collections
+						<span class="cc-version">(v${CC_VERSION})</span>
+						</p>
 				</div>
 			    <div class="cc-box-body">
 				  <div id="cc-config-body">
 				    <div id="cc-config-existing-collections">
-						<p>Existing collections</p>
+						<p>
+						Existing collections 
+						</p>
 					</div>
 					<div id="cc-config-new-collection">
 						<p>Add a new collection</p>
@@ -684,7 +695,6 @@ input:checked + .cc-slider:before {
 		const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
-		    <!-- button id="cc-file-test">File Test</button -->
 		    <i id="configShowSwitch" class="icon-mini-arrow-right"></i> <small>Canvas Collections</small>
 			<a target="_blank"
 			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">

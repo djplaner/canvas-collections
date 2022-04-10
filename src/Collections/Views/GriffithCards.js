@@ -8,6 +8,8 @@ import { cc_View } from '../../cc_View.js';
 
 import { UniversityDateCalendar } from '../../university-date-calendar.js';
 
+import { CircularProgressBar } from "../../../node_modules/circular-progress-bar/public/circular-progress-bar.min.js";
+
 const DEFAULT_DATE_LABEL="Commencing";
 
 export default class GriffithCardsView extends cc_View {
@@ -211,6 +213,7 @@ export default class GriffithCardsView extends cc_View {
 			color: black;
 			background-color: #fff9c2;
 			font-size: 0.75rem;
+			padding-top: 0.15rem;
 		}
 
 		.cc-card-date-time {
@@ -246,6 +249,10 @@ export default class GriffithCardsView extends cc_View {
 			font-size: 0.9rem;
 			font-weight: bold;
 			line-height: 1rem;
+		}
+
+		.cc-progress {
+			float: right;
 		}
 		</style>`;
 
@@ -335,6 +342,7 @@ export default class GriffithCardsView extends cc_View {
 	 ${EDIT_ITEM}
 	 ${DATE} 
 	 ${published}
+	 <div class="cc-progress"></div>
       </div>
     </div>
     `;
@@ -349,7 +357,7 @@ export default class GriffithCardsView extends cc_View {
 		const progress = this.getCardProgressElement(module);
 		if (progress) {
 			// find div.cc_progress in wrapper
-			const progressDiv = wrapper.querySelector('.cc_progress');
+			const progressDiv = wrapper.querySelector('.cc-progress');
 			if (progressDiv) {
 				//progressDiv.insertAdjacentElement('beforeend', progress);
 				progress.appendTo(progressDiv);
@@ -374,6 +382,7 @@ export default class GriffithCardsView extends cc_View {
 
 			label:
 			week:  
+			day:
 			month:
 			date:
 			endDate: { repeat all of first date, except label}
@@ -389,6 +398,7 @@ export default class GriffithCardsView extends cc_View {
 		firstDate.DATE_LABEL = module.date.label || DEFAULT_DATE_LABEL;
 
 		firstDate.WEEK = module.date.week || "";
+		firstDate.DAY = module.date.day || ""; // is this the right default
 		// Week needs more work to add the the day and string "Week"
 		// Also it should be HTML
 
@@ -401,7 +411,14 @@ export default class GriffithCardsView extends cc_View {
 		// on university trimester
 		if (firstDate.WEEK!=="") {
 			// TODO should check for a day, if we wish to get the day
-			const actualDate = this.calendar.getDate(firstDate.WEEK);
+			let actualDate = {};
+			if (firstDate.DAY==="") {
+				// no special day specified, just get the start of the week
+				actualDate = this.calendar.getDate(firstDate.WEEK);
+			} else {
+				// need go get the date for a particular day
+				actualDate = this.calendar.getDate(firstDate.WEEK, false, firstDate.DAY);	
+			}
 			// actualDate { date/month/year }
 			firstDate.DATE = actualDate.date;
 			firstDate.MONTH = actualDate.month;
@@ -423,7 +440,7 @@ export default class GriffithCardsView extends cc_View {
              ${firstDate.DATE_LABEL}
           </div>
 		  <div class="cc-card-date-week">
-          	Week ${firstDate.WEEK}
+          	${firstDate.DAY} Week ${firstDate.WEEK}
 		  </div>
 		  <div class="cc-card-date-time">
           ${firstDate.TIME}

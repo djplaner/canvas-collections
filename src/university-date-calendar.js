@@ -599,7 +599,7 @@ export default class UniversityDateCalendar {
     };
 
     if (dayOfWeek!=="monday") {
-      date.day = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.substring(1, 2);
+      date.day = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.substring(1, 3);
       if (dayOfWeek in dayToNum) {
         d.setDate(d.getDate() + dayToNum[dayOfWeek.toLowerCase()]);
       }
