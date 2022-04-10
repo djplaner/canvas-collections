@@ -2389,16 +2389,131 @@ class GriffithCardsView extends cc_View {
 		// create cardCollection div element
 		let cardCollection = document.createElement('div');
 		// set the cardCollection classlist
-		cardCollection.classList.add('flex', 'flex-wrap', '-m-3');
-		cardCollection.id = "guCardInterface";
+		//cardCollection.classList.add('flex', 'flex-wrap', '-m-3');
+		cardCollection.id = "cc-card-interface";
 
 		const cardStyles = `
 		<style>
-		#guCardInterface { 
-			margin-top: 0.5em;
+		#cc-card-interface { 
+			margin-top: 0.5em !important;
+			flex-wrap: wrap;
+			display: flex;
+			margin: -0.75rem
 		}
+
+		.cc-clickable-card {
+			padding: 0.75rem;
+			flex-direction: column;
+			display: flex;
+			width: 33.33%;
+		}
+
+		@media (max-width:640px) {
+			.cc-clickable-card {
+				width: 50%
+			}
+		}
+
+		@media (max-width:480px) {
+			.cc-clickable-card {
+				width:100%;
+			}
+		}
+
+		.cc-clickable-card:hover {
+			cursor: pointer;
+			opacity: 0.8;
+		}
+
+		.cc-card {
+			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1), 0 4px 6px -4px rgb(0 0 0/ 0.1);
+			background-color: #fff;
+/*			border: 1px solid #000; */
+			border-radius: 0.25rem;
+			overflow: hidden;
+			flex-direction: column;
+			flex: 1 1 0%;
+			display: flex;
+			position:relative;
+		}
+
+		.cc-card:hover{
+			background-color: #f5f5f5;
+			box-shadow: none;
+		}
+
+		.cc-card-image {
+			background-repeat: no-repeat;
+			background-size: cover;
+			/* background-size: contain; */
+			height: 10rem;
+			border-radius: 0.25rem 0.25rem 0 0;
+		}
+
+		.cc-card-content {
+			padding: 0.5rem;
+			flex: 1 1 0%;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.cc-card-content:hover {
+			cursor: pointer;
+		}
+
+		.cc-card-description {
+			font-size: 0.75rem;
+		}
+
 	    .cc-card-description a {
 			text-decoration: underline;
+			flex: 1 1 0%;
+			font-size: 0.8em;
+			margin-bottom: 1rem;
+		}
+
+		.cc-progress {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			padding: 0.5em;
+		}
+
+		.cc-card-title {
+			font-size: 1rem;
+			font-weight: bold;
+		}
+
+		.cc-card-label {
+			font-size: 0.9rem;
+			margin-bottom: 1rem;
+		}
+
+		.cc-card-engage {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			padding: 1rem;
+		}
+
+		.cc-card-engage-button {
+			padding-top: 0.5rem;
+			padding-bottom: 0.5rem;
+			padding-left: 1rem;
+			padding-right: 1rem;
+			color: rgba(30,58,138,1);
+			border-style: solid;
+			border-width: 1px;
+			border-radius: 0.25rem;
+			border-color: rgba(30,58,138,1);
+		}
+
+		.cc-card-engage-button:hover {
+			background-color: rgba(30,58,138,1);
+			color: white;
+			text-decoration: none !important;
+			border: transparent;
+			border-radius: 0.25rem;
 		}
 		</style>`;
 
@@ -2462,21 +2577,20 @@ class GriffithCardsView extends cc_View {
 		}
 
 		const cardHtml = `
-    <div id="cc_module_${module.id}" class="hover:bg-gray-200 hover:shadow-outline bg-white rounded shadow-lg overflow-hidden flex-1 flex flex-col relative">
+    <div id="cc_module_${module.id}" class="cc-card">
       <a href="#${module.id}" class="cardmainlink"></a>
-      <div class="cc_module_image ${imageSize} h-48" style="background-image: url('${imageUrl}'); background-color: rgb(255,255,255)">${IFRAME}
+      <div class="cc-card-image ${imageSize}" style="background-image: url('${imageUrl}')">
+	    ${IFRAME}
       </div>
       ${COMING_SOON}
-      <div class="carddescription p-4 flex-1 flex flex-col hover:cursor-pointer">
-	<div class=cc_card_label">
-	<div class="cc_progress absolute bottom-0 left-0 p-2"></div>
-	    <div class="cc_progress float-right"></div>
-	    <span class="cardLabel">
+      <div class="cc-card-content">
+	<div class=cc-card-label">
+	    <h3 class="cc-card-title">${module.name}</h3>
+	    <span class="cc-card-label">
 		${CARD_LABEL}
 	    </span>
-	    <h3 class="mb-4 text-2xl">${module.name}</h3>
 	</div>
-	<div class="cc-card-description mb-4 flex-1">
+      <div class="cc-card-description">
 	  ${description}
 	</div>
 	<p></p>
@@ -2492,9 +2606,9 @@ class GriffithCardsView extends cc_View {
 
 		// convert cardHtml into DOM element
 		let wrapper = document.createElement('div');
-		wrapper.classList.add(
-			'clickablecard', 'w-full', 'sm:w-1/2', 'md:w-1/3', 'flex', 'flex-col', 'p-3',
-			'hover:cursor-pointer');
+		wrapper.classList.add( 'cc-clickable-card');
+		/*, 'w-full', 'sm:w-1/2', 'md:w-1/3', 'flex', 'flex-col', 'p-3',
+			'hover:cursor-pointer'); */
 		wrapper.innerHTML = cardHtml;
 
 		const progress = this.getCardProgressElement(module);
@@ -2619,10 +2733,13 @@ class GriffithCardsView extends cc_View {
 		const engage = this.generateCardEngage(module);
 		let LINK_ITEM = `
 	    <p>&nbsp;<br /> &nbsp;</p>
-	    <div class="p-4 absolute pin-r pin-b" style="right:0;bottom:0">
-	       <a href="#${module.id}" class="gu-engage"><div class="hover:bg-blue-300 hover:text-white hover:no-underline text-blue-900 font-semibold hover:text-white py-2 px-4 border border-blue-900 hover:border-transparent rounded">
-		${engage}
-	    </div></a>
+	  <!--  <div class="p-4 absolute pin-r pin-b" style="right:0;bottom:0"> -->
+		<div class="cc-card-engage">
+	       <a href="#${module.id}" class="gu-engage">
+<!--		     <div class="hover:bg-blue-300 hover:text-white hover:no-underline text-blue-900 font-semibold hover:text-white py-2 px-4 border border-blue-900 hover:border-transparent rounded"> -->
+			 <div class="cc-card-engage-button">
+			   ${engage}
+	         </div></a>
 	    </div>
 	    `;
 
