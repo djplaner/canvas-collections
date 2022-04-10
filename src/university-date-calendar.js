@@ -27,6 +27,12 @@
 // courseCode_STRM_mode
 // default period is the current main trimester
 const DEFAULT_PERIOD = '3221';
+
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+  "Aug", "Sep", "Oct", "Nov", "Dec", 
+];
+
 /* Griffith Calendar Term dates
  * 2021
  * - OUA Study Periods 1-4
@@ -544,7 +550,12 @@ export default class UniversityDateCalendar {
    * @returns {Object} the correct start/stop dates for the givern period/week
    * null if doesn't exist
    */
-  getWeekDetails(period, week) {
+  getWeekDetails(week, period=this.defaultPeriod) {
+    // if week is a string starting with "Week" remove
+    // the Week and convert number of integer
+    if (typeof week === 'string' && week.startsWith('Week')) {
+      week = parseInt(week.substring(4));
+    }
     // only proceed if the period and week are in the CALENDAR
     if (!(period in CALENDAR)) {
       return null;
@@ -553,6 +564,54 @@ export default class UniversityDateCalendar {
     }
 
     return CALENDAR[period][week];
+  }
+
+  /**
+   * Adaptation of the Card Interface getTermDate
+   * @param {Integer} week - week of university term
+   * @param {Boolean} startWeek - if true, returns the start date of the week
+   * @param {String} dayOfWeek - specify the day to return
+   * @returns {Object} specifying the day, month, year of the week
+   */
+  getDate( week, startWeek=true, dayOfWeek="Monday" ) {
+    let date = {
+      date: "", month: "", week: week, year: 0
+    };
+
+    // lowercase dayOfWeek
+    dayOfWeek = dayOfWeek.toLowerCase();
+
+    // get the details for the given week
+    let weekDetails = this.getWeekDetails(week);
+
+    // if no details for the week, return empty date
+    if (weekDetails === null) {
+      return date;
+    }
+    // weekDetails/date format
+    // 0: { start: "2022-03-07", stop: "2022-03-13" },
+
+    let d = new Date(weekDetails.start);
+
+    const dayToNum = {
+      tuesday: 1, tue: 1, wednesday: 2, wed: 2, thursday: 3, thu: 3,
+      friday: 4, fri: 4, saturday: 5, sat: 5, sunday: 6, sun: 6,
+    };
+
+    if (dayOfWeek!=="monday") {
+      date.day = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.substring(1, 2);
+      if (dayOfWeek in dayToNum) {
+        d.setDate(d.getDate() + dayToNum[dayOfWeek.toLowerCase()]);
+      }
+    }
+
+    date.month = MONTHS[d.getMonth()];
+    date.date = d.getDate();
+    date.year = d.getFullYear();
+
+  return date;
+
+
   }
 
   /**
