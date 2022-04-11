@@ -9,5 +9,5 @@
 // @source       https://github.com/djplaner/canvas-collections.git
 // @license      ISC
 // @homepage     https://github.com
-// @require      https://rawcdn.githack.com/djplaner/canvas-collections/5718e046e6dea120ef47e21ee452a795d5bc435f/release/canvas-collections.min.js
+// @require      https://rawcdn.githack.com/djplaner/canvas-collections/215f296cafd8f54274c07cb74c6935f92b43a50b/release/canvas-collections.min.js
 // ==/UserScript==
