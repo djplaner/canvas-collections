@@ -4,9 +4,16 @@ Improve the functionality of [Canvas LMS](https://www.instructure.com/en-au/canv
 1. Grouping modules into collections; and,
 2. Flexible and enhanced representations.
 
-**Note:** :warning: This project is currently in the early stages of development :construction:. It is known to work as both a userscript and injected into a Canvas instance. Currently, canvas-collections will
-- Add default cards on the module page of any Canvas course.
-- Add specific cards and collections to Canvas courses using hard-coded configuration or basic support for configuration from a JSON file in the course's File area.
+**Note:** :warning: This project is currently in the early stages of development :construction:. It is known to work as both a userscript and injected into a Canvas instance.  Currently, canvas-collections can parse a JSON configuration file from a Canvas course's files area and generate appropriate representations.
+
+Below you can read more about
+
+- [Why is Canvas Collections needed?](#why)
+- [What does it do?](#what)
+- [Current Status](#status) including screenshots
+- [Related work](#related-work)
+
+
 
 ## Why?
 
