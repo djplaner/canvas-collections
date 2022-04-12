@@ -2650,6 +2650,17 @@ class GriffithCardsView extends cc_View {
 		.cc-progress {
 			float: right;
 		}
+
+		.cc-card-published {
+			background-color: red;
+			color: white;
+			font-size: x-small;
+			font-weight: bold;
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+			text-align: center;
+			width: 100%;
+		}
 		</style>`;
 
 		cardCollection.innerHTML = cardStyles;
@@ -2721,6 +2732,7 @@ class GriffithCardsView extends cc_View {
       </div>
       ${DATE_WIDGET}
       ${COMING_SOON}
+	 ${published}
       <div class="cc-card-content">
 	<div class=cc-card-label">
 	    <span class="cc-card-label">
@@ -2737,7 +2749,6 @@ class GriffithCardsView extends cc_View {
 	 ${REVIEW_ITEM}
 	 ${EDIT_ITEM}
 	 ${DATE} 
-	 ${published}
 	 <div class="cc-progress"></div>
       </div>
     </div>
@@ -3040,8 +3051,7 @@ class GriffithCardsView extends cc_View {
 		}
 
 		let publishedHtml = `
-    <span class="bg-red-500 text-white text-xs rounded-full py-1 text-center font-bold"
-	 style="width:8em">
+    <span class="cc-card-published">
 	    Unpublished
     </span>
 	    `;
