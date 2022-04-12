@@ -2723,10 +2723,10 @@ class GriffithCardsView extends cc_View {
       ${COMING_SOON}
       <div class="cc-card-content">
 	<div class=cc-card-label">
-	    <h3 class="cc-card-title">${module.name}</h3>
 	    <span class="cc-card-label">
 		${CARD_LABEL}
 	    </span>
+	    <h3 class="cc-card-title">${module.name}</h3>
 	</div>
       <div class="cc-card-description">
 	  ${description}
