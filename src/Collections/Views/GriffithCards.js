@@ -458,7 +458,13 @@ export default class GriffithCardsView extends cc_View {
 			return "";
 		}
 
-		const message = `Available ${this.generateCardDate(module.comingSoon.date)}`;
+		// TODO 
+		// - handle also the calculation of dual dates
+		// - move these date functions to the Uni Date class
+		let date = this.convertUniDateToReal(module.comingSoon.date);
+		// TODO
+		// - handle all the date variations
+		const message = `Available ${date.MONTH} ${date.DATE}`;
 
 		return `
 		<div class="cc-coming-soon-message">
@@ -549,6 +555,7 @@ export default class GriffithCardsView extends cc_View {
 				firstDate.MONTH === "" && firstDate.DATE === "") {
 			return "";
 		}
+		return firstDate;
 	}
 
 	/**
@@ -562,19 +569,19 @@ export default class GriffithCardsView extends cc_View {
 		const singleDateHtml = `
 		<div class="cc-card-date">
 		  <div class="cc-card-date-label">
-             ${date.DATE_LABEL}
+             ${date.from.DATE_LABEL}
           </div>
 		  <div class="cc-card-date-week">
-          	${date.DAY} Week ${date.WEEK}
+          	${date.from.DAY} Week ${date.from.WEEK}
 		  </div>
 		  <div class="cc-card-date-time">
-          ${date.TIME}
+          ${date.from.TIME}
 		  </div>
 		  <div class="cc-card-date-month">
-      	     ${date.MONTH}
+      	     ${date.from.MONTH}
           </div>
 		  <div class="cc-card-date-date">
-      	     ${date.DATE}
+      	     ${date.from.DATE}
           </div>
         </div>
 		`;
@@ -582,11 +589,11 @@ export default class GriffithCardsView extends cc_View {
 		// TODO remove the elements that aren't needed
 		// Convert singleDateHtml to dom element
 		let element = new DOMParser().parseFromString(singleDateHtml, 'text/html').body.firstChild;
-		if (date.TIME==="") {
+		if (date.from.TIME==="") {
 			// remove the div.cc-card-date-time from element
 			element.removeChild(element.querySelector('.cc-card-date-time'));
 		}
-		if (date.WEEK==="" ) {
+		if (date.from.WEEK==="" ) {
 			// remove the div.cc-card-date-week from element
 			element.removeChild(element.querySelector('.cc-card-date-week'));
 		}
