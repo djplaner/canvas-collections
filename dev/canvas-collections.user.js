@@ -2783,7 +2783,9 @@ class GriffithCardsView extends cc_View {
 		const PUBLISHED = this.generateCardPublished(module);
 
 		let DATE_WIDGET="";
-		if ( module.date ) {
+		// only generateCardDate if module.date includes attributes
+		// week or month and date
+		if ( module.date && (module.date.week || (module.date.month && module.date.date)) ) {
 			DATE_WIDGET = this.generateCardDate(module.date);
 		}
 
