@@ -241,7 +241,7 @@ class cc_View {
 
 
 
-const CC_VERSION="0.7.2";
+const CC_VERSION="0.7.3";
 
 class cc_ConfigurationView extends cc_View {
 

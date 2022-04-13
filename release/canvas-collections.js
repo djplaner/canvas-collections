@@ -225,7 +225,7 @@ class cc_View {
 
 
 
-const CC_VERSION="0.7.1";
+const CC_VERSION="0.7.3";
 
 class cc_ConfigurationView extends cc_View {
 
@@ -1100,7 +1100,7 @@ class CollectionsModel {
 
 		// if currentCollection is undefined set it to the default
 		if ( this.currentCollection === undefined ) {
-			this.currentCollection = this.getDefaultCollection()
+			this.currentCollection = this.getDefaultCollection();
 		}
 	}
 
@@ -1138,6 +1138,27 @@ class CollectionsModel {
 	}
 
 	/**
+	 * Return the Canvas COllections configuration information about modules
+	 * Can ask just modules for a specific collection. Default is all
+	 * @param {String} collection - name of collectio to get modules for, default is all
+	 * @returns - array of dicts containing canvas-collections information about modules
+	 */
+	getCollectionsModules(collection="") {
+		if ( collection==="" ) {
+			// by default return all the modules
+			return this.cc_configuration.MODULES;
+		}
+		const modules = this.cc_configuration.MODULES;
+		// filter modules attributes to those that that have an attribute collection==collection
+		const foundKeys = Object.keys(modules).filter(key => modules[key].collection===collection);
+
+		// filter modules to just include attributes in array foundKeys
+		const foundModules = foundKeys.map(key => modules[key]);
+
+		return foundModules;
+	}
+
+	/**
 	 * @descr Create this.moduleCollections that is a list of dicts for modules including
 	 * both the Canvas module information and the cc module information
 	 */
@@ -1151,7 +1172,7 @@ class CollectionsModel {
 		this.modulesCollections = [];
 		// loop thru canvasModules 
 		for (let i = 0; i < canvasModules.length; i++) {
-			let details = {}
+			let details = {};
 			// loop thu all the keys in current canvas modules
 			for (let key in canvasModules[i]) {
 				details[key] = canvasModules[i][key];
@@ -1217,11 +1238,6 @@ class CollectionsModel {
 	getModulesCollections() {
 		return this.modulesCollections;
 	}
-
-	getCurrentCollection() {
-		return this.currentCollection;
-	}
-
 }
 
 /**
@@ -2420,7 +2436,7 @@ class GriffithCardsView extends cc_View {
 			margin: -0.75rem
 		}
 
-		.cc-clickable-card {
+		.cc-clickable-card, .cc-coming-soon-card {
 			padding: 0.75rem;
 			flex-direction: column;
 			display: flex;
@@ -2428,13 +2444,13 @@ class GriffithCardsView extends cc_View {
 		}
 
 		@media (max-width:640px) {
-			.cc-clickable-card {
+			.cc-clickable-card,  .cc-coming-soon-card {
 				width: 50%
 			}
 		}
 
-		@media (max-width:480px) {
-			.cc-clickable-card {
+		@media (max-width:480px)  
+		    .cc-coming-soon-card, .cc-clickable-card {
 				width:100%;
 			}
 		}
@@ -2604,6 +2620,23 @@ class GriffithCardsView extends cc_View {
 		.cc-progress {
 			float: right;
 		}
+
+		.cc-card-published {
+			background-color: red;
+			color: white;
+			font-size: x-small;
+			font-weight: bold;
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+			text-align: center;
+			width: 100%;
+		}
+
+		.cc-coming-soon-message {
+			font-size: 0.75rem;
+			padding: .5em;
+            background-color: #feee88;
+		}
 		</style>`;
 
 		cardCollection.innerHTML = cardStyles;
@@ -2616,10 +2649,10 @@ class GriffithCardsView extends cc_View {
 
 		//	let count = 0;
 
-		const currentCollection = this.model.getCurrentCollection();
+		//const currentCollection = this.model.getCurrentCollection();
 		for (let module of this.model.getModulesCollections()) {
 			DEBUG && console.log(module);
-			if (module.collection !== currentCollection) {
+			if (module.collection !== this.model.getCurrentCollection()) {
 				// not the right collection, skip this one
 				// set the Canvas module div to display:none
 				// find div.context_module with data-module-id="${module.id}"
@@ -2635,6 +2668,57 @@ class GriffithCardsView extends cc_View {
 			cardCollection.insertAdjacentElement('beforeend', card);
 		}
 
+		cardCollection = this.addComingSoonCards(cardCollection);
+
+		return cardCollection;
+	}
+
+	/**
+	 * Add any "coming soon" cards for currentCollection to cardCollection 
+	 * @param {DomElement} cardCollection - contains cards for all the published modules for current collection
+	 * @param {String} currentCollection - name of current visible collection
+	 * @returns 
+	 */
+
+	addComingSoonCards(cardCollection) {
+		// loop through all modules in the current canvas collections configuration
+		// includes both published and unpubished modules
+
+		const collectionsModules = this.model.getCollectionsModules(this.currentCollection);
+
+		// no modules for the current collection
+		if ( ! collectionsModules ) {
+			return cardCollection;
+		}
+
+		// if the total num modules equals the canvas collections list of modules, then 
+		// all modules were being displayed in Canvas. i.e. no need to add additional
+		// coming soon cards
+		// TODO only want to get the modules for the current collection
+		const allModules = this.model.getModulesCollections();
+		// filter allModules to only include items for this.currentCollection
+		const currentCollectionModules = allModules.filter(
+			module => module.collection === this.model.getCurrentCollection());
+		if (currentCollectionModules.length===collectionsModules.length) {
+			return cardCollection;
+		}
+
+		// filter collectionsModules for those that have a comingSoon attribute
+		const comingSoonModules = collectionsModules.filter(module => module.comingSoon);
+
+//		DEBUG && console.log(`################## addComingSoonCards`) && console.log(comingSoonModules);
+
+		// loop through each coming soon module and add a card for it
+		for (let module of comingSoonModules) {
+			const card = this.generateCard(module,false);
+			// TODO actually want to place this in order
+			const order = module.comingSoon.order-1;
+			// get a list of all div.cc-clickable-card elements in cardCollection
+			const cards = cardCollection.querySelectorAll('.cc-clickable-card');
+			// insert card before cards[order]
+			cardCollection.insertBefore(card, cards[order]);
+		}
+
 		return cardCollection;
 	}
 
@@ -2642,20 +2726,26 @@ class GriffithCardsView extends cc_View {
 	 * Harness to generate HTML for a single card. Calls various other functions
 	 * to get various component
 	 * @param {Object} module 
+	 * @param {boolean} published is the module published (initially used for "coming soon" cards)
 	 * @returns {DOMElement} for a single card
 	 */
-	generateCard(module) {
+	generateCard(module, published=true) {
 		const imageUrl = this.generateCardImageUrl(module);
 		const imageSize = this.generateCardImageSize(module);
 
 		const LINK_ITEM = this.generateCardLinkItem(module);
-		const published = this.generateCardPublished(module);
+		const PUBLISHED = this.generateCardPublished(module);
 
-		const DATE_WIDGET = this.generateCardDate(module);
+		let DATE_WIDGET="";
+		// only generateCardDate if module.date includes attributes
+		// week or month and date
+		if ( module.date && (module.date.week || (module.date.month && module.date.date)) ) {
+			DATE_WIDGET = this.generateCardDate(module.date);
+		}
 
 		const description = module.description;
 
-		const COMING_SOON = "";
+		let COMING_SOON = this.generateComingSoon(module);
 		const REVIEW_ITEM = "";
 		const DATE = "";
 		//		const completion = this.generateCardCompletion( module );
@@ -2675,12 +2765,13 @@ class GriffithCardsView extends cc_View {
       </div>
       ${DATE_WIDGET}
       ${COMING_SOON}
+	 ${PUBLISHED}
       <div class="cc-card-content">
 	<div class=cc-card-label">
-	    <h3 class="cc-card-title">${module.name}</h3>
 	    <span class="cc-card-label">
 		${CARD_LABEL}
 	    </span>
+	    <h3 class="cc-card-title">${module.name}</h3>
 	</div>
       <div class="cc-card-description">
 	  ${description}
@@ -2691,7 +2782,6 @@ class GriffithCardsView extends cc_View {
 	 ${REVIEW_ITEM}
 	 ${EDIT_ITEM}
 	 ${DATE} 
-	 ${published}
 	 <div class="cc-progress"></div>
       </div>
     </div>
@@ -2699,10 +2789,21 @@ class GriffithCardsView extends cc_View {
 
 		// convert cardHtml into DOM element
 		let wrapper = document.createElement('div');
-		wrapper.classList.add( 'cc-clickable-card');
-		/*, 'w-full', 'sm:w-1/2', 'md:w-1/3', 'flex', 'flex-col', 'p-3',
-			'hover:cursor-pointer'); */
-		wrapper.innerHTML = cardHtml;
+		if ( published ) {
+			wrapper.classList.add( 'cc-clickable-card');
+			wrapper.innerHTML = cardHtml;
+		} else {
+			// unpublished card needs a different class and the card link removed
+			wrapper.classList.add( 'cc-coming-soon-card');
+			wrapper.innerHTML = cardHtml;
+			// remove the a.cc-card-link from wrapper
+			wrapper.querySelector('.cc-card-link').remove();
+			// remove the div.cc-card-engage-button if it exists
+			const button = wrapper.querySelector('.cc-card-engage-button');
+			if ( button ) {
+				button.remove();
+			}
+		}
 
 		const progress = this.getCardProgressElement(module);
 		if (progress) {
@@ -2718,6 +2819,34 @@ class GriffithCardsView extends cc_View {
 	}
 
 	/**
+	 * generate a coming soon html element for the current module
+	 * @param {Object} module 
+	 * @returns html string for coming soon block
+	 */
+
+	generateComingSoon(module) {
+		// empty string if there is no coming soon attribute for module
+		if ( ! module.comingSoon ) {
+			return "";
+		}
+
+		// TODO 
+		// - handle also the calculation of dual dates
+		// - move these date functions to the Uni Date class
+		let date = this.convertUniDateToReal(module.comingSoon.date);
+		// TODO
+		// - handle all the date variations
+		const message = `Available ${date.MONTH} ${date.DATE}`;
+
+		return `
+		<div class="cc-coming-soon-message">
+		  <span>🚧</span>
+		  <span>${message}</span>
+		</div>
+		`;
+	}
+
+	/**
 	 * Generate the HTML for the date widget, features include
 	 * - single date or date period
 	 * - university week date
@@ -2725,7 +2854,7 @@ class GriffithCardsView extends cc_View {
 	 * - optional time
 	 * @param {Object} module 
 	 */
-	generateCardDate( module ) {
+	generateCardDate( dateJson ) {
 		/* date information in 
 		   All attributes are optional
 		   module.date {
@@ -2738,24 +2867,43 @@ class GriffithCardsView extends cc_View {
 			endDate: { repeat all of first date, except label}
 		} */
 
-		// if module has no property date, return empty string
-		if (!module.date) {
-			return "";
+		const date = {
+			"from": {},
+			"to": undefined
+		}; 
+		
+		date.from = this.convertUniDateToReal(dateJson);
+		if (dateJson.endDate) {
+			date.to = this.convertUniDateToReal(dateJson.endDate);
+			this.generateDualDate(date);
 		}
+
+		return this.convertDateToHtml(date);
+
+	}
+
+	/**
+	 * Take a Uni date in "JSON" format and convert to an object with 
+	 * actual real dates
+	 * @param {Object} dateJson 
+	 * @returns 
+	 */
+
+	convertUniDateToReal(dateJson) {
 
 		let firstDate = {};
 
-		firstDate.DATE_LABEL = module.date.label || DEFAULT_DATE_LABEL;
+		firstDate.DATE_LABEL = dateJson.label || DEFAULT_DATE_LABEL;
 
-		firstDate.WEEK = module.date.week || "";
-		firstDate.DAY = module.date.day || ""; // is this the right default
+		firstDate.WEEK = dateJson.week || "";
+		firstDate.DAY = dateJson.day || ""; // is this the right default
 		// Week needs more work to add the the day and string "Week"
 		// Also it should be HTML
 
-		firstDate.TIME = module.date.time || "";
+		firstDate.TIME = dateJson.time || "";
 
-		firstDate.MONTH = module.date.month || "";
-		firstDate.DATE = module.date.date || "";
+		firstDate.MONTH = dateJson.month || "";
+		firstDate.DATE = dateJson.date || "";
 
 		// With week defined, we need to calculate MONTH and DATE based
 		// on university trimester
@@ -2779,27 +2927,33 @@ class GriffithCardsView extends cc_View {
 				firstDate.MONTH === "" && firstDate.DATE === "") {
 			return "";
 		}
+		return firstDate;
+	}
 
-		if (module.endDate) {
-			return this.generateDualDate(module, firstDate);
-		}
+	/**
+	 * Convert from and to dates to HTML
+	 * @param {Object} date with two attributes from and to
+	 * @returns  HTML
+	 */
+
+	convertDateToHtml(date) {
 
 		const singleDateHtml = `
 		<div class="cc-card-date">
 		  <div class="cc-card-date-label">
-             ${firstDate.DATE_LABEL}
+             ${date.from.DATE_LABEL}
           </div>
 		  <div class="cc-card-date-week">
-          	${firstDate.DAY} Week ${firstDate.WEEK}
+          	${date.from.DAY} Week ${date.from.WEEK}
 		  </div>
 		  <div class="cc-card-date-time">
-          ${firstDate.TIME}
+          ${date.from.TIME}
 		  </div>
 		  <div class="cc-card-date-month">
-      	     ${firstDate.MONTH}
+      	     ${date.from.MONTH}
           </div>
 		  <div class="cc-card-date-date">
-      	     ${firstDate.DATE}
+      	     ${date.from.DATE}
           </div>
         </div>
 		`;
@@ -2807,11 +2961,11 @@ class GriffithCardsView extends cc_View {
 		// TODO remove the elements that aren't needed
 		// Convert singleDateHtml to dom element
 		let element = new DOMParser().parseFromString(singleDateHtml, 'text/html').body.firstChild;
-		if (firstDate.TIME==="") {
+		if (date.from.TIME==="") {
 			// remove the div.cc-card-date-time from element
 			element.removeChild(element.querySelector('.cc-card-date-time'));
 		}
-		if (firstDate.WEEK==="" ) {
+		if (date.from.WEEK==="" ) {
 			// remove the div.cc-card-date-week from element
 			element.removeChild(element.querySelector('.cc-card-date-week'));
 		}
@@ -2819,8 +2973,7 @@ class GriffithCardsView extends cc_View {
 		return element.outerHTML;
 	}
 
-	generateDualDate( module, firstDate ) {
-
+	generateDualDate( date )  {
 
 		const dualDateHtml = `
 <div class="block rounded-t rounded-b overflow-hidden bg-white text-center w-24 absolute pin-t pin-r">
@@ -2994,8 +3147,7 @@ class GriffithCardsView extends cc_View {
 		}
 
 		let publishedHtml = `
-    <span class="bg-red-500 text-white text-xs rounded-full py-1 text-center font-bold"
-	 style="width:8em">
+    <span class="cc-card-published">
 	    Unpublished
     </span>
 	    `;
