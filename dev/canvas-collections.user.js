@@ -2698,7 +2698,7 @@ class GriffithCardsView extends cc_View {
 		//const currentCollection = this.model.getCurrentCollection();
 		for (let module of this.model.getModulesCollections()) {
 			DEBUG && console.log(module);
-			if (module.collection !== this.currentCollection) {
+			if (module.collection !== this.model.getCurrentCollection()) {
 				// not the right collection, skip this one
 				// set the Canvas module div to display:none
 				// find div.context_module with data-module-id="${module.id}"
@@ -2743,7 +2743,8 @@ class GriffithCardsView extends cc_View {
 		// TODO only want to get the modules for the current collection
 		const allModules = this.model.getModulesCollections();
 		// filter allModules to only include items for this.currentCollection
-		const currentCollectionModules = allModules.filter(module => module.collection === this.currentCollection);
+		const currentCollectionModules = allModules.filter(
+			module => module.collection === this.model.getCurrentCollection());
 		if (currentCollectionModules.length===collectionsModules.length) {
 			return cardCollection;
 		}
@@ -2913,7 +2914,7 @@ class GriffithCardsView extends cc_View {
 		const date = {
 			"from": {},
 			"to": undefined
-		} 
+		}; 
 		
 		date.from = this.convertUniDateToReal(dateJson);
 		if (dateJson.endDate) {
