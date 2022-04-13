@@ -18,7 +18,7 @@ export default class CollectionsModel {
 
 		// if currentCollection is undefined set it to the default
 		if ( this.currentCollection === undefined ) {
-			this.currentCollection = this.getDefaultCollection()
+			this.currentCollection = this.getDefaultCollection();
 		}
 	}
 
@@ -56,6 +56,27 @@ export default class CollectionsModel {
 	}
 
 	/**
+	 * Return the Canvas COllections configuration information about modules
+	 * Can ask just modules for a specific collection. Default is all
+	 * @param {String} collection - name of collectio to get modules for, default is all
+	 * @returns - array of dicts containing canvas-collections information about modules
+	 */
+	getCollectionsModules(collection="") {
+		if ( collection==="" ) {
+			// by default return all the modules
+			return this.cc_configuration.MODULES;
+		}
+		const modules = this.cc_configuration.MODULES;
+		// filter modules attributes to those that that have an attribute collection==collection
+		const foundKeys = Object.keys(modules).filter(key => modules[key].collection===collection);
+
+		// filter modules to just include attributes in array foundKeys
+		const foundModules = foundKeys.map(key => modules[key]);
+
+		return foundModules;
+	}
+
+	/**
 	 * @descr Create this.moduleCollections that is a list of dicts for modules including
 	 * both the Canvas module information and the cc module information
 	 */
@@ -69,7 +90,7 @@ export default class CollectionsModel {
 		this.modulesCollections = [];
 		// loop thru canvasModules 
 		for (let i = 0; i < canvasModules.length; i++) {
-			let details = {}
+			let details = {};
 			// loop thu all the keys in current canvas modules
 			for (let key in canvasModules[i]) {
 				details[key] = canvasModules[i][key];
@@ -135,9 +156,4 @@ export default class CollectionsModel {
 	getModulesCollections() {
 		return this.modulesCollections;
 	}
-
-	getCurrentCollection() {
-		return this.currentCollection;
-	}
-
 }
