@@ -322,15 +322,18 @@ export default class GriffithCardsView extends cc_View {
 
 		// no modules for the current collection
 		if ( ! collectionsModules ) {
-			return;
+			return cardCollection;
 		}
 
 		// if the total num modules equals the canvas collections list of modules, then 
 		// all modules were being displayed in Canvas. i.e. no need to add additional
 		// coming soon cards
+		// TODO only want to get the modules for the current collection
 		const allModules = this.model.getModulesCollections();
-		if (allModules.length===collectionsModules.length) {
-			return;
+		// filter allModules to only include items for this.currentCollection
+		const currentCollectionModules = allModules.filter(module => module.collection === this.currentCollection);
+		if (currentCollectionModules.length===collectionsModules.length) {
+			return cardCollection;
 		}
 
 		// filter collectionsModules for those that have a comingSoon attribute
@@ -498,7 +501,7 @@ export default class GriffithCardsView extends cc_View {
 		const date = {
 			"from": {},
 			"to": undefined
-		} 
+		}; 
 		
 		date.from = this.convertUniDateToReal(dateJson);
 		if (dateJson.endDate) {
