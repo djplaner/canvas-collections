@@ -96,7 +96,7 @@ export default class CollectionsModel {
 				details[key] = canvasModules[i][key];
 			}
 			// get the matching ccModules
-			let ccModule = ccModules[canvasModules[i].name];
+			let ccModule = ccModules[canvasModules[i].name.trim()];
 			if (ccModule) {
 				// loop thru all the keys in ccModule
 				for (let key in ccModule) {

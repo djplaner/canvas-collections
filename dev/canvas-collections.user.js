@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.7.2
+// @version      0.7.3
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -1196,7 +1196,7 @@ class CollectionsModel {
 				details[key] = canvasModules[i][key];
 			}
 			// get the matching ccModules
-			let ccModule = ccModules[canvasModules[i].name];
+			let ccModule = ccModules[canvasModules[i].name.trim()];
 			if (ccModule) {
 				// loop thru all the keys in ccModule
 				for (let key in ccModule) {
