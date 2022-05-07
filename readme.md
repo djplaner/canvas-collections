@@ -23,10 +23,6 @@ To address two known limitiations of [the vanilla Canvas Modules page](https://c
 
 These limitations negatively impact students' ability to understand and navigate Canvas Modules.
 
-Two address two known limitiations of [the vanilla Canvas Modules page](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-are-Modules/ta-p/6):
-1.  [no way to group modules](https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-group-modules-together/m-p/179757/highlight/true#M84952); and,
-2.  [a very linear, less than engaging presentation](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/).
-
 The combination of these limitations leads to various issues the negatively impact students' ability to understand and navigate Canvas Modules.
 
 ### No way to group modules
