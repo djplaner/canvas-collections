@@ -10,6 +10,7 @@
 // @license      ISC
 // @homepage     https://github.com/djplaner/canvas-collections/tree/main#canvas-collections
 // @require      https://unpkg.com/circular-progress-bar
+// @require      https://rawcdn.githack.com/djplaner/canvas-collections/62a4248058d13d32c574f0b620760891651587a7/src/juice/juice_client.js
 // ==/UserScript==
 
 // src/Configuration/cc_ConfigurationModel.js
@@ -1363,7 +1364,7 @@ li.cc-nav a {
 .cc-nav li a:hover {
  /*   background-color: #111; */
     background-color: var(--ic-brand-button--primary-bgd); 
-	border-top: 4px solid var(--ic-brand-button--primary-bgd); */
+	border-top: 4px solid var(--ic-brand-button--primary-bgd); 
 	  color: rgb(255, 255, 255) !important;
   background: rgba(51, 51, 51, 0.9) !important;
   text-decoration: none !important;
@@ -2495,7 +2496,7 @@ class GriffithCardsView extends cc_View {
 			}
 		}
 
-		@media (max-width:480px)  
+		@media (max-width:480px) { 
 		    .cc-coming-soon-card, .cc-clickable-card {
 				width:100%;
 			}
