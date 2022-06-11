@@ -3492,6 +3492,9 @@ class cc_Controller {
 		this.configFileDetails = null;
 		this.cc_configuration = null;
 
+		// test if we should set up juice and inline css copy
+		console.log(`---------- setting up juice`);
+
 		// if cc should run, try to get the config
         if (this.modulesPage || this.homeModulesPage) {
 			// proposed "command" change
@@ -3503,6 +3506,7 @@ class cc_Controller {
 
 			this.requestConfigFileId(); 
 		} 
+
 	}
 
 	/**
