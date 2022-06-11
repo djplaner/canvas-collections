@@ -102,7 +102,7 @@ li.cc-nav a {
 .cc-nav li a:hover {
  /*   background-color: #111; */
     background-color: var(--ic-brand-button--primary-bgd); 
-	border-top: 4px solid var(--ic-brand-button--primary-bgd); */
+	border-top: 4px solid var(--ic-brand-button--primary-bgd); 
 	  color: rgb(255, 255, 255) !important;
   background: rgba(51, 51, 51, 0.9) !important;
   text-decoration: none !important;

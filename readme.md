@@ -113,6 +113,8 @@ The _Additional configuration_ screenshot is from a course where additional conf
 
 ## Related work
 
+- [Cuyamaca College Cards](https://gcccd.instructure.com/courses/10582/pages/cards?module_item_id=17470) - College specific example of using CSS to enable staff to manually create a card interface
+- [Create Interactive Cards](https://www.howtocanvas.com/theme-editor/interactive-cards) - nicer version of the Cuyamaca College approach
 - [Towards a Modules navigation menu in Instructure Canvas](https://learntech.medsci.ox.ac.uk/wordpress-blog/towards-a-navigation-menu-in-instructure-canvas/) - [github](https://gist.github.com/theotherdy/7983b4d64a2f376ee140673926ca5c07#file-ou-canvas-menu-demo-js)
 
     Creates a right-hand menu to support navigation within Modules

@@ -83,7 +83,7 @@ export default class GriffithCardsView extends cc_View {
 			}
 		}
 
-		@media (max-width:480px)  
+		@media (max-width:480px) { 
 		    .cc-coming-soon-card, .cc-clickable-card {
 				width:100%;
 			}
