@@ -11,10 +11,11 @@
  */
 
 
-import { cc_ConfigurationController} from './Configuration/cc_ConfigurationController.js';
+import { cc_ConfigurationController } from './Configuration/cc_ConfigurationController.js';
 import { cc_CollectionsController } from './Collections/CollectionsController.js';
+import { juiceController } from './juice/juiceController.js';
 
-const DEBUG=true;
+const DEBUG = true;
 
 export default class cc_Controller {
 
@@ -27,7 +28,7 @@ export default class cc_Controller {
 	 */
 	constructor() {
 		DEBUG && console.log('-------------- cc_Controller.constructor()');
-    
+
 		// Use document location to set various values controlling operation
 		this.setContext();
 
@@ -37,27 +38,25 @@ export default class cc_Controller {
 		DEBUG && console.log(`cc_Controller: homeModulesPage = ${this.homeModulesPage}`);
 		DEBUG && console.log(`cc_Controller: editMode = ${this.editMode}`);
 		DEBUG && console.log(`cc_Controller: ccOn = ${this.ccOn}`);
-	
+
 		// TODO: extract any additional parameters in the query string
-        // this.checkQueryString();
+		// this.checkQueryString();
 
 		this.configFileDetails = null;
 		this.cc_configuration = null;
 
-		// test if we should set up juice and inline css copy
-		console.log(`---------- setting up juice`);
 
 		// if cc should run, try to get the config
-        if (this.modulesPage || this.homeModulesPage) {
+		if (this.modulesPage || this.homeModulesPage) {
 			// proposed "command" change
-			
+
 
 			//-- original get data chain commencing
 			this.setCsrfToken();
 			DEBUG && console.log(`cc_Controller: csrf = ${this.csrf}`);
 
-			this.requestConfigFileId(); 
-		} 
+			this.requestConfigFileId();
+		}
 
 	}
 
@@ -66,41 +65,41 @@ export default class cc_Controller {
 	 * - If successful then request the file contents
 	 * - if not, call execute with no config
 	 */
-	requestConfigFileId() { 
+	requestConfigFileId() {
 
 		let callUrl = `/api/v1/courses/${this.courseId}/files?` + new URLSearchParams(
-			{'search_term': 'cc_config.json'});
+			{ 'search_term': 'cc_config.json' });
 
 		DEBUG && console.log(`cc_Controller: requestConfig: callUrl = ${callUrl}`);
 
-		fetch(callUrl, { 
+		fetch(callUrl, {
 			method: 'GET', credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-CSRF-Token": this.csrfToken,
-            }
-        }) 
-        .then(this.status) 
-        .then((response) => { 
-            return response.json(); 
-        }) 
-        .then((json) => {
-			DEBUG && console.log(`cc_Controller: requestConfig: json = ${JSON.stringify(json)}`);
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.csrfToken,
+			}
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				DEBUG && console.log(`cc_Controller: requestConfig: json = ${JSON.stringify(json)}`);
 
-			if (json.length===0) {
-				DEBUG && console.log(`cc_Controller: requestConfig: no config file found`);
-			} else if (json.length===1) {
-				this.configFileDetails = json[0];
-			    this.requestConfigFileContent();
-			} else { 
-				DEBUG && console.log(`cc_Controller: requestConfig: more than one (${json.length}) config file found`);
-			} 
-        })			
-		.catch((error) => {
-			console.log(`cc_Controller: requestConfig: error = `);
-			console.log(error);
-		}, false );
+				if (json.length === 0) {
+					DEBUG && console.log(`cc_Controller: requestConfig: no config file found`);
+				} else if (json.length === 1) {
+					this.configFileDetails = json[0];
+					this.requestConfigFileContent();
+				} else {
+					DEBUG && console.log(`cc_Controller: requestConfig: more than one (${json.length}) config file found`);
+				}
+			})
+			.catch((error) => {
+				console.log(`cc_Controller: requestConfig: error = `);
+				console.log(error);
+			}, false);
 	}
 
 	/**
@@ -121,7 +120,7 @@ export default class cc_Controller {
 	requestConfigFileContent() {
 		DEBUG && console.log(`cc_Controller: requestConfigFileContent: for ${this.configFileDetails.id}`);
 
-		if (this.configFileDetails['content-type']!=='application/json') {
+		if (this.configFileDetails['content-type'] !== 'application/json') {
 			DEBUG && console.log(`cc_Controller: requestConfigFile: not json`);
 			return;
 		}
@@ -132,23 +131,23 @@ export default class cc_Controller {
 		DEBUG && console.log(
 			`cc_Controller: requestConfigFileContent: callUrl = ${callUrl}`);
 
-		fetch(callUrl, { 
-			method: 'GET', 
-		} )
-        .then(this.status) 
-        .then((response) => { 
-            return response.json(); 
-        }) 
-        .then((json) => {
-			DEBUG && console.log(`cc_Controller: requestConfigFileContent: json = ${JSON.stringify(json)}`);
+		fetch(callUrl, {
+			method: 'GET',
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				DEBUG && console.log(`cc_Controller: requestConfigFileContent: json = ${JSON.stringify(json)}`);
 
-			this.cc_configuration = json;
-			this.ccOn = this.cc_configuration.STATUS==="on";
-			this.requestModuleInformation();
-        })			
-		.catch((error) => {
-			console.log(`cc_Controller: requestConfigFileContent: error = ${error}`);
-		}, false );
+				this.cc_configuration = json;
+				this.ccOn = this.cc_configuration.STATUS === "on";
+				this.requestModuleInformation();
+			})
+			.catch((error) => {
+				console.log(`cc_Controller: requestConfigFileContent: error = ${error}`);
+			}, false);
 
 	}
 
@@ -162,30 +161,30 @@ export default class cc_Controller {
 
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: callUrl = ${callUrl}`);
 
-		fetch(callUrl, { 
+		fetch(callUrl, {
 			method: 'GET', credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-CSRF-Token": this.csrfToken,
-            }
-        }) 
-        .then(this.status) 
-        .then((response) => { 
-            return response.json(); 
-        }) 
-        .then((json) => {
-			DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(json)}`);
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.csrfToken,
+			}
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(json)}`);
 
-			this.moduleDetails = json;
-			// TODO call https://canvas.instructure.com/doc/api/modules.html#method.context_module_items_api.index
-			// the list module items API for each module
-			this.execute();
-        })			
-		.catch((error) => {
-			console.log(`cc_Controller: requestModuleInformation: error = `);
-			console.log(error);
-		}, false );
+				this.moduleDetails = json;
+				// TODO call https://canvas.instructure.com/doc/api/modules.html#method.context_module_items_api.index
+				// the list module items API for each module
+				this.execute();
+			})
+			.catch((error) => {
+				console.log(`cc_Controller: requestModuleInformation: error = `);
+				console.log(error);
+			}, false);
 
 	}
 
@@ -196,7 +195,7 @@ export default class cc_Controller {
 
 	execute() {
 		// do some final checks to make sure we don't run when not required
-        if (!this.modulesPage && !this.homeModulesPage) {
+		if (!this.modulesPage && !this.homeModulesPage) {
 			DEBUG && console.log('-------------- cc_Controller.execute() ERROR SHOULDN"T BE RUNNING');
 			return;
 		}
@@ -206,14 +205,14 @@ export default class cc_Controller {
 
 		//-- figure out what to do
 
-		if ( this.editMode ) {
+		if (this.editMode) {
 			// show the configShowSwitch if it's there
 			const configShowSwitch = document.getElementById('configShowSwitch');
 			if (configShowSwitch) {
 				configShowSwitch.style.display = 'inline-block';
 			}
 
-			if (this.cc_configuration===null) {
+			if (this.cc_configuration === null) {
 				// no configuration - show the cc interface with option to create one
 				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - no config');
 				this.showConfiguration();
@@ -228,15 +227,18 @@ export default class cc_Controller {
 				}
 
 			}
+
 		} else {
 			// students only see stuff if there is a config
-			if (this.cc_configuration!==null) {
+			if (this.cc_configuration !== null) {
 				DEBUG && console.log('-------------- cc_Controller.execute() Students Mode - config');
 				if (this.ccOn) {
 					this.showCollections();
 				}
 			}
 		}
+		// Now add the juice interface, should only happen with the userscript version
+		this.showJuice();
 	}
 
 	/**
@@ -251,7 +253,7 @@ export default class cc_Controller {
 
 		// remove all the div.cc-module-config 
 		let moduleConfigs = document.querySelectorAll('div.cc-module-config');
-		moduleConfigs.forEach( (moduleConfig) => {
+		moduleConfigs.forEach((moduleConfig) => {
 			moduleConfig.remove();
 		});
 
@@ -273,6 +275,18 @@ export default class cc_Controller {
 	}
 
 	/**
+	 * @descr add the juice interface if we're running in the browser
+	 */
+
+	showJuice(){
+		// the test itself should probably be in the controller
+		if ( typeof(juice)==='function') {
+			console.log("------ setting up juice");
+			this.juiceController = new juiceController(this);
+		}
+	}
+
+	/**
 	 * @descr Show the cc configuration interface at the top of the page
 	 */
 	showConfiguration() {
@@ -288,32 +302,32 @@ export default class cc_Controller {
 		this.collectionsController = new cc_CollectionsController(this);
 	}
 
-    /**
-     * @descr Check queryString and set any options
-     */
-    checkQueryString() {
-        /*let queryString = window.location.search;
+	/**
+	 * @descr Check queryString and set any options
+	 */
+	checkQueryString() {
+		/*let queryString = window.location.search;
 
-        const urlParams = new URLSearchParams(queryString); */
+		const urlParams = new URLSearchParams(queryString); */
 
-        // OLD check for cc-view - this will be in JSON from now on
-        /*const viewOption = urlParams.get('cc-view');
+		// OLD check for cc-view - this will be in JSON from now on
+		/*const viewOption = urlParams.get('cc-view');
 
-        if (SUPPORTED_VIEWS.includes(viewOption)) {
-	        // Learning Journey view is only set iff
-	        // - queryString contains ?lj=true
-	        // - current page is a Canvas modules page
+		if (SUPPORTED_VIEWS.includes(viewOption)) {
+			// Learning Journey view is only set iff
+			// - queryString contains ?lj=true
+			// - current page is a Canvas modules page
 
-            if (viewOption === 'lj') {
-                // does current url include courses/[0-9]+/modules?
-                if (window.location.href.match(/courses\/[0-9]+\/modules/)) {
-                    this.OPTIONS.collectionView = viewOption;
-                }
-            } else {
-                this.OPTIONS.collectionView = viewOption;
-            }
-        } */
-    }
+			if (viewOption === 'lj') {
+				// does current url include courses/[0-9]+/modules?
+				if (window.location.href.match(/courses\/[0-9]+\/modules/)) {
+					this.OPTIONS.collectionView = viewOption;
+				}
+			} else {
+				this.OPTIONS.collectionView = viewOption;
+			}
+		} */
+	}
 
 
 	/**
@@ -324,7 +338,7 @@ export default class cc_Controller {
 	 * - editMode - true iff not in student view
 	 */
 	setContext() {
-	    const location = window.location.href;
+		const location = window.location.href;
 
 		// replace # at end of string
 		this.documentUrl = window.location.href;
@@ -349,10 +363,10 @@ export default class cc_Controller {
 		// - location ends with courses/${courseId}
 		// - div#context_modules is present
 		regEx = new RegExp(`courses/${courseId}$`);
-		this.homeModulesPage = regEx.test(this.documentUrl) && (document.getElementById('context_modules')!==null);
+		this.homeModulesPage = regEx.test(this.documentUrl) && (document.getElementById('context_modules') !== null);
 
 		// editMode true iff a#easy_student_view exists
-		this.editMode = (document.getElementById('easy_student_view')!==null);
+		this.editMode = (document.getElementById('easy_student_view') !== null);
 
 		// won't be on until the config file is found
 		this.ccOn = false;
@@ -398,14 +412,14 @@ export default class cc_Controller {
 		// /api/v1/courses/:course_id/files
 		let callUrl = `/api/v1/courses/${this.courseId}/files`;
 
-		fetch(callUrl, { 
-			method: 'POST', 
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-CSRF-Token": this.csrfToken
-            },
-            body: JSON.stringify({				
+		fetch(callUrl, {
+			method: 'POST',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.csrfToken
+			},
+			body: JSON.stringify({
 				'name': this.configFileDetails.filename,
 				'parent_folder_id': this.configFileDetails.folder_id,
 				'content_type': this.configFileDetails.content_type,
@@ -413,17 +427,17 @@ export default class cc_Controller {
 				'size': numBytes
 			})
 		})
-        .then(this.status) 
-        .then((response) => { 
-            return response.json(); 
-        }) 
-        .then((json) => {
-			DEBUG && console.log(`cc_Controller: save config: json = ${JSON.stringify(json)}`);
-			this.saveConfigFile(json);
-        })			
-		.catch((error) => {
-			console.log(`cc_Controller: saveConfig: error = ${error}`);
-		}, false );
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				DEBUG && console.log(`cc_Controller: save config: json = ${JSON.stringify(json)}`);
+				this.saveConfigFile(json);
+			})
+			.catch((error) => {
+				console.log(`cc_Controller: saveConfig: error = ${error}`);
+			}, false);
 
 
 		// Response will incude various information that needs to be processed
@@ -434,12 +448,12 @@ export default class cc_Controller {
 	 * - there is a third step
 	 * @param {Json} response 
 	 */
-/*	saveConfigFile(response) {
-		DEBUG && console.log('-------------- cc_Controller.saveConfigFile()');
-		console.log(response);
-
-
-		// do the third step
-	}
-*/	
+	/*	saveConfigFile(response) {
+			DEBUG && console.log('-------------- cc_Controller.saveConfigFile()');
+			console.log(response);
+	
+	
+			// do the third step
+		}
+	*/
 }

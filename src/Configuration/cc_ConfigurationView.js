@@ -10,7 +10,7 @@
 
 import { cc_View } from '../cc_View.js';
 
-const CC_VERSION="0.7.3";
+const CC_VERSION="0.8";
 
 export default class cc_ConfigurationView extends cc_View {
 
@@ -695,7 +695,8 @@ input:checked + .cc-slider:before {
 		const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
-		    <i id="configShowSwitch" class="icon-mini-arrow-right"></i> <small>Canvas Collections</small>
+		    <i id="configShowSwitch" class="icon-mini-arrow-right"></i> <small>Canvas Collections
+			<span style="font-size:50%">{${CC_VERSION}}</span></small>
 			<a target="_blank"
 			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
 			   <i class="icon-question"></i>
