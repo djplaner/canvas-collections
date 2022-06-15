@@ -2509,9 +2509,8 @@ class GriffithCardsView extends cc_View {
 		}
 
 		.cc-card {
-			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1), 0 4px 6px -4px rgb(0 0 0/ 0.1);
+			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1);
 			background-color: #fff;
-/*			border: 1px solid #000; */
 			border-radius: 0.5rem;
 			overflow: hidden;
 			flex-direction: column;
@@ -2526,11 +2525,9 @@ class GriffithCardsView extends cc_View {
 		}
 
 		.cc-card-image {
-			background-repeat: no-repeat;
-			background-position: center;
-			background-size: cover;
 			height: 10rem;
-			border-radius: 0.5rem 0.5rem 0 0;
+			width: 100%;
+			object-fit: cover;
 		}
 
 		.cc-card-content {
@@ -2808,9 +2805,10 @@ class GriffithCardsView extends cc_View {
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
       <a href="#${module.id}" class="cc-card-link"></a>
-      <div class="cc-card-image" style="${imageSize} background-image: url('${imageUrl}')">
+	  <img class="cc-card-image" src="${imageUrl}" alt="${module.label}">
+      <!-- <div class="cc-card-image" style="${imageSize} background-image: url('${imageUrl}')">
 	    ${IFRAME}
-      </div>
+      </div> -->
       ${DATE_WIDGET}
       ${COMING_SOON}
 	 ${PUBLISHED}
@@ -3528,7 +3526,7 @@ class juiceController {
 			// get the outerHTML of the div#cc-canvas-collections
 			let html = div.outerHTML;
 			// run it through juice
-			let juiceHTML = juice(html);
+			let juiceHTML = juice(html); 
 
 			// copy it to the clipboard
 			if (navigator.clipboard) {
