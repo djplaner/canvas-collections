@@ -98,6 +98,9 @@ export default class GriffithCardsView extends cc_View {
 			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1);
 			background-color: #fff;
 			border-radius: 0.5rem;
+		}
+
+		.cc-card-flex {
 			overflow: hidden;
 			flex-direction: column;
 			flex: 1 1 0%;
@@ -114,6 +117,10 @@ export default class GriffithCardsView extends cc_View {
 			height: 10rem;
 			width: 100%;
 			object-fit: cover;
+		}
+
+		.cc-card-content-height {
+			height: 15rem;
 		}
 
 		.cc-card-content {
@@ -156,13 +163,11 @@ export default class GriffithCardsView extends cc_View {
 		}
 
 		.cc-card-engage {
-			position: absolute;
-			right: 0;
-			bottom: 0;
 			padding: 1rem;
 		}
 
 		.cc-card-engage-button {
+			float: right;
 			padding-top: 0.5rem;
 			padding-bottom: 0.5rem;
 			padding-left: 1rem;
@@ -390,25 +395,23 @@ export default class GriffithCardsView extends cc_View {
 
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
-      <a href="#${module.id}" class="cc-card-link"></a>
-	  <img class="cc-card-image" src="${imageUrl}" alt="${module.label}">
-      <!-- <div class="cc-card-image" style="${imageSize} background-image: url('${imageUrl}')">
-	    ${IFRAME}
-      </div> -->
-      ${DATE_WIDGET}
-      ${COMING_SOON}
-	 ${PUBLISHED}
+	  <div class="cc-card-flex">
+	      <a href="#${module.id}" class="cc-card-link"></a>
+		  <img class="cc-card-image" src="${imageUrl}" alt="${module.label}">
+      	${DATE_WIDGET}
+      	${COMING_SOON}
+	 	${PUBLISHED}
+	  <div class="cc-card-content-height">
       <div class="cc-card-content">
-	<div class=cc-card-label">
-	    <span class="cc-card-label">
-		${CARD_LABEL}
-	    </span>
-	    <h3 class="cc-card-title">${module.name}</h3>
-	</div>
-      <div class="cc-card-description">
-	  ${description}
-	</div>
-	<p></p>
+		<div class=cc-card-label">
+	    	<span class="cc-card-label"> ${CARD_LABEL} </span>
+	    	<h3 class="cc-card-title">${module.name}</h3>
+		</div>
+      	<div class="cc-card-description">
+	  		${description}
+		</div>
+		</div> <!-- cc-card-content-height -->
+	  </div> <!-- cc-card-flex -->
 	 
 	 ${LINK_ITEM}
 	 ${REVIEW_ITEM}
@@ -749,10 +752,8 @@ export default class GriffithCardsView extends cc_View {
 		const engage = this.generateCardEngage(module);
 		let LINK_ITEM = `
 	    <p>&nbsp;<br /> &nbsp;</p>
-	  <!--  <div class="p-4 absolute pin-r pin-b" style="right:0;bottom:0"> -->
 		<div class="cc-card-engage">
 	       <a href="#${module.id}" class="gu-engage">
-<!--		     <div class="hover:bg-blue-300 hover:text-white hover:no-underline text-blue-900 font-semibold hover:text-white py-2 px-4 border border-blue-900 hover:border-transparent rounded"> -->
 			 <div class="cc-card-engage-button">
 			   ${engage}
 	         </div></a>

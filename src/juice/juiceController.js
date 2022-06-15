@@ -76,6 +76,14 @@ export default class juiceController {
 			if (message) {
 				message.remove();
 			}
+			// find all the h3.cc-card-title
+			let h3s = div.querySelectorAll('h3.cc-card-title');
+			// loop through h3s and wrap innerHTML with <strong>
+			for (let i = 0; i < h3s.length; i++) {
+				let h3 = h3s[i];
+				h3.innerHTML = '<strong>' + h3.innerHTML + '</strong>';
+			}
+
 			// get the outerHTML of the div#cc-canvas-collections
 			let html = div.outerHTML;
 			// run it through juice
