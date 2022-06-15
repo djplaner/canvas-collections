@@ -26,7 +26,7 @@
 //     - 8 = T3
 // courseCode_STRM_mode
 // default period is the current main trimester
-const DEFAULT_PERIOD = '3221';
+const DEFAULT_PERIOD = '3225';
 
 const MONTHS = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",

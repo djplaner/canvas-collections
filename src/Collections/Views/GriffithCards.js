@@ -63,6 +63,10 @@ export default class GriffithCardsView extends cc_View {
 
 		const cardStyles = `
 		<style>
+		#cc-canvas-collections{
+			overflow:hidden;
+		}
+
 		#cc-card-interface { 
 			margin-top: 0.5em !important;
 			flex-wrap: wrap;
@@ -97,7 +101,6 @@ export default class GriffithCardsView extends cc_View {
 		.cc-card {
 			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1);
 			background-color: #fff;
-			border-radius: 0.5rem;
 		}
 
 		.cc-card-flex {
@@ -106,6 +109,8 @@ export default class GriffithCardsView extends cc_View {
 			flex: 1 1 0%;
 			display: flex;
 			position:relative;
+			border: 2px solid black;
+			border-radius: 1em;
 		}
 
 		.cc-card:hover{
@@ -121,6 +126,7 @@ export default class GriffithCardsView extends cc_View {
 
 		.cc-card-content-height {
 			height: 15rem;
+			overflow: auto;
 		}
 
 		.cc-card-content {
@@ -164,6 +170,7 @@ export default class GriffithCardsView extends cc_View {
 
 		.cc-card-engage {
 			padding: 1rem;
+			margin-top: .5rem;
 		}
 
 		.cc-card-engage-button {
@@ -411,7 +418,7 @@ export default class GriffithCardsView extends cc_View {
 	  		${description}
 		</div>
 		</div> <!-- cc-card-content-height -->
-	  </div> <!-- cc-card-flex -->
+	  </div> 
 	 
 	 ${LINK_ITEM}
 	 ${REVIEW_ITEM}
@@ -751,7 +758,7 @@ export default class GriffithCardsView extends cc_View {
 	generateCardLinkItem(module) {
 		const engage = this.generateCardEngage(module);
 		let LINK_ITEM = `
-	    <p>&nbsp;<br /> &nbsp;</p>
+<!--	    <p>&nbsp;<br /> &nbsp;</p> -->
 		<div class="cc-card-engage">
 	       <a href="#${module.id}" class="gu-engage">
 			 <div class="cc-card-engage-button">

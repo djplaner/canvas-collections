@@ -1745,7 +1745,7 @@ class CollectionOnlyView extends cc_View {
 //     - 8 = T3
 // courseCode_STRM_mode
 // default period is the current main trimester
-const DEFAULT_PERIOD = '3221';
+const DEFAULT_PERIOD = '3225';
 
 const MONTHS = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
@@ -2477,6 +2477,10 @@ class GriffithCardsView extends cc_View {
 
 		const cardStyles = `
 		<style>
+		#cc-canvas-collections{
+			overflow:hidden;
+		}
+
 		#cc-card-interface { 
 			margin-top: 0.5em !important;
 			flex-wrap: wrap;
@@ -2511,7 +2515,6 @@ class GriffithCardsView extends cc_View {
 		.cc-card {
 			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1);
 			background-color: #fff;
-			border-radius: 0.5rem;
 		}
 
 		.cc-card-flex {
@@ -2520,6 +2523,8 @@ class GriffithCardsView extends cc_View {
 			flex: 1 1 0%;
 			display: flex;
 			position:relative;
+			border: 2px solid black;
+			border-radius: 1em;
 		}
 
 		.cc-card:hover{
@@ -2535,6 +2540,7 @@ class GriffithCardsView extends cc_View {
 
 		.cc-card-content-height {
 			height: 15rem;
+			overflow: auto;
 		}
 
 		.cc-card-content {
@@ -2825,7 +2831,7 @@ class GriffithCardsView extends cc_View {
 	  		${description}
 		</div>
 		</div> <!-- cc-card-content-height -->
-	  </div> <!-- cc-card-flex -->
+	  </div> 
 	 
 	 ${LINK_ITEM}
 	 ${REVIEW_ITEM}
@@ -3165,7 +3171,7 @@ class GriffithCardsView extends cc_View {
 	generateCardLinkItem(module) {
 		const engage = this.generateCardEngage(module);
 		let LINK_ITEM = `
-	    <p>&nbsp;<br /> &nbsp;</p>
+<!--	    <p>&nbsp;<br /> &nbsp;</p> -->
 		<div class="cc-card-engage">
 	       <a href="#${module.id}" class="gu-engage">
 			 <div class="cc-card-engage-button">
@@ -3530,6 +3536,14 @@ class juiceController {
 			for (let i = 0; i < h3s.length; i++) {
 				let h3 = h3s[i];
 				h3.innerHTML = '<strong>' + h3.innerHTML + '</strong>';
+			}
+
+			//----------------- 
+			// remove all div.cc-progress
+			let progresses = div.querySelectorAll('.cc-progress');
+			for (let i = 0; i < progresses.length; i++) {
+				let progress = progresses[i];
+				progress.remove();
 			}
 
 			// get the outerHTML of the div#cc-canvas-collections

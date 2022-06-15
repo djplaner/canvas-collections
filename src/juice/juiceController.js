@@ -84,6 +84,14 @@ export default class juiceController {
 				h3.innerHTML = '<strong>' + h3.innerHTML + '</strong>';
 			}
 
+			//----------------- 
+			// remove all div.cc-progress
+			let progresses = div.querySelectorAll('.cc-progress');
+			for (let i = 0; i < progresses.length; i++) {
+				let progress = progresses[i];
+				progress.remove();
+			}
+
 			// get the outerHTML of the div#cc-canvas-collections
 			let html = div.outerHTML;
 			// run it through juice
