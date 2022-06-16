@@ -92,6 +92,50 @@ export default class juiceController {
 				progress.remove();
 			}
 
+			//---------------
+			// update all the a.cc-card-link and a.gu-engage and add a href
+			let currentUrl = window.location.href;
+			// if no "modules" at end of url, add it
+			if (currentUrl.indexOf('modules') === -1) {
+				currentUrl += '/modules';
+			}
+			let links = div.querySelectorAll('a.cc-card-link');
+			for (let i = 0; i < links.length; i++) {
+				let link = links[i];
+				link.href = currentUrl + link.getAttribute('href');
+			}
+			links = div.querySelectorAll('a.gu-engage');
+			for (let i = 0; i < links.length; i++) {
+				let link = links[i];
+				link.href = currentUrl + link.getAttribute('href');
+			}
+
+			//----------------------
+			// add onmouseover and onmouseout to all div.cc-card 
+			let cards = div.querySelectorAll('.cc-card');
+			for (let i = 0; i < cards.length; i++) {
+				let card = cards[i];
+				card.setAttribute('onmouseover', 
+					"this.style.backgroundColor='#eeeeee';this.style.opacity=0.5;");
+				card.setAttribute('onmouseout', 
+					"this.style.backgroundColor='#ffffff';this.style.opacity=1;");
+			}
+
+			//--------------------
+			// make clickable div.cc-clickable-card clickable
+			// get all div.cc-clickable-card
+			// Canvas RCE scrubs "onclick"
+/*			let clickableCards = div.querySelectorAll('.cc-clickable-card');
+			for (let i = 0; i < clickableCards.length; i++) {
+				let clickableCard = clickableCards[i];
+				// get the a.cc-card-link within clickableCard
+				let link = clickableCard.querySelector('a.cc-card-link');
+				if (link) {
+					// add an onclick to the clickableCard
+					clickableCard.setAttribute('onclick', `location.href='${link.href}'` );
+				}
+			} */
+
 			// get the outerHTML of the div#cc-canvas-collections
 			let html = div.outerHTML;
 			// run it through juice

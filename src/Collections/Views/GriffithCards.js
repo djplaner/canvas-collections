@@ -280,6 +280,10 @@ export default class GriffithCardsView extends cc_View {
 			padding: .5em;
             background-color: #feee88;
 		}
+
+		.gu-engage {
+			text-decoration: none;
+		}
 		</style>`;
 
 		cardCollection.innerHTML = cardStyles;
@@ -760,10 +764,11 @@ export default class GriffithCardsView extends cc_View {
 		let LINK_ITEM = `
 <!--	    <p>&nbsp;<br /> &nbsp;</p> -->
 		<div class="cc-card-engage">
-	       <a href="#${module.id}" class="gu-engage">
 			 <div class="cc-card-engage-button">
+	       		<a href="#${module.id}" class="gu-engage">
 			   ${engage}
-	         </div></a>
+			 </a>
+	         </div>
 	    </div>
 	    `;
 
