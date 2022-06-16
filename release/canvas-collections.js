@@ -225,7 +225,7 @@ class cc_View {
 
 
 
-const CC_VERSION="0.7.3";
+const CC_VERSION="0.8.2";
 
 class cc_ConfigurationView extends cc_View {
 
@@ -910,7 +910,8 @@ input:checked + .cc-slider:before {
 		const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
-		    <i id="configShowSwitch" class="icon-mini-arrow-right"></i> <small>Canvas Collections</small>
+		    <i id="configShowSwitch" class="icon-mini-arrow-right"></i> <small>Canvas Collections
+			<span style="font-size:50%">{${CC_VERSION}}</span></small>
 			<a target="_blank"
 			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
 			   <i class="icon-question"></i>
@@ -1178,7 +1179,7 @@ class CollectionsModel {
 				details[key] = canvasModules[i][key];
 			}
 			// get the matching ccModules
-			let ccModule = ccModules[canvasModules[i].name];
+			let ccModule = ccModules[canvasModules[i].name.trim()];
 			if (ccModule) {
 				// loop thru all the keys in ccModule
 				for (let key in ccModule) {
@@ -1344,7 +1345,7 @@ li.cc-nav a {
 .cc-nav li a:hover {
  /*   background-color: #111; */
     background-color: var(--ic-brand-button--primary-bgd); 
-	border-top: 4px solid var(--ic-brand-button--primary-bgd); */
+	border-top: 4px solid var(--ic-brand-button--primary-bgd); 
 	  color: rgb(255, 255, 255) !important;
   background: rgba(51, 51, 51, 0.9) !important;
   text-decoration: none !important;
@@ -1699,7 +1700,7 @@ class CollectionOnlyView extends cc_View {
  */
 /* jshint esversion: 6 */
 
-const DEFAULT_PERIOD = '3221';
+const DEFAULT_PERIOD = '3225';
 
 const MONTHS = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
@@ -2429,6 +2430,10 @@ class GriffithCardsView extends cc_View {
 
 		const cardStyles = `
 		<style>
+		#cc-canvas-collections{
+			overflow:hidden;
+		}
+
 		#cc-card-interface { 
 			margin-top: 0.5em !important;
 			flex-wrap: wrap;
@@ -2449,7 +2454,7 @@ class GriffithCardsView extends cc_View {
 			}
 		}
 
-		@media (max-width:480px)  
+		@media (max-width:480px) { 
 		    .cc-coming-soon-card, .cc-clickable-card {
 				width:100%;
 			}
@@ -2461,15 +2466,18 @@ class GriffithCardsView extends cc_View {
 		}
 
 		.cc-card {
-			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1), 0 4px 6px -4px rgb(0 0 0/ 0.1);
+			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1);
 			background-color: #fff;
-/*			border: 1px solid #000; */
-			border-radius: 0.5rem;
+		}
+
+		.cc-card-flex {
 			overflow: hidden;
 			flex-direction: column;
 			flex: 1 1 0%;
 			display: flex;
 			position:relative;
+			border: 2px solid black;
+			border-radius: 1em;
 		}
 
 		.cc-card:hover{
@@ -2478,11 +2486,14 @@ class GriffithCardsView extends cc_View {
 		}
 
 		.cc-card-image {
-			background-repeat: no-repeat;
-			background-position: center;
-			background-size: cover;
 			height: 10rem;
-			border-radius: 0.5rem 0.5rem 0 0;
+			width: 100%;
+			object-fit: cover;
+		}
+
+		.cc-card-content-height {
+			height: 15rem;
+			overflow: auto;
 		}
 
 		.cc-card-content {
@@ -2525,13 +2536,12 @@ class GriffithCardsView extends cc_View {
 		}
 
 		.cc-card-engage {
-			position: absolute;
-			right: 0;
-			bottom: 0;
 			padding: 1rem;
+			margin-top: .5rem;
 		}
 
 		.cc-card-engage-button {
+			float: right;
 			padding-top: 0.5rem;
 			padding-bottom: 0.5rem;
 			padding-left: 1rem;
@@ -2636,6 +2646,10 @@ class GriffithCardsView extends cc_View {
 			font-size: 0.75rem;
 			padding: .5em;
             background-color: #feee88;
+		}
+
+		.gu-engage {
+			text-decoration: none;
 		}
 		</style>`;
 
@@ -2759,24 +2773,23 @@ class GriffithCardsView extends cc_View {
 
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
-      <a href="#${module.id}" class="cc-card-link"></a>
-      <div class="cc-card-image" style="${imageSize} background-image: url('${imageUrl}')">
-	    ${IFRAME}
-      </div>
-      ${DATE_WIDGET}
-      ${COMING_SOON}
-	 ${PUBLISHED}
+	  <div class="cc-card-flex">
+	      <a href="#${module.id}" class="cc-card-link"></a>
+		  <img class="cc-card-image" src="${imageUrl}" alt="${module.label}">
+      	${DATE_WIDGET}
+      	${COMING_SOON}
+	 	${PUBLISHED}
+	  <div class="cc-card-content-height">
       <div class="cc-card-content">
-	<div class=cc-card-label">
-	    <span class="cc-card-label">
-		${CARD_LABEL}
-	    </span>
-	    <h3 class="cc-card-title">${module.name}</h3>
-	</div>
-      <div class="cc-card-description">
-	  ${description}
-	</div>
-	<p></p>
+		<div class=cc-card-label">
+	    	<span class="cc-card-label"> ${CARD_LABEL} </span>
+	    	<h3 class="cc-card-title">${module.name}</h3>
+		</div>
+      	<div class="cc-card-description">
+	  		${description}
+		</div>
+		</div> <!-- cc-card-content-height -->
+	  </div> 
 	 
 	 ${LINK_ITEM}
 	 ${REVIEW_ITEM}
@@ -3116,14 +3129,13 @@ class GriffithCardsView extends cc_View {
 	generateCardLinkItem(module) {
 		const engage = this.generateCardEngage(module);
 		let LINK_ITEM = `
-	    <p>&nbsp;<br /> &nbsp;</p>
-	  <!--  <div class="p-4 absolute pin-r pin-b" style="right:0;bottom:0"> -->
+<!--	    <p>&nbsp;<br /> &nbsp;</p> -->
 		<div class="cc-card-engage">
-	       <a href="#${module.id}" class="gu-engage">
-<!--		     <div class="hover:bg-blue-300 hover:text-white hover:no-underline text-blue-900 font-semibold hover:text-white py-2 px-4 border border-blue-900 hover:border-transparent rounded"> -->
 			 <div class="cc-card-engage-button">
+	       		<a href="#${module.id}" class="gu-engage">
 			   ${engage}
-	         </div></a>
+			 </a>
+	         </div>
 	    </div>
 	    `;
 
@@ -3396,6 +3408,164 @@ class cc_CollectionsController {
 }
 
 /**
+ * @class juiceController
+ * @classdesc Controller for 
+ *    Implements a "Collections > Clipboard" button that  prepares it for the Canvas RCE
+ *    - takes div#cc-nav
+ *    - removes the div.cc-nav and div.cc-message (maybe)
+ *    - runs the HTML through juice (inlining CSS styles )
+ *    - copies it into the clipboard
+ */
+
+
+class juiceController {
+
+	/**
+	 * @descr Initialise the controller
+	 */
+	constructor(controller) {
+		DEBUG && console.log('-------------- juiceController.constructor()');
+
+		this.parentController = controller;
+
+		// break the MVC pattern and do it dirty
+		this.display();
+	}
+
+	/**
+	 * @descr Add the CC > Clipboard button after button.add_module_link
+	 * Set up the event listener
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- juiceController.display()');
+
+		// is there a button.add_module_link
+		let addModuleButton = document.querySelector("button.add_module_link");
+		if (addModuleButton) {
+			// Only add the add button if there's isn't one
+			let button = document.querySelector("button.cc_clipboard");
+			if (!button) {
+				// create a dom element button.c2m_word_2_module
+				button = document.createElement("button");
+				// add margin-right to button style
+				button.style = "margin-left: 0.2em";
+				//				button.classList.add("c2m_word_2_module");
+				button.classList.add("btn");
+//				button.classList.add("btn-primary");
+				button.onclick = (event) => this.juiceIt(event);
+				button.innerHTML = 'Collections 2 Clipboard';
+
+				// insert button after addModuleButton
+				addModuleButton.parentNode.insertBefore(button, addModuleButton.nextSibling);
+				//				addModuleButton.parentElement.insertBefore(button, addModuleButton);
+			}
+		}
+	}
+
+	/**
+	 * @descr Implements the juicing process
+	 * @param {*} event 
+	 */
+
+	juiceIt(event) {
+		DEBUG && console.log('-------------- juiceController.juiceIT()');
+
+		// get the div#cc-canvas-collections
+		let div = document.getElementById('cc-canvas-collections');
+		if (div) {
+			div = div.cloneNode(true);
+			// remove the div#cc-nav within div.cc-canvas-collections
+			let nav = div.querySelector('.cc-nav');
+			if (nav) {
+				nav.remove();
+			}
+			// remove the div#cc-message within div.cc-canvas-collections
+			let message = div.querySelector('.cc-message');
+			if (message) {
+				message.remove();
+			}
+			// find all the h3.cc-card-title
+			let h3s = div.querySelectorAll('h3.cc-card-title');
+			// loop through h3s and wrap innerHTML with <strong>
+			for (let i = 0; i < h3s.length; i++) {
+				let h3 = h3s[i];
+				h3.innerHTML = '<strong>' + h3.innerHTML + '</strong>';
+			}
+
+			//----------------- 
+			// remove all div.cc-progress
+			let progresses = div.querySelectorAll('.cc-progress');
+			for (let i = 0; i < progresses.length; i++) {
+				let progress = progresses[i];
+				progress.remove();
+			}
+
+			//---------------
+			// update all the a.cc-card-link and a.gu-engage and add a href
+			let currentUrl = window.location.href;
+			// if no "modules" at end of url, add it
+			if (currentUrl.indexOf('modules') === -1) {
+				currentUrl += '/modules';
+			}
+			let links = div.querySelectorAll('a.cc-card-link');
+			for (let i = 0; i < links.length; i++) {
+				let link = links[i];
+				link.href = currentUrl + link.getAttribute('href');
+			}
+			links = div.querySelectorAll('a.gu-engage');
+			for (let i = 0; i < links.length; i++) {
+				let link = links[i];
+				link.href = currentUrl + link.getAttribute('href');
+			}
+
+			//----------------------
+			// add onmouseover and onmouseout to all div.cc-card 
+			let cards = div.querySelectorAll('.cc-card');
+			for (let i = 0; i < cards.length; i++) {
+				let card = cards[i];
+				card.setAttribute('onmouseover', 
+					"this.style.backgroundColor='#eeeeee';this.style.opacity=0.5;");
+				card.setAttribute('onmouseout', 
+					"this.style.backgroundColor='#ffffff';this.style.opacity=1;");
+			}
+
+			//--------------------
+			// make clickable div.cc-clickable-card clickable
+			// get all div.cc-clickable-card
+			// Canvas RCE scrubs "onclick"
+/*			let clickableCards = div.querySelectorAll('.cc-clickable-card');
+			for (let i = 0; i < clickableCards.length; i++) {
+				let clickableCard = clickableCards[i];
+				// get the a.cc-card-link within clickableCard
+				let link = clickableCard.querySelector('a.cc-card-link');
+				if (link) {
+					// add an onclick to the clickableCard
+					clickableCard.setAttribute('onclick', `location.href='${link.href}'` );
+				}
+			} */
+
+			// get the outerHTML of the div#cc-canvas-collections
+			let html = div.outerHTML;
+			// run it through juice
+			let juiceHTML = juice(html); 
+
+			// copy it to the clipboard
+			if (navigator.clipboard) {
+				navigator.clipboard.writeText(juiceHTML).then(() => {
+					alert('Canvas Collections: HTML for current representation copied to clipboard');
+				} , (err) => {
+						console.error('Canvas Collections: Error copying to clipboard: ', err);
+				});
+			}
+		} else {
+			alert('Canvas Collections: No collections found to copy');
+		}
+	}
+
+}
+
+/**
  * @class cc_Controller
  * @classdesc Contoller factory for canvas collections. Draws on document.url and any cc configuration to 
  * create and call the appropriate controller(s). Possibilities include
@@ -3411,7 +3581,8 @@ class cc_CollectionsController {
 
 
 
-const DEBUG=true;
+
+const DEBUG = true;
 
 class cc_Controller {
 
@@ -3424,7 +3595,7 @@ class cc_Controller {
 	 */
 	constructor() {
 		DEBUG && console.log('-------------- cc_Controller.constructor()');
-    
+
 		// Use document location to set various values controlling operation
 		this.setContext();
 
@@ -3434,24 +3605,26 @@ class cc_Controller {
 		DEBUG && console.log(`cc_Controller: homeModulesPage = ${this.homeModulesPage}`);
 		DEBUG && console.log(`cc_Controller: editMode = ${this.editMode}`);
 		DEBUG && console.log(`cc_Controller: ccOn = ${this.ccOn}`);
-	
+
 		// TODO: extract any additional parameters in the query string
-        // this.checkQueryString();
+		// this.checkQueryString();
 
 		this.configFileDetails = null;
 		this.cc_configuration = null;
 
+
 		// if cc should run, try to get the config
-        if (this.modulesPage || this.homeModulesPage) {
+		if (this.modulesPage || this.homeModulesPage) {
 			// proposed "command" change
-			
+
 
 			//-- original get data chain commencing
 			this.setCsrfToken();
 			DEBUG && console.log(`cc_Controller: csrf = ${this.csrf}`);
 
-			this.requestConfigFileId(); 
-		} 
+			this.requestConfigFileId();
+		}
+
 	}
 
 	/**
@@ -3459,41 +3632,41 @@ class cc_Controller {
 	 * - If successful then request the file contents
 	 * - if not, call execute with no config
 	 */
-	requestConfigFileId() { 
+	requestConfigFileId() {
 
 		let callUrl = `/api/v1/courses/${this.courseId}/files?` + new URLSearchParams(
-			{'search_term': 'cc_config.json'});
+			{ 'search_term': 'cc_config.json' });
 
 		DEBUG && console.log(`cc_Controller: requestConfig: callUrl = ${callUrl}`);
 
-		fetch(callUrl, { 
+		fetch(callUrl, {
 			method: 'GET', credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-CSRF-Token": this.csrfToken,
-            }
-        }) 
-        .then(this.status) 
-        .then((response) => { 
-            return response.json(); 
-        }) 
-        .then((json) => {
-			DEBUG && console.log(`cc_Controller: requestConfig: json = ${JSON.stringify(json)}`);
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.csrfToken,
+			}
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				DEBUG && console.log(`cc_Controller: requestConfig: json = ${JSON.stringify(json)}`);
 
-			if (json.length===0) {
-				DEBUG && console.log(`cc_Controller: requestConfig: no config file found`);
-			} else if (json.length===1) {
-				this.configFileDetails = json[0];
-			    this.requestConfigFileContent();
-			} else { 
-				DEBUG && console.log(`cc_Controller: requestConfig: more than one (${json.length}) config file found`);
-			} 
-        })			
-		.catch((error) => {
-			console.log(`cc_Controller: requestConfig: error = `);
-			console.log(error);
-		}, false );
+				if (json.length === 0) {
+					DEBUG && console.log(`cc_Controller: requestConfig: no config file found`);
+				} else if (json.length === 1) {
+					this.configFileDetails = json[0];
+					this.requestConfigFileContent();
+				} else {
+					DEBUG && console.log(`cc_Controller: requestConfig: more than one (${json.length}) config file found`);
+				}
+			})
+			.catch((error) => {
+				console.log(`cc_Controller: requestConfig: error = `);
+				console.log(error);
+			}, false);
 	}
 
 	/**
@@ -3514,7 +3687,7 @@ class cc_Controller {
 	requestConfigFileContent() {
 		DEBUG && console.log(`cc_Controller: requestConfigFileContent: for ${this.configFileDetails.id}`);
 
-		if (this.configFileDetails['content-type']!=='application/json') {
+		if (this.configFileDetails['content-type'] !== 'application/json') {
 			DEBUG && console.log(`cc_Controller: requestConfigFile: not json`);
 			return;
 		}
@@ -3525,23 +3698,23 @@ class cc_Controller {
 		DEBUG && console.log(
 			`cc_Controller: requestConfigFileContent: callUrl = ${callUrl}`);
 
-		fetch(callUrl, { 
-			method: 'GET', 
-		} )
-        .then(this.status) 
-        .then((response) => { 
-            return response.json(); 
-        }) 
-        .then((json) => {
-			DEBUG && console.log(`cc_Controller: requestConfigFileContent: json = ${JSON.stringify(json)}`);
+		fetch(callUrl, {
+			method: 'GET',
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				DEBUG && console.log(`cc_Controller: requestConfigFileContent: json = ${JSON.stringify(json)}`);
 
-			this.cc_configuration = json;
-			this.ccOn = this.cc_configuration.STATUS==="on";
-			this.requestModuleInformation();
-        })			
-		.catch((error) => {
-			console.log(`cc_Controller: requestConfigFileContent: error = ${error}`);
-		}, false );
+				this.cc_configuration = json;
+				this.ccOn = this.cc_configuration.STATUS === "on";
+				this.requestModuleInformation();
+			})
+			.catch((error) => {
+				console.log(`cc_Controller: requestConfigFileContent: error = ${error}`);
+			}, false);
 
 	}
 
@@ -3555,30 +3728,30 @@ class cc_Controller {
 
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: callUrl = ${callUrl}`);
 
-		fetch(callUrl, { 
+		fetch(callUrl, {
 			method: 'GET', credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-CSRF-Token": this.csrfToken,
-            }
-        }) 
-        .then(this.status) 
-        .then((response) => { 
-            return response.json(); 
-        }) 
-        .then((json) => {
-			DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(json)}`);
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.csrfToken,
+			}
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(json)}`);
 
-			this.moduleDetails = json;
-			// TODO call https://canvas.instructure.com/doc/api/modules.html#method.context_module_items_api.index
-			// the list module items API for each module
-			this.execute();
-        })			
-		.catch((error) => {
-			console.log(`cc_Controller: requestModuleInformation: error = `);
-			console.log(error);
-		}, false );
+				this.moduleDetails = json;
+				// TODO call https://canvas.instructure.com/doc/api/modules.html#method.context_module_items_api.index
+				// the list module items API for each module
+				this.execute();
+			})
+			.catch((error) => {
+				console.log(`cc_Controller: requestModuleInformation: error = `);
+				console.log(error);
+			}, false);
 
 	}
 
@@ -3589,7 +3762,7 @@ class cc_Controller {
 
 	execute() {
 		// do some final checks to make sure we don't run when not required
-        if (!this.modulesPage && !this.homeModulesPage) {
+		if (!this.modulesPage && !this.homeModulesPage) {
 			DEBUG && console.log('-------------- cc_Controller.execute() ERROR SHOULDN"T BE RUNNING');
 			return;
 		}
@@ -3599,14 +3772,14 @@ class cc_Controller {
 
 		//-- figure out what to do
 
-		if ( this.editMode ) {
+		if (this.editMode) {
 			// show the configShowSwitch if it's there
 			const configShowSwitch = document.getElementById('configShowSwitch');
 			if (configShowSwitch) {
 				configShowSwitch.style.display = 'inline-block';
 			}
 
-			if (this.cc_configuration===null) {
+			if (this.cc_configuration === null) {
 				// no configuration - show the cc interface with option to create one
 				DEBUG && console.log('-------------- cc_Controller.execute() Edit Mode - no config');
 				this.showConfiguration();
@@ -3621,15 +3794,18 @@ class cc_Controller {
 				}
 
 			}
+
 		} else {
 			// students only see stuff if there is a config
-			if (this.cc_configuration!==null) {
+			if (this.cc_configuration !== null) {
 				DEBUG && console.log('-------------- cc_Controller.execute() Students Mode - config');
 				if (this.ccOn) {
 					this.showCollections();
 				}
 			}
 		}
+		// Now add the juice interface, should only happen with the userscript version
+		this.showJuice();
 	}
 
 	/**
@@ -3644,7 +3820,7 @@ class cc_Controller {
 
 		// remove all the div.cc-module-config 
 		let moduleConfigs = document.querySelectorAll('div.cc-module-config');
-		moduleConfigs.forEach( (moduleConfig) => {
+		moduleConfigs.forEach((moduleConfig) => {
 			moduleConfig.remove();
 		});
 
@@ -3666,6 +3842,18 @@ class cc_Controller {
 	}
 
 	/**
+	 * @descr add the juice interface if we're running in the browser
+	 */
+
+	showJuice(){
+		// the test itself should probably be in the controller
+		if ( typeof(juice)==='function') {
+			console.log("------ setting up juice");
+			this.juiceController = new juiceController(this);
+		}
+	}
+
+	/**
 	 * @descr Show the cc configuration interface at the top of the page
 	 */
 	showConfiguration() {
@@ -3681,32 +3869,32 @@ class cc_Controller {
 		this.collectionsController = new cc_CollectionsController(this);
 	}
 
-    /**
-     * @descr Check queryString and set any options
-     */
-    checkQueryString() {
-        /*let queryString = window.location.search;
+	/**
+	 * @descr Check queryString and set any options
+	 */
+	checkQueryString() {
+		/*let queryString = window.location.search;
 
-        const urlParams = new URLSearchParams(queryString); */
+		const urlParams = new URLSearchParams(queryString); */
 
-        // OLD check for cc-view - this will be in JSON from now on
-        /*const viewOption = urlParams.get('cc-view');
+		// OLD check for cc-view - this will be in JSON from now on
+		/*const viewOption = urlParams.get('cc-view');
 
-        if (SUPPORTED_VIEWS.includes(viewOption)) {
-	        // Learning Journey view is only set iff
-	        // - queryString contains ?lj=true
-	        // - current page is a Canvas modules page
+		if (SUPPORTED_VIEWS.includes(viewOption)) {
+			// Learning Journey view is only set iff
+			// - queryString contains ?lj=true
+			// - current page is a Canvas modules page
 
-            if (viewOption === 'lj') {
-                // does current url include courses/[0-9]+/modules?
-                if (window.location.href.match(/courses\/[0-9]+\/modules/)) {
-                    this.OPTIONS.collectionView = viewOption;
-                }
-            } else {
-                this.OPTIONS.collectionView = viewOption;
-            }
-        } */
-    }
+			if (viewOption === 'lj') {
+				// does current url include courses/[0-9]+/modules?
+				if (window.location.href.match(/courses\/[0-9]+\/modules/)) {
+					this.OPTIONS.collectionView = viewOption;
+				}
+			} else {
+				this.OPTIONS.collectionView = viewOption;
+			}
+		} */
+	}
 
 
 	/**
@@ -3717,7 +3905,7 @@ class cc_Controller {
 	 * - editMode - true iff not in student view
 	 */
 	setContext() {
-	    const location = window.location.href;
+		const location = window.location.href;
 
 		// replace # at end of string
 		this.documentUrl = window.location.href;
@@ -3742,10 +3930,10 @@ class cc_Controller {
 		// - location ends with courses/${courseId}
 		// - div#context_modules is present
 		regEx = new RegExp(`courses/${courseId}$`);
-		this.homeModulesPage = regEx.test(this.documentUrl) && (document.getElementById('context_modules')!==null);
+		this.homeModulesPage = regEx.test(this.documentUrl) && (document.getElementById('context_modules') !== null);
 
 		// editMode true iff a#easy_student_view exists
-		this.editMode = (document.getElementById('easy_student_view')!==null);
+		this.editMode = (document.getElementById('easy_student_view') !== null);
 
 		// won't be on until the config file is found
 		this.ccOn = false;
@@ -3791,14 +3979,14 @@ class cc_Controller {
 		// /api/v1/courses/:course_id/files
 		let callUrl = `/api/v1/courses/${this.courseId}/files`;
 
-		fetch(callUrl, { 
-			method: 'POST', 
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-CSRF-Token": this.csrfToken
-            },
-            body: JSON.stringify({				
+		fetch(callUrl, {
+			method: 'POST',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.csrfToken
+			},
+			body: JSON.stringify({
 				'name': this.configFileDetails.filename,
 				'parent_folder_id': this.configFileDetails.folder_id,
 				'content_type': this.configFileDetails.content_type,
@@ -3806,17 +3994,17 @@ class cc_Controller {
 				'size': numBytes
 			})
 		})
-        .then(this.status) 
-        .then((response) => { 
-            return response.json(); 
-        }) 
-        .then((json) => {
-			DEBUG && console.log(`cc_Controller: save config: json = ${JSON.stringify(json)}`);
-			this.saveConfigFile(json);
-        })			
-		.catch((error) => {
-			console.log(`cc_Controller: saveConfig: error = ${error}`);
-		}, false );
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				DEBUG && console.log(`cc_Controller: save config: json = ${JSON.stringify(json)}`);
+				this.saveConfigFile(json);
+			})
+			.catch((error) => {
+				console.log(`cc_Controller: saveConfig: error = ${error}`);
+			}, false);
 
 
 		// Response will incude various information that needs to be processed
@@ -3827,14 +4015,14 @@ class cc_Controller {
 	 * - there is a third step
 	 * @param {Json} response 
 	 */
-/*	saveConfigFile(response) {
-		DEBUG && console.log('-------------- cc_Controller.saveConfigFile()');
-		console.log(response);
-
-
-		// do the third step
-	}
-*/	
+	/*	saveConfigFile(response) {
+			DEBUG && console.log('-------------- cc_Controller.saveConfigFile()');
+			console.log(response);
+	
+	
+			// do the third step
+		}
+	*/
 }
 
 /**
