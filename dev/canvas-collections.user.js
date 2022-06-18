@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.1
+// @version      0.8.2
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -242,7 +242,7 @@ class cc_View {
 
 
 
-const CC_VERSION="0.8.1";
+const CC_VERSION="0.8.2";
 
 class cc_ConfigurationView extends cc_View {
 
@@ -2523,7 +2523,6 @@ class GriffithCardsView extends cc_View {
 			flex: 1 1 0%;
 			display: flex;
 			position:relative;
-			border: 2px solid black;
 			border-radius: 1em;
 		}
 
@@ -2541,6 +2540,8 @@ class GriffithCardsView extends cc_View {
 		.cc-card-content-height {
 			height: 15rem;
 			overflow: auto;
+			border-bottom-left-radius: 0.5rem;
+			border-bottom-right-radius: 0.5rem;
 		}
 
 		.cc-card-content {
@@ -2584,7 +2585,7 @@ class GriffithCardsView extends cc_View {
 
 		.cc-card-engage {
 			padding: 1rem;
-			margin-top: .5rem;
+			padding-top: 1.5rem;
 		}
 
 		.cc-card-engage-button {
@@ -2822,7 +2823,7 @@ class GriffithCardsView extends cc_View {
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
 	      <a href="#${module.id}" class="cc-card-link"></a>
-		  <img class="cc-card-image" src="${imageUrl}" alt="${module.label}">
+		  <img class="cc-card-image" src="${imageUrl}" alt="Image representing '${module.name}'">
       	${DATE_WIDGET}
       	${COMING_SOON}
 	 	${PUBLISHED}
@@ -3564,22 +3565,62 @@ class juiceController {
 				let link = links[i];
 				link.href = currentUrl + link.getAttribute('href');
 			}
+
 			links = div.querySelectorAll('a.gu-engage');
 			for (let i = 0; i < links.length; i++) {
 				let link = links[i];
 				link.href = currentUrl + link.getAttribute('href');
 			}
+			// add a link around the img.cc-card-image
+			let images = div.querySelectorAll('img.cc-card-image');
+			for (let i = 0; i < images.length; i++) {
+				let image = images[i];
+				let link = document.createElement('a');
+				link.href = currentUrl;
+				link.innerHTML = image.outerHTML;
+				image.parentNode.replaceChild(link, image);
+			}
+			// add a link around cc-card-title innerHTML
+			let titles = div.querySelectorAll('h3.cc-card-title');
+			for (let i = 0; i < titles.length; i++) {
+				let title = titles[i];
+				let link = document.createElement('a');
+				link.href = currentUrl;
+				link.innerHTML = title.innerHTML;
+				title.innerHTML = link.outerHTML;
+			}
+
+			// change background to #efefef for div.cc-card-content-height
+			// Canvas RCE removes border-bottom-left-radius and right
+			let cardContents = div.querySelectorAll('.cc-card-content-height');
+			for (let i = 0; i < cardContents.length; i++) {
+				let cardContent = cardContents[i];
+				cardContent.style.backgroundColor = '#efefef';
+			}
+			// change background to #efefef for div.cc-card-engage
+			let cardEngages = div.querySelectorAll('.cc-card-engage');
+			for (let i = 0; i < cardEngages.length; i++) {
+				let cardEngage = cardEngages[i];
+				cardEngage.style.backgroundColor = '#efefef';
+			}
+			// change background to #efefef for div.cc-card-flex
+			let cardFlexes = div.querySelectorAll('.cc-card-flex');
+			for (let i = 0; i < cardFlexes.length; i++) {
+				let cardFlex = cardFlexes[i];
+				cardFlex.style.backgroundColor = '#efefef';
+			}
 
 			//----------------------
-			// add onmouseover and onmouseout to all div.cc-card 
-			let cards = div.querySelectorAll('.cc-card');
+			// add onmouseover and onmouseout to all div.cc-card-image
+			// Canvas RCE removes it
+/*			let cards = div.querySelectorAll('.cc-card-image');
 			for (let i = 0; i < cards.length; i++) {
 				let card = cards[i];
 				card.setAttribute('onmouseover', 
-					"this.style.backgroundColor='#eeeeee';this.style.opacity=0.5;");
+					"this.style.opacity=0.5;");
 				card.setAttribute('onmouseout', 
-					"this.style.backgroundColor='#ffffff';this.style.opacity=1;");
-			}
+					"this.style.opacity=1;");
+			} */
 
 			//--------------------
 			// make clickable div.cc-clickable-card clickable

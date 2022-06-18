@@ -109,7 +109,6 @@ export default class GriffithCardsView extends cc_View {
 			flex: 1 1 0%;
 			display: flex;
 			position:relative;
-			border: 2px solid black;
 			border-radius: 1em;
 		}
 
@@ -127,6 +126,8 @@ export default class GriffithCardsView extends cc_View {
 		.cc-card-content-height {
 			height: 15rem;
 			overflow: auto;
+			border-bottom-left-radius: 0.5rem;
+			border-bottom-right-radius: 0.5rem;
 		}
 
 		.cc-card-content {
@@ -170,7 +171,7 @@ export default class GriffithCardsView extends cc_View {
 
 		.cc-card-engage {
 			padding: 1rem;
-			margin-top: .5rem;
+			padding-top: 1.5rem;
 		}
 
 		.cc-card-engage-button {
@@ -408,7 +409,7 @@ export default class GriffithCardsView extends cc_View {
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
 	      <a href="#${module.id}" class="cc-card-link"></a>
-		  <img class="cc-card-image" src="${imageUrl}" alt="${module.label}">
+		  <img class="cc-card-image" src="${imageUrl}" alt="Image representing '${module.name}'">
       	${DATE_WIDGET}
       	${COMING_SOON}
 	 	${PUBLISHED}
