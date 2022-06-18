@@ -2876,6 +2876,11 @@ class GriffithCardsView extends cc_View {
 			}
 		}
 
+		// if wrapper (the card) includes .cc-card-published, then add class unpublished to wrapper
+		if ( wrapper.querySelector('.cc-card-published') ) {
+			wrapper.classList.add('unpublished');
+		}
+
 		return wrapper;
 	}
 
@@ -3608,6 +3613,13 @@ class juiceController {
 			for (let i = 0; i < cardFlexes.length; i++) {
 				let cardFlex = cardFlexes[i];
 				cardFlex.style.backgroundColor = '#efefef';
+			}
+
+			// find any div.unpublished and remove it
+			let unpublisheds = div.querySelectorAll('.unpublished');
+			for (let i = 0; i < unpublisheds.length; i++) {
+				let unpublished = unpublisheds[i];
+				unpublished.remove();
 			}
 
 			//----------------------

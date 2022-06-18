@@ -462,6 +462,11 @@ export default class GriffithCardsView extends cc_View {
 			}
 		}
 
+		// if wrapper (the card) includes .cc-card-published, then add class unpublished to wrapper
+		if ( wrapper.querySelector('.cc-card-published') ) {
+			wrapper.classList.add('unpublished');
+		}
+
 		return wrapper;
 	}
 

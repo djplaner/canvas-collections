@@ -149,6 +149,13 @@ export default class juiceController {
 				cardFlex.style.backgroundColor = '#efefef';
 			}
 
+			// find any div.unpublished and remove it
+			let unpublisheds = div.querySelectorAll('.unpublished');
+			for (let i = 0; i < unpublisheds.length; i++) {
+				let unpublished = unpublisheds[i];
+				unpublished.remove();
+			}
+
 			//----------------------
 			// add onmouseover and onmouseout to all div.cc-card-image
 			// Canvas RCE removes it
