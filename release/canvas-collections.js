@@ -225,7 +225,7 @@ class cc_View {
 
 
 
-const CC_VERSION="0.8.2";
+const CC_VERSION="0.8.3";
 
 class cc_ConfigurationView extends cc_View {
 
@@ -2209,12 +2209,12 @@ const CALENDAR = {
 
 
 class UniversityDateCalendar {
-  constructor() {
+  constructor(strm=DEFAULT_PERIOD) {
     if (UniversityDateCalendar._instance) {
       return UniversityDateCalendar._instance;
     }
     UniversityDateCalendar._instance = this;
-    this.defaultPeriod = DEFAULT_PERIOD;
+    this.defaultPeriod = strm;
   }
 
   /**
@@ -2400,7 +2400,7 @@ class GriffithCardsView extends cc_View {
 		DEBUG && console.log('-------------- GriffithCardsView.display()');
 		let div = document.getElementById('cc-canvas-collections');
 
-		this.calendar = new UniversityDateCalendar();
+		this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
 
 		// create a simple message div element
 		let message = document.createElement('div');
@@ -2476,7 +2476,6 @@ class GriffithCardsView extends cc_View {
 			flex: 1 1 0%;
 			display: flex;
 			position:relative;
-			border: 2px solid black;
 			border-radius: 1em;
 		}
 
@@ -2494,6 +2493,8 @@ class GriffithCardsView extends cc_View {
 		.cc-card-content-height {
 			height: 15rem;
 			overflow: auto;
+			border-bottom-left-radius: 0.5rem;
+			border-bottom-right-radius: 0.5rem;
 		}
 
 		.cc-card-content {
@@ -2537,7 +2538,7 @@ class GriffithCardsView extends cc_View {
 
 		.cc-card-engage {
 			padding: 1rem;
-			margin-top: .5rem;
+			padding-top: 1.5rem;
 		}
 
 		.cc-card-engage-button {
@@ -2775,7 +2776,7 @@ class GriffithCardsView extends cc_View {
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
 	      <a href="#${module.id}" class="cc-card-link"></a>
-		  <img class="cc-card-image" src="${imageUrl}" alt="${module.label}">
+		  <img class="cc-card-image" src="${imageUrl}" alt="Image representing '${module.name}'">
       	${DATE_WIDGET}
       	${COMING_SOON}
 	 	${PUBLISHED}
@@ -2826,6 +2827,11 @@ class GriffithCardsView extends cc_View {
 				//progressDiv.insertAdjacentElement('beforeend', progress);
 				progress.appendTo(progressDiv);
 			}
+		}
+
+		// if wrapper (the card) includes .cc-card-published, then add class unpublished to wrapper
+		if ( wrapper.querySelector('.cc-card-published') ) {
+			wrapper.classList.add('unpublished');
 		}
 
 		return wrapper;
@@ -3513,22 +3519,69 @@ class juiceController {
 				let link = links[i];
 				link.href = currentUrl + link.getAttribute('href');
 			}
+
 			links = div.querySelectorAll('a.gu-engage');
 			for (let i = 0; i < links.length; i++) {
 				let link = links[i];
 				link.href = currentUrl + link.getAttribute('href');
 			}
+			// add a link around the img.cc-card-image
+			let images = div.querySelectorAll('img.cc-card-image');
+			for (let i = 0; i < images.length; i++) {
+				let image = images[i];
+				let link = document.createElement('a');
+				link.href = currentUrl;
+				link.innerHTML = image.outerHTML;
+				image.parentNode.replaceChild(link, image);
+			}
+			// add a link around cc-card-title innerHTML
+			let titles = div.querySelectorAll('h3.cc-card-title');
+			for (let i = 0; i < titles.length; i++) {
+				let title = titles[i];
+				let link = document.createElement('a');
+				link.href = currentUrl;
+				link.innerHTML = title.innerHTML;
+				title.innerHTML = link.outerHTML;
+			}
+
+			// change background to #efefef for div.cc-card-content-height
+			// Canvas RCE removes border-bottom-left-radius and right
+			let cardContents = div.querySelectorAll('.cc-card-content-height');
+			for (let i = 0; i < cardContents.length; i++) {
+				let cardContent = cardContents[i];
+				cardContent.style.backgroundColor = '#efefef';
+			}
+			// change background to #efefef for div.cc-card-engage
+			let cardEngages = div.querySelectorAll('.cc-card-engage');
+			for (let i = 0; i < cardEngages.length; i++) {
+				let cardEngage = cardEngages[i];
+				cardEngage.style.backgroundColor = '#efefef';
+			}
+			// change background to #efefef for div.cc-card-flex
+			let cardFlexes = div.querySelectorAll('.cc-card-flex');
+			for (let i = 0; i < cardFlexes.length; i++) {
+				let cardFlex = cardFlexes[i];
+				cardFlex.style.backgroundColor = '#efefef';
+			}
+
+			// find any div.unpublished and remove it
+			let unpublisheds = div.querySelectorAll('.unpublished');
+			for (let i = 0; i < unpublisheds.length; i++) {
+				let unpublished = unpublisheds[i];
+				unpublished.remove();
+			}
 
 			//----------------------
-			// add onmouseover and onmouseout to all div.cc-card 
-			let cards = div.querySelectorAll('.cc-card');
+			// add onmouseover and onmouseout to all div.cc-card-image
+			// Canvas RCE removes it
+/*			let cards = div.querySelectorAll('.cc-card-image');
 			for (let i = 0; i < cards.length; i++) {
 				let card = cards[i];
 				card.setAttribute('onmouseover', 
-					"this.style.backgroundColor='#eeeeee';this.style.opacity=0.5;");
+					"this.style.opacity=0.5;");
 				card.setAttribute('onmouseout', 
-					"this.style.backgroundColor='#ffffff';this.style.opacity=1;");
-			}
+					"this.style.opacity=1;");
+			} */
 
 			//--------------------
 			// make clickable div.cc-clickable-card clickable
@@ -3622,9 +3675,143 @@ class cc_Controller {
 			this.setCsrfToken();
 			DEBUG && console.log(`cc_Controller: csrf = ${this.csrf}`);
 
-			this.requestConfigFileId();
+			this.requestCourseObject();
 		}
 
+	}
+
+	/**
+	 * @descr Request the Canvas course object for current course.
+	 * Mostly to set the STRM
+	 * requestConfigFileId() when done
+	 */
+	requestCourseObject() {
+
+		let callUrl = `/api/v1/courses/${this.courseId}`;
+
+		DEBUG && console.log(`cc_Controller: requestCourseOjbect: callUrl = ${callUrl}`);
+
+		fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.csrfToken,
+			}
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				DEBUG && console.log(`cc_Controller: requestCourseObject: json = ${JSON.stringify(json)}`);
+
+				if (json.length === 0) {
+					DEBUG && console.log(`cc_Controller: requestCourseObject: couldn't get course object`);
+				} else {
+					this.courseObject = json;
+					this.generateSTRM();
+					this.requestConfigFileId();
+				}
+			})
+			.catch((error) => {
+				console.log(`cc_Controller: requestCourseObject: error = `);
+				console.log(error);
+				this.requestConfigFileId();
+			}, false);
+	}
+
+	/**
+	 * @descr Examine course object's sis_course_id attribute in an attempt
+	 * to extract the STRM and subsequently calculate the year, period and
+	 * other data
+	 * 
+	 * STRMs come in three flavours
+	 * 1. None - e.g. an org site **this is currently an assumption**
+	 * 2. Production - courseCode-strm-*-*
+	 * 3. Dev - DEV_courseCode_STRM
+	 * 
+	 * TODO rejig based on scapeLib/parseCourseInstanceId (ael-automation)
+	 * In particular to handle the "YP" course ids
+	 */
+
+	generateSTRM() {
+		const sis_course_id = this.courseObject.sis_course_id;
+
+		this.courseCode = undefined;
+		this.strm = undefined;
+
+		// is it a DEV course
+		if (sis_course_id.startsWith('DEV_')) {
+			// use regex ^DEV_([^_]*)_([\d]*)$ to extract the course code and STRM
+			const regex = /^DEV_([^_]*)_([\d]*)$/;
+			const match = regex.exec(sis_course_id);
+			if (match) {
+				this.courseCode = match[1];
+				this.strm = match[2];
+			}
+		} else {
+			// use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
+			const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
+			const match = regex.exec(sis_course_id);
+			if (match) {
+				this.courseCode = match[1];
+				this.strm = match[2];
+			}
+		}
+
+		this.parseStrm();
+
+		console.log(`------------ ${this.strm} period ${this.period} year ${this.year}`);
+	}
+
+	/**
+	 * @descr Parse the STRM and set the type, year, period 
+	 * Based on Griffith STRM definition
+	 * https://intranet.secure.griffith.edu.au/computing/using-learning-at-griffith/staff/administration/course-ID
+	 */
+
+	parseStrm() {
+		this.type = undefined;
+		this.year = undefined;
+		this.period = undefined;
+
+		// return if this.strm undefined
+		if (this.strm === undefined) {
+			return;
+		}
+
+		// break up this.strm into individual characters
+		const strm = this.strm.split('');
+
+		// if more than four chars then return
+		if (strm.length > 4) {
+			console.error(`cc_Controller: parseStrm: strm too long: ${this.strm}`);
+			return;
+		}
+
+		// check all chars are numeric
+		for (let i = 0; i < strm.length; i++) {
+			if (isNaN(strm[i])) {
+				console.error(`cc_Controller: parseStrm: strm not numeric: ${this.strm}`);
+				return;
+			}
+		}
+
+		this.type = strm[0];
+		// this.year is the middle two characters prepended by 20
+		this.year = `20${strm[1]}${strm[2]}`;
+		// this.period (initially) is that last char
+		this.period = strm[3];
+
+		// period value needs translation based on type
+
+		// default is Griffith trimester
+		let translate = { 1: 1, 5: 2, 8: 3 };
+		if (this.type === 2) {
+			translate = { 1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 3, 7: 4 };
+		}
+		this.period = translate[this.period];
 	}
 
 	/**
@@ -3845,9 +4032,9 @@ class cc_Controller {
 	 * @descr add the juice interface if we're running in the browser
 	 */
 
-	showJuice(){
+	showJuice() {
 		// the test itself should probably be in the controller
-		if ( typeof(juice)==='function') {
+		if (typeof (juice) === 'function') {
 			console.log("------ setting up juice");
 			this.juiceController = new juiceController(this);
 		}
