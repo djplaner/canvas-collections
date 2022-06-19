@@ -55,9 +55,143 @@ export default class cc_Controller {
 			this.setCsrfToken();
 			DEBUG && console.log(`cc_Controller: csrf = ${this.csrf}`);
 
-			this.requestConfigFileId();
+			this.requestCourseObject();
 		}
 
+	}
+
+	/**
+	 * @descr Request the Canvas course object for current course.
+	 * Mostly to set the STRM
+	 * requestConfigFileId() when done
+	 */
+	requestCourseObject() {
+
+		let callUrl = `/api/v1/courses/${this.courseId}`;
+
+		DEBUG && console.log(`cc_Controller: requestCourseOjbect: callUrl = ${callUrl}`);
+
+		fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.csrfToken,
+			}
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				DEBUG && console.log(`cc_Controller: requestCourseObject: json = ${JSON.stringify(json)}`);
+
+				if (json.length === 0) {
+					DEBUG && console.log(`cc_Controller: requestCourseObject: couldn't get course object`);
+				} else {
+					this.courseObject = json;
+					this.generateSTRM();
+					this.requestConfigFileId();
+				}
+			})
+			.catch((error) => {
+				console.log(`cc_Controller: requestCourseObject: error = `);
+				console.log(error);
+				this.requestConfigFileId();
+			}, false);
+	}
+
+	/**
+	 * @descr Examine course object's sis_course_id attribute in an attempt
+	 * to extract the STRM and subsequently calculate the year, period and
+	 * other data
+	 * 
+	 * STRMs come in three flavours
+	 * 1. None - e.g. an org site **this is currently an assumption**
+	 * 2. Production - courseCode-strm-*-*
+	 * 3. Dev - DEV_courseCode_STRM
+	 * 
+	 * TODO rejig based on scapeLib/parseCourseInstanceId (ael-automation)
+	 * In particular to handle the "YP" course ids
+	 */
+
+	generateSTRM() {
+		const sis_course_id = this.courseObject.sis_course_id;
+
+		this.courseCode = undefined;
+		this.strm = undefined;
+
+		// is it a DEV course
+		if (sis_course_id.startsWith('DEV_')) {
+			// use regex ^DEV_([^_]*)_([\d]*)$ to extract the course code and STRM
+			const regex = /^DEV_([^_]*)_([\d]*)$/;
+			const match = regex.exec(sis_course_id);
+			if (match) {
+				this.courseCode = match[1];
+				this.strm = match[2];
+			}
+		} else {
+			// use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
+			const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
+			const match = regex.exec(sis_course_id);
+			if (match) {
+				this.courseCode = match[1];
+				this.strm = match[2];
+			}
+		}
+
+		this.parseStrm();
+
+		console.log(`------------ ${this.strm} period ${this.period} year ${this.year}`);
+	}
+
+	/**
+	 * @descr Parse the STRM and set the type, year, period 
+	 * Based on Griffith STRM definition
+	 * https://intranet.secure.griffith.edu.au/computing/using-learning-at-griffith/staff/administration/course-ID
+	 */
+
+	parseStrm() {
+		this.type = undefined;
+		this.year = undefined;
+		this.period = undefined;
+
+		// return if this.strm undefined
+		if (this.strm === undefined) {
+			return;
+		}
+
+		// break up this.strm into individual characters
+		const strm = this.strm.split('');
+
+		// if more than four chars then return
+		if (strm.length > 4) {
+			console.error(`cc_Controller: parseStrm: strm too long: ${this.strm}`);
+			return;
+		}
+
+		// check all chars are numeric
+		for (let i = 0; i < strm.length; i++) {
+			if (isNaN(strm[i])) {
+				console.error(`cc_Controller: parseStrm: strm not numeric: ${this.strm}`);
+				return;
+			}
+		}
+
+		this.type = strm[0];
+		// this.year is the middle two characters prepended by 20
+		this.year = `20${strm[1]}${strm[2]}`;
+		// this.period (initially) is that last char
+		this.period = strm[3];
+
+		// period value needs translation based on type
+
+		// default is Griffith trimester
+		let translate = { 1: 1, 5: 2, 8: 3 };
+		if (this.type === 2) {
+			translate = { 1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 3, 7: 4 };
+		}
+		this.period = translate[this.period];
 	}
 
 	/**
@@ -278,9 +412,9 @@ export default class cc_Controller {
 	 * @descr add the juice interface if we're running in the browser
 	 */
 
-	showJuice(){
+	showJuice() {
 		// the test itself should probably be in the controller
-		if ( typeof(juice)==='function') {
+		if (typeof (juice) === 'function') {
 			console.log("------ setting up juice");
 			this.juiceController = new juiceController(this);
 		}
