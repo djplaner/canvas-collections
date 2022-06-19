@@ -535,12 +535,12 @@ const CALENDAR = {
 
 
 export default class UniversityDateCalendar {
-  constructor() {
+  constructor(strm=DEFAULT_PERIOD) {
     if (UniversityDateCalendar._instance) {
       return UniversityDateCalendar._instance;
     }
     UniversityDateCalendar._instance = this;
-    this.defaultPeriod = DEFAULT_PERIOD;
+    this.defaultPeriod = strm;
   }
 
   /**

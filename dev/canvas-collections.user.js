@@ -2254,12 +2254,12 @@ const CALENDAR = {
 
 
 class UniversityDateCalendar {
-  constructor() {
+  constructor(strm=DEFAULT_PERIOD) {
     if (UniversityDateCalendar._instance) {
       return UniversityDateCalendar._instance;
     }
     UniversityDateCalendar._instance = this;
-    this.defaultPeriod = DEFAULT_PERIOD;
+    this.defaultPeriod = strm;
   }
 
   /**
@@ -2447,7 +2447,7 @@ class GriffithCardsView extends cc_View {
 		DEBUG && console.log('-------------- GriffithCardsView.display()');
 		let div = document.getElementById('cc-canvas-collections');
 
-		this.calendar = new UniversityDateCalendar();
+		this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
 
 		// create a simple message div element
 		let message = document.createElement('div');
