@@ -3735,7 +3735,7 @@ class cc_Controller {
 	/**
 	 * @descr Request the Canvas course object for current course.
 	 * Mostly to set the STRM
-	 * requestConfigFileId() when done
+	 * requestConfigFileId() when done - or bypass for findConfigPage
 	 */
 	requestCourseObject() {
 
@@ -3763,13 +3763,16 @@ class cc_Controller {
 				} else {
 					this.courseObject = json;
 					this.generateSTRM();
-					this.requestConfigFileId();
+					//this.requestConfigFileId();
+					this.findConfigPage();
 				}
 			})
 			.catch((error) => {
 				console.log(`cc_Controller: requestCourseObject: error = `);
 				console.log(error);
-				this.requestConfigFileId();
+				//this.requestConfigFileId();
+				// CORS issues now with requesting config file
+				this.findConfigPage();
 			}, false);
 	}
 
@@ -3867,6 +3870,110 @@ class cc_Controller {
 	}
 
 	/**
+	 * @descr Find the id for a page titled "Canvas Collections Configuration", if got the id
+	 * get the contents of the file
+	 * This is a kludge to work around apparent CORs issues with requesting the config file
+	 * TODO resolve the CORs issue
+	 * TODO Should also generate some graceful error for teacher if can't find file or correct content
+	 */
+	findConfigPage() {
+
+		let callUrl = `/api/v1/courses/${this.courseId}/pages?` + new URLSearchParams(
+			{ 'search_term': 'Canvas Collections Configuration' });
+
+		DEBUG && console.log(`cc_Controller: findConfigPage: callUrl = ${callUrl}`);
+
+		fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.csrfToken,
+			}
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				DEBUG && console.log(`cc_Controller: findConfigPage: json = ${JSON.stringify(json)}`);
+
+				// json should contain a list of items, should be just one
+
+				if (json.length === 0) {
+					DEBUG && console.log(`cc_Controller: findConfigPage: no config page 'Canvas Collections Configuration' found`);
+				} else if (json.length === 1) {
+					const body = json[0];
+					const page_id = body.page_id;
+					this.requestConfigPageContents(page_id);
+				} else {
+					DEBUG && console.log(`cc_Controller: findConfigPage: more than one (${json.length}) config file found`);
+				}
+			})
+			.catch((error) => {
+				console.log(`cc_Controller: requestConfig: error = `);
+				console.log(error);
+			}, false);
+	}
+
+	/**
+	 * @descr Get the contents of page and set it up as config for canvas collections
+	 * This is a kludge to work around apparent CORs issues with requesting the config file
+	 * TODO resolve the CORs issue
+	 * TODO Should also generate some graceful error for teacher if can't find file or correct content
+	 */
+	requestConfigPageContents(page_id) {
+
+		let callUrl = `/api/v1/courses/${this.courseId}/pages/${page_id}`;
+
+		DEBUG && console.log(`cc_Controller: requestConfigPageContents: callUrl = ${callUrl}`);
+
+		fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.csrfToken,
+			}
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				// json should be the page object
+				// https://canvas.instructure.com/doc/api/pages.html#Page
+				DEBUG && console.log(`cc_Controller: requestConfigPageContents: json = ${JSON.stringify(json)}`);
+
+				const parsed = new DOMParser().parseFromString(json.body, 'text/html');
+				let config = parsed.querySelector('div.cc_json');
+				this.cc_configuration = JSON.parse(config.innerHTML);
+				DEBUG && console.log(`cc_Controller: requestCOnfigPageContents: config`);
+				this.ccOn = this.cc_configuration.STATUS === "on";
+				// loop thru the keys of the this.cc_configuration.MODULES hash
+				// and set the corresponding module to on
+				for (let key in this.cc_configuration.MODULES) {
+					const module = this.cc_configuration.MODULES[key];
+					module.description = this.decodeHTML(module.description);
+				}
+
+				this.requestModuleInformation();
+			})
+			.catch((error) => {
+				console.log(`cc_Controller: requestConfig: error = `);
+				console.log(error);
+			}, false);
+	}
+
+	decodeHTML(html) {
+		var txt = document.createElement("textarea");
+		txt.innerHTML = html;
+		return txt.value;
+	}
+
+
+
+	/**
 	 * @descr Request the file id for the cc_config.json file
 	 * - If successful then request the file contents
 	 * - if not, call execute with no config
@@ -3925,6 +4032,7 @@ class cc_Controller {
 
 	requestConfigFileContent() {
 		DEBUG && console.log(`cc_Controller: requestConfigFileContent: for ${this.configFileDetails.id}`);
+		console.table(this.configFileDetails);
 
 		if (this.configFileDetails['content-type'] !== 'application/json') {
 			DEBUG && console.log(`cc_Controller: requestConfigFile: not json`);
@@ -3937,8 +4045,11 @@ class cc_Controller {
 		DEBUG && console.log(
 			`cc_Controller: requestConfigFileContent: callUrl = ${callUrl}`);
 
+		// make request no-cors
+
 		fetch(callUrl, {
 			method: 'GET',
+			credentials: 'include'
 		})
 			.then(this.status)
 			.then((response) => {
@@ -4113,17 +4224,17 @@ class cc_Controller {
 	 */
 	checkQueryString() {
 		/*let queryString = window.location.search;
-
+	
 		const urlParams = new URLSearchParams(queryString); */
 
 		// OLD check for cc-view - this will be in JSON from now on
 		/*const viewOption = urlParams.get('cc-view');
-
+	
 		if (SUPPORTED_VIEWS.includes(viewOption)) {
 			// Learning Journey view is only set iff
 			// - queryString contains ?lj=true
 			// - current page is a Canvas modules page
-
+	
 			if (viewOption === 'lj') {
 				// does current url include courses/[0-9]+/modules?
 				if (window.location.href.match(/courses\/[0-9]+\/modules/)) {
