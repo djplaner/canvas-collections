@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.3
+// @version      0.8.5
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -242,7 +242,7 @@ class cc_View {
 
 
 
-const CC_VERSION="0.8.3";
+const CC_VERSION="0.8.5";
 
 class cc_ConfigurationView extends cc_View {
 
@@ -2562,7 +2562,6 @@ class GriffithCardsView extends cc_View {
 	    .cc-card-description a {
 			text-decoration: underline;
 			flex: 1 1 0%;
-			font-size: 0.8em;
 			margin-bottom: 1rem;
 		}
 
@@ -3956,6 +3955,17 @@ class cc_Controller {
 					const module = this.cc_configuration.MODULES[key];
 					module.description = this.decodeHTML(module.description);
 				}
+				// create new object with keys that have &amp; replaced by &
+				let new_modules = {};
+				for (let key in this.cc_configuration.MODULES) {
+					let newKey = key;
+					if (key.includes('&amp;')) {
+						// replace all &amp; with &
+						newKey = key.replace(/&amp;/g, '&');
+					}
+					new_modules[newKey] = this.cc_configuration.MODULES[key];
+				}
+				this.cc_configuration.MODULES = new_modules;
 
 				this.requestModuleInformation();
 			})

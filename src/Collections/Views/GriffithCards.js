@@ -148,7 +148,6 @@ export default class GriffithCardsView extends cc_View {
 	    .cc-card-description a {
 			text-decoration: underline;
 			flex: 1 1 0%;
-			font-size: 0.8em;
 			margin-bottom: 1rem;
 		}
 

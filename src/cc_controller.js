@@ -284,6 +284,17 @@ export default class cc_Controller {
 					const module = this.cc_configuration.MODULES[key];
 					module.description = this.decodeHTML(module.description);
 				}
+				// create new object with keys that have &amp; replaced by &
+				let new_modules = {};
+				for (let key in this.cc_configuration.MODULES) {
+					let newKey = key;
+					if (key.includes('&amp;')) {
+						// replace all &amp; with &
+						newKey = key.replace(/&amp;/g, '&');
+					}
+					new_modules[newKey] = this.cc_configuration.MODULES[key];
+				}
+				this.cc_configuration.MODULES = new_modules;
 
 				this.requestModuleInformation();
 			})
