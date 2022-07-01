@@ -10,7 +10,7 @@
 
 import { cc_View } from '../cc_View.js';
 
-const CC_VERSION="0.8.5";
+const CC_VERSION="0.8.6";
 
 export default class cc_ConfigurationView extends cc_View {
 

@@ -2538,7 +2538,7 @@ class GriffithCardsView extends cc_View {
 		}
 
 		.cc-card-content-height {
-			height: 15rem;
+			height: 12rem;
 			overflow: auto;
 			border-bottom-left-radius: 0.5rem;
 			border-bottom-right-radius: 0.5rem;
@@ -3560,6 +3560,8 @@ class juiceController {
 			//---------------
 			// update all the a.cc-card-link and a.gu-engage and add a href
 			let currentUrl = window.location.href;
+			// the current url should be the modules page, remove the # and anything after it
+			currentUrl = currentUrl.split('#')[0];
 			// if no "modules" at end of url, add it
 			if (currentUrl.indexOf('modules') === -1) {
 				currentUrl += '/modules';
@@ -3570,10 +3572,14 @@ class juiceController {
 				link.href = currentUrl + link.getAttribute('href');
 			}
 
+			// declare array cardLinks
+			let cardLinks = [];
 			links = div.querySelectorAll('a.gu-engage');
 			for (let i = 0; i < links.length; i++) {
 				let link = links[i];
 				link.href = currentUrl + link.getAttribute('href');
+				// save the link for later use
+				cardLinks[i] = link.href;
 			}
 			// add a link around the img.cc-card-image
 			let images = div.querySelectorAll('img.cc-card-image');
@@ -3589,7 +3595,8 @@ class juiceController {
 			for (let i = 0; i < titles.length; i++) {
 				let title = titles[i];
 				let link = document.createElement('a');
-				link.href = currentUrl;
+				//link.href = currentUrl;
+				link.href = cardLinks[i];
 				link.innerHTML = title.innerHTML;
 				title.innerHTML = link.outerHTML;
 			}

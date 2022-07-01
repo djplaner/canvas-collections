@@ -124,7 +124,7 @@ export default class GriffithCardsView extends cc_View {
 		}
 
 		.cc-card-content-height {
-			height: 15rem;
+			height: 12rem;
 			overflow: auto;
 			border-bottom-left-radius: 0.5rem;
 			border-bottom-right-radius: 0.5rem;
