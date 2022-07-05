@@ -121,6 +121,7 @@ export default class juiceController {
 			for (let i = 0; i < images.length; i++) {
 				let image = images[i];
 				let link = document.createElement('a');
+				link.classList.add('cc-card-link-image');
 				link.href = currentUrl;
 				link.innerHTML = image.outerHTML;
 				image.parentNode.replaceChild(link, image);
@@ -130,6 +131,8 @@ export default class juiceController {
 			for (let i = 0; i < titles.length; i++) {
 				let title = titles[i];
 				let link = document.createElement('a');
+				// set link class to cc-card-link-title
+				link.classList.add('cc-card-link-title');
 				//link.href = currentUrl;
 				link.href = cardLinks[i];
 				link.innerHTML = title.innerHTML;
@@ -160,7 +163,30 @@ export default class juiceController {
 			let unpublisheds = div.querySelectorAll('.unpublished');
 			for (let i = 0; i < unpublisheds.length; i++) {
 				let unpublished = unpublisheds[i];
-				unpublished.remove();
+				// only remove if unpublished doesn't contain div.cc-coming-soon-message
+				if (!unpublished.querySelector('.cc-coming-soon-message')) {
+					unpublished.remove();
+				} else {
+					// remove the span.cc-card-published from unpublished
+					let span = unpublished.querySelector('.cc-card-published');
+					if (span) {
+						span.remove();
+					}
+					// set div.cc-card-engage-button to display:none
+					let button = unpublished.querySelector('.cc-card-engage-button');
+					if (button) {
+						button.style.display = 'none';
+					}
+					// remove the a.cc-card-link-title, but keep innerHTML
+					let link = unpublished.querySelector('.cc-card-link-title');
+					if (link) {
+						link.replaceWith(...link.childNodes);
+					}
+					link = unpublished.querySelector('.cc-card-link-image');
+					if (link) {
+						link.replaceWith(...link.childNodes);
+					}
+				}
 			}
 
 			//----------------------
