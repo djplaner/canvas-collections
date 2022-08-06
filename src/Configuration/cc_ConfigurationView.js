@@ -10,7 +10,7 @@
 
 import { cc_View } from '../cc_View.js';
 
-const CC_VERSION="0.8.7a";
+const CC_VERSION = "0.8.7a";
 
 export default class cc_ConfigurationView extends cc_View {
 
@@ -50,11 +50,14 @@ export default class cc_ConfigurationView extends cc_View {
 		// add the configuration interfaces for individual modules
 		// remove all the div.cc-module-config 
 		let divs = document.querySelectorAll('div.cc-module-config');
-		divs.forEach( (div) => {
+		divs.forEach((div) => {
 			div.remove();
 		});
 
-		this.addModuleConfiguration();
+		// only if ccOn show module configuration
+		if (this.model.isOn()) {
+			this.addModuleConfiguration();
+		}
 	}
 
 	/**
@@ -74,7 +77,7 @@ export default class cc_ConfigurationView extends cc_View {
 			const id = moduleHeader.id;
 			const moduleDetail = moduleDetails[id];
 
-			if (moduleDetail===undefined) {
+			if (moduleDetail === undefined) {
 				continue;
 			}
 
@@ -132,12 +135,12 @@ export default class cc_ConfigurationView extends cc_View {
 		for (let i = 0; i < collections.length; i++) {
 			let selected = '';
 			const collection = collections[i];
-			if (collection===moduleConfig.collection) {
-				selected='selected';
+			if (collection === moduleConfig.collection) {
+				selected = 'selected';
 			}
 			collectionsOptions += `<option value="${collection}" ${selected}>${collection}</option>`;
 		}
-		
+
 		let showConfigHtml = `
 		<style>
 		   .cc-collection-representation label {
@@ -570,6 +573,9 @@ export default class cc_ConfigurationView extends cc_View {
 		// get div.cc-switch-container
 		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
 		if (ccSwitchContainer) {
+			if (this.model.isOn()) {
+				this.addConfigShowSwitch();
+			}
 			return;
 		}
 
@@ -695,7 +701,7 @@ input:checked + .cc-slider:before {
 		const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
-		    <i id="configShowSwitch" class="icon-mini-arrow-right"></i> <small>Canvas Collections
+		    <!-- <i id="configShowSwitch" class="icon-mini-arrow-right"></i> --> <small>Canvas Collections
 			<span style="font-size:50%">{${CC_VERSION}}</span></small>
 			<a target="_blank"
 			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
@@ -709,6 +715,10 @@ input:checked + .cc-slider:before {
 	   </div>
 		`;
 
+		// add event handler to i#configShowSwitch
+		if (this.model.isOn()) {
+			this.addConfigShowSwitch();
+		}
 
 		// find a#easy_student_view
 		// insert before a#easy_student_view
@@ -717,23 +727,60 @@ input:checked + .cc-slider:before {
 			easy_student_view.insertAdjacentHTML('afterend', CC_BUNDLE_HTML);
 
 
-			// add event handler to i#configShowSwitch
-			const configShowSwitch = document.getElementById('configShowSwitch');
-			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
+			//			const configShowSwitch = document.getElementById('configShowSwitch');
+			//			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
 			// add event handler of input#cc-switch
 			const ccSwitch = document.getElementById('cc-switch');
 			ccSwitch.onchange = (event) => this.controller.toggleOffOnSwitch(event);
 
-	//		const fileTest = document.getElementById('cc-file-test');
-//			fileTest.onclick = (event) => this.fileTest();
+			//		const fileTest = document.getElementById('cc-file-test');
+			//			fileTest.onclick = (event) => this.fileTest();
 
 			// remove the configShowSwitch if no ccIsOn
-			if ( ! this.model.isOn()) {
-				configShowSwitch.remove();
-			}
+			//if ( ! this.model.isOn()) {
+			//this.removeConfigShowSwitch();
+			//				configShowSwitch.remove();
+			//} 
 		} else {
 			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
 		}
+	}
+
+	/**
+	 * @descr remove the configShowSwitch
+	 */
+
+	removeConfigShowSwitch() {
+		const configShowSwitch = document.getElementById('configShowSwitch');
+		if (configShowSwitch) {
+			configShowSwitch.remove();
+		}
+	}
+
+	/**
+	 * @descr - add i#configShowSwitch back into div.cc-switch-title and probably add
+	 * the handler back in?
+	 */
+
+	addConfigShowSwitch() {
+		const currentSwitch = document.getElementById('configShowSwitch');
+
+		if (!currentSwitch) {
+			const switchHtml = `
+		<i id="configShowSwitch" class="icon-mini-arrow-right"></i> 
+		`;
+			// insert switchHtml into div.cc-switch-title
+			const switchTitle = document.querySelector('div.cc-switch-title');
+			if (switchTitle) {
+				switchTitle.insertAdjacentHTML('afterbegin', switchHtml);
+				// add the handler
+				const configShowSwitch = document.getElementById('configShowSwitch');
+				if (configShowSwitch) {
+					configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
+				}
+			}
+		}
+
 	}
 
 	/**

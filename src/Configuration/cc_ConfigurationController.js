@@ -40,8 +40,8 @@ export default class cc_ConfigurationController {
 		this.view.display();
 
 		// set up event to call this.saveConfig() every 10 seconds
-//		this.configChange = false;
-	//	setInterval(this.saveConfig.bind(this), TIME_BETWEEN_SAVES);
+		this.configChange = false;
+		setInterval(this.saveConfig.bind(this), TIME_BETWEEN_SAVES);
 	}
 
 	/**
@@ -50,11 +50,11 @@ export default class cc_ConfigurationController {
 	 * - initially set to do it every ten seconds
 	 */
 	saveConfig(){
-		//if (this.configChange) {
-			//this.configChange=false;
+		if (this.configChange) {
+			this.configChange=false;
 			this.parentController.saveConfig();
-			//this.lastSaveTime = new Date().getTime();
-		//}
+			this.lastSaveTime = new Date().getTime();
+		}
 	}
 
 	/**
@@ -106,7 +106,6 @@ export default class cc_ConfigurationController {
 
 		this.model.setModuleConfigClass(moduleId,className);
 
-
 		this.view.display();
 	}
 
@@ -137,6 +136,8 @@ export default class cc_ConfigurationController {
 			this.model.turnOff();
 			this.parentController.turnOff();
 		}
+		this.configChange=true;
+//		this.saveConfig();
 	}
 
 }

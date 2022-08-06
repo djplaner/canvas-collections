@@ -50,13 +50,13 @@ class cc_ConfigurationModel {
 	turnOn() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOn()`);
 		this.controller.parentController.ccOn = true;
-		this.controller.parentController.cc_configuration.STATUS==="on";
+		this.controller.parentController.cc_configuration.STATUS="on";
 	}
 
 	turnOff() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOff()`);
 		this.controller.parentController.ccOn = false;
-		this.controller.parentController.cc_configuration.STATUS==="off";
+		this.controller.parentController.cc_configuration.STATUS="off";
 	}
 
 	getConfigShowing() {
@@ -244,7 +244,7 @@ class cc_View {
 
 
 
-const CC_VERSION="0.8.7a";
+const CC_VERSION = "0.8.7a";
 
 class cc_ConfigurationView extends cc_View {
 
@@ -284,11 +284,14 @@ class cc_ConfigurationView extends cc_View {
 		// add the configuration interfaces for individual modules
 		// remove all the div.cc-module-config 
 		let divs = document.querySelectorAll('div.cc-module-config');
-		divs.forEach( (div) => {
+		divs.forEach((div) => {
 			div.remove();
 		});
 
-		this.addModuleConfiguration();
+		// only if ccOn show module configuration
+		if (this.model.isOn()) {
+			this.addModuleConfiguration();
+		}
 	}
 
 	/**
@@ -308,7 +311,7 @@ class cc_ConfigurationView extends cc_View {
 			const id = moduleHeader.id;
 			const moduleDetail = moduleDetails[id];
 
-			if (moduleDetail===undefined) {
+			if (moduleDetail === undefined) {
 				continue;
 			}
 
@@ -366,12 +369,12 @@ class cc_ConfigurationView extends cc_View {
 		for (let i = 0; i < collections.length; i++) {
 			let selected = '';
 			const collection = collections[i];
-			if (collection===moduleConfig.collection) {
-				selected='selected';
+			if (collection === moduleConfig.collection) {
+				selected = 'selected';
 			}
 			collectionsOptions += `<option value="${collection}" ${selected}>${collection}</option>`;
 		}
-		
+
 		let showConfigHtml = `
 		<style>
 		   .cc-collection-representation label {
@@ -804,6 +807,9 @@ class cc_ConfigurationView extends cc_View {
 		// get div.cc-switch-container
 		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
 		if (ccSwitchContainer) {
+			if (this.model.isOn()) {
+				this.addConfigShowSwitch();
+			}
 			return;
 		}
 
@@ -929,7 +935,7 @@ input:checked + .cc-slider:before {
 		const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
-		    <i id="configShowSwitch" class="icon-mini-arrow-right"></i> <small>Canvas Collections
+		    <!-- <i id="configShowSwitch" class="icon-mini-arrow-right"></i> --> <small>Canvas Collections
 			<span style="font-size:50%">{${CC_VERSION}}</span></small>
 			<a target="_blank"
 			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
@@ -943,6 +949,10 @@ input:checked + .cc-slider:before {
 	   </div>
 		`;
 
+		// add event handler to i#configShowSwitch
+		if (this.model.isOn()) {
+			this.addConfigShowSwitch();
+		}
 
 		// find a#easy_student_view
 		// insert before a#easy_student_view
@@ -951,23 +961,60 @@ input:checked + .cc-slider:before {
 			easy_student_view.insertAdjacentHTML('afterend', CC_BUNDLE_HTML);
 
 
-			// add event handler to i#configShowSwitch
-			const configShowSwitch = document.getElementById('configShowSwitch');
-			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
+			//			const configShowSwitch = document.getElementById('configShowSwitch');
+			//			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
 			// add event handler of input#cc-switch
 			const ccSwitch = document.getElementById('cc-switch');
 			ccSwitch.onchange = (event) => this.controller.toggleOffOnSwitch(event);
 
-	//		const fileTest = document.getElementById('cc-file-test');
-//			fileTest.onclick = (event) => this.fileTest();
+			//		const fileTest = document.getElementById('cc-file-test');
+			//			fileTest.onclick = (event) => this.fileTest();
 
 			// remove the configShowSwitch if no ccIsOn
-			if ( ! this.model.isOn()) {
-				configShowSwitch.remove();
-			}
+			//if ( ! this.model.isOn()) {
+			//this.removeConfigShowSwitch();
+			//				configShowSwitch.remove();
+			//} 
 		} else {
 			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
 		}
+	}
+
+	/**
+	 * @descr remove the configShowSwitch
+	 */
+
+	removeConfigShowSwitch() {
+		const configShowSwitch = document.getElementById('configShowSwitch');
+		if (configShowSwitch) {
+			configShowSwitch.remove();
+		}
+	}
+
+	/**
+	 * @descr - add i#configShowSwitch back into div.cc-switch-title and probably add
+	 * the handler back in?
+	 */
+
+	addConfigShowSwitch() {
+		const currentSwitch = document.getElementById('configShowSwitch');
+
+		if (!currentSwitch) {
+			const switchHtml = `
+		<i id="configShowSwitch" class="icon-mini-arrow-right"></i> 
+		`;
+			// insert switchHtml into div.cc-switch-title
+			const switchTitle = document.querySelector('div.cc-switch-title');
+			if (switchTitle) {
+				switchTitle.insertAdjacentHTML('afterbegin', switchHtml);
+				// add the handler
+				const configShowSwitch = document.getElementById('configShowSwitch');
+				if (configShowSwitch) {
+					configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -1023,8 +1070,8 @@ class cc_ConfigurationController {
 		this.view.display();
 
 		// set up event to call this.saveConfig() every 10 seconds
-//		this.configChange = false;
-	//	setInterval(this.saveConfig.bind(this), TIME_BETWEEN_SAVES);
+		this.configChange = false;
+		setInterval(this.saveConfig.bind(this), TIME_BETWEEN_SAVES);
 	}
 
 	/**
@@ -1033,11 +1080,11 @@ class cc_ConfigurationController {
 	 * - initially set to do it every ten seconds
 	 */
 	saveConfig(){
-		//if (this.configChange) {
-			//this.configChange=false;
+		if (this.configChange) {
+			this.configChange=false;
 			this.parentController.saveConfig();
-			//this.lastSaveTime = new Date().getTime();
-		//}
+			this.lastSaveTime = new Date().getTime();
+		}
 	}
 
 	/**
@@ -1089,7 +1136,6 @@ class cc_ConfigurationController {
 
 		this.model.setModuleConfigClass(moduleId,className);
 
-
 		this.view.display();
 	}
 
@@ -1120,6 +1166,8 @@ class cc_ConfigurationController {
 			this.model.turnOff();
 			this.parentController.turnOff();
 		}
+		this.configChange=true;
+//		this.saveConfig();
 	}
 
 }
@@ -4461,11 +4509,11 @@ class cc_Controller {
 		}
 
 		DEBUG && console.log('-------------- cc_Controller.execute()');
-		console.log(this.cc_configuration);
+//		console.log(this.cc_configuration);
 
 		//-- figure out what to do
-
 		if (this.editMode) {
+			// In staff view 
 			// show the configShowSwitch if it's there
 			const configShowSwitch = document.getElementById('configShowSwitch');
 			if (configShowSwitch) {
@@ -4484,10 +4532,8 @@ class cc_Controller {
 				// only show collections if cc is turned on
 				if (this.ccOn) {
 					this.showCollections();
-				}
-
+				} 
 			}
-
 		} else {
 			// students only see stuff if there is a config
 			if (this.cc_configuration !== null) {
@@ -4498,7 +4544,23 @@ class cc_Controller {
 			}
 		}
 		// Now add the juice interface, should only happen with the userscript version
-		this.showJuice();
+		if (this.ccOn) {
+			this.showJuice();
+		}
+	}
+
+	/**
+	 * find all the div.editable_context_module, if display:none then show it
+	 */
+	thisShowModules() {
+		// get all div.editable_context_module
+		const modules = document.getElementsByClassName('editable_context_module');
+		for (let i = 0; i < modules.length; i++) {
+			const module = modules[i];
+			if (module.style.display === 'none') {
+				module.style.display = 'block';
+			}
+		}
 	}
 
 	/**
@@ -4516,6 +4578,8 @@ class cc_Controller {
 		moduleConfigs.forEach((moduleConfig) => {
 			moduleConfig.remove();
 		});
+		// show all the modules
+		this.thisShowModules();
 
 		// remove div#cc-config-wrapper
 		let cc_config_wrapper = document.getElementById('cc-config-wrapper');

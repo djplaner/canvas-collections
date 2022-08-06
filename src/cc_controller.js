@@ -463,11 +463,11 @@ export default class cc_Controller {
 		}
 
 		DEBUG && console.log('-------------- cc_Controller.execute()');
-		console.log(this.cc_configuration);
+//		console.log(this.cc_configuration);
 
 		//-- figure out what to do
-
 		if (this.editMode) {
+			// In staff view 
 			// show the configShowSwitch if it's there
 			const configShowSwitch = document.getElementById('configShowSwitch');
 			if (configShowSwitch) {
@@ -486,10 +486,8 @@ export default class cc_Controller {
 				// only show collections if cc is turned on
 				if (this.ccOn) {
 					this.showCollections();
-				}
-
+				} 
 			}
-
 		} else {
 			// students only see stuff if there is a config
 			if (this.cc_configuration !== null) {
@@ -500,7 +498,23 @@ export default class cc_Controller {
 			}
 		}
 		// Now add the juice interface, should only happen with the userscript version
-		this.showJuice();
+		if (this.ccOn) {
+			this.showJuice();
+		}
+	}
+
+	/**
+	 * find all the div.editable_context_module, if display:none then show it
+	 */
+	thisShowModules() {
+		// get all div.editable_context_module
+		const modules = document.getElementsByClassName('editable_context_module');
+		for (let i = 0; i < modules.length; i++) {
+			const module = modules[i];
+			if (module.style.display === 'none') {
+				module.style.display = 'block';
+			}
+		}
 	}
 
 	/**
@@ -518,6 +532,8 @@ export default class cc_Controller {
 		moduleConfigs.forEach((moduleConfig) => {
 			moduleConfig.remove();
 		});
+		// show all the modules
+		this.thisShowModules();
 
 		// remove div#cc-config-wrapper
 		let cc_config_wrapper = document.getElementById('cc-config-wrapper');

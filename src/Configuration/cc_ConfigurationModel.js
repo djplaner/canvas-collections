@@ -34,13 +34,13 @@ export default class cc_ConfigurationModel {
 	turnOn() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOn()`);
 		this.controller.parentController.ccOn = true;
-		this.controller.parentController.cc_configuration.STATUS==="on";
+		this.controller.parentController.cc_configuration.STATUS="on";
 	}
 
 	turnOff() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOff()`);
 		this.controller.parentController.ccOn = false;
-		this.controller.parentController.cc_configuration.STATUS==="off";
+		this.controller.parentController.cc_configuration.STATUS="off";
 	}
 
 	getConfigShowing() {
