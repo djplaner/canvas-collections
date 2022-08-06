@@ -10,14 +10,21 @@
 
 const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 <div class="cc-config-explanation">
-<div style="float:left">
+<div style="float:left;padding:0.5em">
   <img src="https://repository-images.githubusercontent.com/444951314/42343d35-e259-45ae-b74e-b9957222211f"
-      alt="canvas-collections logo" width="256" height="185" />
+      alt="canvas-collections logo" width="123" height="92" />
 </div>
-<div>
+<div style="padding:0.5em">
   <h3>Canvas Collections Configuration page</h3>
-  <p>This page is used to configure Canvas Collections.  Please make sure you have
-
+  <p>This page is used to configure <a href="https://djplaner.github.io/canvas-collections/">Canvas Collections</a>.  
+  Avoid direct modification to this page, instead use the Canvas Collections configuration interface.  </p>
+  {{VISIBLE_TEXT}}
+ </div>
+ </div>
+ <p style="clear:both"></p>
+ <div class="cc_json" style="display:none">
+ {{CONFIG}}
+ </div>
 `;
 
 export default class cc_ConfigurationStore {
@@ -83,32 +90,32 @@ export default class cc_ConfigurationStore {
 			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken,
+				"X-CSRF-Token": this.parentController.csrf,
 			}
 		})
-		.then(this.status)
-		.then((response) => {
-			return response.json();
-		})
-		.then( (json) => {
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
 
-			// json should contain a list of items, should be just one
-			if (json.length === 0) {
-				DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: no config page 'Canvas Collections Configuration' found`);
-				// TODO this is where we create the configuration page
-			} else if (json.length === 1) {
-				this.pageObject = json[0];
-				this.requestConfigPageContents();
-			} else {
-				const error = `cc_ConfigurationStore: findConfigPage: more than one (${json.length}) config page found`;
-				DEBUG && console.log(error);
+				// json should contain a list of items, should be just one
+				if (json.length === 0) {
+					DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: no config page 'Canvas Collections Configuration' found`);
+					// TODO this is where we create the configuration page
+				} else if (json.length === 1) {
+					this.pageObject = json[0];
+					this.requestConfigPageContents();
+				} else {
+					const error = `cc_ConfigurationStore: findConfigPage: more than one (${json.length}) config page found`;
+					DEBUG && console.log(error);
+					// TODO call some sort of controller error handler??
+				}
+			})
+			.catch((error) => {
+				DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: error = ${error}`);
 				// TODO call some sort of controller error handler??
-			}
-		})
-		.catch( (error) => {
-			DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: error = ${error}`);
-			// TODO call some sort of controller error handler??
-		}, false);
+			}, false);
 
 	}
 
@@ -129,7 +136,7 @@ export default class cc_ConfigurationStore {
 			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken,
+				"X-CSRF-Token": this.parentController.csrf,
 			}
 		})
 			.then(this.status)
@@ -185,60 +192,58 @@ export default class cc_ConfigurationStore {
 
 		// construct the new content for the page
 		// - boiler plate description HTML to start
+		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
 		// - div.json containing
 		//   - JSON stringify of this.parentController.cc_configuration
 		//   - however, each module needs to have it's description encoded as HTML
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			const module = this.parentController.cc_configuration.MODULES[key];
+			module.description = this.encodeHTML(module.description);
+		}
+		content = content.replace('{{CONFIG}}',
+			JSON.stringify(this.parentController.cc_configuration));
+
+		// get the current time as string
+		let time = new Date().toISOString();
+
+		content = content.replace('{{VISIBLE_TEXT}}', `<p>saved at ${time}</p>`);
+
+		let _body = {
+			"wiki_page": {
+				"body": content,
+			}
+		};
+		const bodyString = JSON.stringify(_body);
+
 
 		fetch(callUrl, {
-			method: 'PUT', credentials: 'include',
+			method: 'put', credentials: 'include',
 			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken,
+				"Content-type": "application/json; charset=UTF-8",
+				"Accept": "application/json; charset=UTF-8",
+				"X-CSRF-Token": this.parentController.csrf,
 			},
-			body: JSON.stringify({
-				"wiki_page": {
-					"body": content 
-				}
-			})
+			body: bodyString
 		})
 			.then(this.status)
 			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				// json should be the page object
-				// https://canvas.instructure.com/doc/api/pages.html#Page
-				DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: json = ${JSON.stringify(json)}`);
+				if (response.ok) {
+					const json = response.json();
+					// json should have the newly created page object,
+					// don't need to do anything with it here
+					DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: json = ${JSON.stringify(json)}`);
 
-				const parsed = new DOMParser().parseFromString(json.body, 'text/html');
-				let config = parsed.querySelector('div.cc_json');
-				this.parentController.cc_configuration = JSON.parse(config.innerHTML);
-				DEBUG && console.log(`cc_ConfigurationStore: requestCOnfigPageContents: config`);
-				this.parentController.ccOn = this.parentController.cc_configuration.STATUS === "on";
-				// loop thru the keys of the this.cc_configuration.MODULES hash
-				// and set the corresponding module to on
-				for (let key in this.parentController.cc_configuration.MODULES) {
-					const module = this.parentController.cc_configuration.MODULES[key];
-					module.description = this.decodeHTML(module.description);
+					// tell the controller we successfully completed
+					this.parentController.completedSaveConfig();
+				} else {
+					alert(`Problem saving config ${response.status} - `);
 				}
-				// create new object with keys that have &amp; replaced by &
-				let new_modules = {};
-				for (let key in this.parentController.cc_configuration.MODULES) {
-					let newKey = key;
-					if (key.includes('&amp;')) {
-						// replace all &amp; with &
-						newKey = key.replace(/&amp;/g, '&');
-					}
-					new_modules[newKey] = this.parentController.cc_configuration.MODULES[key];
-				}
-				this.parentController.cc_configuration.MODULES = new_modules;
-
-				this.parentController.requestModuleInformation();
 			})
 			.catch((error) => {
 				console.log(`cc_ConfigurationStore: requestConfig: error = `);
 				console.log(error);
+
+				this.parentController.failedSaveConfig(error);
 			}, false);
 	}
 
@@ -247,6 +252,12 @@ export default class cc_ConfigurationStore {
 		var txt = document.createElement("textarea");
 		txt.innerHTML = html;
 		return txt.value;
+	}
+
+	encodeHTML(html) {
+		let txt = document.createElement("textarea");
+		txt.innerHTML = html;
+		return txt.innerHTML;
 	}
 
 

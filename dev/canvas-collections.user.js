@@ -3712,6 +3712,25 @@ class juiceController {
 
 // jshint esversion: 8
 
+const CONFIGURATION_PAGE_HTML_TEMPLATE = `
+<div class="cc-config-explanation">
+<div style="float:left;padding:0.5em">
+  <img src="https://repository-images.githubusercontent.com/444951314/42343d35-e259-45ae-b74e-b9957222211f"
+      alt="canvas-collections logo" width="123" height="92" />
+</div>
+<div style="padding:0.5em">
+  <h3>Canvas Collections Configuration page</h3>
+  <p>This page is used to configure <a href="https://djplaner.github.io/canvas-collections/">Canvas Collections</a>.  
+  Avoid direct modification to this page, instead use the Canvas Collections configuration interface.  </p>
+  {{VISIBLE_TEXT}}
+ </div>
+ </div>
+ <p style="clear:both"></p>
+ <div class="cc_json" style="display:none">
+ {{CONFIG}}
+ </div>
+`;
+
 class cc_ConfigurationStore {
 
 	/**
@@ -3746,6 +3765,14 @@ class cc_ConfigurationStore {
 	}
 
 	/**
+	 * @descr Harness for savingConfiguration
+	 */
+
+	saveConfiguration() {
+		this.saveConfigPage();
+	}
+
+	/**
 	 * @descr Find the id for a page titled "Canvas Collections Configuration", if got the id
 	 * get the contents of the file
 	 * This is a kludge to work around apparent CORs issues with requesting the config file
@@ -3767,32 +3794,32 @@ class cc_ConfigurationStore {
 			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken,
+				"X-CSRF-Token": this.parentController.csrf,
 			}
 		})
-		.then(this.status)
-		.then((response) => {
-			return response.json();
-		})
-		.then( (json) => {
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
 
-			// json should contain a list of items, should be just one
-			if (json.length === 0) {
-				DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: no config page 'Canvas Collections Configuration' found`);
-				// TODO this is where we create the configuration page
-			} else if (json.length === 1) {
-				this.pageObject = json[0];
-				this.requestConfigPageContents();
-			} else {
-				const error = `cc_ConfigurationStore: findConfigPage: more than one (${json.length}) config page found`;
-				DEBUG && console.log(error);
+				// json should contain a list of items, should be just one
+				if (json.length === 0) {
+					DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: no config page 'Canvas Collections Configuration' found`);
+					// TODO this is where we create the configuration page
+				} else if (json.length === 1) {
+					this.pageObject = json[0];
+					this.requestConfigPageContents();
+				} else {
+					const error = `cc_ConfigurationStore: findConfigPage: more than one (${json.length}) config page found`;
+					DEBUG && console.log(error);
+					// TODO call some sort of controller error handler??
+				}
+			})
+			.catch((error) => {
+				DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: error = ${error}`);
 				// TODO call some sort of controller error handler??
-			}
-		})
-		.catch( (error) => {
-			DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: error = ${error}`);
-			// TODO call some sort of controller error handler??
-		}, false);
+			}, false);
 
 	}
 
@@ -3813,7 +3840,7 @@ class cc_ConfigurationStore {
 			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken,
+				"X-CSRF-Token": this.parentController.csrf,
 			}
 		})
 			.then(this.status)
@@ -3856,37 +3883,108 @@ class cc_ConfigurationStore {
 			}, false);
 	}
 
+	/**
+	 * @descr update the contents of the configuration page (this.pageObject.pageId) with 
+	 * the this.parentController.cc_configuration as JSON
+	 */
+
+	saveConfigPage() {
+
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.pageObject.page_id}`;
+//		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.pageObject.url}`;
+
+		DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: callUrl = ${callUrl}`);
+
+		// construct the new content for the page
+		// - boiler plate description HTML to start
+		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
+		// - div.json containing
+		//   - JSON stringify of this.parentController.cc_configuration
+		//   - however, each module needs to have it's description encoded as HTML
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			const module = this.parentController.cc_configuration.MODULES[key];
+			module.description = this.encodeHTML(module.description);
+		}
+		content = content.replace('{{CONFIG}}',
+			JSON.stringify(this.parentController.cc_configuration));
+
+		// get the current time as string
+		let time = new Date().toISOString();
+
+		content = content.replace('{{VISIBLE_TEXT}}', `<p>saved at ${time}</p>`);
+
+		console.log(`cc_ConfigurationStore: saveConfigPage: content = ${content}`);
+
+		// 422 - no
+		let _body = {
+			"wiki_page": {
+				"body": content,
+			}
+		};
+		// 422 - showign "request payload" not format data
+		//_body = { "wiki_page[body]": content };
+		//_body = `wiki_page[body]=${content}`;
+
+		const bodyString = JSON.stringify(_body);
+		// 500
+		//const bodyString=`wiki_page[body]=${content}`;
+
+
+		fetch(callUrl, {
+			method: 'put', credentials: 'include',
+			headers: {
+				//"Content-Type": "application/x-www-form-urlencoded",
+				//"Content-Type": "application/json; charset=UTF-8",
+				//"Content-type": "multipart/form-data",
+				"Content-type": "application/json; charset=UTF-8",
+				"Accept": "application/json; charset=UTF-8",
+				"X-CSRF-Token": this.parentController.csrf,
+			},
+			//body: JSON.stringify({ "wiki_page[body]": content })
+			// 422
+			//body: JSON.stringify({ "wiki_page[body]": content })
+			//body: { "wiki_page[body]": content }
+			/*body: new URLSearchParams( {
+				'wiki_page[body]': "work_friend" 
+			})*/
+			//body: formData //"wiki_page[body]=will%20this%20work"
+			body: bodyString
+		})
+			.then(this.status)
+			.then((response) => {
+				if (response.ok) {
+					const json = response.json();
+					// json should have the newly created page object,
+					// don't need to do anything with it here
+					DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: json = ${JSON.stringify(json)}`);
+
+					// tell the controller we successfully completed
+					this.parentController.completedSaveConfig();
+				} else {
+					alert(`Problem saving config ${response.status} - `);
+				}
+			})
+			.catch((error) => {
+				console.log(`cc_ConfigurationStore: requestConfig: error = `);
+				console.log(error);
+
+				this.parentController.failedSaveConfig(error);
+			}, false);
+	}
+
+
 	decodeHTML(html) {
 		var txt = document.createElement("textarea");
 		txt.innerHTML = html;
 		return txt.value;
 	}
 
-
-	/**
-	 * @descr When the use toggles the configShowSwitch
-	 * - update the icon being shown for the switch
-	 * - update the indication of whether config is being shown
-	 * - redisplay the cc configuration
-	 * @param {*} event 
-	 */
-
-	toggleConfigShowSwitch(event) {
-		DEBUG && console.log('-------------- cc_ConfigurationController.toggleConfigShowSwitch()');
-
-		// get the class for the event.target element
-		const className = event.target.className;
-
-		let status = this.model.getConfigShowClass();
-
-		let newClass = this.model.getOtherConfigShowClass(className);
-
-		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
-
-		this.model.setConfigShowClass(newClass);
-
-		this.view.display();
+	encodeHTML(html) {
+		let txt = document.createElement("textarea");
+		txt.innerHTML = html;
+		return txt.innerHTML;
 	}
+
 
 }
 
@@ -4321,7 +4419,7 @@ class cc_Controller {
 			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken,
+				"X-CSRF-Token": this.csrf,
 			}
 		})
 			.then(this.status)
@@ -4394,6 +4492,9 @@ class cc_Controller {
 		}
 		// Now add the juice interface, should only happen with the userscript version
 		this.showJuice();
+
+		// and kludge to do a save
+		this.saveConfig();
 	}
 
 	/**
@@ -4554,63 +4655,20 @@ class cc_Controller {
 	 * - File Uploads https://canvas.instructure.com/doc/api/file.file_uploads.html
 	 */
 	saveConfig() {
-		return;
-		DEBUG && console.log('-------------- cc_Controller.saveConfig()');
-		console.log(this.configFileDetails);
-
-		// generate JSON string from config object
-		const configString = JSON.stringify(this.cc_configuration);
-		// get num bytes in config string
-		const numBytes = configString.length;
-
-		// POST
-		// /api/v1/courses/:course_id/files
-		let callUrl = `/api/v1/courses/${this.courseId}/files`;
-
-		fetch(callUrl, {
-			method: 'POST',
-			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken
-			},
-			body: JSON.stringify({
-				'name': this.configFileDetails.filename,
-				'parent_folder_id': this.configFileDetails.folder_id,
-				'content_type': this.configFileDetails.content_type,
-				'on_duplicate': 'overwrite',
-				'size': numBytes
-			})
-		})
-			.then(this.status)
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				DEBUG && console.log(`cc_Controller: save config: json = ${JSON.stringify(json)}`);
-				this.saveConfigFile(json);
-			})
-			.catch((error) => {
-				console.log(`cc_Controller: saveConfig: error = ${error}`);
-			}, false);
-
-
-		// Response will incude various information that needs to be processed
+		this.configurationStore.saveConfiguration();
 	}
 
 	/**
-	 * Do the second step in the Canvas file upload process, upload the file data
-	 * - there is a third step
-	 * @param {Json} response 
+	 * Handle the case when we've successfully updated the config file
 	 */
-	/*	saveConfigFile(response) {
-			DEBUG && console.log('-------------- cc_Controller.saveConfigFile()');
-			console.log(response);
+	completedSaveConfig() {
+		alert('Configuration saved you lazy sod. Make this work');
 	
-	
-			// do the third step
-		}
-	*/
+	}
+
+	failedSaveConfig(error) {
+		alert(`Failed to save configuration - ${error}`);
+	}
 }
 
 // src/index.js

@@ -428,7 +428,7 @@ export default class cc_Controller {
 			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken,
+				"X-CSRF-Token": this.csrf,
 			}
 		})
 			.then(this.status)
@@ -501,6 +501,9 @@ export default class cc_Controller {
 		}
 		// Now add the juice interface, should only happen with the userscript version
 		this.showJuice();
+
+		// and kludge to do a save
+		this.saveConfig();
 	}
 
 	/**
@@ -661,61 +664,18 @@ export default class cc_Controller {
 	 * - File Uploads https://canvas.instructure.com/doc/api/file.file_uploads.html
 	 */
 	saveConfig() {
-		return;
-		DEBUG && console.log('-------------- cc_Controller.saveConfig()');
-		console.log(this.configFileDetails);
-
-		// generate JSON string from config object
-		const configString = JSON.stringify(this.cc_configuration);
-		// get num bytes in config string
-		const numBytes = configString.length;
-
-		// POST
-		// /api/v1/courses/:course_id/files
-		let callUrl = `/api/v1/courses/${this.courseId}/files`;
-
-		fetch(callUrl, {
-			method: 'POST',
-			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken
-			},
-			body: JSON.stringify({
-				'name': this.configFileDetails.filename,
-				'parent_folder_id': this.configFileDetails.folder_id,
-				'content_type': this.configFileDetails.content_type,
-				'on_duplicate': 'overwrite',
-				'size': numBytes
-			})
-		})
-			.then(this.status)
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				DEBUG && console.log(`cc_Controller: save config: json = ${JSON.stringify(json)}`);
-				this.saveConfigFile(json);
-			})
-			.catch((error) => {
-				console.log(`cc_Controller: saveConfig: error = ${error}`);
-			}, false);
-
-
-		// Response will incude various information that needs to be processed
+		this.configurationStore.saveConfiguration();
 	}
 
 	/**
-	 * Do the second step in the Canvas file upload process, upload the file data
-	 * - there is a third step
-	 * @param {Json} response 
+	 * Handle the case when we've successfully updated the config file
 	 */
-	/*	saveConfigFile(response) {
-			DEBUG && console.log('-------------- cc_Controller.saveConfigFile()');
-			console.log(response);
+	completedSaveConfig() {
+		alert('Configuration saved you lazy sod. Make this work');
 	
-	
-			// do the third step
-		}
-	*/
+	}
+
+	failedSaveConfig(error) {
+		alert(`Failed to save configuration - ${error}`);
+	}
 }
