@@ -242,7 +242,7 @@ class cc_View {
 
 
 
-const CC_VERSION="0.8.6";
+const CC_VERSION="0.8.7a";
 
 class cc_ConfigurationView extends cc_View {
 
@@ -3144,7 +3144,7 @@ class GriffithCardsView extends cc_View {
 
 	generateCardImageUrl(module) {
 		let imageUrl = "https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png";
-		if ('image' in module) {
+		if (('image' in module ) && ( module.image !== "")) {
 			imageUrl = module.image;
 		}
 		return imageUrl;
@@ -3701,6 +3701,195 @@ class juiceController {
 
 }
 
+// src/Configuration/cc_ConfigurationStore.js
+/**
+ * @class cc_ConfigurationStore
+ * @classdesc Responsible for retrieving/updating Canvas Collections' configuration.
+ * - uses the Canvas API to update/retrieve - currently from a Canvas page named
+ *   "Canvas Collections Configuration"
+ * - passed call backs to be run when the async Canvas API calls are complete    
+ */
+
+// jshint esversion: 8
+
+class cc_ConfigurationStore {
+
+	/**
+	 * @descr Initialise the configuration store
+	 * @param {Object} controller - the parent controller
+	 */
+	constructor(controller) {
+		DEBUG && console.log('-------------- cc_ConfigurationStore.constructor()');
+
+		this.parentController = controller;
+
+		// will eventually contain the page object returned by Canvas API
+		this.pageObject = null;
+		// whether or not cc is on, will be set based on configuration
+		// -- actually set these in the parent controller
+		//this.ccOn = false;
+		// object containing the CC configuration 
+		//this.cc_configuration = null;
+
+	}
+
+	/**
+	 * @descr Get the configuration from the Canvas API - harness which calls various
+	 * other functions
+	 */
+
+	getConfiguration() {
+		DEBUG && console.log('-------------- cc_ConfigurationStore.getConfiguration()');
+
+		// can we find the config page?
+		this.findConfigPage();
+	}
+
+	/**
+	 * @descr Find the id for a page titled "Canvas Collections Configuration", if got the id
+	 * get the contents of the file
+	 * This is a kludge to work around apparent CORs issues with requesting the config file
+	 * TODO if there's isn't a page, create one
+	 */
+	findConfigPage() {
+		// test for presence of parentController and courseId
+		if (!this.parentController || !this.parentController.courseId) {
+			throw new Error(`cc_ConfigurationStore: findConfigPage: missing parentController or courseId`);
+		}
+
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages?` + new URLSearchParams(
+			{ 'search_term': 'Canvas Collections Configuration' });
+
+		DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: callUrl = ${callUrl}`);
+
+		const response = fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.csrfToken,
+			}
+		})
+		.then(this.status)
+		.then((response) => {
+			return response.json();
+		})
+		.then( (json) => {
+
+			// json should contain a list of items, should be just one
+			if (json.length === 0) {
+				DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: no config page 'Canvas Collections Configuration' found`);
+				// TODO this is where we create the configuration page
+			} else if (json.length === 1) {
+				this.pageObject = json[0];
+				this.requestConfigPageContents();
+			} else {
+				const error = `cc_ConfigurationStore: findConfigPage: more than one (${json.length}) config page found`;
+				DEBUG && console.log(error);
+				// TODO call some sort of controller error handler??
+			}
+		})
+		.catch( (error) => {
+			DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: error = ${error}`);
+			// TODO call some sort of controller error handler??
+		}, false);
+
+	}
+
+	/**
+	 * @descr Get the contents of page and set it up as config for canvas collections
+	 * This is a kludge to work around apparent CORs issues with requesting the config file
+	 * TODO resolve the CORs issue
+	 * TODO Should also generate some graceful error for teacher if can't find file or correct content
+	 */
+	requestConfigPageContents() {
+
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.pageObject.page_id}`;
+
+		DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: callUrl = ${callUrl}`);
+
+		fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.csrfToken,
+			}
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				// json should be the page object
+				// https://canvas.instructure.com/doc/api/pages.html#Page
+				DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: json = ${JSON.stringify(json)}`);
+
+				const parsed = new DOMParser().parseFromString(json.body, 'text/html');
+				let config = parsed.querySelector('div.cc_json');
+				this.parentController.cc_configuration = JSON.parse(config.innerHTML);
+				DEBUG && console.log(`cc_ConfigurationStore: requestCOnfigPageContents: config`);
+				this.parentController.ccOn = this.parentController.cc_configuration.STATUS === "on";
+				// loop thru the keys of the this.cc_configuration.MODULES hash
+				// and set the corresponding module to on
+				for (let key in this.parentController.cc_configuration.MODULES) {
+					const module = this.parentController.cc_configuration.MODULES[key];
+					module.description = this.decodeHTML(module.description);
+				}
+				// create new object with keys that have &amp; replaced by &
+				let new_modules = {};
+				for (let key in this.parentController.cc_configuration.MODULES) {
+					let newKey = key;
+					if (key.includes('&amp;')) {
+						// replace all &amp; with &
+						newKey = key.replace(/&amp;/g, '&');
+					}
+					new_modules[newKey] = this.parentController.cc_configuration.MODULES[key];
+				}
+				this.parentController.cc_configuration.MODULES = new_modules;
+
+				this.parentController.requestModuleInformation();
+			})
+			.catch((error) => {
+				console.log(`cc_ConfigurationStore: requestConfig: error = `);
+				console.log(error);
+			}, false);
+	}
+
+	decodeHTML(html) {
+		var txt = document.createElement("textarea");
+		txt.innerHTML = html;
+		return txt.value;
+	}
+
+
+	/**
+	 * @descr When the use toggles the configShowSwitch
+	 * - update the icon being shown for the switch
+	 * - update the indication of whether config is being shown
+	 * - redisplay the cc configuration
+	 * @param {*} event 
+	 */
+
+	toggleConfigShowSwitch(event) {
+		DEBUG && console.log('-------------- cc_ConfigurationController.toggleConfigShowSwitch()');
+
+		// get the class for the event.target element
+		const className = event.target.className;
+
+		let status = this.model.getConfigShowClass();
+
+		let newClass = this.model.getOtherConfigShowClass(className);
+
+		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
+
+		this.model.setConfigShowClass(newClass);
+
+		this.view.display();
+	}
+
+}
+
 // src/cc_Controller.js
 /**
  * @class cc_Controller
@@ -3713,6 +3902,7 @@ class juiceController {
  *   - update Modules page to show the collections and their representations
  *   - in both staff and student view
  */
+
 
 
 
@@ -3748,6 +3938,8 @@ class cc_Controller {
 
 		this.configFileDetails = null;
 		this.cc_configuration = null;
+
+		this.configurationStore = new cc_ConfigurationStore(this);
 
 
 		// if cc should run, try to get the config
@@ -3796,7 +3988,9 @@ class cc_Controller {
 					this.courseObject = json;
 					this.generateSTRM();
 					//this.requestConfigFileId();
-					this.findConfigPage();
+					// Experiment using configuration store
+					this.configurationStore.getConfiguration();
+					//this.findConfigPage();
 				}
 			})
 			.catch((error) => {
@@ -3804,7 +3998,7 @@ class cc_Controller {
 				console.log(error);
 				//this.requestConfigFileId();
 				// CORS issues now with requesting config file
-				this.findConfigPage();
+				// this.findConfigPage();
 			}, false);
 	}
 
@@ -3908,7 +4102,7 @@ class cc_Controller {
 	 * TODO resolve the CORs issue
 	 * TODO Should also generate some graceful error for teacher if can't find file or correct content
 	 */
-	findConfigPage() {
+/*	findConfigPage() {
 
 		let callUrl = `/api/v1/courses/${this.courseId}/pages?` + new URLSearchParams(
 			{ 'search_term': 'Canvas Collections Configuration' });
@@ -3946,7 +4140,7 @@ class cc_Controller {
 				console.log(`cc_Controller: requestConfig: error = `);
 				console.log(error);
 			}, false);
-	}
+	} */
 
 	/**
 	 * @descr Get the contents of page and set it up as config for canvas collections
@@ -3954,7 +4148,7 @@ class cc_Controller {
 	 * TODO resolve the CORs issue
 	 * TODO Should also generate some graceful error for teacher if can't find file or correct content
 	 */
-	requestConfigPageContents(page_id) {
+/*	requestConfigPageContents(page_id) {
 
 		let callUrl = `/api/v1/courses/${this.courseId}/pages/${page_id}`;
 
@@ -4014,14 +4208,14 @@ class cc_Controller {
 		return txt.value;
 	}
 
-
+*/
 
 	/**
 	 * @descr Request the file id for the cc_config.json file
 	 * - If successful then request the file contents
 	 * - if not, call execute with no config
 	 */
-	requestConfigFileId() {
+/*	requestConfigFileId() {
 
 		let callUrl = `/api/v1/courses/${this.courseId}/files?` + new URLSearchParams(
 			{ 'search_term': 'cc_config.json' });
@@ -4057,7 +4251,7 @@ class cc_Controller {
 				console.log(error);
 			}, false);
 	}
-
+*/
 	/**
 	 * @descr Request the config file, called only after requestConfigFileId is successful in
 	 * setting this.configDetails to json (e.g. below). Request the content of this file, if the
@@ -4072,7 +4266,7 @@ class cc_Controller {
 	 *   "thumbnail_url":null,"modified_at":"2022-03-05T03:27:56Z","mime_class":"file",
 	 *   "media_entry_id":null,"locked_for_user":false} 
 	 */
-
+/*
 	requestConfigFileContent() {
 		DEBUG && console.log(`cc_Controller: requestConfigFileContent: for ${this.configFileDetails.id}`);
 		console.table(this.configFileDetails);
@@ -4110,6 +4304,7 @@ class cc_Controller {
 			}, false);
 
 	}
+	*/
 
 	/**
 	 * @descr Generate API request for all information of course's modules

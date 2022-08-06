@@ -730,7 +730,7 @@ export default class GriffithCardsView extends cc_View {
 
 	generateCardImageUrl(module) {
 		let imageUrl = "https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png";
-		if ('image' in module) {
+		if (('image' in module ) && ( module.image !== "")) {
 			imageUrl = module.image;
 		}
 		return imageUrl;

@@ -14,6 +14,7 @@
 import { cc_ConfigurationController } from './Configuration/cc_ConfigurationController.js';
 import { cc_CollectionsController } from './Collections/CollectionsController.js';
 import { juiceController } from './juice/juiceController.js';
+import { cc_ConfigurationStore } from './Configuration/cc_ConfigurationStore.js';
 
 const DEBUG = true;
 
@@ -44,6 +45,8 @@ export default class cc_Controller {
 
 		this.configFileDetails = null;
 		this.cc_configuration = null;
+
+		this.configurationStore = new cc_ConfigurationStore(this);
 
 
 		// if cc should run, try to get the config
@@ -92,7 +95,9 @@ export default class cc_Controller {
 					this.courseObject = json;
 					this.generateSTRM();
 					//this.requestConfigFileId();
-					this.findConfigPage();
+					// Experiment using configuration store
+					this.configurationStore.getConfiguration();
+					//this.findConfigPage();
 				}
 			})
 			.catch((error) => {
@@ -100,7 +105,7 @@ export default class cc_Controller {
 				console.log(error);
 				//this.requestConfigFileId();
 				// CORS issues now with requesting config file
-				this.findConfigPage();
+				// this.findConfigPage();
 			}, false);
 	}
 
@@ -204,7 +209,7 @@ export default class cc_Controller {
 	 * TODO resolve the CORs issue
 	 * TODO Should also generate some graceful error for teacher if can't find file or correct content
 	 */
-	findConfigPage() {
+/*	findConfigPage() {
 
 		let callUrl = `/api/v1/courses/${this.courseId}/pages?` + new URLSearchParams(
 			{ 'search_term': 'Canvas Collections Configuration' });
@@ -242,7 +247,7 @@ export default class cc_Controller {
 				console.log(`cc_Controller: requestConfig: error = `);
 				console.log(error);
 			}, false);
-	}
+	} */
 
 	/**
 	 * @descr Get the contents of page and set it up as config for canvas collections
@@ -250,7 +255,7 @@ export default class cc_Controller {
 	 * TODO resolve the CORs issue
 	 * TODO Should also generate some graceful error for teacher if can't find file or correct content
 	 */
-	requestConfigPageContents(page_id) {
+/*	requestConfigPageContents(page_id) {
 
 		let callUrl = `/api/v1/courses/${this.courseId}/pages/${page_id}`;
 
@@ -310,14 +315,14 @@ export default class cc_Controller {
 		return txt.value;
 	}
 
-
+*/
 
 	/**
 	 * @descr Request the file id for the cc_config.json file
 	 * - If successful then request the file contents
 	 * - if not, call execute with no config
 	 */
-	requestConfigFileId() {
+/*	requestConfigFileId() {
 
 		let callUrl = `/api/v1/courses/${this.courseId}/files?` + new URLSearchParams(
 			{ 'search_term': 'cc_config.json' });
@@ -353,7 +358,7 @@ export default class cc_Controller {
 				console.log(error);
 			}, false);
 	}
-
+*/
 	/**
 	 * @descr Request the config file, called only after requestConfigFileId is successful in
 	 * setting this.configDetails to json (e.g. below). Request the content of this file, if the
@@ -368,7 +373,7 @@ export default class cc_Controller {
 	 *   "thumbnail_url":null,"modified_at":"2022-03-05T03:27:56Z","mime_class":"file",
 	 *   "media_entry_id":null,"locked_for_user":false} 
 	 */
-
+/*
 	requestConfigFileContent() {
 		DEBUG && console.log(`cc_Controller: requestConfigFileContent: for ${this.configFileDetails.id}`);
 		console.table(this.configFileDetails);
@@ -406,6 +411,7 @@ export default class cc_Controller {
 			}, false);
 
 	}
+	*/
 
 	/**
 	 * @descr Generate API request for all information of course's modules
