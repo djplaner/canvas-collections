@@ -100,8 +100,10 @@ export default class cc_ConfigurationModel {
 		// find the index of CONFIG_SHOW_ICONS that matches newClass
 
 		if ( this.CONFIG_SHOW_ICONS[false]===className ) {
+			this.turnOn();
 			return this.CONFIG_SHOW_ICONS[true];
 		} else {
+			this.turnOff();
 			return this.CONFIG_SHOW_ICONS[false];
 		}
 	}

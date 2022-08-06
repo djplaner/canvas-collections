@@ -501,9 +501,6 @@ export default class cc_Controller {
 		}
 		// Now add the juice interface, should only happen with the userscript version
 		this.showJuice();
-
-		// and kludge to do a save
-		this.saveConfig();
 	}
 
 	/**
@@ -531,6 +528,11 @@ export default class cc_Controller {
 			if (cc_switch_container) {
 				cc_switch_container.style.borderBottom = '1px solid #c7cdd1';
 			}
+		}
+		// remove button#cc_2_clipboard
+		let cc_2_clipboard = document.getElementById('cc_2_clipboard');
+		if (cc_2_clipboard) {
+			cc_2_clipboard.remove();
 		}
 		const configShowSwitch = document.getElementById('configShowSwitch');
 		// set configShowSwitch to display:none

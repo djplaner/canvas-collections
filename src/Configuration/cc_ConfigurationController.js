@@ -20,6 +20,7 @@
 import { cc_ConfigurationModel } from './cc_ConfigurationModel.js';
 import { cc_ConfigurationView } from './cc_ConfigurationView.js';
 
+const TIME_BETWEEN_SAVES = 10000; // 10 seconds
 
 export default class cc_ConfigurationController {
 
@@ -33,7 +34,27 @@ export default class cc_ConfigurationController {
 		this.model = new cc_ConfigurationModel(this);
 		this.view = new cc_ConfigurationView(this.model, this);
 
+		// set lastSaveTime to current time
+		//this.lastSaveTime = new Date().getTime();
+
 		this.view.display();
+
+		// set up event to call this.saveConfig() every 10 seconds
+//		this.configChange = false;
+	//	setInterval(this.saveConfig.bind(this), TIME_BETWEEN_SAVES);
+	}
+
+	/**
+	 * @descr While configuration controller working, this will decide how often/when
+	 * to save the configuration (parentController.saveConfig)
+	 * - initially set to do it every ten seconds
+	 */
+	saveConfig(){
+		//if (this.configChange) {
+			//this.configChange=false;
+			this.parentController.saveConfig();
+			//this.lastSaveTime = new Date().getTime();
+		//}
 	}
 
 	/**
@@ -57,6 +78,9 @@ export default class cc_ConfigurationController {
 		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
 
 		this.model.setConfigShowClass(newClass);
+
+	//	this.configChange = true;
+		this.saveConfig();
 
 		this.view.display();
 	}
@@ -113,7 +137,6 @@ export default class cc_ConfigurationController {
 			this.model.turnOff();
 			this.parentController.turnOff();
 		}
-		this.parentController.saveConfig();
 	}
 
 }

@@ -22,7 +22,8 @@ const CONFIGURATION_PAGE_HTML_TEMPLATE = `
  </div>
  </div>
  <p style="clear:both"></p>
- <div class="cc_json" style="display:none">
+ <!-- <div class="cc_json" style="display:none"> -->
+ <div class="cc_json">
  {{CONFIG}}
  </div>
 `;

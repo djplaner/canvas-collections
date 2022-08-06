@@ -116,8 +116,10 @@ class cc_ConfigurationModel {
 		// find the index of CONFIG_SHOW_ICONS that matches newClass
 
 		if ( this.CONFIG_SHOW_ICONS[false]===className ) {
+			this.turnOn();
 			return this.CONFIG_SHOW_ICONS[true];
 		} else {
+			this.turnOff();
 			return this.CONFIG_SHOW_ICONS[false];
 		}
 	}
@@ -1001,6 +1003,7 @@ input:checked + .cc-slider:before {
 
 
 
+const TIME_BETWEEN_SAVES = 10000; // 10 seconds
 
 class cc_ConfigurationController {
 
@@ -1014,7 +1017,27 @@ class cc_ConfigurationController {
 		this.model = new cc_ConfigurationModel(this);
 		this.view = new cc_ConfigurationView(this.model, this);
 
+		// set lastSaveTime to current time
+		//this.lastSaveTime = new Date().getTime();
+
 		this.view.display();
+
+		// set up event to call this.saveConfig() every 10 seconds
+//		this.configChange = false;
+	//	setInterval(this.saveConfig.bind(this), TIME_BETWEEN_SAVES);
+	}
+
+	/**
+	 * @descr While configuration controller working, this will decide how often/when
+	 * to save the configuration (parentController.saveConfig)
+	 * - initially set to do it every ten seconds
+	 */
+	saveConfig(){
+		//if (this.configChange) {
+			//this.configChange=false;
+			this.parentController.saveConfig();
+			//this.lastSaveTime = new Date().getTime();
+		//}
 	}
 
 	/**
@@ -1038,6 +1061,9 @@ class cc_ConfigurationController {
 		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
 
 		this.model.setConfigShowClass(newClass);
+
+	//	this.configChange = true;
+		this.saveConfig();
 
 		this.view.display();
 	}
@@ -1094,7 +1120,6 @@ class cc_ConfigurationController {
 			this.model.turnOff();
 			this.parentController.turnOff();
 		}
-		this.parentController.saveConfig();
 	}
 
 }
@@ -3508,6 +3533,8 @@ class juiceController {
 				button.style = "margin-left: 0.2em";
 				//				button.classList.add("c2m_word_2_module");
 				button.classList.add("btn");
+				// set button.id to cc_2_clipboard
+				button.id = "cc_2_clipboard";
 //				button.classList.add("btn-primary");
 				button.onclick = (event) => this.juiceIt(event);
 				button.innerHTML = 'Collections 2 Clipboard';
@@ -3726,7 +3753,8 @@ const CONFIGURATION_PAGE_HTML_TEMPLATE = `
  </div>
  </div>
  <p style="clear:both"></p>
- <div class="cc_json" style="display:none">
+ <!-- <div class="cc_json" style="display:none"> -->
+ <div class="cc_json">
  {{CONFIG}}
  </div>
 `;
@@ -3891,7 +3919,6 @@ class cc_ConfigurationStore {
 	saveConfigPage() {
 
 		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.pageObject.page_id}`;
-//		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.pageObject.url}`;
 
 		DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: callUrl = ${callUrl}`);
 
@@ -3913,41 +3940,21 @@ class cc_ConfigurationStore {
 
 		content = content.replace('{{VISIBLE_TEXT}}', `<p>saved at ${time}</p>`);
 
-		console.log(`cc_ConfigurationStore: saveConfigPage: content = ${content}`);
-
-		// 422 - no
 		let _body = {
 			"wiki_page": {
 				"body": content,
 			}
 		};
-		// 422 - showign "request payload" not format data
-		//_body = { "wiki_page[body]": content };
-		//_body = `wiki_page[body]=${content}`;
-
 		const bodyString = JSON.stringify(_body);
-		// 500
-		//const bodyString=`wiki_page[body]=${content}`;
 
 
 		fetch(callUrl, {
 			method: 'put', credentials: 'include',
 			headers: {
-				//"Content-Type": "application/x-www-form-urlencoded",
-				//"Content-Type": "application/json; charset=UTF-8",
-				//"Content-type": "multipart/form-data",
 				"Content-type": "application/json; charset=UTF-8",
 				"Accept": "application/json; charset=UTF-8",
 				"X-CSRF-Token": this.parentController.csrf,
 			},
-			//body: JSON.stringify({ "wiki_page[body]": content })
-			// 422
-			//body: JSON.stringify({ "wiki_page[body]": content })
-			//body: { "wiki_page[body]": content }
-			/*body: new URLSearchParams( {
-				'wiki_page[body]': "work_friend" 
-			})*/
-			//body: formData //"wiki_page[body]=will%20this%20work"
 			body: bodyString
 		})
 			.then(this.status)
@@ -4492,9 +4499,6 @@ class cc_Controller {
 		}
 		// Now add the juice interface, should only happen with the userscript version
 		this.showJuice();
-
-		// and kludge to do a save
-		this.saveConfig();
 	}
 
 	/**
@@ -4522,6 +4526,11 @@ class cc_Controller {
 			if (cc_switch_container) {
 				cc_switch_container.style.borderBottom = '1px solid #c7cdd1';
 			}
+		}
+		// remove button#cc_2_clipboard
+		let cc_2_clipboard = document.getElementById('cc_2_clipboard');
+		if (cc_2_clipboard) {
+			cc_2_clipboard.remove();
 		}
 		const configShowSwitch = document.getElementById('configShowSwitch');
 		// set configShowSwitch to display:none

@@ -43,6 +43,8 @@ export default class juiceController {
 				button.style = "margin-left: 0.2em";
 				//				button.classList.add("c2m_word_2_module");
 				button.classList.add("btn");
+				// set button.id to cc_2_clipboard
+				button.id = "cc_2_clipboard";
 //				button.classList.add("btn-primary");
 				button.onclick = (event) => this.juiceIt(event);
 				button.innerHTML = 'Collections 2 Clipboard';
