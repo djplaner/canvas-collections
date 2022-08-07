@@ -1016,6 +1016,10 @@ input:checked + .cc-slider:before {
 			const ccSwitch = document.getElementById('cc-switch');
 			ccSwitch.onchange = (event) => this.controller.toggleOffOnSwitch(event);
 
+			// add event handler of button#cc-save-button
+			const ccSaveButton = document.getElementById('cc-save-button');
+			ccSaveButton.onclick = (event) => this.controller.saveConfig();
+
 			//		const fileTest = document.getElementById('cc-file-test');
 			//			fileTest.onclick = (event) => this.fileTest();
 
