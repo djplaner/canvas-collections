@@ -34,8 +34,7 @@ class cc_ConfigurationModel {
 		this.CONFIG_SHOW_ICONS = {
 			true: 'icon-mini-arrow-down',
 			false: 'icon-mini-arrow-right'
-		}
-
+		};
 	}
 
 	/**
@@ -94,9 +93,9 @@ class cc_ConfigurationModel {
 
 		// set the configClass attribute of the found object to newClass
 		if (newClass==="icon-mini-arrow-down") {
-			module['configClass'] = "icon-mini-arrow-right";
+			module.configClass = "icon-mini-arrow-right";
 		} else {
-			module['configClass'] = "icon-mini-arrow-down";
+			module.configClass = "icon-mini-arrow-down";
 		}
 	}
 
@@ -116,10 +115,10 @@ class cc_ConfigurationModel {
 		// find the index of CONFIG_SHOW_ICONS that matches newClass
 
 		if ( this.CONFIG_SHOW_ICONS[false]===className ) {
-			this.turnOn();
+			//this.turnOn();
 			return this.CONFIG_SHOW_ICONS[true];
 		} else {
-			this.turnOff();
+			//this.turnOff();
 			return this.CONFIG_SHOW_ICONS[false];
 		}
 	}
