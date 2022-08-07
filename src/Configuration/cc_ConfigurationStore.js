@@ -154,6 +154,10 @@ export default class cc_ConfigurationStore {
 				this.parentController.cc_configuration = JSON.parse(config.innerHTML);
 				DEBUG && console.log(`cc_ConfigurationStore: requestCOnfigPageContents: config`);
 				this.parentController.ccOn = this.parentController.cc_configuration.STATUS === "on";
+				// add a COLLECTIONS_ORDER array to the config if it's not there
+				if (!this.parentController.cc_configuration.COLLECTIONS_ORDER) {
+					this.parentController.cc_configuration.COLLECTIONS_ORDER = Object.keys(this.parentController.cc_configuration.COLLECTIONS);
+				}
 				// loop thru the keys of the this.cc_configuration.MODULES hash
 				// and set the corresponding module to on
 				for (let key in this.parentController.cc_configuration.MODULES) {

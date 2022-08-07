@@ -91,7 +91,7 @@ export default class cc_ConfigurationController {
 		this.model.setConfigShowClass(newClass);
 
 	//	this.configChange = true;
-		this.saveConfig();
+	//	this.saveConfig();
 
 		this.view.display();
 	}
@@ -149,6 +149,44 @@ export default class cc_ConfigurationController {
 		}
 		this.changeMade(true);
 //		this.saveConfig();
+	}
+
+	/**
+	 * @descr Move a collection matching the .cc-move-collection element that was clicked
+	 * @param {*} event 
+	 */
+
+	moveCollection(event) {
+		// get the id of the element that was clicked
+		const idString = event.target.id;
+		// extract the collectionName and direction from 
+		// the id format cc-collection-<collectionName>-<direction>
+		const collectionName = idString.match(/cc-collection-(.*)-(up|down)/)[1];
+		const direction = idString.match(/cc-collection-(.*)-(up|down)/)[2];
+
+
+		// move the collection around in the model's stored order
+		const currentOrder = this.model.getExistingCollectionNames();
+		const currentOrderString = currentOrder.join(',');
+		// find the index of the collectionName in the array
+		const index = currentOrder.indexOf(collectionName);
+		if (direction == 'up') {
+			currentOrder.splice(index, 1);
+			currentOrder.splice(index - 1, 0, collectionName);
+		} else { // direction is down
+			currentOrder.splice(index, 1);
+			currentOrder.splice(index + 1, 0, collectionName);
+		}
+		this.model.setExistingCollectionNames(currentOrder);
+
+		this.changeMade(true);
+
+		// redisplay the configuration
+		this.view.updateExistingCollections();
+		// - also need to update the main display
+		this.parentController.showCollections();
+		
+
 	}
 
 }

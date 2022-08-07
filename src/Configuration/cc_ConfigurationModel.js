@@ -125,14 +125,17 @@ export default class cc_ConfigurationModel {
 	}
 
 	/**
-	 * @descr return an array of existing collection names
+	 * @descr return an array of existing collection names in the current order
 	 */
 
 	getExistingCollectionNames() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getExistingCollectionNames()`);
-//		console.log(this.controller.parentController.cc_configuration);
-		// show the keys for the cc_configuration object
-	 	return Object.keys(this.controller.parentController.cc_configuration.COLLECTIONS);
+	 	return this.controller.parentController.cc_configuration.COLLECTIONS_ORDER;
+	}
+
+	setExistingCollectionNames(collectionNames) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.setExistingCollectionNames()`);
+		this.controller.parentController.cc_configuration.COLLECTIONS_ORDER = collectionNames;
 	}
 
 	/**

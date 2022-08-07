@@ -141,14 +141,17 @@ class cc_ConfigurationModel {
 	}
 
 	/**
-	 * @descr return an array of existing collection names
+	 * @descr return an array of existing collection names in the current order
 	 */
 
 	getExistingCollectionNames() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getExistingCollectionNames()`);
-//		console.log(this.controller.parentController.cc_configuration);
-		// show the keys for the cc_configuration object
-	 	return Object.keys(this.controller.parentController.cc_configuration.COLLECTIONS);
+	 	return this.controller.parentController.cc_configuration.COLLECTIONS_ORDER;
+	}
+
+	setExistingCollectionNames(collectionNames) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.setExistingCollectionNames()`);
+		this.controller.parentController.cc_configuration.COLLECTIONS_ORDER = collectionNames;
 	}
 
 	/**
@@ -581,6 +584,10 @@ class cc_ConfigurationView extends cc_View {
 				height: 2rem;
 			}
 
+			.cc-move-collection {
+				cursor: pointer;
+			}
+
 			.cc-collection-representation {
 				display: flex;
 				align-items: center;
@@ -673,6 +680,22 @@ class cc_ConfigurationView extends cc_View {
 	}
 
 	/**
+	 * @descr existing collections are already showing, but user has asked to move on
+	 * - remove all the existing #cc-config-existing-collections > div.cc-existing-collection
+	 * - call showExistingCollections() to re-add them
+	 */
+
+	updateExistingCollections() {
+		// find all existing #cc-config-existing-collections > div.cc-existing-Collection
+		const existingCollections = document.querySelectorAll('#cc-config-existing-collections > div.cc-existing-collection');
+		// remove them
+		for (let i = 0; i < existingCollections.length; i++) {
+			existingCollections[i].remove();
+		}
+		this.showExistingCollections();
+	}
+
+	/**
 	 * @descr Fill div#cc-config-existing-collections with a div.cc-existing-collection for each
 	 * of the existing collections
 	 */
@@ -697,8 +720,8 @@ class cc_ConfigurationView extends cc_View {
 			<div class="cc-existing-collection border border-trbl" id="cc-collection-${collectionName}">
 				<p>${collectionName} - (${moduleCount} ${moduleName})
 				<span class="cc-collection-move">
-				<i class="icon-arrow-up" id="cc-collection-${collectionName}-up"></i>
-				<i class="icon-arrow-down" id="cc-collection-${collectionName}-down"></i>
+				<i class="icon-arrow-up cc-move-collection" id="cc-collection-${collectionName}-up"></i>
+				<i class="icon-arrow-down cc-move-collection" id="cc-collection-${collectionName}-down"></i>
 				</p>
 
 				<div class="cc-collection-representation">
@@ -775,6 +798,13 @@ class cc_ConfigurationView extends cc_View {
 			count += 1;
 		});
 
+		// add event handler to all the i.cc-move-collection 
+		const moveIcons = document.querySelectorAll('.cc-move-collection');
+		moveIcons.forEach(icon => {
+			icon.onclick = (event) => this.controller.moveCollection(event);
+		});
+
+
 	}
 
 
@@ -804,12 +834,12 @@ class cc_ConfigurationView extends cc_View {
 	 * Currently placed to the left of the "Student View" button at the top of page
 	 */
 	addCcBundle() {
+		if (this.model.isOn()) {
+			this.addConfigShowSwitch();
+		}
 		// get div.cc-switch-container
 		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
 		if (ccSwitchContainer) {
-			if (this.model.isOn()) {
-				this.addConfigShowSwitch();
-			}
 			return;
 		}
 
@@ -998,10 +1028,6 @@ input:checked + .cc-slider:before {
 	   </div>
 		`;
 
-		// add event handler to i#configShowSwitch
-		if (this.model.isOn()) {
-			this.addConfigShowSwitch();
-		}
 
 		// find a#easy_student_view
 		// insert before a#easy_student_view
@@ -1009,6 +1035,10 @@ input:checked + .cc-slider:before {
 		if (easy_student_view) {
 			easy_student_view.insertAdjacentHTML('afterend', CC_BUNDLE_HTML);
 
+			// add event handler to i#configShowSwitch
+			if (this.model.isOn()) {
+				this.addConfigShowSwitch();
+			}
 
 			//			const configShowSwitch = document.getElementById('configShowSwitch');
 			//			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
@@ -1019,6 +1049,8 @@ input:checked + .cc-slider:before {
 			// add event handler of button#cc-save-button
 			const ccSaveButton = document.getElementById('cc-save-button');
 			ccSaveButton.onclick = (event) => this.controller.saveConfig();
+
+
 
 			//		const fileTest = document.getElementById('cc-file-test');
 			//			fileTest.onclick = (event) => this.fileTest();
@@ -1189,7 +1221,7 @@ class cc_ConfigurationController {
 		this.model.setConfigShowClass(newClass);
 
 	//	this.configChange = true;
-		this.saveConfig();
+	//	this.saveConfig();
 
 		this.view.display();
 	}
@@ -1249,6 +1281,44 @@ class cc_ConfigurationController {
 //		this.saveConfig();
 	}
 
+	/**
+	 * @descr Move a collection matching the .cc-move-collection element that was clicked
+	 * @param {*} event 
+	 */
+
+	moveCollection(event) {
+		// get the id of the element that was clicked
+		const idString = event.target.id;
+		// extract the collectionName and direction from 
+		// the id format cc-collection-<collectionName>-<direction>
+		const collectionName = idString.match(/cc-collection-(.*)-(up|down)/)[1];
+		const direction = idString.match(/cc-collection-(.*)-(up|down)/)[2];
+
+
+		// move the collection around in the model's stored order
+		const currentOrder = this.model.getExistingCollectionNames();
+		const currentOrderString = currentOrder.join(',');
+		// find the index of the collectionName in the array
+		const index = currentOrder.indexOf(collectionName);
+		if (direction == 'up') {
+			currentOrder.splice(index, 1);
+			currentOrder.splice(index - 1, 0, collectionName);
+		} else { // direction is down
+			currentOrder.splice(index, 1);
+			currentOrder.splice(index + 1, 0, collectionName);
+		}
+		this.model.setExistingCollectionNames(currentOrder);
+
+		this.changeMade(true);
+
+		// redisplay the configuration
+		this.view.updateExistingCollections();
+		// - also need to update the main display
+		this.parentController.showCollections();
+		
+
+	}
+
 }
 
 // src/Collections/CollectionsModel.js
@@ -1286,7 +1356,7 @@ class CollectionsModel {
 
 	getCollections() {
 		// return the keys from the COLLECTIONS object
-		return Object.keys(this.cc_configuration.COLLECTIONS);
+		return this.cc_configuration.COLLECTIONS_ORDER;
 	}
 
 	getCurrentCollection() {
@@ -1306,7 +1376,7 @@ class CollectionsModel {
 	}
 
 	getCollectionNames() {
-		return Object.keys(this.cc_configuration.COLLECTIONS);
+		return this.cc_configuration.COLLECTIONS_ORDER;
 	}
 
 	/**
@@ -4012,6 +4082,10 @@ class cc_ConfigurationStore {
 				this.parentController.cc_configuration = JSON.parse(config.innerHTML);
 				DEBUG && console.log(`cc_ConfigurationStore: requestCOnfigPageContents: config`);
 				this.parentController.ccOn = this.parentController.cc_configuration.STATUS === "on";
+				// add a COLLECTIONS_ORDER array to the config if it's not there
+				if (!this.parentController.cc_configuration.COLLECTIONS_ORDER) {
+					this.parentController.cc_configuration.COLLECTIONS_ORDER = Object.keys(this.parentController.cc_configuration.COLLECTIONS);
+				}
 				// loop thru the keys of the this.cc_configuration.MODULES hash
 				// and set the corresponding module to on
 				for (let key in this.parentController.cc_configuration.MODULES) {

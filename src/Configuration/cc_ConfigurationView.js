@@ -347,6 +347,10 @@ export default class cc_ConfigurationView extends cc_View {
 				height: 2rem;
 			}
 
+			.cc-move-collection {
+				cursor: pointer;
+			}
+
 			.cc-collection-representation {
 				display: flex;
 				align-items: center;
@@ -439,6 +443,22 @@ export default class cc_ConfigurationView extends cc_View {
 	}
 
 	/**
+	 * @descr existing collections are already showing, but user has asked to move on
+	 * - remove all the existing #cc-config-existing-collections > div.cc-existing-collection
+	 * - call showExistingCollections() to re-add them
+	 */
+
+	updateExistingCollections() {
+		// find all existing #cc-config-existing-collections > div.cc-existing-Collection
+		const existingCollections = document.querySelectorAll('#cc-config-existing-collections > div.cc-existing-collection');
+		// remove them
+		for (let i = 0; i < existingCollections.length; i++) {
+			existingCollections[i].remove();
+		}
+		this.showExistingCollections();
+	}
+
+	/**
 	 * @descr Fill div#cc-config-existing-collections with a div.cc-existing-collection for each
 	 * of the existing collections
 	 */
@@ -463,8 +483,8 @@ export default class cc_ConfigurationView extends cc_View {
 			<div class="cc-existing-collection border border-trbl" id="cc-collection-${collectionName}">
 				<p>${collectionName} - (${moduleCount} ${moduleName})
 				<span class="cc-collection-move">
-				<i class="icon-arrow-up" id="cc-collection-${collectionName}-up"></i>
-				<i class="icon-arrow-down" id="cc-collection-${collectionName}-down"></i>
+				<i class="icon-arrow-up cc-move-collection" id="cc-collection-${collectionName}-up"></i>
+				<i class="icon-arrow-down cc-move-collection" id="cc-collection-${collectionName}-down"></i>
 				</p>
 
 				<div class="cc-collection-representation">
@@ -541,6 +561,13 @@ export default class cc_ConfigurationView extends cc_View {
 			count += 1;
 		});
 
+		// add event handler to all the i.cc-move-collection 
+		const moveIcons = document.querySelectorAll('.cc-move-collection');
+		moveIcons.forEach(icon => {
+			icon.onclick = (event) => this.controller.moveCollection(event);
+		});
+
+
 	}
 
 
@@ -570,12 +597,12 @@ export default class cc_ConfigurationView extends cc_View {
 	 * Currently placed to the left of the "Student View" button at the top of page
 	 */
 	addCcBundle() {
+		if (this.model.isOn()) {
+			this.addConfigShowSwitch();
+		}
 		// get div.cc-switch-container
 		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
 		if (ccSwitchContainer) {
-			if (this.model.isOn()) {
-				this.addConfigShowSwitch();
-			}
 			return;
 		}
 
@@ -764,10 +791,6 @@ input:checked + .cc-slider:before {
 	   </div>
 		`;
 
-		// add event handler to i#configShowSwitch
-		if (this.model.isOn()) {
-			this.addConfigShowSwitch();
-		}
 
 		// find a#easy_student_view
 		// insert before a#easy_student_view
@@ -775,6 +798,10 @@ input:checked + .cc-slider:before {
 		if (easy_student_view) {
 			easy_student_view.insertAdjacentHTML('afterend', CC_BUNDLE_HTML);
 
+			// add event handler to i#configShowSwitch
+			if (this.model.isOn()) {
+				this.addConfigShowSwitch();
+			}
 
 			//			const configShowSwitch = document.getElementById('configShowSwitch');
 			//			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
@@ -785,6 +812,8 @@ input:checked + .cc-slider:before {
 			// add event handler of button#cc-save-button
 			const ccSaveButton = document.getElementById('cc-save-button');
 			ccSaveButton.onclick = (event) => this.controller.saveConfig();
+
+
 
 			//		const fileTest = document.getElementById('cc-file-test');
 			//			fileTest.onclick = (event) => this.fileTest();

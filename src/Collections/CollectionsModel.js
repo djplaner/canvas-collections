@@ -32,7 +32,7 @@ export default class CollectionsModel {
 
 	getCollections() {
 		// return the keys from the COLLECTIONS object
-		return Object.keys(this.cc_configuration.COLLECTIONS);
+		return this.cc_configuration.COLLECTIONS_ORDER;
 	}
 
 	getCurrentCollection() {
@@ -52,7 +52,7 @@ export default class CollectionsModel {
 	}
 
 	getCollectionNames() {
-		return Object.keys(this.cc_configuration.COLLECTIONS);
+		return this.cc_configuration.COLLECTIONS_ORDER;
 	}
 
 	/**
