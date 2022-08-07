@@ -205,6 +205,49 @@ class cc_ConfigurationModel {
 		// return the keys for the cc_configuration.COLLECTIONS object
 		return Object.keys(this.controller.parentController.cc_configuration.COLLECTIONS);
 	}
+
+	/**
+	 * @descr Change the value for a configuration variable for a specific module
+	 * @param {*} moduleId 
+	 * @param {*} fieldName 
+	 * @param {*} value 
+	 */
+
+	changeModuleConfig(moduleId,fieldName,value) {
+		const module = this.findModuleById(moduleId);
+
+		if (module) {
+			module[fieldName] = value;
+		}
+	}
+
+	/**
+	 * @descr Given a moduleId return the module object from the cc_configuration.MODULES object
+	 * return null if not found
+	 * @param {*} moduleId 
+	 */
+
+	findModuleById(moduleId) {
+		// get the name for the given moduleId
+		const modulesDetails = this.controller.parentController.moduleDetails;
+		let moduleName = null;
+		for (let i=0; i<modulesDetails.length; i++) {
+			if (modulesDetails[i].id===moduleId) {
+				moduleName = modulesDetails[i].name;
+				break;
+			}
+		}
+
+		if (!moduleName) {
+			return null;
+		}
+
+		let modules = this.controller.parentController.cc_configuration.MODULES;
+		if ( modules.hasOwnProperty(moduleName) ) {
+			return modules[moduleName];
+		}
+		return null;
+	}
 }
 
 // src/cc_View.js
@@ -315,16 +358,21 @@ class cc_ConfigurationView extends cc_View {
 				continue;
 			}
 
-			let showConfigHtml = '';
-			// does moduleDetail have property configClass
-			if (!("configClass" in moduleDetail)) {
-				moduleDetail['configClass'] = 'icon-mini-arrow-right';
-			} else if (moduleDetail['configClass'] === 'icon-mini-arrow-down') {
-				// do nothing
-				showConfigHtml = this.showModuleConfig(moduleDetail);
-			}
+			this.addSingleModuleConfiguration(moduleHeader, moduleDetail, id);
+		}
+	}
 
-			const moduleConfigHtml = `
+	addSingleModuleConfiguration(moduleHeader, moduleDetail, id) {
+		let showConfigHtml = '';
+		// does moduleDetail have property configClass
+		if (!("configClass" in moduleDetail)) {
+			moduleDetail['configClass'] = 'icon-mini-arrow-right';
+		} else if (moduleDetail['configClass'] === 'icon-mini-arrow-down') {
+			// do nothing
+			showConfigHtml = this.showModuleConfig(moduleDetail);
+		}
+
+		const moduleConfigHtml = `
 		<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
       		<span>
 			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
@@ -332,29 +380,57 @@ class cc_ConfigurationView extends cc_View {
 			  ${showConfigHtml}
   		</div>`;
 
-			// TO DO check that the id matches on of the module ids in data structure
+		// TO DO check that the id matches on of the module ids in data structure
 
-			// insert moduleConfigHtml afterend of moduleHeader
-			moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
+		// insert moduleConfigHtml afterend of moduleHeader
+		moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
 
-			// add a click handler for i#cc-module-config-${id}-switch
-			const moduleConfigSwitch = document.getElementById(`cc-module-config-${id}-switch`);
-			if (moduleConfigSwitch) {
-				moduleConfigSwitch.onclick = (event) => this.controller.toggleModuleConfigSwitch(event);
-				// and update the class appropriately
-				moduleConfigSwitch.className = moduleDetail.configClass;
+		// add a click handler for i#cc-module-config-${id}-switch
+		const moduleConfigSwitch = document.getElementById(`cc-module-config-${id}-switch`);
+		if (moduleConfigSwitch) {
+			moduleConfigSwitch.onclick = (event) => this.controller.toggleModuleConfigSwitch(event);
+			// and update the class appropriately
+			moduleConfigSwitch.className = moduleDetail.configClass;
+		}
+
+		// for all input/select fields for cc-module-config-${id} add 
+		// this.controller.updateModuleConfigField(event) as change handler
+		const configDiv = document.querySelector(`#cc-module-config-${id}`);
+		if (configDiv) {
+			const configFields = configDiv.querySelectorAll('input, select, textarea');
+			for (let j = 0; j < configFields.length; j++) {
+				configFields[j].onchange = (event) => this.controller.updateModuleConfigField(event);
 			}
+		}
+	}
 
-			// for all input/select fields for cc-module-config-${id} add 
-			// this.controller.updateModuleConfigField(event) as change handler
-			const configDiv = document.querySelector(`#cc-module-config-${id}`);
-			if (configDiv) {
-				const configFields = configDiv.querySelectorAll('input, select, textarea');
-				for (let j = 0; j < configFields.length; j++) {
-					configFields[j].onchange = (event) => this.controller.updateModuleConfigField(event);
-				}
+	/**
+	 * @descr Replace/update the div.cc-module-config for the given module
+	 * @param {*} moduleId  - integer matching the Canvas module id
+	 */
+
+	updateSingleModuleConfig(moduleId) {
+		// get the moduleDetails for the given id (if there is one)
+		// TODO need to get moduleHeader
+		const modulesDetails = this.controller.parentController.moduleDetails;
+		let singleModuleDetails = null;
+		for (let i = 0; i < modulesDetails.length; i++) {
+			if (modulesDetails[i].id === moduleId) {
+				singleModuleDetails = modulesDetails;
+				break;
 			}
+		}
 
+		// no match return
+		// TODO should handle the error?
+		if (!singleModuleDetails) {
+			return;
+		}
+
+		// get the moduleHeader element from the div.ig-header with id as moduleId
+		const moduleHeader = document.getElementById(moduleId);
+		if (moduleHeader) {
+			this.addSingleModuleConfiguration(moduleHeader, singleModuleDetails, moduleId);
 		}
 	}
 
@@ -388,11 +464,11 @@ class cc_ConfigurationView extends cc_View {
 		// set the imageSizeOptions
 		let imageSizeOptions = '';
 		let imageSize = moduleConfig.imageSize;
-		if (imageSize==="") {
+		if (imageSize === "") {
 			imageSize = "contain";
 			moduleConfig.imageSize = imageSize;
 		}
-		const options = [ 'scale-down','fill','contain','cover','none' ];
+		const options = ['scale-down', 'fill', 'contain', 'cover', 'none'];
 		for (let i = 0; i < options.length; i++) {
 			let selected = '';
 			const option = options[i];
@@ -1411,6 +1487,13 @@ class cc_ConfigurationController {
 		const value = event.target.value;
 
 		alert(`change in config for moduleId is ${moduleId} fieldName is ${fieldName} change to ${value}`);
+
+		this.model.changeModuleConfig(moduleId,fieldName,value);
+		this.changeMade(true);
+		// TODO - redisplay the representation
+		this.parentController.showCollections();
+
+		// TODO - redisplay the module configuration view
 	}
 
 

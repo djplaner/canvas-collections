@@ -189,4 +189,47 @@ export default class cc_ConfigurationModel {
 		// return the keys for the cc_configuration.COLLECTIONS object
 		return Object.keys(this.controller.parentController.cc_configuration.COLLECTIONS);
 	}
+
+	/**
+	 * @descr Change the value for a configuration variable for a specific module
+	 * @param {*} moduleId 
+	 * @param {*} fieldName 
+	 * @param {*} value 
+	 */
+
+	changeModuleConfig(moduleId,fieldName,value) {
+		const module = this.findModuleById(moduleId);
+
+		if (module) {
+			module[fieldName] = value;
+		}
+	}
+
+	/**
+	 * @descr Given a moduleId return the module object from the cc_configuration.MODULES object
+	 * return null if not found
+	 * @param {*} moduleId 
+	 */
+
+	findModuleById(moduleId) {
+		// get the name for the given moduleId
+		const modulesDetails = this.controller.parentController.moduleDetails;
+		let moduleName = null;
+		for (let i=0; i<modulesDetails.length; i++) {
+			if (modulesDetails[i].id===moduleId) {
+				moduleName = modulesDetails[i].name;
+				break;
+			}
+		}
+
+		if (!moduleName) {
+			return null;
+		}
+
+		let modules = this.controller.parentController.cc_configuration.MODULES;
+		if ( modules.hasOwnProperty(moduleName) ) {
+			return modules[moduleName];
+		}
+		return null;
+	}
 }
