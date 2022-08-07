@@ -652,7 +652,7 @@ class cc_ConfigurationView extends cc_View {
 				</div>
 			</div>
 		</div>
-		`
+		`;
 
 		// remove the border at the bottom of Canvas top nav bar
 		const toggleAndCrumbs = document.getElementsByClassName('ic-app-nav-toggle-and-crumbs')[0];
@@ -919,6 +919,52 @@ input:checked + .cc-slider:before {
 				height: 100%;
 			}
 
+			.cc-save {
+				margin-top: 0.5rem;
+			}
+
+			.cc-active-save-button {
+				background-color: #c94444;
+				color: var(--ic-brand-button--primary-text);
+				border: 1px solid;
+				border-color: var(--ic-brand-primary--primary-bgd-darkened-15);
+				border-radius: 2px;
+				display: inline-block;
+				position: relative;
+				padding-left: 0.25rem;
+				padding-right: 0.25rem
+				text-align: center;
+				vertical-align: middle;
+				cursor: pointer;
+				font-size: 65%;
+				transition: background-color 0.2s ease-in-out;
+			}
+
+			.cc-active-save-button:hover {
+				background: var(--ic-brand-primary);
+			}
+
+			.cc-save-button {
+				background: #f5f5f5;
+				color: #2d3b45;
+				border: 1px solid;
+				border-color: #c7cdd1;
+				border-radius: 2px;
+				display: inline-block;
+				position: relative;
+				padding-left: 0.25rem;
+				padding-right: 0.25rem
+				text-align: center;
+				vertical-align: middle;
+				cursor: pointer;
+				font-size: 65%;
+				transition: background-color 0.2s ease-in-out;
+			}
+
+			.cc-save-button:hover {
+				background: #cccccc;
+			}
+
 
 
 		 </style>
@@ -946,6 +992,9 @@ input:checked + .cc-slider:before {
 		    <input type="checkbox" class="cc-toggle-checkbox" id="cc-switch" ${cc_on}>
 			<span class="cc-slider cc-round"></span>
 		</label>
+		<div class="cc-save">
+		  <button class="cc-save-button" id="cc-save-button">Save</button>
+	    </div>
 	   </div>
 		`;
 
@@ -977,6 +1026,21 @@ input:checked + .cc-slider:before {
 			//} 
 		} else {
 			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
+		}
+	}
+
+	/**
+	 * @descr change the button#cc-save-button
+	 * - if change is true change class to cc-active-save-button
+	 * - if change is false change class to cc-save-button
+	 */
+
+	changeSaveButton(change) {
+		const saveButton = document.getElementById('cc-save-button');
+		if (change) {
+			saveButton.className = 'cc-active-save-button';
+		} else {
+			saveButton.className = 'cc-save-button';
 		}
 	}
 
@@ -1074,6 +1138,17 @@ class cc_ConfigurationController {
 		setInterval(this.saveConfig.bind(this), TIME_BETWEEN_SAVES);
 	}
 
+	/** 
+	 * @descr Method called whenever you want to action a change in the configuration
+	 * - set configChange to true
+	 * - but also trigger the view changeSaveButton
+	 */
+
+	changeMade(change) {
+		this.configChange = change;
+		this.view.changeSaveButton(this.configChange);
+	}
+
 	/**
 	 * @descr While configuration controller working, this will decide how often/when
 	 * to save the configuration (parentController.saveConfig)
@@ -1081,7 +1156,7 @@ class cc_ConfigurationController {
 	 */
 	saveConfig(){
 		if (this.configChange) {
-			this.configChange=false;
+			this.changeMade(false);
 			this.parentController.saveConfig();
 			this.lastSaveTime = new Date().getTime();
 		}
@@ -1166,7 +1241,7 @@ class cc_ConfigurationController {
 			this.model.turnOff();
 			this.parentController.turnOff();
 		}
-		this.configChange=true;
+		this.changeMade(true);
 //		this.saveConfig();
 	}
 

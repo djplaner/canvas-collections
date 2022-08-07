@@ -44,6 +44,17 @@ export default class cc_ConfigurationController {
 		setInterval(this.saveConfig.bind(this), TIME_BETWEEN_SAVES);
 	}
 
+	/** 
+	 * @descr Method called whenever you want to action a change in the configuration
+	 * - set configChange to true
+	 * - but also trigger the view changeSaveButton
+	 */
+
+	changeMade(change) {
+		this.configChange = change;
+		this.view.changeSaveButton(this.configChange);
+	}
+
 	/**
 	 * @descr While configuration controller working, this will decide how often/when
 	 * to save the configuration (parentController.saveConfig)
@@ -51,7 +62,7 @@ export default class cc_ConfigurationController {
 	 */
 	saveConfig(){
 		if (this.configChange) {
-			this.configChange=false;
+			this.changeMade(false);
 			this.parentController.saveConfig();
 			this.lastSaveTime = new Date().getTime();
 		}
@@ -136,7 +147,7 @@ export default class cc_ConfigurationController {
 			this.model.turnOff();
 			this.parentController.turnOff();
 		}
-		this.configChange=true;
+		this.changeMade(true);
 //		this.saveConfig();
 	}
 
