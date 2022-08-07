@@ -115,10 +115,8 @@ class cc_ConfigurationModel {
 		// find the index of CONFIG_SHOW_ICONS that matches newClass
 
 		if ( this.CONFIG_SHOW_ICONS[false]===className ) {
-			//this.turnOn();
 			return this.CONFIG_SHOW_ICONS[true];
 		} else {
-			//this.turnOff();
 			return this.CONFIG_SHOW_ICONS[false];
 		}
 	}
@@ -346,6 +344,17 @@ class cc_ConfigurationView extends cc_View {
 				// and update the class appropriately
 				moduleConfigSwitch.className = moduleDetail.configClass;
 			}
+
+			// for all input/select fields for cc-module-config-${id} add 
+			// this.controller.updateModuleConfigField(event) as change handler
+			const configDiv = document.querySelector(`#cc-module-config-${id}`);
+			if (configDiv) {
+				const configFields = configDiv.querySelectorAll('input, select, textarea');
+				for (let j = 0; j < configFields.length; j++) {
+					configFields[j].onchange = (event) => this.controller.updateModuleConfigField(event);
+				}
+			}
+
 		}
 	}
 
@@ -375,6 +384,22 @@ class cc_ConfigurationView extends cc_View {
 				selected = 'selected';
 			}
 			collectionsOptions += `<option value="${collection}" ${selected}>${collection}</option>`;
+		}
+		// set the imageSizeOptions
+		let imageSizeOptions = '';
+		let imageSize = moduleConfig.imageSize;
+		if (imageSize==="") {
+			imageSize = "contain";
+			moduleConfig.imageSize = imageSize;
+		}
+		const options = [ 'scale-down','fill','contain','cover','none' ];
+		for (let i = 0; i < options.length; i++) {
+			let selected = '';
+			const option = options[i];
+			if (option === moduleConfig.imageSize) {
+				selected = 'selected';
+			}
+			imageSizeOptions += `<option value="${option}" ${selected}>${option}</option>`;
 		}
 
 		let showConfigHtml = `
@@ -428,7 +453,10 @@ class cc_ConfigurationView extends cc_View {
 			<div>
 				<div class="cc-collection-representation">
 					<label for="cc-collection-representation-${moduleDetail.id}-imageSize">Image size</label>
-					<input id="cc-module-config-${moduleDetail.id}-imageSize" value="${moduleConfig.imageSize}">
+<!--					<input id="cc-module-config-${moduleDetail.id}-imageSize" value="${moduleConfig.imageSize}"> -->
+		   		       <select id="cc-module-config-${moduleDetail.id}-imageSize">
+					      ${imageSizeOptions}
+						</select>
 					<br clear="all" />
 					<label for="cc-collection-representation-${moduleDetail.id}-imageUrl">Image URL</label>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-imageUrl" 
@@ -436,7 +464,54 @@ class cc_ConfigurationView extends cc_View {
 				</div>
 				<div class="cc-module-config-imagePreview">
 				  <div class="cc-preview-container">
-					<div class="cc-card" aria-label="Preview">
+				    <div class="cc-clickable-card" style="width:50%">
+					  <div class="cc-card" aria-label="Preview">
+					    <div class="cc-card-flex">
+							<img class="cc-card-image" src="${moduleConfig.image}" 
+							   style="object-fit: ${moduleConfig.imageSize};"
+							   alt="${Image} representing ${moduleConfig.name}" />
+							<div class="cc-card-date">
+							  <div class="cc-card-date-label">${moduleConfig.date.label}</div>
+							  <div class="cc-card-date-week">${moduleConfig.date.week}</div>
+							  <div class="cc-card-date-month"> </div>
+							  <div class="cc-card-date-date"> </div>
+							</div>
+							<div class="cc-card-content-height">
+							  <div class="cc-card-content">
+							    <div class="cc-card-label">
+								  <span class="cc-card-label">${moduleConfig.label}
+								     ${moduleConfig.num}</span>
+								  <h3 class="cc-card-title">${moduleDetail.name}</h3>
+								</div>
+							</div>
+							<div class="cc-card-engage">
+							  <div class="cc-card-engage-button">
+							    <a class="gu-engage">Engage</a></div>
+							</div>
+						</div>
+					  </div>
+					</div>
+				</div> <!-- TODO should replace this with a call to the proper representation view -->
+
+							 
+<!--	  						</div>
+		   				    <a href="#module_${moduleDetail.id}" class="cc-card-link">
+	  							<div class="cc-card-header-content">
+	    							<h3 class="cc-card-header-title cc-ellipsis" title="${moduleDetail.name}">
+									  ${moduleDetail.name}
+									</h3>
+	    							<div class="cc-card-header-subtitle cc-ellipsis">
+									</div>
+									<div class="cc-card-header-description">
+										${moduleConfig.description}
+									</div>
+	  							</div>
+							</a>	
+						</div>
+					</div>
+					</div> ->
+					<!-- OLD content
+										<div class="cc-card" aria-label="Preview">
   						<div class="cc-card-header">
 							<div class="cc-card-header-image" 
 							     style="background-image:url('${moduleConfig.image}');">
@@ -455,7 +530,8 @@ class cc_ConfigurationView extends cc_View {
 	  							</div>
 							</a>	
 						</div>
-					</div>
+					</div> -->
+
 				  </div>
 				</div>
 		    </div>
@@ -1317,6 +1393,26 @@ class cc_ConfigurationController {
 		
 
 	}
+
+	/**
+	 * @descr handle a change made to a module configuration field
+	 * @param event 
+	 */
+
+	updateModuleConfigField(event) {
+		// get the id of the element that was clicked
+		const idString = event.target.id;
+		// extract the moduleId and fieldName from idString
+		// using the format cc-module-config-<moduleId>-<fieldName>
+		const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-(.*)/)[1]);
+		const fieldName = idString.match(/cc-module-config-(\d+)-(.*)/)[2];
+
+		// get the value for the fieldName from the event.target element
+		const value = event.target.value;
+
+		alert(`change in config for moduleId is ${moduleId} fieldName is ${fieldName} change to ${value}`);
+	}
+
 
 }
 

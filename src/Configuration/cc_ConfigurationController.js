@@ -189,4 +189,24 @@ export default class cc_ConfigurationController {
 
 	}
 
+	/**
+	 * @descr handle a change made to a module configuration field
+	 * @param event 
+	 */
+
+	updateModuleConfigField(event) {
+		// get the id of the element that was clicked
+		const idString = event.target.id;
+		// extract the moduleId and fieldName from idString
+		// using the format cc-module-config-<moduleId>-<fieldName>
+		const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-(.*)/)[1]);
+		const fieldName = idString.match(/cc-module-config-(\d+)-(.*)/)[2];
+
+		// get the value for the fieldName from the event.target element
+		const value = event.target.value;
+
+		alert(`change in config for moduleId is ${moduleId} fieldName is ${fieldName} change to ${value}`);
+	}
+
+
 }
