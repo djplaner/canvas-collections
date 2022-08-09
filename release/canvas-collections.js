@@ -19,8 +19,7 @@ class cc_ConfigurationModel {
 		this.CONFIG_SHOW_ICONS = {
 			true: 'icon-mini-arrow-down',
 			false: 'icon-mini-arrow-right'
-		}
-
+		};
 	}
 
 	/**
@@ -35,13 +34,13 @@ class cc_ConfigurationModel {
 	turnOn() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOn()`);
 		this.controller.parentController.ccOn = true;
-		this.controller.parentController.cc_configuration.STATUS==="on";
+		this.controller.parentController.cc_configuration.STATUS="on";
 	}
 
 	turnOff() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOff()`);
 		this.controller.parentController.ccOn = false;
-		this.controller.parentController.cc_configuration.STATUS==="off";
+		this.controller.parentController.cc_configuration.STATUS="off";
 	}
 
 	getConfigShowing() {
@@ -79,9 +78,9 @@ class cc_ConfigurationModel {
 
 		// set the configClass attribute of the found object to newClass
 		if (newClass==="icon-mini-arrow-down") {
-			module['configClass'] = "icon-mini-arrow-right";
+			module.configClass = "icon-mini-arrow-right";
 		} else {
-			module['configClass'] = "icon-mini-arrow-down";
+			module.configClass = "icon-mini-arrow-down";
 		}
 	}
 
@@ -124,14 +123,17 @@ class cc_ConfigurationModel {
 	}
 
 	/**
-	 * @descr return an array of existing collection names
+	 * @descr return an array of existing collection names in the current order
 	 */
 
 	getExistingCollectionNames() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getExistingCollectionNames()`);
-//		console.log(this.controller.parentController.cc_configuration);
-		// show the keys for the cc_configuration object
-	 	return Object.keys(this.controller.parentController.cc_configuration.COLLECTIONS);
+	 	return this.controller.parentController.cc_configuration.COLLECTIONS_ORDER;
+	}
+
+	setExistingCollectionNames(collectionNames) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.setExistingCollectionNames()`);
+		this.controller.parentController.cc_configuration.COLLECTIONS_ORDER = collectionNames;
 	}
 
 	/**
@@ -188,6 +190,49 @@ class cc_ConfigurationModel {
 		// return the keys for the cc_configuration.COLLECTIONS object
 		return Object.keys(this.controller.parentController.cc_configuration.COLLECTIONS);
 	}
+
+	/**
+	 * @descr Change the value for a configuration variable for a specific module
+	 * @param {*} moduleId 
+	 * @param {*} fieldName 
+	 * @param {*} value 
+	 */
+
+	changeModuleConfig(moduleId,fieldName,value) {
+		const module = this.findModuleById(moduleId);
+
+		if (module) {
+			module[fieldName] = value;
+		}
+	}
+
+	/**
+	 * @descr Given a moduleId return the module object from the cc_configuration.MODULES object
+	 * return null if not found
+	 * @param {*} moduleId 
+	 */
+
+	findModuleById(moduleId) {
+		// get the name for the given moduleId
+		const modulesDetails = this.controller.parentController.moduleDetails;
+		let moduleName = null;
+		for (let i=0; i<modulesDetails.length; i++) {
+			if (modulesDetails[i].id===moduleId) {
+				moduleName = modulesDetails[i].name;
+				break;
+			}
+		}
+
+		if (!moduleName) {
+			return null;
+		}
+
+		let modules = this.controller.parentController.cc_configuration.MODULES;
+		if ( modules.hasOwnProperty(moduleName) ) {
+			return modules[moduleName];
+		}
+		return null;
+	}
 }
 
 /**
@@ -225,7 +270,7 @@ class cc_View {
 
 
 
-const CC_VERSION="0.8.6";
+const CC_VERSION = "0.8.7a";
 
 class cc_ConfigurationView extends cc_View {
 
@@ -265,11 +310,14 @@ class cc_ConfigurationView extends cc_View {
 		// add the configuration interfaces for individual modules
 		// remove all the div.cc-module-config 
 		let divs = document.querySelectorAll('div.cc-module-config');
-		divs.forEach( (div) => {
+		divs.forEach((div) => {
 			div.remove();
 		});
 
-		this.addModuleConfiguration();
+		// only if ccOn show module configuration
+		if (this.model.isOn()) {
+			this.addModuleConfiguration();
+		}
 	}
 
 	/**
@@ -289,20 +337,25 @@ class cc_ConfigurationView extends cc_View {
 			const id = moduleHeader.id;
 			const moduleDetail = moduleDetails[id];
 
-			if (moduleDetail===undefined) {
+			if (moduleDetail === undefined) {
 				continue;
 			}
 
-			let showConfigHtml = '';
-			// does moduleDetail have property configClass
-			if (!("configClass" in moduleDetail)) {
-				moduleDetail['configClass'] = 'icon-mini-arrow-right';
-			} else if (moduleDetail['configClass'] === 'icon-mini-arrow-down') {
-				// do nothing
-				showConfigHtml = this.showModuleConfig(moduleDetail);
-			}
+			this.addSingleModuleConfiguration(moduleHeader, moduleDetail, id);
+		}
+	}
 
-			const moduleConfigHtml = `
+	addSingleModuleConfiguration(moduleHeader, moduleDetail, id) {
+		let showConfigHtml = '';
+		// does moduleDetail have property configClass
+		if (!("configClass" in moduleDetail)) {
+			moduleDetail['configClass'] = 'icon-mini-arrow-right';
+		} else if (moduleDetail['configClass'] === 'icon-mini-arrow-down') {
+			// do nothing
+			showConfigHtml = this.showModuleConfig(moduleDetail);
+		}
+
+		const moduleConfigHtml = `
 		<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
       		<span>
 			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
@@ -310,18 +363,58 @@ class cc_ConfigurationView extends cc_View {
 			  ${showConfigHtml}
   		</div>`;
 
-			// TO DO check that the id matches on of the module ids in data structure
+		// TO DO check that the id matches on of the module ids in data structure
 
-			// insert moduleConfigHtml afterend of moduleHeader
-			moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
+		// insert moduleConfigHtml afterend of moduleHeader
+		moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
 
-			// add a click handler for i#cc-module-config-${id}-switch
-			const moduleConfigSwitch = document.getElementById(`cc-module-config-${id}-switch`);
-			if (moduleConfigSwitch) {
-				moduleConfigSwitch.onclick = (event) => this.controller.toggleModuleConfigSwitch(event);
-				// and update the class appropriately
-				moduleConfigSwitch.className = moduleDetail.configClass;
+		// add a click handler for i#cc-module-config-${id}-switch
+		const moduleConfigSwitch = document.getElementById(`cc-module-config-${id}-switch`);
+		if (moduleConfigSwitch) {
+			moduleConfigSwitch.onclick = (event) => this.controller.toggleModuleConfigSwitch(event);
+			// and update the class appropriately
+			moduleConfigSwitch.className = moduleDetail.configClass;
+		}
+
+		// for all input/select fields for cc-module-config-${id} add 
+		// this.controller.updateModuleConfigField(event) as change handler
+		const configDiv = document.querySelector(`#cc-module-config-${id}`);
+		if (configDiv) {
+			const configFields = configDiv.querySelectorAll('input, select, textarea');
+			for (let j = 0; j < configFields.length; j++) {
+				configFields[j].onchange = (event) => this.controller.updateModuleConfigField(event);
 			}
+		}
+	}
+
+	/**
+	 * @descr Replace/update the div.cc-module-config for the given module
+	 * @param {*} moduleId  - integer matching the Canvas module id
+	 */
+
+	updateSingleModuleConfig(moduleId) {
+		// get the moduleDetails for the given id (if there is one)
+		// TODO need to get moduleHeader
+		const modulesDetails = this.controller.parentController.moduleDetails;
+		let singleModuleDetails = null;
+		for (let i = 0; i < modulesDetails.length; i++) {
+			if (modulesDetails[i].id === moduleId) {
+				singleModuleDetails = modulesDetails;
+				break;
+			}
+		}
+		// https://www.webwisewording.com/wp-content/uploads/aaron-burden-AvqpdLRjABs-unsplash.jpg
+
+		// no match return
+		// TODO should handle the error?
+		if (!singleModuleDetails) {
+			return;
+		}
+
+		// get the moduleHeader element from the div.ig-header with id as moduleId
+		const moduleHeader = document.getElementById(moduleId);
+		if (moduleHeader) {
+			this.addSingleModuleConfiguration(moduleHeader, singleModuleDetails, moduleId);
 		}
 	}
 
@@ -347,12 +440,28 @@ class cc_ConfigurationView extends cc_View {
 		for (let i = 0; i < collections.length; i++) {
 			let selected = '';
 			const collection = collections[i];
-			if (collection===moduleConfig.collection) {
-				selected='selected';
+			if (collection === moduleConfig.collection) {
+				selected = 'selected';
 			}
 			collectionsOptions += `<option value="${collection}" ${selected}>${collection}</option>`;
 		}
-		
+		// set the imageSizeOptions
+		let imageSizeOptions = '';
+		let imageSize = moduleConfig.imageSize;
+		if (imageSize === "") {
+			imageSize = "contain";
+			moduleConfig.imageSize = imageSize;
+		}
+		const options = ['scale-down', 'fill', 'contain', 'cover', 'none'];
+		for (let i = 0; i < options.length; i++) {
+			let selected = '';
+			const option = options[i];
+			if (option === moduleConfig.imageSize) {
+				selected = 'selected';
+			}
+			imageSizeOptions += `<option value="${option}" ${selected}>${option}</option>`;
+		}
+
 		let showConfigHtml = `
 		<style>
 		   .cc-collection-representation label {
@@ -389,8 +498,8 @@ class cc_ConfigurationView extends cc_View {
 					<input type="text" id="cc-module-config-${moduleDetail.id}-label" 
 						value="${moduleConfig.label}" />
 					<br clear="all" />
-				    <label for="cc-module-config-${moduleDetail.id}-number">Number</label>
-					<input type="text" id="cc-module-config-${moduleDetail.id}-number" 
+				    <label for="cc-module-config-${moduleDetail.id}-num">Number</label>
+					<input type="text" id="cc-module-config-${moduleDetail.id}-num" 
 					     value="${moduleConfig.num}" />
 					<br clear="all" />
 				    <label for="cc-module-config-${moduleDetail.id}-date">Date</label>
@@ -404,7 +513,10 @@ class cc_ConfigurationView extends cc_View {
 			<div>
 				<div class="cc-collection-representation">
 					<label for="cc-collection-representation-${moduleDetail.id}-imageSize">Image size</label>
-					<input id="cc-module-config-${moduleDetail.id}-imageSize" value="${moduleConfig.imageSize}">
+<!--					<input id="cc-module-config-${moduleDetail.id}-imageSize" value="${moduleConfig.imageSize}"> -->
+		   		       <select id="cc-module-config-${moduleDetail.id}-imageSize">
+					      ${imageSizeOptions}
+						</select>
 					<br clear="all" />
 					<label for="cc-collection-representation-${moduleDetail.id}-imageUrl">Image URL</label>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-imageUrl" 
@@ -412,7 +524,56 @@ class cc_ConfigurationView extends cc_View {
 				</div>
 				<div class="cc-module-config-imagePreview">
 				  <div class="cc-preview-container">
-					<div class="cc-card" aria-label="Preview">
+				    <div class="cc-clickable-card" style="width:50%">
+					  <div class="cc-card" aria-label="Preview">
+					    <div class="cc-card-flex">
+							<img class="cc-card-image" src="${moduleConfig.image}" 
+							   style="object-fit: ${moduleConfig.imageSize};"
+							   alt="${Image} representing ${moduleConfig.name}" />
+							<div class="cc-card-date">
+							  <div class="cc-card-date-label">${moduleConfig.date.label}</div>
+							  <div class="cc-card-date-week">${moduleConfig.date.week}</div>
+							  <div class="cc-card-date-month"> </div>
+							  <div class="cc-card-date-date"> </div>
+							</div>
+							<div class="cc-card-content-height">
+							  <div class="cc-card-content">
+							    <div class="cc-card-label">
+								  <span class="cc-card-label">${moduleConfig.label}
+								     ${moduleConfig.num}</span>
+								  <h3 class="cc-card-title">${moduleDetail.name}</h3>
+ 					        	<div class="cc-card-description"> ${moduleConfig.description} </div>
+
+								</div>
+							</div>
+							<div class="cc-card-engage">
+							  <div class="cc-card-engage-button">
+							    <a class="gu-engage">Engage</a></div>
+							</div>
+						</div>
+					  </div>
+					</div>
+				</div> <!-- TODO should replace this with a call to the proper representation view -->
+
+							 
+<!--	  						</div>
+		   				    <a href="#module_${moduleDetail.id}" class="cc-card-link">
+	  							<div class="cc-card-header-content">
+	    							<h3 class="cc-card-header-title cc-ellipsis" title="${moduleDetail.name}">
+									  ${moduleDetail.name}
+									</h3>
+	    							<div class="cc-card-header-subtitle cc-ellipsis">
+									</div>
+									<div class="cc-card-header-description">
+										${moduleConfig.description}
+									</div>
+	  							</div>
+							</a>	
+						</div>
+					</div>
+					</div> ->
+					<!-- OLD content
+										<div class="cc-card" aria-label="Preview">
   						<div class="cc-card-header">
 							<div class="cc-card-header-image" 
 							     style="background-image:url('${moduleConfig.image}');">
@@ -431,7 +592,8 @@ class cc_ConfigurationView extends cc_View {
 	  							</div>
 							</a>	
 						</div>
-					</div>
+					</div> -->
+
 				  </div>
 				</div>
 		    </div>
@@ -559,6 +721,10 @@ class cc_ConfigurationView extends cc_View {
 				height: 2rem;
 			}
 
+			.cc-move-collection {
+				cursor: pointer;
+			}
+
 			.cc-collection-representation {
 				display: flex;
 				align-items: center;
@@ -630,7 +796,7 @@ class cc_ConfigurationView extends cc_View {
 				</div>
 			</div>
 		</div>
-		`
+		`;
 
 		// remove the border at the bottom of Canvas top nav bar
 		const toggleAndCrumbs = document.getElementsByClassName('ic-app-nav-toggle-and-crumbs')[0];
@@ -648,6 +814,22 @@ class cc_ConfigurationView extends cc_View {
 		// add in the details of the existing collections
 		this.showExistingCollections();
 
+	}
+
+	/**
+	 * @descr existing collections are already showing, but user has asked to move on
+	 * - remove all the existing #cc-config-existing-collections > div.cc-existing-collection
+	 * - call showExistingCollections() to re-add them
+	 */
+
+	updateExistingCollections() {
+		// find all existing #cc-config-existing-collections > div.cc-existing-Collection
+		const existingCollections = document.querySelectorAll('#cc-config-existing-collections > div.cc-existing-collection');
+		// remove them
+		for (let i = 0; i < existingCollections.length; i++) {
+			existingCollections[i].remove();
+		}
+		this.showExistingCollections();
 	}
 
 	/**
@@ -675,8 +857,8 @@ class cc_ConfigurationView extends cc_View {
 			<div class="cc-existing-collection border border-trbl" id="cc-collection-${collectionName}">
 				<p>${collectionName} - (${moduleCount} ${moduleName})
 				<span class="cc-collection-move">
-				<i class="icon-arrow-up" id="cc-collection-${collectionName}-up"></i>
-				<i class="icon-arrow-down" id="cc-collection-${collectionName}-down"></i>
+				<i class="icon-arrow-up cc-move-collection" id="cc-collection-${collectionName}-up"></i>
+				<i class="icon-arrow-down cc-move-collection" id="cc-collection-${collectionName}-down"></i>
 				</p>
 
 				<div class="cc-collection-representation">
@@ -753,6 +935,13 @@ class cc_ConfigurationView extends cc_View {
 			count += 1;
 		});
 
+		// add event handler to all the i.cc-move-collection 
+		const moveIcons = document.querySelectorAll('.cc-move-collection');
+		moveIcons.forEach(icon => {
+			icon.onclick = (event) => this.controller.moveCollection(event);
+		});
+
+
 	}
 
 
@@ -782,6 +971,9 @@ class cc_ConfigurationView extends cc_View {
 	 * Currently placed to the left of the "Student View" button at the top of page
 	 */
 	addCcBundle() {
+		if (this.model.isOn()) {
+			this.addConfigShowSwitch();
+		}
 		// get div.cc-switch-container
 		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
 		if (ccSwitchContainer) {
@@ -894,6 +1086,52 @@ input:checked + .cc-slider:before {
 				height: 100%;
 			}
 
+			.cc-save {
+				margin-top: 0.5rem;
+			}
+
+			.cc-active-save-button {
+				background-color: #c94444;
+				color: var(--ic-brand-button--primary-text);
+				border: 1px solid;
+				border-color: var(--ic-brand-primary--primary-bgd-darkened-15);
+				border-radius: 2px;
+				display: inline-block;
+				position: relative;
+				padding-left: 0.25rem;
+				padding-right: 0.25rem
+				text-align: center;
+				vertical-align: middle;
+				cursor: pointer;
+				font-size: 65%;
+				transition: background-color 0.2s ease-in-out;
+			}
+
+			.cc-active-save-button:hover {
+				background: var(--ic-brand-primary);
+			}
+
+			.cc-save-button {
+				background: #f5f5f5;
+				color: #2d3b45;
+				border: 1px solid;
+				border-color: #c7cdd1;
+				border-radius: 2px;
+				display: inline-block;
+				position: relative;
+				padding-left: 0.25rem;
+				padding-right: 0.25rem
+				text-align: center;
+				vertical-align: middle;
+				cursor: pointer;
+				font-size: 65%;
+				transition: background-color 0.2s ease-in-out;
+			}
+
+			.cc-save-button:hover {
+				background: #cccccc;
+			}
+
 
 
 		 </style>
@@ -910,7 +1148,7 @@ input:checked + .cc-slider:before {
 		const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
-		    <i id="configShowSwitch" class="icon-mini-arrow-right"></i> <small>Canvas Collections
+		    <!-- <i id="configShowSwitch" class="icon-mini-arrow-right"></i> --> <small>Canvas Collections
 			<span style="font-size:50%">{${CC_VERSION}}</span></small>
 			<a target="_blank"
 			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
@@ -921,6 +1159,9 @@ input:checked + .cc-slider:before {
 		    <input type="checkbox" class="cc-toggle-checkbox" id="cc-switch" ${cc_on}>
 			<span class="cc-slider cc-round"></span>
 		</label>
+		<div class="cc-save">
+		  <button class="cc-save-button" id="cc-save-button">Save</button>
+	    </div>
 	   </div>
 		`;
 
@@ -931,24 +1172,86 @@ input:checked + .cc-slider:before {
 		if (easy_student_view) {
 			easy_student_view.insertAdjacentHTML('afterend', CC_BUNDLE_HTML);
 
-
 			// add event handler to i#configShowSwitch
-			const configShowSwitch = document.getElementById('configShowSwitch');
-			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
+			if (this.model.isOn()) {
+				this.addConfigShowSwitch();
+			}
+
+			//			const configShowSwitch = document.getElementById('configShowSwitch');
+			//			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
 			// add event handler of input#cc-switch
 			const ccSwitch = document.getElementById('cc-switch');
 			ccSwitch.onchange = (event) => this.controller.toggleOffOnSwitch(event);
 
-	//		const fileTest = document.getElementById('cc-file-test');
-//			fileTest.onclick = (event) => this.fileTest();
+			// add event handler of button#cc-save-button
+			const ccSaveButton = document.getElementById('cc-save-button');
+			ccSaveButton.onclick = (event) => this.controller.saveConfig();
+
+
+
+			//		const fileTest = document.getElementById('cc-file-test');
+			//			fileTest.onclick = (event) => this.fileTest();
 
 			// remove the configShowSwitch if no ccIsOn
-			if ( ! this.model.isOn()) {
-				configShowSwitch.remove();
-			}
+			//if ( ! this.model.isOn()) {
+			//this.removeConfigShowSwitch();
+			//				configShowSwitch.remove();
+			//} 
 		} else {
 			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
 		}
+	}
+
+	/**
+	 * @descr change the button#cc-save-button
+	 * - if change is true change class to cc-active-save-button
+	 * - if change is false change class to cc-save-button
+	 */
+
+	changeSaveButton(change) {
+		const saveButton = document.getElementById('cc-save-button');
+		if (change) {
+			saveButton.className = 'cc-active-save-button';
+		} else {
+			saveButton.className = 'cc-save-button';
+		}
+	}
+
+	/**
+	 * @descr remove the configShowSwitch
+	 */
+
+	removeConfigShowSwitch() {
+		const configShowSwitch = document.getElementById('configShowSwitch');
+		if (configShowSwitch) {
+			configShowSwitch.remove();
+		}
+	}
+
+	/**
+	 * @descr - add i#configShowSwitch back into div.cc-switch-title and probably add
+	 * the handler back in?
+	 */
+
+	addConfigShowSwitch() {
+		const currentSwitch = document.getElementById('configShowSwitch');
+
+		if (!currentSwitch) {
+			const switchHtml = `
+		<i id="configShowSwitch" class="icon-mini-arrow-right"></i> 
+		`;
+			// insert switchHtml into div.cc-switch-title
+			const switchTitle = document.querySelector('div.cc-switch-title');
+			if (switchTitle) {
+				switchTitle.insertAdjacentHTML('afterbegin', switchHtml);
+				// add the handler
+				const configShowSwitch = document.getElementById('configShowSwitch');
+				if (configShowSwitch) {
+					configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -983,6 +1286,7 @@ input:checked + .cc-slider:before {
 
 
 
+const TIME_BETWEEN_SAVES = 10000; // 10 seconds
 
 class cc_ConfigurationController {
 
@@ -996,7 +1300,38 @@ class cc_ConfigurationController {
 		this.model = new cc_ConfigurationModel(this);
 		this.view = new cc_ConfigurationView(this.model, this);
 
+		// set lastSaveTime to current time
+		//this.lastSaveTime = new Date().getTime();
+
 		this.view.display();
+
+		// set up event to call this.saveConfig() every 10 seconds
+		this.configChange = false;
+		setInterval(this.saveConfig.bind(this), TIME_BETWEEN_SAVES);
+	}
+
+	/** 
+	 * @descr Method called whenever you want to action a change in the configuration
+	 * - set configChange to true
+	 * - but also trigger the view changeSaveButton
+	 */
+
+	changeMade(change) {
+		this.configChange = change;
+		this.view.changeSaveButton(this.configChange);
+	}
+
+	/**
+	 * @descr While configuration controller working, this will decide how often/when
+	 * to save the configuration (parentController.saveConfig)
+	 * - initially set to do it every ten seconds
+	 */
+	saveConfig(){
+		if (this.configChange) {
+			this.changeMade(false);
+			this.parentController.saveConfig();
+			this.lastSaveTime = new Date().getTime();
+		}
 	}
 
 	/**
@@ -1021,6 +1356,9 @@ class cc_ConfigurationController {
 
 		this.model.setConfigShowClass(newClass);
 
+	//	this.configChange = true;
+	//	this.saveConfig();
+
 		this.view.display();
 	}
 
@@ -1044,7 +1382,6 @@ class cc_ConfigurationController {
 //		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
 
 		this.model.setModuleConfigClass(moduleId,className);
-
 
 		this.view.display();
 	}
@@ -1076,8 +1413,74 @@ class cc_ConfigurationController {
 			this.model.turnOff();
 			this.parentController.turnOff();
 		}
-		this.parentController.saveConfig();
+		this.changeMade(true);
+//		this.saveConfig();
 	}
+
+	/**
+	 * @descr Move a collection matching the .cc-move-collection element that was clicked
+	 * @param {*} event 
+	 */
+
+	moveCollection(event) {
+		// get the id of the element that was clicked
+		const idString = event.target.id;
+		// extract the collectionName and direction from 
+		// the id format cc-collection-<collectionName>-<direction>
+		const collectionName = idString.match(/cc-collection-(.*)-(up|down)/)[1];
+		const direction = idString.match(/cc-collection-(.*)-(up|down)/)[2];
+
+
+		// move the collection around in the model's stored order
+		const currentOrder = this.model.getExistingCollectionNames();
+		const currentOrderString = currentOrder.join(',');
+		// find the index of the collectionName in the array
+		const index = currentOrder.indexOf(collectionName);
+		if (direction == 'up') {
+			currentOrder.splice(index, 1);
+			currentOrder.splice(index - 1, 0, collectionName);
+		} else { // direction is down
+			currentOrder.splice(index, 1);
+			currentOrder.splice(index + 1, 0, collectionName);
+		}
+		this.model.setExistingCollectionNames(currentOrder);
+
+		this.changeMade(true);
+
+		// redisplay the configuration
+		this.view.updateExistingCollections();
+		// - also need to update the main display
+		this.parentController.showCollections();
+		
+
+	}
+
+	/**
+	 * @descr handle a change made to a module configuration field
+	 * @param event 
+	 */
+
+	updateModuleConfigField(event) {
+		// get the id of the element that was clicked
+		const idString = event.target.id;
+		// extract the moduleId and fieldName from idString
+		// using the format cc-module-config-<moduleId>-<fieldName>
+		const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-(.*)/)[1]);
+		const fieldName = idString.match(/cc-module-config-(\d+)-(.*)/)[2];
+
+		// get the value for the fieldName from the event.target element
+		const value = event.target.value;
+
+		alert(`change in config for moduleId is ${moduleId} fieldName is ${fieldName} change to ${value}`);
+
+		this.model.changeModuleConfig(moduleId,fieldName,value);
+		this.changeMade(true);
+		// TODO - redisplay the representation
+		this.parentController.showCollections();
+
+		// TODO - redisplay the module configuration view
+	}
+
 
 }
 
@@ -1115,7 +1518,7 @@ class CollectionsModel {
 
 	getCollections() {
 		// return the keys from the COLLECTIONS object
-		return Object.keys(this.cc_configuration.COLLECTIONS);
+		return this.cc_configuration.COLLECTIONS_ORDER;
 	}
 
 	getCurrentCollection() {
@@ -1135,7 +1538,7 @@ class CollectionsModel {
 	}
 
 	getCollectionNames() {
-		return Object.keys(this.cc_configuration.COLLECTIONS);
+		return this.cc_configuration.COLLECTIONS_ORDER;
 	}
 
 	/**
@@ -3097,7 +3500,7 @@ class GriffithCardsView extends cc_View {
 
 	generateCardImageUrl(module) {
 		let imageUrl = "https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png";
-		if ('image' in module) {
+		if (('image' in module ) && ( module.image !== "")) {
 			imageUrl = module.image;
 		}
 		return imageUrl;
@@ -3457,6 +3860,8 @@ class juiceController {
 				button.style = "margin-left: 0.2em";
 				//				button.classList.add("c2m_word_2_module");
 				button.classList.add("btn");
+				// set button.id to cc_2_clipboard
+				button.id = "cc_2_clipboard";
 //				button.classList.add("btn-primary");
 				button.onclick = (event) => this.juiceIt(event);
 				button.innerHTML = 'Collections 2 Clipboard';
@@ -3535,6 +3940,7 @@ class juiceController {
 			for (let i = 0; i < images.length; i++) {
 				let image = images[i];
 				let link = document.createElement('a');
+				link.classList.add('cc-card-link-image');
 				link.href = currentUrl;
 				link.innerHTML = image.outerHTML;
 				image.parentNode.replaceChild(link, image);
@@ -3544,6 +3950,8 @@ class juiceController {
 			for (let i = 0; i < titles.length; i++) {
 				let title = titles[i];
 				let link = document.createElement('a');
+				// set link class to cc-card-link-title
+				link.classList.add('cc-card-link-title');
 				//link.href = currentUrl;
 				link.href = cardLinks[i];
 				link.innerHTML = title.innerHTML;
@@ -3574,7 +3982,30 @@ class juiceController {
 			let unpublisheds = div.querySelectorAll('.unpublished');
 			for (let i = 0; i < unpublisheds.length; i++) {
 				let unpublished = unpublisheds[i];
-				unpublished.remove();
+				// only remove if unpublished doesn't contain div.cc-coming-soon-message
+				if (!unpublished.querySelector('.cc-coming-soon-message')) {
+					unpublished.remove();
+				} else {
+					// remove the span.cc-card-published from unpublished
+					let span = unpublished.querySelector('.cc-card-published');
+					if (span) {
+						span.remove();
+					}
+					// set div.cc-card-engage-button to display:none
+					let button = unpublished.querySelector('.cc-card-engage-button');
+					if (button) {
+						button.style.display = 'none';
+					}
+					// remove the a.cc-card-link-title, but keep innerHTML
+					let link = unpublished.querySelector('.cc-card-link-title');
+					if (link) {
+						link.replaceWith(...link.childNodes);
+					}
+					link = unpublished.querySelector('.cc-card-link-image');
+					if (link) {
+						link.replaceWith(...link.childNodes);
+					}
+				}
 			}
 
 			//----------------------
@@ -3625,6 +4056,274 @@ class juiceController {
 }
 
 /**
+ * @class cc_ConfigurationStore
+ * @classdesc Responsible for retrieving/updating Canvas Collections' configuration.
+ * - uses the Canvas API to update/retrieve - currently from a Canvas page named
+ *   "Canvas Collections Configuration"
+ * - passed call backs to be run when the async Canvas API calls are complete    
+ */
+
+
+const CONFIGURATION_PAGE_HTML_TEMPLATE = `
+<div class="cc-config-explanation">
+<div style="float:left;padding:0.5em">
+  <img src="https://repository-images.githubusercontent.com/444951314/42343d35-e259-45ae-b74e-b9957222211f"
+      alt="canvas-collections logo" width="123" height="92" />
+</div>
+<div style="padding:0.5em">
+  <h3>Canvas Collections Configuration page</h3>
+  <p>This page is used to configure <a href="https://djplaner.github.io/canvas-collections/">Canvas Collections</a>.  
+  Avoid direct modification to this page, instead use the Canvas Collections configuration interface.  </p>
+  {{VISIBLE_TEXT}}
+ </div>
+ </div>
+ <p style="clear:both"></p>
+<div class="cc_json" style="display:none">
+ {{CONFIG}}
+ </div>
+`;
+
+class cc_ConfigurationStore {
+
+	/**
+	 * @descr Initialise the configuration store
+	 * @param {Object} controller - the parent controller
+	 */
+	constructor(controller) {
+		DEBUG && console.log('-------------- cc_ConfigurationStore.constructor()');
+
+		this.parentController = controller;
+
+		// will eventually contain the page object returned by Canvas API
+		this.pageObject = null;
+		// whether or not cc is on, will be set based on configuration
+		// -- actually set these in the parent controller
+		//this.ccOn = false;
+		// object containing the CC configuration 
+		//this.cc_configuration = null;
+
+	}
+
+	/**
+	 * @descr Get the configuration from the Canvas API - harness which calls various
+	 * other functions
+	 */
+
+	getConfiguration() {
+		DEBUG && console.log('-------------- cc_ConfigurationStore.getConfiguration()');
+
+		// can we find the config page?
+		this.findConfigPage();
+	}
+
+	/**
+	 * @descr Harness for savingConfiguration
+	 */
+
+	saveConfiguration() {
+		this.saveConfigPage();
+	}
+
+	/**
+	 * @descr Find the id for a page titled "Canvas Collections Configuration", if got the id
+	 * get the contents of the file
+	 * This is a kludge to work around apparent CORs issues with requesting the config file
+	 * TODO if there's isn't a page, create one
+	 */
+	findConfigPage() {
+		// test for presence of parentController and courseId
+		if (!this.parentController || !this.parentController.courseId) {
+			throw new Error(`cc_ConfigurationStore: findConfigPage: missing parentController or courseId`);
+		}
+
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages?` + new URLSearchParams(
+			{ 'search_term': 'Canvas Collections Configuration' });
+
+		DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: callUrl = ${callUrl}`);
+
+		const response = fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.parentController.csrf,
+			}
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+
+				// json should contain a list of items, should be just one
+				if (json.length === 0) {
+					DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: no config page 'Canvas Collections Configuration' found`);
+					// TODO this is where we create the configuration page
+				} else if (json.length === 1) {
+					this.pageObject = json[0];
+					this.requestConfigPageContents();
+				} else {
+					const error = `cc_ConfigurationStore: findConfigPage: more than one (${json.length}) config page found`;
+					DEBUG && console.log(error);
+					// TODO call some sort of controller error handler??
+				}
+			})
+			.catch((error) => {
+				DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: error = ${error}`);
+				// TODO call some sort of controller error handler??
+			}, false);
+
+	}
+
+	/**
+	 * @descr Get the contents of page and set it up as config for canvas collections
+	 * This is a kludge to work around apparent CORs issues with requesting the config file
+	 * TODO resolve the CORs issue
+	 * TODO Should also generate some graceful error for teacher if can't find file or correct content
+	 */
+	requestConfigPageContents() {
+
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.pageObject.page_id}`;
+
+		DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: callUrl = ${callUrl}`);
+
+		fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.parentController.csrf,
+			}
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				// json should be the page object
+				// https://canvas.instructure.com/doc/api/pages.html#Page
+				DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: json = ${JSON.stringify(json)}`);
+
+				const parsed = new DOMParser().parseFromString(json.body, 'text/html');
+				let config = parsed.querySelector('div.cc_json');
+				this.parentController.cc_configuration = JSON.parse(config.innerHTML);
+				DEBUG && console.log(`cc_ConfigurationStore: requestCOnfigPageContents: config`);
+				this.parentController.ccOn = this.parentController.cc_configuration.STATUS === "on";
+				// add a COLLECTIONS_ORDER array to the config if it's not there
+				if (!this.parentController.cc_configuration.COLLECTIONS_ORDER) {
+					this.parentController.cc_configuration.COLLECTIONS_ORDER = Object.keys(this.parentController.cc_configuration.COLLECTIONS);
+				}
+				// loop thru the keys of the this.cc_configuration.MODULES hash
+				// and set the corresponding module to on
+				for (let key in this.parentController.cc_configuration.MODULES) {
+					const module = this.parentController.cc_configuration.MODULES[key];
+					module.description = this.decodeHTML(module.description);
+				}
+				// create new object with keys that have &amp; replaced by &
+				let new_modules = {};
+				for (let key in this.parentController.cc_configuration.MODULES) {
+					let newKey = key;
+					if (key.includes('&amp;')) {
+						// replace all &amp; with &
+						newKey = key.replace(/&amp;/g, '&');
+					}
+					new_modules[newKey] = this.parentController.cc_configuration.MODULES[key];
+				}
+				this.parentController.cc_configuration.MODULES = new_modules;
+
+				this.parentController.requestModuleInformation();
+			})
+			.catch((error) => {
+				console.log(`cc_ConfigurationStore: requestConfig: error = `);
+				console.log(error);
+			}, false);
+	}
+
+	/**
+	 * @descr update the contents of the configuration page (this.pageObject.pageId) with 
+	 * the this.parentController.cc_configuration as JSON
+	 */
+
+	saveConfigPage() {
+
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.pageObject.page_id}`;
+
+		DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: callUrl = ${callUrl}`);
+
+		// construct the new content for the page
+		// - boiler plate description HTML to start
+		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
+		// - div.json containing
+		//   - JSON stringify of this.parentController.cc_configuration
+		//   - however, each module needs to have it's description encoded as HTML
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			const module = this.parentController.cc_configuration.MODULES[key];
+			module.description = this.encodeHTML(module.description);
+		}
+		content = content.replace('{{CONFIG}}',
+			JSON.stringify(this.parentController.cc_configuration));
+
+		// get the current time as string
+		let time = new Date().toISOString();
+
+		content = content.replace('{{VISIBLE_TEXT}}', `<p>saved at ${time}</p>`);
+
+		let _body = {
+			"wiki_page": {
+				"body": content,
+			}
+		};
+		const bodyString = JSON.stringify(_body);
+
+
+		fetch(callUrl, {
+			method: 'put', credentials: 'include',
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+				"Accept": "application/json; charset=UTF-8",
+				"X-CSRF-Token": this.parentController.csrf,
+			},
+			body: bodyString
+		})
+			.then(this.status)
+			.then((response) => {
+				if (response.ok) {
+					const json = response.json();
+					// json should have the newly created page object,
+					// don't need to do anything with it here
+					DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: json = ${JSON.stringify(json)}`);
+
+					// tell the controller we successfully completed
+					this.parentController.completedSaveConfig();
+				} else {
+					alert(`Problem saving config ${response.status} - `);
+				}
+			})
+			.catch((error) => {
+				console.log(`cc_ConfigurationStore: requestConfig: error = `);
+				console.log(error);
+
+				this.parentController.failedSaveConfig(error);
+			}, false);
+	}
+
+
+	decodeHTML(html) {
+		var txt = document.createElement("textarea");
+		txt.innerHTML = html;
+		return txt.value;
+	}
+
+	encodeHTML(html) {
+		let txt = document.createElement("textarea");
+		txt.innerHTML = html;
+		return txt.innerHTML;
+	}
+
+
+}
+
+/**
  * @class cc_Controller
  * @classdesc Contoller factory for canvas collections. Draws on document.url and any cc configuration to 
  * create and call the appropriate controller(s). Possibilities include
@@ -3635,6 +4334,7 @@ class juiceController {
  *   - update Modules page to show the collections and their representations
  *   - in both staff and student view
  */
+
 
 
 
@@ -3670,6 +4370,8 @@ class cc_Controller {
 
 		this.configFileDetails = null;
 		this.cc_configuration = null;
+
+		this.configurationStore = new cc_ConfigurationStore(this);
 
 
 		// if cc should run, try to get the config
@@ -3718,7 +4420,9 @@ class cc_Controller {
 					this.courseObject = json;
 					this.generateSTRM();
 					//this.requestConfigFileId();
-					this.findConfigPage();
+					// Experiment using configuration store
+					this.configurationStore.getConfiguration();
+					//this.findConfigPage();
 				}
 			})
 			.catch((error) => {
@@ -3726,7 +4430,7 @@ class cc_Controller {
 				console.log(error);
 				//this.requestConfigFileId();
 				// CORS issues now with requesting config file
-				this.findConfigPage();
+				// this.findConfigPage();
 			}, false);
 	}
 
@@ -3830,7 +4534,7 @@ class cc_Controller {
 	 * TODO resolve the CORs issue
 	 * TODO Should also generate some graceful error for teacher if can't find file or correct content
 	 */
-	findConfigPage() {
+/*	findConfigPage() {
 
 		let callUrl = `/api/v1/courses/${this.courseId}/pages?` + new URLSearchParams(
 			{ 'search_term': 'Canvas Collections Configuration' });
@@ -3868,7 +4572,7 @@ class cc_Controller {
 				console.log(`cc_Controller: requestConfig: error = `);
 				console.log(error);
 			}, false);
-	}
+	} */
 
 	/**
 	 * @descr Get the contents of page and set it up as config for canvas collections
@@ -3876,7 +4580,7 @@ class cc_Controller {
 	 * TODO resolve the CORs issue
 	 * TODO Should also generate some graceful error for teacher if can't find file or correct content
 	 */
-	requestConfigPageContents(page_id) {
+/*	requestConfigPageContents(page_id) {
 
 		let callUrl = `/api/v1/courses/${this.courseId}/pages/${page_id}`;
 
@@ -3936,14 +4640,14 @@ class cc_Controller {
 		return txt.value;
 	}
 
-
+*/
 
 	/**
 	 * @descr Request the file id for the cc_config.json file
 	 * - If successful then request the file contents
 	 * - if not, call execute with no config
 	 */
-	requestConfigFileId() {
+/*	requestConfigFileId() {
 
 		let callUrl = `/api/v1/courses/${this.courseId}/files?` + new URLSearchParams(
 			{ 'search_term': 'cc_config.json' });
@@ -3979,7 +4683,7 @@ class cc_Controller {
 				console.log(error);
 			}, false);
 	}
-
+*/
 	/**
 	 * @descr Request the config file, called only after requestConfigFileId is successful in
 	 * setting this.configDetails to json (e.g. below). Request the content of this file, if the
@@ -3994,7 +4698,7 @@ class cc_Controller {
 	 *   "thumbnail_url":null,"modified_at":"2022-03-05T03:27:56Z","mime_class":"file",
 	 *   "media_entry_id":null,"locked_for_user":false} 
 	 */
-
+/*
 	requestConfigFileContent() {
 		DEBUG && console.log(`cc_Controller: requestConfigFileContent: for ${this.configFileDetails.id}`);
 		console.table(this.configFileDetails);
@@ -4032,6 +4736,7 @@ class cc_Controller {
 			}, false);
 
 	}
+	*/
 
 	/**
 	 * @descr Generate API request for all information of course's modules
@@ -4048,7 +4753,7 @@ class cc_Controller {
 			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken,
+				"X-CSRF-Token": this.csrf,
 			}
 		})
 			.then(this.status)
@@ -4083,11 +4788,11 @@ class cc_Controller {
 		}
 
 		DEBUG && console.log('-------------- cc_Controller.execute()');
-		console.log(this.cc_configuration);
+//		console.log(this.cc_configuration);
 
 		//-- figure out what to do
-
 		if (this.editMode) {
+			// In staff view 
 			// show the configShowSwitch if it's there
 			const configShowSwitch = document.getElementById('configShowSwitch');
 			if (configShowSwitch) {
@@ -4106,10 +4811,8 @@ class cc_Controller {
 				// only show collections if cc is turned on
 				if (this.ccOn) {
 					this.showCollections();
-				}
-
+				} 
 			}
-
 		} else {
 			// students only see stuff if there is a config
 			if (this.cc_configuration !== null) {
@@ -4120,7 +4823,23 @@ class cc_Controller {
 			}
 		}
 		// Now add the juice interface, should only happen with the userscript version
-		this.showJuice();
+		if (this.ccOn) {
+			this.showJuice();
+		}
+	}
+
+	/**
+	 * find all the div.editable_context_module, if display:none then show it
+	 */
+	thisShowModules() {
+		// get all div.editable_context_module
+		const modules = document.getElementsByClassName('editable_context_module');
+		for (let i = 0; i < modules.length; i++) {
+			const module = modules[i];
+			if (module.style.display === 'none') {
+				module.style.display = 'block';
+			}
+		}
 	}
 
 	/**
@@ -4138,6 +4857,8 @@ class cc_Controller {
 		moduleConfigs.forEach((moduleConfig) => {
 			moduleConfig.remove();
 		});
+		// show all the modules
+		this.thisShowModules();
 
 		// remove div#cc-config-wrapper
 		let cc_config_wrapper = document.getElementById('cc-config-wrapper');
@@ -4148,6 +4869,11 @@ class cc_Controller {
 			if (cc_switch_container) {
 				cc_switch_container.style.borderBottom = '1px solid #c7cdd1';
 			}
+		}
+		// remove button#cc_2_clipboard
+		let cc_2_clipboard = document.getElementById('cc_2_clipboard');
+		if (cc_2_clipboard) {
+			cc_2_clipboard.remove();
 		}
 		const configShowSwitch = document.getElementById('configShowSwitch');
 		// set configShowSwitch to display:none
@@ -4281,63 +5007,20 @@ class cc_Controller {
 	 * - File Uploads https://canvas.instructure.com/doc/api/file.file_uploads.html
 	 */
 	saveConfig() {
-		return;
-		DEBUG && console.log('-------------- cc_Controller.saveConfig()');
-		console.log(this.configFileDetails);
-
-		// generate JSON string from config object
-		const configString = JSON.stringify(this.cc_configuration);
-		// get num bytes in config string
-		const numBytes = configString.length;
-
-		// POST
-		// /api/v1/courses/:course_id/files
-		let callUrl = `/api/v1/courses/${this.courseId}/files`;
-
-		fetch(callUrl, {
-			method: 'POST',
-			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken
-			},
-			body: JSON.stringify({
-				'name': this.configFileDetails.filename,
-				'parent_folder_id': this.configFileDetails.folder_id,
-				'content_type': this.configFileDetails.content_type,
-				'on_duplicate': 'overwrite',
-				'size': numBytes
-			})
-		})
-			.then(this.status)
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				DEBUG && console.log(`cc_Controller: save config: json = ${JSON.stringify(json)}`);
-				this.saveConfigFile(json);
-			})
-			.catch((error) => {
-				console.log(`cc_Controller: saveConfig: error = ${error}`);
-			}, false);
-
-
-		// Response will incude various information that needs to be processed
+		this.configurationStore.saveConfiguration();
 	}
 
 	/**
-	 * Do the second step in the Canvas file upload process, upload the file data
-	 * - there is a third step
-	 * @param {Json} response 
+	 * Handle the case when we've successfully updated the config file
 	 */
-	/*	saveConfigFile(response) {
-			DEBUG && console.log('-------------- cc_Controller.saveConfigFile()');
-			console.log(response);
+	completedSaveConfig() {
+		//alert('Configuration saved you lazy sod. Make this work');
 	
-	
-			// do the third step
-		}
-	*/
+	}
+
+	failedSaveConfig(error) {
+		alert(`Failed to save configuration - ${error}`);
+	}
 }
 
 /**

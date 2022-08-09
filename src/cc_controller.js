@@ -689,7 +689,7 @@ export default class cc_Controller {
 	 * Handle the case when we've successfully updated the config file
 	 */
 	completedSaveConfig() {
-		alert('Configuration saved you lazy sod. Make this work');
+		//alert('Configuration saved you lazy sod. Make this work');
 	
 	}
 

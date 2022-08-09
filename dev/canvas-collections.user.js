@@ -420,6 +420,7 @@ class cc_ConfigurationView extends cc_View {
 				break;
 			}
 		}
+		// https://www.webwisewording.com/wp-content/uploads/aaron-burden-AvqpdLRjABs-unsplash.jpg
 
 		// no match return
 		// TODO should handle the error?
@@ -514,8 +515,8 @@ class cc_ConfigurationView extends cc_View {
 					<input type="text" id="cc-module-config-${moduleDetail.id}-label" 
 						value="${moduleConfig.label}" />
 					<br clear="all" />
-				    <label for="cc-module-config-${moduleDetail.id}-number">Number</label>
-					<input type="text" id="cc-module-config-${moduleDetail.id}-number" 
+				    <label for="cc-module-config-${moduleDetail.id}-num">Number</label>
+					<input type="text" id="cc-module-config-${moduleDetail.id}-num" 
 					     value="${moduleConfig.num}" />
 					<br clear="all" />
 				    <label for="cc-module-config-${moduleDetail.id}-date">Date</label>
@@ -558,6 +559,8 @@ class cc_ConfigurationView extends cc_View {
 								  <span class="cc-card-label">${moduleConfig.label}
 								     ${moduleConfig.num}</span>
 								  <h3 class="cc-card-title">${moduleDetail.name}</h3>
+ 					        	<div class="cc-card-description"> ${moduleConfig.description} </div>
+
 								</div>
 							</div>
 							<div class="cc-card-engage">
@@ -4128,8 +4131,7 @@ const CONFIGURATION_PAGE_HTML_TEMPLATE = `
  </div>
  </div>
  <p style="clear:both"></p>
- <!-- <div class="cc_json" style="display:none"> -->
- <div class="cc_json">
+<div class="cc_json" style="display:none">
  {{CONFIG}}
  </div>
 `;
@@ -5066,7 +5068,7 @@ class cc_Controller {
 	 * Handle the case when we've successfully updated the config file
 	 */
 	completedSaveConfig() {
-		alert('Configuration saved you lazy sod. Make this work');
+		//alert('Configuration saved you lazy sod. Make this work');
 	
 	}
 
