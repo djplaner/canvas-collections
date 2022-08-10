@@ -89,8 +89,8 @@ export default class cc_ConfigurationView extends cc_View {
 		let showConfigHtml = '';
 		// does moduleDetail have property configClass
 		if (!("configClass" in moduleDetail)) {
-			moduleDetail['configClass'] = 'icon-mini-arrow-right';
-		} else if (moduleDetail['configClass'] === 'icon-mini-arrow-down') {
+			moduleDetail.configClass = 'icon-mini-arrow-right';
+		} else if (moduleDetail.configClass === 'icon-mini-arrow-down') {
 			// do nothing
 			showConfigHtml = this.showModuleConfig(moduleDetail);
 		}
@@ -134,26 +134,24 @@ export default class cc_ConfigurationView extends cc_View {
 
 	updateSingleModuleConfig(moduleId) {
 		// get the moduleDetails for the given id (if there is one)
-		// TODO need to get moduleHeader
-		const modulesDetails = this.controller.parentController.moduleDetails;
-		let singleModuleDetails = null;
-		for (let i = 0; i < modulesDetails.length; i++) {
-			if (modulesDetails[i].id === moduleId) {
-				singleModuleDetails = modulesDetails;
-				break;
-			}
-		}
-		// https://www.webwisewording.com/wp-content/uploads/aaron-burden-AvqpdLRjABs-unsplash.jpg
+		const moduleDetails = this.model.getModuleDetails();
 
-		// no match return
-		// TODO should handle the error?
-		if (!singleModuleDetails) {
+		// does moduleDetails have the moduleId property
+		if ( ! moduleDetails.hasOwnProperty(moduleId) ) {
+			// TODO handle the error
 			return;
 		}
+		const singleModuleDetails = moduleDetails[moduleId];
 
 		// get the moduleHeader element from the div.ig-header with id as moduleId
 		const moduleHeader = document.getElementById(moduleId);
 		if (moduleHeader) {
+			// find the nextSibling of moduleHeader div.cc-module-config
+			const moduleConfigDiv = document.querySelector(`#cc-module-config-${moduleId}`);
+			if (moduleConfigDiv) {
+				moduleConfigDiv.remove();
+			}
+			singleModuleDetails.configClass = 'icon-mini-arrow-down';
 			this.addSingleModuleConfiguration(moduleHeader, singleModuleDetails, moduleId);
 		}
 	}
@@ -258,8 +256,8 @@ export default class cc_ConfigurationView extends cc_View {
 					      ${imageSizeOptions}
 						</select>
 					<br clear="all" />
-					<label for="cc-collection-representation-${moduleDetail.id}-imageUrl">Image URL</label>
-					<input type="text" id="cc-module-config-${moduleDetail.id}-imageUrl" 
+					<label for="cc-collection-representation-${moduleDetail.id}-image">Image URL</label>
+					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
 					        value="${moduleConfig.image}">
 				</div>
 				<div class="cc-module-config-imagePreview">
@@ -294,46 +292,7 @@ export default class cc_ConfigurationView extends cc_View {
 					  </div>
 					</div>
 				</div> <!-- TODO should replace this with a call to the proper representation view -->
-
 							 
-<!--	  						</div>
-		   				    <a href="#module_${moduleDetail.id}" class="cc-card-link">
-	  							<div class="cc-card-header-content">
-	    							<h3 class="cc-card-header-title cc-ellipsis" title="${moduleDetail.name}">
-									  ${moduleDetail.name}
-									</h3>
-	    							<div class="cc-card-header-subtitle cc-ellipsis">
-									</div>
-									<div class="cc-card-header-description">
-										${moduleConfig.description}
-									</div>
-	  							</div>
-							</a>	
-						</div>
-					</div>
-					</div> ->
-					<!-- OLD content
-										<div class="cc-card" aria-label="Preview">
-  						<div class="cc-card-header">
-							<div class="cc-card-header-image" 
-							     style="background-image:url('${moduleConfig.image}');">
-								<div class="cc-card-header-hero" aria-hidden="true"></div>
-	  						</div>
-		   				    <a href="#module_${moduleDetail.id}" class="cc-card-link">
-	  							<div class="cc-card-header-content">
-	    							<h3 class="cc-card-header-title cc-ellipsis" title="${moduleDetail.name}">
-									  ${moduleDetail.name}
-									</h3>
-	    							<div class="cc-card-header-subtitle cc-ellipsis">
-									</div>
-									<div class="cc-card-header-description">
-										${moduleConfig.description}
-									</div>
-	  							</div>
-							</a>	
-						</div>
-					</div> -->
-
 				  </div>
 				</div>
 		    </div>

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.6
+// @version      0.8.7
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -366,8 +366,8 @@ class cc_ConfigurationView extends cc_View {
 		let showConfigHtml = '';
 		// does moduleDetail have property configClass
 		if (!("configClass" in moduleDetail)) {
-			moduleDetail['configClass'] = 'icon-mini-arrow-right';
-		} else if (moduleDetail['configClass'] === 'icon-mini-arrow-down') {
+			moduleDetail.configClass = 'icon-mini-arrow-right';
+		} else if (moduleDetail.configClass === 'icon-mini-arrow-down') {
 			// do nothing
 			showConfigHtml = this.showModuleConfig(moduleDetail);
 		}
@@ -412,8 +412,17 @@ class cc_ConfigurationView extends cc_View {
 	updateSingleModuleConfig(moduleId) {
 		// get the moduleDetails for the given id (if there is one)
 		// TODO need to get moduleHeader
-		const modulesDetails = this.controller.parentController.moduleDetails;
-		let singleModuleDetails = null;
+//		const modulesDetails = this.controller.parentController.moduleDetails;
+		const moduleDetails = this.model.getModuleDetails();
+
+		// does moduleDetails have the moduleId property
+		if ( ! moduleDetails.hasOwnProperty(moduleId) ) {
+			// TODO handle the error
+			return;
+		}
+		const singleModuleDetails = moduleDetails[moduleId];
+
+/*		let singleModuleDetails = null;
 		for (let i = 0; i < modulesDetails.length; i++) {
 			if (modulesDetails[i].id === moduleId) {
 				singleModuleDetails = modulesDetails;
@@ -426,11 +435,17 @@ class cc_ConfigurationView extends cc_View {
 		// TODO should handle the error?
 		if (!singleModuleDetails) {
 			return;
-		}
+		} */
 
 		// get the moduleHeader element from the div.ig-header with id as moduleId
 		const moduleHeader = document.getElementById(moduleId);
 		if (moduleHeader) {
+			// find the nextSibling of moduleHeader div.cc-module-config
+			const moduleConfigDiv = document.querySelector(`#cc-module-config-${moduleId}`);
+			if (moduleConfigDiv) {
+				moduleConfigDiv.remove();
+			}
+			singleModuleDetails.configClass = 'icon-mini-arrow-down';
 			this.addSingleModuleConfiguration(moduleHeader, singleModuleDetails, moduleId);
 		}
 	}
@@ -535,8 +550,8 @@ class cc_ConfigurationView extends cc_View {
 					      ${imageSizeOptions}
 						</select>
 					<br clear="all" />
-					<label for="cc-collection-representation-${moduleDetail.id}-imageUrl">Image URL</label>
-					<input type="text" id="cc-module-config-${moduleDetail.id}-imageUrl" 
+					<label for="cc-collection-representation-${moduleDetail.id}-image">Image URL</label>
+					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
 					        value="${moduleConfig.image}">
 				</div>
 				<div class="cc-module-config-imagePreview">
@@ -571,46 +586,7 @@ class cc_ConfigurationView extends cc_View {
 					  </div>
 					</div>
 				</div> <!-- TODO should replace this with a call to the proper representation view -->
-
 							 
-<!--	  						</div>
-		   				    <a href="#module_${moduleDetail.id}" class="cc-card-link">
-	  							<div class="cc-card-header-content">
-	    							<h3 class="cc-card-header-title cc-ellipsis" title="${moduleDetail.name}">
-									  ${moduleDetail.name}
-									</h3>
-	    							<div class="cc-card-header-subtitle cc-ellipsis">
-									</div>
-									<div class="cc-card-header-description">
-										${moduleConfig.description}
-									</div>
-	  							</div>
-							</a>	
-						</div>
-					</div>
-					</div> ->
-					<!-- OLD content
-										<div class="cc-card" aria-label="Preview">
-  						<div class="cc-card-header">
-							<div class="cc-card-header-image" 
-							     style="background-image:url('${moduleConfig.image}');">
-								<div class="cc-card-header-hero" aria-hidden="true"></div>
-	  						</div>
-		   				    <a href="#module_${moduleDetail.id}" class="cc-card-link">
-	  							<div class="cc-card-header-content">
-	    							<h3 class="cc-card-header-title cc-ellipsis" title="${moduleDetail.name}">
-									  ${moduleDetail.name}
-									</h3>
-	    							<div class="cc-card-header-subtitle cc-ellipsis">
-									</div>
-									<div class="cc-card-header-description">
-										${moduleConfig.description}
-									</div>
-	  							</div>
-							</a>	
-						</div>
-					</div> -->
-
 				  </div>
 				</div>
 		    </div>
@@ -1489,14 +1465,13 @@ class cc_ConfigurationController {
 		// get the value for the fieldName from the event.target element
 		const value = event.target.value;
 
-		alert(`change in config for moduleId is ${moduleId} fieldName is ${fieldName} change to ${value}`);
-
 		this.model.changeModuleConfig(moduleId,fieldName,value);
 		this.changeMade(true);
 		// TODO - redisplay the representation
 		this.parentController.showCollections();
 
 		// TODO - redisplay the module configuration view
+		this.view.updateSingleModuleConfig(moduleId);
 	}
 
 

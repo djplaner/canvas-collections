@@ -205,14 +205,13 @@ export default class cc_ConfigurationController {
 		// get the value for the fieldName from the event.target element
 		const value = event.target.value;
 
-		alert(`change in config for moduleId is ${moduleId} fieldName is ${fieldName} change to ${value}`);
-
 		this.model.changeModuleConfig(moduleId,fieldName,value);
 		this.changeMade(true);
 		// TODO - redisplay the representation
 		this.parentController.showCollections();
 
 		// TODO - redisplay the module configuration view
+		this.view.updateSingleModuleConfig(moduleId);
 	}
 
 
