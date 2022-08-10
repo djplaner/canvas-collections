@@ -385,6 +385,9 @@ class cc_ConfigurationView extends cc_View {
 		// insert moduleConfigHtml afterend of moduleHeader
 		moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
 
+		// try to start tinymce editor on the textarea
+		//tinymce.init( {selector: 'textarea'});
+
 		// add a click handler for i#cc-module-config-${id}-switch
 		const moduleConfigSwitch = document.getElementById(`cc-module-config-${id}-switch`);
 		if (moduleConfigSwitch) {
@@ -400,6 +403,7 @@ class cc_ConfigurationView extends cc_View {
 			const configFields = configDiv.querySelectorAll('input, select, textarea');
 			for (let j = 0; j < configFields.length; j++) {
 				configFields[j].onchange = (event) => this.controller.updateModuleConfigField(event);
+				configFields[j].onkeydown = (event) => event.stopPropagation();
 			}
 		}
 	}
@@ -411,8 +415,6 @@ class cc_ConfigurationView extends cc_View {
 
 	updateSingleModuleConfig(moduleId) {
 		// get the moduleDetails for the given id (if there is one)
-		// TODO need to get moduleHeader
-//		const modulesDetails = this.controller.parentController.moduleDetails;
 		const moduleDetails = this.model.getModuleDetails();
 
 		// does moduleDetails have the moduleId property
@@ -421,21 +423,6 @@ class cc_ConfigurationView extends cc_View {
 			return;
 		}
 		const singleModuleDetails = moduleDetails[moduleId];
-
-/*		let singleModuleDetails = null;
-		for (let i = 0; i < modulesDetails.length; i++) {
-			if (modulesDetails[i].id === moduleId) {
-				singleModuleDetails = modulesDetails;
-				break;
-			}
-		}
-		// https://www.webwisewording.com/wp-content/uploads/aaron-burden-AvqpdLRjABs-unsplash.jpg
-
-		// no match return
-		// TODO should handle the error?
-		if (!singleModuleDetails) {
-			return;
-		} */
 
 		// get the moduleHeader element from the div.ig-header with id as moduleId
 		const moduleHeader = document.getElementById(moduleId);
@@ -518,6 +505,7 @@ class cc_ConfigurationView extends cc_View {
 		</style>
 
 		<div class="cc-module-config-detail">
+		<form>
 			<div>
 				<div class="cc-collection-representation">
 					<label for="cc-collection-representation-${moduleDetail.id}-collection">Collection</label>
@@ -535,8 +523,17 @@ class cc_ConfigurationView extends cc_View {
 					     value="${moduleConfig.num}" />
 					<br clear="all" />
 				    <label for="cc-module-config-${moduleDetail.id}-date">Date</label>
-					<input type="text" id="cc-module-config-${moduleDetail.id}-date" 
-					      value="${date}">
+					<style>
+					   input[readonly] {
+						display:none;
+					   }
+					   </style>
+					<aeon-datepicker local="en-au">
+					<input type="date" id="date" name="date" value="" />
+					<input type="time" id="time" name="time" value="" />
+					</aeon-datepicker>
+					<!-- <input type="date" id="cc-module-config-${moduleDetail.id}-date"  -->
+					      <!-- value="${date}"> -->
 					<br clear="all" />
 				    <label for="cc-module-config-${moduleDetail.id}-description">Description</label>
 					<textarea id="cc-module-config-${moduleDetail.id}-description">${moduleConfig.description}</textarea>
@@ -590,6 +587,7 @@ class cc_ConfigurationView extends cc_View {
 				  </div>
 				</div>
 		    </div>
+			</form>
 		</div>	
 		`;
 

@@ -108,6 +108,9 @@ export default class cc_ConfigurationView extends cc_View {
 		// insert moduleConfigHtml afterend of moduleHeader
 		moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
 
+		// try to start tinymce editor on the textarea
+		//tinymce.init( {selector: 'textarea'});
+
 		// add a click handler for i#cc-module-config-${id}-switch
 		const moduleConfigSwitch = document.getElementById(`cc-module-config-${id}-switch`);
 		if (moduleConfigSwitch) {
@@ -123,6 +126,7 @@ export default class cc_ConfigurationView extends cc_View {
 			const configFields = configDiv.querySelectorAll('input, select, textarea');
 			for (let j = 0; j < configFields.length; j++) {
 				configFields[j].onchange = (event) => this.controller.updateModuleConfigField(event);
+				configFields[j].onkeydown = (event) => event.stopPropagation();
 			}
 		}
 	}
@@ -241,8 +245,17 @@ export default class cc_ConfigurationView extends cc_View {
 					     value="${moduleConfig.num}" />
 					<br clear="all" />
 				    <label for="cc-module-config-${moduleDetail.id}-date">Date</label>
-					<input type="text" id="cc-module-config-${moduleDetail.id}-date" 
-					      value="${date}">
+					<style>
+					   input[readonly] {
+						display:none;
+					   }
+					   </style>
+					<aeon-datepicker local="en-au">
+					<input type="date" id="date" name="date" value="" />
+					<input type="time" id="time" name="time" value="" />
+					</aeon-datepicker>
+					<!-- <input type="date" id="cc-module-config-${moduleDetail.id}-date"  -->
+					      <!-- value="${date}"> -->
 					<br clear="all" />
 				    <label for="cc-module-config-${moduleDetail.id}-description">Description</label>
 					<textarea id="cc-module-config-${moduleDetail.id}-description">${moduleConfig.description}</textarea>
