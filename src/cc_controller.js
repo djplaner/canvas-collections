@@ -682,7 +682,7 @@ export default class cc_Controller {
 	 * - File Uploads https://canvas.instructure.com/doc/api/file.file_uploads.html
 	 */
 	saveConfig() {
-		this.configurationStore.saveConfiguration();
+	//	this.configurationStore.saveConfiguration();
 	}
 
 	/**

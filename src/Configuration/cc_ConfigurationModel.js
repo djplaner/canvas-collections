@@ -46,6 +46,9 @@ export default class cc_ConfigurationModel {
 		return this.configShowing;
 	}
 
+	/*
+	 * REturn hash of all modules keyed on moduleId
+	**/
 	getModuleDetails() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getModuleDetails()`);
 		const moduleDetails = this.controller.parentController.moduleDetails;

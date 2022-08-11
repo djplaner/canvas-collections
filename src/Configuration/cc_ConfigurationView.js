@@ -95,8 +95,11 @@ export default class cc_ConfigurationView extends cc_View {
 			showConfigHtml = this.showModuleConfig(moduleDetail);
 		}
 
+		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.name);
+
 		const moduleConfigHtml = `
 		<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
+		<link href="//cdn.quilljs.com/1.0.0/quill.snow.css" rel="stylesheet" />
       		<span>
 			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
 			  Canvas Collections Configuration</span>
@@ -119,17 +122,70 @@ export default class cc_ConfigurationView extends cc_View {
 			moduleConfigSwitch.className = moduleDetail.configClass;
 		}
 
-		// for all input/select fields for cc-module-config-${id} add 
-		// this.controller.updateModuleConfigField(event) as change handler
+
+		// if our module cc config is revealed, then set up the quill editor
+		if (moduleDetail.configClass === 'icon-mini-arrow-down') {
+			let editor = new Quill(`#cc-module-config-${id}-description`,
+				{ //modules: { toolbar: '#toolbar' },
+					theme: 'snow'
+				});
+
+			// if that succeeded
+			if (editor.container) {
+				// set the contents
+				const delta = editor.clipboard.convert(moduleConfig.description);
+				editor.setContents(delta);
+				// keep track of the current editor
+				this.currentQuill = editor;
+				// set the event handler
+				const editorChangeHandler = this.quillChange.bind(this);
+				editor.on('selection-change', editorChangeHandler);
+			}
+		}
+
 		const configDiv = document.querySelector(`#cc-module-config-${id}`);
 		if (configDiv) {
-			const configFields = configDiv.querySelectorAll('input, select, textarea');
+			const configFields = configDiv.querySelectorAll('input, select');
 			for (let j = 0; j < configFields.length; j++) {
 				configFields[j].onchange = (event) => this.controller.updateModuleConfigField(event);
 				configFields[j].onkeydown = (event) => event.stopPropagation();
 			}
+			// and also Quill, stop prop
+			const quillFields = configDiv.querySelectorAll('div.ql-editor');
+			for (let j = 0; j < quillFields.length; j++) {
+				quillFields[j].onkeydown = (event) => event.stopPropagation();
+			}
 		}
 	}
+
+	/**
+	 * Event handler for loss of focus on the quill edito
+	 * TODO change this to an "update" description??
+	 * @param {*} range 
+	 * @param {*} oldRange 
+	 * @param {*} source 
+	 */
+	quillChange(range, oldRange, source) {
+		if (!range) {
+			// assume user has changed focus
+			if (this.currentQuill) {
+				const parentId = this.currentQuill.root.parentNode.id;
+				// extract the id from parentId with format cc-module-config-<id>-description
+				//const id = parentId.substring(parentId.indexOf('-') + 1, parentId.lastIndexOf('-'));
+				const event = {
+					target: {
+						id: parentId,
+						value: this.currentQuill.root.innerHTML
+					}
+				};
+				this.controller.updateModuleConfigField(event);
+			}
+
+		} else {
+			console.log("user entered the editor");
+		}
+	}
+
 
 	/**
 	 * @descr Replace/update the div.cc-module-config for the given module
@@ -141,7 +197,7 @@ export default class cc_ConfigurationView extends cc_View {
 		const moduleDetails = this.model.getModuleDetails();
 
 		// does moduleDetails have the moduleId property
-		if ( ! moduleDetails.hasOwnProperty(moduleId) ) {
+		if (!moduleDetails.hasOwnProperty(moduleId)) {
 			// TODO handle the error
 			return;
 		}
@@ -258,7 +314,8 @@ export default class cc_ConfigurationView extends cc_View {
 					      <!-- value="${date}"> -->
 					<br clear="all" />
 				    <label for="cc-module-config-${moduleDetail.id}-description">Description</label>
-					<textarea id="cc-module-config-${moduleDetail.id}-description">${moduleConfig.description}</textarea>
+					<!-- <textarea id="cc-module-config-${moduleDetail.id}-description">${moduleConfig.description}</textarea> -->
+					<div id="cc-module-config-${moduleDetail.id}-description" class="cc-module-config-description" style="height:8rem"> </div>
 				</div>
 		    </div>
 			<div>
@@ -784,7 +841,7 @@ input:checked + .cc-slider:before {
 				padding-left: 0.5em;
 				font-size: smaller;
 				margin:0;
-				font-weight: bold;
+			/*	font-weight: bold; */
 			}
 
 
