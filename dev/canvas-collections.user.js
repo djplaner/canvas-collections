@@ -21,6 +21,7 @@
  * 
  */
 
+
 class cc_ConfigurationModel {
 
 
@@ -35,6 +36,15 @@ class cc_ConfigurationModel {
 			true: 'icon-mini-arrow-down',
 			false: 'icon-mini-arrow-right'
 		};
+
+		// set the list of available representations
+		// - used to populate configuration view - the representations the user can choose
+		// - TODO also to check what views to create???
+		this.availableRepresentations = [
+			'GriffithCards',
+			'CollectionOnly'
+//			'AssessmentTable'
+		];
 	}
 
 	/**
@@ -203,10 +213,25 @@ class cc_ConfigurationModel {
 		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation;
 	}
 
+	/**
+	 * Modify the collection's representation to the passed value 
+	 * @param {*} collectionName 
+	 * @param {*} representation 
+	 */
+	setCollectionRepresentation(collectionName, representation) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.setCollectionRepresentation()`);
+		this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation = representation;
+	}
+
 	getCollections() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getCollections()`);
 		// return the keys for the cc_configuration.COLLECTIONS object
 		return Object.keys(this.controller.parentController.cc_configuration.COLLECTIONS);
+	}
+
+	getCurrentCollection() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getCurrentCollection()`);
+		return this.controller.parentController.collectionsController.model.currentCollection;
 	}
 
 	/**
@@ -539,7 +564,6 @@ class cc_ConfigurationView extends cc_View {
 			}
 			imageSizeOptions += `<option value="${option}" ${selected}>${option}</option>`;
 		}
-
 		let showConfigHtml = `
 		<style>
 		   .cc-collection-representation label {
@@ -661,6 +685,26 @@ class cc_ConfigurationView extends cc_View {
 	}
 
 	/**
+	 * Return a string containing HTML <options> capturing the currently
+	 * availableRepresentations
+	 * @param {String} currentRepresentation - name of a representation to be set to selected
+	 * @return {String} - HTML <options> of all available representations
+	 */
+	getAvailableRepresentations(currentRepresentation = null) {
+
+		// set the available repseentation drop box
+		let availableRepresentations = '';
+		for (let i = 0; i < this.model.availableRepresentations.length; i++) {
+			if (this.model.availableRepresentations[i] === currentRepresentation) {
+				availableRepresentations += `<option value="${this.model.availableRepresentations[i]}" selected>${this.model.availableRepresentations[i]}</option>`;
+			} else {
+				availableRepresentations += `<option value="${this.model.availableRepresentations[i]}">${this.model.availableRepresentations[i]}</option>`;
+			}
+		}
+		return availableRepresentations;
+	}
+
+	/**
 	 * @descr Add the div#cc-config to the end of div.ic-app-nav-toggle-and-crumbs
 	 * Config should allow for
 	 * - Choosing default initial collection
@@ -670,6 +714,7 @@ class cc_ConfigurationView extends cc_View {
 	 * - whether to include the "All" and "None" collections?
 	 */
 	showConfig() {
+
 		const configDivHtml = `
 		<div id="cc-config-wrapper">
 		<style>
@@ -811,8 +856,7 @@ class cc_ConfigurationView extends cc_View {
 						<div class="cc-collection-representation">
 							<label for="cc-collection-newRepresentation">Representation</label>
 							<select id="cc-collection-newRepresentation">
-								<option id="cc-collection-newRepresentation-cards" value="cards">Cards</option>
-								<option id="cc-collection-newRpresentation-table" value="table">Table</option>
+							  ${this.getAvailableRepresentations()}
 							</select>
 						</div>
 
@@ -902,7 +946,12 @@ class cc_ConfigurationView extends cc_View {
 		existingCollectionNames.forEach(collectionName => {
 			const moduleCount = this.model.getModuleCount(collectionName);
 			const moduleName = `module${moduleCount !== 1 ? 's' : ''}`;
-			const divExistingCollection = `
+			// get the <option> elements for all the representations
+			// with the current collection's representation selected
+			const availableRepresentations = this.getAvailableRepresentations(
+				this.model.getCollectionRepresentation(collectionName)
+			);
+		const divExistingCollection = `
 			<div class="cc-existing-collection border border-trbl" id="cc-collection-${collectionName}">
 				<p>${collectionName} - (${moduleCount} ${moduleName})
 				<span class="cc-collection-move">
@@ -912,9 +961,9 @@ class cc_ConfigurationView extends cc_View {
 
 				<div class="cc-collection-representation">
 					<label for="cc-collection-${collectionName}-representation">Representation</label>
-				 	<select id="cc-collection-${collectionName}-representation">
-						<option id="cc-collection-${collectionName}-representation-cards" value="cards">Cards</option>
-						<option id="cc-collection-${collectionName}-representation-table" value="table">Table</option>
+				 	<select id="cc-collection-${collectionName}-representation"
+					    class="cc-collection-representation">
+					  ${availableRepresentations}
 					</select>
 				</div>
 
@@ -945,99 +994,105 @@ class cc_ConfigurationView extends cc_View {
 			`;
 
 
-			// add the div.cc-existing-collection to div#cc-config-existing-collections
-			existingCollectionsDiv.insertAdjacentHTML('beforeEnd', divExistingCollection);
+		// add the div.cc-existing-collection to div#cc-config-existing-collections
+		existingCollectionsDiv.insertAdjacentHTML('beforeEnd', divExistingCollection);
 
-			// TODO add an event handler for clicking the options
+		// TODO add an event handler for clicking the options
 
-			// TODO add event handlers for the up and down buttons
+		// TODO add event handlers for the up and down buttons
 
-			// set input#cc-config-collection-${collectionName}-default to checked
-			if (defaultCollection === collectionName) {
-				const defaultCheckbox = document.getElementById(`cc-config-collection-${collectionName}-default`);
-				if (defaultCheckbox) {
-					defaultCheckbox.checked = true;
-				}
+		// set input#cc-config-collection-${collectionName}-default to checked
+		if (defaultCollection === collectionName) {
+			const defaultCheckbox = document.getElementById(`cc-config-collection-${collectionName}-default`);
+			if (defaultCheckbox) {
+				defaultCheckbox.checked = true;
 			}
+		}
 
-			// select the right representation
-			const representation = this.model.getCollectionRepresentation(collectionName);
-			// set option#cc-collection-${collectionName}-representation-${representation} to selected
-			const representationOption = document.getElementById(`cc-collection-${collectionName}-representation-${representation}`);
-			if (representationOption) {
-				representationOption.selected = true;
+		// select the right representation
+		const representation = this.model.getCollectionRepresentation(collectionName);
+		// set option#cc-collection-${collectionName}-representation-${representation} to selected
+		const representationOption = document.getElementById(`cc-collection-${collectionName}-representation-${representation}`);
+		if (representationOption) {
+			representationOption.selected = true;
+		}
+
+		// if we're the first collection, remove i#cc-collection-${collectionName}-up
+		if (count === 0) {
+			const upButton = document.getElementById(`cc-collection-${collectionName}-up`);
+			if (upButton) {
+				upButton.remove();
 			}
-
-			// if we're the first collection, remove i#cc-collection-${collectionName}-up
-			if (count === 0) {
-				const upButton = document.getElementById(`cc-collection-${collectionName}-up`);
-				if (upButton) {
-					upButton.remove();
-				}
-			} else if (count === numCollections - 1) {
-				// if we're the last collection, remove i#cc-collection-${collectionName}-down
-				const downButton = document.getElementById(`cc-collection-${collectionName}-down`);
-				if (downButton) {
-					downButton.remove();
-				}
+		} else if (count === numCollections - 1) {
+			// if we're the last collection, remove i#cc-collection-${collectionName}-down
+			const downButton = document.getElementById(`cc-collection-${collectionName}-down`);
+			if (downButton) {
+				downButton.remove();
 			}
-			count += 1;
-		});
+		}
+		count += 1;
+	});
 
-		// add event handler to all the i.cc-move-collection 
-		const moveIcons = document.querySelectorAll('.cc-move-collection');
-		moveIcons.forEach(icon => {
-			icon.onclick = (event) => this.controller.moveCollection(event);
-		});
+	// add event handler to all the i.cc-move-collection 
+	const moveIcons = document.querySelectorAll('.cc-move-collection');
+	moveIcons.forEach(icon => {
+		icon.onclick = (event) => this.controller.moveCollection(event);
+	});
+	// add event handler for select.cc-collection-representation
+	const representations = document.querySelectorAll('select.cc-collection-representation');
+	representations.forEach(representation => {
+		representation.onchange = (event) => this.controller.changeCollectionRepresentation(event);
+	});
 
 
+
+}
+
+
+/**
+ * @descr Remove the div#cc-config from the end of div.ic-app-nav-toggle-and-crumbs, if it exists
+ */
+removeConfig() {
+	const configDiv = document.getElementById('cc-config-wrapper');
+	if (configDiv) {
+		configDiv.remove();
+		const toggleAndCrumbs = document.getElementsByClassName('ic-app-nav-toggle-and-crumbs')[0];
+		if (toggleAndCrumbs) {
+			toggleAndCrumbs.style.borderBottom = '1px solid #c7cdd1';
+		}
 	}
 
-
-	/**
-	 * @descr Remove the div#cc-config from the end of div.ic-app-nav-toggle-and-crumbs, if it exists
-	 */
-	removeConfig() {
-		const configDiv = document.getElementById('cc-config-wrapper');
-		if (configDiv) {
-			configDiv.remove();
-			const toggleAndCrumbs = document.getElementsByClassName('ic-app-nav-toggle-and-crumbs')[0];
-			if (toggleAndCrumbs) {
-				toggleAndCrumbs.style.borderBottom = '1px solid #c7cdd1';
-			}
-		}
-
-		// add the bottom border from div.cc-switch-container
-		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
-		if (ccSwitchContainer) {
-			ccSwitchContainer.style.borderBottom = '1px solid #c7cdd1';
-		}
-
+	// add the bottom border from div.cc-switch-container
+	const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
+	if (ccSwitchContainer) {
+		ccSwitchContainer.style.borderBottom = '1px solid #c7cdd1';
 	}
 
-	/**
-	 * @descr Add the cc configuration bundle to the canvas page.
-	 * Currently placed to the left of the "Student View" button at the top of page
-	 */
-	addCcBundle() {
-		if (this.model.isOn()) {
-			this.addConfigShowSwitch();
-		}
-		// get div.cc-switch-container
-		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
-		if (ccSwitchContainer) {
-			return;
-		}
+}
 
-		/*
-		30px - 2em
-		17px - 1.2em
-		13px - 1rem
+/**
+ * @descr Add the cc configuration bundle to the canvas page.
+ * Currently placed to the left of the "Student View" button at the top of page
+ */
+addCcBundle() {
+	if (this.model.isOn()) {
+		this.addConfigShowSwitch();
+	}
+	// get div.cc-switch-container
+	const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
+	if (ccSwitchContainer) {
+		return;
+	}
 
-		*/
+	/*
+	30px - 2em
+	17px - 1.2em
+	13px - 1rem
 
-		// inject the switch script tag into the canvas page, just after start of body
-		const SL_SWITCH_HTML = `
+	*/
+
+	// inject the switch script tag into the canvas page, just after start of body
+	const SL_SWITCH_HTML = `
 		 <style>
 		 /* The switch - the box around the slider */
 .cc-switch {
@@ -1186,15 +1241,15 @@ input:checked + .cc-slider:before {
 		 </style>
 			`;
 
-		const body = document.querySelector('div#application');
-		body.insertAdjacentHTML('afterbegin', SL_SWITCH_HTML);
+	const body = document.querySelector('div#application');
+	body.insertAdjacentHTML('afterbegin', SL_SWITCH_HTML);
 
-		let cc_on = "";
-		if (this.model.isOn()) {
-			cc_on = "checked";
-		}
-		// Try the Canvas switch way first
-		const CC_BUNDLE_HTML = `
+	let cc_on = "";
+	if (this.model.isOn()) {
+		cc_on = "checked";
+	}
+	// Try the Canvas switch way first
+	const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
 		    <!-- <i id="configShowSwitch" class="icon-mini-arrow-right"></i> --> <small>Canvas Collections
@@ -1215,101 +1270,101 @@ input:checked + .cc-slider:before {
 		`;
 
 
-		// find a#easy_student_view
-		// insert before a#easy_student_view
-		let easy_student_view = document.querySelector('a#easy_student_view');
-		if (easy_student_view) {
-			easy_student_view.insertAdjacentHTML('afterend', CC_BUNDLE_HTML);
+	// find a#easy_student_view
+	// insert before a#easy_student_view
+	let easy_student_view = document.querySelector('a#easy_student_view');
+	if (easy_student_view) {
+		easy_student_view.insertAdjacentHTML('afterend', CC_BUNDLE_HTML);
 
-			// add event handler to i#configShowSwitch
-			if (this.model.isOn()) {
-				this.addConfigShowSwitch();
-			}
-
-			//			const configShowSwitch = document.getElementById('configShowSwitch');
-			//			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
-			// add event handler of input#cc-switch
-			const ccSwitch = document.getElementById('cc-switch');
-			ccSwitch.onchange = (event) => this.controller.toggleOffOnSwitch(event);
-
-			// add event handler of button#cc-save-button
-			const ccSaveButton = document.getElementById('cc-save-button');
-			ccSaveButton.onclick = (event) => this.controller.saveConfig();
-
-
-
-			//		const fileTest = document.getElementById('cc-file-test');
-			//			fileTest.onclick = (event) => this.fileTest();
-
-			// remove the configShowSwitch if no ccIsOn
-			//if ( ! this.model.isOn()) {
-			//this.removeConfigShowSwitch();
-			//				configShowSwitch.remove();
-			//} 
-		} else {
-			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
+		// add event handler to i#configShowSwitch
+		if (this.model.isOn()) {
+			this.addConfigShowSwitch();
 		}
+
+		//			const configShowSwitch = document.getElementById('configShowSwitch');
+		//			configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
+		// add event handler of input#cc-switch
+		const ccSwitch = document.getElementById('cc-switch');
+		ccSwitch.onchange = (event) => this.controller.toggleOffOnSwitch(event);
+
+		// add event handler of button#cc-save-button
+		const ccSaveButton = document.getElementById('cc-save-button');
+		ccSaveButton.onclick = (event) => this.controller.saveConfig();
+
+
+
+		//		const fileTest = document.getElementById('cc-file-test');
+		//			fileTest.onclick = (event) => this.fileTest();
+
+		// remove the configShowSwitch if no ccIsOn
+		//if ( ! this.model.isOn()) {
+		//this.removeConfigShowSwitch();
+		//				configShowSwitch.remove();
+		//} 
+	} else {
+		console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
 	}
+}
 
-	/**
-	 * @descr change the button#cc-save-button
-	 * - if change is true change class to cc-active-save-button
-	 * - if change is false change class to cc-save-button
-	 */
+/**
+ * @descr change the button#cc-save-button
+ * - if change is true change class to cc-active-save-button
+ * - if change is false change class to cc-save-button
+ */
 
-	changeSaveButton(change) {
-		const saveButton = document.getElementById('cc-save-button');
-		if (change) {
-			saveButton.className = 'cc-active-save-button';
-		} else {
-			saveButton.className = 'cc-save-button';
-		}
+changeSaveButton(change) {
+	const saveButton = document.getElementById('cc-save-button');
+	if (change) {
+		saveButton.className = 'cc-active-save-button';
+	} else {
+		saveButton.className = 'cc-save-button';
 	}
+}
 
-	/**
-	 * @descr remove the configShowSwitch
-	 */
+/**
+ * @descr remove the configShowSwitch
+ */
 
-	removeConfigShowSwitch() {
-		const configShowSwitch = document.getElementById('configShowSwitch');
-		if (configShowSwitch) {
-			configShowSwitch.remove();
-		}
+removeConfigShowSwitch() {
+	const configShowSwitch = document.getElementById('configShowSwitch');
+	if (configShowSwitch) {
+		configShowSwitch.remove();
 	}
+}
 
-	/**
-	 * @descr - add i#configShowSwitch back into div.cc-switch-title and probably add
-	 * the handler back in?
-	 */
+/**
+ * @descr - add i#configShowSwitch back into div.cc-switch-title and probably add
+ * the handler back in?
+ */
 
-	addConfigShowSwitch() {
-		const currentSwitch = document.getElementById('configShowSwitch');
+addConfigShowSwitch() {
+	const currentSwitch = document.getElementById('configShowSwitch');
 
-		if (!currentSwitch) {
-			const switchHtml = `
+	if (!currentSwitch) {
+		const switchHtml = `
 		<i id="configShowSwitch" class="icon-mini-arrow-right"></i> 
 		`;
-			// insert switchHtml into div.cc-switch-title
-			const switchTitle = document.querySelector('div.cc-switch-title');
-			if (switchTitle) {
-				switchTitle.insertAdjacentHTML('afterbegin', switchHtml);
-				// add the handler
-				const configShowSwitch = document.getElementById('configShowSwitch');
-				if (configShowSwitch) {
-					configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
-				}
+		// insert switchHtml into div.cc-switch-title
+		const switchTitle = document.querySelector('div.cc-switch-title');
+		if (switchTitle) {
+			switchTitle.insertAdjacentHTML('afterbegin', switchHtml);
+			// add the handler
+			const configShowSwitch = document.getElementById('configShowSwitch');
+			if (configShowSwitch) {
+				configShowSwitch.onclick = (event) => this.controller.toggleConfigShowSwitch(event);
 			}
 		}
-
 	}
 
-	/**
-	 * Simple harness to test for file creation 
-	 */
+}
 
-	fileTest(event) {
-		console.log("---------------------- fileTest clicked");
-	}
+/**
+ * Simple harness to test for file creation 
+ */
+
+fileTest(event) {
+	console.log("---------------------- fileTest clicked");
+}
 
 }
 
@@ -1501,8 +1556,33 @@ class cc_ConfigurationController {
 		this.view.updateExistingCollections();
 		// - also need to update the main display
 		this.parentController.showCollections();
-		
+	}
 
+	/**
+	 * User has changed the representation of an existing collection
+	 * - update the representation details for the collection
+	 * - if the collection is the current collection, update the main display
+	 * @param {*} event 
+	 */
+
+	changeCollectionRepresentation(event) {
+		// get the id of the element that was clicked
+		const idString = event.target.id;
+		// extract the collectionName and direction from 
+		// the id format cc-collection-<collectionName>-representation
+		const collectionName = idString.match(/cc-collection-(.*)-representation/)[1];
+		const newRepresentation = event.target.value;
+
+		if ( collectionName) {
+			// update the representation details for the collection
+			this.model.setCollectionRepresentation(collectionName, newRepresentation);
+			this.changeMade(true);
+			this.saveConfig();
+			// maybe let the controller etc figure out whether anything needs doing
+			if (collectionName === this.model.getCurrentCollection()) {
+				this.parentController.showCollections();
+			}
+		}
 	}
 
 	/**
@@ -5092,7 +5172,7 @@ class cc_Controller {
 	 * - File Uploads https://canvas.instructure.com/doc/api/file.file_uploads.html
 	 */
 	saveConfig() {
-	//	this.configurationStore.saveConfiguration();
+		this.configurationStore.saveConfiguration();
 	}
 
 	/**

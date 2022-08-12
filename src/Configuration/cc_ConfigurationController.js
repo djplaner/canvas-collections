@@ -185,8 +185,33 @@ export default class cc_ConfigurationController {
 		this.view.updateExistingCollections();
 		// - also need to update the main display
 		this.parentController.showCollections();
-		
+	}
 
+	/**
+	 * User has changed the representation of an existing collection
+	 * - update the representation details for the collection
+	 * - if the collection is the current collection, update the main display
+	 * @param {*} event 
+	 */
+
+	changeCollectionRepresentation(event) {
+		// get the id of the element that was clicked
+		const idString = event.target.id;
+		// extract the collectionName and direction from 
+		// the id format cc-collection-<collectionName>-representation
+		const collectionName = idString.match(/cc-collection-(.*)-representation/)[1];
+		const newRepresentation = event.target.value;
+
+		if ( collectionName) {
+			// update the representation details for the collection
+			this.model.setCollectionRepresentation(collectionName, newRepresentation);
+			this.changeMade(true);
+			this.saveConfig();
+			// maybe let the controller etc figure out whether anything needs doing
+			if (collectionName === this.model.getCurrentCollection()) {
+				this.parentController.showCollections();
+			}
+		}
 	}
 
 	/**

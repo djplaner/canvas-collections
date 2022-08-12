@@ -5,6 +5,7 @@
  * 
  */
 
+
 export default class cc_ConfigurationModel {
 
 
@@ -19,6 +20,15 @@ export default class cc_ConfigurationModel {
 			true: 'icon-mini-arrow-down',
 			false: 'icon-mini-arrow-right'
 		};
+
+		// set the list of available representations
+		// - used to populate configuration view - the representations the user can choose
+		// - TODO also to check what views to create???
+		this.availableRepresentations = [
+			'GriffithCards',
+			'CollectionOnly'
+//			'AssessmentTable'
+		];
 	}
 
 	/**
@@ -187,10 +197,25 @@ export default class cc_ConfigurationModel {
 		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation;
 	}
 
+	/**
+	 * Modify the collection's representation to the passed value 
+	 * @param {*} collectionName 
+	 * @param {*} representation 
+	 */
+	setCollectionRepresentation(collectionName, representation) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.setCollectionRepresentation()`);
+		this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation = representation;
+	}
+
 	getCollections() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getCollections()`);
 		// return the keys for the cc_configuration.COLLECTIONS object
 		return Object.keys(this.controller.parentController.cc_configuration.COLLECTIONS);
+	}
+
+	getCurrentCollection() {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getCurrentCollection()`);
+		return this.controller.parentController.collectionsController.model.currentCollection;
 	}
 
 	/**
