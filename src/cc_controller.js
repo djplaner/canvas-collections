@@ -585,6 +585,10 @@ export default class cc_Controller {
 		this.collectionsController = new cc_CollectionsController(this);
 	}
 
+	updateCurrentRepresentation() {
+		this.collectionsController.view.updateCurrentRepresentation();
+	}
+
 	/**
 	 * @descr Check queryString and set any options
 	 */

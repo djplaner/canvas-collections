@@ -11,10 +11,10 @@
  * - 3 will change if editMode
  * 
  * The collections view current added to a div#cc-canvas-collections that is inserted before
- * the Canvas module list. Intent is that
- * - this view inserts the collections view into the DOM (initially hidden)
- * - other views then modify that div appropriately
- * - when finished this view makes the DOM visible
+ * the Canvas module list. div#cc-canvas-collections contains three elements
+ * - div#cc-nav - the navigation bar
+ * - div.cc-message - a largely unused (currently) div for a collection specific message
+ * - div.cc-representation - final div that contains the representation 
  *  
  */
 
@@ -71,10 +71,30 @@ export default class CollectionsView extends cc_View {
 		// TODO call other views to display the collections
 		this.navView.display();
 
+		this.updateCurrentRepresentation();
+
 
 		// display the current collection using its representation
-		this.representations[this.model.getCurrentCollection()].display();
 	//	this.representationView.display();
+	}
+
+	/**
+	 * Do the work necessary to update the current (visible) collections representation
+	 * 
+	 */
+
+	updateCurrentRepresentation() {
+		// remove the existing div.cc-representation iff exists
+		let ccRepresentation = document.querySelector('div.cc-representation');
+		if (ccRepresentation) {
+			ccRepresentation.remove();
+		}
+		const currentCollection = this.model.getCurrentCollection();
+		const representation = this.model.getCollectionRepresentation(currentCollection);
+		// update the view object with the current representation
+		this.representations[currentCollection] = CollectionsViewFactory.createView(representation, this.model, controller);
+		// add the new representation via the current collections view
+		this.representations[currentCollection].display();
 	}
 
 	/**

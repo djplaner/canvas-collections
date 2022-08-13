@@ -60,7 +60,7 @@ export default class cc_ConfigurationController {
 	 * to save the configuration (parentController.saveConfig)
 	 * - initially set to do it every ten seconds
 	 */
-	saveConfig(){
+	saveConfig() {
 		if (this.configChange) {
 			this.changeMade(false);
 			this.parentController.saveConfig();
@@ -90,8 +90,8 @@ export default class cc_ConfigurationController {
 
 		this.model.setConfigShowClass(newClass);
 
-	//	this.configChange = true;
-	//	this.saveConfig();
+		//	this.configChange = true;
+		//	this.saveConfig();
 
 		this.view.display();
 	}
@@ -109,13 +109,13 @@ export default class cc_ConfigurationController {
 		// match cc-module-config-(\d+)-switch and extract the number
 		const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-switch/)[1]);
 
-//		let status = this.model.getModuleConfigClass(moduleId);
+		//		let status = this.model.getModuleConfigClass(moduleId);
 
-//		let newClass = this.model.getOtherConfigShowClass(className);
+		//		let newClass = this.model.getOtherConfigShowClass(className);
 
-//		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
+		//		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
 
-		this.model.setModuleConfigClass(moduleId,className);
+		this.model.setModuleConfigClass(moduleId, className);
 
 		this.view.display();
 	}
@@ -148,7 +148,7 @@ export default class cc_ConfigurationController {
 			this.parentController.turnOff();
 		}
 		this.changeMade(true);
-//		this.saveConfig();
+		//		this.saveConfig();
 	}
 
 	/**
@@ -202,14 +202,16 @@ export default class cc_ConfigurationController {
 		const collectionName = idString.match(/cc-collection-(.*)-representation/)[1];
 		const newRepresentation = event.target.value;
 
-		if ( collectionName) {
+		if (collectionName) {
 			// update the representation details for the collection
 			this.model.setCollectionRepresentation(collectionName, newRepresentation);
 			this.changeMade(true);
 			this.saveConfig();
-			// maybe let the controller etc figure out whether anything needs doing
 			if (collectionName === this.model.getCurrentCollection()) {
-				this.parentController.showCollections();
+				// - if this is the current collection we changed, then we
+				//   only want to change it's collections view - not the whole of showCollections
+				// CollectionsView.updateCurrentCollectionView()
+				this.parentController.updateCurrentRepresentation();
 			}
 		}
 	}
@@ -230,7 +232,7 @@ export default class cc_ConfigurationController {
 		// get the value for the fieldName from the event.target element
 		const value = event.target.value;
 
-		this.model.changeModuleConfig(moduleId,fieldName,value);
+		this.model.changeModuleConfig(moduleId, fieldName, value);
 		this.changeMade(true);
 		// TODO - redisplay the representation
 		this.parentController.showCollections();

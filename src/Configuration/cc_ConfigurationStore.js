@@ -207,6 +207,13 @@ export default class cc_ConfigurationStore {
 		content = content.replace('{{CONFIG}}',
 			JSON.stringify(this.parentController.cc_configuration));
 
+		// now de-encode the description for the page
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			const module = this.parentController.cc_configuration.MODULES[key];
+			module.description = this.decodeHTML(module.description);
+		}
+
+
 		// get the current time as string
 		let time = new Date().toISOString();
 

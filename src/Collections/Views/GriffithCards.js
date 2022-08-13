@@ -33,7 +33,12 @@ export default class GriffithCardsView extends cc_View {
 		DEBUG && console.log('-------------- GriffithCardsView.display()');
 		let div = document.getElementById('cc-canvas-collections');
 
-		this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
+		// if this.controller has parentController property 
+		if (this.controller.hasOwnProperty('parentController')) {
+			this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
+		} else if ( this.controller.hasOwnProperty('strm')) {
+			this.calendar = new UniversityDateCalendar(this.controller.strm);
+		}
 
 		// create a simple message div element
 		let message = document.createElement('div');
@@ -60,6 +65,8 @@ export default class GriffithCardsView extends cc_View {
 		// set the cardCollection classlist
 		//cardCollection.classList.add('flex', 'flex-wrap', '-m-3');
 		cardCollection.id = "cc-card-interface";
+		// set class to cc-representation - that all representations should use
+		cardCollection.classList.add('cc-representation');
 
 		const cardStyles = `
 		<style>

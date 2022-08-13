@@ -1431,7 +1431,7 @@ class cc_ConfigurationController {
 	 * to save the configuration (parentController.saveConfig)
 	 * - initially set to do it every ten seconds
 	 */
-	saveConfig(){
+	saveConfig() {
 		if (this.configChange) {
 			this.changeMade(false);
 			this.parentController.saveConfig();
@@ -1461,8 +1461,8 @@ class cc_ConfigurationController {
 
 		this.model.setConfigShowClass(newClass);
 
-	//	this.configChange = true;
-	//	this.saveConfig();
+		//	this.configChange = true;
+		//	this.saveConfig();
 
 		this.view.display();
 	}
@@ -1480,13 +1480,13 @@ class cc_ConfigurationController {
 		// match cc-module-config-(\d+)-switch and extract the number
 		const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-switch/)[1]);
 
-//		let status = this.model.getModuleConfigClass(moduleId);
+		//		let status = this.model.getModuleConfigClass(moduleId);
 
-//		let newClass = this.model.getOtherConfigShowClass(className);
+		//		let newClass = this.model.getOtherConfigShowClass(className);
 
-//		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
+		//		DEBUG && console.log(`changing to ${newClass} current setting is ${status}`);
 
-		this.model.setModuleConfigClass(moduleId,className);
+		this.model.setModuleConfigClass(moduleId, className);
 
 		this.view.display();
 	}
@@ -1519,7 +1519,7 @@ class cc_ConfigurationController {
 			this.parentController.turnOff();
 		}
 		this.changeMade(true);
-//		this.saveConfig();
+		//		this.saveConfig();
 	}
 
 	/**
@@ -1573,14 +1573,16 @@ class cc_ConfigurationController {
 		const collectionName = idString.match(/cc-collection-(.*)-representation/)[1];
 		const newRepresentation = event.target.value;
 
-		if ( collectionName) {
+		if (collectionName) {
 			// update the representation details for the collection
 			this.model.setCollectionRepresentation(collectionName, newRepresentation);
 			this.changeMade(true);
 			this.saveConfig();
-			// maybe let the controller etc figure out whether anything needs doing
 			if (collectionName === this.model.getCurrentCollection()) {
-				this.parentController.showCollections();
+				// - if this is the current collection we changed, then we
+				//   only want to change it's collections view - not the whole of showCollections
+				// CollectionsView.updateCurrentCollectionView()
+				this.parentController.updateCurrentRepresentation();
 			}
 		}
 	}
@@ -1601,7 +1603,7 @@ class cc_ConfigurationController {
 		// get the value for the fieldName from the event.target element
 		const value = event.target.value;
 
-		this.model.changeModuleConfig(moduleId,fieldName,value);
+		this.model.changeModuleConfig(moduleId, fieldName, value);
 		this.changeMade(true);
 		// TODO - redisplay the representation
 		this.parentController.showCollections();
@@ -2961,7 +2963,12 @@ class GriffithCardsView extends cc_View {
 		DEBUG && console.log('-------------- GriffithCardsView.display()');
 		let div = document.getElementById('cc-canvas-collections');
 
-		this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
+		// if this.controller has parentController property 
+		if (this.controller.hasOwnProperty('parentController')) {
+			this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
+		} else if ( this.controller.hasOwnProperty('strm')) {
+			this.calendar = new UniversityDateCalendar(this.controller.strm);
+		}
 
 		// create a simple message div element
 		let message = document.createElement('div');
@@ -2988,6 +2995,8 @@ class GriffithCardsView extends cc_View {
 		// set the cardCollection classlist
 		//cardCollection.classList.add('flex', 'flex-wrap', '-m-3');
 		cardCollection.id = "cc-card-interface";
+		// set class to cc-representation - that all representations should use
+		cardCollection.classList.add('cc-representation');
 
 		const cardStyles = `
 		<style>
@@ -3828,10 +3837,10 @@ class CollectionsViewFactory {
  * - 3 will change if editMode
  * 
  * The collections view current added to a div#cc-canvas-collections that is inserted before
- * the Canvas module list. Intent is that
- * - this view inserts the collections view into the DOM (initially hidden)
- * - other views then modify that div appropriately
- * - when finished this view makes the DOM visible
+ * the Canvas module list. div#cc-canvas-collections contains three elements
+ * - div#cc-nav - the navigation bar
+ * - div.cc-message - a largely unused (currently) div for a collection specific message
+ * - div.cc-representation - final div that contains the representation 
  *  
  */
 
@@ -3888,10 +3897,30 @@ class CollectionsView extends cc_View {
 		// TODO call other views to display the collections
 		this.navView.display();
 
+		this.updateCurrentRepresentation();
+
 
 		// display the current collection using its representation
-		this.representations[this.model.getCurrentCollection()].display();
 	//	this.representationView.display();
+	}
+
+	/**
+	 * Do the work necessary to update the current (visible) collections representation
+	 * 
+	 */
+
+	updateCurrentRepresentation() {
+		// remove the existing div.cc-representation iff exists
+		let ccRepresentation = document.querySelector('div.cc-representation');
+		if (ccRepresentation) {
+			ccRepresentation.remove();
+		}
+		const currentCollection = this.model.getCurrentCollection();
+		const representation = this.model.getCollectionRepresentation(currentCollection);
+		// update the view object with the current representation
+		this.representations[currentCollection] = CollectionsViewFactory.createView(representation, this.model, controller);
+		// add the new representation via the current collections view
+		this.representations[currentCollection].display();
 	}
 
 	/**
@@ -4426,6 +4455,13 @@ class cc_ConfigurationStore {
 		}
 		content = content.replace('{{CONFIG}}',
 			JSON.stringify(this.parentController.cc_configuration));
+
+		// now de-encode the description for the page
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			const module = this.parentController.cc_configuration.MODULES[key];
+			module.description = this.decodeHTML(module.description);
+		}
+
 
 		// get the current time as string
 		let time = new Date().toISOString();
@@ -5073,6 +5109,10 @@ class cc_Controller {
 	showCollections() {
 		DEBUG && console.log('-------------- cc_Controller.showCollectionsStudentMode()');
 		this.collectionsController = new cc_CollectionsController(this);
+	}
+
+	updateCurrentRepresentation() {
+		this.collectionsController.view.updateCurrentRepresentation();
 	}
 
 	/**
