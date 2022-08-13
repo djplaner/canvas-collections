@@ -682,19 +682,22 @@ export default class cc_ConfigurationView extends cc_View {
 				<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
 					<div class="ic-Checkbox-group">
 						<div class="ic-Form-control ic-Form-control--checkbox">
-							<input type="checkbox" id="cc-config-collection-${collectionName}-default">
+							<input type="checkbox" id="cc-config-collection-${collectionName}-default"
+							    class="cc-config-collection-default">
 							<label class="ic-Label" for="cc-config-collection-${collectionName}-default">
 								Default collection?
 							</label>
 						</div>
 						<div class="ic-Form-control ic-Form-control--checkbox">
-							<input type="checkbox" id="cc-config-collection-${collectionName}-all">
+							<input type="checkbox" id="cc-config-collection-${collectionName}-all"
+							    class="cc-config-collection-all">
 							<label class="ic-Label" for="cc-config-collection-${collectionName}-all">
 								Include all modules?
 							</label>
 						</div>
 						<div class="ic-Form-control ic-Form-control--checkbox">
-							<input type="checkbox" id="cc-config-collection-${collectionName}-unallocated">
+							<input type="checkbox" id="cc-config-collection-${collectionName}-unallocated"
+							     class="cc-config-collection-unallocated">
 							<label class="ic-Label" for="cc-config-collection-${collectionName}-unallocated">
 								Include modules without a collection?
 							</label>
@@ -762,6 +765,11 @@ export default class cc_ConfigurationView extends cc_View {
 		if (newCollectionButton) {
 			newCollectionButton.onclick = (event) => this.controller.addNewCollection(event);
 		}
+		// add event handler for cc-config-collection-default selection
+		const defaultCheckboxes = document.querySelectorAll('input.cc-config-collection-default');
+		defaultCheckboxes.forEach(checkbox => {
+			checkbox.onchange = (event) => this.controller.changeDefaultCollection(event);
+		});
 	}
 
 

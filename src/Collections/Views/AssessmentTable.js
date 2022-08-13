@@ -14,157 +14,11 @@
  * - Connecting with the known assignment groups and deriving data from there?
  */
 
+// esversion: 11
+
 import { cc_View } from '../../cc_View.js';
 
-export default class AssessmentTableView extends cc_View {
-
-
-	/**
-	 * @descr Initialise the view
-	 * @param {Object} model
-	 * @param {Object} controller
-	 */
-	constructor( model, controller ) {
-		super( model, controller );
-
-		this.currentCollection = this.model.getCurrentCollection();
-	}
-
-	/**
-	 * @descr insert a nav bar based on current collections
-	 */
-
-	display() {
-		DEBUG && console.log('-------------- AssessmentTable.display()');
-		let div = document.getElementById('cc-canvas-collections');
-
-
-		// create a simple message div element
-		let message = document.createElement('div');
-		message.className = 'cc-message';
-		message.innerHTML = `
-		<style>
-			${this.TABLE_STYLES}
-		</style>
-		<h1> Hello from AssessmentTable </h1>
-
-		<div id="cc-assessment-table" class="cc-assessment-container">
-
-			<table class="responsive-table" role="table">
-      			<caption>{{CAPTION}}</caption>
-      			<thead role="rowgroup">
-        			<tr role="row">
-          				<th role="columnheader" scope="col">Title</th>
-          				<th role="columnheader" scope="col">Type</th>
-          				<th role="columnheader" scope="col">Due Date</th>
-          				<th role="columnheader" scope="col">Weighting</th>
-          				<th role="columnheader" scope="col">Learning Outcomes</th>
-					</tr> 
-				</thead>
-      			<tbody>
-			<!-- 	{{TABLE-ROWS}} -->
-				  <tr role="row">
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
-            Workshop preparation and activities
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Type</span>
-            Assignment - Written Assignment 
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
-            21 Mar 22  - 3 Jun 22 
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
-            20%
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
-            1, 2, 3, 4, 5
-          </td>
-        </tr>
-        
-        <tr role="row">
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
-            Offer and Acceptance Assignment
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Type</span>
-            Assignment - Problem Solving Assignment
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
-            10 Apr 22 23:59
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
-            10%
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
-            1, 5
-          </td>
-        </tr>
-        
-        <tr role="row">
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
-            Mid-Trimester Test
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Type</span>
-            Test or quiz
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
-            3 May 22 09:00 - 6 May 22 17:00
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
-            20%
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
-            1, 2, 3, 5
-          </td>
-        </tr>
-        
-        <tr role="row">
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
-            Final Take Home examination
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Type</span>
-            Assignment - Problem Solving Assignment
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
-            16 Jun 22  - 25 Jun 22 
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
-            50%
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
-            1, 2, 3, 4, 5
-          </td>
-        </tr>
-        
-				</tbody>
-			</table>
-		</div>
-		`;
-
-		div.insertAdjacentElement('beforeend', message);
-
-	}
-
-	TABLE_STYLES = `
+const TABLE_STYLES = `
 .cc-assessment-container { 
   margin: auto;
   max-width: 960px;
@@ -280,5 +134,186 @@ export default class AssessmentTableView extends cc_View {
   }
 }
 	`;
+
+const TABLE_HTML = `
+		<style>
+			${TABLE_STYLES}
+		</style>
+		<h1> Hello from AssessmentTable </h1>
+
+		<div id="cc-assessment-table" class="cc-assessment-container">
+
+      <p>
+      {{DESCRIPTION}}
+      </p>
+
+			<table class="responsive-table" role="table">
+      			<caption>{{CAPTION}}</caption>
+      			<thead role="rowgroup">
+        			<tr role="row">
+          				<th role="columnheader" scope="col">Title</th>
+          				<th role="columnheader" scope="col">Type</th>
+          				<th role="columnheader" scope="col">Due Date</th>
+          				<th role="columnheader" scope="col">Weighting</th>
+          				<th role="columnheader" scope="col">Learning Outcomes</th>
+					</tr> 
+				</thead>
+      			<tbody>
+			<!-- 	{{TABLE-ROWS}} -->
+				  <tr role="row">
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Title</span>
+            Workshop preparation and activities
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Type</span>
+            Assignment - Written Assignment 
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
+            21 Mar 22  - 3 Jun 22 
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
+            20%
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            1, 2, 3, 4, 5
+          </td>
+        </tr>
+        
+        <tr role="row">
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Title</span>
+            Offer and Acceptance Assignment
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Type</span>
+            Assignment - Problem Solving Assignment
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
+            10 Apr 22 23:59
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
+            10%
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            1, 5
+          </td>
+        </tr>
+        
+        <tr role="row">
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Title</span>
+            Mid-Trimester Test
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Type</span>
+            Test or quiz
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
+            3 May 22 09:00 - 6 May 22 17:00
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
+            20%
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            1, 2, 3, 5
+          </td>
+        </tr>
+        
+        <tr role="row">
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Title</span>
+            Final Take Home examination
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Type</span>
+            Assignment - Problem Solving Assignment
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
+            16 Jun 22  - 25 Jun 22 
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
+            50%
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            1, 2, 3, 4, 5
+          </td>
+        </tr>
+        
+				</tbody>
+			</table>
+		</div>
+		`;
+
+
+export default class AssessmentTableView extends cc_View {
+
+
+  /**
+   * @descr Initialise the view
+   * @param {Object} model
+   * @param {Object} controller
+   */
+  constructor(model, controller) {
+    super(model, controller);
+
+    this.TABLE_HTML = TABLE_HTML;
+
+    this.TABLE_HTML_FIELD_NAMES = [
+      'DESCRIPTION', 'CAPTION', 'TABLE-ROWS'
+    ];
+
+    this.currentCollection = this.model.getCurrentCollection();
+  }
+
+  /**
+   * @descr insert a nav bar based on current collections
+   */
+
+  display() {
+    DEBUG && console.log('-------------- AssessmentTable.display()');
+    let div = document.getElementById('cc-canvas-collections');
+
+
+    // create a simple message div element
+    let message = document.createElement('div');
+    message.className = 'cc-message';
+
+    let messageHtml = this.TABLE_HTML;
+
+    // update the messageHTML
+    const description = this.model.getCurrentCollectionDescription();
+
+    messageHtml = this.emptyRemainingFields(messageHtml );
+    message.innerHTML = messageHtml;
+    div.insertAdjacentElement('beforeend', message);
+
+  }
+
+  /**
+   * Remove any remaining {{field-name}} from the message HTML
+   * @param {String} message 
+   * @returns String message with all remaining field names {{field-name}} removed
+   */
+  emptyRemainingFields(message) {
+    this.TABLE_HTML_FIELD_NAMES.forEach(fieldName => {
+      // replace any string {{fieldName}} with an empty string
+      message = message.replace(`{{${fieldName}}}`, '');
+    });
+    return message;
+  }
+
 }
 

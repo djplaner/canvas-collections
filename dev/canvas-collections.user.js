@@ -202,6 +202,15 @@ class cc_ConfigurationModel {
 	}
 
 	/**
+	 * Modify the default collection
+	 * @param {String} collectionName 
+	 */
+	setDefaultCollection(collectionName) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.setDefaultCollection()`);
+		this.controller.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION = collectionName;
+	}
+
+	/**
 	 * return the representation for the given collectionName
 	 * @param {String} collectionName 
 	 * @returns {String} - Name of representation
@@ -1059,19 +1068,22 @@ class cc_ConfigurationView extends cc_View {
 				<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
 					<div class="ic-Checkbox-group">
 						<div class="ic-Form-control ic-Form-control--checkbox">
-							<input type="checkbox" id="cc-config-collection-${collectionName}-default">
+							<input type="checkbox" id="cc-config-collection-${collectionName}-default"
+							    class="cc-config-collection-default">
 							<label class="ic-Label" for="cc-config-collection-${collectionName}-default">
 								Default collection?
 							</label>
 						</div>
 						<div class="ic-Form-control ic-Form-control--checkbox">
-							<input type="checkbox" id="cc-config-collection-${collectionName}-all">
+							<input type="checkbox" id="cc-config-collection-${collectionName}-all"
+							    class="cc-config-collection-all">
 							<label class="ic-Label" for="cc-config-collection-${collectionName}-all">
 								Include all modules?
 							</label>
 						</div>
 						<div class="ic-Form-control ic-Form-control--checkbox">
-							<input type="checkbox" id="cc-config-collection-${collectionName}-unallocated">
+							<input type="checkbox" id="cc-config-collection-${collectionName}-unallocated"
+							     class="cc-config-collection-unallocated">
 							<label class="ic-Label" for="cc-config-collection-${collectionName}-unallocated">
 								Include modules without a collection?
 							</label>
@@ -1139,6 +1151,11 @@ class cc_ConfigurationView extends cc_View {
 		if (newCollectionButton) {
 			newCollectionButton.onclick = (event) => this.controller.addNewCollection(event);
 		}
+		// add event handler for cc-config-collection-default selection
+		const defaultCheckboxes = document.querySelectorAll('input.cc-config-collection-default');
+		defaultCheckboxes.forEach(checkbox => {
+			checkbox.onchange = (event) => this.controller.changeDefaultCollection(event);
+		});
 	}
 
 
@@ -1803,6 +1820,61 @@ class cc_ConfigurationController {
 	}
 
 	/**
+	 * User has clicked on a "default collection" checkbox. 
+	 * - if the checkbox was already checked (i.e) it's now unchecked, then error saying
+	 *   can't uncheck the default collection
+	 * - if the checkbox was unchecked (i.e) it's now checked, then set the current collection
+	 *   and unselect all other default collections
+	 * - default collection checkboxes are all input.cc-config-collection-default
+	 * - with id cc-config-collection-<collectionName>-default
+	 * @param {Event} event 
+	 */
+	changeDefaultCollection(event) {
+		// get the value of the target
+		const value = event.target.checked;
+
+		// if unchecked, then error
+		if (!value) {
+			this.handleDefaultConfigurationError(event);
+			return;
+		}
+
+		// user has selected a new default collection
+		// - get the id of the element that was clicked
+		const idString = event.target.id;
+		// extract the collectionName from the id format cc-config-collection-<collectionName>-default
+		const collectionName = idString.match(/cc-config-collection-(.*)-default/)[1];
+
+		// change the current DEFAULT_COLLECTION
+		this.model.setDefaultCollection(collectionName);
+		this.changeMade(true);
+
+		// reset all the other input.cc-config-collection-default elements to unchecked
+		const defaultCollectionCheckboxes = document.querySelectorAll('input.cc-config-collection-default');
+		for (let i = 0; i < defaultCollectionCheckboxes.length; i++) {
+			const checkbox = defaultCollectionCheckboxes[i];
+			if (checkbox.id !== idString) {
+				checkbox.checked = false;
+			}
+		}
+	}
+
+	/**
+	 * User clicked on an already selected input.cc-config-collection-default
+	 * We can't turn this off - there always has to be a selected default
+	 * TODO
+	 * - set the value of the target back to checked
+	 * - add an error message explaining
+	 * @param {*} event 
+	 */
+
+	handleDefaultConfigurationError(event) {
+		const errorMsg = `Unable to uncheck the default collection - there always needs to be one.  Check the new default collection to change.`;
+		event.target.checked = true;
+		alert(errorMsg);
+	}
+
+	/**
 	 * @descr handle a change made to a module configuration field
 	 * @param event 
 	 */
@@ -2421,157 +2493,11 @@ class TableView extends cc_View {
  * - Connecting with the known assignment groups and deriving data from there?
  */
 
+// esversion: 11
 
 
-class AssessmentTableView extends cc_View {
 
-
-	/**
-	 * @descr Initialise the view
-	 * @param {Object} model
-	 * @param {Object} controller
-	 */
-	constructor( model, controller ) {
-		super( model, controller );
-
-		this.currentCollection = this.model.getCurrentCollection();
-	}
-
-	/**
-	 * @descr insert a nav bar based on current collections
-	 */
-
-	display() {
-		DEBUG && console.log('-------------- AssessmentTable.display()');
-		let div = document.getElementById('cc-canvas-collections');
-
-
-		// create a simple message div element
-		let message = document.createElement('div');
-		message.className = 'cc-message';
-		message.innerHTML = `
-		<style>
-			${this.TABLE_STYLES}
-		</style>
-		<h1> Hello from AssessmentTable </h1>
-
-		<div id="cc-assessment-table" class="cc-assessment-container">
-
-			<table class="responsive-table" role="table">
-      			<caption>{{CAPTION}}</caption>
-      			<thead role="rowgroup">
-        			<tr role="row">
-          				<th role="columnheader" scope="col">Title</th>
-          				<th role="columnheader" scope="col">Type</th>
-          				<th role="columnheader" scope="col">Due Date</th>
-          				<th role="columnheader" scope="col">Weighting</th>
-          				<th role="columnheader" scope="col">Learning Outcomes</th>
-					</tr> 
-				</thead>
-      			<tbody>
-			<!-- 	{{TABLE-ROWS}} -->
-				  <tr role="row">
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
-            Workshop preparation and activities
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Type</span>
-            Assignment - Written Assignment 
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
-            21 Mar 22  - 3 Jun 22 
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
-            20%
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
-            1, 2, 3, 4, 5
-          </td>
-        </tr>
-        
-        <tr role="row">
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
-            Offer and Acceptance Assignment
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Type</span>
-            Assignment - Problem Solving Assignment
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
-            10 Apr 22 23:59
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
-            10%
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
-            1, 5
-          </td>
-        </tr>
-        
-        <tr role="row">
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
-            Mid-Trimester Test
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Type</span>
-            Test or quiz
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
-            3 May 22 09:00 - 6 May 22 17:00
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
-            20%
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
-            1, 2, 3, 5
-          </td>
-        </tr>
-        
-        <tr role="row">
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
-            Final Take Home examination
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Type</span>
-            Assignment - Problem Solving Assignment
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
-            16 Jun 22  - 25 Jun 22 
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
-            50%
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
-            1, 2, 3, 4, 5
-          </td>
-        </tr>
-        
-				</tbody>
-			</table>
-		</div>
-		`;
-
-		div.insertAdjacentElement('beforeend', message);
-
-	}
-
-	TABLE_STYLES = `
+const TABLE_STYLES = `
 .cc-assessment-container { 
   margin: auto;
   max-width: 960px;
@@ -2687,6 +2613,187 @@ class AssessmentTableView extends cc_View {
   }
 }
 	`;
+
+const TABLE_HTML = `
+		<style>
+			${TABLE_STYLES}
+		</style>
+		<h1> Hello from AssessmentTable </h1>
+
+		<div id="cc-assessment-table" class="cc-assessment-container">
+
+      <p>
+      {{DESCRIPTION}}
+      </p>
+
+			<table class="responsive-table" role="table">
+      			<caption>{{CAPTION}}</caption>
+      			<thead role="rowgroup">
+        			<tr role="row">
+          				<th role="columnheader" scope="col">Title</th>
+          				<th role="columnheader" scope="col">Type</th>
+          				<th role="columnheader" scope="col">Due Date</th>
+          				<th role="columnheader" scope="col">Weighting</th>
+          				<th role="columnheader" scope="col">Learning Outcomes</th>
+					</tr> 
+				</thead>
+      			<tbody>
+			<!-- 	{{TABLE-ROWS}} -->
+				  <tr role="row">
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Title</span>
+            Workshop preparation and activities
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Type</span>
+            Assignment - Written Assignment 
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
+            21 Mar 22  - 3 Jun 22 
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
+            20%
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            1, 2, 3, 4, 5
+          </td>
+        </tr>
+        
+        <tr role="row">
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Title</span>
+            Offer and Acceptance Assignment
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Type</span>
+            Assignment - Problem Solving Assignment
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
+            10 Apr 22 23:59
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
+            10%
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            1, 5
+          </td>
+        </tr>
+        
+        <tr role="row">
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Title</span>
+            Mid-Trimester Test
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Type</span>
+            Test or quiz
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
+            3 May 22 09:00 - 6 May 22 17:00
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
+            20%
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            1, 2, 3, 5
+          </td>
+        </tr>
+        
+        <tr role="row">
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Title</span>
+            Final Take Home examination
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Type</span>
+            Assignment - Problem Solving Assignment
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
+            16 Jun 22  - 25 Jun 22 
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
+            50%
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            1, 2, 3, 4, 5
+          </td>
+        </tr>
+        
+				</tbody>
+			</table>
+		</div>
+		`;
+
+
+class AssessmentTableView extends cc_View {
+
+
+  /**
+   * @descr Initialise the view
+   * @param {Object} model
+   * @param {Object} controller
+   */
+  constructor(model, controller) {
+    super(model, controller);
+
+    this.TABLE_HTML = TABLE_HTML;
+
+    this.TABLE_HTML_FIELD_NAMES = [
+      'DESCRIPTION', 'CAPTION', 'TABLE-ROWS'
+    ];
+
+    this.currentCollection = this.model.getCurrentCollection();
+  }
+
+  /**
+   * @descr insert a nav bar based on current collections
+   */
+
+  display() {
+    DEBUG && console.log('-------------- AssessmentTable.display()');
+    let div = document.getElementById('cc-canvas-collections');
+
+
+    // create a simple message div element
+    let message = document.createElement('div');
+    message.className = 'cc-message';
+
+    let messageHtml = this.TABLE_HTML;
+
+    // update the messageHTML
+    const description = this.model.getCurrentCollectionDescription();
+
+    messageHtml = this.emptyRemainingFields(messageHtml );
+    message.innerHTML = messageHtml;
+    div.insertAdjacentElement('beforeend', message);
+
+  }
+
+  /**
+   * Remove any remaining {{field-name}} from the message HTML
+   * @param {String} message 
+   * @returns String message with all remaining field names {{field-name}} removed
+   */
+  emptyRemainingFields(message) {
+    this.TABLE_HTML_FIELD_NAMES.forEach(fieldName => {
+      // replace any string {{fieldName}} with an empty string
+      message = message.replace(`{{${fieldName}}}`, '');
+    });
+    return message;
+  }
+
 }
 
 // src/Collections/Views/CollectionOnly.js

@@ -186,6 +186,15 @@ export default class cc_ConfigurationModel {
 	}
 
 	/**
+	 * Modify the default collection
+	 * @param {String} collectionName 
+	 */
+	setDefaultCollection(collectionName) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.setDefaultCollection()`);
+		this.controller.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION = collectionName;
+	}
+
+	/**
 	 * return the representation for the given collectionName
 	 * @param {String} collectionName 
 	 * @returns {String} - Name of representation

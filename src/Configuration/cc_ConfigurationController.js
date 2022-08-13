@@ -309,6 +309,61 @@ export default class cc_ConfigurationController {
 	}
 
 	/**
+	 * User has clicked on a "default collection" checkbox. 
+	 * - if the checkbox was already checked (i.e) it's now unchecked, then error saying
+	 *   can't uncheck the default collection
+	 * - if the checkbox was unchecked (i.e) it's now checked, then set the current collection
+	 *   and unselect all other default collections
+	 * - default collection checkboxes are all input.cc-config-collection-default
+	 * - with id cc-config-collection-<collectionName>-default
+	 * @param {Event} event 
+	 */
+	changeDefaultCollection(event) {
+		// get the value of the target
+		const value = event.target.checked;
+
+		// if unchecked, then error
+		if (!value) {
+			this.handleDefaultConfigurationError(event);
+			return;
+		}
+
+		// user has selected a new default collection
+		// - get the id of the element that was clicked
+		const idString = event.target.id;
+		// extract the collectionName from the id format cc-config-collection-<collectionName>-default
+		const collectionName = idString.match(/cc-config-collection-(.*)-default/)[1];
+
+		// change the current DEFAULT_COLLECTION
+		this.model.setDefaultCollection(collectionName);
+		this.changeMade(true);
+
+		// reset all the other input.cc-config-collection-default elements to unchecked
+		const defaultCollectionCheckboxes = document.querySelectorAll('input.cc-config-collection-default');
+		for (let i = 0; i < defaultCollectionCheckboxes.length; i++) {
+			const checkbox = defaultCollectionCheckboxes[i];
+			if (checkbox.id !== idString) {
+				checkbox.checked = false;
+			}
+		}
+	}
+
+	/**
+	 * User clicked on an already selected input.cc-config-collection-default
+	 * We can't turn this off - there always has to be a selected default
+	 * TODO
+	 * - set the value of the target back to checked
+	 * - add an error message explaining
+	 * @param {*} event 
+	 */
+
+	handleDefaultConfigurationError(event) {
+		const errorMsg = `Unable to uncheck the default collection - there always needs to be one.  Check the new default collection to change.`;
+		event.target.checked = true;
+		alert(errorMsg);
+	}
+
+	/**
 	 * @descr handle a change made to a module configuration field
 	 * @param event 
 	 */
