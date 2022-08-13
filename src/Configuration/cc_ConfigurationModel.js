@@ -26,8 +26,8 @@ export default class cc_ConfigurationModel {
 		// - TODO also to check what views to create???
 		this.availableRepresentations = [
 			'GriffithCards',
-			'CollectionOnly'
-//			'AssessmentTable'
+			'CollectionOnly',
+			'AssessmentTable'
 		];
 	}
 

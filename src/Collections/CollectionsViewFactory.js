@@ -5,12 +5,14 @@
 
 import { CardsView } from "./Views/Cards.js";
 import { TableView } from "./Views/Table.js";
+import { AssessmentTableView } from "./Views/AssessmentTable.js";
 import { CollectionOnlyView } from "./Views/CollectionOnly.js";
 import { GriffithCardsView } from "./Views/GriffithCards.js";
 
 const VIEWS = {
 	CardsView,
 	TableView,
+	AssessmentTableView,
 	CollectionOnlyView,
 	GriffithCardsView
 }

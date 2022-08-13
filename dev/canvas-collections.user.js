@@ -42,8 +42,8 @@ class cc_ConfigurationModel {
 		// - TODO also to check what views to create???
 		this.availableRepresentations = [
 			'GriffithCards',
-			'CollectionOnly'
-//			'AssessmentTable'
+			'CollectionOnly',
+			'AssessmentTable'
 		];
 	}
 
@@ -2404,6 +2404,46 @@ class TableView extends cc_View {
 	}
 }
 
+// src/Collections/Views/AssessmentTable.js
+/**
+ * Table.js 
+ * - implement a table view for a Canvas Collection  
+ */
+
+
+
+class AssessmentTableView extends cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		super( model, controller );
+
+		this.currentCollection = this.model.getCurrentCollection();
+	}
+
+	/**
+	 * @descr insert a nav bar based on current collections
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- AssessmentTable.display()');
+		let div = document.getElementById('cc-canvas-collections');
+
+
+		// create a simple message div element
+		let message = document.createElement('div');
+		message.className = 'cc-message';
+		message.innerHTML = '<h1> Hello from AssessmentTable </h1>';
+
+		div.insertAdjacentElement('beforeend', message);
+
+	}
+}
+
 // src/Collections/Views/CollectionOnly.js
 /**
  * CollectionOly.js 
@@ -4009,9 +4049,11 @@ class GriffithCardsView extends cc_View {
 
 
 
+
 const VIEWS = {
 	CardsView,
 	TableView,
+	AssessmentTableView,
 	CollectionOnlyView,
 	GriffithCardsView
 }
