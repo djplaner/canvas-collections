@@ -235,6 +235,78 @@ class cc_ConfigurationModel {
 	}
 
 	/**
+	 * Given an object representing details of a newCollection with following fields -
+	 * add it to the Canvas Collections configuration
+	 * - name - name of the new collection
+	 * - representation - name of the representation for the new collection
+	 * - all - TODO deprecated boolean to indicate if all modules should be added to the new collection
+	 * - unallocated - TODO deprecated boolean to indicate if unallocated modules should be added to the new collection
+	 * - default - boolean to indicate if the new collection should be the new default collection
+	 * @param {Object} newCollection 
+	 */
+
+	addNewCollection(newCollection) {
+		// cc_configuration contains
+		// - COLLECTIONS hash of hashes: keyed on collection name with fields
+		//   - representation - description - 
+		// - COLLECTIONS_ORDER array of collection names in order
+		// - DEFAULT_ACTIVE_COLLECTION - name of default active collection
+		let cc_configuration = this.controller.parentController.cc_configuration;
+
+		// add the new collection to the COLLECTIONS hash
+		// TODO - description is likely still empty or undefined
+		cc_configuration.COLLECTIONS[newCollection.name] = {
+			representation: newCollection.representation,
+			description: newCollection.description
+		};
+
+		// add the new collection to the COLLECTIONS_ORDER array
+		cc_configuration.COLLECTIONS_ORDER.push(newCollection.name);
+
+		// if the new collection is the default, set the DEFAULT_ACTIVE_COLLECTION to the new collection name
+		if (newCollection.default) {
+			cc_configuration.DEFAULT_ACTIVE_COLLECTION = newCollection.name;
+		}
+	}
+
+	/**
+	 * Given a collection name, remove it by
+	 * - removing it from the COLLECTIONS hash
+	 * - removing it from the COLLECTIONS_ORDER array
+	 * - if the collection is the default, set the DEFAULT_ACTIVE_COLLECTION to the first collection in the COLLECTIONS_ORDER array
+	 * - Loop through all the modules, any currently set to the collection should be set to no collection
+	 * @param {String} collectionName 
+	 */
+	deleteCollection(collectionName) {
+		let cc_configuration = this.controller.parentController.cc_configuration;
+
+		// remove the collection from the COLLECTIONS hash
+		if ( cc_configuration.COLLECTIONS.hasOwnProperty(collectionName) ) {
+			delete cc_configuration.COLLECTIONS[collectionName];
+		}
+
+		// remove the collection from the COLLECTIONS_ORDER array
+		let index = cc_configuration.COLLECTIONS_ORDER.indexOf(collectionName);
+		if (index > -1) {
+			cc_configuration.COLLECTIONS_ORDER.splice(index, 1);
+		}
+
+		// if the collection is the default, set the DEFAULT_ACTIVE_COLLECTION to the first collection in the COLLECTIONS_ORDER array
+		if (collectionName === cc_configuration.DEFAULT_ACTIVE_COLLECTION) {
+			cc_configuration.DEFAULT_ACTIVE_COLLECTION = cc_configuration.COLLECTIONS_ORDER[0];
+		}
+
+		// loop through all the attributes of the cc_configuration.MODULES hash
+		// if any have the collectionName as their collection, set the collection to no collection
+		Object.keys(cc_configuration.MODULES).forEach((moduleName) => {
+			if (cc_configuration.MODULES[moduleName].collection === collectionName) {
+				cc_configuration.MODULES[moduleName].collection = null;
+			}
+		});
+
+	}
+
+	/**
 	 * @descr Change the value for a configuration variable for a specific module
 	 * @param {*} moduleId 
 	 * @param {*} fieldName 
@@ -791,6 +863,18 @@ class cc_ConfigurationView extends cc_View {
 				margin-top: 0.2em;
 				margin-bottom: 0.2em;
 			}
+
+			.cc-existing-collection i {
+				cursor: pointer;
+			}
+
+			.cc-config-error {
+				background-color:red;
+				color:white;
+				padding:0.5em;
+				font-size:0.8em;
+				margin:0.5em;
+			}
 		
 			.cc-config-collection {
 				padding-top: 0.5em;
@@ -957,6 +1041,10 @@ class cc_ConfigurationView extends cc_View {
 				<span class="cc-collection-move">
 				<i class="icon-arrow-up cc-move-collection" id="cc-collection-${collectionName}-up"></i>
 				<i class="icon-arrow-down cc-move-collection" id="cc-collection-${collectionName}-down"></i>
+				</span>
+				<span class="cc-collection-delete">
+				<i class="icon-trash cc-delete-collection" id="cc-collection-${collectionName}-delete"></i>
+				</span>
 				</p>
 
 				<div class="cc-collection-representation">
@@ -1035,6 +1123,11 @@ class cc_ConfigurationView extends cc_View {
 		const moveIcons = document.querySelectorAll('.cc-move-collection');
 		moveIcons.forEach(icon => {
 			icon.onclick = (event) => this.controller.moveCollection(event);
+		});
+		// add event handler to all the i.cc-delete-collection
+		const deleteIcons = document.querySelectorAll('.cc-delete-collection');
+		deleteIcons.forEach(icon => {
+			icon.onclick = (event) => this.controller.deleteCollection(event);
 		});
 		// add event handler for select.cc-collection-representation
 		const representations = document.querySelectorAll('select.cc-collection-representation');
@@ -1371,14 +1464,27 @@ input:checked + .cc-slider:before {
 	 * an error div into the end of div#cc-config-new-collection > div.cc-config-collection 
 	 */
 
-	displayNewCollectionError(error) {
+	displayNewCollectionError(error, removeExisting = true) {
 		const errorHtml = `<div class="cc-config-error">${error}</div>`;
 
 		const newCollection = document.querySelector('div#cc-config-new-collection');
 		if (newCollection) {
 			const collection = newCollection.querySelector('div.cc-config-collection');
 			if (collection) {
+				if (removeExisting) {
+					this.removeCollectionErrors();
+				}
 				collection.insertAdjacentHTML('beforeend', errorHtml);
+			}
+		}
+	}
+
+	removeCollectionErrors() {
+		const collection = document.querySelector('div#cc-config-new-collection');
+		if (collection) {
+			const existingErrors = collection.querySelectorAll('div.cc-config-error');
+			for (let i = 0; i < existingErrors.length; i++) {
+				existingErrors[i].remove();
 			}
 		}
 	}
@@ -1576,6 +1682,31 @@ class cc_ConfigurationController {
 	}
 
 	/**
+	 * User clicked an i.cc-delete-collection with id=cc-collection-<collectionName>-delete 
+	 * Remove the collection from the model and the view
+	 * @param {Event} event 
+	 */
+
+	deleteCollection(event) {
+		const idString = event.target.id;
+		const collectionName = idString.match(/cc-collection-(.*)-delete/)[1];
+
+		// confirm that they actually want to delete the collection
+		if (!confirm(`Are you sure you want to delete the collection ${collectionName}?`)) {
+			return;
+		}
+
+		this.model.deleteCollection(collectionName);
+
+		this.changeMade(true);
+
+		// update the display
+		this.view.removeConfig();
+		this.view.showConfig();
+
+	}
+
+	/**
 	 * User has changed the representation of an existing collection
 	 * - update the representation details for the collection
 	 * - if the collection is the current collection, update the main display
@@ -1640,10 +1771,35 @@ class cc_ConfigurationController {
 		// Do some checks on the newCollection
 		// - check that the name is not already in use
 		// - check that the name is not empty
+		
 		if (newCollection.name == '') {
-			this.view.displayNewCollectionError('Collection name cannot be empty');
+			this.view.displayNewCollectionError('Name of new collection cannot be empty');
 			return;
 		}
+		// get names of existing collections
+		const existingCollectionNames = this.model.getExistingCollectionNames();
+		for (let i = 0; i < existingCollectionNames.length; i++) {
+			if (existingCollectionNames[i] === newCollection.name) {
+				this.view.displayNewCollectionError(
+					`Name of new collection (<strong>${newCollection.name}</strong>) is already in use`);
+				return;
+			}
+		}
+		 
+		//--------------------------------------------------------------------------------
+		// add the new collection to the model
+		this.model.addNewCollection(newCollection);
+
+		// make sure the change gets saved 
+		this.changeMade(true);
+
+		// update the interface
+		// remove any prior errors
+		//this.view.updateExistingCollections();
+		// update the display
+		this.view.removeConfig();
+		this.view.showConfig();
+		this.parentController.showCollections();
 	}
 
 	/**

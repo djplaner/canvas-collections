@@ -188,6 +188,31 @@ export default class cc_ConfigurationController {
 	}
 
 	/**
+	 * User clicked an i.cc-delete-collection with id=cc-collection-<collectionName>-delete 
+	 * Remove the collection from the model and the view
+	 * @param {Event} event 
+	 */
+
+	deleteCollection(event) {
+		const idString = event.target.id;
+		const collectionName = idString.match(/cc-collection-(.*)-delete/)[1];
+
+		// confirm that they actually want to delete the collection
+		if (!confirm(`Are you sure you want to delete the collection ${collectionName}?`)) {
+			return;
+		}
+
+		this.model.deleteCollection(collectionName);
+
+		this.changeMade(true);
+
+		// update the display
+		this.view.removeConfig();
+		this.view.showConfig();
+
+	}
+
+	/**
 	 * User has changed the representation of an existing collection
 	 * - update the representation details for the collection
 	 * - if the collection is the current collection, update the main display
@@ -252,10 +277,35 @@ export default class cc_ConfigurationController {
 		// Do some checks on the newCollection
 		// - check that the name is not already in use
 		// - check that the name is not empty
+		
 		if (newCollection.name == '') {
-			this.view.displayNewCollectionError('Collection name cannot be empty');
+			this.view.displayNewCollectionError('Name of new collection cannot be empty');
 			return;
 		}
+		// get names of existing collections
+		const existingCollectionNames = this.model.getExistingCollectionNames();
+		for (let i = 0; i < existingCollectionNames.length; i++) {
+			if (existingCollectionNames[i] === newCollection.name) {
+				this.view.displayNewCollectionError(
+					`Name of new collection (<strong>${newCollection.name}</strong>) is already in use`);
+				return;
+			}
+		}
+		 
+		//--------------------------------------------------------------------------------
+		// add the new collection to the model
+		this.model.addNewCollection(newCollection);
+
+		// make sure the change gets saved 
+		this.changeMade(true);
+
+		// update the interface
+		// remove any prior errors
+		//this.view.updateExistingCollections();
+		// update the display
+		this.view.removeConfig();
+		this.view.showConfig();
+		this.parentController.showCollections();
 	}
 
 	/**

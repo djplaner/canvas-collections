@@ -219,6 +219,78 @@ export default class cc_ConfigurationModel {
 	}
 
 	/**
+	 * Given an object representing details of a newCollection with following fields -
+	 * add it to the Canvas Collections configuration
+	 * - name - name of the new collection
+	 * - representation - name of the representation for the new collection
+	 * - all - TODO deprecated boolean to indicate if all modules should be added to the new collection
+	 * - unallocated - TODO deprecated boolean to indicate if unallocated modules should be added to the new collection
+	 * - default - boolean to indicate if the new collection should be the new default collection
+	 * @param {Object} newCollection 
+	 */
+
+	addNewCollection(newCollection) {
+		// cc_configuration contains
+		// - COLLECTIONS hash of hashes: keyed on collection name with fields
+		//   - representation - description - 
+		// - COLLECTIONS_ORDER array of collection names in order
+		// - DEFAULT_ACTIVE_COLLECTION - name of default active collection
+		let cc_configuration = this.controller.parentController.cc_configuration;
+
+		// add the new collection to the COLLECTIONS hash
+		// TODO - description is likely still empty or undefined
+		cc_configuration.COLLECTIONS[newCollection.name] = {
+			representation: newCollection.representation,
+			description: newCollection.description
+		};
+
+		// add the new collection to the COLLECTIONS_ORDER array
+		cc_configuration.COLLECTIONS_ORDER.push(newCollection.name);
+
+		// if the new collection is the default, set the DEFAULT_ACTIVE_COLLECTION to the new collection name
+		if (newCollection.default) {
+			cc_configuration.DEFAULT_ACTIVE_COLLECTION = newCollection.name;
+		}
+	}
+
+	/**
+	 * Given a collection name, remove it by
+	 * - removing it from the COLLECTIONS hash
+	 * - removing it from the COLLECTIONS_ORDER array
+	 * - if the collection is the default, set the DEFAULT_ACTIVE_COLLECTION to the first collection in the COLLECTIONS_ORDER array
+	 * - Loop through all the modules, any currently set to the collection should be set to no collection
+	 * @param {String} collectionName 
+	 */
+	deleteCollection(collectionName) {
+		let cc_configuration = this.controller.parentController.cc_configuration;
+
+		// remove the collection from the COLLECTIONS hash
+		if ( cc_configuration.COLLECTIONS.hasOwnProperty(collectionName) ) {
+			delete cc_configuration.COLLECTIONS[collectionName];
+		}
+
+		// remove the collection from the COLLECTIONS_ORDER array
+		let index = cc_configuration.COLLECTIONS_ORDER.indexOf(collectionName);
+		if (index > -1) {
+			cc_configuration.COLLECTIONS_ORDER.splice(index, 1);
+		}
+
+		// if the collection is the default, set the DEFAULT_ACTIVE_COLLECTION to the first collection in the COLLECTIONS_ORDER array
+		if (collectionName === cc_configuration.DEFAULT_ACTIVE_COLLECTION) {
+			cc_configuration.DEFAULT_ACTIVE_COLLECTION = cc_configuration.COLLECTIONS_ORDER[0];
+		}
+
+		// loop through all the attributes of the cc_configuration.MODULES hash
+		// if any have the collectionName as their collection, set the collection to no collection
+		Object.keys(cc_configuration.MODULES).forEach((moduleName) => {
+			if (cc_configuration.MODULES[moduleName].collection === collectionName) {
+				cc_configuration.MODULES[moduleName].collection = null;
+			}
+		});
+
+	}
+
+	/**
 	 * @descr Change the value for a configuration variable for a specific module
 	 * @param {*} moduleId 
 	 * @param {*} fieldName 

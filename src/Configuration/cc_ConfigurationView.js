@@ -486,6 +486,18 @@ export default class cc_ConfigurationView extends cc_View {
 				margin-top: 0.2em;
 				margin-bottom: 0.2em;
 			}
+
+			.cc-existing-collection i {
+				cursor: pointer;
+			}
+
+			.cc-config-error {
+				background-color:red;
+				color:white;
+				padding:0.5em;
+				font-size:0.8em;
+				margin:0.5em;
+			}
 		
 			.cc-config-collection {
 				padding-top: 0.5em;
@@ -652,6 +664,10 @@ export default class cc_ConfigurationView extends cc_View {
 				<span class="cc-collection-move">
 				<i class="icon-arrow-up cc-move-collection" id="cc-collection-${collectionName}-up"></i>
 				<i class="icon-arrow-down cc-move-collection" id="cc-collection-${collectionName}-down"></i>
+				</span>
+				<span class="cc-collection-delete">
+				<i class="icon-trash cc-delete-collection" id="cc-collection-${collectionName}-delete"></i>
+				</span>
 				</p>
 
 				<div class="cc-collection-representation">
@@ -730,6 +746,11 @@ export default class cc_ConfigurationView extends cc_View {
 		const moveIcons = document.querySelectorAll('.cc-move-collection');
 		moveIcons.forEach(icon => {
 			icon.onclick = (event) => this.controller.moveCollection(event);
+		});
+		// add event handler to all the i.cc-delete-collection
+		const deleteIcons = document.querySelectorAll('.cc-delete-collection');
+		deleteIcons.forEach(icon => {
+			icon.onclick = (event) => this.controller.deleteCollection(event);
 		});
 		// add event handler for select.cc-collection-representation
 		const representations = document.querySelectorAll('select.cc-collection-representation');
@@ -1066,14 +1087,27 @@ input:checked + .cc-slider:before {
 	 * an error div into the end of div#cc-config-new-collection > div.cc-config-collection 
 	 */
 
-	displayNewCollectionError(error) {
+	displayNewCollectionError(error, removeExisting = true) {
 		const errorHtml = `<div class="cc-config-error">${error}</div>`;
 
 		const newCollection = document.querySelector('div#cc-config-new-collection');
 		if (newCollection) {
 			const collection = newCollection.querySelector('div.cc-config-collection');
 			if (collection) {
+				if (removeExisting) {
+					this.removeCollectionErrors();
+				}
 				collection.insertAdjacentHTML('beforeend', errorHtml);
+			}
+		}
+	}
+
+	removeCollectionErrors() {
+		const collection = document.querySelector('div#cc-config-new-collection');
+		if (collection) {
+			const existingErrors = collection.querySelectorAll('div.cc-config-error');
+			for (let i = 0; i < existingErrors.length; i++) {
+				existingErrors[i].remove();
 			}
 		}
 	}
