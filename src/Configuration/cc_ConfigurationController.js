@@ -217,6 +217,48 @@ export default class cc_ConfigurationController {
 	}
 
 	/**
+	 * User has hit the "add" button for a new collection
+	 * - get all the values for the form elements within div#cc-config-new-collection
+	 * - insert them into the collections configuration detail and save
+	 * 
+	 * TODO
+	 * - perform checks on the name of the collection and generate errors if necessary
+	 * @param {Event} event
+	 */
+
+	addNewCollection(event) {
+		DEBUG && console.log('-------------- cc_ConfigurationController.addNewCollection()');
+
+		//--------------------------------------------------------------------------------
+		// get the values for the form elements within div#cc-config-new-collection and place
+		// in an object newCollection
+		let newCollection = {};
+		const newCollectionForm = document.querySelector('#cc-config-new-collection');
+		if (newCollectionForm) {
+			const newCollectionFormElements = newCollectionForm.querySelectorAll('input , select'); 
+			for (let i = 0; i < newCollectionFormElements.length; i++) {
+				const element = newCollectionFormElements[i];
+				if (element.id) {
+					// parse the id to get the name - format cc-config-new-collection-<name>
+					const name = element.id.match(/cc-config-new-collection-(.*)/)[1];
+					newCollection[name] = element.value;
+				}
+			}
+			console.log('-------------- addnewCollection');
+			console.log(newCollection);
+		}
+
+		//--------------------------------------------------------------------------------
+		// Do some checks on the newCollection
+		// - check that the name is not already in use
+		// - check that the name is not empty
+		if (newCollection.name == '') {
+			this.view.displayNewCollectionError('Collection name cannot be empty');
+			return;
+		}
+	}
+
+	/**
 	 * @descr handle a change made to a module configuration field
 	 * @param event 
 	 */
