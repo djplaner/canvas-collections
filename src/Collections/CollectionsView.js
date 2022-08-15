@@ -95,6 +95,11 @@ export default class CollectionsView extends cc_View {
 		this.representations[currentCollection] = CollectionsViewFactory.createView(representation, this.model, controller);
 		// add the new representation via the current collections view
 		this.representations[currentCollection].display();
+		// idea is that all views should only show the current modules 
+		// - though configuration may change, the smarts of which can be put
+		//   into the following method.
+//		this.representations[currentCollection].showCurrentCollectionModules();
+
 	}
 
 	/**

@@ -25,6 +25,11 @@ export default class GriffithCardsView extends cc_View {
 		this.currentCollection = this.model.getCurrentCollection();
 	}
 
+	/*showOnlyCurrentCollectionModules() {
+		// call the parent method
+		super.showOnlyCurrentCollectionModules();
+	}*/
+
 	/**
 	 * @descr insert a nav bar based on current collections
 	 */

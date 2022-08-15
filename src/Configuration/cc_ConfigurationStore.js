@@ -27,6 +27,16 @@ const CONFIGURATION_PAGE_HTML_TEMPLATE = `
  </div>
 `;
 
+const DEFAULT_CONFIGURATION = {
+	"STATUS": "off",
+	"DEFAULT_ACTIVE_COLLECTION": "",
+	"COLLECTIONS": {
+	},
+	"COLLECTIONS_ORDER": [],
+	"MODULES": {
+	}
+};
+
 export default class cc_ConfigurationStore {
 
 	/**
@@ -102,6 +112,7 @@ export default class cc_ConfigurationStore {
 				// json should contain a list of items, should be just one
 				if (json.length === 0) {
 					DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: no config page 'Canvas Collections Configuration' found`);
+					this.initialiseConfigPage();
 					// TODO this is where we create the configuration page
 				} else if (json.length === 1) {
 					this.pageObject = json[0];
@@ -186,11 +197,16 @@ export default class cc_ConfigurationStore {
 	/**
 	 * @descr update the contents of the configuration page (this.pageObject.pageId) with 
 	 * the this.parentController.cc_configuration as JSON
+	 * @param {Boolean} create - default false, set to true to create a new page
 	 */
 
-	saveConfigPage() {
+	saveConfigPage(create = false) {
 
-		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.pageObject.page_id}`;
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages`;
+
+		if (!create && this.hasOwnProperty('pageObject') && this.pageObject.hasOwnProperty('page_id')) {
+			callUrl += `/${this.pageObject.page_id}`;
+		}
 
 		DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: callUrl = ${callUrl}`);
 
@@ -224,11 +240,28 @@ export default class cc_ConfigurationStore {
 				"body": content,
 			}
 		};
+
+		let method = "put";
+		// if we're creating, change the URL and add the title
+		if (create) {
+			method = "post";
+			_body = {
+				"wiki_page": {
+					"body": content,
+					"title": 'Canvas Collections Configuration',
+					"editing_roles": 'teachers',
+					"notify_of_update": false,
+					"published": false,
+					"front_page": false
+				}
+			};
+		}
+
 		const bodyString = JSON.stringify(_body);
 
 
 		fetch(callUrl, {
-			method: 'put', credentials: 'include',
+			method: method, credentials: 'include',
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
 				"Accept": "application/json; charset=UTF-8",
@@ -244,8 +277,13 @@ export default class cc_ConfigurationStore {
 					// don't need to do anything with it here
 					DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: json = ${JSON.stringify(json)}`);
 
-					// tell the controller we successfully completed
-					this.parentController.completedSaveConfig();
+					if (create) {
+						this.pageObject = json[0];
+					} else {
+						// tell the controller we successfully completed
+						this.parentController.completedSaveConfig();
+					}
+
 				} else {
 					alert(`Problem saving config ${response.status} - `);
 				}
@@ -269,6 +307,29 @@ export default class cc_ConfigurationStore {
 		let txt = document.createElement("textarea");
 		txt.innerHTML = html;
 		return txt.innerHTML;
+	}
+
+	/**
+	 * @descr Initialse the configuration to an "empty" default and then save
+	 * the page
+	 */
+	initialiseConfigPage() {
+		const config = DEFAULT_CONFIGURATION;
+		const configStr = JSON.stringify(config);
+
+		// TODO
+		// - assign the new config to this.parentController.cc_configuration
+		this.parentController.cc_configuration = config;
+		//		this.parentController.cc_configuration.COLLECTIONS_ORDER = [];
+		this.parentController.ccOn = this.parentController.cc_configuration.STATUS === "on";
+		// - create the new config page
+		//   - perhaps by passing parameter to saveConfigPage()
+
+		// create the new config page
+		this.saveConfigPage(true);
+		// continue the process
+		this.parentController.requestModuleInformation();
+
 	}
 
 

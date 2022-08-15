@@ -153,7 +153,19 @@ export default class CollectionsModel {
 		return this.controller.parentController.moduleDetails;
 	}
 
-	getModulesCollections() {
-		return this.modulesCollections;
+	/**
+	 * Return all of modulesCollections or filter them based on collectionName
+	 * @param {*} collectionName 
+	 * @returns Array of dicts
+	 */
+
+	getModulesCollections(collectionName=null) {
+		if ( collectionName===null ) {
+			return this.modulesCollections;
+		}
+		// filter modulesCollections array to those that have an attribute collection==collectionName
+		const collectionModules = this.modulesCollections.filter(module => module.collection===collectionName);
+
+		return collectionModules;
 	}
 }

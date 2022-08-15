@@ -375,13 +375,35 @@ class cc_View {
 	 * @param {Object} model
 	 * @param {Object} controller
 	 */
-	constructor( model, controller ) {
+	constructor(model, controller) {
 		this.model = model;
 		this.controller = controller;
 	}
 
+	showOnlyCurrentCollectionModules() {
+		// if we don't have a model with getModulesCollections methods, avoid
+		if (!this.hasOwnProperty('model') || !this.model.hasOwnProperty('getModulesCollections')) {
+			return;
+		}
 
-}
+		const currentCollection = this.model.getCurrentCollection();
+
+		for (let module of this.model.getModulesCollections()) {
+			if (module.collection !== currentCollection) {
+				// not the right collection, skip this one
+				// set the Canvas module div to display:none
+				// find div.context_module with data-module-id="${module.id}"
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				contextModule.style.display = 'none';
+			} else {
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				contextModule.style.display = 'block';
+			}
+		}
+	}
+
+
+	}
 
 // src/Configuration/cc_ConfigurationView.js
 /**
@@ -2058,8 +2080,20 @@ class CollectionsModel {
 		return this.controller.parentController.moduleDetails;
 	}
 
-	getModulesCollections() {
-		return this.modulesCollections;
+	/**
+	 * Return all of modulesCollections or filter them based on collectionName
+	 * @param {*} collectionName 
+	 * @returns Array of dicts
+	 */
+
+	getModulesCollections(collectionName=null) {
+		if ( collectionName===null ) {
+			return this.modulesCollections;
+		}
+		// filter modulesCollections array to those that have an attribute collection==collectionName
+		const collectionModules = this.modulesCollections.filter(module => module.collection===collectionName);
+
+		return collectionModules;
 	}
 }
 
@@ -2493,14 +2527,13 @@ class TableView extends cc_View {
  * - Connecting with the known assignment groups and deriving data from there?
  */
 
-// esversion: 11
 
 
 
 const TABLE_STYLES = `
 .cc-assessment-container { 
   margin: auto;
-  max-width: 960px;
+  max-width: 90%;
 }
 
 /* Standard table styling, change as desired */
@@ -2514,18 +2547,27 @@ const TABLE_STYLES = `
   font-weight: 700;
   text-align: left;
 }
+
+td.descriptionCell {
+  width: 20rem;
+}
   
 .cc-assessment-container th {
   border-bottom: 1px solid #bfc1c3;
   font-size: 1em;
   padding: 0.5em 1em 0.5em 0;
+  vertical-align:top;
   text-align: left;
+  background-color: #e03e2d;
+  color: #fff;
+  font-weight: bold;
 }
   
 .cc-assessment-container td {
   border-bottom: 1px solid #bfc1c3;
   font-size: 1em;
-  padding: 0.5em 1em 0.5em 0;
+  padding: 0.5em; /*1em 0.5em 0; */
+  vertical-align: top;
 }
 
 /* Responsive table styling */
@@ -2553,6 +2595,14 @@ const TABLE_STYLES = `
   margin-bottom: 1.5em;
   padding: 0 0.5em;
 }
+
+.cc-assessment-container tr:nth-child(even) {
+  background-color: rgb(245,245,245) 
+}
+
+/*.cc-assessment-container tr:nth-child(odd) {
+  background-color: rgb(128,);
+}*/
 
 .cc-assessment-container tbody tr td {
   display: block; /* browsers that don't support flex */
@@ -2618,8 +2668,6 @@ const TABLE_HTML = `
 		<style>
 			${TABLE_STYLES}
 		</style>
-		<h1> Hello from AssessmentTable </h1>
-
 		<div id="cc-assessment-table" class="cc-assessment-container">
 
       <p>
@@ -2631,110 +2679,45 @@ const TABLE_HTML = `
       			<thead role="rowgroup">
         			<tr role="row">
           				<th role="columnheader" scope="col">Title</th>
-          				<th role="columnheader" scope="col">Type</th>
-          				<th role="columnheader" scope="col">Due Date</th>
+          				<th role="columnheader" scope="col">Description</th>
           				<th role="columnheader" scope="col">Weighting</th>
+          				<th role="columnheader" scope="col">Due Date</th>
           				<th role="columnheader" scope="col">Learning Outcomes</th>
 					</tr> 
 				</thead>
-      			<tbody>
-			<!-- 	{{TABLE-ROWS}} -->
-				  <tr role="row">
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
-            Workshop preparation and activities
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Type</span>
-            Assignment - Written Assignment 
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
-            21 Mar 22  - 3 Jun 22 
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
-            20%
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
-            1, 2, 3, 4, 5
-          </td>
-        </tr>
-        
-        <tr role="row">
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
-            Offer and Acceptance Assignment
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Type</span>
-            Assignment - Problem Solving Assignment
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
-            10 Apr 22 23:59
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
-            10%
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
-            1, 5
-          </td>
-        </tr>
-        
-        <tr role="row">
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
-            Mid-Trimester Test
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Type</span>
-            Test or quiz
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
-            3 May 22 09:00 - 6 May 22 17:00
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
-            20%
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
-            1, 2, 3, 5
-          </td>
-        </tr>
-        
-        <tr role="row">
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
-            Final Take Home examination
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Type</span>
-            Assignment - Problem Solving Assignment
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
-            16 Jun 22  - 25 Jun 22 
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
-            50%
-          </td>
-          <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
-            1, 2, 3, 4, 5
-          </td>
-        </tr>
-        
+   			<tbody>
+		 	      {{TABLE-ROWS}}
 				</tbody>
 			</table>
 		</div>
 		`;
+
+const TABLE_ROW_HTML = `
+		  <tr role="row">
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Title</span>
+            <p><a href="#{{MODULE-ID}}">
+              {{TITLE}}
+            </a> </p>
+          </td>
+          <td role="cell" class="descriptionCell">
+            <span class="responsive-table__heading" aria-hidden="true">Description</span>
+            {{DESCRIPTION}}
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
+            <p>{{WEIGHTING}} </p>
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
+            <p>{{DUE-DATE}}</p>
+          </td>
+          <td role="cell">
+            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            <p>{{LEARNING-OUTCOMES}}</p>
+          </td>
+        </tr>
+`;
 
 
 class AssessmentTableView extends cc_View {
@@ -2746,12 +2729,14 @@ class AssessmentTableView extends cc_View {
    * @param {Object} controller
    */
   constructor(model, controller) {
-    super(model, controller);
+    super(model,controller);
 
     this.TABLE_HTML = TABLE_HTML;
 
     this.TABLE_HTML_FIELD_NAMES = [
-      'DESCRIPTION', 'CAPTION', 'TABLE-ROWS'
+      'DESCRIPTION', 'CAPTION', 'TABLE-ROWS',
+      'TITLE', 'TYPE', 'DUE-DATE', 'WEIGHTING', 'LEARNING-OUTCOMES',
+      'DESCRIPTION', 'MODULE-ID'
     ];
 
     this.currentCollection = this.model.getCurrentCollection();
@@ -2772,10 +2757,43 @@ class AssessmentTableView extends cc_View {
 
     let messageHtml = this.TABLE_HTML;
 
-    // update the messageHTML
+    // TODO update the messageHTML
     const description = this.model.getCurrentCollectionDescription();
 
-    messageHtml = this.emptyRemainingFields(messageHtml );
+    // add a row for each module belonging to the collection
+    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());
+    let tableRows = '';
+    for (let i = 0; i < collectionsModules.length; i++) {
+      let rowHtml = TABLE_ROW_HTML;
+
+      const dueDate = collectionsModules[i].date;
+      let dueDateString = '';
+      if (dueDate && dueDate.month) {
+        dueDateString = `${dueDate.month} ${dueDate.date}`;
+      }
+
+
+      const mapping = {
+        'MODULE-ID': collectionsModules[i].id,
+        'DESCRIPTION': collectionsModules[i].description,
+        'TITLE': collectionsModules[i].name,
+        'TYPE': collectionsModules[i].label,
+        'DUE-DATE': dueDateString
+      };
+
+      // loop through mapping keys and replace the values in the row html
+      for (let key in mapping) {
+        if (mapping[key]) {
+          rowHtml = rowHtml.replace(`{{${key}}}`, mapping[key]);
+        }
+      }
+
+      tableRows += rowHtml;
+    }
+    messageHtml = messageHtml.replace(/{{TABLE-ROWS}}/g, tableRows);
+
+
+    messageHtml = this.emptyRemainingFields(messageHtml);
     message.innerHTML = messageHtml;
     div.insertAdjacentElement('beforeend', message);
 
@@ -2789,7 +2807,7 @@ class AssessmentTableView extends cc_View {
   emptyRemainingFields(message) {
     this.TABLE_HTML_FIELD_NAMES.forEach(fieldName => {
       // replace any string {{fieldName}} with an empty string
-      message = message.replace(`{{${fieldName}}}`, '');
+      message = message.replaceAll(`{{${fieldName}}}`, '');
     });
     return message;
   }
@@ -3561,6 +3579,11 @@ class GriffithCardsView extends cc_View {
 
 		this.currentCollection = this.model.getCurrentCollection();
 	}
+
+	/*showOnlyCurrentCollectionModules() {
+		// call the parent method
+		super.showOnlyCurrentCollectionModules();
+	}*/
 
 	/**
 	 * @descr insert a nav bar based on current collections
@@ -4530,6 +4553,11 @@ class CollectionsView extends cc_View {
 		this.representations[currentCollection] = CollectionsViewFactory.createView(representation, this.model, controller);
 		// add the new representation via the current collections view
 		this.representations[currentCollection].display();
+		// idea is that all views should only show the current modules 
+		// - though configuration may change, the smarts of which can be put
+		//   into the following method.
+//		this.representations[currentCollection].showCurrentCollectionModules();
+
 	}
 
 	/**
@@ -4885,6 +4913,16 @@ const CONFIGURATION_PAGE_HTML_TEMPLATE = `
  </div>
 `;
 
+const DEFAULT_CONFIGURATION = {
+	"STATUS": "off",
+	"DEFAULT_ACTIVE_COLLECTION": "",
+	"COLLECTIONS": {
+	},
+	"COLLECTIONS_ORDER": [],
+	"MODULES": {
+	}
+};
+
 class cc_ConfigurationStore {
 
 	/**
@@ -4960,6 +4998,7 @@ class cc_ConfigurationStore {
 				// json should contain a list of items, should be just one
 				if (json.length === 0) {
 					DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: no config page 'Canvas Collections Configuration' found`);
+					this.initialiseConfigPage();
 					// TODO this is where we create the configuration page
 				} else if (json.length === 1) {
 					this.pageObject = json[0];
@@ -5044,11 +5083,16 @@ class cc_ConfigurationStore {
 	/**
 	 * @descr update the contents of the configuration page (this.pageObject.pageId) with 
 	 * the this.parentController.cc_configuration as JSON
+	 * @param {Boolean} create - default false, set to true to create a new page
 	 */
 
-	saveConfigPage() {
+	saveConfigPage(create = false) {
 
-		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.pageObject.page_id}`;
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages`;
+
+		if (!create && this.hasOwnProperty('pageObject') && this.pageObject.hasOwnProperty('page_id')) {
+			callUrl += `/${this.pageObject.page_id}`;
+		}
 
 		DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: callUrl = ${callUrl}`);
 
@@ -5082,11 +5126,28 @@ class cc_ConfigurationStore {
 				"body": content,
 			}
 		};
+
+		let method = "put";
+		// if we're creating, change the URL and add the title
+		if (create) {
+			method = "post";
+			_body = {
+				"wiki_page": {
+					"body": content,
+					"title": 'Canvas Collections Configuration',
+					"editing_roles": 'teachers',
+					"notify_of_update": false,
+					"published": false,
+					"front_page": false
+				}
+			};
+		}
+
 		const bodyString = JSON.stringify(_body);
 
 
 		fetch(callUrl, {
-			method: 'put', credentials: 'include',
+			method: method, credentials: 'include',
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
 				"Accept": "application/json; charset=UTF-8",
@@ -5102,8 +5163,13 @@ class cc_ConfigurationStore {
 					// don't need to do anything with it here
 					DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: json = ${JSON.stringify(json)}`);
 
-					// tell the controller we successfully completed
-					this.parentController.completedSaveConfig();
+					if (create) {
+						this.pageObject = json[0];
+					} else {
+						// tell the controller we successfully completed
+						this.parentController.completedSaveConfig();
+					}
+
 				} else {
 					alert(`Problem saving config ${response.status} - `);
 				}
@@ -5127,6 +5193,29 @@ class cc_ConfigurationStore {
 		let txt = document.createElement("textarea");
 		txt.innerHTML = html;
 		return txt.innerHTML;
+	}
+
+	/**
+	 * @descr Initialse the configuration to an "empty" default and then save
+	 * the page
+	 */
+	initialiseConfigPage() {
+		const config = DEFAULT_CONFIGURATION;
+		const configStr = JSON.stringify(config);
+
+		// TODO
+		// - assign the new config to this.parentController.cc_configuration
+		this.parentController.cc_configuration = config;
+		//		this.parentController.cc_configuration.COLLECTIONS_ORDER = [];
+		this.parentController.ccOn = this.parentController.cc_configuration.STATUS === "on";
+		// - create the new config page
+		//   - perhaps by passing parameter to saveConfigPage()
+
+		// create the new config page
+		this.saveConfigPage(true);
+		// continue the process
+		this.parentController.requestModuleInformation();
+
 	}
 
 
