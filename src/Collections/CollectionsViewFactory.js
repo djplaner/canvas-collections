@@ -8,10 +8,12 @@ import { TableView } from "./Views/Table.js";
 import { AssessmentTableView } from "./Views/AssessmentTable.js";
 import { CollectionOnlyView } from "./Views/CollectionOnly.js";
 import { GriffithCardsView } from "./Views/GriffithCards.js";
+import { CanvasPageView } from "./Views/CanvasPage.js";
 
 const VIEWS = {
 	CardsView,
 	TableView,
+	CanvasPageView,
 	AssessmentTableView,
 	CollectionOnlyView,
 	GriffithCardsView

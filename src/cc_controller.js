@@ -96,7 +96,8 @@ export default class cc_Controller {
 					this.generateSTRM();
 					//this.requestConfigFileId();
 					// Experiment using configuration store
-					this.configurationStore.getConfiguration();
+					//this.configurationStore.getConfiguration();
+					this.requestModuleInformation();
 					//this.findConfigPage();
 				}
 			})
@@ -124,16 +125,16 @@ export default class cc_Controller {
 	 */
 
 	generateSTRM() {
-		const sis_course_id = this.courseObject.sis_course_id;
+		const canvasCourseCode = this.courseObject.course_code;
 
 		this.courseCode = undefined;
 		this.strm = undefined;
 
 		// is it a DEV course
-		if (sis_course_id.startsWith('DEV_')) {
+		if (canvasCourseCode.startsWith('DEV_')) {
 			// use regex ^DEV_([^_]*)_([\d]*)$ to extract the course code and STRM
 			const regex = /^DEV_([^_]*)_([\d]*)$/;
-			const match = regex.exec(sis_course_id);
+			const match = regex.exec(canvasCourseCode);
 			if (match) {
 				this.courseCode = match[1];
 				this.strm = match[2];
@@ -141,7 +142,7 @@ export default class cc_Controller {
 		} else {
 			// use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
 			const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
-			const match = regex.exec(sis_course_id);
+			const match = regex.exec(canvasCourseCode);
 			if (match) {
 				this.courseCode = match[1];
 				this.strm = match[2];
@@ -441,7 +442,8 @@ export default class cc_Controller {
 				this.moduleDetails = json;
 				// TODO call https://canvas.instructure.com/doc/api/modules.html#method.context_module_items_api.index
 				// the list module items API for each module
-				this.execute();
+				this.configurationStore.getConfiguration();
+//				this.execute();
 			})
 			.catch((error) => {
 				console.log(`cc_Controller: requestModuleInformation: error = `);

@@ -47,6 +47,10 @@ export default class CollectionsModel {
 		return this.cc_configuration.COLLECTIONS[this.currentCollection].representation;
 	}
 
+	getCurrentCollectionPageName() {
+		return this.cc_configuration.COLLECTIONS[this.currentCollection].pageName;
+	}
+
 	getCollectionRepresentation(collection) {
 		return this.cc_configuration.COLLECTIONS[collection].representation;
 	}

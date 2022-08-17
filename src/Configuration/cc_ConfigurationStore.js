@@ -8,6 +8,13 @@
 
 // jshint esversion: 8
 
+
+//------------------------------------------------------------------------------
+// Define the templates for creating an initial configuration page, using three parts
+// - The HTML template for the configuration page - CONFIGURATION_PAGE_TEMPLATE
+// - The JSON template for most of the configuration form - DEFAULT_CONFIGURATION_TEMPLATE
+// - The JSON template for each module configuration - MODULE_CONFIGURATION_TEMPLATE
+
 const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 <div class="cc-config-explanation">
 <div style="float:left;padding:0.5em">
@@ -27,7 +34,7 @@ const CONFIGURATION_PAGE_HTML_TEMPLATE = `
  </div>
 `;
 
-const DEFAULT_CONFIGURATION = {
+const DEFAULT_CONFIGURATION_TEMPLATE = {
 	"STATUS": "off",
 	"DEFAULT_ACTIVE_COLLECTION": "",
 	"COLLECTIONS": {
@@ -36,6 +43,7 @@ const DEFAULT_CONFIGURATION = {
 	"MODULES": {
 	}
 };
+
 
 export default class cc_ConfigurationStore {
 
@@ -186,7 +194,8 @@ export default class cc_ConfigurationStore {
 				}
 				this.parentController.cc_configuration.MODULES = new_modules;
 
-				this.parentController.requestModuleInformation();
+				//this.parentController.requestModuleInformation();
+				this.parentController.execute();
 			})
 			.catch((error) => {
 				console.log(`cc_ConfigurationStore: requestConfig: error = `);
@@ -314,8 +323,9 @@ export default class cc_ConfigurationStore {
 	 * the page
 	 */
 	initialiseConfigPage() {
-		const config = DEFAULT_CONFIGURATION;
-		const configStr = JSON.stringify(config);
+		const config = DEFAULT_CONFIGURATION_TEMPLATE;
+		// not needed this is done in saveConfigPage
+		//const configStr = JSON.stringify(config);
 
 		// TODO
 		// - assign the new config to this.parentController.cc_configuration
@@ -325,12 +335,43 @@ export default class cc_ConfigurationStore {
 		// - create the new config page
 		//   - perhaps by passing parameter to saveConfigPage()
 
+		// add to the this.parentController.cc_configuration.MODULES array default
+		// data for the current modules
+		this.initialiseModuleConfig();
+
 		// create the new config page
 		this.saveConfigPage(true);
 		// continue the process
-		this.parentController.requestModuleInformation();
+		//this.parentController.requestModuleInformation();
+		this.parentController.execute();
 
 	}
 
+	/**
+	 * @descr Initialise the configuration for the current modules
+	 * - get a list of all the current modules
+	 * - for each module
+	 *   - create an empty object with specific values
+	 *   - add it to the this.parentController.cc_configuration.MODULES object
+	 * 
+	 * Problem here is that this is called very early in in Canvas collections set up
+	 * so that details of the existing canvas modules is not available.
+	 * Need to do that first.
+	 */
+
+	initialiseModuleConfig() {
+		const currentModules = "hello";
+
+	}
+
+/*const MODULE_CONFIGURATION_TEMPLATE = {
+	"{{MODULE_NAME}}": {
+		"name": "{{MODULE_NAME}}",
+		"collection: "",
+		"label: "",
+		"num": "",
+		"description" : ""
+	}
+` */
 
 }

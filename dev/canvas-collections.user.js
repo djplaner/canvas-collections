@@ -43,7 +43,8 @@ class cc_ConfigurationModel {
 		this.availableRepresentations = [
 			'GriffithCards',
 			'CollectionOnly',
-			'AssessmentTable'
+			'AssessmentTable',
+			'CanvasPage'
 		];
 	}
 
@@ -1974,6 +1975,10 @@ class CollectionsModel {
 		return this.cc_configuration.COLLECTIONS[this.currentCollection].representation;
 	}
 
+	getCurrentCollectionPageName() {
+		return this.cc_configuration.COLLECTIONS[this.currentCollection].pageName;
+	}
+
 	getCollectionRepresentation(collection) {
 		return this.cc_configuration.COLLECTIONS[collection].representation;
 	}
@@ -2914,6 +2919,25 @@ const MONTHS = [
  */
 
 const CALENDAR = {
+    '3231': {
+    0: { start: "2023-02-27", stop: "2023-03-03" },
+    1: { start: "2023-03-06", stop: "2023-03-12" },
+    2: { start: "2023-03-13", stop: "2023-03-19" },
+    3: { start: "2023-03-20", stop: "2023-03-26" },
+    4: { start: "2023-03-27", stop: "2023-04-09" },
+    5: { start: "2023-04-10", stop: "2023-04-16" },
+    6: { start: "2023-04-17", stop: "2023-04-23" },
+    7: { start: "2023-04-24", stop: "2023-04-30" },
+    8: { start: "2023-05-01", stop: "2023-05-07" },
+    9: { start: "2023-05-08", stop: "2023-05-14" },
+    10: { start: "2023-05-15", stop: "2023-05-21" },
+    11: { start: "2023-05-22", stop: "2023-05-28" },
+    12: { start: "2023-05-29", stop: "2023-06-04" },
+    13: { start: "2023-06-05", stop: "2023-06-11" },
+    14: { start: "2023-06-12", stop: "2023-06-18" },
+    15: { start: "2023-06-19", stop: "2023-07-25" },
+    exam: { start: "2023-06-08", stop: "2023-06-17" },
+  },
   '3221': {
     0: { start: "2022-03-07", stop: "2022-03-13" },
     1: { start: "2022-03-14", stop: "2022-03-20" },
@@ -4413,6 +4437,167 @@ class GriffithCardsView extends cc_View {
 
 }
 
+// src/Collections/Views/CanvasPage.js
+/**
+ * CanvasPage.js 
+ * - Representation for Canvas Collections that is given the name of a Canvas page
+ * - It will hide all modules, get the content of the Canvas page, and display that
+ * 
+ * Currently hard coded to show a padlet embed, not yet getting page name data
+ */
+
+
+
+class CanvasPageView extends cc_View {
+
+	/**
+	 * @descr Initialise the view
+	 * @param {Object} model
+	 * @param {Object} controller
+	 */
+	constructor( model, controller ) {
+		super( model, controller );
+
+		this.currentCollection = this.model.getCurrentCollection();
+	}
+
+	/**
+	 * @descr insert a nav bar based on current collections
+	 */
+
+	display() {
+		DEBUG && console.log('-------------- TableView.display()');
+
+		// get the pageName every time display is run in the hope we 
+		// get all changes
+		this.pageName = this.model.getCurrentCollectionPageName();
+
+		// Execution method will be
+		// - findPage - tries to find the named page in the course
+		//   - success - calls showPage
+		//   - failure - calls showNoMatchingPage
+		// TODO what happens if page is empty
+		this.findPage();
+
+		//this.showPage();
+	}
+
+	/**
+	 * Given a page object as parameter add that content into
+	 * the div element with id 'cc-canvas-collections'
+	 * @param {*} page 
+	 */
+
+	showPage( page ) {
+
+		const content = page.body;
+/*		const content = `
+        <div class="padlet-embed" style="border: 1px solid rgba(0,0,0,0.1); border-radius: 2px; overflow: hidden; position: relative; width: 100%; background: #F4F4F4;">
+<p style="padding: 0; margin: 0;"><iframe style="width: 100%; height: 608px; display: block; padding: 0; margin: 0;" src="https://griffithu.padlet.org/embed/f2zyf40aldduvhxr" allow="camera;microphone;geolocation"></iframe></p>
+<div style="display: flex; align-items: center; justify-content: end; margin: 0; height: 28px;">
+<div style="display: flex; align-items: center;"><img style="padding: 0; margin: 0; background: 0 0; border: none;" src="https://padlet.net/embeds/made_with_padlet_2022.png" alt="Made with Padlet" width="114" height="28" /></div>
+</div>
+</div>
+		`; */
+
+		let div = document.getElementById('cc-canvas-collections');
+
+		// create a simple message div element
+		let message = document.createElement('div');
+		message.className = 'cc-page-content';
+		message.innerHTML = content;
+
+		div.insertAdjacentElement('beforeend', message);
+	}
+
+	/**
+	 * Use the Canvas API to find this.pageName
+	 */
+	findPage() {
+		// test for presence of parentController and courseId
+		if (!this.pageName ) {
+			throw new Error(`CanvasPage: missing page name`);
+		}
+
+		let callUrl = `/api/v1/courses/${this.controller.courseId}/pages?` + new URLSearchParams(
+			{ 'search_term': this.pageName });
+
+		DEBUG && console.log(`CanvasPage: findPage: callUrl = ${callUrl}`);
+
+		const response = fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.controller.csrf,
+			}
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+
+				// json should contain a list of items, should be just one
+				if (json.length === 0) {
+					DEBUG && console.log(`CanvasPage: findConfigPage: no config page 'Canvas Collections Configuration' found`);
+					// TODO this is where we create the configuration page
+				} else if (json.length === 1) {
+					this.pageObject = json[0];
+					this.getPageBody();
+				} else {
+					const error = `CanvasPage: findConfigPage: more than one (${json.length}) config page found`;
+					DEBUG && console.log(error);
+					// TODO call some sort of controller error handler??
+				}
+			})
+			.catch((error) => {
+				DEBUG && console.log(`CanvasPage: findConfigPage: error = ${error}`);
+				// TODO call some sort of controller error handler??
+			}, false);
+	}
+
+	/**
+	 * Use the Canvas API to get the full details of the page (this.pageObject)
+	 * In particular, the body to pass to showPage
+	 */
+	getPageBody() {
+
+		let callUrl = `/api/v1/courses/${this.controller.courseId}/pages/${this.pageObject.page_id}`;
+
+		DEBUG && console.log(`CanvasPage: requestConfigPageContents: callUrl = ${callUrl}`);
+
+		fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.controller.csrf,
+			}
+		})
+			.then(this.status)
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				// json should be the page object
+				// https://canvas.instructure.com/doc/api/pages.html#Page
+				DEBUG && console.log(`CanvasPage: requestConfigPageContents: json = ${JSON.stringify(json)}`);
+				this.pageObject = json;
+
+//				const parsed = new DOMParser().parseFromString(json.body, 'text/html');
+
+				this.showPage(json);
+			})
+			.catch((error) => {
+				console.log(`CanvasPage: requestConfig: error = `);
+				console.log(error);
+			}, false);
+	}
+
+
+}
+
 // src/Collections/CollectionsViewFactory.js
 /**
  * CollectionsViewFactory.js
@@ -4425,9 +4610,11 @@ class GriffithCardsView extends cc_View {
 
 
 
+
 const VIEWS = {
 	CardsView,
 	TableView,
+	CanvasPageView,
 	AssessmentTableView,
 	CollectionOnlyView,
 	GriffithCardsView
@@ -4479,7 +4666,7 @@ class CollectionsViewFactory {
 
 
 
-
+//import { CardsView } from './Views/Cards.js';
 
 
 class CollectionsView extends cc_View {
@@ -4894,6 +5081,13 @@ class juiceController {
 
 // jshint esversion: 8
 
+
+//------------------------------------------------------------------------------
+// Define the templates for creating an initial configuration page, using three parts
+// - The HTML template for the configuration page - CONFIGURATION_PAGE_TEMPLATE
+// - The JSON template for most of the configuration form - DEFAULT_CONFIGURATION_TEMPLATE
+// - The JSON template for each module configuration - MODULE_CONFIGURATION_TEMPLATE
+
 const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 <div class="cc-config-explanation">
 <div style="float:left;padding:0.5em">
@@ -4913,7 +5107,7 @@ const CONFIGURATION_PAGE_HTML_TEMPLATE = `
  </div>
 `;
 
-const DEFAULT_CONFIGURATION = {
+const DEFAULT_CONFIGURATION_TEMPLATE = {
 	"STATUS": "off",
 	"DEFAULT_ACTIVE_COLLECTION": "",
 	"COLLECTIONS": {
@@ -4922,6 +5116,7 @@ const DEFAULT_CONFIGURATION = {
 	"MODULES": {
 	}
 };
+
 
 class cc_ConfigurationStore {
 
@@ -5072,7 +5267,8 @@ class cc_ConfigurationStore {
 				}
 				this.parentController.cc_configuration.MODULES = new_modules;
 
-				this.parentController.requestModuleInformation();
+				//this.parentController.requestModuleInformation();
+				this.parentController.execute();
 			})
 			.catch((error) => {
 				console.log(`cc_ConfigurationStore: requestConfig: error = `);
@@ -5200,8 +5396,9 @@ class cc_ConfigurationStore {
 	 * the page
 	 */
 	initialiseConfigPage() {
-		const config = DEFAULT_CONFIGURATION;
-		const configStr = JSON.stringify(config);
+		const config = DEFAULT_CONFIGURATION_TEMPLATE;
+		// not needed this is done in saveConfigPage
+		//const configStr = JSON.stringify(config);
 
 		// TODO
 		// - assign the new config to this.parentController.cc_configuration
@@ -5211,13 +5408,44 @@ class cc_ConfigurationStore {
 		// - create the new config page
 		//   - perhaps by passing parameter to saveConfigPage()
 
+		// add to the this.parentController.cc_configuration.MODULES array default
+		// data for the current modules
+		this.initialiseModuleConfig();
+
 		// create the new config page
 		this.saveConfigPage(true);
 		// continue the process
-		this.parentController.requestModuleInformation();
+		//this.parentController.requestModuleInformation();
+		this.parentController.execute();
 
 	}
 
+	/**
+	 * @descr Initialise the configuration for the current modules
+	 * - get a list of all the current modules
+	 * - for each module
+	 *   - create an empty object with specific values
+	 *   - add it to the this.parentController.cc_configuration.MODULES object
+	 * 
+	 * Problem here is that this is called very early in in Canvas collections set up
+	 * so that details of the existing canvas modules is not available.
+	 * Need to do that first.
+	 */
+
+	initialiseModuleConfig() {
+		const currentModules = "hello";
+
+	}
+
+/*const MODULE_CONFIGURATION_TEMPLATE = {
+	"{{MODULE_NAME}}": {
+		"name": "{{MODULE_NAME}}",
+		"collection: "",
+		"label: "",
+		"num": "",
+		"description" : ""
+	}
+` */
 
 }
 
@@ -5320,7 +5548,8 @@ class cc_Controller {
 					this.generateSTRM();
 					//this.requestConfigFileId();
 					// Experiment using configuration store
-					this.configurationStore.getConfiguration();
+					//this.configurationStore.getConfiguration();
+					this.requestModuleInformation();
 					//this.findConfigPage();
 				}
 			})
@@ -5348,16 +5577,16 @@ class cc_Controller {
 	 */
 
 	generateSTRM() {
-		const sis_course_id = this.courseObject.sis_course_id;
+		const canvasCourseCode = this.courseObject.course_code;
 
 		this.courseCode = undefined;
 		this.strm = undefined;
 
 		// is it a DEV course
-		if (sis_course_id.startsWith('DEV_')) {
+		if (canvasCourseCode.startsWith('DEV_')) {
 			// use regex ^DEV_([^_]*)_([\d]*)$ to extract the course code and STRM
 			const regex = /^DEV_([^_]*)_([\d]*)$/;
-			const match = regex.exec(sis_course_id);
+			const match = regex.exec(canvasCourseCode);
 			if (match) {
 				this.courseCode = match[1];
 				this.strm = match[2];
@@ -5365,7 +5594,7 @@ class cc_Controller {
 		} else {
 			// use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
 			const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
-			const match = regex.exec(sis_course_id);
+			const match = regex.exec(canvasCourseCode);
 			if (match) {
 				this.courseCode = match[1];
 				this.strm = match[2];
@@ -5665,7 +5894,8 @@ class cc_Controller {
 				this.moduleDetails = json;
 				// TODO call https://canvas.instructure.com/doc/api/modules.html#method.context_module_items_api.index
 				// the list module items API for each module
-				this.execute();
+				this.configurationStore.getConfiguration();
+//				this.execute();
 			})
 			.catch((error) => {
 				console.log(`cc_Controller: requestModuleInformation: error = `);

@@ -27,7 +27,8 @@ export default class cc_ConfigurationModel {
 		this.availableRepresentations = [
 			'GriffithCards',
 			'CollectionOnly',
-			'AssessmentTable'
+			'AssessmentTable',
+			'CanvasPage'
 		];
 	}
 
