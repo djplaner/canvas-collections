@@ -354,24 +354,44 @@ export default class cc_ConfigurationStore {
 	 *   - create an empty object with specific values
 	 *   - add it to the this.parentController.cc_configuration.MODULES object
 	 * 
-	 * Problem here is that this is called very early in in Canvas collections set up
-	 * so that details of the existing canvas modules is not available.
-	 * Need to do that first.
 	 */
 
 	initialiseModuleConfig() {
-		const currentModules = "hello";
+		if (!this.hasOwnProperty('parentController') ||
+			!this.parentController.hasOwnProperty('moduleDetails') ||
+			!this.parentController.hasOwnProperty('cc_configuration') ||
+			!this.parentController.cc_configuration.hasOwnProperty('MODULES')) {
+			console.error('cc_ConfigurationStore: initialiseModuleConfig: no parentController or moduleDetails or cc config');
+			return;
+		}
 
+		const currentModules = this.parentController.moduleDetails;
+		let ccModules = this.parentController.cc_configuration.MODULES;
+		let defaultCollection = this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION;
+
+		for ( i=0; i<currentModules.length; i++) {
+			// for each Canvas module, add a default CC module config
+			let newModule = {
+				"name": currentModules[i].name,
+				"id": currentModules[i].id,
+				"collection": defaultCollection,
+				"description": "",
+				"label": "",
+				"num": "",
+				"image": ""
+			};
+			ccModules[currentModules[i].id] = newModule;
+		}
 	}
 
-/*const MODULE_CONFIGURATION_TEMPLATE = {
-	"{{MODULE_NAME}}": {
-		"name": "{{MODULE_NAME}}",
-		"collection: "",
-		"label: "",
-		"num": "",
-		"description" : ""
-	}
-` */
+	/*const MODULE_CONFIGURATION_TEMPLATE = {
+		"{{MODULE_NAME}}": {
+			"name": "{{MODULE_NAME}}",
+			"collection: "",
+			"label: "",
+			"num": "",
+			"description" : ""
+		}
+	` */
 
 }
