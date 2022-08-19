@@ -31,11 +31,11 @@ export default class CollectionsView extends cc_View {
 	 * @param {Object} model
 	 * @param {Object} controller
 	 */
-	constructor( model, controller ) {
-		super( model, controller );
+	constructor(model, controller) {
+		super(model, controller);
 
-		this.navView = new NavView( model, controller );
-//		this.representationView = new CardsView( model, controller );
+		this.navView = new NavView(model, controller);
+		//		this.representationView = new CardsView( model, controller );
 
 		const currentCollectionView = model.getCurrentCollectionRepresentation();
 
@@ -75,7 +75,7 @@ export default class CollectionsView extends cc_View {
 
 
 		// display the current collection using its representation
-	//	this.representationView.display();
+		//	this.representationView.display();
 	}
 
 	/**
@@ -98,7 +98,49 @@ export default class CollectionsView extends cc_View {
 		// idea is that all views should only show the current modules 
 		// - though configuration may change, the smarts of which can be put
 		//   into the following method.
-//		this.representations[currentCollection].showCurrentCollectionModules();
+		this.showCanvasModules();
+		//		this.representations[currentCollection].showCurrentCollectionModules();
+
+	}
+
+	/**
+	 * @descr Show the Canvas representation of modules after the collections view
+	 * - Show all the modules allocated to this collection as per normal
+	 * - Hide all the modules allocated to another collection
+	 * - show the modules unallocated with a change in colour (which may be done elsewhere)
+	 * TODO
+	 * - Explore if some representation methods should be used to modify what is shown
+	 */
+	showCanvasModules() {
+		const modulesCollections = this.model.getModulesCollections();
+		const currentCollection = this.model.getCurrentCollection();
+		const editMode = this.model.getEditMode();
+
+		// show modules matching this collection, hide modules with collections that aren't
+		for (let module of modulesCollections) {
+			// if no collection for this module and in staff view, leave it here
+			// and maybe change the appearence here or later
+			if (!module.collection || module.collection === "") {
+				if (!editMode()) {
+					const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+					if (contextModule) {
+						contextModule.style.display = 'none';
+					}
+				}
+				// TODO? colour it someway
+			} else if(module.collection !== currentCollection) {
+				// not the right collection, skip this one
+				// set the Canvas module div to display:none
+				// find div.context_module with data-module-id="${module.id}"
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				if (contextModule) {
+					contextModule.style.display = 'none';
+				}
+			} else {
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				contextModule.style.display = 'block';
+			}
+		}
 
 	}
 
@@ -107,8 +149,8 @@ export default class CollectionsView extends cc_View {
 	 */
 
 	addCanvasCollectionsDiv() {
-        let ccCanvasCollections = document.createElement('div');
-        ccCanvasCollections.id = 'cc-canvas-collections';
+		let ccCanvasCollections = document.createElement('div');
+		ccCanvasCollections.id = 'cc-canvas-collections';
 		// set to hidden
 		//ccCanvasCollections.style.display = 'none';
 

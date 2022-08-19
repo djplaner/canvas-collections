@@ -178,6 +178,10 @@ export default class cc_ConfigurationModel {
 		return collectionModules.length; */
 	}
 
+	getEditMode() {
+		return this.controller.parentController.editMode;
+	}
+
 	/**
 	 * @descr get the object representing the CC configuration for the given module name
 	 * @params {String} moduleName

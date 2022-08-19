@@ -194,6 +194,10 @@ class cc_ConfigurationModel {
 		return collectionModules.length; */
 	}
 
+	getEditMode() {
+		return this.controller.parentController.editMode;
+	}
+
 	/**
 	 * @descr get the object representing the CC configuration for the given module name
 	 * @params {String} moduleName
@@ -534,6 +538,9 @@ class cc_ConfigurationView extends cc_View {
 		const moduleConfigHtml = `
 		<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
 		<link href="//cdn.quilljs.com/1.0.0/quill.snow.css" rel="stylesheet" />
+		    <div class="cc-module-no-collection" id="cc-module-config-no-collection-${id}">
+			    No collection allocated
+			</div>
       		<span>
 			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
 			  Canvas Collections Configuration</span>
@@ -556,6 +563,12 @@ class cc_ConfigurationView extends cc_View {
 			moduleConfigSwitch.className = moduleDetail.configClass;
 		}
 
+		// set display:inline-block for div#cc-module-no-collection-${id} iff
+		// module.collection is undefined or empty
+		if ( !moduleDetail.collection || moduleDetail.collection.length === 0) {
+			const moduleNoCollection = document.getElementById(`cc-module-config-no-collection-${id}`);
+			moduleNoCollection.style.display = 'inline-block';
+		}
 
 		// if our module cc config is revealed, then set up the quill editor
 		if (moduleDetail.configClass === 'icon-mini-arrow-down') {
@@ -730,6 +743,7 @@ class cc_ConfigurationView extends cc_View {
 			   flex-wrap: wrap;
 			   width: 100%;
 		   }
+
 
 		   .cc-preview-container .cc-card {
 			   min-width: 50%;
@@ -1356,6 +1370,17 @@ input:checked + .cc-slider:before {
 				margin:0;
 			/*	font-weight: bold; */
 			}
+
+		   .cc-module-no-collection {
+				float:right;
+				background: red;
+				color:white;
+				border-radius: 0.25rem;
+				padding-left: 0.5rem;
+				padding-right: 0.5rem;
+				display:none;
+		   }
+
 
 
 			.cc-module-config-detail {  
@@ -1984,6 +2009,10 @@ class CollectionsModel {
 		if (this.currentCollection === undefined) {
 			this.currentCollection = this.getDefaultCollection();
 		}
+	}
+
+	getEditMode() {
+		return this.controller.parentController.editMode;
 	}
 
 	getDefaultCollection() {
@@ -3945,6 +3974,12 @@ class GriffithCardsView extends cc_View {
 		const currentCollection = this.model.getCurrentCollection();
 		for (let module of modulesCollections) {
 			DEBUG && console.log(module);
+			// still need to skip generate card
+
+			if ( module.collection!==currentCollection ) {
+				continue;
+			}
+/*	Moved to CollectionsView			
 			// PROB: module doesn't have a collection
 			if (module.collection !== currentCollection) {
 				// not the right collection, skip this one
@@ -3958,7 +3993,7 @@ class GriffithCardsView extends cc_View {
 			} else {
 				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
 				contextModule.style.display = 'block';
-			}
+			} */
 
 			const card = this.generateCard(module);
 			cardCollection.insertAdjacentElement('beforeend', card);
@@ -4741,11 +4776,11 @@ class CollectionsView extends cc_View {
 	 * @param {Object} model
 	 * @param {Object} controller
 	 */
-	constructor( model, controller ) {
-		super( model, controller );
+	constructor(model, controller) {
+		super(model, controller);
 
-		this.navView = new NavView( model, controller );
-//		this.representationView = new CardsView( model, controller );
+		this.navView = new NavView(model, controller);
+		//		this.representationView = new CardsView( model, controller );
 
 		const currentCollectionView = model.getCurrentCollectionRepresentation();
 
@@ -4785,7 +4820,7 @@ class CollectionsView extends cc_View {
 
 
 		// display the current collection using its representation
-	//	this.representationView.display();
+		//	this.representationView.display();
 	}
 
 	/**
@@ -4808,7 +4843,49 @@ class CollectionsView extends cc_View {
 		// idea is that all views should only show the current modules 
 		// - though configuration may change, the smarts of which can be put
 		//   into the following method.
-//		this.representations[currentCollection].showCurrentCollectionModules();
+		this.showCanvasModules();
+		//		this.representations[currentCollection].showCurrentCollectionModules();
+
+	}
+
+	/**
+	 * @descr Show the Canvas representation of modules after the collections view
+	 * - Show all the modules allocated to this collection as per normal
+	 * - Hide all the modules allocated to another collection
+	 * - show the modules unallocated with a change in colour (which may be done elsewhere)
+	 * TODO
+	 * - Explore if some representation methods should be used to modify what is shown
+	 */
+	showCanvasModules() {
+		const modulesCollections = this.model.getModulesCollections();
+		const currentCollection = this.model.getCurrentCollection();
+		const editMode = this.model.getEditMode();
+
+		// show modules matching this collection, hide modules with collections that aren't
+		for (let module of modulesCollections) {
+			// if no collection for this module and in staff view, leave it here
+			// and maybe change the appearence here or later
+			if (!module.collection || module.collection === "") {
+				if (!editMode()) {
+					const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+					if (contextModule) {
+						contextModule.style.display = 'none';
+					}
+				}
+				// TODO? colour it someway
+			} else if(module.collection !== currentCollection) {
+				// not the right collection, skip this one
+				// set the Canvas module div to display:none
+				// find div.context_module with data-module-id="${module.id}"
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				if (contextModule) {
+					contextModule.style.display = 'none';
+				}
+			} else {
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				contextModule.style.display = 'block';
+			}
+		}
 
 	}
 
@@ -4817,8 +4894,8 @@ class CollectionsView extends cc_View {
 	 */
 
 	addCanvasCollectionsDiv() {
-        let ccCanvasCollections = document.createElement('div');
-        ccCanvasCollections.id = 'cc-canvas-collections';
+		let ccCanvasCollections = document.createElement('div');
+		ccCanvasCollections.id = 'cc-canvas-collections';
 		// set to hidden
 		//ccCanvasCollections.style.display = 'none';
 

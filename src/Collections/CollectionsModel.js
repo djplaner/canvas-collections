@@ -22,6 +22,10 @@ export default class CollectionsModel {
 		}
 	}
 
+	getEditMode() {
+		return this.controller.parentController.editMode;
+	}
+
 	getDefaultCollection() {
 		return this.cc_configuration.DEFAULT_ACTIVE_COLLECTION;
 	}

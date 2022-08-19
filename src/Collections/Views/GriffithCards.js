@@ -312,6 +312,12 @@ export default class GriffithCardsView extends cc_View {
 		const currentCollection = this.model.getCurrentCollection();
 		for (let module of modulesCollections) {
 			DEBUG && console.log(module);
+			// still need to skip generate card
+
+			if ( module.collection!==currentCollection ) {
+				continue;
+			}
+/*	Moved to CollectionsView			
 			// PROB: module doesn't have a collection
 			if (module.collection !== currentCollection) {
 				// not the right collection, skip this one
@@ -325,7 +331,7 @@ export default class GriffithCardsView extends cc_View {
 			} else {
 				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
 				contextModule.style.display = 'block';
-			}
+			} */
 
 			const card = this.generateCard(module);
 			cardCollection.insertAdjacentElement('beforeend', card);

@@ -100,6 +100,9 @@ export default class cc_ConfigurationView extends cc_View {
 		const moduleConfigHtml = `
 		<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
 		<link href="//cdn.quilljs.com/1.0.0/quill.snow.css" rel="stylesheet" />
+		    <div class="cc-module-no-collection" id="cc-module-config-no-collection-${id}">
+			    No collection allocated
+			</div>
       		<span>
 			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
 			  Canvas Collections Configuration</span>
@@ -122,6 +125,12 @@ export default class cc_ConfigurationView extends cc_View {
 			moduleConfigSwitch.className = moduleDetail.configClass;
 		}
 
+		// set display:inline-block for div#cc-module-no-collection-${id} iff
+		// module.collection is undefined or empty
+		if ( !moduleDetail.collection || moduleDetail.collection.length === 0) {
+			const moduleNoCollection = document.getElementById(`cc-module-config-no-collection-${id}`);
+			moduleNoCollection.style.display = 'inline-block';
+		}
 
 		// if our module cc config is revealed, then set up the quill editor
 		if (moduleDetail.configClass === 'icon-mini-arrow-down') {
@@ -296,6 +305,7 @@ export default class cc_ConfigurationView extends cc_View {
 			   flex-wrap: wrap;
 			   width: 100%;
 		   }
+
 
 		   .cc-preview-container .cc-card {
 			   min-width: 50%;
@@ -922,6 +932,17 @@ input:checked + .cc-slider:before {
 				margin:0;
 			/*	font-weight: bold; */
 			}
+
+		   .cc-module-no-collection {
+				float:right;
+				background: red;
+				color:white;
+				border-radius: 0.25rem;
+				padding-left: 0.5rem;
+				padding-right: 0.5rem;
+				display:none;
+		   }
+
 
 
 			.cc-module-config-detail {  
