@@ -16,7 +16,8 @@ import { cc_CollectionsController } from './Collections/CollectionsController.js
 import { juiceController } from './juice/juiceController.js';
 import { cc_ConfigurationStore } from './Configuration/cc_ConfigurationStore.js';
 
-const DEBUG = true;
+// turn debug console.logs on/off
+const DEBUG = false;
 
 export default class cc_Controller {
 
@@ -297,6 +298,11 @@ export default class cc_Controller {
 		if (!this.modulesPage && !this.homeModulesPage) {
 			DEBUG && console.log('-------------- cc_Controller.execute() ERROR SHOULDN"T BE RUNNING');
 			return;
+		}
+
+		// check if start up converted the config, iff save it
+		if (this.configurationStore.configConverted) {
+			this.saveConfig();
 		}
 
 		DEBUG && console.log('-------------- cc_Controller.execute()');

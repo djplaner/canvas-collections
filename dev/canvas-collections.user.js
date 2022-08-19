@@ -2966,7 +2966,10 @@ class CollectionOnlyView extends cc_View {
 		// create a simple message div element
 		let message = document.createElement('div');
 		message.className = 'cc-message';
-		message.innerHTML = description;
+
+		if (description) {
+			message.innerHTML = description;
+		}
 
 		div.insertAdjacentElement('beforeend', message);
 
@@ -4894,7 +4897,7 @@ class CollectionsView extends cc_View {
 			// if no collection for this module and in staff view, leave it here
 			// and maybe change the appearence here or later
 			if (!module.collection || module.collection === "") {
-				if (!editMode()) {
+				if (!editMode) {
 					const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
 					if (contextModule) {
 						contextModule.style.display = 'none';
@@ -5412,6 +5415,7 @@ class cc_ConfigurationStore {
 				const parsed = new DOMParser().parseFromString(json.body, 'text/html');
 				let config = parsed.querySelector('div.cc_json');
 				this.parentController.cc_configuration = JSON.parse(config.innerHTML);
+				this.configConverted = this.checkConvertOldConfiguration();
 				DEBUG && console.log(`cc_ConfigurationStore: requestCOnfigPageContents: config`);
 				this.parentController.ccOn = this.parentController.cc_configuration.STATUS === "on";
 				// add a COLLECTIONS_ORDER array to the config if it's not there
@@ -5426,16 +5430,16 @@ class cc_ConfigurationStore {
 				}
 				// create new object with keys that have &amp; replaced by &
 				// no need for this, as module keys are now Canvas module ids
-/*				let new_modules = {};
-				for (let key in this.parentController.cc_configuration.MODULES) {
-					let newKey = key;
-					if (key.includes('&amp;')) {
-						// replace all &amp; with &
-						newKey = key.replace(/&amp;/g, '&');
-					}
-					new_modules[newKey] = this.parentController.cc_configuration.MODULES[key];
-				}
-				this.parentController.cc_configuration.MODULES = new_modules; */
+				/*				let new_modules = {};
+								for (let key in this.parentController.cc_configuration.MODULES) {
+									let newKey = key;
+									if (key.includes('&amp;')) {
+										// replace all &amp; with &
+										newKey = key.replace(/&amp;/g, '&');
+									}
+									new_modules[newKey] = this.parentController.cc_configuration.MODULES[key];
+								}
+								this.parentController.cc_configuration.MODULES = new_modules; */
 
 				//this.parentController.requestModuleInformation();
 				this.parentController.mergeModuleDetails();
@@ -5444,6 +5448,43 @@ class cc_ConfigurationStore {
 				console.log(`cc_ConfigurationStore: requestConfig: error = `);
 				console.log(error);
 			}, false);
+	}
+
+	/**
+	 * @descr Convert old style CC config (where MODULES is keyed on module name, not id)
+	 * @returns {boolean} true if converted, false if not
+	 */
+	checkConvertOldConfiguration() {
+		let collectionsModules = this.parentController.cc_configuration.MODULES;
+
+		// get the keys of the modules hash
+		let keys = Object.keys(collectionsModules);
+		// does the first one have a number?
+		const regex = /^\d+$/;
+		if (!regex.test(keys[0])) {
+			// no, it does not, so convert to new style
+
+			// convert moduleDetails array of hash to hash keyed on module name
+			const moduleDetailsHash = {};
+			let moduleDetails = this.parentController.moduleDetails;
+			for (let i = 0; i < moduleDetails.length; i++) {
+				moduleDetailsHash[moduleDetails[i].name] = moduleDetails[i];
+			}
+
+			// loop through the module
+			let new_modules = {};
+			for (let name in collectionsModules) {
+				// does moduleDetailsHash have module of this name?
+				if (moduleDetailsHash[name]) {
+					// add to new_modules hash
+					const id = moduleDetailsHash[name].id;
+					new_modules[id] = collectionsModules[name];
+				}
+			}
+			this.parentController.cc_configuration.MODULES = new_modules;
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -5612,7 +5653,7 @@ class cc_ConfigurationStore {
 		let ccModules = this.parentController.cc_configuration.MODULES;
 		let defaultCollection = this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION;
 
-		for ( i=0; i<currentModules.length; i++) {
+		for (i = 0; i < currentModules.length; i++) {
 			// for each Canvas module, add a default CC module config
 			let newModule = {
 				"name": currentModules[i].name,
@@ -5647,7 +5688,8 @@ class cc_ConfigurationStore {
 
 
 
-const DEBUG = true;
+// turn debug console.logs on/off
+const DEBUG = false;
 
 class cc_Controller {
 
@@ -5928,6 +5970,11 @@ class cc_Controller {
 		if (!this.modulesPage && !this.homeModulesPage) {
 			DEBUG && console.log('-------------- cc_Controller.execute() ERROR SHOULDN"T BE RUNNING');
 			return;
+		}
+
+		// check if start up converted the config, iff save it
+		if (this.configurationStore.configConverted) {
+			this.saveConfig();
 		}
 
 		DEBUG && console.log('-------------- cc_Controller.execute()');

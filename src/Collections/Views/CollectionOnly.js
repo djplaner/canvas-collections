@@ -33,7 +33,10 @@ export default class CollectionOnlyView extends cc_View {
 		// create a simple message div element
 		let message = document.createElement('div');
 		message.className = 'cc-message';
-		message.innerHTML = description;
+
+		if (description) {
+			message.innerHTML = description;
+		}
 
 		div.insertAdjacentElement('beforeend', message);
 
