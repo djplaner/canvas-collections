@@ -159,8 +159,8 @@ export default class cc_ConfigurationModel {
 		const modules = this.controller.parentController.cc_configuration.MODULES;
 
 		let count = 0;
-		for (let module of modules) {
-			if (module.collection===collectionName) {
+		for (const id in modules) {
+			if (modules[id].collection===collectionName) {
 				count++;
 			}
 		}

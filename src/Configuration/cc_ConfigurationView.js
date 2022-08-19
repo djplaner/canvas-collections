@@ -1036,15 +1036,6 @@ input:checked + .cc-slider:before {
 			ccSaveButton.onclick = (event) => this.controller.saveConfig();
 
 
-
-			//		const fileTest = document.getElementById('cc-file-test');
-			//			fileTest.onclick = (event) => this.fileTest();
-
-			// remove the configShowSwitch if no ccIsOn
-			//if ( ! this.model.isOn()) {
-			//this.removeConfigShowSwitch();
-			//				configShowSwitch.remove();
-			//} 
 		} else {
 			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
 		}
