@@ -309,14 +309,19 @@ export default class GriffithCardsView extends cc_View {
 		//	let count = 0;
 
 		//const currentCollection = this.model.getCurrentCollection();
-		for (let module of this.model.getModulesCollections()) {
+		const modulesCollections = this.model.getModulesCollections();
+		const currentCollection = this.model.getCurrentCollection();
+		for (let module of modulesCollections) {
 			DEBUG && console.log(module);
-			if (module.collection !== this.model.getCurrentCollection()) {
+			// PROB: module doesn't have a collection
+			if (module.collection !== currentCollection) {
 				// not the right collection, skip this one
 				// set the Canvas module div to display:none
 				// find div.context_module with data-module-id="${module.id}"
 				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
-				contextModule.style.display = 'none';
+				if (contextModule) {
+					contextModule.style.display = 'none';
+				}
 				continue;
 			} else {
 				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);

@@ -17,7 +17,7 @@ export default class CollectionsModel {
 		this.createModuleCollections();
 
 		// if currentCollection is undefined set it to the default
-		if ( this.currentCollection === undefined ) {
+		if (this.currentCollection === undefined) {
 			this.currentCollection = this.getDefaultCollection();
 		}
 	}
@@ -44,14 +44,28 @@ export default class CollectionsModel {
 	}
 
 	getCurrentCollectionRepresentation() {
+		if (!this.hasOwnProperty('currentCollection') ||
+			!this.cc_configuration.COLLECTIONS.hasOwnProperty(this.currentCollection) ||
+			!this.cc_configuration.COLLECTIONS[this.currentCollection].hasOwnProperty('representation')) {
+			return null;
+		}
 		return this.cc_configuration.COLLECTIONS[this.currentCollection].representation;
 	}
 
 	getCurrentCollectionPageName() {
+		if (!this.hasOwnProperty('currentCollection') ||
+			!this.cc_configuration.COLLECTIONS.hasOwnProperty(this.currentCollection) ||
+			!this.cc_configuration.COLLECTIONS[this.currentCollection].hasOwnProperty('pageName')) {
+			return null;
+		}
 		return this.cc_configuration.COLLECTIONS[this.currentCollection].pageName;
 	}
 
 	getCollectionRepresentation(collection) {
+		if ( !this.cc_configuration.COLLECTIONS.hasOwnProperty(collection) ||
+			!this.cc_configuration.COLLECTIONS[collection].hasOwnProperty('representation')) {
+			return null;
+		}
 		return this.cc_configuration.COLLECTIONS[collection].representation;
 	}
 
@@ -65,14 +79,14 @@ export default class CollectionsModel {
 	 * @param {String} collection - name of collectio to get modules for, default is all
 	 * @returns - array of dicts containing canvas-collections information about modules
 	 */
-	getCollectionsModules(collection="") {
-		if ( collection==="" ) {
+	getCollectionsModules(collection = "") {
+		if (collection === "") {
 			// by default return all the modules
 			return this.cc_configuration.MODULES;
 		}
 		const modules = this.cc_configuration.MODULES;
 		// filter modules attributes to those that that have an attribute collection==collection
-		const foundKeys = Object.keys(modules).filter(key => modules[key].collection===collection);
+		const foundKeys = Object.keys(modules).filter(key => modules[key].collection === collection);
 
 		// filter modules to just include attributes in array foundKeys
 		const foundModules = foundKeys.map(key => modules[key]);
@@ -100,7 +114,8 @@ export default class CollectionsModel {
 				details[key] = canvasModules[i][key];
 			}
 			// get the matching ccModules
-			let ccModule = ccModules[canvasModules[i].name.trim()];
+			//let ccModule = ccModules[canvasModules[i].name.trim()];
+			let ccModule = ccModules[canvasModules[i].id];
 			if (ccModule) {
 				// loop thru all the keys in ccModule
 				for (let key in ccModule) {
@@ -122,14 +137,14 @@ export default class CollectionsModel {
 	 *         undefined if no items for compeletion_requirements
 	 */
 
-	getItemsCompleted( module ) {
+	getItemsCompleted(module) {
 		let itemsCompleted = {
 			numRequired: 0,
 			numCompleted: 0
 		};
 
 		// if the module doesn't have an items attribute, return undefined
-		if ( !module.items ) {
+		if (!module.items) {
 			return undefined;
 		}
 
@@ -137,17 +152,17 @@ export default class CollectionsModel {
 		for (let i = 0; i < module.items.length; i++) {
 			let item = module.items[i];
 			// if the item has a completion_requirement, increment the count
-			if ( item.completion_requirement ) {
+			if (item.completion_requirement) {
 				itemsCompleted.numRequired++;
 				// if the item has a completion_requirement and is completed, increment the count
-				if ( item.completion_requirement.completed ) {
+				if (item.completion_requirement.completed) {
 					itemsCompleted.numCompleted++;
 				}
 			}
 		}
 
 		// if itemsComplete.numRequires is 0, return undefined
-		if ( itemsCompleted.numRequired === 0 ) {
+		if (itemsCompleted.numRequired === 0) {
 			return undefined;
 		}
 		return itemsCompleted;
@@ -163,12 +178,12 @@ export default class CollectionsModel {
 	 * @returns Array of dicts
 	 */
 
-	getModulesCollections(collectionName=null) {
-		if ( collectionName===null ) {
+	getModulesCollections(collectionName = null) {
+		if (collectionName === null) {
 			return this.modulesCollections;
 		}
 		// filter modulesCollections array to those that have an attribute collection==collectionName
-		const collectionModules = this.modulesCollections.filter(module => module.collection===collectionName);
+		const collectionModules = this.modulesCollections.filter(module => module.collection === collectionName);
 
 		return collectionModules;
 	}

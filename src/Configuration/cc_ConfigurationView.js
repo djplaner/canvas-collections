@@ -259,6 +259,26 @@ export default class cc_ConfigurationView extends cc_View {
 			}
 			imageSizeOptions += `<option value="${option}" ${selected}>${option}</option>`;
 		}
+		// TODO need to generate the date information
+		// - current kludge just handles the case when there is no date
+		// - eventually will need to handle the CSS 
+		// - perhaps with a date view?
+		let dateInfo = {
+			label: '',
+			week: '',
+			date: '',
+			month: ''
+		};
+		if (moduleConfig.date) {
+			for ( const dateField in dateInfo) {
+				if (moduleConfig.date.hasOwnProperty(dateField)) {
+					dateInfo[dateField] = moduleConfig.date[dateField];
+				}
+			}
+		}
+
+
+
 		let showConfigHtml = `
 		<style>
 		   .cc-collection-representation label {
@@ -338,8 +358,8 @@ export default class cc_ConfigurationView extends cc_View {
 							   style="object-fit: ${moduleConfig.imageSize};"
 							   alt="${Image} representing ${moduleConfig.name}" />
 							<div class="cc-card-date">
-							  <div class="cc-card-date-label">${moduleConfig.date.label}</div>
-							  <div class="cc-card-date-week">${moduleConfig.date.week}</div>
+							  <div class="cc-card-date-label">${dateInfo.label}</div>
+							  <div class="cc-card-date-week">${dateInfo.week}</div>
 							  <div class="cc-card-date-month"> </div>
 							  <div class="cc-card-date-date"> </div>
 							</div>

@@ -12,8 +12,7 @@
 //------------------------------------------------------------------------------
 // Define the templates for creating an initial configuration page, using three parts
 // - The HTML template for the configuration page - CONFIGURATION_PAGE_TEMPLATE
-// - The JSON template for most of the configuration form - DEFAULT_CONFIGURATION_TEMPLATE
-// - The JSON template for each module configuration - MODULE_CONFIGURATION_TEMPLATE
+// - The dict template for most of the configuration form - DEFAULT_CONFIGURATION_TEMPLATE
 
 const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 <div class="cc-config-explanation">
@@ -183,7 +182,8 @@ export default class cc_ConfigurationStore {
 					module.description = this.decodeHTML(module.description);
 				}
 				// create new object with keys that have &amp; replaced by &
-				let new_modules = {};
+				// no need for this, as module keys are now Canvas module ids
+/*				let new_modules = {};
 				for (let key in this.parentController.cc_configuration.MODULES) {
 					let newKey = key;
 					if (key.includes('&amp;')) {
@@ -192,7 +192,7 @@ export default class cc_ConfigurationStore {
 					}
 					new_modules[newKey] = this.parentController.cc_configuration.MODULES[key];
 				}
-				this.parentController.cc_configuration.MODULES = new_modules;
+				this.parentController.cc_configuration.MODULES = new_modules; */
 
 				//this.parentController.requestModuleInformation();
 				this.parentController.execute();
@@ -383,15 +383,4 @@ export default class cc_ConfigurationStore {
 			ccModules[currentModules[i].id] = newModule;
 		}
 	}
-
-	/*const MODULE_CONFIGURATION_TEMPLATE = {
-		"{{MODULE_NAME}}": {
-			"name": "{{MODULE_NAME}}",
-			"collection: "",
-			"label: "",
-			"num": "",
-			"description" : ""
-		}
-	` */
-
 }

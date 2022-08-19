@@ -158,13 +158,21 @@ export default class cc_ConfigurationModel {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getModuleCount()`);
 		const modules = this.controller.parentController.cc_configuration.MODULES;
 
+		let count = 0;
+		for (let module of modules) {
+			if (module.collection===collectionName) {
+				count++;
+			}
+		}
+		return count;
+
 		// filter modules to return only objects with collection==collectionName
 		//const collectionModules = modules.filter(module => module.collection===collectionName);
-		const collectionModules = Object.keys(modules).filter(
+/*		const collectionModules = Object.keys(modules).filter(
 			(module) => modules[module].collection===collectionName
 			);
 
-		return collectionModules.length;
+		return collectionModules.length; */
 	}
 
 	/**
@@ -174,7 +182,15 @@ export default class cc_ConfigurationModel {
 	 */
 
 	getModuleConfiguration(moduleName) {
-		return this.controller.parentController.cc_configuration.MODULES[moduleName];
+		const modules = this.controller.parentController.cc_configuration.MODULES;
+		// loop through all the properties of the modules object and return the
+		// on that has the name attribute matching moduleName
+		for (const moduleId in modules) {
+			if (modules[moduleId].name===moduleName) {
+				return modules[moduleId];
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -290,13 +306,13 @@ export default class cc_ConfigurationModel {
 			cc_configuration.DEFAULT_ACTIVE_COLLECTION = cc_configuration.COLLECTIONS_ORDER[0];
 		}
 
-		// loop through all the attributes of the cc_configuration.MODULES hash
-		// if any have the collectionName as their collection, set the collection to no collection
-		Object.keys(cc_configuration.MODULES).forEach((moduleName) => {
-			if (cc_configuration.MODULES[moduleName].collection === collectionName) {
-				cc_configuration.MODULES[moduleName].collection = null;
+		// loop through all the properties of cc_configuration.MODULES and set to null
+		// the collection attribute for any where collection===collectionName
+		for (const moduleId in cc_configuration.MODULES) {
+			if (cc_configuration.MODULES[moduleId].collection === collectionName) {
+				cc_configuration.MODULES[moduleId].collection = null;
 			}
-		});
+		}
 
 	}
 
@@ -322,7 +338,10 @@ export default class cc_ConfigurationModel {
 	 */
 
 	findModuleById(moduleId) {
-		// get the name for the given moduleId
+
+		return this.controller.parentController.moduleDetails[moduleId];
+
+/*		// get the name for the given moduleId
 		const modulesDetails = this.controller.parentController.moduleDetails;
 		let moduleName = null;
 		for (let i=0; i<modulesDetails.length; i++) {
@@ -340,6 +359,6 @@ export default class cc_ConfigurationModel {
 		if ( modules.hasOwnProperty(moduleName) ) {
 			return modules[moduleName];
 		}
-		return null;
+		return null; */
 	}
 }

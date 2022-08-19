@@ -174,13 +174,21 @@ class cc_ConfigurationModel {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getModuleCount()`);
 		const modules = this.controller.parentController.cc_configuration.MODULES;
 
+		let count = 0;
+		for (let module of modules) {
+			if (module.collection===collectionName) {
+				count++;
+			}
+		}
+		return count;
+
 		// filter modules to return only objects with collection==collectionName
 		//const collectionModules = modules.filter(module => module.collection===collectionName);
-		const collectionModules = Object.keys(modules).filter(
+/*		const collectionModules = Object.keys(modules).filter(
 			(module) => modules[module].collection===collectionName
 			);
 
-		return collectionModules.length;
+		return collectionModules.length; */
 	}
 
 	/**
@@ -190,7 +198,15 @@ class cc_ConfigurationModel {
 	 */
 
 	getModuleConfiguration(moduleName) {
-		return this.controller.parentController.cc_configuration.MODULES[moduleName];
+		const modules = this.controller.parentController.cc_configuration.MODULES;
+		// loop through all the properties of the modules object and return the
+		// on that has the name attribute matching moduleName
+		for (const moduleId in modules) {
+			if (modules[moduleId].name===moduleName) {
+				return modules[moduleId];
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -306,13 +322,13 @@ class cc_ConfigurationModel {
 			cc_configuration.DEFAULT_ACTIVE_COLLECTION = cc_configuration.COLLECTIONS_ORDER[0];
 		}
 
-		// loop through all the attributes of the cc_configuration.MODULES hash
-		// if any have the collectionName as their collection, set the collection to no collection
-		Object.keys(cc_configuration.MODULES).forEach((moduleName) => {
-			if (cc_configuration.MODULES[moduleName].collection === collectionName) {
-				cc_configuration.MODULES[moduleName].collection = null;
+		// loop through all the properties of cc_configuration.MODULES and set to null
+		// the collection attribute for any where collection===collectionName
+		for (const moduleId in cc_configuration.MODULES) {
+			if (cc_configuration.MODULES[moduleId].collection === collectionName) {
+				cc_configuration.MODULES[moduleId].collection = null;
 			}
-		});
+		}
 
 	}
 
@@ -338,7 +354,10 @@ class cc_ConfigurationModel {
 	 */
 
 	findModuleById(moduleId) {
-		// get the name for the given moduleId
+
+		return this.controller.parentController.moduleDetails[moduleId];
+
+/*		// get the name for the given moduleId
 		const modulesDetails = this.controller.parentController.moduleDetails;
 		let moduleName = null;
 		for (let i=0; i<modulesDetails.length; i++) {
@@ -356,7 +375,7 @@ class cc_ConfigurationModel {
 		if ( modules.hasOwnProperty(moduleName) ) {
 			return modules[moduleName];
 		}
-		return null;
+		return null; */
 	}
 }
 
@@ -668,6 +687,26 @@ class cc_ConfigurationView extends cc_View {
 			}
 			imageSizeOptions += `<option value="${option}" ${selected}>${option}</option>`;
 		}
+		// TODO need to generate the date information
+		// - current kludge just handles the case when there is no date
+		// - eventually will need to handle the CSS 
+		// - perhaps with a date view?
+		let dateInfo = {
+			label: '',
+			week: '',
+			date: '',
+			month: ''
+		};
+		if (moduleConfig.date) {
+			for ( const dateField in dateInfo) {
+				if (moduleConfig.date.hasOwnProperty(dateField)) {
+					dateInfo[dateField] = moduleConfig.date[dateField];
+				}
+			}
+		}
+
+
+
 		let showConfigHtml = `
 		<style>
 		   .cc-collection-representation label {
@@ -747,8 +786,8 @@ class cc_ConfigurationView extends cc_View {
 							   style="object-fit: ${moduleConfig.imageSize};"
 							   alt="${Image} representing ${moduleConfig.name}" />
 							<div class="cc-card-date">
-							  <div class="cc-card-date-label">${moduleConfig.date.label}</div>
-							  <div class="cc-card-date-week">${moduleConfig.date.week}</div>
+							  <div class="cc-card-date-label">${dateInfo.label}</div>
+							  <div class="cc-card-date-week">${dateInfo.week}</div>
 							  <div class="cc-card-date-month"> </div>
 							  <div class="cc-card-date-date"> </div>
 							</div>
@@ -1945,7 +1984,7 @@ class CollectionsModel {
 		this.createModuleCollections();
 
 		// if currentCollection is undefined set it to the default
-		if ( this.currentCollection === undefined ) {
+		if (this.currentCollection === undefined) {
 			this.currentCollection = this.getDefaultCollection();
 		}
 	}
@@ -1972,14 +2011,28 @@ class CollectionsModel {
 	}
 
 	getCurrentCollectionRepresentation() {
+		if (!this.hasOwnProperty('currentCollection') ||
+			!this.cc_configuration.COLLECTIONS.hasOwnProperty(this.currentCollection) ||
+			!this.cc_configuration.COLLECTIONS[this.currentCollection].hasOwnProperty('representation')) {
+			return null;
+		}
 		return this.cc_configuration.COLLECTIONS[this.currentCollection].representation;
 	}
 
 	getCurrentCollectionPageName() {
+		if (!this.hasOwnProperty('currentCollection') ||
+			!this.cc_configuration.COLLECTIONS.hasOwnProperty(this.currentCollection) ||
+			!this.cc_configuration.COLLECTIONS[this.currentCollection].hasOwnProperty('pageName')) {
+			return null;
+		}
 		return this.cc_configuration.COLLECTIONS[this.currentCollection].pageName;
 	}
 
 	getCollectionRepresentation(collection) {
+		if ( !this.cc_configuration.COLLECTIONS.hasOwnProperty(collection) ||
+			!this.cc_configuration.COLLECTIONS[collection].hasOwnProperty('representation')) {
+			return null;
+		}
 		return this.cc_configuration.COLLECTIONS[collection].representation;
 	}
 
@@ -1993,14 +2046,14 @@ class CollectionsModel {
 	 * @param {String} collection - name of collectio to get modules for, default is all
 	 * @returns - array of dicts containing canvas-collections information about modules
 	 */
-	getCollectionsModules(collection="") {
-		if ( collection==="" ) {
+	getCollectionsModules(collection = "") {
+		if (collection === "") {
 			// by default return all the modules
 			return this.cc_configuration.MODULES;
 		}
 		const modules = this.cc_configuration.MODULES;
 		// filter modules attributes to those that that have an attribute collection==collection
-		const foundKeys = Object.keys(modules).filter(key => modules[key].collection===collection);
+		const foundKeys = Object.keys(modules).filter(key => modules[key].collection === collection);
 
 		// filter modules to just include attributes in array foundKeys
 		const foundModules = foundKeys.map(key => modules[key]);
@@ -2028,7 +2081,8 @@ class CollectionsModel {
 				details[key] = canvasModules[i][key];
 			}
 			// get the matching ccModules
-			let ccModule = ccModules[canvasModules[i].name.trim()];
+			//let ccModule = ccModules[canvasModules[i].name.trim()];
+			let ccModule = ccModules[canvasModules[i].id];
 			if (ccModule) {
 				// loop thru all the keys in ccModule
 				for (let key in ccModule) {
@@ -2050,14 +2104,14 @@ class CollectionsModel {
 	 *         undefined if no items for compeletion_requirements
 	 */
 
-	getItemsCompleted( module ) {
+	getItemsCompleted(module) {
 		let itemsCompleted = {
 			numRequired: 0,
 			numCompleted: 0
 		};
 
 		// if the module doesn't have an items attribute, return undefined
-		if ( !module.items ) {
+		if (!module.items) {
 			return undefined;
 		}
 
@@ -2065,17 +2119,17 @@ class CollectionsModel {
 		for (let i = 0; i < module.items.length; i++) {
 			let item = module.items[i];
 			// if the item has a completion_requirement, increment the count
-			if ( item.completion_requirement ) {
+			if (item.completion_requirement) {
 				itemsCompleted.numRequired++;
 				// if the item has a completion_requirement and is completed, increment the count
-				if ( item.completion_requirement.completed ) {
+				if (item.completion_requirement.completed) {
 					itemsCompleted.numCompleted++;
 				}
 			}
 		}
 
 		// if itemsComplete.numRequires is 0, return undefined
-		if ( itemsCompleted.numRequired === 0 ) {
+		if (itemsCompleted.numRequired === 0) {
 			return undefined;
 		}
 		return itemsCompleted;
@@ -2091,12 +2145,12 @@ class CollectionsModel {
 	 * @returns Array of dicts
 	 */
 
-	getModulesCollections(collectionName=null) {
-		if ( collectionName===null ) {
+	getModulesCollections(collectionName = null) {
+		if (collectionName === null) {
 			return this.modulesCollections;
 		}
 		// filter modulesCollections array to those that have an attribute collection==collectionName
-		const collectionModules = this.modulesCollections.filter(module => module.collection===collectionName);
+		const collectionModules = this.modulesCollections.filter(module => module.collection === collectionName);
 
 		return collectionModules;
 	}
@@ -3888,14 +3942,19 @@ class GriffithCardsView extends cc_View {
 		//	let count = 0;
 
 		//const currentCollection = this.model.getCurrentCollection();
-		for (let module of this.model.getModulesCollections()) {
+		const modulesCollections = this.model.getModulesCollections();
+		const currentCollection = this.model.getCurrentCollection();
+		for (let module of modulesCollections) {
 			DEBUG && console.log(module);
-			if (module.collection !== this.model.getCurrentCollection()) {
+			// PROB: module doesn't have a collection
+			if (module.collection !== currentCollection) {
 				// not the right collection, skip this one
 				// set the Canvas module div to display:none
 				// find div.context_module with data-module-id="${module.id}"
 				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
-				contextModule.style.display = 'none';
+				if (contextModule) {
+					contextModule.style.display = 'none';
+				}
 				continue;
 			} else {
 				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
@@ -5085,8 +5144,7 @@ class juiceController {
 //------------------------------------------------------------------------------
 // Define the templates for creating an initial configuration page, using three parts
 // - The HTML template for the configuration page - CONFIGURATION_PAGE_TEMPLATE
-// - The JSON template for most of the configuration form - DEFAULT_CONFIGURATION_TEMPLATE
-// - The JSON template for each module configuration - MODULE_CONFIGURATION_TEMPLATE
+// - The dict template for most of the configuration form - DEFAULT_CONFIGURATION_TEMPLATE
 
 const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 <div class="cc-config-explanation">
@@ -5256,7 +5314,8 @@ class cc_ConfigurationStore {
 					module.description = this.decodeHTML(module.description);
 				}
 				// create new object with keys that have &amp; replaced by &
-				let new_modules = {};
+				// no need for this, as module keys are now Canvas module ids
+/*				let new_modules = {};
 				for (let key in this.parentController.cc_configuration.MODULES) {
 					let newKey = key;
 					if (key.includes('&amp;')) {
@@ -5265,7 +5324,7 @@ class cc_ConfigurationStore {
 					}
 					new_modules[newKey] = this.parentController.cc_configuration.MODULES[key];
 				}
-				this.parentController.cc_configuration.MODULES = new_modules;
+				this.parentController.cc_configuration.MODULES = new_modules; */
 
 				//this.parentController.requestModuleInformation();
 				this.parentController.execute();
@@ -5456,17 +5515,6 @@ class cc_ConfigurationStore {
 			ccModules[currentModules[i].id] = newModule;
 		}
 	}
-
-	/*const MODULE_CONFIGURATION_TEMPLATE = {
-		"{{MODULE_NAME}}": {
-			"name": "{{MODULE_NAME}}",
-			"collection: "",
-			"label: "",
-			"num": "",
-			"description" : ""
-		}
-	` */
-
 }
 
 // src/cc_Controller.js
@@ -5675,216 +5723,7 @@ class cc_Controller {
 		this.period = translate[this.period];
 	}
 
-	/**
-	 * @descr Find the id for a page titled "Canvas Collections Configuration", if got the id
-	 * get the contents of the file
-	 * This is a kludge to work around apparent CORs issues with requesting the config file
-	 * TODO resolve the CORs issue
-	 * TODO Should also generate some graceful error for teacher if can't find file or correct content
-	 */
-/*	findConfigPage() {
 
-		let callUrl = `/api/v1/courses/${this.courseId}/pages?` + new URLSearchParams(
-			{ 'search_term': 'Canvas Collections Configuration' });
-
-		DEBUG && console.log(`cc_Controller: findConfigPage: callUrl = ${callUrl}`);
-
-		fetch(callUrl, {
-			method: 'GET', credentials: 'include',
-			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken,
-			}
-		})
-			.then(this.status)
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				DEBUG && console.log(`cc_Controller: findConfigPage: json = ${JSON.stringify(json)}`);
-
-				// json should contain a list of items, should be just one
-
-				if (json.length === 0) {
-					DEBUG && console.log(`cc_Controller: findConfigPage: no config page 'Canvas Collections Configuration' found`);
-				} else if (json.length === 1) {
-					const body = json[0];
-					const page_id = body.page_id;
-					this.requestConfigPageContents(page_id);
-				} else {
-					DEBUG && console.log(`cc_Controller: findConfigPage: more than one (${json.length}) config file found`);
-				}
-			})
-			.catch((error) => {
-				console.log(`cc_Controller: requestConfig: error = `);
-				console.log(error);
-			}, false);
-	} */
-
-	/**
-	 * @descr Get the contents of page and set it up as config for canvas collections
-	 * This is a kludge to work around apparent CORs issues with requesting the config file
-	 * TODO resolve the CORs issue
-	 * TODO Should also generate some graceful error for teacher if can't find file or correct content
-	 */
-/*	requestConfigPageContents(page_id) {
-
-		let callUrl = `/api/v1/courses/${this.courseId}/pages/${page_id}`;
-
-		DEBUG && console.log(`cc_Controller: requestConfigPageContents: callUrl = ${callUrl}`);
-
-		fetch(callUrl, {
-			method: 'GET', credentials: 'include',
-			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken,
-			}
-		})
-			.then(this.status)
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				// json should be the page object
-				// https://canvas.instructure.com/doc/api/pages.html#Page
-				DEBUG && console.log(`cc_Controller: requestConfigPageContents: json = ${JSON.stringify(json)}`);
-
-				const parsed = new DOMParser().parseFromString(json.body, 'text/html');
-				let config = parsed.querySelector('div.cc_json');
-				this.cc_configuration = JSON.parse(config.innerHTML);
-				DEBUG && console.log(`cc_Controller: requestCOnfigPageContents: config`);
-				this.ccOn = this.cc_configuration.STATUS === "on";
-				// loop thru the keys of the this.cc_configuration.MODULES hash
-				// and set the corresponding module to on
-				for (let key in this.cc_configuration.MODULES) {
-					const module = this.cc_configuration.MODULES[key];
-					module.description = this.decodeHTML(module.description);
-				}
-				// create new object with keys that have &amp; replaced by &
-				let new_modules = {};
-				for (let key in this.cc_configuration.MODULES) {
-					let newKey = key;
-					if (key.includes('&amp;')) {
-						// replace all &amp; with &
-						newKey = key.replace(/&amp;/g, '&');
-					}
-					new_modules[newKey] = this.cc_configuration.MODULES[key];
-				}
-				this.cc_configuration.MODULES = new_modules;
-
-				this.requestModuleInformation();
-			})
-			.catch((error) => {
-				console.log(`cc_Controller: requestConfig: error = `);
-				console.log(error);
-			}, false);
-	}
-
-	decodeHTML(html) {
-		var txt = document.createElement("textarea");
-		txt.innerHTML = html;
-		return txt.value;
-	}
-
-*/
-
-	/**
-	 * @descr Request the file id for the cc_config.json file
-	 * - If successful then request the file contents
-	 * - if not, call execute with no config
-	 */
-/*	requestConfigFileId() {
-
-		let callUrl = `/api/v1/courses/${this.courseId}/files?` + new URLSearchParams(
-			{ 'search_term': 'cc_config.json' });
-
-		DEBUG && console.log(`cc_Controller: requestConfig: callUrl = ${callUrl}`);
-
-		fetch(callUrl, {
-			method: 'GET', credentials: 'include',
-			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json",
-				"X-CSRF-Token": this.csrfToken,
-			}
-		})
-			.then(this.status)
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				DEBUG && console.log(`cc_Controller: requestConfig: json = ${JSON.stringify(json)}`);
-
-				if (json.length === 0) {
-					DEBUG && console.log(`cc_Controller: requestConfig: no config file found`);
-				} else if (json.length === 1) {
-					this.configFileDetails = json[0];
-					this.requestConfigFileContent();
-				} else {
-					DEBUG && console.log(`cc_Controller: requestConfig: more than one (${json.length}) config file found`);
-				}
-			})
-			.catch((error) => {
-				console.log(`cc_Controller: requestConfig: error = `);
-				console.log(error);
-			}, false);
-	}
-*/
-	/**
-	 * @descr Request the config file, called only after requestConfigFileId is successful in
-	 * setting this.configDetails to json (e.g. below). Request the content of this file, if the
-	 * file itself is json
-	 * {
-	 *   "id":210137, "uuid":"wyuY3tKLdqWIR2tMbhqsteIjime1vVNhIUrFnPDS",
-	 *   "folder_id":177, "display_name":"cc_config.json", "filename":"cc_config.json",
-	 *   "upload_status":"success","content-type":"application/json",
-	 *   "url":"https://lms.griffith.edu.au/files/210137/download?download_frd=1","size":684,
-	 *   "created_at":"2022-03-05T03:27:56Z","updated_at":"2022-03-05T03:27:56Z",
-	 *   "unlock_at":null,"locked":false,"hidden":false,"lock_at":null,"hidden_for_user":false,
-	 *   "thumbnail_url":null,"modified_at":"2022-03-05T03:27:56Z","mime_class":"file",
-	 *   "media_entry_id":null,"locked_for_user":false} 
-	 */
-/*
-	requestConfigFileContent() {
-		DEBUG && console.log(`cc_Controller: requestConfigFileContent: for ${this.configFileDetails.id}`);
-		console.table(this.configFileDetails);
-
-		if (this.configFileDetails['content-type'] !== 'application/json') {
-			DEBUG && console.log(`cc_Controller: requestConfigFile: not json`);
-			return;
-		}
-
-		//-- get the file contents
-		let callUrl = this.configFileDetails.url;
-
-		DEBUG && console.log(
-			`cc_Controller: requestConfigFileContent: callUrl = ${callUrl}`);
-
-		// make request no-cors
-
-		fetch(callUrl, {
-			method: 'GET',
-			credentials: 'include'
-		})
-			.then(this.status)
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				DEBUG && console.log(`cc_Controller: requestConfigFileContent: json = ${JSON.stringify(json)}`);
-
-				this.cc_configuration = json;
-				this.ccOn = this.cc_configuration.STATUS === "on";
-				this.requestModuleInformation();
-			})
-			.catch((error) => {
-				console.log(`cc_Controller: requestConfigFileContent: error = ${error}`);
-			}, false);
-
-	}
-	*/
 
 	/**
 	 * @descr Generate API request for all information of course's modules
