@@ -95,7 +95,7 @@ export default class cc_ConfigurationView extends cc_View {
 			showConfigHtml = this.showModuleConfig(moduleDetail);
 		}
 
-		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.name);
+		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.id);
 
 		const moduleConfigHtml = `
 		<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
@@ -194,14 +194,14 @@ export default class cc_ConfigurationView extends cc_View {
 
 	updateSingleModuleConfig(moduleId) {
 		// get the moduleDetails for the given id (if there is one)
-		const moduleDetails = this.model.getModuleDetails();
+		let moduleDetails = this.model.getModuleDetails();
 
 		// does moduleDetails have the moduleId property
 		if (!moduleDetails.hasOwnProperty(moduleId)) {
 			// TODO handle the error
 			return;
-		}
-		const singleModuleDetails = moduleDetails[moduleId];
+		} 
+		let singleModuleDetails = moduleDetails[moduleId];
 
 		// get the moduleHeader element from the div.ig-header with id as moduleId
 		const moduleHeader = document.getElementById(moduleId);
@@ -226,7 +226,7 @@ export default class cc_ConfigurationView extends cc_View {
 		DEBUG && console.log('-------------- cc_ConfigurationView.showModuleConfig()');
 		console.log(moduleDetail);
 
-		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.name);
+		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.id);
 		console.log('---- configuration');
 		console.log(moduleConfig);
 

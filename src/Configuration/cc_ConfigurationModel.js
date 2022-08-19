@@ -62,7 +62,9 @@ export default class cc_ConfigurationModel {
 	**/
 	getModuleDetails() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getModuleDetails()`);
-		const moduleDetails = this.controller.parentController.moduleDetails;
+
+		return this.controller.parentController.mergedModuleDetails;
+/*		const moduleDetails = this.controller.parentController.moduleDetails;
 		// map array of objects moduleDetails into hash keyed on id attribute
 		const moduleDetailsHash = moduleDetails.reduce(
 			(accumulator, module) => {
@@ -72,7 +74,7 @@ export default class cc_ConfigurationModel {
 			{}
 		);
 
-		return moduleDetailsHash; //this.controller.parentController.moduleDetails;
+		return moduleDetailsHash; //this.controller.parentController.moduleDetails; */
 	}
 
 	/**
@@ -85,9 +87,10 @@ export default class cc_ConfigurationModel {
 
 		// find the object in the array this.controller.parentController.moduleDetails that 
 		// has the id matching moduleId
-		const module = this.controller.parentController.moduleDetails.find(
+/*		const module = this.controller.parentController.moduleDetails.find(
 			(module) => module.id===moduleId
-		);
+		);  */
+		const module = this.controller.parentController.mergedModuleDetails[moduleId];
 
 		// set the configClass attribute of the found object to newClass
 		if (newClass==="icon-mini-arrow-down") {
@@ -181,16 +184,18 @@ export default class cc_ConfigurationModel {
 	 * @returns {Object} - the object representing the CC configuration for the given module id
 	 */
 
-	getModuleConfiguration(moduleName) {
+	getModuleConfiguration(id) {
 		const modules = this.controller.parentController.cc_configuration.MODULES;
-		// loop through all the properties of the modules object and return the
+
+		return modules[id];
+/*		// loop through all the properties of the modules object and return the
 		// on that has the name attribute matching moduleName
 		for (const moduleId in modules) {
 			if (modules[moduleId].name===moduleName) {
 				return modules[moduleId];
 			}
 		}
-		return null;
+		return null; */
 	}
 
 	/**
@@ -339,7 +344,8 @@ export default class cc_ConfigurationModel {
 
 	findModuleById(moduleId) {
 
-		return this.controller.parentController.moduleDetails[moduleId];
+		//return this.controller.parentController.moduleDetails[moduleId];
+		return this.controller.parentController.cc_configuration.MODULES[moduleId];
 
 /*		// get the name for the given moduleId
 		const modulesDetails = this.controller.parentController.moduleDetails;

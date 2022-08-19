@@ -244,6 +244,50 @@ export default class cc_Controller {
 	}
 
 	/**
+	 * Called by the configurationStore at the stage that both Canvas and
+	 * Collections configuration information has been obtained
+	 * Purpose here is to create mergedModuleDetails object which 
+	 * merges the two sets of module information into the one - keyed on module id
+	 * - Calls this.execute() when done
+	 */
+
+	mergeModuleDetails() {
+		// Canvas module details stored in array of dicts
+		const canvasModules = this.moduleDetails;
+		// collections modules details stored in object with attributes matching
+		// Canvas module id
+		const collectionsModules = this.cc_configuration.MODULES;
+
+		this.mergedModuleDetails = {};
+
+		// merge the two sets of module details into one - keyed on module id
+		for (let i = 0; i < canvasModules.length; i++) {
+			// create object for merged details for current module
+			let details = {};
+			const canvasModule = canvasModules[i];
+			const canvasModuleId = canvasModule.id;
+
+			// copy all the canvas module keys into merged
+			for (let key in canvasModule) {
+				details[key] = canvasModules[i][key];
+			}
+			// do the same for CC module details, but skip some fields
+			let ccModule = collectionsModules[canvasModuleId];
+			if (ccModule) {
+				const skipFields = ['name'];
+				for (let key in ccModule) {
+					if (!skipFields.includes(key)) {
+						details[key] = ccModule[key];
+					}
+				}
+			}
+			this.mergedModuleDetails[canvasModuleId] = details;
+		}
+
+		this.execute();
+	}
+
+	/**
 	 * @descr Figure out which controller(s) need to be created and run, based on URL and config
 	 * TODO: this should only be called as a result of the API returning the JSON (or failing to do so)
 	 */

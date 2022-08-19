@@ -307,7 +307,6 @@ export default class GriffithCardsView extends cc_View {
 		//        let cardsShown = 0;
 
 		//	let count = 0;
-
 		//const currentCollection = this.model.getCurrentCollection();
 		const modulesCollections = this.model.getModulesCollections();
 		const currentCollection = this.model.getCurrentCollection();
@@ -417,8 +416,15 @@ export default class GriffithCardsView extends cc_View {
 		const EDIT_ITEM = "";
 
 		let CARD_LABEL = "";
-		if (module.label && module.num) {
-			CARD_LABEL = `${module.label} ${module.num}`;
+		if (module.label ) {
+			CARD_LABEL = module.label;
+		} 
+		if ( module.num) {
+			CARD_LABEL += ` ${module.num}`;
+			// remove first char from CARD_LABEL if it is a space
+			if (CARD_LABEL.charAt(0)===' ') {
+				CARD_LABEL = CARD_LABEL.substring(1);
+			}
 		}
 
 		const cardHtml = `

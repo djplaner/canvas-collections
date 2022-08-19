@@ -195,7 +195,7 @@ export default class cc_ConfigurationStore {
 				this.parentController.cc_configuration.MODULES = new_modules; */
 
 				//this.parentController.requestModuleInformation();
-				this.parentController.execute();
+				this.parentController.mergeModuleDetails();
 			})
 			.catch((error) => {
 				console.log(`cc_ConfigurationStore: requestConfig: error = `);

@@ -114,12 +114,15 @@ export default class CollectionsModel {
 				details[key] = canvasModules[i][key];
 			}
 			// get the matching ccModules
-			//let ccModule = ccModules[canvasModules[i].name.trim()];
 			let ccModule = ccModules[canvasModules[i].id];
 			if (ccModule) {
 				// loop thru all the keys in ccModule
+				// but some fields we want to skip 
+				const skipFields = ['name'];
 				for (let key in ccModule) {
-					details[key] = ccModule[key];
+					if (!skipFields.includes(key)) {
+						details[key] = ccModule[key];
+					}
 				}
 			}
 			// calculate the module completion status

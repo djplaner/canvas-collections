@@ -78,7 +78,9 @@ class cc_ConfigurationModel {
 	**/
 	getModuleDetails() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getModuleDetails()`);
-		const moduleDetails = this.controller.parentController.moduleDetails;
+
+		return this.controller.parentController.mergedModuleDetails;
+/*		const moduleDetails = this.controller.parentController.moduleDetails;
 		// map array of objects moduleDetails into hash keyed on id attribute
 		const moduleDetailsHash = moduleDetails.reduce(
 			(accumulator, module) => {
@@ -88,7 +90,7 @@ class cc_ConfigurationModel {
 			{}
 		);
 
-		return moduleDetailsHash; //this.controller.parentController.moduleDetails;
+		return moduleDetailsHash; //this.controller.parentController.moduleDetails; */
 	}
 
 	/**
@@ -101,9 +103,10 @@ class cc_ConfigurationModel {
 
 		// find the object in the array this.controller.parentController.moduleDetails that 
 		// has the id matching moduleId
-		const module = this.controller.parentController.moduleDetails.find(
+/*		const module = this.controller.parentController.moduleDetails.find(
 			(module) => module.id===moduleId
-		);
+		);  */
+		const module = this.controller.parentController.mergedModuleDetails[moduleId];
 
 		// set the configClass attribute of the found object to newClass
 		if (newClass==="icon-mini-arrow-down") {
@@ -197,16 +200,18 @@ class cc_ConfigurationModel {
 	 * @returns {Object} - the object representing the CC configuration for the given module id
 	 */
 
-	getModuleConfiguration(moduleName) {
+	getModuleConfiguration(id) {
 		const modules = this.controller.parentController.cc_configuration.MODULES;
-		// loop through all the properties of the modules object and return the
+
+		return modules[id];
+/*		// loop through all the properties of the modules object and return the
 		// on that has the name attribute matching moduleName
 		for (const moduleId in modules) {
 			if (modules[moduleId].name===moduleName) {
 				return modules[moduleId];
 			}
 		}
-		return null;
+		return null; */
 	}
 
 	/**
@@ -355,7 +360,8 @@ class cc_ConfigurationModel {
 
 	findModuleById(moduleId) {
 
-		return this.controller.parentController.moduleDetails[moduleId];
+		//return this.controller.parentController.moduleDetails[moduleId];
+		return this.controller.parentController.cc_configuration.MODULES[moduleId];
 
 /*		// get the name for the given moduleId
 		const modulesDetails = this.controller.parentController.moduleDetails;
@@ -523,7 +529,7 @@ class cc_ConfigurationView extends cc_View {
 			showConfigHtml = this.showModuleConfig(moduleDetail);
 		}
 
-		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.name);
+		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.id);
 
 		const moduleConfigHtml = `
 		<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
@@ -622,14 +628,14 @@ class cc_ConfigurationView extends cc_View {
 
 	updateSingleModuleConfig(moduleId) {
 		// get the moduleDetails for the given id (if there is one)
-		const moduleDetails = this.model.getModuleDetails();
+		let moduleDetails = this.model.getModuleDetails();
 
 		// does moduleDetails have the moduleId property
 		if (!moduleDetails.hasOwnProperty(moduleId)) {
 			// TODO handle the error
 			return;
-		}
-		const singleModuleDetails = moduleDetails[moduleId];
+		} 
+		let singleModuleDetails = moduleDetails[moduleId];
 
 		// get the moduleHeader element from the div.ig-header with id as moduleId
 		const moduleHeader = document.getElementById(moduleId);
@@ -654,7 +660,7 @@ class cc_ConfigurationView extends cc_View {
 		DEBUG && console.log('-------------- cc_ConfigurationView.showModuleConfig()');
 		console.log(moduleDetail);
 
-		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.name);
+		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.id);
 		console.log('---- configuration');
 		console.log(moduleConfig);
 
@@ -1464,15 +1470,6 @@ input:checked + .cc-slider:before {
 			ccSaveButton.onclick = (event) => this.controller.saveConfig();
 
 
-
-			//		const fileTest = document.getElementById('cc-file-test');
-			//			fileTest.onclick = (event) => this.fileTest();
-
-			// remove the configShowSwitch if no ccIsOn
-			//if ( ! this.model.isOn()) {
-			//this.removeConfigShowSwitch();
-			//				configShowSwitch.remove();
-			//} 
 		} else {
 			console.error('cc_ConfigurationView.addCcBundle() - could not find a#easy_student_view');
 		}
@@ -2081,12 +2078,15 @@ class CollectionsModel {
 				details[key] = canvasModules[i][key];
 			}
 			// get the matching ccModules
-			//let ccModule = ccModules[canvasModules[i].name.trim()];
 			let ccModule = ccModules[canvasModules[i].id];
 			if (ccModule) {
 				// loop thru all the keys in ccModule
+				// but some fields we want to skip 
+				const skipFields = ['name'];
 				for (let key in ccModule) {
-					details[key] = ccModule[key];
+					if (!skipFields.includes(key)) {
+						details[key] = ccModule[key];
+					}
 				}
 			}
 			// calculate the module completion status
@@ -3940,7 +3940,6 @@ class GriffithCardsView extends cc_View {
 		//        let cardsShown = 0;
 
 		//	let count = 0;
-
 		//const currentCollection = this.model.getCurrentCollection();
 		const modulesCollections = this.model.getModulesCollections();
 		const currentCollection = this.model.getCurrentCollection();
@@ -4050,8 +4049,15 @@ class GriffithCardsView extends cc_View {
 		const EDIT_ITEM = "";
 
 		let CARD_LABEL = "";
-		if (module.label && module.num) {
-			CARD_LABEL = `${module.label} ${module.num}`;
+		if (module.label ) {
+			CARD_LABEL = module.label;
+		} 
+		if ( module.num) {
+			CARD_LABEL += ` ${module.num}`;
+			// remove first char from CARD_LABEL if it is a space
+			if (CARD_LABEL.charAt(0)===' ') {
+				CARD_LABEL = CARD_LABEL.substring(1);
+			}
 		}
 
 		const cardHtml = `
@@ -5327,7 +5333,7 @@ class cc_ConfigurationStore {
 				this.parentController.cc_configuration.MODULES = new_modules; */
 
 				//this.parentController.requestModuleInformation();
-				this.parentController.execute();
+				this.parentController.mergeModuleDetails();
 			})
 			.catch((error) => {
 				console.log(`cc_ConfigurationStore: requestConfig: error = `);
@@ -5761,6 +5767,50 @@ class cc_Controller {
 				console.log(error);
 			}, false);
 
+	}
+
+	/**
+	 * Called by the configurationStore at the stage that both Canvas and
+	 * Collections configuration information has been obtained
+	 * Purpose here is to create mergedModuleDetails object which 
+	 * merges the two sets of module information into the one - keyed on module id
+	 * - Calls this.execute() when done
+	 */
+
+	mergeModuleDetails() {
+		// Canvas module details stored in array of dicts
+		const canvasModules = this.moduleDetails;
+		// collections modules details stored in object with attributes matching
+		// Canvas module id
+		const collectionsModules = this.cc_configuration.MODULES;
+
+		this.mergedModuleDetails = {};
+
+		// merge the two sets of module details into one - keyed on module id
+		for (let i = 0; i < canvasModules.length; i++) {
+			// create object for merged details for current module
+			let details = {};
+			const canvasModule = canvasModules[i];
+			const canvasModuleId = canvasModule.id;
+
+			// copy all the canvas module keys into merged
+			for (let key in canvasModule) {
+				details[key] = canvasModules[i][key];
+			}
+			// do the same for CC module details, but skip some fields
+			let ccModule = collectionsModules[canvasModuleId];
+			if (ccModule) {
+				const skipFields = ['name'];
+				for (let key in ccModule) {
+					if (!skipFields.includes(key)) {
+						details[key] = ccModule[key];
+					}
+				}
+			}
+			this.mergedModuleDetails[canvasModuleId] = details;
+		}
+
+		this.execute();
 	}
 
 	/**
