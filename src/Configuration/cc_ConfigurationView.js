@@ -127,7 +127,7 @@ export default class cc_ConfigurationView extends cc_View {
 
 		// set display:inline-block for div#cc-module-no-collection-${id} iff
 		// module.collection is undefined or empty
-		if ( !moduleDetail.collection || moduleDetail.collection.length === 0) {
+		if ( !moduleConfig || !moduleConfig.collection || moduleConfig.collection.length === 0) {
 			const moduleNoCollection = document.getElementById(`cc-module-config-no-collection-${id}`);
 			moduleNoCollection.style.display = 'inline-block';
 		}
@@ -235,11 +235,24 @@ export default class cc_ConfigurationView extends cc_View {
 		DEBUG && console.log('-------------- cc_ConfigurationView.showModuleConfig()');
 		console.log(moduleDetail);
 
-		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.id);
+		// try and get existing Collections module configuration
+		let moduleConfig = this.model.getModuleConfiguration(moduleDetail.id);
+
+		// check for a module that hasn't been added to the collection yet
+		if (!moduleConfig) {
+			// if not, we want to add it
+			moduleConfig = this.model.addModuleConfiguration(moduleDetail);
+		}
+
 		console.log('---- configuration');
 		console.log(moduleConfig);
 
 		const date = "";
+
+		let moduleCollection = "";
+		if ( moduleConfig.hasOwnProperty('collection') && moduleConfig.collection!=="") {
+			moduleCollection=moduleConfig.collection;
+		}
 
 		// get list of collections
 		const collections = this.model.getCollections();
@@ -247,7 +260,7 @@ export default class cc_ConfigurationView extends cc_View {
 		for (let i = 0; i < collections.length; i++) {
 			let selected = '';
 			const collection = collections[i];
-			if (collection === moduleConfig.collection) {
+			if ( collection === moduleCollection) {
 				selected = 'selected';
 			}
 			collectionsOptions += `<option value="${collection}" ${selected}>${collection}</option>`;

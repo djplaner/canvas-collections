@@ -192,14 +192,29 @@ export default class cc_ConfigurationModel {
 		const modules = this.controller.parentController.cc_configuration.MODULES;
 
 		return modules[id];
-/*		// loop through all the properties of the modules object and return the
-		// on that has the name attribute matching moduleName
-		for (const moduleId in modules) {
-			if (modules[moduleId].name===moduleName) {
-				return modules[moduleId];
-			}
-		}
-		return null; */
+	}
+
+	/**
+	 * Add a new module to the Collections module configuration using the passed object
+	 * - name and id comes from module detail
+	 * - other values go to a default
+	 *   - description, label, num, image
+	 * @param {Object} module - default Canvas module details
+	 */
+	addModuleConfiguration(module) {
+		this.controller.parentController.cc_configuration.MODULES[module.id] = {
+			name: module.name,
+			id: module.id,
+			description: "",
+			label: "",
+			num: "",
+			image: ""
+		};
+		// make sure we save the change
+		this.controller.parentController.mergeModuleDetails();
+		this.controller.changeMade(true);
+		// should also call merge
+		return this.controller.parentController.cc_configuration.MODULES[module.id];
 	}
 
 	/**
