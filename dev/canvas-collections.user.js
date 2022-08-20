@@ -1711,6 +1711,18 @@ class cc_ConfigurationController {
 		// match cc-module-config-(\d+)-switch and extract the number
 		const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-switch/)[1]);
 
+		// if we can, change the URL to the module being configured
+		// but should only do this if we're opening?? Maybe not
+		// TODO - decide if this is right place, maybe set or view?
+		// get current url
+		if (this.parentController && this.parentController.courseId && moduleId &&
+			!window.location.href.endsWith(`#${moduleId}`)) {
+			const hostname = window.location.hostname;
+			let url = `https://${hostname}/courses/${this.parentController.courseId}/modules#${moduleId}`;
+			// change browser URL to url
+			window.history.pushState({}, '', url);
+		}
+
 		//		let status = this.model.getModuleConfigClass(moduleId);
 
 		//		let newClass = this.model.getOtherConfigShowClass(className);
@@ -1862,7 +1874,7 @@ class cc_ConfigurationController {
 		let newCollection = {};
 		const newCollectionForm = document.querySelector('#cc-config-new-collection');
 		if (newCollectionForm) {
-			const newCollectionFormElements = newCollectionForm.querySelectorAll('input , select'); 
+			const newCollectionFormElements = newCollectionForm.querySelectorAll('input , select');
 			for (let i = 0; i < newCollectionFormElements.length; i++) {
 				const element = newCollectionFormElements[i];
 				if (element.id) {
@@ -1879,7 +1891,7 @@ class cc_ConfigurationController {
 		// Do some checks on the newCollection
 		// - check that the name is not already in use
 		// - check that the name is not empty
-		
+
 		if (newCollection.name == '') {
 			this.view.displayNewCollectionError('Name of new collection cannot be empty');
 			return;
@@ -1893,7 +1905,7 @@ class cc_ConfigurationController {
 				return;
 			}
 		}
-		 
+
 		//--------------------------------------------------------------------------------
 		// add the new collection to the model
 		this.model.addNewCollection(newCollection);
@@ -1984,7 +1996,8 @@ class cc_ConfigurationController {
 		this.model.changeModuleConfig(moduleId, fieldName, value);
 		this.changeMade(true);
 		// TODO - redisplay the representation
-		this.parentController.showCollections();
+		//this.parentController.showCollections();
+		this.parentController.collectionsController.view.display();
 
 		// TODO - redisplay the module configuration view
 		this.view.updateSingleModuleConfig(moduleId);
@@ -5024,6 +5037,7 @@ class juiceController {
 	display() {
 		DEBUG && console.log('-------------- juiceController.display()');
 
+		// nothing to do if button already there
 		let cc_2_clipboard = document.getElementById('cc_2_clipboard');
 		if (cc_2_clipboard) {
 			return;
@@ -6230,6 +6244,7 @@ class cc_Controller {
 	failedSaveConfig(error) {
 		alert(`Failed to save configuration - ${error}`);
 	}
+
 }
 
 // src/index.js

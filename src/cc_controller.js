@@ -518,4 +518,5 @@ export default class cc_Controller {
 	failedSaveConfig(error) {
 		alert(`Failed to save configuration - ${error}`);
 	}
+
 }
