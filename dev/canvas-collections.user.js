@@ -5296,6 +5296,7 @@ class cc_ConfigurationStore {
 		// object containing the CC configuration 
 		//this.cc_configuration = null;
 
+		//this.getConfiguration();
 	}
 
 	/**
@@ -5306,8 +5307,16 @@ class cc_ConfigurationStore {
 	getConfiguration() {
 		DEBUG && console.log('-------------- cc_ConfigurationStore.getConfiguration()');
 
-		// can we find the config page?
+		// Figure out if we need to create/read the configuration page
 		this.findConfigPage();
+
+	/*	if (this.pageObject) {
+			// get a pageObject, so we can get the config
+	//		this.requestConfigPageContents();
+		} else {
+			// initialise one for this course
+//			this.initialiseConfigPage();
+		} */
 	}
 
 	/**
@@ -5324,7 +5333,7 @@ class cc_ConfigurationStore {
 	 * This is a kludge to work around apparent CORs issues with requesting the config file
 	 * TODO if there's isn't a page, create one
 	 */
-	findConfigPage() {
+	async findConfigPage() {
 		// test for presence of parentController and courseId
 		if (!this.parentController || !this.parentController.courseId) {
 			throw new Error(`cc_ConfigurationStore: findConfigPage: missing parentController or courseId`);
@@ -5335,39 +5344,29 @@ class cc_ConfigurationStore {
 
 		DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: callUrl = ${callUrl}`);
 
-		const response = fetch(callUrl, {
+		const response = await fetch(callUrl, {
 			method: 'GET', credentials: 'include',
 			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json",
 				"X-CSRF-Token": this.parentController.csrf,
 			}
-		})
-			.then(this.status)
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
+		});
 
-				// json should contain a list of items, should be just one
-				if (json.length === 0) {
-					DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: no config page 'Canvas Collections Configuration' found`);
-					this.initialiseConfigPage();
-					// TODO this is where we create the configuration page
-				} else if (json.length === 1) {
-					this.pageObject = json[0];
-					this.requestConfigPageContents();
-				} else {
-					const error = `cc_ConfigurationStore: findConfigPage: more than one (${json.length}) config page found`;
-					DEBUG && console.log(error);
-					// TODO call some sort of controller error handler??
-				}
-			})
-			.catch((error) => {
-				DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: error = ${error}`);
-				// TODO call some sort of controller error handler??
-			}, false);
+		if (!response.ok) {
+			throw new Error(`cc_ConfigurationStore: findConfigPage: error ${response.status} ${response.statusText}`);
+		}
 
+		const data = await response.json();
+
+		// json should contain a list of items, should be just one
+		if (data.length === 0) {
+			DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: no config page 'Canvas Collections Configuration' found`);
+			this.initialiseConfigPage();
+		} else if (data.length === 1) {
+			this.pageObject = data[0];
+			this.requestConfigPageContents();
+		}
 	}
 
 	/**
@@ -5376,65 +5375,59 @@ class cc_ConfigurationStore {
 	 * TODO resolve the CORs issue
 	 * TODO Should also generate some graceful error for teacher if can't find file or correct content
 	 */
-	requestConfigPageContents() {
+	async requestConfigPageContents() {
 
 		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.pageObject.page_id}`;
 
 		DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: callUrl = ${callUrl}`);
 
-		fetch(callUrl, {
+		const response = await fetch(callUrl, {
 			method: 'GET', credentials: 'include',
 			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json",
 				"X-CSRF-Token": this.parentController.csrf,
 			}
-		})
-			.then(this.status)
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				// json should be the page object
-				// https://canvas.instructure.com/doc/api/pages.html#Page
-				DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: json = ${JSON.stringify(json)}`);
+		});
 
-				const parsed = new DOMParser().parseFromString(json.body, 'text/html');
-				let config = parsed.querySelector('div.cc_json');
-				this.parentController.cc_configuration = JSON.parse(config.innerHTML);
-				this.configConverted = this.checkConvertOldConfiguration();
-				DEBUG && console.log(`cc_ConfigurationStore: requestCOnfigPageContents: config`);
-				this.parentController.ccOn = this.parentController.cc_configuration.STATUS === "on";
-				// add a COLLECTIONS_ORDER array to the config if it's not there
-				if (!this.parentController.cc_configuration.COLLECTIONS_ORDER) {
-					this.parentController.cc_configuration.COLLECTIONS_ORDER = Object.keys(this.parentController.cc_configuration.COLLECTIONS);
-				}
-				// loop thru the keys of the this.cc_configuration.MODULES hash
-				// and set the corresponding module to on
-				for (let key in this.parentController.cc_configuration.MODULES) {
-					const module = this.parentController.cc_configuration.MODULES[key];
-					module.description = this.decodeHTML(module.description);
-				}
-				// create new object with keys that have &amp; replaced by &
-				// no need for this, as module keys are now Canvas module ids
-				/*				let new_modules = {};
-								for (let key in this.parentController.cc_configuration.MODULES) {
-									let newKey = key;
-									if (key.includes('&amp;')) {
-										// replace all &amp; with &
-										newKey = key.replace(/&amp;/g, '&');
-									}
-									new_modules[newKey] = this.parentController.cc_configuration.MODULES[key];
-								}
-								this.parentController.cc_configuration.MODULES = new_modules; */
+		if (!response.ok) {
+			throw new Error(`cc_ConfigurationStore: requestConfigPageContents: error ${response.status} ${response.statusText}`);
+		}
 
-				//this.parentController.requestModuleInformation();
-				this.parentController.mergeModuleDetails();
-			})
-			.catch((error) => {
-				console.log(`cc_ConfigurationStore: requestConfig: error = `);
-				console.log(error);
-			}, false);
+		const data = await response.json();
+
+		// data should be the page object
+		// https://canvas.instructure.com/doc/api/pages.html#Page
+		DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: json = ${JSON.stringify(data)}`);
+
+		// TODO error checking
+
+		const parsed = new DOMParser().parseFromString(data.body, 'text/html');
+		let config = parsed.querySelector('div.cc_json');
+		if (!config) {
+			throw new Error(`cc_ConfigurationStore: requestConfigPageContents: no div.cc_json found in page`);
+		}
+
+		this.parentController.cc_configuration = JSON.parse(config.innerHTML);
+		// double check and possibly convert an old configuration
+		this.configConverted = this.checkConvertOldConfiguration();
+
+		// initialise the controller etc
+		DEBUG && console.log(`cc_ConfigurationStore: requestCOnfigPageContents: config`);
+		this.parentController.ccOn = this.parentController.cc_configuration.STATUS === "on";
+		// add a COLLECTIONS_ORDER array to the config if it's not there
+		if (!this.parentController.cc_configuration.COLLECTIONS_ORDER) {
+			this.parentController.cc_configuration.COLLECTIONS_ORDER = Object.keys(this.parentController.cc_configuration.COLLECTIONS);
+		}
+		// loop thru the keys of the this.cc_configuration.MODULES hash
+		// and set the corresponding module to on
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			const module = this.parentController.cc_configuration.MODULES[key];
+			module.description = this.decodeHTML(module.description);
+		}
+		// create a structure that merges Canvas and Collections module information
+		this.parentController.mergeModuleDetails();
+		this.parentController.execute();
 	}
 
 	/**
@@ -5623,40 +5616,9 @@ class cc_ConfigurationStore {
 		const json = await response.json();
 		this.pageObject = json;
 		alert(`Successfully created config page `);
-
-/*
-
-		fetch(callUrl, {
-			method: method, credentials: 'include',
-			headers: {
-				"Content-type": "application/json; charset=UTF-8",
-				"Accept": "application/json; charset=UTF-8",
-				"X-CSRF-Token": this.parentController.csrf,
-			},
-			body: bodyString
-		})
-			.then(this.status)
-			.then((response) => {
-				if (response.ok) {
-					const json = response.json();
-					// json should have the newly created page object,
-					// don't need to do anything with it here
-					DEBUG && console.log(`cc_ConfigurationStore: createConfigPage: json = ${JSON.stringify(json)}`);
-
-					this.pageObject = json[0];
-					//					this.parentController.completedSaveConfig();
-					this.parentController.execute();
-
-				} else {
-					alert(`Problem creating config ${response.status} - `);
-				}
-			})
-			.catch((error) => {
-				console.log(`cc_ConfigurationStore: requestConfig: error = `);
-				console.log(error);
-
-				this.parentController.failedSaveConfig(error);
-			}, false); */
+		// create a structure that merges Canvas and Collections module information
+		this.parentController.mergeModuleDetails();
+		this.parentController.execute();
 	}
 
 
@@ -5696,7 +5658,6 @@ class cc_ConfigurationStore {
 
 		// create the new config page
 		this.createConfigPage();
-		this.parentController.execute();
 
 		// continue the process
 		//this.parentController.requestModuleInformation();
@@ -5726,7 +5687,7 @@ class cc_ConfigurationStore {
 		let ccModules = this.parentController.cc_configuration.MODULES;
 		let defaultCollection = this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION;
 
-		for (i = 0; i < currentModules.length; i++) {
+		for (let i = 0; i < currentModules.length; i++) {
 			// for each Canvas module, add a default CC module config
 			let newModule = {
 				"name": currentModules[i].name,
@@ -5791,22 +5752,18 @@ class cc_Controller {
 
 		this.configFileDetails = null;
 		this.cc_configuration = null;
-
 		this.configurationStore = new cc_ConfigurationStore(this);
-
 
 		// if cc should run, try to get the config
 		if (this.modulesPage || this.homeModulesPage) {
-			// proposed "command" change
 
-
-			//-- original get data chain commencing
 			this.setCsrfToken();
 			DEBUG && console.log(`cc_Controller: csrf = ${this.csrf}`);
 
+			// get Canvas info about the course
+			// should create this.courseObject
 			this.requestCourseObject();
 		}
-
 	}
 
 	/**
@@ -5814,46 +5771,33 @@ class cc_Controller {
 	 * Mostly to set the STRM
 	 * requestConfigFileId() when done - or bypass for findConfigPage
 	 */
-	requestCourseObject() {
-
+	async requestCourseObject() {
 		let callUrl = `/api/v1/courses/${this.courseId}`;
 
 		DEBUG && console.log(`cc_Controller: requestCourseOjbect: callUrl = ${callUrl}`);
 
-		fetch(callUrl, {
+		const response = await fetch(callUrl, {
 			method: 'GET', credentials: 'include',
 			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json",
 				"X-CSRF-Token": this.csrfToken,
 			}
-		})
-			.then(this.status)
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				DEBUG && console.log(`cc_Controller: requestCourseObject: json = ${JSON.stringify(json)}`);
+		});
+		if (!response.ok) {
+			throw new Error(`cc_Controller: requestCourseObject: error ${response.status}`);
+		}
 
-				if (json.length === 0) {
-					DEBUG && console.log(`cc_Controller: requestCourseObject: couldn't get course object`);
-				} else {
-					this.courseObject = json;
-					this.generateSTRM();
-					//this.requestConfigFileId();
-					// Experiment using configuration store
-					//this.configurationStore.getConfiguration();
-					this.requestModuleInformation();
-					//this.findConfigPage();
-				}
-			})
-			.catch((error) => {
-				console.log(`cc_Controller: requestCourseObject: error = `);
-				console.log(error);
-				//this.requestConfigFileId();
-				// CORS issues now with requesting config file
-				// this.findConfigPage();
-			}, false);
+		const data = await response.json();
+
+		if (data.length === 0) { 
+			// TODO unsure about the validity of this
+			DEBUG && console.log(`cc_Controller: requestCourseObject: couldn't get course object`);
+		} else { 
+			this.courseObject = data;
+			this.generateSTRM();
+			this.requestModuleInformation();
+		}
 	}
 
 	/**
@@ -5954,39 +5898,31 @@ class cc_Controller {
 	/**
 	 * @descr Generate API request for all information of course's modules
 	 */
-	requestModuleInformation() {
+	async requestModuleInformation() {
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: for ${this.courseId}`);
 
 		let callUrl = `/api/v1/courses/${this.courseId}/modules?include=items&per_page=500`;
 
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: callUrl = ${callUrl}`);
 
-		fetch(callUrl, {
+		const response = await fetch(callUrl, {
 			method: 'GET', credentials: 'include',
 			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json",
 				"X-CSRF-Token": this.csrf,
 			}
-		})
-			.then(this.status)
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(json)}`);
+		});
+		if (!response.ok) {
+			throw new Error(`cc_Controller: requestModuleInformation: error ${response.status}`);
+		}
 
-				this.moduleDetails = json;
-				// TODO call https://canvas.instructure.com/doc/api/modules.html#method.context_module_items_api.index
-				// the list module items API for each module
-				this.configurationStore.getConfiguration();
-//				this.execute();
-			})
-			.catch((error) => {
-				console.log(`cc_Controller: requestModuleInformation: error = `);
-				console.log(error);
-			}, false);
+		const data = await response.json();
 
+		DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(data)}`);
+
+		this.moduleDetails = data;
+		this.configurationStore.getConfiguration();
 	}
 
 	/**

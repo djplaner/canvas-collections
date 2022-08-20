@@ -63,7 +63,7 @@ export default class cc_ConfigurationStore {
 		// object containing the CC configuration 
 		//this.cc_configuration = null;
 
-		this.getConfiguration();
+		//this.getConfiguration();
 	}
 
 	/**
@@ -77,13 +77,13 @@ export default class cc_ConfigurationStore {
 		// Figure out if we need to create/read the configuration page
 		this.findConfigPage();
 
-		if (this.pageObject) {
+	/*	if (this.pageObject) {
 			// get a pageObject, so we can get the config
-			this.requestConfigPageContents();
+	//		this.requestConfigPageContents();
 		} else {
 			// initialise one for this course
-			this.initialiseConfigPage();
-		}
+//			this.initialiseConfigPage();
+		} */
 	}
 
 	/**
@@ -129,11 +129,10 @@ export default class cc_ConfigurationStore {
 		// json should contain a list of items, should be just one
 		if (data.length === 0) {
 			DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: no config page 'Canvas Collections Configuration' found`);
-//			this.initialiseConfigPage();
-			// TODO this is where we create the configuration page
+			this.initialiseConfigPage();
 		} else if (data.length === 1) {
 			this.pageObject = data[0];
-//			this.requestConfigPageContents();
+			this.requestConfigPageContents();
 		}
 	}
 
@@ -166,11 +165,11 @@ export default class cc_ConfigurationStore {
 
 		// data should be the page object
 		// https://canvas.instructure.com/doc/api/pages.html#Page
-		DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: json = ${JSON.stringify(json)}`);
+		DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: json = ${JSON.stringify(data)}`);
 
 		// TODO error checking
 
-		const parsed = new DOMParser().parseFromString(json.body, 'text/html');
+		const parsed = new DOMParser().parseFromString(data.body, 'text/html');
 		let config = parsed.querySelector('div.cc_json');
 		if (!config) {
 			throw new Error(`cc_ConfigurationStore: requestConfigPageContents: no div.cc_json found in page`);
@@ -195,6 +194,7 @@ export default class cc_ConfigurationStore {
 		}
 		// create a structure that merges Canvas and Collections module information
 		this.parentController.mergeModuleDetails();
+		this.parentController.execute();
 	}
 
 	/**
@@ -383,40 +383,9 @@ export default class cc_ConfigurationStore {
 		const json = await response.json();
 		this.pageObject = json;
 		alert(`Successfully created config page `);
-
-		/*
-		
-				fetch(callUrl, {
-					method: method, credentials: 'include',
-					headers: {
-						"Content-type": "application/json; charset=UTF-8",
-						"Accept": "application/json; charset=UTF-8",
-						"X-CSRF-Token": this.parentController.csrf,
-					},
-					body: bodyString
-				})
-					.then(this.status)
-					.then((response) => {
-						if (response.ok) {
-							const json = response.json();
-							// json should have the newly created page object,
-							// don't need to do anything with it here
-							DEBUG && console.log(`cc_ConfigurationStore: createConfigPage: json = ${JSON.stringify(json)}`);
-		
-							this.pageObject = json[0];
-							//					this.parentController.completedSaveConfig();
-							this.parentController.execute();
-		
-						} else {
-							alert(`Problem creating config ${response.status} - `);
-						}
-					})
-					.catch((error) => {
-						console.log(`cc_ConfigurationStore: requestConfig: error = `);
-						console.log(error);
-		
-						this.parentController.failedSaveConfig(error);
-					}, false); */
+		// create a structure that merges Canvas and Collections module information
+		this.parentController.mergeModuleDetails();
+		this.parentController.execute();
 	}
 
 
@@ -456,7 +425,6 @@ export default class cc_ConfigurationStore {
 
 		// create the new config page
 		this.createConfigPage();
-		this.parentController.execute();
 
 		// continue the process
 		//this.parentController.requestModuleInformation();
@@ -486,7 +454,7 @@ export default class cc_ConfigurationStore {
 		let ccModules = this.parentController.cc_configuration.MODULES;
 		let defaultCollection = this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION;
 
-		for (i = 0; i < currentModules.length; i++) {
+		for (let i = 0; i < currentModules.length; i++) {
 			// for each Canvas module, add a default CC module config
 			let newModule = {
 				"name": currentModules[i].name,

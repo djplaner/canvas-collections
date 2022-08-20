@@ -46,7 +46,7 @@ export default class cc_Controller {
 
 		this.configFileDetails = null;
 		this.cc_configuration = null;
-
+		this.configurationStore = new cc_ConfigurationStore(this);
 
 		// if cc should run, try to get the config
 		if (this.modulesPage || this.homeModulesPage) {
@@ -57,21 +57,7 @@ export default class cc_Controller {
 			// get Canvas info about the course
 			// should create this.courseObject
 			this.requestCourseObject();
-			// TODO result check
-			// Use the course information to identify STRM based on course Id
-			this.generateSTRM();
-			// get Canvas info about modules
-			// Populates this.moduleDetails
-			this.requestModuleInformation();
-			// TODO result check
-			//-- now get information about Collections configuration
-			this.configurationStore = new cc_ConfigurationStore(this);
-
-			// all set up and ready to go
-			// TODO - error checking?
-			this.execute();
 		}
-
 	}
 
 	/**
@@ -103,6 +89,8 @@ export default class cc_Controller {
 			DEBUG && console.log(`cc_Controller: requestCourseObject: couldn't get course object`);
 		} else { 
 			this.courseObject = data;
+			this.generateSTRM();
+			this.requestModuleInformation();
 		}
 	}
 
@@ -228,6 +216,7 @@ export default class cc_Controller {
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(data)}`);
 
 		this.moduleDetails = data;
+		this.configurationStore.getConfiguration();
 	}
 
 	/**
