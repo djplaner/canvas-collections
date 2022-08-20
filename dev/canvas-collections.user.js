@@ -5024,6 +5024,11 @@ class juiceController {
 	display() {
 		DEBUG && console.log('-------------- juiceController.display()');
 
+		let cc_2_clipboard = document.getElementById('cc_2_clipboard');
+		if (cc_2_clipboard) {
+			return;
+		}
+
 		// is there a button.add_module_link
 		let addModuleButton = document.querySelector("button.add_module_link");
 		if (addModuleButton) {
