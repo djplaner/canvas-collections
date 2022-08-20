@@ -207,7 +207,7 @@ export default class cc_ConfigurationController {
 		this.changeMade(true);
 
 		// update the display
-		this.view.removeConfig();
+		//this.view.removeConfig();
 		this.view.showConfig();
 
 	}
@@ -303,7 +303,7 @@ export default class cc_ConfigurationController {
 		// remove any prior errors
 		//this.view.updateExistingCollections();
 		// update the display
-		this.view.removeConfig();
+		//this.view.removeConfig();
 		this.view.showConfig();
 		this.parentController.showCollections();
 	}

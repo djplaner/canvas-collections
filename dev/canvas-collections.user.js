@@ -592,7 +592,7 @@ class cc_ConfigurationView extends cc_View {
 
 		// set display:inline-block for div#cc-module-no-collection-${id} iff
 		// module.collection is undefined or empty
-		if ( !moduleConfig || !moduleConfig.collection || moduleConfig.collection.length === 0) {
+		if (!moduleConfig || !moduleConfig.collection || moduleConfig.collection.length === 0) {
 			const moduleNoCollection = document.getElementById(`cc-module-config-no-collection-${id}`);
 			moduleNoCollection.style.display = 'inline-block';
 		}
@@ -674,7 +674,7 @@ class cc_ConfigurationView extends cc_View {
 		if (!moduleDetails.hasOwnProperty(moduleId)) {
 			// TODO handle the error
 			return;
-		} 
+		}
 		let singleModuleDetails = moduleDetails[moduleId];
 
 		// get the moduleHeader element from the div.ig-header with id as moduleId
@@ -715,8 +715,8 @@ class cc_ConfigurationView extends cc_View {
 		const date = "";
 
 		let moduleCollection = "";
-		if ( moduleConfig.hasOwnProperty('collection') && moduleConfig.collection!=="") {
-			moduleCollection=moduleConfig.collection;
+		if (moduleConfig.hasOwnProperty('collection') && moduleConfig.collection !== "") {
+			moduleCollection = moduleConfig.collection;
 		}
 
 		// get list of collections
@@ -725,7 +725,7 @@ class cc_ConfigurationView extends cc_View {
 		let collectionsOptions = '<option value="">Unallocated</option>';
 		for (let i = 0; i < collections.length; i++) {
 			const collection = collections[i];
-			if ( collection === moduleCollection) {
+			if (collection === moduleCollection) {
 				selected = 'selected';
 			}
 			collectionsOptions += `<option value="${collection}" ${selected}>${collection}</option>`;
@@ -757,7 +757,7 @@ class cc_ConfigurationView extends cc_View {
 			month: ''
 		};
 		if (moduleConfig.date) {
-			for ( const dateField in dateInfo) {
+			for (const dateField in dateInfo) {
 				if (moduleConfig.date.hasOwnProperty(dateField)) {
 					dateInfo[dateField] = moduleConfig.date[dateField];
 				}
@@ -768,11 +768,11 @@ class cc_ConfigurationView extends cc_View {
 
 		let showConfigHtml = `
 		<style>
-		   .cc-collection-representation label {
+		   .cc-module-config-collection-representation label {
 			   width: 5rem;
 			   font-size: 0.8rem;
 		   }
-		   .cc-collection-representation input {
+		   .cc-module-config-collection-representation input {
 			   font-size: 0.8rem;
 		   }
 		   .cc-module-config-detail {
@@ -792,13 +792,13 @@ class cc_ConfigurationView extends cc_View {
 
 		<div class="cc-module-config-detail">
 			<div>
-				<div class="cc-collection-representation">
+				<div class="cc-module-config-collection-representation">
 					<label for="cc-collection-representation-${moduleDetail.id}-collection">Collection</label>
 					<select id="cc-module-config-${moduleDetail.id}-collection">
 					  ${collectionsOptions}
 					</select>
 				</div>
-				<div class="cc-collection-representation">
+				<div class="cc-module-config-collection-representation">
 				    <label for="cc-module-config-${moduleDetail.id}-label">Label</label>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-label" 
 						value="${moduleConfig.label}" />
@@ -826,14 +826,14 @@ class cc_ConfigurationView extends cc_View {
 				</div>
 		    </div>
 			<div>
-				<div class="cc-collection-representation">
+				<div class="cc-module-config-collection-representation">
 					<label for="cc-collection-representation-${moduleDetail.id}-imageSize">Image size</label>
 <!--					<input id="cc-module-config-${moduleDetail.id}-imageSize" value="${moduleConfig.imageSize}"> -->
 		   		       <select id="cc-module-config-${moduleDetail.id}-imageSize">
 					      ${imageSizeOptions}
 						</select>
 					<br clear="all" />
-					<label for="cc-collection-representation-${moduleDetail.id}-image">Image URL</label>
+					<label for="cc-module-config-collection-representation-${moduleDetail.id}-image">Image URL</label>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
 					        value="${moduleConfig.image}">
 				</div>
@@ -917,6 +917,9 @@ class cc_ConfigurationView extends cc_View {
 	 * - whether to include the "All" and "None" collections?
 	 */
 	showConfig() {
+
+		// always remove before showing, just in case?
+		this.removeConfig();
 
 		const configDivHtml = `
 		<div id="cc-config-wrapper">
@@ -1258,14 +1261,12 @@ class cc_ConfigurationView extends cc_View {
 			if (toggleAndCrumbs) {
 				toggleAndCrumbs.style.borderBottom = '1px solid #c7cdd1';
 			}
+			// add the bottom border from div.cc-switch-container
+			const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
+			if (ccSwitchContainer) {
+				ccSwitchContainer.style.borderBottom = '1px solid #c7cdd1';
+			}
 		}
-
-		// add the bottom border from div.cc-switch-container
-		const ccSwitchContainer = document.getElementsByClassName('cc-switch-container')[0];
-		if (ccSwitchContainer) {
-			ccSwitchContainer.style.borderBottom = '1px solid #c7cdd1';
-		}
-
 	}
 
 	/**
@@ -1808,7 +1809,7 @@ class cc_ConfigurationController {
 		this.changeMade(true);
 
 		// update the display
-		this.view.removeConfig();
+		//this.view.removeConfig();
 		this.view.showConfig();
 
 	}
@@ -1904,7 +1905,7 @@ class cc_ConfigurationController {
 		// remove any prior errors
 		//this.view.updateExistingCollections();
 		// update the display
-		this.view.removeConfig();
+		//this.view.removeConfig();
 		this.view.showConfig();
 		this.parentController.showCollections();
 	}
