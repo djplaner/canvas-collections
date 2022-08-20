@@ -17,7 +17,7 @@ const VIEWS = {
 	AssessmentTableView,
 	CollectionOnlyView,
 	GriffithCardsView
-}
+};
 
 export default class CollectionsViewFactory {
 

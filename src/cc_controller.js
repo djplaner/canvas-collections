@@ -17,7 +17,7 @@ import { juiceController } from './juice/juiceController.js';
 import { cc_ConfigurationStore } from './Configuration/cc_ConfigurationStore.js';
 
 // turn debug console.logs on/off
-const DEBUG = false;
+const DEBUG = true;
 
 export default class cc_Controller {
 

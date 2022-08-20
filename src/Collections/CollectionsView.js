@@ -84,13 +84,19 @@ export default class CollectionsView extends cc_View {
 	 */
 
 	updateCurrentRepresentation() {
+		const currentCollection = this.model.getCurrentCollection();
+		const representation = this.model.getCollectionRepresentation(currentCollection);
+
+		if (currentCollection==="" || !representation) {
+			// nothing to do here
+			return;
+		}
+
 		// remove the existing div.cc-representation iff exists
 		let ccRepresentation = document.querySelector('div.cc-representation');
 		if (ccRepresentation) {
 			ccRepresentation.remove();
 		}
-		const currentCollection = this.model.getCurrentCollection();
-		const representation = this.model.getCollectionRepresentation(currentCollection);
 		// update the view object with the current representation
 		this.representations[currentCollection] = CollectionsViewFactory.createView(representation, this.model, controller);
 		// add the new representation via the current collections view

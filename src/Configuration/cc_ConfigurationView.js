@@ -69,6 +69,11 @@ export default class cc_ConfigurationView extends cc_View {
 
 		const moduleDetails = this.model.getModuleDetails();
 
+		if (!moduleDetails) {
+			// TODO for some reason, didn't get module details, skip
+			return;
+		}
+
 		// loop through all the div.ig-header elements
 		// 
 		//const moduleHeaders = document.getElementsByClassName('ig-header');
@@ -617,20 +622,6 @@ export default class cc_ConfigurationView extends cc_View {
 						</div>
 
 						<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
-							<div class="ic-Checkbox-group">
-								<div class="ic-Form-control ic-Form-control--checkbox">
-									<input type="checkbox" id="cc-config-new-collection-default">
-									<label class="ic-Label" for="cc-config-new-collection-default">
-										<small>Default collection?</small>
-									</label>
-								</div>
-								<div class="ic-Form-control ic-Form-control--checkbox">
-									<input type="checkbox" id="cc-config-new-collection-all">
-									<label class="ic-Label" for="cc-config-new-collection-all">
-										<small>Include all modules?</small>
-									</label>
-								</div>
-							</div>
 							<button class="btn btn-primary" id="cc-config-new-collection-button">Add</button>
 						</fieldset>
 					</div>
@@ -729,13 +720,6 @@ export default class cc_ConfigurationView extends cc_View {
 							    class="cc-config-collection-default">
 							<label class="ic-Label" for="cc-config-collection-${collectionName}-default">
 								Default collection?
-							</label>
-						</div>
-						<div class="ic-Form-control ic-Form-control--checkbox">
-							<input type="checkbox" id="cc-config-collection-${collectionName}-all"
-							    class="cc-config-collection-all">
-							<label class="ic-Label" for="cc-config-collection-${collectionName}-all">
-								Include all modules?
 							</label>
 						</div>
 					</div>

@@ -249,11 +249,7 @@ export default class cc_ConfigurationStore {
 
 	saveConfigPage(create = false) {
 
-		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages`;
-
-		if (!create && this.hasOwnProperty('pageObject') && this.pageObject.hasOwnProperty('page_id')) {
-			callUrl += `/${this.pageObject.page_id}`;
-		}
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.pageObject.page_id}`;
 
 		DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: callUrl = ${callUrl}`);
 
@@ -290,22 +286,8 @@ export default class cc_ConfigurationStore {
 
 		let method = "put";
 		// if we're creating, change the URL and add the title
-		if (create) {
-			method = "post";
-			_body = {
-				"wiki_page": {
-					"body": content,
-					"title": 'Canvas Collections Configuration',
-					"editing_roles": 'teachers',
-					"notify_of_update": false,
-					"published": false,
-					"front_page": false
-				}
-			};
-		}
 
 		const bodyString = JSON.stringify(_body);
-
 
 		fetch(callUrl, {
 			method: method, credentials: 'include',
@@ -324,13 +306,8 @@ export default class cc_ConfigurationStore {
 					// don't need to do anything with it here
 					DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: json = ${JSON.stringify(json)}`);
 
-					if (create) {
-						this.pageObject = json[0];
-					} else {
-						// tell the controller we successfully completed
-						this.parentController.completedSaveConfig();
-					}
-
+					// tell the controller we successfully completed
+					this.parentController.completedSaveConfig();
 				} else {
 					alert(`Problem saving config ${response.status} - `);
 				}
@@ -342,6 +319,113 @@ export default class cc_ConfigurationStore {
 				this.parentController.failedSaveConfig(error);
 			}, false);
 	}
+
+	/**
+	 * @descr update the contents of the configuration page (this.pageObject.pageId) with 
+	 * the this.parentController.cc_configuration as JSON
+	 * @param {Boolean} create - default false, set to true to create a new page
+	 */
+
+	async createConfigPage() {
+
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages`;
+
+		DEBUG && console.log(`cc_ConfigurationStore: createConfigPage: callUrl = ${callUrl}`);
+
+		// construct the new content for the page
+		// - boiler plate description HTML to start
+		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
+		// - div.json containing
+		//   - JSON stringify of this.parentController.cc_configuration
+		//   - however, each module needs to have it's description encoded as HTML
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			const module = this.parentController.cc_configuration.MODULES[key];
+			module.description = this.encodeHTML(module.description);
+		}
+		content = content.replace('{{CONFIG}}',
+			JSON.stringify(this.parentController.cc_configuration));
+
+		// now de-encode the description for the page
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			const module = this.parentController.cc_configuration.MODULES[key];
+			module.description = this.decodeHTML(module.description);
+		}
+
+
+		// get the current time as string
+		let time = new Date().toISOString();
+
+		content = content.replace('{{VISIBLE_TEXT}}', `<p> saved at ${time}</p>`);
+
+		let _body = {
+			"wiki_page": {
+				"body": content,
+				"title": 'Canvas Collections Configuration',
+				"editing_roles": 'teachers',
+				"notify_of_update": false,
+				"published": false,
+				"front_page": false
+			}
+		};
+
+		let method = "post";
+
+		const bodyString = JSON.stringify(_body);
+
+		const response = await fetch(callUrl, {
+			method: method, credentials: 'include',
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+				"Accept": "application/json; charset=UTF-8",
+				"X-CSRF-Token": this.parentController.csrf,
+			},
+			body: bodyString
+		});
+
+		if (!response.ok) {
+			alert(`Problem creating config ${response.status} - `);
+			return;
+		}
+
+		const json = await response.json();
+		this.pageObject = json;
+		alert(`Successfully created config page `);
+
+/*
+
+		fetch(callUrl, {
+			method: method, credentials: 'include',
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+				"Accept": "application/json; charset=UTF-8",
+				"X-CSRF-Token": this.parentController.csrf,
+			},
+			body: bodyString
+		})
+			.then(this.status)
+			.then((response) => {
+				if (response.ok) {
+					const json = response.json();
+					// json should have the newly created page object,
+					// don't need to do anything with it here
+					DEBUG && console.log(`cc_ConfigurationStore: createConfigPage: json = ${JSON.stringify(json)}`);
+
+					this.pageObject = json[0];
+					//					this.parentController.completedSaveConfig();
+					this.parentController.execute();
+
+				} else {
+					alert(`Problem creating config ${response.status} - `);
+				}
+			})
+			.catch((error) => {
+				console.log(`cc_ConfigurationStore: requestConfig: error = `);
+				console.log(error);
+
+				this.parentController.failedSaveConfig(error);
+			}, false); */
+	}
+
 
 
 	decodeHTML(html) {
@@ -378,10 +462,12 @@ export default class cc_ConfigurationStore {
 		this.initialiseModuleConfig();
 
 		// create the new config page
-		this.saveConfigPage(true);
+		this.createConfigPage();
+		this.parentController.execute();
+
 		// continue the process
 		//this.parentController.requestModuleInformation();
-		this.parentController.execute();
+
 
 	}
 

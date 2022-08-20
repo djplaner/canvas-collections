@@ -297,8 +297,9 @@ export default class cc_ConfigurationModel {
 		// add the new collection to the COLLECTIONS_ORDER array
 		cc_configuration.COLLECTIONS_ORDER.push(newCollection.name);
 
-		// if the new collection is the default, set the DEFAULT_ACTIVE_COLLECTION to the new collection name
-		if (newCollection.default) {
+		// only set new collection to default, if there currently isn't one
+		const currentDefault = this.getDefaultCollection();
+		if (!currentDefault || currentDefault==='' ){
 			cc_configuration.DEFAULT_ACTIVE_COLLECTION = newCollection.name;
 		}
 	}
