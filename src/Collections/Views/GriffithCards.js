@@ -437,7 +437,7 @@ export default class GriffithCardsView extends cc_View {
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
 	      <a href="#${module.id}" class="cc-card-link"></a>
-		  <img class="cc-card-image" src="${imageUrl}" alt="Image representing '${module.name}'">
+		  <img class="cc-card-image" style="${imageSize}" src="${imageUrl}" alt="Image representing '${module.name}'">
       	${DATE_WIDGET}
       	${COMING_SOON}
 	 	${PUBLISHED}
@@ -785,9 +785,12 @@ export default class GriffithCardsView extends cc_View {
 	 */
 	generateCardImageSize(module) {
 		let imageSize = "";
+		const allowedObjectFit = ['contain', 'cover', 'scale-down','fill'];
 		if ("imageSize" in module && module.imageSize!=="" ) {
 			if (module.imageSize === "bg-contain") {
 				imageSize = "background-size: contain !important; background-repeat: no-repeat; background-position: center;";
+			} else if ( allowedObjectFit.includes( module.imageSize )){	
+				imageSize = `object-fit: ${module.imageSize} !important;`;
 			}
 		}
 		return imageSize;

@@ -523,10 +523,16 @@ class cc_ConfigurationView extends cc_View {
 		const moduleDetails = this.model.getModuleDetails();
 
 		// loop through all the div.ig-header elements
-		const moduleHeaders = document.getElementsByClassName('ig-header');
+		// 
+		//const moduleHeaders = document.getElementsByClassName('ig-header');
+		let moduleHeaders = document.querySelectorAll('div.ig-header');
 		// for each
 		for (let i = 0; i < moduleHeaders.length; i++) {
 			const moduleHeader = moduleHeaders[i];
+			// if moduleHeader does not have a numeric id, continue
+			if (!moduleHeader.id.match(/^\d+$/)) {
+				continue;
+			}
 			const id = moduleHeader.id;
 			const moduleDetail = moduleDetails[id];
 
@@ -709,9 +715,9 @@ class cc_ConfigurationView extends cc_View {
 
 		// get list of collections
 		const collections = this.model.getCollections();
-		let collectionsOptions = '';
+		let selected = '';
+		let collectionsOptions = '<option value="">Unallocated</option>';
 		for (let i = 0; i < collections.length; i++) {
-			let selected = '';
 			const collection = collections[i];
 			if ( collection === moduleCollection) {
 				selected = 'selected';
@@ -1077,12 +1083,6 @@ class cc_ConfigurationView extends cc_View {
 										<small>Include all modules?</small>
 									</label>
 								</div>
-								<div class="ic-Form-control ic-Form-control--checkbox">
-									<input type="checkbox" id="cc-config-new-collection-unallocated">
-									<label class="ic-Label" for="cc-config-new-collection-unallocated">
-										<small>Include modules without a collection?</small>
-									</label>
-								</div>
 							</div>
 							<button class="btn btn-primary" id="cc-config-new-collection-button">Add</button>
 						</fieldset>
@@ -1189,13 +1189,6 @@ class cc_ConfigurationView extends cc_View {
 							    class="cc-config-collection-all">
 							<label class="ic-Label" for="cc-config-collection-${collectionName}-all">
 								Include all modules?
-							</label>
-						</div>
-						<div class="ic-Form-control ic-Form-control--checkbox">
-							<input type="checkbox" id="cc-config-collection-${collectionName}-unallocated"
-							     class="cc-config-collection-unallocated">
-							<label class="ic-Label" for="cc-config-collection-${collectionName}-unallocated">
-								Include modules without a collection?
 							</label>
 						</div>
 					</div>
@@ -4130,7 +4123,7 @@ class GriffithCardsView extends cc_View {
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
 	      <a href="#${module.id}" class="cc-card-link"></a>
-		  <img class="cc-card-image" src="${imageUrl}" alt="Image representing '${module.name}'">
+		  <img class="cc-card-image" style="${imageSize}" src="${imageUrl}" alt="Image representing '${module.name}'">
       	${DATE_WIDGET}
       	${COMING_SOON}
 	 	${PUBLISHED}
@@ -4478,9 +4471,12 @@ class GriffithCardsView extends cc_View {
 	 */
 	generateCardImageSize(module) {
 		let imageSize = "";
+		const allowedObjectFit = ['contain', 'cover', 'scale-down','fill'];
 		if ("imageSize" in module && module.imageSize!=="" ) {
 			if (module.imageSize === "bg-contain") {
 				imageSize = "background-size: contain !important; background-repeat: no-repeat; background-position: center;";
+			} else if ( allowedObjectFit.includes( module.imageSize )){	
+				imageSize = `object-fit: ${module.imageSize} !important;`;
 			}
 		}
 		return imageSize;
