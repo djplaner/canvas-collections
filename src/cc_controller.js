@@ -47,19 +47,29 @@ export default class cc_Controller {
 		this.configFileDetails = null;
 		this.cc_configuration = null;
 
-		this.configurationStore = new cc_ConfigurationStore(this);
-
 
 		// if cc should run, try to get the config
 		if (this.modulesPage || this.homeModulesPage) {
-			// proposed "command" change
 
-
-			//-- original get data chain commencing
 			this.setCsrfToken();
 			DEBUG && console.log(`cc_Controller: csrf = ${this.csrf}`);
 
+			// get Canvas info about the course
+			// should create this.courseObject
 			this.requestCourseObject();
+			// TODO result check
+			// Use the course information to identify STRM based on course Id
+			this.generateSTRM();
+			// get Canvas info about modules
+			// Populates this.moduleDetails
+			this.requestModuleInformation();
+			// TODO result check
+			//-- now get information about Collections configuration
+			this.configurationStore = new cc_ConfigurationStore(this);
+
+			// all set up and ready to go
+			// TODO - error checking?
+			this.execute();
 		}
 
 	}
@@ -69,46 +79,31 @@ export default class cc_Controller {
 	 * Mostly to set the STRM
 	 * requestConfigFileId() when done - or bypass for findConfigPage
 	 */
-	requestCourseObject() {
-
+	async requestCourseObject() {
 		let callUrl = `/api/v1/courses/${this.courseId}`;
 
 		DEBUG && console.log(`cc_Controller: requestCourseOjbect: callUrl = ${callUrl}`);
 
-		fetch(callUrl, {
+		const response = await fetch(callUrl, {
 			method: 'GET', credentials: 'include',
 			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json",
 				"X-CSRF-Token": this.csrfToken,
 			}
-		})
-			.then(this.status)
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				DEBUG && console.log(`cc_Controller: requestCourseObject: json = ${JSON.stringify(json)}`);
+		});
+		if (!response.ok) {
+			throw new Error(`cc_Controller: requestCourseObject: error ${response.status}`);
+		}
 
-				if (json.length === 0) {
-					DEBUG && console.log(`cc_Controller: requestCourseObject: couldn't get course object`);
-				} else {
-					this.courseObject = json;
-					this.generateSTRM();
-					//this.requestConfigFileId();
-					// Experiment using configuration store
-					//this.configurationStore.getConfiguration();
-					this.requestModuleInformation();
-					//this.findConfigPage();
-				}
-			})
-			.catch((error) => {
-				console.log(`cc_Controller: requestCourseObject: error = `);
-				console.log(error);
-				//this.requestConfigFileId();
-				// CORS issues now with requesting config file
-				// this.findConfigPage();
-			}, false);
+		const data = await response.json();
+
+		if (data.length === 0) { 
+			// TODO unsure about the validity of this
+			DEBUG && console.log(`cc_Controller: requestCourseObject: couldn't get course object`);
+		} else { 
+			this.courseObject = data;
+		}
 	}
 
 	/**
@@ -209,39 +204,30 @@ export default class cc_Controller {
 	/**
 	 * @descr Generate API request for all information of course's modules
 	 */
-	requestModuleInformation() {
+	async requestModuleInformation() {
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: for ${this.courseId}`);
 
 		let callUrl = `/api/v1/courses/${this.courseId}/modules?include=items&per_page=500`;
 
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: callUrl = ${callUrl}`);
 
-		fetch(callUrl, {
+		const response = await fetch(callUrl, {
 			method: 'GET', credentials: 'include',
 			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json",
 				"X-CSRF-Token": this.csrf,
 			}
-		})
-			.then(this.status)
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(json)}`);
+		});
+		if (!response.ok) {
+			throw new Error(`cc_Controller: requestModuleInformation: error ${response.status}`);
+		}
 
-				this.moduleDetails = json;
-				// TODO call https://canvas.instructure.com/doc/api/modules.html#method.context_module_items_api.index
-				// the list module items API for each module
-				this.configurationStore.getConfiguration();
-//				this.execute();
-			})
-			.catch((error) => {
-				console.log(`cc_Controller: requestModuleInformation: error = `);
-				console.log(error);
-			}, false);
+		const data = await response.json();
 
+		DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(data)}`);
+
+		this.moduleDetails = data;
 	}
 
 	/**
