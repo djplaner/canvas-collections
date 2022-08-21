@@ -609,7 +609,7 @@ class cc_ConfigurationView extends cc_View {
 			</div>
       		<span>
 			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
-			  Canvas Collections Configuration</span>
+			  Collections Configuration</span>
 			  ${showConfigHtml}
   		</div>`;
 
@@ -779,6 +779,8 @@ class cc_ConfigurationView extends cc_View {
 
 		// try and get existing Collections module configuration
 		let moduleConfig = this.model.getModuleConfiguration(moduleDetail.id);
+		// get the current collection
+//		const currentCollection = this.model.getCurrentCollection();
 
 		// check for a module that hasn't been added to the collection yet
 		if (!moduleConfig) {
@@ -806,6 +808,7 @@ class cc_ConfigurationView extends cc_View {
 				selected = 'selected';
 			}
 			collectionsOptions += `<option value="${collection}" ${selected}>${collection}</option>`;
+			selected='';
 		}
 		// set the imageSizeOptions
 		let imageSizeOptions = '';
