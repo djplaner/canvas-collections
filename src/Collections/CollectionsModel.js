@@ -62,13 +62,13 @@ export default class CollectionsModel {
 		return this.cc_configuration.COLLECTIONS[this.currentCollection].representation;
 	}
 
-	getCurrentCollectionPageName() {
+	getCurrentCollectionIncludePage() {
 		if (!this.hasOwnProperty('currentCollection') ||
 			!this.cc_configuration.COLLECTIONS.hasOwnProperty(this.currentCollection) ||
-			!this.cc_configuration.COLLECTIONS[this.currentCollection].hasOwnProperty('pageName')) {
+			!this.cc_configuration.COLLECTIONS[this.currentCollection].hasOwnProperty('includePage')) {
 			return null;
 		}
-		return this.cc_configuration.COLLECTIONS[this.currentCollection].pageName;
+		return this.cc_configuration.COLLECTIONS[this.currentCollection].includePage;
 	}
 
 	getCollectionRepresentation(collection) {

@@ -28,7 +28,7 @@ export default class cc_ConfigurationModel {
 			'GriffithCards',
 			'CollectionOnly',
 			'AssessmentTable',
-			'CanvasPage'
+			//'CanvasPage' deprecated replaced by includePage collection config
 		];
 	}
 

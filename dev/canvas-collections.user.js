@@ -44,7 +44,7 @@ class cc_ConfigurationModel {
 			'GriffithCards',
 			'CollectionOnly',
 			'AssessmentTable',
-			'CanvasPage'
+			//'CanvasPage' deprecated replaced by includePage collection config
 		];
 	}
 
@@ -2219,13 +2219,13 @@ class CollectionsModel {
 		return this.cc_configuration.COLLECTIONS[this.currentCollection].representation;
 	}
 
-	getCurrentCollectionPageName() {
+	getCurrentCollectionIncludePage() {
 		if (!this.hasOwnProperty('currentCollection') ||
 			!this.cc_configuration.COLLECTIONS.hasOwnProperty(this.currentCollection) ||
-			!this.cc_configuration.COLLECTIONS[this.currentCollection].hasOwnProperty('pageName')) {
+			!this.cc_configuration.COLLECTIONS[this.currentCollection].hasOwnProperty('includePage')) {
 			return null;
 		}
-		return this.cc_configuration.COLLECTIONS[this.currentCollection].pageName;
+		return this.cc_configuration.COLLECTIONS[this.currentCollection].includePage;
 	}
 
 	getCollectionRepresentation(collection) {
@@ -4946,6 +4946,8 @@ class CollectionsViewFactory {
  * the Canvas module list. div#cc-canvas-collections contains three elements
  * - div#cc-nav - the navigation bar
  * - div.cc-message - a largely unused (currently) div for a collection specific message
+ * - div.cc-include-page - content of a specified Canvas page to be included
+ *     TODO include-page probably to replace cc-message
  * - div.cc-representation - final div that contains the representation 
  *  
  */
@@ -5000,8 +5002,10 @@ class CollectionsView extends cc_View {
 		this.removeCanvasCollectionsDiv();
 		this.addCanvasCollectionsDiv();
 
-		// TODO call other views to display the collections
+		// set up div#cc-nav
 		this.navView.display();
+		// set up div#cc-include-page
+		this.addIncludePage();
 
 		this.updateCurrentRepresentation();
 
@@ -5009,6 +5013,116 @@ class CollectionsView extends cc_View {
 		// display the current collection using its representation
 		//	this.representationView.display();
 	}
+
+	/**
+	 * Add div#cc-include-page 
+	 * If the current collection has an includePage defined 
+	 * - get it's content and place in div#cc-include-page
+	 * Content is gotten by
+	 * - findPage(includePage)
+	 *   - which attempts to find the matching file
+	 *   - generate error (if in edit mode)
+	 * - addPageContent()
+	 */
+
+	addIncludePage() {
+		// create div#cc-include-page - and add after div.cc-nav
+		// - already for the async grabbing of page content to be inserted
+		let ccIncludePage = document.createElement('div');
+		ccIncludePage.id = 'cc-include-page';
+		
+		// add after div.cc-nav
+		let ccNav = document.querySelector('div.cc-nav');
+		if (ccNav) {
+			ccNav.insertAdjacentElement('afterend', ccIncludePage);
+		}
+		
+		const includePage = this.model.getCurrentCollectionIncludePage();
+
+		if (includePage) {
+			this.findPage(includePage);
+		}
+	}
+
+	/**
+	 * Use the Canvas API to find this.pageName
+	 */
+	async findPage(pageName) {
+
+		let callUrl = `/api/v1/courses/${this.controller.parentController.courseId}/pages?` + new URLSearchParams(
+			{ 'search_term': pageName });
+
+		DEBUG && console.log(`CollectionsView: findPage: callUrl = ${callUrl}`);
+
+		const response = await fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.controller.csrf,
+			}
+		});
+
+		if (!response.ok) {
+			throw new Error(`CollectionsView: findPage: error ${response.status} ${response.statusText}`);
+		}
+
+		const data = await response.json();
+
+		// json should contain a list of items, should be just one
+		if (data.length === 0) {
+			DEBUG && console.log(`CollectionsView: findPage no page found for ${pageName}`);
+			// TODO if in edit mode, display some error
+		} 
+
+		// add the page content for the first found page
+		// TODO is this needed
+		this.addPageContent(data[0]);
+
+		if (data.length > 1) {
+			DEBUG && console.log(`CollectionsView: findPage multiple pages found for ${pageName}`);
+			// TODO if in edit mode, display some error
+		}
+	}
+
+	/**
+	 * Use the Canvas API to get the full details of the page (pageObject)
+	 * And insert the contents into div#cc-include-page
+	 */
+	async addPageContent(pageObject) {
+
+		let callUrl = `/api/v1/courses/${this.controller.parentController.courseId}/pages/${pageObject.page_id}`;
+
+		DEBUG && console.log(`CanvasPage: requestConfigPageContents: callUrl = ${callUrl}`);
+
+		const response = await fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.controller.csrf,
+			}
+		});
+
+		if (!response.ok) {
+			DEBUG && console.log(`CanvasPage: requestConfigPageContents: response not ok`);
+			// TODO if in edit mode, display some error
+			return;
+		}
+
+		const newPageObject = await response.json();
+		const content = newPageObject.body;
+
+		let div = document.querySelector('div#cc-include-page');
+
+		if (div) {
+			div.innerHTML = content;
+		}
+		// TODO some error if div not found
+
+	}
+
+
 
 	/**
 	 * Do the work necessary to update the current (visible) collections representation
