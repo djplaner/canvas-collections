@@ -376,6 +376,51 @@ export default class cc_ConfigurationController {
 	}
 
 	/**
+	 * User changed a input for a Collection page
+	 *   input id format cc-collection<collectionName>-[include|output]-page
+	 * - get the collection name and type of page
+	 * - modify the collection configuration details
+	 * @param {*} event 
+	 */
+
+	modifyCollectionPages(event) {
+		const value = event.target.value;
+
+
+		const idString = event.target.id;
+		// get collectionName
+		const collectionName = idString.match(/cc-collection-([^-]+)-/)[1];
+		// get type of page
+		const pageType = idString.match(/-([^-]+)-page$/)[1];
+
+		// if trying to use "Canvas Collections Configuration" page as an output page, error
+		if (pageType === 'output' && value === 'Canvas Collections Configuration') {
+			alert('Canvas Collections Configuration cannot be used as an output page');
+			return;
+		}
+
+		// if we change configuration
+		if (this.model.changeCollectionPage(collectionName, pageType, value)) {
+			// make sure it's saved
+			// update various representations
+
+			this.changeMade(true);
+
+			// TODO
+			// - generate appropriate errors for pages that don't exist etc
+			// - probably spark off a search for the page which will generate an
+			//   error if the page doesn't exist
+			// - this perhaps then needs to be factored into the collections configuration
+			//   and then the representation of the configuration
+
+			// TODO figure out if and how to modify the collection representation
+			// - if collection matches the collection name then update the representation
+		}
+
+
+	}
+
+	/**
 	 * @descr handle a change made to a module configuration field
 	 * @param event 
 	 */

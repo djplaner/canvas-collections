@@ -632,6 +632,11 @@ export default class cc_ConfigurationView extends cc_View {
 				font-weight: normal;
 			}
 
+			input.cc-existing-collection {
+				width: 10rem;
+				margin: 0.1rem;
+			}
+
 			</style>
 
 			<div id="cc-config">
@@ -733,6 +738,9 @@ export default class cc_ConfigurationView extends cc_View {
 			const availableRepresentations = this.getAvailableRepresentations(
 				this.model.getCollectionRepresentation(collectionName)
 			);
+			// TODO set these to collection values
+			let includePage=this.model.getCollectionAttribute(collectionName,"includePage");
+			let outputPage=this.model.getCollectionAttribute(collectionName,"outputPage");
 			const divExistingCollection = `
 			<div class="cc-existing-collection border border-trbl" id="cc-collection-${collectionName}">
 				<p>${collectionName} - (${moduleCount} ${moduleName})
@@ -751,6 +759,16 @@ export default class cc_ConfigurationView extends cc_View {
 					    class="cc-collection-representation">
 					  ${availableRepresentations}
 					</select>
+				</div>
+				<div class="cc-collection-representation">
+					<label for="cc-collection-${collectionName}-include-page">Include page</label>
+				 	<input id="cc-collection-${collectionName}-include-page" 
+					     value="${includePage}" class="cc-existing-collection" />
+				</div>
+				<div class="cc-collection-representation">
+					<label for="cc-collection-${collectionName}-output-page">Output page</label>
+				 	<input id="cc-collection-${collectionName}-output-page" 
+					      value="${outputPage}" class="cc-existing-collection" />
 				</div>
 
 				<!-- put the options -->
@@ -830,6 +848,11 @@ export default class cc_ConfigurationView extends cc_View {
 		const defaultCheckboxes = document.querySelectorAll('input.cc-config-collection-default');
 		defaultCheckboxes.forEach(checkbox => {
 			checkbox.onchange = (event) => this.controller.changeDefaultCollection(event);
+		});
+		// add event handler for input.cc-existing-collection (the page inputs)
+		const existingCollections = document.querySelectorAll('input.cc-existing-collection');
+		existingCollections.forEach(collection => {
+			collection.onchange = (event) => this.controller.modifyCollectionPages(event);
 		});
 	}
 

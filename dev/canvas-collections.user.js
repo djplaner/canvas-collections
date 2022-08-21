@@ -60,13 +60,13 @@ class cc_ConfigurationModel {
 	turnOn() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOn()`);
 		this.controller.parentController.ccOn = true;
-		this.controller.parentController.cc_configuration.STATUS="on";
+		this.controller.parentController.cc_configuration.STATUS = "on";
 	}
 
 	turnOff() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOff()`);
 		this.controller.parentController.ccOn = false;
-		this.controller.parentController.cc_configuration.STATUS="off";
+		this.controller.parentController.cc_configuration.STATUS = "off";
 	}
 
 	getConfigShowing() {
@@ -80,17 +80,17 @@ class cc_ConfigurationModel {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getModuleDetails()`);
 
 		return this.controller.parentController.mergedModuleDetails;
-/*		const moduleDetails = this.controller.parentController.moduleDetails;
-		// map array of objects moduleDetails into hash keyed on id attribute
-		const moduleDetailsHash = moduleDetails.reduce(
-			(accumulator, module) => {
-				accumulator[module.id] = module;
-				return accumulator;
-			},
-			{}
-		);
-
-		return moduleDetailsHash; //this.controller.parentController.moduleDetails; */
+		/*		const moduleDetails = this.controller.parentController.moduleDetails;
+				// map array of objects moduleDetails into hash keyed on id attribute
+				const moduleDetailsHash = moduleDetails.reduce(
+					(accumulator, module) => {
+						accumulator[module.id] = module;
+						return accumulator;
+					},
+					{}
+				);
+		
+				return moduleDetailsHash; //this.controller.parentController.moduleDetails; */
 	}
 
 	/**
@@ -103,13 +103,13 @@ class cc_ConfigurationModel {
 
 		// find the object in the array this.controller.parentController.moduleDetails that 
 		// has the id matching moduleId
-/*		const module = this.controller.parentController.moduleDetails.find(
-			(module) => module.id===moduleId
-		);  */
+		/*		const module = this.controller.parentController.moduleDetails.find(
+					(module) => module.id===moduleId
+				);  */
 		const module = this.controller.parentController.mergedModuleDetails[moduleId];
 
 		// set the configClass attribute of the found object to newClass
-		if (newClass==="icon-mini-arrow-down") {
+		if (newClass === "icon-mini-arrow-down") {
 			module.configClass = "icon-mini-arrow-right";
 		} else {
 			module.configClass = "icon-mini-arrow-down";
@@ -131,7 +131,7 @@ class cc_ConfigurationModel {
 	getOtherConfigShowClass(className) {
 		// find the index of CONFIG_SHOW_ICONS that matches newClass
 
-		if ( this.CONFIG_SHOW_ICONS[false]===className ) {
+		if (this.CONFIG_SHOW_ICONS[false] === className) {
 			return this.CONFIG_SHOW_ICONS[true];
 		} else {
 			return this.CONFIG_SHOW_ICONS[false];
@@ -145,7 +145,7 @@ class cc_ConfigurationModel {
 	 */
 	setConfigShowClass(newClass) {
 		// find the index of CONFIG_SHOW_ICONS that matches newClass
-		if (this.CONFIG_SHOW_ICONS[false]===newClass) {
+		if (this.CONFIG_SHOW_ICONS[false] === newClass) {
 			this.configShowing = false;
 		} else {
 			this.configShowing = true;
@@ -160,7 +160,7 @@ class cc_ConfigurationModel {
 
 	getExistingCollectionNames() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getExistingCollectionNames()`);
-	 	return this.controller.parentController.cc_configuration.COLLECTIONS_ORDER;
+		return this.controller.parentController.cc_configuration.COLLECTIONS_ORDER;
 	}
 
 	setExistingCollectionNames(collectionNames) {
@@ -179,7 +179,7 @@ class cc_ConfigurationModel {
 
 		let count = 0;
 		for (const id in modules) {
-			if (modules[id].collection===collectionName) {
+			if (modules[id].collection === collectionName) {
 				count++;
 			}
 		}
@@ -187,11 +187,11 @@ class cc_ConfigurationModel {
 
 		// filter modules to return only objects with collection==collectionName
 		//const collectionModules = modules.filter(module => module.collection===collectionName);
-/*		const collectionModules = Object.keys(modules).filter(
-			(module) => modules[module].collection===collectionName
-			);
-
-		return collectionModules.length; */
+		/*		const collectionModules = Object.keys(modules).filter(
+					(module) => modules[module].collection===collectionName
+					);
+		
+				return collectionModules.length; */
 	}
 
 	getEditMode() {
@@ -260,7 +260,20 @@ class cc_ConfigurationModel {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getCollectionRepresentation()`);
 		console.log(
 			`representation is ${this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation}`);
+
+
 		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation;
+	}
+
+	getCollectionAttribute(collectionName, attribute) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getCollectionAttribute()`);
+
+		// return null if there's no matching collection or attribute
+		if (!this.controller.parentController.cc_configuration.COLLECTIONS[collectionName] ||
+			!this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute]) {
+			return "";
+		}
+		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute];
 	}
 
 	/**
@@ -315,7 +328,7 @@ class cc_ConfigurationModel {
 
 		// only set new collection to default, if there currently isn't one
 		const currentDefault = this.getDefaultCollection();
-		if (!currentDefault || currentDefault==='' ){
+		if (!currentDefault || currentDefault === '') {
 			cc_configuration.DEFAULT_ACTIVE_COLLECTION = newCollection.name;
 		}
 	}
@@ -332,7 +345,7 @@ class cc_ConfigurationModel {
 		let cc_configuration = this.controller.parentController.cc_configuration;
 
 		// remove the collection from the COLLECTIONS hash
-		if ( cc_configuration.COLLECTIONS.hasOwnProperty(collectionName) ) {
+		if (cc_configuration.COLLECTIONS.hasOwnProperty(collectionName)) {
 			delete cc_configuration.COLLECTIONS[collectionName];
 		}
 
@@ -364,12 +377,38 @@ class cc_ConfigurationModel {
 	 * @param {*} value 
 	 */
 
-	changeModuleConfig(moduleId,fieldName,value) {
+	changeModuleConfig(moduleId, fieldName, value) {
 		const module = this.findModuleById(moduleId);
 
 		if (module) {
 			module[fieldName] = value;
 		}
+	}
+
+	/**
+	 * User has modified the include/output page for a collection, update
+	 * the configuration settings
+	 * @param {string} collectionName 
+	 * @param {string} pageType 
+	 * @param {string} value 
+	 */
+
+	changeCollectionPage(collectionName, pageType, value) {
+		let cc_configuration = this.controller.parentController.cc_configuration;
+		// if there's collection of this name
+		if (cc_configuration.COLLECTIONS.hasOwnProperty(collectionName)) {
+			// if the pageType is include or output
+			if (pageType === 'include' || pageType === 'output') {
+				// if there really is a change
+				if (cc_configuration.COLLECTIONS[collectionName][`${pageType}Page`] !== value) {
+					// set the value for the pageType
+					cc_configuration.COLLECTIONS[collectionName][`${pageType}Page`] = value;
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -383,25 +422,25 @@ class cc_ConfigurationModel {
 		//return this.controller.parentController.moduleDetails[moduleId];
 		return this.controller.parentController.cc_configuration.MODULES[moduleId];
 
-/*		// get the name for the given moduleId
-		const modulesDetails = this.controller.parentController.moduleDetails;
-		let moduleName = null;
-		for (let i=0; i<modulesDetails.length; i++) {
-			if (modulesDetails[i].id===moduleId) {
-				moduleName = modulesDetails[i].name;
-				break;
-			}
-		}
-
-		if (!moduleName) {
-			return null;
-		}
-
-		let modules = this.controller.parentController.cc_configuration.MODULES;
-		if ( modules.hasOwnProperty(moduleName) ) {
-			return modules[moduleName];
-		}
-		return null; */
+		/*		// get the name for the given moduleId
+				const modulesDetails = this.controller.parentController.moduleDetails;
+				let moduleName = null;
+				for (let i=0; i<modulesDetails.length; i++) {
+					if (modulesDetails[i].id===moduleId) {
+						moduleName = modulesDetails[i].name;
+						break;
+					}
+				}
+		
+				if (!moduleName) {
+					return null;
+				}
+		
+				let modules = this.controller.parentController.cc_configuration.MODULES;
+				if ( modules.hasOwnProperty(moduleName) ) {
+					return modules[moduleName];
+				}
+				return null; */
 	}
 }
 
@@ -1086,6 +1125,11 @@ class cc_ConfigurationView extends cc_View {
 				font-weight: normal;
 			}
 
+			input.cc-existing-collection {
+				width: 10rem;
+				margin: 0.1rem;
+			}
+
 			</style>
 
 			<div id="cc-config">
@@ -1187,6 +1231,9 @@ class cc_ConfigurationView extends cc_View {
 			const availableRepresentations = this.getAvailableRepresentations(
 				this.model.getCollectionRepresentation(collectionName)
 			);
+			// TODO set these to collection values
+			let includePage=this.model.getCollectionAttribute(collectionName,"includePage");
+			let outputPage=this.model.getCollectionAttribute(collectionName,"outputPage");
 			const divExistingCollection = `
 			<div class="cc-existing-collection border border-trbl" id="cc-collection-${collectionName}">
 				<p>${collectionName} - (${moduleCount} ${moduleName})
@@ -1205,6 +1252,16 @@ class cc_ConfigurationView extends cc_View {
 					    class="cc-collection-representation">
 					  ${availableRepresentations}
 					</select>
+				</div>
+				<div class="cc-collection-representation">
+					<label for="cc-collection-${collectionName}-include-page">Include page</label>
+				 	<input id="cc-collection-${collectionName}-include-page" 
+					     value="${includePage}" class="cc-existing-collection" />
+				</div>
+				<div class="cc-collection-representation">
+					<label for="cc-collection-${collectionName}-output-page">Output page</label>
+				 	<input id="cc-collection-${collectionName}-output-page" 
+					      value="${outputPage}" class="cc-existing-collection" />
 				</div>
 
 				<!-- put the options -->
@@ -1284,6 +1341,11 @@ class cc_ConfigurationView extends cc_View {
 		const defaultCheckboxes = document.querySelectorAll('input.cc-config-collection-default');
 		defaultCheckboxes.forEach(checkbox => {
 			checkbox.onchange = (event) => this.controller.changeDefaultCollection(event);
+		});
+		// add event handler for input.cc-existing-collection (the page inputs)
+		const existingCollections = document.querySelectorAll('input.cc-existing-collection');
+		existingCollections.forEach(collection => {
+			collection.onchange = (event) => this.controller.modifyCollectionPages(event);
 		});
 	}
 
@@ -2013,6 +2075,51 @@ class cc_ConfigurationController {
 		const errorMsg = `Unable to uncheck the default collection - there always needs to be one.  Check the new default collection to change.`;
 		event.target.checked = true;
 		alert(errorMsg);
+	}
+
+	/**
+	 * User changed a input for a Collection page
+	 *   input id format cc-collection<collectionName>-[include|output]-page
+	 * - get the collection name and type of page
+	 * - modify the collection configuration details
+	 * @param {*} event 
+	 */
+
+	modifyCollectionPages(event) {
+		const value = event.target.value;
+
+
+		const idString = event.target.id;
+		// get collectionName
+		const collectionName = idString.match(/cc-collection-([^-]+)-/)[1];
+		// get type of page
+		const pageType = idString.match(/-([^-]+)-page$/)[1];
+
+		// if trying to use "Canvas Collections Configuration" page as an output page, error
+		if (pageType === 'output' && value === 'Canvas Collections Configuration') {
+			alert('Canvas Collections Configuration cannot be used as an output page');
+			return;
+		}
+
+		// if we change configuration
+		if (this.model.changeCollectionPage(collectionName, pageType, value)) {
+			// make sure it's saved
+			// update various representations
+
+			this.changeMade(true);
+
+			// TODO
+			// - generate appropriate errors for pages that don't exist etc
+			// - probably spark off a search for the page which will generate an
+			//   error if the page doesn't exist
+			// - this perhaps then needs to be factored into the collections configuration
+			//   and then the representation of the configuration
+
+			// TODO figure out if and how to modify the collection representation
+			// - if collection matches the collection name then update the representation
+		}
+
+
 	}
 
 	/**

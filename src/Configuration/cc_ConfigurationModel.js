@@ -44,13 +44,13 @@ export default class cc_ConfigurationModel {
 	turnOn() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOn()`);
 		this.controller.parentController.ccOn = true;
-		this.controller.parentController.cc_configuration.STATUS="on";
+		this.controller.parentController.cc_configuration.STATUS = "on";
 	}
 
 	turnOff() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOff()`);
 		this.controller.parentController.ccOn = false;
-		this.controller.parentController.cc_configuration.STATUS="off";
+		this.controller.parentController.cc_configuration.STATUS = "off";
 	}
 
 	getConfigShowing() {
@@ -64,17 +64,17 @@ export default class cc_ConfigurationModel {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getModuleDetails()`);
 
 		return this.controller.parentController.mergedModuleDetails;
-/*		const moduleDetails = this.controller.parentController.moduleDetails;
-		// map array of objects moduleDetails into hash keyed on id attribute
-		const moduleDetailsHash = moduleDetails.reduce(
-			(accumulator, module) => {
-				accumulator[module.id] = module;
-				return accumulator;
-			},
-			{}
-		);
-
-		return moduleDetailsHash; //this.controller.parentController.moduleDetails; */
+		/*		const moduleDetails = this.controller.parentController.moduleDetails;
+				// map array of objects moduleDetails into hash keyed on id attribute
+				const moduleDetailsHash = moduleDetails.reduce(
+					(accumulator, module) => {
+						accumulator[module.id] = module;
+						return accumulator;
+					},
+					{}
+				);
+		
+				return moduleDetailsHash; //this.controller.parentController.moduleDetails; */
 	}
 
 	/**
@@ -87,13 +87,13 @@ export default class cc_ConfigurationModel {
 
 		// find the object in the array this.controller.parentController.moduleDetails that 
 		// has the id matching moduleId
-/*		const module = this.controller.parentController.moduleDetails.find(
-			(module) => module.id===moduleId
-		);  */
+		/*		const module = this.controller.parentController.moduleDetails.find(
+					(module) => module.id===moduleId
+				);  */
 		const module = this.controller.parentController.mergedModuleDetails[moduleId];
 
 		// set the configClass attribute of the found object to newClass
-		if (newClass==="icon-mini-arrow-down") {
+		if (newClass === "icon-mini-arrow-down") {
 			module.configClass = "icon-mini-arrow-right";
 		} else {
 			module.configClass = "icon-mini-arrow-down";
@@ -115,7 +115,7 @@ export default class cc_ConfigurationModel {
 	getOtherConfigShowClass(className) {
 		// find the index of CONFIG_SHOW_ICONS that matches newClass
 
-		if ( this.CONFIG_SHOW_ICONS[false]===className ) {
+		if (this.CONFIG_SHOW_ICONS[false] === className) {
 			return this.CONFIG_SHOW_ICONS[true];
 		} else {
 			return this.CONFIG_SHOW_ICONS[false];
@@ -129,7 +129,7 @@ export default class cc_ConfigurationModel {
 	 */
 	setConfigShowClass(newClass) {
 		// find the index of CONFIG_SHOW_ICONS that matches newClass
-		if (this.CONFIG_SHOW_ICONS[false]===newClass) {
+		if (this.CONFIG_SHOW_ICONS[false] === newClass) {
 			this.configShowing = false;
 		} else {
 			this.configShowing = true;
@@ -144,7 +144,7 @@ export default class cc_ConfigurationModel {
 
 	getExistingCollectionNames() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getExistingCollectionNames()`);
-	 	return this.controller.parentController.cc_configuration.COLLECTIONS_ORDER;
+		return this.controller.parentController.cc_configuration.COLLECTIONS_ORDER;
 	}
 
 	setExistingCollectionNames(collectionNames) {
@@ -163,7 +163,7 @@ export default class cc_ConfigurationModel {
 
 		let count = 0;
 		for (const id in modules) {
-			if (modules[id].collection===collectionName) {
+			if (modules[id].collection === collectionName) {
 				count++;
 			}
 		}
@@ -171,11 +171,11 @@ export default class cc_ConfigurationModel {
 
 		// filter modules to return only objects with collection==collectionName
 		//const collectionModules = modules.filter(module => module.collection===collectionName);
-/*		const collectionModules = Object.keys(modules).filter(
-			(module) => modules[module].collection===collectionName
-			);
-
-		return collectionModules.length; */
+		/*		const collectionModules = Object.keys(modules).filter(
+					(module) => modules[module].collection===collectionName
+					);
+		
+				return collectionModules.length; */
 	}
 
 	getEditMode() {
@@ -244,7 +244,20 @@ export default class cc_ConfigurationModel {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.getCollectionRepresentation()`);
 		console.log(
 			`representation is ${this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation}`);
+
+
 		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName].representation;
+	}
+
+	getCollectionAttribute(collectionName, attribute) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.getCollectionAttribute()`);
+
+		// return null if there's no matching collection or attribute
+		if (!this.controller.parentController.cc_configuration.COLLECTIONS[collectionName] ||
+			!this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute]) {
+			return "";
+		}
+		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute];
 	}
 
 	/**
@@ -299,7 +312,7 @@ export default class cc_ConfigurationModel {
 
 		// only set new collection to default, if there currently isn't one
 		const currentDefault = this.getDefaultCollection();
-		if (!currentDefault || currentDefault==='' ){
+		if (!currentDefault || currentDefault === '') {
 			cc_configuration.DEFAULT_ACTIVE_COLLECTION = newCollection.name;
 		}
 	}
@@ -316,7 +329,7 @@ export default class cc_ConfigurationModel {
 		let cc_configuration = this.controller.parentController.cc_configuration;
 
 		// remove the collection from the COLLECTIONS hash
-		if ( cc_configuration.COLLECTIONS.hasOwnProperty(collectionName) ) {
+		if (cc_configuration.COLLECTIONS.hasOwnProperty(collectionName)) {
 			delete cc_configuration.COLLECTIONS[collectionName];
 		}
 
@@ -348,12 +361,38 @@ export default class cc_ConfigurationModel {
 	 * @param {*} value 
 	 */
 
-	changeModuleConfig(moduleId,fieldName,value) {
+	changeModuleConfig(moduleId, fieldName, value) {
 		const module = this.findModuleById(moduleId);
 
 		if (module) {
 			module[fieldName] = value;
 		}
+	}
+
+	/**
+	 * User has modified the include/output page for a collection, update
+	 * the configuration settings
+	 * @param {string} collectionName 
+	 * @param {string} pageType 
+	 * @param {string} value 
+	 */
+
+	changeCollectionPage(collectionName, pageType, value) {
+		let cc_configuration = this.controller.parentController.cc_configuration;
+		// if there's collection of this name
+		if (cc_configuration.COLLECTIONS.hasOwnProperty(collectionName)) {
+			// if the pageType is include or output
+			if (pageType === 'include' || pageType === 'output') {
+				// if there really is a change
+				if (cc_configuration.COLLECTIONS[collectionName][`${pageType}Page`] !== value) {
+					// set the value for the pageType
+					cc_configuration.COLLECTIONS[collectionName][`${pageType}Page`] = value;
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -367,24 +406,24 @@ export default class cc_ConfigurationModel {
 		//return this.controller.parentController.moduleDetails[moduleId];
 		return this.controller.parentController.cc_configuration.MODULES[moduleId];
 
-/*		// get the name for the given moduleId
-		const modulesDetails = this.controller.parentController.moduleDetails;
-		let moduleName = null;
-		for (let i=0; i<modulesDetails.length; i++) {
-			if (modulesDetails[i].id===moduleId) {
-				moduleName = modulesDetails[i].name;
-				break;
-			}
-		}
-
-		if (!moduleName) {
-			return null;
-		}
-
-		let modules = this.controller.parentController.cc_configuration.MODULES;
-		if ( modules.hasOwnProperty(moduleName) ) {
-			return modules[moduleName];
-		}
-		return null; */
+		/*		// get the name for the given moduleId
+				const modulesDetails = this.controller.parentController.moduleDetails;
+				let moduleName = null;
+				for (let i=0; i<modulesDetails.length; i++) {
+					if (modulesDetails[i].id===moduleId) {
+						moduleName = modulesDetails[i].name;
+						break;
+					}
+				}
+		
+				if (!moduleName) {
+					return null;
+				}
+		
+				let modules = this.controller.parentController.cc_configuration.MODULES;
+				if ( modules.hasOwnProperty(moduleName) ) {
+					return modules[moduleName];
+				}
+				return null; */
 	}
 }
