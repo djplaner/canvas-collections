@@ -83,7 +83,7 @@ export default class CollectionsView extends cc_View {
 	 * 
 	 */
 
-	updateCurrentRepresentation() {
+	updateCurrentRepresentation(justRepresentation=false) {
 		const currentCollection = this.model.getCurrentCollection();
 		const representation = this.model.getCollectionRepresentation(currentCollection);
 
@@ -104,7 +104,10 @@ export default class CollectionsView extends cc_View {
 		// idea is that all views should only show the current modules 
 		// - though configuration may change, the smarts of which can be put
 		//   into the following method.
-		this.showCanvasModules();
+
+		if (!justRepresentation) {
+			this.showCanvasModules();
+		}
 		//		this.representations[currentCollection].showCurrentCollectionModules();
 
 	}

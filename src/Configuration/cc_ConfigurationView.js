@@ -157,9 +157,12 @@ export default class cc_ConfigurationView extends cc_View {
 				editor.setContents(delta);
 				// keep track of the current editor
 				this.currentQuill = editor;
+				this.quillChanged = false;
 				// set the event handler
+				const editorSelectionHandler = this.quillSelectionChange.bind(this);
+				editor.on('selection-change', editorSelectionHandler);
 				const editorChangeHandler = this.quillChange.bind(this);
-				editor.on('selection-change', editorChangeHandler);
+				editor.on('text-change', editorChangeHandler);
 			}
 		}
 
@@ -168,6 +171,7 @@ export default class cc_ConfigurationView extends cc_View {
 			const configFields = configDiv.querySelectorAll('input, select');
 			for (let j = 0; j < configFields.length; j++) {
 				configFields[j].onchange = (event) => this.controller.updateModuleConfigField(event);
+				// this to prevent some other strange behavior (introduced by Canvas?)
 				configFields[j].onkeydown = (event) => event.stopPropagation();
 			}
 			// and also Quill, stop prop
@@ -179,16 +183,49 @@ export default class cc_ConfigurationView extends cc_View {
 	}
 
 	/**
+	 * Event handler called when Quill text is changed
+	 * Just sets the quillChanged flag to true
+	 * @param {*} delta 
+	 * @param {*} oldDelta 
+	 * @param {*} source 
+	 */
+	quillChange(delta, oldDelta, source) {
+		this.quillChanged = true;
+		const parentId = this.currentQuill.root.parentNode.id;
+		// extract the id from parentId with format cc-module-config-<id>-description
+		//const id = parentId.substring(parentId.indexOf('-') + 1, parentId.lastIndexOf('-'));
+		const event = {
+			target: {
+				id: parentId,
+				value: this.currentQuill.root.innerHTML
+			}
+		};
+		this.quillChanged = false;
+		// update the current collection representation
+		// - first the model
+		this.controller.updateModuleConfigField(event,false);
+		this.controller.changeMade(true);
+		// - then the view
+		this.controller.parentController.updateCurrentRepresentation(true);
+
+/*		this.controller.updateModuleConfigField(event);
+		this.currentQuill.focus(); */
+	}
+
+	/**
 	 * Event handler for loss of focus on the quill edito
 	 * TODO change this to an "update" description??
 	 * @param {*} range 
 	 * @param {*} oldRange 
 	 * @param {*} source 
 	 */
-	quillChange(range, oldRange, source) {
+	quillSelectionChange(range, oldRange, source) {
 		if (!range) {
 			// assume user has changed focus
-			if (this.currentQuill) {
+			if (this.currentQuill && this.quillChanged) {
+/*				if (this.currentQuill.hasFocus() ) {
+					return;
+				} */
 				const parentId = this.currentQuill.root.parentNode.id;
 				// extract the id from parentId with format cc-module-config-<id>-description
 				//const id = parentId.substring(parentId.indexOf('-') + 1, parentId.lastIndexOf('-'));
@@ -198,6 +235,7 @@ export default class cc_ConfigurationView extends cc_View {
 						value: this.currentQuill.root.innerHTML
 					}
 				};
+				this.quillChanged = false;
 				this.controller.updateModuleConfigField(event);
 			}
 
@@ -384,7 +422,7 @@ export default class cc_ConfigurationView extends cc_View {
 					        value="${moduleConfig.image}">
 				</div>
 				<div class="cc-module-config-imagePreview">
-				  <div class="cc-preview-container">
+<!--				  <div class="cc-preview-container">
 				    <div class="cc-clickable-card" style="width:50%">
 					  <div class="cc-card" aria-label="Preview">
 					    <div class="cc-card-flex">
@@ -414,7 +452,7 @@ export default class cc_ConfigurationView extends cc_View {
 						</div>
 					  </div>
 					</div>
-				</div> <!-- TODO should replace this with a call to the proper representation view -->
+				</div> --> <!-- TODO should replace this with a call to the proper representation view -->
 							 
 				  </div>
 				</div>

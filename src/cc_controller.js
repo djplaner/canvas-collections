@@ -84,10 +84,10 @@ export default class cc_Controller {
 
 		const data = await response.json();
 
-		if (data.length === 0) { 
+		if (data.length === 0) {
 			// TODO unsure about the validity of this
 			DEBUG && console.log(`cc_Controller: requestCourseObject: couldn't get course object`);
-		} else { 
+		} else {
 			this.courseObject = data;
 			this.generateSTRM();
 			this.requestModuleInformation();
@@ -227,7 +227,7 @@ export default class cc_Controller {
 	 * - Calls this.execute() when done
 	 */
 
-	mergeModuleDetails() {
+	mergeModuleDetails(execute = true) {
 		// Canvas module details stored in array of dicts
 		const canvasModules = this.moduleDetails;
 		// collections modules details stored in object with attributes matching
@@ -260,7 +260,9 @@ export default class cc_Controller {
 			this.mergedModuleDetails[canvasModuleId] = details;
 		}
 
-		this.execute();
+		if (execute) {
+			this.execute();
+		}
 	}
 
 	/**
@@ -281,7 +283,7 @@ export default class cc_Controller {
 		}
 
 		DEBUG && console.log('-------------- cc_Controller.execute()');
-//		console.log(this.cc_configuration);
+		//		console.log(this.cc_configuration);
 
 		//-- figure out what to do
 		if (this.editMode) {
@@ -304,7 +306,7 @@ export default class cc_Controller {
 				// only show collections if cc is turned on
 				if (this.ccOn) {
 					this.showCollections();
-				} 
+				}
 			}
 		} else {
 			// students only see stuff if there is a config
@@ -403,8 +405,17 @@ export default class cc_Controller {
 		this.collectionsController = new cc_CollectionsController(this);
 	}
 
-	updateCurrentRepresentation() {
-		this.collectionsController.view.updateCurrentRepresentation();
+	/**
+	 * Update the representation for the current collections, both the representation
+	 * and the module configuration (if appropriate)
+	 * - if just the representation pass in true
+	 * @param {Boolean} justRepresentation 
+	 */
+
+	updateCurrentRepresentation(justRepresentation = false) {
+		// re-calculate mergedModuleDetails because the current representation has changed
+		this.mergeModuleDetails(false);
+		this.collectionsController.view.updateCurrentRepresentation(justRepresentation);
 	}
 
 	/**
@@ -512,7 +523,7 @@ export default class cc_Controller {
 	 */
 	completedSaveConfig() {
 		//alert('Configuration saved you lazy sod. Make this work');
-	
+
 	}
 
 	failedSaveConfig(error) {

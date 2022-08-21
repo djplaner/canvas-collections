@@ -14,7 +14,8 @@ export default class CollectionsModel {
 		this.cc_configuration = this.controller.parentController.cc_configuration;
 
 		// merge the Canvas module and Collections configurations
-		this.createModuleCollections();
+		// replace this with live use of  parentController.mergedModuleDetails
+		//this.createModuleCollections();
 
 		// if currentCollection is undefined set it to the default
 		if (this.currentCollection === undefined) {
@@ -186,11 +187,18 @@ export default class CollectionsModel {
 	 */
 
 	getModulesCollections(collectionName = null) {
+		// mergedDetails is a hash of all modules keyed on id
+		const mergedDetails = this.controller.parentController.mergedModuleDetails;
+
 		if (collectionName === null) {
-			return this.modulesCollections;
+			// if no collectionName, convert hash of dicts mergedDetails into an array of dicts
+			return Object.values(mergedDetails);
 		}
 		// filter modulesCollections array to those that have an attribute collection==collectionName
-		const collectionModules = this.modulesCollections.filter(module => module.collection === collectionName);
+		//const collectionModules = this.modulesCollections.filter(module => module.collection === collectionName); */
+
+		// create array of dicts from mergedDetails where the collection is collectionName
+		const collectionModules = Object.keys(mergedDetails).filter(key => mergedDetails[key].collection === collectionName);
 
 		return collectionModules;
 	}

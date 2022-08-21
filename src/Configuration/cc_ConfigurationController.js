@@ -380,7 +380,7 @@ export default class cc_ConfigurationController {
 	 * @param event 
 	 */
 
-	updateModuleConfigField(event) {
+	updateModuleConfigField(event, updateView = true) {
 		// get the id of the element that was clicked
 		const idString = event.target.id;
 		// extract the moduleId and fieldName from idString
@@ -394,10 +394,14 @@ export default class cc_ConfigurationController {
 		this.model.changeModuleConfig(moduleId, fieldName, value);
 		this.changeMade(true);
 		// TODO - redisplay the representation
-		this.parentController.collectionsController.view.display();
 
-		// TODO - redisplay the module configuration view
-		this.view.updateSingleModuleConfig(moduleId);
+		if (updateView) {
+
+			this.parentController.collectionsController.view.display();
+
+			// TODO - redisplay the module configuration view
+			this.view.updateSingleModuleConfig(moduleId);
+		}
 	}
 
 

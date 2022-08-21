@@ -611,9 +611,12 @@ class cc_ConfigurationView extends cc_View {
 				editor.setContents(delta);
 				// keep track of the current editor
 				this.currentQuill = editor;
+				this.quillChanged = false;
 				// set the event handler
+				const editorSelectionHandler = this.quillSelectionChange.bind(this);
+				editor.on('selection-change', editorSelectionHandler);
 				const editorChangeHandler = this.quillChange.bind(this);
-				editor.on('selection-change', editorChangeHandler);
+				editor.on('text-change', editorChangeHandler);
 			}
 		}
 
@@ -622,6 +625,7 @@ class cc_ConfigurationView extends cc_View {
 			const configFields = configDiv.querySelectorAll('input, select');
 			for (let j = 0; j < configFields.length; j++) {
 				configFields[j].onchange = (event) => this.controller.updateModuleConfigField(event);
+				// this to prevent some other strange behavior (introduced by Canvas?)
 				configFields[j].onkeydown = (event) => event.stopPropagation();
 			}
 			// and also Quill, stop prop
@@ -633,16 +637,49 @@ class cc_ConfigurationView extends cc_View {
 	}
 
 	/**
+	 * Event handler called when Quill text is changed
+	 * Just sets the quillChanged flag to true
+	 * @param {*} delta 
+	 * @param {*} oldDelta 
+	 * @param {*} source 
+	 */
+	quillChange(delta, oldDelta, source) {
+		this.quillChanged = true;
+		const parentId = this.currentQuill.root.parentNode.id;
+		// extract the id from parentId with format cc-module-config-<id>-description
+		//const id = parentId.substring(parentId.indexOf('-') + 1, parentId.lastIndexOf('-'));
+		const event = {
+			target: {
+				id: parentId,
+				value: this.currentQuill.root.innerHTML
+			}
+		};
+		this.quillChanged = false;
+		// update the current collection representation
+		// - first the model
+		this.controller.updateModuleConfigField(event,false);
+		this.controller.changeMade(true);
+		// - then the view
+		this.controller.parentController.updateCurrentRepresentation(true);
+
+/*		this.controller.updateModuleConfigField(event);
+		this.currentQuill.focus(); */
+	}
+
+	/**
 	 * Event handler for loss of focus on the quill edito
 	 * TODO change this to an "update" description??
 	 * @param {*} range 
 	 * @param {*} oldRange 
 	 * @param {*} source 
 	 */
-	quillChange(range, oldRange, source) {
+	quillSelectionChange(range, oldRange, source) {
 		if (!range) {
 			// assume user has changed focus
-			if (this.currentQuill) {
+			if (this.currentQuill && this.quillChanged) {
+/*				if (this.currentQuill.hasFocus() ) {
+					return;
+				} */
 				const parentId = this.currentQuill.root.parentNode.id;
 				// extract the id from parentId with format cc-module-config-<id>-description
 				//const id = parentId.substring(parentId.indexOf('-') + 1, parentId.lastIndexOf('-'));
@@ -652,6 +689,7 @@ class cc_ConfigurationView extends cc_View {
 						value: this.currentQuill.root.innerHTML
 					}
 				};
+				this.quillChanged = false;
 				this.controller.updateModuleConfigField(event);
 			}
 
@@ -838,7 +876,7 @@ class cc_ConfigurationView extends cc_View {
 					        value="${moduleConfig.image}">
 				</div>
 				<div class="cc-module-config-imagePreview">
-				  <div class="cc-preview-container">
+<!--				  <div class="cc-preview-container">
 				    <div class="cc-clickable-card" style="width:50%">
 					  <div class="cc-card" aria-label="Preview">
 					    <div class="cc-card-flex">
@@ -868,7 +906,7 @@ class cc_ConfigurationView extends cc_View {
 						</div>
 					  </div>
 					</div>
-				</div> <!-- TODO should replace this with a call to the proper representation view -->
+				</div> --> <!-- TODO should replace this with a call to the proper representation view -->
 							 
 				  </div>
 				</div>
@@ -1982,7 +2020,7 @@ class cc_ConfigurationController {
 	 * @param event 
 	 */
 
-	updateModuleConfigField(event) {
+	updateModuleConfigField(event, updateView = true) {
 		// get the id of the element that was clicked
 		const idString = event.target.id;
 		// extract the moduleId and fieldName from idString
@@ -1996,11 +2034,14 @@ class cc_ConfigurationController {
 		this.model.changeModuleConfig(moduleId, fieldName, value);
 		this.changeMade(true);
 		// TODO - redisplay the representation
-		//this.parentController.showCollections();
-		this.parentController.collectionsController.view.display();
 
-		// TODO - redisplay the module configuration view
-		this.view.updateSingleModuleConfig(moduleId);
+		if (updateView) {
+
+			this.parentController.collectionsController.view.display();
+
+			// TODO - redisplay the module configuration view
+			this.view.updateSingleModuleConfig(moduleId);
+		}
 	}
 
 
@@ -2023,7 +2064,8 @@ class CollectionsModel {
 		this.cc_configuration = this.controller.parentController.cc_configuration;
 
 		// merge the Canvas module and Collections configurations
-		this.createModuleCollections();
+		// replace this with live use of  parentController.mergedModuleDetails
+		//this.createModuleCollections();
 
 		// if currentCollection is undefined set it to the default
 		if (this.currentCollection === undefined) {
@@ -2195,11 +2237,18 @@ class CollectionsModel {
 	 */
 
 	getModulesCollections(collectionName = null) {
+		// mergedDetails is a hash of all modules keyed on id
+		const mergedDetails = this.controller.parentController.mergedModuleDetails;
+
 		if (collectionName === null) {
-			return this.modulesCollections;
+			// if no collectionName, convert hash of dicts mergedDetails into an array of dicts
+			return Object.values(mergedDetails);
 		}
 		// filter modulesCollections array to those that have an attribute collection==collectionName
-		const collectionModules = this.modulesCollections.filter(module => module.collection === collectionName);
+		//const collectionModules = this.modulesCollections.filter(module => module.collection === collectionName); */
+
+		// create array of dicts from mergedDetails where the collection is collectionName
+		const collectionModules = Object.keys(mergedDetails).filter(key => mergedDetails[key].collection === collectionName);
 
 		return collectionModules;
 	}
@@ -4854,7 +4903,7 @@ class CollectionsView extends cc_View {
 	 * 
 	 */
 
-	updateCurrentRepresentation() {
+	updateCurrentRepresentation(justRepresentation=false) {
 		const currentCollection = this.model.getCurrentCollection();
 		const representation = this.model.getCollectionRepresentation(currentCollection);
 
@@ -4875,7 +4924,10 @@ class CollectionsView extends cc_View {
 		// idea is that all views should only show the current modules 
 		// - though configuration may change, the smarts of which can be put
 		//   into the following method.
-		this.showCanvasModules();
+
+		if (!justRepresentation) {
+			this.showCanvasModules();
+		}
 		//		this.representations[currentCollection].showCurrentCollectionModules();
 
 	}
@@ -5810,10 +5862,10 @@ class cc_Controller {
 
 		const data = await response.json();
 
-		if (data.length === 0) { 
+		if (data.length === 0) {
 			// TODO unsure about the validity of this
 			DEBUG && console.log(`cc_Controller: requestCourseObject: couldn't get course object`);
-		} else { 
+		} else {
 			this.courseObject = data;
 			this.generateSTRM();
 			this.requestModuleInformation();
@@ -5953,7 +6005,7 @@ class cc_Controller {
 	 * - Calls this.execute() when done
 	 */
 
-	mergeModuleDetails() {
+	mergeModuleDetails(execute = true) {
 		// Canvas module details stored in array of dicts
 		const canvasModules = this.moduleDetails;
 		// collections modules details stored in object with attributes matching
@@ -5986,7 +6038,9 @@ class cc_Controller {
 			this.mergedModuleDetails[canvasModuleId] = details;
 		}
 
-		this.execute();
+		if (execute) {
+			this.execute();
+		}
 	}
 
 	/**
@@ -6007,7 +6061,7 @@ class cc_Controller {
 		}
 
 		DEBUG && console.log('-------------- cc_Controller.execute()');
-//		console.log(this.cc_configuration);
+		//		console.log(this.cc_configuration);
 
 		//-- figure out what to do
 		if (this.editMode) {
@@ -6030,7 +6084,7 @@ class cc_Controller {
 				// only show collections if cc is turned on
 				if (this.ccOn) {
 					this.showCollections();
-				} 
+				}
 			}
 		} else {
 			// students only see stuff if there is a config
@@ -6129,8 +6183,17 @@ class cc_Controller {
 		this.collectionsController = new cc_CollectionsController(this);
 	}
 
-	updateCurrentRepresentation() {
-		this.collectionsController.view.updateCurrentRepresentation();
+	/**
+	 * Update the representation for the current collections, both the representation
+	 * and the module configuration (if appropriate)
+	 * - if just the representation pass in true
+	 * @param {Boolean} justRepresentation 
+	 */
+
+	updateCurrentRepresentation(justRepresentation = false) {
+		// re-calculate mergedModuleDetails because the current representation has changed
+		this.mergeModuleDetails(false);
+		this.collectionsController.view.updateCurrentRepresentation(justRepresentation);
 	}
 
 	/**
@@ -6238,7 +6301,7 @@ class cc_Controller {
 	 */
 	completedSaveConfig() {
 		//alert('Configuration saved you lazy sod. Make this work');
-	
+
 	}
 
 	failedSaveConfig(error) {
