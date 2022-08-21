@@ -46,7 +46,10 @@ export default class cc_Controller {
 
 		this.configFileDetails = null;
 		this.cc_configuration = null;
+		// string name of last collection viewed
+		this.lastCollectionViewed = null;
 		this.configurationStore = new cc_ConfigurationStore(this);
+
 
 		// if cc should run, try to get the config
 		if (this.modulesPage || this.homeModulesPage) {
@@ -260,9 +263,9 @@ export default class cc_Controller {
 			this.mergedModuleDetails[canvasModuleId] = details;
 		}
 
-		if (execute) {
+/*		if (execute) {
 			this.execute();
-		}
+		} */
 	}
 
 	/**
@@ -528,6 +531,23 @@ export default class cc_Controller {
 
 	failedSaveConfig(error) {
 		alert(`Failed to save configuration - ${error}`);
+	}
+
+	/**
+	 * Check local storage for cc-<hostname>-<course_id>-last-collection
+	 * for name of last Collection viewed
+	 */
+	retrieveLastCollectionViewed() {
+		// get hostname
+		let hostname = window.location.hostname;
+		this. lastCollectionViewed = localStorage.getItem(`cc-${hostname}-${this.courseId}-last-collection`);
+	}
+
+	setLastCollectionViewed(collectionName) {
+		this.lastCollectionViewed = collectionName;
+		// get hostname
+		let hostname = window.location.hostname;
+		localStorage.setItem(`cc-${hostname}-${this.courseId}-last-collection`, this.lastCollectionViewed);
 	}
 
 }

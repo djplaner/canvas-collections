@@ -194,6 +194,7 @@ export default class cc_ConfigurationStore {
 		}
 		// create a structure that merges Canvas and Collections module information
 		this.parentController.mergeModuleDetails();
+		this.parentController.retrieveLastCollectionViewed();
 		this.parentController.execute();
 	}
 
@@ -382,7 +383,6 @@ export default class cc_ConfigurationStore {
 
 		const json = await response.json();
 		this.pageObject = json;
-		alert(`Successfully created config page `);
 		// create a structure that merges Canvas and Collections module information
 		this.parentController.mergeModuleDetails();
 		this.parentController.execute();

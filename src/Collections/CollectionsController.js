@@ -45,6 +45,8 @@ export default class cc_CollectionsController {
 		if (newCollection === this.model.getCurrentCollection()) {
 			return;
 		} 
+		// update the last collection viewed
+		this.parentController.setLastCollectionViewed(newCollection);
 		// change to the new collection
 		this.model.setCurrentCollection(newCollection);
 		this.view.display();

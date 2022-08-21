@@ -2069,7 +2069,12 @@ class CollectionsModel {
 
 		// if currentCollection is undefined set it to the default
 		if (this.currentCollection === undefined) {
-			this.currentCollection = this.getDefaultCollection();
+			if (this.controller.parentController.lastCollectionViewed &&
+				this.controller.parentController.lastCollectionViewed !== "") {
+				this.currentCollection = this.controller.parentController.lastCollectionViewed;
+			} else {
+				this.currentCollection = this.getDefaultCollection();
+			}
 		}
 	}
 
@@ -5047,6 +5052,8 @@ class cc_CollectionsController {
 		if (newCollection === this.model.getCurrentCollection()) {
 			return;
 		} 
+		// update the last collection viewed
+		this.parentController.setLastCollectionViewed(newCollection);
 		// change to the new collection
 		this.model.setCurrentCollection(newCollection);
 		this.view.display();
@@ -5499,6 +5506,7 @@ class cc_ConfigurationStore {
 		}
 		// create a structure that merges Canvas and Collections module information
 		this.parentController.mergeModuleDetails();
+		this.parentController.retrieveLastCollectionViewed();
 		this.parentController.execute();
 	}
 
@@ -5687,7 +5695,6 @@ class cc_ConfigurationStore {
 
 		const json = await response.json();
 		this.pageObject = json;
-		alert(`Successfully created config page `);
 		// create a structure that merges Canvas and Collections module information
 		this.parentController.mergeModuleDetails();
 		this.parentController.execute();
@@ -5824,7 +5831,10 @@ class cc_Controller {
 
 		this.configFileDetails = null;
 		this.cc_configuration = null;
+		// string name of last collection viewed
+		this.lastCollectionViewed = null;
 		this.configurationStore = new cc_ConfigurationStore(this);
+
 
 		// if cc should run, try to get the config
 		if (this.modulesPage || this.homeModulesPage) {
@@ -6038,9 +6048,9 @@ class cc_Controller {
 			this.mergedModuleDetails[canvasModuleId] = details;
 		}
 
-		if (execute) {
+/*		if (execute) {
 			this.execute();
-		}
+		} */
 	}
 
 	/**
@@ -6306,6 +6316,23 @@ class cc_Controller {
 
 	failedSaveConfig(error) {
 		alert(`Failed to save configuration - ${error}`);
+	}
+
+	/**
+	 * Check local storage for cc-<hostname>-<course_id>-last-collection
+	 * for name of last Collection viewed
+	 */
+	retrieveLastCollectionViewed() {
+		// get hostname
+		let hostname = window.location.hostname;
+		this. lastCollectionViewed = localStorage.getItem(`cc-${hostname}-${this.courseId}-last-collection`);
+	}
+
+	setLastCollectionViewed(collectionName) {
+		this.lastCollectionViewed = collectionName;
+		// get hostname
+		let hostname = window.location.hostname;
+		localStorage.setItem(`cc-${hostname}-${this.courseId}-last-collection`, this.lastCollectionViewed);
 	}
 
 }

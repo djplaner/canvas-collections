@@ -19,7 +19,12 @@ export default class CollectionsModel {
 
 		// if currentCollection is undefined set it to the default
 		if (this.currentCollection === undefined) {
-			this.currentCollection = this.getDefaultCollection();
+			if (this.controller.parentController.lastCollectionViewed &&
+				this.controller.parentController.lastCollectionViewed !== "") {
+				this.currentCollection = this.controller.parentController.lastCollectionViewed;
+			} else {
+				this.currentCollection = this.getDefaultCollection();
+			}
 		}
 	}
 
