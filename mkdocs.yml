@@ -1,0 +1,14 @@
+site_name: Canvas Collections
+site_url: https://djplaner.github.io/canvas-collections/
+site_author: David Jones
+site_description: >-
+  Improve the visual identity and information architecture of the Canvas LMS
+
+
+# Configuration
+theme:
+  name: material
+
+
+nav:
+  - Home: 'index.md'
