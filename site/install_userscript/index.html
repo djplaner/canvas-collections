@@ -1,0 +1,327 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Improve the visual identity and information architecture of the Canvas LMS">
+      
+      
+        <link rel="canonical" href="https://djplaner.github.io/canvas-collections/install_userscript/">
+      
+      
+        <meta name="author" content="David Jones">
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.5.12">
+    
+    
+      
+        <title>Install canvas-collections as a userscript - Canvas Collections</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.4dd2dd8d.min.css">
+      
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#install-canvas-collections-as-a-userscript" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="https://djplaner.github.io/canvas-collections/" title="Canvas Collections" class="md-header-nav__button md-logo" aria-label="Canvas Collections">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Canvas Collections
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Install canvas-collections as a userscript
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://djplaner.github.io/canvas-collections/" title="Canvas Collections" class="md-nav__button md-logo" aria-label="Canvas Collections">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Canvas Collections
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-install-a-userscript-manager" class="md-nav__link">
+    1. Install a userscript manager
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Install a userscript manager">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-visit-the-tampermonkey-home-page" class="md-nav__link">
+    1.1. Visit the Tampermonkey home page.
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-click-on-the-left-hand-download-button" class="md-nav__link">
+    1.2. Click on the left-hand Download button
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-follow-the-instructions-to-add-tampermonkey-to-your-web-browser" class="md-nav__link">
+    1.3. Follow the instructions to add Tampermonkey to your web browser
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-install-canvas-collections-userscript" class="md-nav__link">
+    2. Install canvas-collections userscript
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-turning-canvas-collections-off" class="md-nav__link">
+    3. Turning canvas-collections off
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  
+                
+                
+                <h1 id="install-canvas-collections-as-a-userscript">Install canvas-collections as a userscript</h1>
+<blockquote>
+<p>:warning: canvas-collections is still under construction :construction:</p>
+</blockquote>
+<p>If you cannot add Javascript to a Canvas instance, you can still use canvas-collections by installing it as a userscript. The two step process - explained below - is:
+1. Install a userscript manager - for example, <a href="https://www.tampermonkey.net/">TamperMonkey</a>
+2. Install the canvas-collections userscript</p>
+<blockquote>
+<p>:question: You install a <a href="https://en.wikipedia.org/wiki/Userscript_manager">userscript manager</a> into your web browser (not surprisingly) to help manage <a href="https://en.wikipedia.org/wiki/Userscript">userscripts</a>. Small Javascript programs that your browser will run when you view specific web pages. Userscripts customise those web pages to better suit your purposes. e.g. to modify a Canvas modules page to show canvas-collections.</p>
+</blockquote>
+<h2 id="1-install-a-userscript-manager">1. Install a userscript manager</h2>
+<p><a href="https://www.tampermonkey.net/">TamperMonkey</a> is a widely used userscript manager. It can be used on most modern web browsers. </p>
+<h3 id="11-visit-the-tampermonkey-home-page">1.1. Visit the <a href="https://www.tampermonkey.net/">Tampermonkey home page</a>.</h3>
+<p>You should see instructions for downloading (installing) TamperMonkey for your web browser. e.g. the following image for the Firefox browser</p>
+<p><img alt="" src="pics/tamperMonkeyHome.png" /></p>
+<h3 id="12-click-on-the-left-hand-download-button">1.2. Click on the left-hand <em>Download</em> button</h3>
+<p>As shown above, you can choose to download the stable (left-hand download button) version of TamperMonkey or the BETA (right-hand download button) version. The stable version is recommended.</p>
+<p>You will be taken to your web brower's <a href="https://en.wikipedia.org/wiki/Browser_extension">extension or add-on service</a>.</p>
+<h3 id="13-follow-the-instructions-to-add-tampermonkey-to-your-web-browser">1.3. Follow the instructions to add Tampermonkey to your web browser</h3>
+<p>Each web browser’s browser extension installation process will be a little different. In general, it will provide you with details of what permissions the browser extension (Tampemonkey in this case) wishes to have and provides you with the option to install.</p>
+<h2 id="2-install-canvas-collections-userscript">2. Install canvas-collections userscript</h2>
+<p>With TamperMonkey installed you can now install <a href="https://github.com/djplaner/canvas-collections/raw/main/release/canvas-collections.user.js">the canvas-collections userscript</a>. Just click on that link.</p>
+<p>If all is working you should something like the following image. An image showing TamperMonkey providing you with details of the userscript and asking if you wish to install it.</p>
+<p><img alt="" src="pics/tamperMonkeyInstallCanvasCollections.png" /></p>
+<h2 id="3-turning-canvas-collections-off">3. Turning canvas-collections off</h2>
+<p>There are two ways to prevent canvas-collections from modifying your view of Canvas modules pages:
+- Disable TamperMonkey (or your userscript manager)
+- Disable the canvas-collection userscript</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/vendor.3636a4ec.min.js"></script>
+      <script src="../assets/javascripts/bundle.e9fe3281.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: [],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

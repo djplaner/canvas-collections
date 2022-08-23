@@ -1,5 +1,6 @@
 site_name: Canvas Collections
 site_url: https://djplaner.github.io/canvas-collections/
+repo_url: https://github.com/djplaner/canvas-collections
 site_author: David Jones
 site_description: >-
   Improve the visual identity and information architecture of the Canvas LMS
@@ -7,8 +8,21 @@ site_description: >-
 
 # Configuration
 theme:
+  logo: assets/logo.png
   name: material
+  font:
+    text: Arial
+  palette:
+    scheme: default
+    primary: red
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
 
+extra:
+  social:
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/djplaner
 
 nav:
   - Home: 'index.md'

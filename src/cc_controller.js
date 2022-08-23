@@ -66,7 +66,7 @@ export default class cc_Controller {
 	/**
 	 * @descr Request the Canvas course object for current course.
 	 * Mostly to set the STRM
-	 * requestConfigFileId() when done - or bypass for findConfigPage
+	 * requestConfigFileId() when done - or bypass 
 	 */
 	async requestCourseObject() {
 		let callUrl = `/api/v1/courses/${this.courseId}`;

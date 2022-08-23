@@ -5611,7 +5611,8 @@ class cc_ConfigurationStore {
 		DEBUG && console.log('-------------- cc_ConfigurationStore.getConfiguration()');
 
 		// Figure out if we need to create/read the configuration page
-		this.findConfigPage();
+//		this.findConfigPage();
+		this.requestConfigPageContents();
 
 	/*	if (this.pageObject) {
 			// get a pageObject, so we can get the config
@@ -5680,7 +5681,7 @@ class cc_ConfigurationStore {
 	 */
 	async requestConfigPageContents() {
 
-		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.pageObject.page_id}`;
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/canvas-collections-configuration`;
 
 		DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: callUrl = ${callUrl}`);
 
@@ -5703,6 +5704,11 @@ class cc_ConfigurationStore {
 		// https://canvas.instructure.com/doc/api/pages.html#Page
 		DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: json = ${JSON.stringify(data)}`);
 
+		if (data.length===0) {
+			throw new Error(`cc_ConfigurationStore: requestConfigPageContents: no config page found`);
+		}
+
+		this.pageObject = data[0];
 		// TODO error checking
 
 		const parsed = new DOMParser().parseFromString(data.body, 'text/html');
