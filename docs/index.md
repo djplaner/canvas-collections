@@ -1,17 +1,12 @@
-# Welcome to MkDocs
+# Canvas Collections
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+Improve your Canvas course site's
 
-## Commands
+-	Information architecture; and,
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+    Group modules into collections, a [long requested feature](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383) which is [not being provided by the vendor](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383/highlight/true#M50428).
 
-## Project layout
+-	Visual design.
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+    Use different, collection specific visual representations.
+
