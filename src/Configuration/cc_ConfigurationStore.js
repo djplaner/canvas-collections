@@ -121,7 +121,7 @@ export default class cc_ConfigurationStore {
 			throw new Error(`cc_ConfigurationStore: requestConfigPageContents: no config page found`);
 		}
 
-		this.pageObject = data[0];
+		this.pageObject = data;
 		// TODO error checking
 
 		const parsed = new DOMParser().parseFromString(data.body, 'text/html');

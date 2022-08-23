@@ -1074,11 +1074,13 @@ input:checked + .cc-slider:before {
 		  <div class="cc-switch-title">
 		    <!-- <i id="configShowSwitch" class="icon-mini-arrow-right"></i> --> <small>Canvas Collections
 			<span style="font-size:50%">{${CC_VERSION}}</span></small>
-			<a target="_blank"
+			<a id="cc-about-collections" target="_blank"
 			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
 			   <i class="icon-question"></i>
 		   </a>
 		  </div>
+
+
 		<label class="cc-switch">
 		    <input type="checkbox" class="cc-toggle-checkbox" id="cc-switch" ${cc_on}>
 			<span class="cc-slider cc-round"></span>

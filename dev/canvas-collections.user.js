@@ -1567,11 +1567,13 @@ input:checked + .cc-slider:before {
 		  <div class="cc-switch-title">
 		    <!-- <i id="configShowSwitch" class="icon-mini-arrow-right"></i> --> <small>Canvas Collections
 			<span style="font-size:50%">{${CC_VERSION}}</span></small>
-			<a target="_blank"
+			<a id="cc-about-collections" target="_blank"
 			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
 			   <i class="icon-question"></i>
 		   </a>
 		  </div>
+
+
 		<label class="cc-switch">
 		    <input type="checkbox" class="cc-toggle-checkbox" id="cc-switch" ${cc_on}>
 			<span class="cc-slider cc-round"></span>
@@ -5611,16 +5613,7 @@ class cc_ConfigurationStore {
 		DEBUG && console.log('-------------- cc_ConfigurationStore.getConfiguration()');
 
 		// Figure out if we need to create/read the configuration page
-//		this.findConfigPage();
 		this.requestConfigPageContents();
-
-	/*	if (this.pageObject) {
-			// get a pageObject, so we can get the config
-	//		this.requestConfigPageContents();
-		} else {
-			// initialise one for this course
-//			this.initialiseConfigPage();
-		} */
 	}
 
 	/**
@@ -5629,48 +5622,6 @@ class cc_ConfigurationStore {
 
 	saveConfiguration() {
 		this.saveConfigPage();
-	}
-
-	/**
-	 * @descr Find the id for a page titled "Canvas Collections Configuration", if got the id
-	 * get the contents of the file
-	 * This is a kludge to work around apparent CORs issues with requesting the config file
-	 * TODO if there's isn't a page, create one
-	 */
-	async findConfigPage() {
-		// test for presence of parentController and courseId
-		if (!this.parentController || !this.parentController.courseId) {
-			throw new Error(`cc_ConfigurationStore: findConfigPage: missing parentController or courseId`);
-		}
-
-		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages?` + new URLSearchParams(
-			{ 'search_term': 'Canvas Collections Configuration' });
-
-		DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: callUrl = ${callUrl}`);
-
-		const response = await fetch(callUrl, {
-			method: 'GET', credentials: 'include',
-			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json",
-				"X-CSRF-Token": this.parentController.csrf,
-			}
-		});
-
-		if (!response.ok) {
-			throw new Error(`cc_ConfigurationStore: findConfigPage: error ${response.status} ${response.statusText}`);
-		}
-
-		const data = await response.json();
-
-		// json should contain a list of items, should be just one
-		if (data.length === 0) {
-			DEBUG && console.log(`cc_ConfigurationStore: findConfigPage: no config page 'Canvas Collections Configuration' found`);
-			this.initialiseConfigPage();
-		} else if (data.length === 1) {
-			this.pageObject = data[0];
-			this.requestConfigPageContents();
-		}
 	}
 
 	/**
@@ -5708,7 +5659,7 @@ class cc_ConfigurationStore {
 			throw new Error(`cc_ConfigurationStore: requestConfigPageContents: no config page found`);
 		}
 
-		this.pageObject = data[0];
+		this.pageObject = data;
 		// TODO error checking
 
 		const parsed = new DOMParser().parseFromString(data.body, 'text/html');
@@ -6081,7 +6032,7 @@ class cc_Controller {
 	/**
 	 * @descr Request the Canvas course object for current course.
 	 * Mostly to set the STRM
-	 * requestConfigFileId() when done - or bypass for findConfigPage
+	 * requestConfigFileId() when done - or bypass 
 	 */
 	async requestCourseObject() {
 		let callUrl = `/api/v1/courses/${this.courseId}`;
