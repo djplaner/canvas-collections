@@ -43,6 +43,270 @@ const DEFAULT_CONFIGURATION_TEMPLATE = {
 	}
 };
 
+const FUNNY_TEMPLATE = `
+<link rel="stylesheet" href="https://s3.amazonaws.com/filebucketdave/banner.js/gu_study.css" />
+
+<div id="cc-card-interface" class="cc-representation">
+		<style>
+		#cc-canvas-collections{
+			overflow:hidden;
+		}
+
+		#cc-card-interface { 
+			margin-top: 0.5em !important;
+			flex-wrap: wrap;
+			display: flex;
+			margin: -0.75rem
+		}
+
+		.cc-clickable-card, .cc-coming-soon-card {
+			padding: 0.75rem;
+			flex-direction: column;
+			display: flex;
+			width: 30%;
+		}
+
+		@media (max-width:640px) {
+			.cc-clickable-card,  .cc-coming-soon-card {
+				width: 50%
+			}
+		}
+
+		@media (max-width:480px) { 
+		    .cc-coming-soon-card, .cc-clickable-card {
+				width:100%;
+			}
+		}
+
+		.cc-clickable-card:hover {
+			cursor: pointer;
+			opacity: 0.8;
+		}
+
+		.cc-card {
+			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1);
+			background-color: #fff;
+		}
+
+		.cc-card-flex {
+			overflow: hidden;
+			flex-direction: column;
+			flex: 1 1 0%;
+			display: flex;
+			position:relative;
+			border-radius: 1em;
+		}
+
+		.cc-card:hover{
+			background-color: #f5f5f5;
+			box-shadow: none;
+		}
+
+		.cc-card-image {
+			height: 10rem;
+			width: 100%;
+			object-fit: cover;
+		}
+
+		.cc-card-content-height {
+			height: 12rem;
+			overflow: auto;
+			border-bottom-left-radius: 0.5rem;
+			border-bottom-right-radius: 0.5rem;
+		}
+
+		.cc-card-content {
+			padding: 0.5rem;
+			flex: 1 1 0%;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.cc-card-content:hover {
+			cursor: pointer;
+		}
+
+		.cc-card-description {
+			font-size: 0.75rem;
+		}
+
+	    .cc-card-description a {
+			text-decoration: underline;
+			flex: 1 1 0%;
+			margin-bottom: 1rem;
+		}
+
+		.cc-progress {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			padding: 0.5em;
+		}
+
+		.cc-card-title {
+			font-size: 1rem;
+			font-weight: bold;
+		}
+
+		.cc-card-label {
+			font-size: 0.9rem;
+			margin-bottom: 1rem;
+		}
+
+		.cc-card-engage {
+			padding: 1rem;
+			padding-top: 1.5rem;
+		}
+
+		.cc-card-engage-button {
+			float: right;
+			padding-top: 0.5rem;
+			padding-bottom: 0.5rem;
+			padding-left: 1rem;
+			padding-right: 1rem;
+			color: rgba(30,58,138,1);
+			border-style: solid;
+			border-width: 1px;
+			border-radius: 0.25rem;
+			border-color: rgba(30,58,138,1);
+		}
+
+		.cc-card-engage-button:hover {
+			background-color: rgba(30,58,138,1);
+			color: white;
+			text-decoration: none !important;
+			border: transparent;
+			border-radius: 0.25rem;
+		}
+
+		.cc-card-date {
+			text-align: center;
+			background-color: #f5f5f5;
+			border-radius: 0.25rem;
+			overflow: hidden;
+			width: 5rem;
+			display:block;
+			position: absolute;
+			top: 0;
+			right: 0;
+		}
+
+		.cc-card-date-label { 
+			color: white;
+			font-size: 0.75rem;
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+			background-color: black;
+			border-color: black;
+			border-left-width: 1px;
+			border-right-width: 1px;
+			border-top-width: 1px;
+		}
+
+		.cc-card-date-week {
+			color: black;
+			background-color: #fff9c2;
+			font-size: 0.75rem;
+			padding-top: 0.15rem;
+		}
+
+		.cc-card-date-time {
+			font-size: 0.75rem;
+			color: black;
+			background-color: #fff382;	
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+		}
+
+		.cc-card-date-month {
+			color: white;
+			background-color: red;
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+			border-color: black;
+			border-left-width: 1px;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			font-size: 0.9rem;
+			line-height: 1rem;
+		}
+
+		.cc-card-date-date {
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+			border-left-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			border-bottom-right-radius: 0.25rem;
+			border-bottom-left-radius: 0.25rem;
+			border-color: black;
+			font-size: 0.9rem;
+			font-weight: bold;
+			line-height: 1rem;
+		}
+
+		.cc-progress {
+			float: right;
+		}
+
+		.cc-card-published {
+			background-color: red;
+			color: white;
+			font-size: x-small;
+			font-weight: bold;
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+			text-align: center;
+			width: 100%;
+		}
+
+		.cc-coming-soon-message {
+			font-size: 0.75rem;
+			padding: .5em;
+            background-color: #feee88;
+		}
+
+		.gu-engage {
+			text-decoration: none;
+		}
+		</style><div class="cc-clickable-card">
+    <div id="cc_module_19453" class="cc-card">
+	  <div class="cc-card-flex">
+	      <a href="#19453" class="cc-card-link"></a>
+		  <img class="cc-card-image" style="object-fit: contain !important;" src="https://upload.wikimedia.org/wikipedia/en/thumb/4/40/400px-Survivor.borneo.logo.png/250px-400px-Survivor.borneo.logo.png" alt="Image representing 'Week 1: The writer's mantra. Surviving feedback. The great grammar lie.'">
+      	
+      	
+	 	
+	  <div class="cc-card-content-height">
+      <div class="cc-card-content">
+		<div class="cc-card-label&quot;">
+	    	<span class="cc-card-label">  </span>
+	    	<h3 class="cc-card-title">Week 1: The writer's mantra. Surviving feedback. The great grammar lie.</h3>
+		</div>
+      	<div class="cc-card-description">
+	  		<p><br></p><p><br></p><p><br></p>
+		</div>
+		</div> <!-- cc-card-content-height -->
+	  </div> 
+	 
+	 
+<!--	    <p>&nbsp;<br /> &nbsp;</p> -->
+		<div class="cc-card-engage">
+			 <div class="cc-card-engage-button">
+	       		<a href="#19453" class="gu-engage">
+			   Engage
+			 </a>
+	         </div>
+	    </div>
+	    
+	 
+	 
+	  
+	 <div class="cc-progress"></div>
+      </div>
+    </div>
+    </div></div>
+`;
 
 export default class cc_ConfigurationStore {
 
@@ -65,6 +329,67 @@ export default class cc_ConfigurationStore {
 
 		//this.getConfiguration();
 	}
+
+	/**
+	 * test harness for figuring out constraints on content saved to Canvas pages via
+	 * the API
+	 * - Works on the page cc-funny-save
+	 * - assumes it already exists 
+	 */
+	funnySave() {
+
+		let callUrl = `/api/v1/courses/1538/pages/cc-funny-page`;
+
+		DEBUG && console.log(`cc_ConfigurationStore: funny save: callUrl = ${callUrl}`);
+
+		// construct the new content for the page
+		// - boiler plate description HTML to start
+		let content = FUNNY_TEMPLATE;
+
+		console.log(`cc_ConfigurationStore: funny save: content = ${content}`);
+
+		let _body = {
+			"wiki_page": {
+				"body": content,
+			}
+		};
+
+		let method = "put";
+		// if we're creating, change the URL and add the title
+
+		const bodyString = JSON.stringify(_body);
+
+		fetch(callUrl, {
+			method: method, credentials: 'include',
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+				"Accept": "application/json; charset=UTF-8",
+				"X-CSRF-Token": this.parentController.csrf,
+			},
+			body: bodyString
+		})
+			.then(this.status)
+			.then((response) => {
+				if (response.ok) {
+					const json = response.json();
+					// json should have the newly created page object,
+					// don't need to do anything with it here
+					DEBUG && console.log(`cc_ConfigurationStore: funny save: json = ${JSON.stringify(json)}`);
+
+					// tell the controller we successfully completed
+					this.parentController.completedSaveConfig();
+				} else {
+					alert(`Problem saving funny-save ${response.status} - `);
+				}
+			})
+			.catch((error) => {
+				console.log(`cc_ConfigurationStore: requestConfig: error = `);
+				console.log(error);
+
+				this.parentController.failedSaveConfig(error);
+			}, false);
+	}
+
 
 	/**
 	 * @descr Get the configuration from the Canvas API - harness which calls various

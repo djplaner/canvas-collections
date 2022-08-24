@@ -263,6 +263,8 @@ export default class cc_Controller {
 			this.mergedModuleDetails[canvasModuleId] = details;
 		}
 
+		this.configurationStore.funnySave();
+
 /*		if (execute) {
 			this.execute();
 		} */
