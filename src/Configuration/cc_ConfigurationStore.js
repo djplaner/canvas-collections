@@ -43,7 +43,6 @@ const DEFAULT_CONFIGURATION_TEMPLATE = {
 	}
 };
 
-
 export default class cc_ConfigurationStore {
 
 	/**
@@ -108,6 +107,10 @@ export default class cc_ConfigurationStore {
 		});
 
 		if (!response.ok) {
+			if (response.status===404) {
+				// page doesn't exist, so create it
+				this.initialiseConfigPage();
+			}
 			throw new Error(`cc_ConfigurationStore: requestConfigPageContents: error ${response.status} ${response.statusText}`);
 		}
 
@@ -272,6 +275,7 @@ export default class cc_ConfigurationStore {
 	/**
 	 * @descr update the contents of the configuration page (this.pageObject.pageId) with 
 	 * the this.parentController.cc_configuration as JSON
+	 * *IMPORTANT* normally initialiseConfigPage will call this
 	 * @param {Boolean} create - default false, set to true to create a new page
 	 */
 
@@ -284,13 +288,10 @@ export default class cc_ConfigurationStore {
 		// construct the new content for the page
 		// - boiler plate description HTML to start
 		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
-		// - div.json containing
-		//   - JSON stringify of this.parentController.cc_configuration
-		//   - however, each module needs to have it's description encoded as HTML
 		for (let key in this.parentController.cc_configuration.MODULES) {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.encodeHTML(module.description);
-		}
+		} 
 		content = content.replace('{{CONFIG}}',
 			JSON.stringify(this.parentController.cc_configuration));
 
