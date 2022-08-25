@@ -696,13 +696,13 @@ class cc_ConfigurationView extends cc_View {
 		this.quillChanged = false;
 		// update the current collection representation
 		// - first the model
-		this.controller.updateModuleConfigField(event,false);
+		this.controller.updateModuleConfigField(event, false);
 		this.controller.changeMade(true);
 		// - then the view
 		this.controller.parentController.updateCurrentRepresentation(true);
 
-/*		this.controller.updateModuleConfigField(event);
-		this.currentQuill.focus(); */
+		/*		this.controller.updateModuleConfigField(event);
+				this.currentQuill.focus(); */
 	}
 
 	/**
@@ -716,9 +716,9 @@ class cc_ConfigurationView extends cc_View {
 		if (!range) {
 			// assume user has changed focus
 			if (this.currentQuill && this.quillChanged) {
-/*				if (this.currentQuill.hasFocus() ) {
-					return;
-				} */
+				/*				if (this.currentQuill.hasFocus() ) {
+									return;
+								} */
 				const parentId = this.currentQuill.root.parentNode.id;
 				// extract the id from parentId with format cc-module-config-<id>-description
 				//const id = parentId.substring(parentId.indexOf('-') + 1, parentId.lastIndexOf('-'));
@@ -780,7 +780,7 @@ class cc_ConfigurationView extends cc_View {
 		// try and get existing Collections module configuration
 		let moduleConfig = this.model.getModuleConfiguration(moduleDetail.id);
 		// get the current collection
-//		const currentCollection = this.model.getCurrentCollection();
+		//		const currentCollection = this.model.getCurrentCollection();
 
 		// check for a module that hasn't been added to the collection yet
 		if (!moduleConfig) {
@@ -808,7 +808,7 @@ class cc_ConfigurationView extends cc_View {
 				selected = 'selected';
 			}
 			collectionsOptions += `<option value="${collection}" ${selected}>${collection}</option>`;
-			selected='';
+			selected = '';
 		}
 		// set the imageSizeOptions
 		let imageSizeOptions = '';
@@ -1235,8 +1235,8 @@ class cc_ConfigurationView extends cc_View {
 				this.model.getCollectionRepresentation(collectionName)
 			);
 			// TODO set these to collection values
-			let includePage=this.model.getCollectionAttribute(collectionName,"includePage");
-			let outputPage=this.model.getCollectionAttribute(collectionName,"outputPage");
+			let includePage = this.model.getCollectionAttribute(collectionName, "includePage");
+			let outputPage = this.model.getCollectionAttribute(collectionName, "outputPage");
 			const divExistingCollection = `
 			<div class="cc-existing-collection border border-trbl" id="cc-collection-${collectionName}">
 				<p>${collectionName} - (${moduleCount} ${moduleName})
@@ -1549,6 +1549,15 @@ input:checked + .cc-slider:before {
 				background: #cccccc;
 			}
 
+			.html5tooltip-box
+{
+  background-color: #cccccc;
+  border-radius: 0.5em;
+  padding: 0.5em;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.15), 0 0 10px rgba(255,255,255,.15);
+  font-size: 0.8em;
+  color: black;
+}
 
 
 		 </style>
@@ -1590,6 +1599,18 @@ input:checked + .cc-slider:before {
 		let easy_student_view = document.querySelector('a#easy_student_view');
 		if (easy_student_view) {
 			easy_student_view.insertAdjacentHTML('afterend', CC_BUNDLE_HTML);
+
+			// calculate px of 15em
+			let em = 15;
+			let px = em * parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+			html5tooltips({
+				contentText: `Find out more about Canvas Collections and how it can help 
+				improve the user experience of your course site`,
+				maxWidth: `${px}px`,
+				targetSelector: "#cc-about-collections",
+				animateFunction: "spin"
+			});
 
 			// add event handler to i#configShowSwitch
 			if (this.model.isOn()) {
