@@ -15,8 +15,8 @@ export default class NavView extends cc_View {
 	 * @param {Object} model
 	 * @param {Object} controller
 	 */
-	constructor( model, controller ) {
-		super( model, controller );
+	constructor(model, controller) {
+		super(model, controller);
 
 	}
 
@@ -30,16 +30,21 @@ export default class NavView extends cc_View {
 
 
 		// generate the HTML
-//		let html ='<h1> Hello from NavView </h1>';
+		//		let html ='<h1> Hello from NavView </h1>';
 
 		let navBar = this.generateNavBar();
+		// if there's a div#cc-nav, remove it
+		let oldNavBar = document.querySelector('div#cc-nav');
+		if (oldNavBar) {
+			oldNavBar.remove();
+		}
 		div.insertAdjacentElement('beforeend', navBar);
 
 		// add html to div#cc-canvas-collections
-//		div.insertAdjacentHTML('afterbegin', html);
+		//		div.insertAdjacentHTML('afterbegin', html);
 	}
 
-	generateNavBar() { 
+	generateNavBar() {
 		let navBar = document.createElement('div');
 		navBar.className = 'cc-nav';
 
@@ -109,34 +114,36 @@ li.cc-nav a {
 
 		let count = 0;
 		let navList = document.createElement('ul');
-        for (let collection of this.model.getCollectionNames()) {
-            let navClass = ['li', 'mr-4'];
-            let style = 'cc-nav';
+		for (let collection of this.model.getCollectionNames()) {
+			let navClass = ['li', 'mr-4'];
+			let style = 'cc-nav';
 
 
-            let navElement = `
+			let navElement = `
 		  <a href="#">${collection}</a>
 		`;
-            let navItem = document.createElement('li');
+			let navItem = document.createElement('li');
 			navItem.className = "cc-nav";
+			// also set id to cc-nav
+			navItem.id = "cc-nav";
 
 			// set the active navigation item if currentCollection is defined and matches OR
 			// currentCollection is undefined and we're at the first one
-            if ( 
-				( collection === this.model.currentCollection) || 
-			    ( this.model.currentCollection === undefined && count===0 )
-			 ) {
-                navItem.classList.add('cc-active');
-            }
-			count+=1;
+			if (
+				(collection === this.model.currentCollection) ||
+				(this.model.currentCollection === undefined && count === 0)
+			) {
+				navItem.classList.add('cc-active');
+			}
+			count += 1;
 
-            navItem.onclick = (event) => this.controller.navigateCollections(event);
+			navItem.onclick = (event) => this.controller.navigateCollections(event);
 			// TODO probably shouldn't be on this view the click? SHouldn't it be the
 			// controller?, 
-            //navItem.onclick = () => this.collectionsClick(collection, this);
-            navItem.innerHTML = navElement;
-            navList.appendChild(navItem);
-        }
+			//navItem.onclick = () => this.collectionsClick(collection, this);
+			navItem.innerHTML = navElement;
+			navList.appendChild(navItem);
+		}
 		navBar.appendChild(navList);
 
 		return navBar;
