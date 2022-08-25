@@ -196,7 +196,8 @@ export default class cc_ConfigurationController {
 		// redisplay the configuration
 		this.view.updateExistingCollections();
 		// - also need to update the main display
-		this.parentController.showCollections();
+		//this.parentController.showCollections();
+		this.parentController.collectionsController.view.display();
 	}
 
 	/**
@@ -221,6 +222,7 @@ export default class cc_ConfigurationController {
 		// update the display
 		//this.view.removeConfig();
 		this.view.showConfig();
+		this.parentController.collectionsController.view.display();
 
 	}
 
@@ -317,7 +319,8 @@ export default class cc_ConfigurationController {
 		// update the display
 		//this.view.removeConfig();
 		this.view.showConfig();
-		this.parentController.showCollections();
+		this.parentController.collectionsController.view.display();
+//		this.parentController.showCollections();
 	}
 
 	/**
@@ -415,6 +418,7 @@ export default class cc_ConfigurationController {
 
 			// TODO figure out if and how to modify the collection representation
 			// - if collection matches the collection name then update the representation
+			this.parentController.collectionsController.view.display();
 		}
 
 

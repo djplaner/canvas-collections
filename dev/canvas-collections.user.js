@@ -1903,7 +1903,8 @@ class cc_ConfigurationController {
 		// redisplay the configuration
 		this.view.updateExistingCollections();
 		// - also need to update the main display
-		this.parentController.showCollections();
+		//this.parentController.showCollections();
+		this.parentController.collectionsController.view.display();
 	}
 
 	/**
@@ -1928,6 +1929,7 @@ class cc_ConfigurationController {
 		// update the display
 		//this.view.removeConfig();
 		this.view.showConfig();
+		this.parentController.collectionsController.view.display();
 
 	}
 
@@ -2024,7 +2026,8 @@ class cc_ConfigurationController {
 		// update the display
 		//this.view.removeConfig();
 		this.view.showConfig();
-		this.parentController.showCollections();
+		this.parentController.collectionsController.view.display();
+//		this.parentController.showCollections();
 	}
 
 	/**
@@ -2122,6 +2125,7 @@ class cc_ConfigurationController {
 
 			// TODO figure out if and how to modify the collection representation
 			// - if collection matches the collection name then update the representation
+			this.parentController.collectionsController.view.display();
 		}
 
 
@@ -5031,6 +5035,12 @@ class CollectionsView extends cc_View {
 	 */
 
 	addIncludePage() {
+		// if there's a div#cc-include-page, remove it
+		const includePageDiv = document.querySelector('div#cc-include-page');
+		if (includePageDiv) {
+			includePageDiv.remove();
+		}
+
 		// create div#cc-include-page - and add after div.cc-nav
 		// - already for the async grabbing of page content to be inserted
 		let ccIncludePage = document.createElement('div');

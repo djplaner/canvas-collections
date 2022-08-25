@@ -94,6 +94,12 @@ export default class CollectionsView extends cc_View {
 	 */
 
 	addIncludePage() {
+		// if there's a div#cc-include-page, remove it
+		const includePageDiv = document.querySelector('div#cc-include-page');
+		if (includePageDiv) {
+			includePageDiv.remove();
+		}
+
 		// create div#cc-include-page - and add after div.cc-nav
 		// - already for the async grabbing of page content to be inserted
 		let ccIncludePage = document.createElement('div');
