@@ -528,7 +528,27 @@ const CONFIG_VIEW_TOOLTIPS = [
 		targetSelector: "#cc-about-new-collection",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/#add-a-new-collection"
-	}
+	},
+	{ 
+		contentText: `Which collection does this module belong to?`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-collection",
+		animateFunction: "spin",
+	},
+	{ 
+		contentText: `Describe the type of object the module represents (e.g. lecture, theme etc.)`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-label",
+		animateFunction: "spin",
+	},
+	{ 
+		contentText: `Specify a date based on the week of the study period`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-date",
+		animateFunction: "spin",
+	},
+
+
 ];
 
 class cc_ConfigurationView extends cc_View {
@@ -879,7 +899,32 @@ class cc_ConfigurationView extends cc_View {
 				}
 			}
 		}
+		let weekOptions = '';
+		let dayOfWeekOptions = '';
+		// week options needs to be integers for each of the weeks in current calendar
+		// TODO get it from the calendar
+		const weeks = ['Not chosen','0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'];
+		for (let i = 0; i < weeks.length; i++) {
+			let selected = '';
+			const week = weeks[i];
+			if (week === dateInfo.week) {
+				selected = 'selected';
+			}
+			weekOptions += `<option value="${week}" ${selected}>${week}</option>`;
+		}
 
+		const days = ['Not chosen', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+		for (let i = 0; i < days.length; i++) {
+			let selected = '';
+			const day = days[i];
+			if (day === dateInfo.week) {
+				selected = 'selected';
+			}
+			dayOfWeekOptions += `<option value="${day}" ${selected}>${day}</option>`;
+		}
+
+		// TODO calculate the date based on settings and using calendar
+		let calculatedDate="No date chosen";
 
 
 		let showConfigHtml = `
@@ -887,6 +932,7 @@ class cc_ConfigurationView extends cc_View {
 		   .cc-module-config-collection-representation label {
 			   width: 5rem;
 			   font-size: 0.8rem;
+			   font-weight: bold;
 		   }
 		   .cc-module-config-collection-representation input {
 			   font-size: 0.8rem;
@@ -900,48 +946,72 @@ class cc_ConfigurationView extends cc_View {
 			   width: 100%;
 		   }
 
+		   .cc-module-icon{
+			position:relative;
+			top:-0.2rem;
+		   }
 
 		   .cc-preview-container .cc-card {
 			   min-width: 50%;
+		   }
+
+		   .cc-calculated-date {
+			   font-size: 0.8rem;
+			   display: inline;
+			   background-color: #eee;
 		   }
 		</style>
 
 		<div class="cc-module-config-detail">
 			<div>
 				<div class="cc-module-config-collection-representation">
-					<label for="cc-collection-representation-${moduleDetail.id}-collection">Collection</label>
+					<label for="cc-module-config-${moduleDetail.id}-collection">Collection
+			   			<i class="icon-question cc-module-icon" id="cc-about-module-collection"></i>
+					</label>
 					<select id="cc-module-config-${moduleDetail.id}-collection">
 					  ${collectionsOptions}
 					</select>
 				</div>
 				<div class="cc-module-config-collection-representation">
-				    <label for="cc-module-config-${moduleDetail.id}-label">Label</label>
-					<input type="text" id="cc-module-config-${moduleDetail.id}-label" 
-						value="${moduleConfig.label}" />
-					<br clear="all" />
+				    <label for="cc-module-config-${moduleDetail.id}-label">Label
+			   			<i class="icon-question cc-module-icon" id="cc-about-module-label"></i>
+					</label>
+					<input type="text" id="cc-module-config-${moduleDetail.id}-label"
+					    style="width:10rem" value="${moduleConfig.label}" />
 				    <label for="cc-module-config-${moduleDetail.id}-num">Number</label>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-num" 
-					     value="${moduleConfig.num}" />
+					     value="${moduleConfig.num}" style="width:3rem" />
 					<br clear="all" />
-				    <label for="cc-module-config-${moduleDetail.id}-date">Date</label>
-					<style>
-					   input[readonly] {
-						display:none;
-					   }
-					   </style>
-					<aeon-datepicker local="en-au">
-					<input type="date" id="date" name="date" value="" />
-					<input type="time" id="time" name="time" value="" />
-					</aeon-datepicker>
-					<!-- <input type="date" id="cc-module-config-${moduleDetail.id}-date"  -->
-					      <!-- value="${date}"> -->
+				</div>
+				<div class="border border-trbl" style="margin-right:1em">
+				    <div style="padding-top:0.5rem;padding-left:0.5rem"><strong>Date</strong> 
+			   			<i class="icon-question cc-module-icon" id="cc-about-module-date"></i>
+						<div class="cc-calculated-date">${calculatedDate}</div>
+						</div>
+					<div class="cc-module-config-collection-representation"
+					    style="padding-top:1rem; padding-left:3rem">
+				    	<label for="cc-module-config-${moduleDetail.id}-date">Day of week</label>
+						<select id="cc-module-config-${moduleDetail.id}-day-week">
+		                  ${dayOfWeekOptions}
+						</select> <br />
+						<label for="cc-module-config-${moduleDetail.id}-week">Week</label>
+						<select id="cc-module-config-${moduleDetail.id}-week">
+		   		           ${weekOptions}}	
+						</select> <br />
+						<label for="cc-module-config-${moduleDetail.id}-time">Time</label>
+						<style>
+					   		input[readonly] {
+							display:none;
+					   		}
+					   	</style>
+						<aeon-datepicker local="en-au">
+						<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="" />
+						</aeon-datepicker>
+					</div>
 					<br clear="all" />
-				    <label for="cc-module-config-${moduleDetail.id}-description">Description</label>
-					<!-- <textarea id="cc-module-config-${moduleDetail.id}-description">${moduleConfig.description}</textarea> -->
-					<div id="cc-module-config-${moduleDetail.id}-description" class="cc-module-config-description" style="height:8rem"> </div>
 				</div>
 		    </div>
-			<div>
+			<div style="margin-right:1em">
 				<div class="cc-module-config-collection-representation">
 					<label for="cc-collection-representation-${moduleDetail.id}-imageSize">Image size</label>
 <!--					<input id="cc-module-config-${moduleDetail.id}-imageSize" value="${moduleConfig.imageSize}"> -->
@@ -952,6 +1022,9 @@ class cc_ConfigurationView extends cc_View {
 					<label for="cc-module-config-collection-representation-${moduleDetail.id}-image">Image URL</label>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
 					        value="${moduleConfig.image}">
+					<br clear="all" />
+				    <label for="cc-module-config-${moduleDetail.id}-description">Description</label>
+					<div id="cc-module-config-${moduleDetail.id}-description" class="cc-module-config-description" style="height:8rem"> </div>
 				</div>
 				<div class="cc-module-config-imagePreview">
 <!--				  <div class="cc-preview-container">
