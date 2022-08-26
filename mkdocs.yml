@@ -26,6 +26,12 @@ theme:
   features:
     - navigation.tabs
     - navigation.tabs.sticky
+    - navigation.sections
+
+  markdown_extensions:
+    - def_list
+    - pymdownx.tasklist:
+        custom_checkbox: true
 
 extra:
   social:
@@ -33,4 +39,5 @@ extra:
       link: https://twitter.com/djplaner
 
 nav:
-  - Home: 'index.md'
+  - Home: index.md
+  - Reference: reference.md

@@ -16,29 +16,26 @@ const CONFIG_VIEW_TOOLTIPS = [
 	{ 
 		contentText: `Use Canvas Collections to improve the learner experience of 
 		your site by generatively enhancing the information architecture and visual design.`, 
-		maxWidth: `${px}px`,
+		maxWidth: `250px`,
 		targetSelector: "#cc-about-collections",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/"
 	},
 	{ 
-		contentText: `Find out more about Canvas Collections and how it can help 
-				improve the user experience of your course site`, 
-		maxWidth: `${px}px`,
+		contentText: `The list of current collections for your course and where you 
+				can modify their order, appearance etc.<p>Click to learn more</p>`, 
+		maxWidth: `250px`,
 		targetSelector: "#cc-about-existing-collections",
 		animateFunction: "spin",
-		href: ""
+		href: "https://djplaner.github.io/canvas-collections/reference/#existing-collections"
 	},
 	{ 
-		contentText: `Find out more about Canvas Collections and how it can help 
-				improve the user experience of your course site`, 
-		maxWidth: `${px}px`,
+		contentText: `Where to add a new collection to your site`,
+		maxWidth: `250px`,
 		targetSelector: "#cc-about-new-collection",
 		animateFunction: "spin",
-		href: ""
-	},
-
-
+		href: "https://djplaner.github.io/canvas-collections/reference/#add-a-new-collection"
+	}
 ];
 
 export default class cc_ConfigurationView extends cc_View {
@@ -50,6 +47,14 @@ export default class cc_ConfigurationView extends cc_View {
 	 */
 	constructor(model, controller) {
 		super(model, controller);
+
+		this.COLLECTIONS_CONFIG_TOOLTIPS = CONFIG_VIEW_TOOLTIPS;
+	}
+
+	addCollectionsConfigTooltips() {
+		if (this.COLLECTIONS_CONFIG_TOOLTIPS) {
+			html5tooltips(this.COLLECTIONS_CONFIG_TOOLTIPS);
+		}
 	}
 
 	/**
@@ -87,6 +92,8 @@ export default class cc_ConfigurationView extends cc_View {
 		if (this.model.isOn()) {
 			this.addModuleConfiguration();
 		}
+
+		this.addCollectionsConfigTooltips();
 	}
 
 	/**
