@@ -5754,12 +5754,35 @@ class cc_ConfigurationStore {
 		if (!this.parentController.cc_configuration.COLLECTIONS_ORDER) {
 			this.parentController.cc_configuration.COLLECTIONS_ORDER = Object.keys(this.parentController.cc_configuration.COLLECTIONS);
 		}
-		// loop thru the keys of the this.cc_configuration.MODULES hash
-		// and set the corresponding module to on
+		// Need to decode some html entities
+		// this.cc_configuration.MODULES hash description and collection
 		for (let key in this.parentController.cc_configuration.MODULES) {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.decodeHTML(module.description);
+			module.collection = this.decodeHTML(module.collection);
 		}
+		// also need to decode the collection names in
+		// - keys for this.cc_configuration.COLLECTIONS
+		// - values in this.cc_configuration.COLLECTIONS_ORDER
+		// - values in this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
+
+		// decode the keys for this.cc_configuration.COLLECTIONS
+		const collections = {};
+		for (let key in this.parentController.cc_configuration.COLLECTIONS) {
+			const collection = this.parentController.cc_configuration.COLLECTIONS[key];
+			collections[this.decodeHTML(key)] = collection;
+		}
+		this.parentController.cc_configuration.COLLECTIONS = collections;
+		// decode the values in this.cc_configuration.COLLECTIONS_ORDER
+		this.parentController.cc_configuration.COLLECTIONS_ORDER = this.parentController.cc_configuration.COLLECTIONS_ORDER.map((collection) => {
+			return this.decodeHTML(collection);
+		});
+		// decode the value in the string this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
+		this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION = this.decodeHTML(
+			this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
+
+
+
 		// create a structure that merges Canvas and Collections module information
 		this.parentController.mergeModuleDetails();
 		this.parentController.retrieveLastCollectionViewed();
