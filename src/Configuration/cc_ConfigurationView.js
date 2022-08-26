@@ -12,6 +12,35 @@ import { cc_View } from '../cc_View.js';
 
 const CC_VERSION = "0.8.7a";
 
+const CONFIG_VIEW_TOOLTIPS = [ 
+	{ 
+		contentText: `Use Canvas Collections to improve the learner experience of 
+		your site by generatively enhancing the information architecture and visual design.`, 
+		maxWidth: `${px}px`,
+		targetSelector: "#cc-about-collections",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/"
+	},
+	{ 
+		contentText: `Find out more about Canvas Collections and how it can help 
+				improve the user experience of your course site`, 
+		maxWidth: `${px}px`,
+		targetSelector: "#cc-about-existing-collections",
+		animateFunction: "spin",
+		href: ""
+	},
+	{ 
+		contentText: `Find out more about Canvas Collections and how it can help 
+				improve the user experience of your course site`, 
+		maxWidth: `${px}px`,
+		targetSelector: "#cc-about-new-collection",
+		animateFunction: "spin",
+		href: ""
+	},
+
+
+];
+
 export default class cc_ConfigurationView extends cc_View {
 
 	/**
@@ -653,10 +682,15 @@ export default class cc_ConfigurationView extends cc_View {
 				    <div id="cc-config-existing-collections">
 						<p>
 						Existing collections 
+						<a id="cc-about-existing-collections" target="_blank" href="">
+			   			<i class="icon-question"></i></a>
 						</p>
 					</div>
 					<div id="cc-config-new-collection">
-						<p>Add a new collection</p>
+						<p>Add a new collection
+						<a id="cc-about-new-collection" target="_blank" href="">
+			   			<i class="icon-question"></i></a>
+						</p>
 						<div class="cc-config-collection border border-trbl">
 						<div class="ic-Form-control" style="margin-bottom: 0px">
 						  	<input type="text" id="cc-config-new-collection-name" 

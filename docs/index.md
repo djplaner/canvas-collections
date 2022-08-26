@@ -1,6 +1,6 @@
 # Canvas Collections
 
-Improve your Canvas course site's
+Improve the learner experience of your course site by improving your site's
 
 -	Information architecture; and,
 
