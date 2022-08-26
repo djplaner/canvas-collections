@@ -196,8 +196,11 @@ export default class CollectionsModel {
 		const mergedDetails = this.controller.parentController.mergedModuleDetails;
 
 		if (collectionName === null) {
+			let values = Object.values(mergedDetails);
+			// sort the objects in the values array by their "position" numeric attribute
+			values.sort((a, b) => a.position - b.position);
 			// if no collectionName, convert hash of dicts mergedDetails into an array of dicts
-			return Object.values(mergedDetails);
+			return values;
 		}
 		// filter modulesCollections array to those that have an attribute collection==collectionName
 		//const collectionModules = this.modulesCollections.filter(module => module.collection === collectionName); */
