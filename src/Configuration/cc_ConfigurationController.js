@@ -438,7 +438,12 @@ export default class cc_ConfigurationController {
 		const fieldName = idString.match(/cc-module-config-(\d+)-(.*)/)[2];
 
 		// get the value for the fieldName from the event.target element
-		const value = event.target.value;
+		let value = event.target.value;
+
+		// autonum is checkbox, it's value is checked
+		if (fieldName==="autonum") {
+			value = event.target.checked;
+		}
 
 		this.model.changeModuleConfig(moduleId, fieldName, value);
 		this.changeMade(true);
@@ -446,6 +451,7 @@ export default class cc_ConfigurationController {
 
 		if (updateView) {
 
+			// TODO this is too heavyweight
 			this.parentController.collectionsController.view.display();
 
 			// TODO - redisplay the module configuration view

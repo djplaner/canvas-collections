@@ -376,10 +376,20 @@ export default class cc_ConfigurationModel {
 					};
 				}
 				module.date[fieldName] = value;
-			} else {
-				// set the non-date fields
-				module[fieldName] = value;
+			} 
+
+			// if autonum then
+			// - if checked then remove the module.num field
+			// - if unchecked the add the module.num field
+			if (fieldName === 'autonum') {
+				if (value) {
+					delete module.num;
+				} else {
+					module.num = '';
+				}
 			}
+
+			module[fieldName] = value;
 		}
 	}
 

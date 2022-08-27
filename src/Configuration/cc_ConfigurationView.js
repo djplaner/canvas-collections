@@ -47,12 +47,22 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-label",
 		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/#module-label"
 	},
 	{ 
 		contentText: `Specify a date based on the week of the study period`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-date",
 		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/#module-date"
+	},
+	{ 
+		contentText: `If and how a label specific number will be calculated for the module 
+		(e.g. <em>Lecture 1</em> or <em>Workshop 5</em>)<p>Auto number or specify a value.</p>`,  
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-number",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/#module-number"
 	},
 
 
@@ -449,7 +459,24 @@ export default class cc_ConfigurationView extends cc_View {
 		// TODO calculate the date based on settings and using calendar
 		let calculatedDate=this.calculateDate( dateInfo );
 		
+		// calculate the number elements for the form
+		// - if no module.num then it's auto calculate
+		//     - show a selected checkbox for auto  
+		//     - hide the form
+		// - else
+		//     - grey out the unselected auto checkbox
+		//     - display the form
+		let autonumStyle = "";
+		let autonumChecked = "";
+		let numStyle = "";
 
+		if (!moduleConfig.hasOwnProperty('num')) {
+			// no num, so we're doing auto calculate
+			autonumChecked = "checked";
+			numStyle = "display:none;";
+		} else {
+			autonumStyle = "color:grey;";
+		}
 
 		let showConfigHtml = `
 		<style>
@@ -491,21 +518,34 @@ export default class cc_ConfigurationView extends cc_View {
 			<div>
 				<div class="cc-module-config-collection-representation">
 					<label for="cc-module-config-${moduleDetail.id}-collection">Collection
-			   			<i class="icon-question cc-module-icon" id="cc-about-module-collection"></i>
+						<a id="cc-about-module-collections" target="_blank" href="">
+			   			<i class="icon-question cc-module-icon"></i></a>
 					</label>
 					<select id="cc-module-config-${moduleDetail.id}-collection">
 					  ${collectionsOptions}
 					</select>
 				</div>
-				<div class="cc-module-config-collection-representation">
-				    <label for="cc-module-config-${moduleDetail.id}-label">Label
-			   			<i class="icon-question cc-module-icon" id="cc-about-module-label"></i>
-					</label>
-					<input type="text" id="cc-module-config-${moduleDetail.id}-label"
-					    style="width:10rem" value="${moduleConfig.label}" />
-				    <label for="cc-module-config-${moduleDetail.id}-num">Number</label>
-					<input type="text" id="cc-module-config-${moduleDetail.id}-num" 
-					     value="${moduleConfig.num}" style="width:3rem" />
+				<div class="cc-module-config-collection-representation" style="margin-top:0.5rem">
+					<div style="float:left; margin-right:0.5rem">
+				    	<label for="cc-module-config-${moduleDetail.id}-label">Label
+						<a id="cc-about-module-label" target="_blank" href="">
+			   				<i class="icon-question cc-module-icon"></i></a>
+						</label> <br />
+						<input type="text" id="cc-module-config-${moduleDetail.id}-label"
+					    	style="width:10rem" value="${moduleConfig.label}" />
+					</div>
+					<div>
+				    	<label for="cc-module-config-${moduleDetail.id}-num">Number</label>
+						<a id="cc-about-module-number" target="_blank" href="">
+			   				<i class="icon-question cc-module-icon"></i></a>
+						<br />
+						<span class="cc-config-autonum" style="${autonumStyle}">Auto-number:
+					   		<input type="checkbox" id="cc-module-config-${moduleDetail.id}-autonum" ${autonumChecked} 
+							    style="position:relative: top:-0.25rem; ${autonumStyle}" />
+						</span>
+						<input type="text" id="cc-module-config-${moduleDetail.id}-num" 
+					     	value="${moduleConfig.num}" style="width:3rem;${numStyle}" />
+					</div>
 					<br clear="all" />
 				</div>
 				<div class="border border-trbl" style="margin-right:1em">
