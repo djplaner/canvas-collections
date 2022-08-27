@@ -53,6 +53,8 @@ export default class cc_ConfigurationController {
 	changeMade(change) {
 		this.configChange = change;
 		this.view.changeSaveButton(this.configChange);
+		// update the merge details with latest change from collections
+		this.parentController.mergeModuleDetails();
 	}
 
 	/**
@@ -452,7 +454,8 @@ export default class cc_ConfigurationController {
 		if (updateView) {
 
 			// TODO this is too heavyweight
-			this.parentController.collectionsController.view.display();
+			//this.parentController.collectionsController.view.display();
+			this.parentController.collectionsController.view.updateCurrentRepresentation();
 
 			// TODO - redisplay the module configuration view
 			this.view.updateSingleModuleConfig(moduleId);
