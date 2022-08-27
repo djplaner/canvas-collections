@@ -88,14 +88,14 @@ export default class cc_ConfigurationView extends cc_View {
 	constructor(model, controller) {
 		super(model, controller);
 
-		this.COLLECTIONS_CONFIG_TOOLTIPS = CONFIG_VIEW_TOOLTIPS;
+		this.TOOLTIPS = CONFIG_VIEW_TOOLTIPS;
 	}
 
-	addCollectionsConfigTooltips() {
-		if (this.COLLECTIONS_CONFIG_TOOLTIPS) {
-			html5tooltips(this.COLLECTIONS_CONFIG_TOOLTIPS);
+/*	addCollectionsConfigTooltips() {
+		if (this.TOOLTIPS) {
+			html5tooltips(this.TOOLTIPS);
 		}
-	}
+	} */
 
 	/**
 	 * @descr Modify the canvas page to show the cc title, switch, and drop arrow.
@@ -133,7 +133,8 @@ export default class cc_ConfigurationView extends cc_View {
 			this.addModuleConfiguration();
 		}
 
-		this.addCollectionsConfigTooltips();
+//		this.addCollectionsConfigTooltips();
+		this.addTooltips();
 	}
 
 	/**

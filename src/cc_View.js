@@ -18,6 +18,12 @@ export default class cc_View {
 		this.controller = controller;
 	}
 
+	addTooltips() {
+		if (this.TOOLTIPS) {
+			html5tooltips(this.TOOLTIPS);
+		}
+	}
+
 	showOnlyCurrentCollectionModules() {
 		// if we don't have a model with getModulesCollections methods, avoid
 		if (!this.hasOwnProperty('model') || !this.model.hasOwnProperty('getModulesCollections')) {

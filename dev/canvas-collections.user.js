@@ -498,6 +498,12 @@ class cc_View {
 		this.controller = controller;
 	}
 
+	addTooltips() {
+		if (this.TOOLTIPS) {
+			html5tooltips(this.TOOLTIPS);
+		}
+	}
+
 	showOnlyCurrentCollectionModules() {
 		// if we don't have a model with getModulesCollections methods, avoid
 		if (!this.hasOwnProperty('model') || !this.model.hasOwnProperty('getModulesCollections')) {
@@ -614,14 +620,14 @@ class cc_ConfigurationView extends cc_View {
 	constructor(model, controller) {
 		super(model, controller);
 
-		this.COLLECTIONS_CONFIG_TOOLTIPS = CONFIG_VIEW_TOOLTIPS;
+		this.TOOLTIPS = CONFIG_VIEW_TOOLTIPS;
 	}
 
-	addCollectionsConfigTooltips() {
-		if (this.COLLECTIONS_CONFIG_TOOLTIPS) {
-			html5tooltips(this.COLLECTIONS_CONFIG_TOOLTIPS);
+/*	addCollectionsConfigTooltips() {
+		if (this.TOOLTIPS) {
+			html5tooltips(this.TOOLTIPS);
 		}
-	}
+	} */
 
 	/**
 	 * @descr Modify the canvas page to show the cc title, switch, and drop arrow.
@@ -659,7 +665,8 @@ class cc_ConfigurationView extends cc_View {
 			this.addModuleConfiguration();
 		}
 
-		this.addCollectionsConfigTooltips();
+//		this.addCollectionsConfigTooltips();
+		this.addTooltips();
 	}
 
 	/**
@@ -2729,6 +2736,17 @@ class CollectionsModel {
 
 
 
+const NAV_WF_TOOLTIPS = [ 
+	{ 
+		contentText: `<p>Collection hidden from students. Any published modules for this collection
+		may be visible to students.</p>`,
+		targetSelector: '#cc-about-hide-collection',
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/#hide-a-collection"
+	}
+];
+
+
 class NavView extends cc_View {
 
 	/**
@@ -2736,9 +2754,10 @@ class NavView extends cc_View {
 	 * @param {Object} model
 	 * @param {Object} controller
 	 */
-	constructor( model, controller ) {
-		super( model, controller );
+	constructor(model, controller) {
+		super(model, controller);
 
+		this.TOOLTIPS = NAV_WF_TOOLTIPS;
 	}
 
 	/**
@@ -2751,16 +2770,18 @@ class NavView extends cc_View {
 
 
 		// generate the HTML
-//		let html ='<h1> Hello from NavView </h1>';
+		//		let html ='<h1> Hello from NavView </h1>';
 
 		let navBar = this.generateNavBar();
 		div.insertAdjacentElement('beforeend', navBar);
 
+		this.addTooltips();		
+
 		// add html to div#cc-canvas-collections
-//		div.insertAdjacentHTML('afterbegin', html);
+		//		div.insertAdjacentHTML('afterbegin', html);
 	}
 
-	generateNavBar() { 
+	generateNavBar() {
 		let navBar = document.createElement('div');
 		navBar.className = 'cc-nav';
 
@@ -2834,50 +2855,85 @@ li.cc-nav a {
 .cc-nav li:nth-child(4) {
     border-right: none;
 }
+
+.cc-collection-hidden {
+	background: #cacaca;
+	text-align:center;
+}
+div.cc-collection-hidden > a {
+	display:inline;
+}
 </style>
 		`;
 
 		// insert styles in navBar
 		navBar.insertAdjacentHTML('afterbegin', navBarStyles);
 
+		const editMode = this.controller.parentController.editMode;
+
 		let count = 0;
 		let navList = document.createElement('ul');
-        for (let collection of this.model.getCollectionNames()) {
-            let navClass = ['li', 'mr-4'];
-            let style = 'cc-nav';
+		// iterate through all the collections
+		for (let collection of this.model.getCollectionNames()) {
+			let navClass = ['li', 'mr-4'];
+			let style = 'cc-nav';
 
 			// get the collection details for this collection
 			// KLUDGE TODO fix this up
 			let collectionDetails = this.model.cc_configuration.COLLECTIONS[collection];
 			let icon = "";
-			if (collectionDetails.icon!=="") {
+			if (collectionDetails.icon !== "") {
 				icon = `<i class="${collectionDetails.icon}"></i>`;
 			}
 			//console.log(collectionDetails);
 
+			// - how to know if we're in staff view
+			if (collectionDetails.hide) {
+				if (!editMode) {
+					// skip this collection if not in editMode (student)
+					// and the collection is hidden
+					continue;
+				}
+			}
 
-            let navElement = `<a href="#">${icon} ${collection}</a> `;
-            let navItem = document.createElement('li');
+
+			let navElement = `<a href="#">${icon} ${collection}</a> `;
+			let navItem = document.createElement('li');
 			navItem.className = "cc-nav";
 
 			// set the active navigation item if currentCollection is defined and matches OR
 			// currentCollection is undefined and we're at the first one
-            if ( 
-				( collection === this.model.currentCollection) || 
-			    ( this.model.currentCollection === undefined && count===0 )
-			 ) {
-                navItem.classList.add('cc-active');
-            }
-			count+=1;
+			if (
+				(collection === this.model.currentCollection) ||
+				(this.model.currentCollection === undefined && count === 0)
+			) {
+				navItem.classList.add('cc-active');
+			}
+			count += 1;
 
-            navItem.onclick = (event) => this.controller.navigateCollections(event);
+			navItem.onclick = (event) => this.controller.navigateCollections(event);
 			// TODO probably shouldn't be on this view the click? SHouldn't it be the
 			// controller?, 
-            //navItem.onclick = () => this.collectionsClick(collection, this);
-            navItem.innerHTML = navElement;
-            navList.appendChild(navItem);
-        }
+			//navItem.onclick = () => this.collectionsClick(collection, this);
+			navItem.innerHTML = navElement;
+
+			if (collectionDetails.hide && editMode) {
+				// insert a div.cc-collection-hidden to indicate that this collection is hidden
+				// and only visible in editMode
+				let hiddenDiv = document.createElement('div');
+				hiddenDiv.className = 'cc-collection-hidden';
+				hiddenDiv.innerHTML = `Hidden
+						<a id="cc-about-hide-collection" target="_blank" href="">
+			   					<i class="icon-question"></i></a>`;
+				navItem.insertAdjacentElement('beforeend', hiddenDiv);
+			}
+
+			navList.appendChild(navItem);
+		}
 		navBar.appendChild(navList);
+
+
+
 
 		return navBar;
 	}
