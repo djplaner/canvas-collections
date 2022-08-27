@@ -271,7 +271,7 @@ class cc_ConfigurationModel {
 		// return null if there's no matching collection or attribute
 		if (!this.controller.parentController.cc_configuration.COLLECTIONS[collectionName] ||
 			!this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute]) {
-			return "";
+			return undefined;
 		}
 		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute];
 	}
@@ -553,6 +553,15 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/#add-a-new-collection"
 	},
+	{ 
+		contentText: `Make collection invisible to students.
+		<p><i class="icon-warning"></i> Also unpublish all the collection's modules to be safe.`,
+		targetSelector: '#cc-about-hide-collection',
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/#hide-a-collection"
+	},
+
+	//******** Module configuration */
 	{ 
 		contentText: `Which collection does this module belong to?`,
 		maxWidth: `250px`,
@@ -1432,7 +1441,13 @@ class cc_ConfigurationView extends cc_View {
 			);
 			// TODO set these to collection values
 			let includePage = this.model.getCollectionAttribute(collectionName, "includePage");
+			if ( ! includePage ) {
+				includePage="";
+			}
 			let outputPage = this.model.getCollectionAttribute(collectionName, "outputPage");
+			if ( ! outputPage ) {
+				outputPage="";
+			}
 			const divExistingCollection = `
 			<div class="cc-existing-collection border border-trbl" id="cc-collection-${collectionName}">
 				<p>${collectionName} - (${moduleCount} ${moduleName})
@@ -1473,6 +1488,15 @@ class cc_ConfigurationView extends cc_View {
 								Default collection?
 							</label>
 						</div>
+						<div class="ic-Form-control ic-Form-control--checkbox">
+							<input type="checkbox" id="cc-config-collection-${collectionName}-hide"
+							    class="cc-config-collection-default">
+							<label class="ic-Label" for="cc-config-collection-${collectionName}-hide">
+								Hide collection?
+								<a id="cc-about-hide-collection" target="_blank" href="">
+			   					<i class="icon-question"></i></a>
+							</label>
+						</div>
 					</div>
 				</fieldset>
 			</div>
@@ -1489,6 +1513,17 @@ class cc_ConfigurationView extends cc_View {
 				const defaultCheckbox = document.getElementById(`cc-config-collection-${collectionName}-default`);
 				if (defaultCheckbox) {
 					defaultCheckbox.checked = true;
+				}
+			}
+			// TODO set input#cc-config-collection-${collectionName}-hide to checked
+			// if the collection is hidden
+			const hidden = this.model.getCollectionAttribute(collectionName, "hide");
+			const hideCheckbox = document.getElementById(`cc-config-collection-${collectionName}-hide`);
+			if (hideCheckbox) {
+				if (hidden) {
+					hideCheckbox.checked = true;
+				} else {
+					hideCheckbox.checked = false;
 				}
 			}
 

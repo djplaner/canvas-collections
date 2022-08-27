@@ -255,7 +255,7 @@ export default class cc_ConfigurationModel {
 		// return null if there's no matching collection or attribute
 		if (!this.controller.parentController.cc_configuration.COLLECTIONS[collectionName] ||
 			!this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute]) {
-			return "";
+			return undefined;
 		}
 		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute];
 	}
