@@ -394,10 +394,8 @@ export default class cc_ConfigurationView extends cc_View {
 		// - eventually will need to handle the CSS 
 		// - perhaps with a date view?
 		let dateInfo = {
-			label: '',
-			week: '',
-			date: '',
-			month: ''
+			label: '', week: '', date: '',
+			month: '', day: '', time: ''
 		};
 		if (moduleConfig.date) {
 			for (const dateField in dateInfo) {
@@ -410,28 +408,47 @@ export default class cc_ConfigurationView extends cc_View {
 		let dayOfWeekOptions = '';
 		// week options needs to be integers for each of the weeks in current calendar
 		// TODO get it from the calendar
-		const weeks = ['Not chosen','0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'];
+
+		// current calendar located
+		let calendar = this.controller.parentController.calendar;
+		// weeks is an object/dict of weeks
+		const periodWeeks = calendar.getWeekDetails();
+		let weeks = ['Not chosen'];
+		// get the keys for periodWeeks and add to weeks array
+		for (const week in periodWeeks) {
+			weeks.push(week);
+		}
+
 		for (let i = 0; i < weeks.length; i++) {
 			let selected = '';
 			const week = weeks[i];
 			if (week === dateInfo.week) {
 				selected = 'selected';
 			}
-			weekOptions += `<option value="${week}" ${selected}>${week}</option>`;
+			let weekValue = week;
+			if (week === 'Not chosen') {
+				weekValue = '';
+			}
+			weekOptions += `<option value="${weekValue}" ${selected}>${week}</option>`;
 		}
 
 		const days = ['Not chosen', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 		for (let i = 0; i < days.length; i++) {
 			let selected = '';
 			const day = days[i];
-			if (day === dateInfo.week) {
+			if (day === dateInfo.day) {
 				selected = 'selected';
 			}
-			dayOfWeekOptions += `<option value="${day}" ${selected}>${day}</option>`;
+			let dayValue = day;
+			if (day === 'Not chosen') {
+				dayValue = '';
+			}
+			dayOfWeekOptions += `<option value="${dayValue}" ${selected}>${day}</option>`;
 		}
 
 		// TODO calculate the date based on settings and using calendar
-		let calculatedDate="No date chosen";
+		let calculatedDate=this.calculateDate( dateInfo );
+		
 
 
 		let showConfigHtml = `
@@ -466,6 +483,7 @@ export default class cc_ConfigurationView extends cc_View {
 			   font-size: 0.8rem;
 			   display: inline;
 			   background-color: #eee;
+			   padding: 0.5em
 		   }
 		</style>
 
@@ -497,8 +515,8 @@ export default class cc_ConfigurationView extends cc_View {
 						</div>
 					<div class="cc-module-config-collection-representation"
 					    style="padding-top:1rem; padding-left:3rem">
-				    	<label for="cc-module-config-${moduleDetail.id}-date">Day of week</label>
-						<select id="cc-module-config-${moduleDetail.id}-day-week">
+				    	<label for="cc-module-config-${moduleDetail.id}-day">Day of week</label>
+						<select id="cc-module-config-${moduleDetail.id}-day">
 		                  ${dayOfWeekOptions}
 						</select> <br />
 						<label for="cc-module-config-${moduleDetail.id}-week">Week</label>
@@ -512,7 +530,7 @@ export default class cc_ConfigurationView extends cc_View {
 					   		}
 					   	</style>
 						<aeon-datepicker local="en-au">
-						<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="" />
+						<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="${dateInfo.time}" />
 						</aeon-datepicker>
 					</div>
 					<br clear="all" />
@@ -1342,6 +1360,45 @@ input:checked + .cc-slider:before {
 				existingErrors[i].remove();
 			}
 		}
+	}
+
+	/**
+	 * Given a collections date info hash, return a string with a human readable
+	 * version of the date using the calendar to calculate
+	 * Return "No set date" if no date is set
+	 * @param {Object} dateInfo - object with keys label, week, date, month, day, time
+	 */
+	calculateDate( dateInfo) {
+		// valid date combinations will be
+		// 1. week
+		// 2. week and day
+		// 3. week and day and time
+		// - must have a week
+
+		if (dateInfo.week==='') {
+			return "No date set";
+		}
+
+		let calcDate = {};
+
+		if (dateInfo.day==='') {
+			// no day
+			calcDate = this.controller.parentController.calendar.getDate( dateInfo.week);
+		} else {
+			calcDate = this.controller.parentController.calendar.getDate(
+				dateInfo.week, false, dateInfo.day 
+			);
+		}
+		let dateString = `${calcDate.date} ${calcDate.month} ${calcDate.year}`;
+
+		if (calcDate.hasOwnProperty('day')) {
+			dateString = `${calcDate.day} ${dateString}`;
+		}
+		if (dateInfo.time!=='') {
+			// no time
+			dateString = `${dateInfo.time} ${dateString}`;
+		}
+		return dateString;
 	}
 
 }

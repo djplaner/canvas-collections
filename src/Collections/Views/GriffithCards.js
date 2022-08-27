@@ -6,7 +6,7 @@
 
 import { cc_View } from '../../cc_View.js';
 
-import { UniversityDateCalendar } from '../../university-date-calendar.js';
+//import { UniversityDateCalendar } from '../../university-date-calendar.js';
 
 import { CircularProgressBar } from "../../../node_modules/circular-progress-bar/public/circular-progress-bar.min.js";
 
@@ -40,10 +40,18 @@ export default class GriffithCardsView extends cc_View {
 
 		// if this.controller has parentController property 
 		if (this.controller.hasOwnProperty('parentController')) {
-			this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
-		} else if ( this.controller.hasOwnProperty('strm')) {
-			this.calendar = new UniversityDateCalendar(this.controller.strm);
-		}
+			// old style
+			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
+			this.calendar = this.controller.parentController.calendar;
+		} else if ( 
+			this.model.hasOwnProperty('controller') &&
+			this.model.controller.hasOwnProperty('parentController') ) {
+				this.calendar = this.model.controller.parentController.calendar;
+		} else {
+			alert("Another funny calendar miss. Fix it");
+		} 
+
+
 
 		// create a simple message div element
 		let message = document.createElement('div');

@@ -15,6 +15,8 @@ import { cc_ConfigurationController } from './Configuration/cc_ConfigurationCont
 import { cc_CollectionsController } from './Collections/CollectionsController.js';
 import { juiceController } from './juice/juiceController.js';
 import { cc_ConfigurationStore } from './Configuration/cc_ConfigurationStore.js';
+import { UniversityDateCalendar } from './university-date-calendar.js';
+
 
 // turn debug console.logs on/off
 const DEBUG = true;
@@ -188,6 +190,9 @@ export default class cc_Controller {
 			translate = { 1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 3, 7: 4 };
 		}
 		this.period = translate[this.period];
+
+		// create calendar
+		this.calendar = new UniversityDateCalendar(this.strm);
 	}
 
 

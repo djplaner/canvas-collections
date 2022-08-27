@@ -381,7 +381,21 @@ class cc_ConfigurationModel {
 		const module = this.findModuleById(moduleId);
 
 		if (module) {
-			module[fieldName] = value;
+			// specify the fields that are for dates, to be handled differently
+			const dateFields = [ 'day', 'week', 'time'];
+
+			if ( dateFields.includes(fieldName) ) {
+				// does module contain a date field
+				if (!module.hasOwnProperty('date')) {
+					module.date = {
+						label: '', day: '', week: '', time: ''
+					};
+				}
+				module.date[fieldName] = value;
+			} else {
+				// set the non-date fields
+				module[fieldName] = value;
+			}
 		}
 	}
 
@@ -887,10 +901,8 @@ class cc_ConfigurationView extends cc_View {
 		// - eventually will need to handle the CSS 
 		// - perhaps with a date view?
 		let dateInfo = {
-			label: '',
-			week: '',
-			date: '',
-			month: ''
+			label: '', week: '', date: '',
+			month: '', day: '', time: ''
 		};
 		if (moduleConfig.date) {
 			for (const dateField in dateInfo) {
@@ -903,28 +915,47 @@ class cc_ConfigurationView extends cc_View {
 		let dayOfWeekOptions = '';
 		// week options needs to be integers for each of the weeks in current calendar
 		// TODO get it from the calendar
-		const weeks = ['Not chosen','0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'];
+
+		// current calendar located
+		let calendar = this.controller.parentController.calendar;
+		// weeks is an object/dict of weeks
+		const periodWeeks = calendar.getWeekDetails();
+		let weeks = ['Not chosen'];
+		// get the keys for periodWeeks and add to weeks array
+		for (const week in periodWeeks) {
+			weeks.push(week);
+		}
+
 		for (let i = 0; i < weeks.length; i++) {
 			let selected = '';
 			const week = weeks[i];
 			if (week === dateInfo.week) {
 				selected = 'selected';
 			}
-			weekOptions += `<option value="${week}" ${selected}>${week}</option>`;
+			let weekValue = week;
+			if (week === 'Not chosen') {
+				weekValue = '';
+			}
+			weekOptions += `<option value="${weekValue}" ${selected}>${week}</option>`;
 		}
 
 		const days = ['Not chosen', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 		for (let i = 0; i < days.length; i++) {
 			let selected = '';
 			const day = days[i];
-			if (day === dateInfo.week) {
+			if (day === dateInfo.day) {
 				selected = 'selected';
 			}
-			dayOfWeekOptions += `<option value="${day}" ${selected}>${day}</option>`;
+			let dayValue = day;
+			if (day === 'Not chosen') {
+				dayValue = '';
+			}
+			dayOfWeekOptions += `<option value="${dayValue}" ${selected}>${day}</option>`;
 		}
 
 		// TODO calculate the date based on settings and using calendar
-		let calculatedDate="No date chosen";
+		let calculatedDate=this.calculateDate( dateInfo );
+		
 
 
 		let showConfigHtml = `
@@ -959,6 +990,7 @@ class cc_ConfigurationView extends cc_View {
 			   font-size: 0.8rem;
 			   display: inline;
 			   background-color: #eee;
+			   padding: 0.5em
 		   }
 		</style>
 
@@ -990,8 +1022,8 @@ class cc_ConfigurationView extends cc_View {
 						</div>
 					<div class="cc-module-config-collection-representation"
 					    style="padding-top:1rem; padding-left:3rem">
-				    	<label for="cc-module-config-${moduleDetail.id}-date">Day of week</label>
-						<select id="cc-module-config-${moduleDetail.id}-day-week">
+				    	<label for="cc-module-config-${moduleDetail.id}-day">Day of week</label>
+						<select id="cc-module-config-${moduleDetail.id}-day">
 		                  ${dayOfWeekOptions}
 						</select> <br />
 						<label for="cc-module-config-${moduleDetail.id}-week">Week</label>
@@ -1005,7 +1037,7 @@ class cc_ConfigurationView extends cc_View {
 					   		}
 					   	</style>
 						<aeon-datepicker local="en-au">
-						<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="" />
+						<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="${dateInfo.time}" />
 						</aeon-datepicker>
 					</div>
 					<br clear="all" />
@@ -1835,6 +1867,45 @@ input:checked + .cc-slider:before {
 				existingErrors[i].remove();
 			}
 		}
+	}
+
+	/**
+	 * Given a collections date info hash, return a string with a human readable
+	 * version of the date using the calendar to calculate
+	 * Return "No set date" if no date is set
+	 * @param {Object} dateInfo - object with keys label, week, date, month, day, time
+	 */
+	calculateDate( dateInfo) {
+		// valid date combinations will be
+		// 1. week
+		// 2. week and day
+		// 3. week and day and time
+		// - must have a week
+
+		if (dateInfo.week==='') {
+			return "No date set";
+		}
+
+		let calcDate = {};
+
+		if (dateInfo.day==='') {
+			// no day
+			calcDate = this.controller.parentController.calendar.getDate( dateInfo.week);
+		} else {
+			calcDate = this.controller.parentController.calendar.getDate(
+				dateInfo.week, false, dateInfo.day 
+			);
+		}
+		let dateString = `${calcDate.date} ${calcDate.month} ${calcDate.year}`;
+
+		if (calcDate.hasOwnProperty('day')) {
+			dateString = `${calcDate.day} ${dateString}`;
+		}
+		if (dateInfo.time!=='') {
+			// no time
+			dateString = `${dateInfo.time} ${dateString}`;
+		}
+		return dateString;
 	}
 
 }
@@ -3276,717 +3347,6 @@ class CollectionOnlyView extends cc_View {
 	}
 }
 
-// src/university-date-calendar.js
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-/* jshint esversion: 6 */
-
-// Calendar for Griffith University
-// Period is represented by a four digit number - an STRM
-// XYYP 
-// - X is the type of offering
-//   - 2 indicates OUA course
-//   - 3 indicates normal Griffith course
-// - YY is the year (last two digits) 
-//   - 19 is 2019
-//   - 21 is 2021
-// - P is the particular period for the offering
-//   - OUA has study periods
-//     - 1 = period 1 
-//     - 3 = period 2
-//     - 5 = period 3
-//     - 7 = period 4
-//   - Griffith has 3 trimesters
-//     - 1 = T1
-//     - 5 = T2
-//     - 8 = T3
-// courseCode_STRM_mode
-// default period is the current main trimester
-const DEFAULT_PERIOD = '3225';
-
-const MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
-  "Aug", "Sep", "Oct", "Nov", "Dec", 
-];
-
-/* Griffith Calendar Term dates
- * 2021
- * - OUA Study Periods 1-4
- *   2211, 2213 2215 2217
- * - GU T1, T2, T3
- *   3211 3215 3218
- * - QCM T1 T2
- *   3211QCM 3215QCM
- * 2020
- * - OUA Study Periods 1-4
- *   2201 2203 2205 2207
- * - GU T1, T2, T3
- *   3201 3205 3208
- * 2019
- * - OUA SP 3, 4
- *   2195 2197
- * - GU T1, T2, T3
- *   3191 3195 319
- */
-
-const CALENDAR = {
-    '3231': {
-    0: { start: "2023-02-27", stop: "2023-03-03" },
-    1: { start: "2023-03-06", stop: "2023-03-12" },
-    2: { start: "2023-03-13", stop: "2023-03-19" },
-    3: { start: "2023-03-20", stop: "2023-03-26" },
-    4: { start: "2023-03-27", stop: "2023-04-09" },
-    5: { start: "2023-04-10", stop: "2023-04-16" },
-    6: { start: "2023-04-17", stop: "2023-04-23" },
-    7: { start: "2023-04-24", stop: "2023-04-30" },
-    8: { start: "2023-05-01", stop: "2023-05-07" },
-    9: { start: "2023-05-08", stop: "2023-05-14" },
-    10: { start: "2023-05-15", stop: "2023-05-21" },
-    11: { start: "2023-05-22", stop: "2023-05-28" },
-    12: { start: "2023-05-29", stop: "2023-06-04" },
-    13: { start: "2023-06-05", stop: "2023-06-11" },
-    14: { start: "2023-06-12", stop: "2023-06-18" },
-    15: { start: "2023-06-19", stop: "2023-07-25" },
-    exam: { start: "2023-06-08", stop: "2023-06-17" },
-  },
-  '3221': {
-    0: { start: "2022-03-07", stop: "2022-03-13" },
-    1: { start: "2022-03-14", stop: "2022-03-20" },
-    2: { start: "2022-03-21", stop: "2022-03-28" },
-    3: { start: "2022-03-28", stop: "2022-04-03" },
-    4: { start: "2022-04-04", stop: "2022-04-10" },
-    5: { start: "2022-04-18", stop: "2022-04-24" },
-    6: { start: "2022-04-25", stop: "2022-05-01" },
-    7: { start: "2022-05-02", stop: "2022-05-08" },
-    8: { start: "2022-05-09", stop: "2022-05-15" },
-    9: { start: "2022-05-16", stop: "2022-05-22" },
-    10: { start: "2022-05-23", stop: "2022-05-29" },
-    11: { start: "2022-05-30", stop: "2022-06-05" },
-    12: { start: "2022-06-06", stop: "2022-06-12" },
-    13: { start: "2022-06-13", stop: "2022-06-19" },
-    14: { start: "2022-06-20", stop: "2022-06-26" },
-    15: { start: "2022-06-27", stop: "2022-07-03" },
-    exam: { start: "2022-06-13", stop: "2022-06-25" },
-  },
-  '3221QCM': {
-    0: { start: "2022-02-21", stop: "2022-02-27" },
-    1: { start: "2022-02-28", stop: "2022-03-06" },
-    2: { start: "2022-03-07", stop: "2022-03-13" },
-    3: { start: "2022-03-14", stop: "2022-03-20" },
-    4: { start: "2022-03-21", stop: "2022-03-27" },
-    5: { start: "2022-03-28", stop: "2022-04-03" },
-    6: { start: "2022-04-04", stop: "2022-04-10" },
-    7: { start: "2022-04-18", stop: "2022-04-24" },
-    8: { start: "2022-04-25", stop: "2022-05-01" },
-    9: { start: "2022-05-09", stop: "2022-05-15" },
-    10: { start: "2022-05-16", stop: "2022-05-22" },
-    11: { start: "2022-05-23", stop: "2022-05-29" },
-    12: { start: "2022-05-30", stop: "2022-06-05" },
-    13: { start: "2022-06-06", stop: "2022-06-12" },
-    14: { start: "2022-06-13", stop: "2022-06-19" },
-    15: { start: "2022-06-20", stop: "2022-07-26" },
-    exam: { start: "2022-06-13", stop: "2022-06-25" },
-  },
-  '3225': {
-    0: { start: "2022-07-11", stop: "2022-07-17" },
-    1: { start: "2022-07-18", stop: "2022-07-24" },
-    2: { start: "2022-07-25", stop: "2022-07-31" },
-    3: { start: "2022-08-01", stop: "2022-08-07" },
-    4: { start: "2022-08-08", stop: "2022-08-14" },
-    5: { start: "2022-08-22", stop: "2022-08-28" },
-    6: { start: "2022-08-29", stop: "2022-09-04" },
-    7: { start: "2022-09-05", stop: "2022-09-11" },
-    8: { start: "2022-09-12", stop: "2022-09-18" },
-    9: { start: "2022-09-19", stop: "2022-09-25" },
-    10: { start: "2022-09-26", stop: "2022-10-02" },
-    11: { start: "2022-10-03", stop: "2022-10-09" },
-    12: { start: "2022-10-10", stop: "2022-10-16" },
-    13: { start: "2022-10-17", stop: "2022-10-23" },
-    14: { start: "2022-10-24", stop: "2022-10-30" },
-    15: { start: "2022-10-31", stop: "2022-11-06" },
-    exam: { start: "2022-10-20", stop: "2022-10-29" },
-  },
-  '3225QCM': {
-    0: { start: "2022-07-18", stop: "2022-07-24" },
-    1: { start: "2022-07-25", stop: "2022-07-31" },
-    2: { start: "2022-08-01", stop: "2022-08-07" },
-    3: { start: "2022-08-08", stop: "2022-08-14" },
-    4: { start: "2022-08-15", stop: "2022-08-21" },
-    5: { start: "2022-08-22", stop: "2022-08-28" },
-    6: { start: "2022-09-05", stop: "2022-09-11" },
-    7: { start: "2022-09-12", stop: "2022-09-18" },
-    8: { start: "2022-09-19", stop: "2022-09-25" },
-    9: { start: "2022-10-03", stop: "2022-10-09" },
-    10: { start: "2022-10-10", stop: "2022-10-16" },
-    11: { start: "2022-10-17", stop: "2022-10-23" },
-    12: { start: "2022-10-24", stop: "2022-10-30" },
-    13: { start: "2022-10-31", stop: "2022-11-06" },
-    14: { start: "2022-11-07", stop: "2022-11-13" },
-    15: { start: "2022-11-14", stop: "2022-07-20" },
-    exam: { start: "2022-11-07", stop: "2022-11-19" },
-  },
-  3228: {
-    0: { start: "2022-10-31", stop: "2022-11-06" },
-    1: { start: "2022-11-07", stop: "2022-11-13" },
-    2: { start: "2022-11-14", stop: "2022-11-20" },
-    3: { start: "2022-11-21", stop: "2022-11-27" },
-    4: { start: "2022-11-28", stop: "2022-12-04" },
-    5: { start: "2022-12-05", stop: "2022-12-11" },
-    6: { start: "2022-12-12", stop: "2022-12-18" },
-    7: { start: "2022-12-19", stop: "2022-12-25" },
-    8: { start: "2023-01-09", stop: "2023-01-15" },
-    9: { start: "2023-01-16", stop: "2023-01-22" },
-    10: { start: "2023-01-23", stop: "2023-01-29" },
-    11: { start: "2023-01-30", stop: "2023-02-05" },
-    12: { start: "2023-02-06", stop: "2023-02-12" },
-    13: { start: "2023-02-13", stop: "2023-02-19" },
-    14: { start: "2023-02-20", stop: "2023-02-26" },
-    15: { start: "2023-02-27", stop: "2023-03-05" },
-    //    exam: { start: "2023-02-17", stop: "2023-02-26" },
-  },
-  2211: {
-    0: { start: '2021-02-22', stop: '2021-02-28' },
-    1: { start: '2021-03-01', stop: '2021-03-07' },
-    2: { start: '2021-03-08', stop: '2021-03-14' },
-    3: { start: '2021-03-15', stop: '2021-03-21' },
-    4: { start: '2021-03-22', stop: '2021-03-28' },
-    5: { start: '2021-03-29', stop: '2021-04-04' },
-    6: { start: '2021-04-05', stop: '2021-04-11' },
-    7: { start: '2021-04-12', stop: '2021-04-18' },
-    8: { start: '2021-04-19', stop: '2021-04-25' },
-    9: { start: '2021-04-26', stop: '2021-05-02' },
-    10: { start: '2021-05-03', stop: '2021-05-09' },
-    11: { start: '2021-05-10', stop: '2021-05-16' },
-    12: { start: '2021-05-17', stop: '2021-05-23' },
-    13: { start: '2021-05-24', stop: '2021-05-30' },
-    14: { start: '2021-05-31', stop: '2021-06-06' },
-    exam: { start: '2021-05-31', stop: '2021-06-06' },
-  },
-  2213: {
-    1: { start: '2021-05-31', stop: '2021-06-06' },
-    2: { start: '2021-06-07', stop: '2021-06-13' },
-    3: { start: '2021-06-14', stop: '2021-06-20' },
-    4: { start: '2021-06-21', stop: '2021-06-27' },
-    5: { start: '2021-06-28', stop: '2021-07-04' },
-    6: { start: '2021-07-05', stop: '2021-07-11' },
-    7: { start: '2021-07-12', stop: '2021-07-18' },
-    8: { start: '2021-07-19', stop: '2021-07-25' },
-    9: { start: '2021-07-26', stop: '2021-08-01' },
-    10: { start: '2021-08-02', stop: '2021-08-08' },
-    11: { start: '2021-08-09', stop: '2021-08-15' },
-    12: { start: '2021-08-16', stop: '2021-08-22' },
-    13: { start: '2021-08-23', stop: '2021-08-29' },
-    exam: { start: '2021-08-30', stop: '2021-09-05' },
-  },
-  2215: {
-    0: { start: '2021-08-23', stop: '2021-08-29' },
-    1: { start: '2021-08-30', stop: '2021-09-05' },
-    2: { start: '2021-09-06', stop: '2021-09-12' },
-    3: { start: '2021-09-13', stop: '2021-09-19' },
-    4: { start: '2021-09-20', stop: '2021-09-26' },
-    5: { start: '2021-09-27', stop: '2021-10-03' },
-    6: { start: '2021-10-04', stop: '2021-10-10' },
-    7: { start: '2021-10-11', stop: '2021-10-17' },
-    8: { start: '2021-10-18', stop: '2021-10-24' },
-    9: { start: '2021-10-25', stop: '2021-10-31' },
-    10: { start: '2021-11-01', stop: '2021-11-07' },
-    11: { start: '2021-11-08', stop: '2021-11-14' },
-    12: { start: '2021-11-15', stop: '2021-11-21' },
-    13: { start: '2021-11-22', stop: '2021-11-28' },
-    exam: { start: '2021-11-29', stop: '2021-12-05' },
-  },
-  2217: {
-    0: { start: '2021-11-22', stop: '2021-11-28' },
-    1: { start: '2021-11-29', stop: '2021-12-05' },
-    2: { start: '2021-12-06', stop: '2021-12-12' },
-    3: { start: '2021-12-13', stop: '2021-12-19' },
-    4: { start: '2021-12-20', stop: '2021-12-26' },
-    5: { start: '2021-12-27', stop: '2022-01-02' },
-    6: { start: '2022-01-03', stop: '2022-01-09' },
-    7: { start: '2022-01-10', stop: '2022-01-16' },
-    8: { start: '2022-01-17', stop: '2022-01-23' },
-    9: { start: '2022-01-24', stop: '2022-01-30' },
-    10: { start: '2022-01-31', stop: '2022-02-06' },
-    11: { start: '2022-02-07', stop: '2022-02-13' },
-    12: { start: '2022-02-14', stop: '2022-02-20' },
-    13: { start: '2022-02-21', stop: '2022-02-27' },
-    exam: { start: '2022-02-28', stop: '2022-03-04' },
-  },
-  3218: {
-    0: { start: '2021-11-01', stop: '2021-11-07' },
-    1: { start: '2021-11-08', stop: '2021-11-14' },
-    2: { start: '2021-11-15', stop: '2021-11-21' },
-    3: { start: '2021-11-22', stop: '2021-11-28' },
-    4: { start: '2021-11-29', stop: '2021-12-05' },
-    5: { start: '2021-12-06', stop: '2021-12-12' },
-    6: { start: '2021-12-13', stop: '2021-12-19' },
-    7: { start: '2021-12-20', stop: '2021-12-26' },
-    8: { start: '2022-01-10', stop: '2022-01-16' },
-    9: { start: '2022-01-17', stop: '2022-01-23' },
-    10: { start: '2022-01-24', stop: '2022-01-30' },
-    11: { start: '2022-01-31', stop: '2022-02-06' },
-    12: { start: '2022-02-07', stop: '2022-02-13' },
-    13: { start: '2022-02-14', stop: '2022-02-20' },
-    14: { start: '2022-02-21', stop: '2022-02-27' },
-    15: { start: '2022-02-28', stop: '2022-03-06' },
-    exam: { start: '2022-02-17', stop: '2022-02-26' },
-  },
-  3215: {
-    0: { start: '2021-07-12', stop: '2021-07-18' },
-    1: { start: '2021-07-19', stop: '2021-07-25' },
-    2: { start: '2021-07-26', stop: '2021-08-01' },
-    3: { start: '2021-08-02', stop: '2021-08-08' },
-    4: { start: '2021-08-16', stop: '2021-08-22' },
-    5: { start: '2021-08-23', stop: '2021-08-29' },
-    6: { start: '2021-08-30', stop: '2021-09-05' },
-    7: { start: '2021-09-06', stop: '2021-09-12' },
-    8: { start: '2021-09-13', stop: '2021-09-19' },
-    9: { start: '2021-09-20', stop: '2021-09-26' },
-    10: { start: '2021-09-27', stop: '2021-10-03' },
-    11: { start: '2021-10-04', stop: '2021-10-10' },
-    12: { start: '2021-10-11', stop: '2021-10-17' },
-    13: { start: '2021-10-18', stop: '2021-10-24' },
-    14: { start: '2021-10-25', stop: '2021-10-31' },
-    15: { start: '2021-11-01', stop: '2021-11-07' },
-    exam: { start: '2021-10-21', stop: '2021-10-31' },
-  },
-  3211: {
-    0: { start: '2021-03-01', stop: '2021-03-07' },
-    1: { start: '2021-03-08', stop: '2021-03-14' },
-    2: { start: '2021-03-15', stop: '2021-03-21' },
-    3: { start: '2021-03-22', stop: '2021-03-28' },
-    4: { start: '2021-03-29', stop: '2021-04-04' },
-    5: { start: '2021-04-12', stop: '2021-04-18' },
-    6: { start: '2021-04-19', stop: '2021-04-25' },
-    7: { start: '2021-04-26', stop: '2021-05-02' },
-    8: { start: '2021-05-03', stop: '2021-05-09' },
-    9: { start: '2021-05-10', stop: '2021-05-16' },
-    10: { start: '2021-05-17', stop: '2021-05-23' },
-    11: { start: '2021-05-24', stop: '2021-05-30' },
-    12: { start: '2021-05-31', stop: '2021-06-06' },
-    13: { start: '2021-06-07', stop: '2021-06-13' },
-    14: { start: '2021-06-14', stop: '2021-06-20' },
-    15: { start: '2021-06-21', stop: '2021-06-27' },
-    exam: { start: '2021-06-10', stop: '2021-06-19' },
-  },
-  '3215QCM': {
-    0: { start: '2021-07-12', stop: '2021-07-18' },
-    1: { start: '2021-07-19', stop: '2021-07-25' },
-    2: { start: '2021-07-26', stop: '2021-08-01' },
-    3: { start: '2021-08-02', stop: '2021-08-08' },
-    4: { start: '2021-08-09', stop: '2021-08-15' },
-    5: { start: '2021-08-16', stop: '2021-08-22' },
-    6: { start: '2021-08-30', stop: '2021-09-05' },
-    7: { start: '2021-09-06', stop: '2021-09-12' },
-    8: { start: '2021-09-13', stop: '2021-09-19' },
-    9: { start: '2021-09-20', stop: '2021-09-26' },
-    10: { start: '2021-10-04', stop: '2021-10-10' },
-    11: { start: '2021-10-11', stop: '2021-10-17' },
-    12: { start: '2021-10-18', stop: '2021-10-24' },
-    13: { start: '2021-10-25', stop: '2021-10-31' },
-    14: { start: '2021-11-01', stop: '2021-11-07' },
-    15: { start: '2021-11-08', stop: '2021-11-14' },
-    exam: { start: '2021-10-30', stop: '2021-11-13' },
-  },
-  '3211QCM': {
-    0: { start: '2021-02-22', stop: '2021-02-28' },
-    1: { start: '2021-03-01', stop: '2021-03-07' },
-    2: { start: '2021-03-08', stop: '2021-03-14' },
-    3: { start: '2021-03-15', stop: '2021-03-21' },
-    4: { start: '2021-03-22', stop: '2021-03-29' },
-    5: { start: '2021-03-29', stop: '2021-04-04' },
-    6: { start: '2021-04-12', stop: '2021-04-18' },
-    7: { start: '2021-04-19', stop: '2021-04-25' },
-    8: { start: '2021-04-26', stop: '2021-05-02' },
-    9: { start: '2021-05-10', stop: '2021-05-16' },
-    10: { start: '2021-05-17', stop: '2021-05-23' },
-    11: { start: '2021-05-24', stop: '2021-05-30' },
-    12: { start: '2021-05-31', stop: '2021-06-06' },
-    13: { start: '2021-06-07', stop: '2021-03-13' },
-    14: { start: '2021-06-14', stop: '2021-03-20' },
-    15: { start: '2021-06-21', stop: '2021-03-26' },
-    exam: { start: '2021-06-12', stop: '2021-06-26' },
-  },
-
-  2201: {
-    0: { start: '2020-02-24', stop: '2020-03-01' },
-    1: { start: '2020-03-02', stop: '2020-03-08' },
-    2: { start: '2020-03-09', stop: '2020-03-15' },
-    3: { start: '2020-03-16', stCop: '2020-03-22' },
-    4: { start: '2020-03-23', stop: '2020-03-29' },
-    5: { start: '2020-03-30', stop: '2020-04-05' },
-    6: { start: '2020-04-06', stop: '2020-04-12' },
-    7: { start: '2020-04-13', stop: '2020-04-19' },
-    8: { start: '2020-04-20', stop: '2020-04-26' },
-    9: { start: '2020-04-27', stop: '2020-05-03' },
-    10: { start: '2020-05-04', stop: '2020-05-10' },
-    11: { start: '2020-05-11', stop: '2020-05-17' },
-    12: { start: '2020-05-18', stop: '2020-05-24' },
-    13: { start: '2020-05-25', stop: '2020-05-31' },
-    14: { start: '2020-06-01', stop: '2020-06-05' },
-    exam: { start: '2020-06-01', stop: '2020-06-05' },
-  },
-  2203: {
-    0: { start: '2020-05-25', stop: '2020-05-31' },
-    1: { start: '2020-06-01', stop: '2020-06-07' },
-    2: { start: '2020-06-08', stop: '2020-06-14' },
-    3: { start: '2020-06-15', stop: '2020-06-21' },
-    4: { start: '2020-06-22', stop: '2020-06-28' },
-    5: { start: '2020-06-29', stop: '2020-07-05' },
-    6: { start: '2020-07-06', stop: '2020-07-12' },
-    7: { start: '2020-07-13', stop: '2020-07-19' },
-    8: { start: '2020-07-20', stop: '2020-07-26' },
-    9: { start: '2020-07-27', stop: '2020-08-02' },
-    10: { start: '2020-08-03', stop: '2020-08-09' },
-    11: { start: '2020-08-10', stop: '2020-05-17' },
-    12: { start: '2020-08-17', stop: '2020-05-24' },
-    13: { start: '2020-08-24', stop: '2020-05-31' },
-    14: { start: '2020-08-31', stop: '2020-09-06' },
-    exam: { start: '2020-08-31', stop: '2020-09-04' },
-  },
-  2205: {
-    0: { start: '2020-08-24', stop: '2020-09-30' },
-    1: { start: '2020-08-31', stop: '2020-09-06' },
-    2: { start: '2020-09-07', stop: '2020-09-13' },
-    3: { start: '2020-09-14', stop: '2020-09-20' },
-    4: { start: '2020-09-21', stop: '2020-09-27' },
-    5: { start: '2020-09-28', stop: '2020-10-04' },
-    6: { start: '2020-10-05', stop: '2020-10-11' },
-    7: { start: '2020-10-12', stop: '2020-10-19' },
-    8: { start: '2020-10-19', stop: '2020-10-25' },
-    9: { start: '2020-10-26', stop: '2020-11-01' },
-    10: { start: '2020-11-02', stop: '2020-11-08' },
-    11: { start: '2020-11-09', stop: '2020-11-15' },
-    12: { start: '2020-11-16', stop: '2020-11-22' },
-    13: { start: '2020-11-23', stop: '2020-11-29' },
-    14: { start: '2020-11-30', stop: '2020-12-06' },
-    15: { start: '2020-12-07', stop: '2020-12-13' },
-    exam: { start: '2020-12-07', stop: '2020-12-13' },
-  },
-  2207: {
-    0: { start: '2020-11-23', stop: '2020-11-29' },
-    1: { start: '2020-11-30', stop: '2020-12-06' },
-    2: { start: '2020-12-07', stop: '2020-12-13' },
-    3: { start: '2020-12-14', stop: '2020-12-20' },
-    4: { start: '2020-12-21', stop: '2020-12-27' },
-    5: { start: '2020-12-28', stop: '2021-01-03' },
-    6: { start: '2021-01-04', stop: '2021-01-10' },
-    7: { start: '2021-01-11', stop: '2021-01-17' },
-    8: { start: '2021-01-18', stop: '2021-01-24' },
-    9: { start: '2021-01-25', stop: '2021-01-31' },
-    10: { start: '2021-02-01', stop: '2021-02-07' },
-    11: { start: '2021-02-08', stop: '2021-02-14' },
-    12: { start: '2021-02-15', stop: '2021-02-21' },
-    13: { start: '2021-02-22', stop: '2021-02-28' },
-    14: { start: '2021-03-01', stop: '2021-03-07' },
-    15: { start: '2021-03-08', stop: '2021-03-14' },
-    exam: { start: '2021-03-01', stop: '2021-03-07' },
-  },
-  3208: {
-    0: { start: '2020-10-26', stop: '2020-11-01' },
-    1: { start: '2020-11-02', stop: '2020-11-08' },
-    2: { start: '2020-11-09', stop: '2020-11-15' },
-    3: { start: '2020-11-16', stop: '2020-11-22' },
-    4: { start: '2020-11-23', stop: '2020-11-29' },
-    5: { start: '2020-11-30', stop: '2020-12-06' },
-    6: { start: '2020-12-07', stop: '2020-12-13' },
-    7: { start: '2020-12-14', stop: '2020-12-20' },
-    8: { start: '2021-01-04', stop: '2021-01-10' },
-    9: { start: '2021-01-11', stop: '2021-01-17' },
-    10: { start: '2021-01-18', stop: '2021-01-24' },
-    11: { start: '2021-01-25', stop: '2021-01-31' },
-    12: { start: '2021-02-01', stop: '2021-02-07' },
-    13: { start: '2021-02-08', stop: '2021-02-14' },
-    exam: { start: '2021-02-08', stop: '2021-02-20' },
-  },
-  3205: {
-    0: { start: '2020-07-06', stop: '2020-07-12' },
-    1: { start: '2020-07-13', stop: '2020-07-19' },
-    2: { start: '2020-07-20', stop: '2020-08-26' },
-    3: { start: '2020-07-27', stop: '2020-08-02' },
-    4: { start: '2020-08-03', stop: '2020-08-16' },
-    5: { start: '2020-08-17', stop: '2020-08-23' },
-    6: { start: '2020-08-24', stop: '2020-08-30' },
-    7: { start: '2020-08-31', stop: '2020-09-06' },
-    8: { start: '2020-09-07', stop: '2020-09-13' },
-    9: { start: '2020-09-14', stop: '2020-09-20' },
-    10: { start: '2020-09-21', stop: '2020-09-27' },
-    11: { start: '2020-09-28', stop: '2020-10-04' },
-    12: { start: '2020-10-05', stop: '2020-10-11' },
-    13: { start: '2020-10-12', stop: '2020-10-18' },
-    14: { start: '2020-10-19', stop: '2020-10-25' },
-    15: { start: '2020-10-27', stop: '2020-11-01' },
-    exam: { start: '2020-10-12', stop: '2020-10-18' },
-  },
-  3201: {
-    0: { start: '2020-02-17', stop: '2020-02-23' },
-    1: { start: '2020-02-24', stop: '2020-03-01' },
-    2: { start: '2020-03-02', stop: '2020-03-08' },
-    3: { start: '2020-03-09', stop: '2020-03-15' },
-    4: { start: '2020-03-16', stop: '2020-03-22' },
-    5: { start: '2020-03-23', stop: '2020-03-29' },
-    6: { start: '2020-03-30', stop: '2020-04-05' },
-    7: { start: '2020-04-13', stop: '2020-04-19' },
-    8: { start: '2020-04-20', stop: '2020-04-26' },
-    9: { start: '2020-04-27', stop: '2020-05-03' },
-    10: { start: '2020-05-04', stop: '2020-05-10' },
-    11: { start: '2020-05-11', stop: '2020-05-17' },
-    12: { start: '2020-05-18', stop: '2020-05-24' },
-    13: { start: '2020-05-25', stop: '2020-05-31' },
-    exam: { start: '2020-06-01', stop: '2020-06-07' },
-  },
-  3198: {
-    0: { start: '2019-10-21', stop: '2019-10-27' },
-    1: { start: '2019-10-28', stop: '2019-11-03' },
-    2: { start: '2019-11-04', stop: '2019-11-10' },
-    3: { start: '2019-11-11', stop: '2019-11-17' },
-    4: { start: '2019-11-18', stop: '2019-11-24' },
-    5: { start: '2019-11-25', stop: '2019-12-1' },
-    6: { start: '2019-12-02', stop: '2019-12-08' },
-    7: { start: '2019-12-09', stop: '2019-12-15' },
-    8: { start: '2019-12-16', stop: '2019-12-22' },
-    9: { start: '2020-01-06', stop: '2020-01-12' },
-    10: { start: '2020-01-13', stop: '2020-01-19' },
-    11: { start: '2020-01-20', stop: '2020-01-26' },
-    12: { start: '2020-01-27', stop: '2020-02-02' },
-    13: { start: '2020-02-03', stop: '2020-02-09' },
-    exam: { start: '2020-02-06', stop: '2020-02-15' },
-  },
-  2197: {
-    0: { start: '2019-11-18', stop: '2019-11-24' },
-    1: { start: '2019-11-25', stop: '2019-12-01' },
-    2: { start: '2019-12-02', stop: '2019-12-08' },
-    3: { start: '2019-12-09', stop: '2019-12-15' },
-    4: { start: '2019-12-16', stop: '2019-12-22' },
-    5: { start: '2019-12-23', stop: '2019-09-29' },
-    6: { start: '2019-12-30', stop: '2020-01-05' },
-    7: { start: '2020-01-06', stop: '2020-01-12' },
-    8: { start: '2020-01-13', stop: '2020-01-19' },
-    9: { start: '2020-01-20', stop: '2020-01-26' },
-    10: { start: '2020-01-27', stop: '2020-02-02' },
-    11: { start: '2020-02-03', stop: '2020-02-09' },
-    12: { start: '2020-02-10', stop: '2020-02-16' },
-    13: { start: '2019-02-17', stop: '2020-02-23' },
-    14: { start: '2020-02-24', stop: '2020-03-01' },
-    15: { start: '2020-03-02', stop: '2020-03-08' },
-  },
-  2195: {
-    0: { start: '2019-08-19', stop: '2019-09-25' },
-    1: { start: '2019-08-26', stop: '2019-09-01' },
-    2: { start: '2019-09-02', stop: '2019-09-18' },
-    3: { start: '2019-09-09', stop: '2019-09-15' },
-    4: { start: '2019-09-16', stop: '2019-09-22' },
-    5: { start: '2019-09-23', stop: '2019-09-29' },
-    6: { start: '2019-09-30', stop: '2019-10-06' },
-    7: { start: '2019-10-07', stop: '2019-10-13' },
-    8: { start: '2019-10-14', stop: '2019-08-20' },
-    9: { start: '2019-10-21', stop: '2019-10-27' },
-    10: { start: '2019-10-28', stop: '2019-11-03' },
-    11: { start: '2019-11-04', stop: '2019-11-10' },
-    12: { start: '2019-11-11', stop: '2019-11-17' },
-    13: { start: '2019-11-18', stop: '2019-11-24' },
-    14: { start: '2019-11-25', stop: '2019-12-01' },
-    15: { start: '2019-10-07', stop: '2019-10-13' },
-  },
-  3195: {
-    0: { start: '2019-07-01', stop: '2019-07-07' },
-    1: { start: '2019-07-08', stop: '2019-07-14' },
-    2: { start: '2019-07-15', stop: '2019-07-21' },
-    3: { start: '2019-07-22', stop: '2019-07-28' },
-    4: { start: '2019-07-29', stop: '2019-08-04' },
-    5: { start: '2019-08-05', stop: '2019-08-11' },
-    6: { start: '2019-08-19', stop: '2019-08-25' },
-    7: { start: '2019-08-26', stop: '2019-09-01' },
-    8: { start: '2019-09-02', stop: '2019-09-08' },
-    9: { start: '2019-09-09', stop: '2019-09-15' },
-    10: { start: '2019-09-16', stop: '2019-09-22' },
-    11: { start: '2019-09-23', stop: '2019-09-29' },
-    12: { start: '2019-09-30', stop: '2019-10-06' },
-    13: { start: '2019-10-07', stop: '2019-10-13' },
-    14: { start: '2019-10-14', stop: '2019-10-20' },
-    15: { start: '2019-10-21', stop: '2019-10-27' },
-    exam: { start: '2019-10-10', stop: '2019-10-19' },
-  },
-  3191: {
-    0: { start: '2019-02-18', stop: '2019-02-24' },
-    1: { start: '2019-02-25', stop: '2019-03-03' },
-    2: { start: '2019-03-04', stop: '2019-03-10' },
-    3: { start: '2019-03-11', stop: '2019-03-17' },
-    4: { start: '2019-03-18', stop: '2019-03-24' },
-    5: { start: '2019-03-25', stop: '2019-03-31' },
-    6: { start: '2019-04-01', stop: '2019-04-07' },
-    7: { start: '2019-04-08', stop: '2019-04-14' },
-    8: { start: '2019-04-22', stop: '2019-04-28' },
-    9: { start: '2019-04-29', stop: '2019-05-05' },
-    10: { start: '2019-05-06', stop: '2019-05-12' },
-    11: { start: '2019-05-13', stop: '2019-05-19' },
-    12: { start: '2019-05-20', stop: '2019-05-26' },
-    13: { start: '2019-05-27', stop: '2019-06-02' },
-    14: { start: '2019-06-03', stop: '2019-06-09' },
-    15: { start: '2019-06-10', stop: '2019-06-17' },
-    exam: { start: '2019-05-30', stop: '2019-06-08' },
-  },
-};
-
-
-class UniversityDateCalendar {
-  constructor(strm=DEFAULT_PERIOD) {
-    if (UniversityDateCalendar._instance) {
-      return UniversityDateCalendar._instance;
-    }
-    UniversityDateCalendar._instance = this;
-    this.defaultPeriod = strm;
-  }
-
-  /**
-   * @function getWeekDetails
-   * @param {String} period
-   * @param {String} week
-   * @returns {Object} the correct start/stop dates for the givern period/week
-   * null if doesn't exist
-   */
-  getWeekDetails(week, period=this.defaultPeriod) {
-    // if week is a string starting with "Week" remove
-    // the Week and convert number of integer
-    if (typeof week === 'string' && week.startsWith('Week')) {
-      week = parseInt(week.substring(4));
-    }
-    // only proceed if the period and week are in the CALENDAR
-    if (!(period in CALENDAR)) {
-      return null;
-    } else if (!(week in CALENDAR[period])) {
-      return null;
-    }
-
-    return CALENDAR[period][week];
-  }
-
-  /**
-   * Adaptation of the Card Interface getTermDate
-   * @param {Integer} week - week of university term
-   * @param {Boolean} startWeek - if true, returns the start date of the week
-   * @param {String} dayOfWeek - specify the day to return
-   * @returns {Object} specifying the day, month, year of the week
-   */
-  getDate( week, startWeek=true, dayOfWeek="Monday" ) {
-    let date = {
-      date: "", month: "", week: week, year: 0
-    };
-
-    // lowercase dayOfWeek
-    dayOfWeek = dayOfWeek.toLowerCase();
-
-    // get the details for the given week
-    let weekDetails = this.getWeekDetails(week);
-
-    // if no details for the week, return empty date
-    if (weekDetails === null) {
-      return date;
-    }
-    // weekDetails/date format
-    // 0: { start: "2022-03-07", stop: "2022-03-13" },
-
-    let d = new Date(weekDetails.start);
-
-    const dayToNum = {
-      tuesday: 1, tue: 1, wednesday: 2, wed: 2, thursday: 3, thu: 3,
-      friday: 4, fri: 4, saturday: 5, sat: 5, sunday: 6, sun: 6,
-    };
-
-    if (dayOfWeek!=="monday") {
-      date.day = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.substring(1, 3);
-      if (dayOfWeek in dayToNum) {
-        d.setDate(d.getDate() + dayToNum[dayOfWeek.toLowerCase()]);
-      }
-    }
-
-    date.month = MONTHS[d.getMonth()];
-    date.date = d.getDate();
-    date.year = d.getFullYear();
-
-  return date;
-
-
-  }
-
-  /**
-   * getCurrentPeriod
-   * @returns value matching the current period for a GU blackboard site
-   * If unable figure out the title, return default period
-   */
-
-  getCurrentPeriod() {
-    // GU current period should be in the courseMenu_link element
-    const titleElement = document.getElementById('courseMenu_link');
-    if (titleElement === null) {
-      return this.defaultPeriod;
-    }
-    // the title attribute contains a string with the period (in the courseId)
-    const courseTitle = titleElement.getAttribute('title');
-
-    // get the course id (incl. period) will be in brackets
-    let m = courseTitle.match(/^.*\((.+)\)/);
-    let id;
-    let breakIdRe;
-
-    // we found a course Id (something in brackets), try to get the STRM value
-    if (m) {
-      id = m[1];
-      // break the course Id up into its components
-      // courseCode_STRM_mode
-
-      // Look for OUA Courses e.g. COM10_2211_OT
-      breakIdRe = new RegExp(
-        '^([A-Z]+[0-9]+)_([0-9][0-9][0-9][0-9])_([A-Z][A-Z])$'
-      );
-      m = id.match(breakIdRe);
-
-      // found an actual course site (rather than org site)
-      if (m) {
-        return m[2];
-      }
-
-      // Look for GU mode-based course e.g. 1511QCM_3211_SB
-      breakIdRe = new RegExp(
-        '^([0-9]+[A-Z]+)_([0-9][0-9][0-9][0-9])_([A-Z][A-Z])$'
-      );
-      m = id.match(breakIdRe);
-
-      // found an actual course site (rather than org site)
-      if (m) {
-        // but is it a QCM course
-        if (m[1].includes('QCM')) {
-          return m[2] + 'QCM';
-        }
-        return m[2];
-      }
-
-      // Look for joined GU course e.g. 1511QCM_3211
-      breakIdRe = new RegExp('^([0-9]+[A-Z]+)_([0-9][0-9][0-9][0-9])$');
-
-      m = id.match(breakIdRe);
-
-      if (m) {
-        return m[2];
-      }
-
-      // Look for year long QCM courses e.g. 3526QCM_Y1_3211_SB
-      breakIdRe = new RegExp(
-        '^([0-9]+[A-Z]+)_(Y[0-9])_([0-9][0-9][0-9][0-9])_([A-Z][A-Z])$'
-      );
-
-      m = id.match(breakIdRe);
-      if (m) {
-        return m[3];
-      }
-    }
-    return this.defaultPeriod;
-  }
-}
-
 // node_modules/circular-progress-bar/public/circular-progress-bar.min.js
 window.CircularProgressBar=function(t){var e={};function n(i){if(e[i])return e[i].exports;var r=e[i]={i:i,l:!1,exports:{}};return t[i].call(r.exports,r,r.exports,n),r.l=!0,r.exports}return n.m=t,n.c=e,n.d=function(t,e,i){n.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:i})},n.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},n.t=function(t,e){if(1&e&&(t=n(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var i=Object.create(null);if(n.r(i),Object.defineProperty(i,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var r in t)n.d(i,r,function(e){return t[e]}.bind(null,r));return i},n.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},n.p="",n(n.s=1)}([function(t,e,n){t.exports=function(){"use strict";const t=function(t,e){const n="number"==typeof t?{value:t}:t;Object.entries(n).map(([t,n])=>e(n,t))};function e(t,e){this.start=new Date/1e3,this.time=e,this.from=t,this.current=t,this.to=t,this.speed=0}return e.prototype.get=function(t){const e=t/1e3-this.start;if(e<0)throw new Error("Cannot read in the past");return e>=this.time?this.to:this.to-((t,e,n,i)=>(e*n+2*t)/n**3*i**3+-(2*e*n+3*t)/n**2*i**2+e*i+t)(this.to-this.from,this.speed,this.time,e)},e.prototype.getSpeed=function(t){const e=t/1e3-this.start;return e>=this.time?0:((t,e,n,i)=>(e*n+2*t)/n**3*3*i**2+-(2*e*n+3*t)/n**2*2*i+e)(this.to-this.from,this.speed,this.time,e)},e.prototype.set=function(t,e){const n=new Date,i=this.get(n);return this.speed=this.getSpeed(n),this.start=n/1e3,this.from=i,this.to=t,e&&(this.time=e),i},function(n,i=300){return"number"==typeof n&&(n={value:n}),t(n,(t,r)=>{const o=new e(t,i/1e3);Object.defineProperty(n,"_"+r,{value:o}),Object.defineProperty(n,r,{get:()=>o.get(new Date),set:t=>o.set(t),enumerable:!0})}),Object.defineProperty(n,"get",{get:()=>function(t="value",e=new Date){return this["_"+t].get(e)}}),Object.defineProperty(n,"set",{get:()=>function(e,n=0){t(e,(t,e)=>{this["_"+e].set(t,n/1e3)})}}),n}}()},function(t,e,n){"use strict";n.r(e),n.d(e,"default",(function(){return f}));var i=n(0),r=n.n(i);n(2);const o=(t,e)=>{Object.keys(e).forEach(n=>t.style[n]=e[n])},s=Symbol("_values"),a=Symbol("_interpolated"),c=Symbol("_text"),u=Symbol("_update"),l=Symbol("_lastUpdate"),h=Symbol("_animationFrame");class f{constructor(t=0,e){this.options={...f.defaultOptions,...e},this.node=document.createElement("div"),this.node.className="circular-progress-bar",o(this.node,{width:`${this.options.size}px`,height:`${this.options.size}px`});const n=document.createElement("div");n.className="circular-progress-bar_value";const i=(100-this.options.barsWidth)/100*this.options.size;o(n,{background:this.options.valueBackground,width:`${i}px`,height:`${i}px`,top:`${this.options.barsWidth/2}%`,left:`${this.options.barsWidth/2}%`}),this.node.appendChild(n),this[c]=document.createElement("div"),this[c].className="circular-progress-bar_value_text",o(this[c],{lineHeight:`${i}px`,fontSize:`${i/3}px`}),n.appendChild(this[c]);const s=Array.isArray(t)?t:[t];this[a]=r()(s),this[u]=this[u].bind(this),this.values=s}get value(){return this.values[0]}get values(){return this[s]}set value(t){this.values=[t]}set values(t){if(this[s]=t,t.length!==this[a].length){const e=new Date,n=this[a].map((t,e)=>this[a][`_${e}`]);for(;n.length&&0===n[n.length-1].get(e);)n.length-=1;const{length:i}=n;this[a]=r()(new Array(Math.max(i,t.length)).fill(0));for(let t=0;t<i;++t){const i=n[t],r=this[a][`_${t}`];r.time=0,r.to=i.get(e)}t.push(...new Array(Math.max(0,i-t.length)).fill(0))}this[a].set(t,this.options.transitionTime),this[l]=performance.now(),this[h]=this[u](0);const e=this[s].reduce((t,e)=>t+e,0);let n="";if(e>=this.options.max&&this.options.valueWhenDone)n=this.options.valueWhenDone;else{let t=this.values.length>1?e:this.values[0];"%"===this.options.valueUnit&&(t/=this.options.max/100),n=`${t.toFixed(this.options.valueDecimals)}${this.options.valueUnit}`}this.options.showValue&&(this[c].textContent=n)}appendTo(t){t.appendChild(this.node)}remove(){this.node.remove()}static get defaultOptions(){return{size:150,barsWidth:20,max:100,showValue:!0,valueDecimals:0,valueUnit:"%",valueBackground:"#333",colors:["#0484d1","#e53b44","#2ce8f4","#ffe762","#63c64d","#fb922b"],background:"rgba(0, 0, 0, .3)",transitionTime:500,valueWhenDone:null}}}f.prototype[u]=function(t){if(t>this[l]+this.options.transitionTime)return;this[h]&&cancelAnimationFrame(this[h]),this[h]=requestAnimationFrame(this[u]);let e=0;const n=this[a].map((t,n)=>{const i=t/this.options.max*100;if(i<.1)return null;const r=`${o=this.options.colors,s=n,o[s%o.length]} ${e}% ${e+i}%`;var o,s;return e+=i+.1,r}).filter(t=>t);e<100&&n.push(`transparent ${e}% 100%`),this.node.style.background=`conic-gradient(${n.join(",")}) ${this.options.background}`}},function(t,e,n){var i=n(3),r=n(4);"string"==typeof(r=r.__esModule?r.default:r)&&(r=[[t.i,r,""]]);var o={insert:"head",singleton:!1},s=(i(r,o),r.locals?r.locals:{});t.exports=s},function(t,e,n){"use strict";var i,r=function(){return void 0===i&&(i=Boolean(window&&document&&document.all&&!window.atob)),i},o=function(){var t={};return function(e){if(void 0===t[e]){var n=document.querySelector(e);if(window.HTMLIFrameElement&&n instanceof window.HTMLIFrameElement)try{n=n.contentDocument.head}catch(t){n=null}t[e]=n}return t[e]}}(),s=[];function a(t){for(var e=-1,n=0;n<s.length;n++)if(s[n].identifier===t){e=n;break}return e}function c(t,e){for(var n={},i=[],r=0;r<t.length;r++){var o=t[r],c=e.base?o[0]+e.base:o[0],u=n[c]||0,l="".concat(c," ").concat(u);n[c]=u+1;var h=a(l),f={css:o[1],media:o[2],sourceMap:o[3]};-1!==h?(s[h].references++,s[h].updater(f)):s.push({identifier:l,updater:v(f,e),references:1}),i.push(l)}return i}function u(t){var e=document.createElement("style"),i=t.attributes||{};if(void 0===i.nonce){var r=n.nc;r&&(i.nonce=r)}if(Object.keys(i).forEach((function(t){e.setAttribute(t,i[t])})),"function"==typeof t.insert)t.insert(e);else{var s=o(t.insert||"head");if(!s)throw new Error("Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.");s.appendChild(e)}return e}var l,h=(l=[],function(t,e){return l[t]=e,l.filter(Boolean).join("\n")});function f(t,e,n,i){var r=n?"":i.media?"@media ".concat(i.media," {").concat(i.css,"}"):i.css;if(t.styleSheet)t.styleSheet.cssText=h(e,r);else{var o=document.createTextNode(r),s=t.childNodes;s[e]&&t.removeChild(s[e]),s.length?t.insertBefore(o,s[e]):t.appendChild(o)}}function p(t,e,n){var i=n.css,r=n.media,o=n.sourceMap;if(r?t.setAttribute("media",r):t.removeAttribute("media"),o&&btoa&&(i+="\n/*# sourceMappingURL=data:application/json;base64,".concat(btoa(unescape(encodeURIComponent(JSON.stringify(o))))," */")),t.styleSheet)t.styleSheet.cssText=i;else{for(;t.firstChild;)t.removeChild(t.firstChild);t.appendChild(document.createTextNode(i))}}var d=null,m=0;function v(t,e){var n,i,r;if(e.singleton){var o=m++;n=d||(d=u(e)),i=f.bind(null,n,o,!1),r=f.bind(null,n,o,!0)}else n=u(e),i=p.bind(null,n,e),r=function(){!function(t){if(null===t.parentNode)return!1;t.parentNode.removeChild(t)}(n)};return i(t),function(e){if(e){if(e.css===t.css&&e.media===t.media&&e.sourceMap===t.sourceMap)return;i(t=e)}else r()}}t.exports=function(t,e){(e=e||{}).singleton||"boolean"==typeof e.singleton||(e.singleton=r());var n=c(t=t||[],e);return function(t){if(t=t||[],"[object Array]"===Object.prototype.toString.call(t)){for(var i=0;i<n.length;i++){var r=a(n[i]);s[r].references--}for(var o=c(t,e),u=0;u<n.length;u++){var l=a(n[u]);0===s[l].references&&(s[l].updater(),s.splice(l,1))}n=o}}}},function(t,e,n){(e=n(5)(!1)).push([t.i,".circular-progress-bar {\n  display: inline-block;\n  border-radius: 50%;\n}\n.circular-progress-bar .circular-progress-bar_value {\n  position: relative;\n  display: inline-block;\n  border-radius: 50%;\n}\n.circular-progress-bar .circular-progress-bar_value .circular-progress-bar_value_text {\n  text-align: center;\n  font-family: monospace;\n  color: #fff;\n  mix-blend-mode: difference;\n}\n",""]),t.exports=e},function(t,e,n){"use strict";t.exports=function(t){var e=[];return e.toString=function(){return this.map((function(e){var n=function(t,e){var n=t[1]||"",i=t[3];if(!i)return n;if(e&&"function"==typeof btoa){var r=(s=i,a=btoa(unescape(encodeURIComponent(JSON.stringify(s)))),c="sourceMappingURL=data:application/json;charset=utf-8;base64,".concat(a),"/*# ".concat(c," */")),o=i.sources.map((function(t){return"/*# sourceURL=".concat(i.sourceRoot||"").concat(t," */")}));return[n].concat(o).concat([r]).join("\n")}var s,a,c;return[n].join("\n")}(e,t);return e[2]?"@media ".concat(e[2]," {").concat(n,"}"):n})).join("")},e.i=function(t,n,i){"string"==typeof t&&(t=[[null,t,""]]);var r={};if(i)for(var o=0;o<this.length;o++){var s=this[o][0];null!=s&&(r[s]=!0)}for(var a=0;a<t.length;a++){var c=[].concat(t[a]);i&&r[c[0]]||(n&&(c[2]?c[2]="".concat(n," and ").concat(c[2]):c[2]=n),e.push(c))}},e}}]).default;
 
@@ -3999,7 +3359,7 @@ window.CircularProgressBar=function(t){var e={};function n(i){if(e[i])return e[i
 
 
 
-
+//import { UniversityDateCalendar } from '../../university-date-calendar.js';
 
 
 
@@ -4033,10 +3393,18 @@ class GriffithCardsView extends cc_View {
 
 		// if this.controller has parentController property 
 		if (this.controller.hasOwnProperty('parentController')) {
-			this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
-		} else if ( this.controller.hasOwnProperty('strm')) {
-			this.calendar = new UniversityDateCalendar(this.controller.strm);
-		}
+			// old style
+			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
+			this.calendar = this.controller.parentController.calendar;
+		} else if ( 
+			this.model.hasOwnProperty('controller') &&
+			this.model.controller.hasOwnProperty('parentController') ) {
+				this.calendar = this.model.controller.parentController.calendar;
+		} else {
+			alert("Another funny calendar miss. Fix it");
+		} 
+
+
 
 		// create a simple message div element
 		let message = document.createElement('div');
@@ -6135,6 +5503,724 @@ class cc_ConfigurationStore {
 	}
 }
 
+// src/university-date-calendar.js
+/**
+ * @license
+ * Copyright 2019 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+/* jshint esversion: 6 */
+
+// Calendar for Griffith University
+// Period is represented by a four digit number - an STRM
+// XYYP 
+// - X is the type of offering
+//   - 2 indicates OUA course
+//   - 3 indicates normal Griffith course
+// - YY is the year (last two digits) 
+//   - 19 is 2019
+//   - 21 is 2021
+// - P is the particular period for the offering
+//   - OUA has study periods
+//     - 1 = period 1 
+//     - 3 = period 2
+//     - 5 = period 3
+//     - 7 = period 4
+//   - Griffith has 3 trimesters
+//     - 1 = T1
+//     - 5 = T2
+//     - 8 = T3
+// courseCode_STRM_mode
+// default period is the current main trimester
+const DEFAULT_PERIOD = '3225';
+
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+  "Aug", "Sep", "Oct", "Nov", "Dec", 
+];
+
+/* Griffith Calendar Term dates
+ * 2021
+ * - OUA Study Periods 1-4
+ *   2211, 2213 2215 2217
+ * - GU T1, T2, T3
+ *   3211 3215 3218
+ * - QCM T1 T2
+ *   3211QCM 3215QCM
+ * 2020
+ * - OUA Study Periods 1-4
+ *   2201 2203 2205 2207
+ * - GU T1, T2, T3
+ *   3201 3205 3208
+ * 2019
+ * - OUA SP 3, 4
+ *   2195 2197
+ * - GU T1, T2, T3
+ *   3191 3195 319
+ */
+
+const CALENDAR = {
+    '3231': {
+    0: { start: "2023-02-27", stop: "2023-03-03" },
+    1: { start: "2023-03-06", stop: "2023-03-12" },
+    2: { start: "2023-03-13", stop: "2023-03-19" },
+    3: { start: "2023-03-20", stop: "2023-03-26" },
+    4: { start: "2023-03-27", stop: "2023-04-09" },
+    5: { start: "2023-04-10", stop: "2023-04-16" },
+    6: { start: "2023-04-17", stop: "2023-04-23" },
+    7: { start: "2023-04-24", stop: "2023-04-30" },
+    8: { start: "2023-05-01", stop: "2023-05-07" },
+    9: { start: "2023-05-08", stop: "2023-05-14" },
+    10: { start: "2023-05-15", stop: "2023-05-21" },
+    11: { start: "2023-05-22", stop: "2023-05-28" },
+    12: { start: "2023-05-29", stop: "2023-06-04" },
+    13: { start: "2023-06-05", stop: "2023-06-11" },
+    14: { start: "2023-06-12", stop: "2023-06-18" },
+    15: { start: "2023-06-19", stop: "2023-07-25" },
+    exam: { start: "2023-06-08", stop: "2023-06-17" },
+  },
+  '3221': {
+    0: { start: "2022-03-07", stop: "2022-03-13" },
+    1: { start: "2022-03-14", stop: "2022-03-20" },
+    2: { start: "2022-03-21", stop: "2022-03-28" },
+    3: { start: "2022-03-28", stop: "2022-04-03" },
+    4: { start: "2022-04-04", stop: "2022-04-10" },
+    5: { start: "2022-04-18", stop: "2022-04-24" },
+    6: { start: "2022-04-25", stop: "2022-05-01" },
+    7: { start: "2022-05-02", stop: "2022-05-08" },
+    8: { start: "2022-05-09", stop: "2022-05-15" },
+    9: { start: "2022-05-16", stop: "2022-05-22" },
+    10: { start: "2022-05-23", stop: "2022-05-29" },
+    11: { start: "2022-05-30", stop: "2022-06-05" },
+    12: { start: "2022-06-06", stop: "2022-06-12" },
+    13: { start: "2022-06-13", stop: "2022-06-19" },
+    14: { start: "2022-06-20", stop: "2022-06-26" },
+    15: { start: "2022-06-27", stop: "2022-07-03" },
+    exam: { start: "2022-06-13", stop: "2022-06-25" },
+  },
+  '3221QCM': {
+    0: { start: "2022-02-21", stop: "2022-02-27" },
+    1: { start: "2022-02-28", stop: "2022-03-06" },
+    2: { start: "2022-03-07", stop: "2022-03-13" },
+    3: { start: "2022-03-14", stop: "2022-03-20" },
+    4: { start: "2022-03-21", stop: "2022-03-27" },
+    5: { start: "2022-03-28", stop: "2022-04-03" },
+    6: { start: "2022-04-04", stop: "2022-04-10" },
+    7: { start: "2022-04-18", stop: "2022-04-24" },
+    8: { start: "2022-04-25", stop: "2022-05-01" },
+    9: { start: "2022-05-09", stop: "2022-05-15" },
+    10: { start: "2022-05-16", stop: "2022-05-22" },
+    11: { start: "2022-05-23", stop: "2022-05-29" },
+    12: { start: "2022-05-30", stop: "2022-06-05" },
+    13: { start: "2022-06-06", stop: "2022-06-12" },
+    14: { start: "2022-06-13", stop: "2022-06-19" },
+    15: { start: "2022-06-20", stop: "2022-07-26" },
+    exam: { start: "2022-06-13", stop: "2022-06-25" },
+  },
+  '3225': {
+    0: { start: "2022-07-11", stop: "2022-07-17" },
+    1: { start: "2022-07-18", stop: "2022-07-24" },
+    2: { start: "2022-07-25", stop: "2022-07-31" },
+    3: { start: "2022-08-01", stop: "2022-08-07" },
+    4: { start: "2022-08-08", stop: "2022-08-14" },
+    5: { start: "2022-08-22", stop: "2022-08-28" },
+    6: { start: "2022-08-29", stop: "2022-09-04" },
+    7: { start: "2022-09-05", stop: "2022-09-11" },
+    8: { start: "2022-09-12", stop: "2022-09-18" },
+    9: { start: "2022-09-19", stop: "2022-09-25" },
+    10: { start: "2022-09-26", stop: "2022-10-02" },
+    11: { start: "2022-10-03", stop: "2022-10-09" },
+    12: { start: "2022-10-10", stop: "2022-10-16" },
+    13: { start: "2022-10-17", stop: "2022-10-23" },
+    14: { start: "2022-10-24", stop: "2022-10-30" },
+    15: { start: "2022-10-31", stop: "2022-11-06" },
+    exam: { start: "2022-10-20", stop: "2022-10-29" },
+  },
+  '3225QCM': {
+    0: { start: "2022-07-18", stop: "2022-07-24" },
+    1: { start: "2022-07-25", stop: "2022-07-31" },
+    2: { start: "2022-08-01", stop: "2022-08-07" },
+    3: { start: "2022-08-08", stop: "2022-08-14" },
+    4: { start: "2022-08-15", stop: "2022-08-21" },
+    5: { start: "2022-08-22", stop: "2022-08-28" },
+    6: { start: "2022-09-05", stop: "2022-09-11" },
+    7: { start: "2022-09-12", stop: "2022-09-18" },
+    8: { start: "2022-09-19", stop: "2022-09-25" },
+    9: { start: "2022-10-03", stop: "2022-10-09" },
+    10: { start: "2022-10-10", stop: "2022-10-16" },
+    11: { start: "2022-10-17", stop: "2022-10-23" },
+    12: { start: "2022-10-24", stop: "2022-10-30" },
+    13: { start: "2022-10-31", stop: "2022-11-06" },
+    14: { start: "2022-11-07", stop: "2022-11-13" },
+    15: { start: "2022-11-14", stop: "2022-07-20" },
+    exam: { start: "2022-11-07", stop: "2022-11-19" },
+  },
+  3228: {
+    0: { start: "2022-10-31", stop: "2022-11-06" },
+    1: { start: "2022-11-07", stop: "2022-11-13" },
+    2: { start: "2022-11-14", stop: "2022-11-20" },
+    3: { start: "2022-11-21", stop: "2022-11-27" },
+    4: { start: "2022-11-28", stop: "2022-12-04" },
+    5: { start: "2022-12-05", stop: "2022-12-11" },
+    6: { start: "2022-12-12", stop: "2022-12-18" },
+    7: { start: "2022-12-19", stop: "2022-12-25" },
+    8: { start: "2023-01-09", stop: "2023-01-15" },
+    9: { start: "2023-01-16", stop: "2023-01-22" },
+    10: { start: "2023-01-23", stop: "2023-01-29" },
+    11: { start: "2023-01-30", stop: "2023-02-05" },
+    12: { start: "2023-02-06", stop: "2023-02-12" },
+    13: { start: "2023-02-13", stop: "2023-02-19" },
+    14: { start: "2023-02-20", stop: "2023-02-26" },
+    15: { start: "2023-02-27", stop: "2023-03-05" },
+    //    exam: { start: "2023-02-17", stop: "2023-02-26" },
+  },
+  2211: {
+    0: { start: '2021-02-22', stop: '2021-02-28' },
+    1: { start: '2021-03-01', stop: '2021-03-07' },
+    2: { start: '2021-03-08', stop: '2021-03-14' },
+    3: { start: '2021-03-15', stop: '2021-03-21' },
+    4: { start: '2021-03-22', stop: '2021-03-28' },
+    5: { start: '2021-03-29', stop: '2021-04-04' },
+    6: { start: '2021-04-05', stop: '2021-04-11' },
+    7: { start: '2021-04-12', stop: '2021-04-18' },
+    8: { start: '2021-04-19', stop: '2021-04-25' },
+    9: { start: '2021-04-26', stop: '2021-05-02' },
+    10: { start: '2021-05-03', stop: '2021-05-09' },
+    11: { start: '2021-05-10', stop: '2021-05-16' },
+    12: { start: '2021-05-17', stop: '2021-05-23' },
+    13: { start: '2021-05-24', stop: '2021-05-30' },
+    14: { start: '2021-05-31', stop: '2021-06-06' },
+    exam: { start: '2021-05-31', stop: '2021-06-06' },
+  },
+  2213: {
+    1: { start: '2021-05-31', stop: '2021-06-06' },
+    2: { start: '2021-06-07', stop: '2021-06-13' },
+    3: { start: '2021-06-14', stop: '2021-06-20' },
+    4: { start: '2021-06-21', stop: '2021-06-27' },
+    5: { start: '2021-06-28', stop: '2021-07-04' },
+    6: { start: '2021-07-05', stop: '2021-07-11' },
+    7: { start: '2021-07-12', stop: '2021-07-18' },
+    8: { start: '2021-07-19', stop: '2021-07-25' },
+    9: { start: '2021-07-26', stop: '2021-08-01' },
+    10: { start: '2021-08-02', stop: '2021-08-08' },
+    11: { start: '2021-08-09', stop: '2021-08-15' },
+    12: { start: '2021-08-16', stop: '2021-08-22' },
+    13: { start: '2021-08-23', stop: '2021-08-29' },
+    exam: { start: '2021-08-30', stop: '2021-09-05' },
+  },
+  2215: {
+    0: { start: '2021-08-23', stop: '2021-08-29' },
+    1: { start: '2021-08-30', stop: '2021-09-05' },
+    2: { start: '2021-09-06', stop: '2021-09-12' },
+    3: { start: '2021-09-13', stop: '2021-09-19' },
+    4: { start: '2021-09-20', stop: '2021-09-26' },
+    5: { start: '2021-09-27', stop: '2021-10-03' },
+    6: { start: '2021-10-04', stop: '2021-10-10' },
+    7: { start: '2021-10-11', stop: '2021-10-17' },
+    8: { start: '2021-10-18', stop: '2021-10-24' },
+    9: { start: '2021-10-25', stop: '2021-10-31' },
+    10: { start: '2021-11-01', stop: '2021-11-07' },
+    11: { start: '2021-11-08', stop: '2021-11-14' },
+    12: { start: '2021-11-15', stop: '2021-11-21' },
+    13: { start: '2021-11-22', stop: '2021-11-28' },
+    exam: { start: '2021-11-29', stop: '2021-12-05' },
+  },
+  2217: {
+    0: { start: '2021-11-22', stop: '2021-11-28' },
+    1: { start: '2021-11-29', stop: '2021-12-05' },
+    2: { start: '2021-12-06', stop: '2021-12-12' },
+    3: { start: '2021-12-13', stop: '2021-12-19' },
+    4: { start: '2021-12-20', stop: '2021-12-26' },
+    5: { start: '2021-12-27', stop: '2022-01-02' },
+    6: { start: '2022-01-03', stop: '2022-01-09' },
+    7: { start: '2022-01-10', stop: '2022-01-16' },
+    8: { start: '2022-01-17', stop: '2022-01-23' },
+    9: { start: '2022-01-24', stop: '2022-01-30' },
+    10: { start: '2022-01-31', stop: '2022-02-06' },
+    11: { start: '2022-02-07', stop: '2022-02-13' },
+    12: { start: '2022-02-14', stop: '2022-02-20' },
+    13: { start: '2022-02-21', stop: '2022-02-27' },
+    exam: { start: '2022-02-28', stop: '2022-03-04' },
+  },
+  3218: {
+    0: { start: '2021-11-01', stop: '2021-11-07' },
+    1: { start: '2021-11-08', stop: '2021-11-14' },
+    2: { start: '2021-11-15', stop: '2021-11-21' },
+    3: { start: '2021-11-22', stop: '2021-11-28' },
+    4: { start: '2021-11-29', stop: '2021-12-05' },
+    5: { start: '2021-12-06', stop: '2021-12-12' },
+    6: { start: '2021-12-13', stop: '2021-12-19' },
+    7: { start: '2021-12-20', stop: '2021-12-26' },
+    8: { start: '2022-01-10', stop: '2022-01-16' },
+    9: { start: '2022-01-17', stop: '2022-01-23' },
+    10: { start: '2022-01-24', stop: '2022-01-30' },
+    11: { start: '2022-01-31', stop: '2022-02-06' },
+    12: { start: '2022-02-07', stop: '2022-02-13' },
+    13: { start: '2022-02-14', stop: '2022-02-20' },
+    14: { start: '2022-02-21', stop: '2022-02-27' },
+    15: { start: '2022-02-28', stop: '2022-03-06' },
+    exam: { start: '2022-02-17', stop: '2022-02-26' },
+  },
+  3215: {
+    0: { start: '2021-07-12', stop: '2021-07-18' },
+    1: { start: '2021-07-19', stop: '2021-07-25' },
+    2: { start: '2021-07-26', stop: '2021-08-01' },
+    3: { start: '2021-08-02', stop: '2021-08-08' },
+    4: { start: '2021-08-16', stop: '2021-08-22' },
+    5: { start: '2021-08-23', stop: '2021-08-29' },
+    6: { start: '2021-08-30', stop: '2021-09-05' },
+    7: { start: '2021-09-06', stop: '2021-09-12' },
+    8: { start: '2021-09-13', stop: '2021-09-19' },
+    9: { start: '2021-09-20', stop: '2021-09-26' },
+    10: { start: '2021-09-27', stop: '2021-10-03' },
+    11: { start: '2021-10-04', stop: '2021-10-10' },
+    12: { start: '2021-10-11', stop: '2021-10-17' },
+    13: { start: '2021-10-18', stop: '2021-10-24' },
+    14: { start: '2021-10-25', stop: '2021-10-31' },
+    15: { start: '2021-11-01', stop: '2021-11-07' },
+    exam: { start: '2021-10-21', stop: '2021-10-31' },
+  },
+  3211: {
+    0: { start: '2021-03-01', stop: '2021-03-07' },
+    1: { start: '2021-03-08', stop: '2021-03-14' },
+    2: { start: '2021-03-15', stop: '2021-03-21' },
+    3: { start: '2021-03-22', stop: '2021-03-28' },
+    4: { start: '2021-03-29', stop: '2021-04-04' },
+    5: { start: '2021-04-12', stop: '2021-04-18' },
+    6: { start: '2021-04-19', stop: '2021-04-25' },
+    7: { start: '2021-04-26', stop: '2021-05-02' },
+    8: { start: '2021-05-03', stop: '2021-05-09' },
+    9: { start: '2021-05-10', stop: '2021-05-16' },
+    10: { start: '2021-05-17', stop: '2021-05-23' },
+    11: { start: '2021-05-24', stop: '2021-05-30' },
+    12: { start: '2021-05-31', stop: '2021-06-06' },
+    13: { start: '2021-06-07', stop: '2021-06-13' },
+    14: { start: '2021-06-14', stop: '2021-06-20' },
+    15: { start: '2021-06-21', stop: '2021-06-27' },
+    exam: { start: '2021-06-10', stop: '2021-06-19' },
+  },
+  '3215QCM': {
+    0: { start: '2021-07-12', stop: '2021-07-18' },
+    1: { start: '2021-07-19', stop: '2021-07-25' },
+    2: { start: '2021-07-26', stop: '2021-08-01' },
+    3: { start: '2021-08-02', stop: '2021-08-08' },
+    4: { start: '2021-08-09', stop: '2021-08-15' },
+    5: { start: '2021-08-16', stop: '2021-08-22' },
+    6: { start: '2021-08-30', stop: '2021-09-05' },
+    7: { start: '2021-09-06', stop: '2021-09-12' },
+    8: { start: '2021-09-13', stop: '2021-09-19' },
+    9: { start: '2021-09-20', stop: '2021-09-26' },
+    10: { start: '2021-10-04', stop: '2021-10-10' },
+    11: { start: '2021-10-11', stop: '2021-10-17' },
+    12: { start: '2021-10-18', stop: '2021-10-24' },
+    13: { start: '2021-10-25', stop: '2021-10-31' },
+    14: { start: '2021-11-01', stop: '2021-11-07' },
+    15: { start: '2021-11-08', stop: '2021-11-14' },
+    exam: { start: '2021-10-30', stop: '2021-11-13' },
+  },
+  '3211QCM': {
+    0: { start: '2021-02-22', stop: '2021-02-28' },
+    1: { start: '2021-03-01', stop: '2021-03-07' },
+    2: { start: '2021-03-08', stop: '2021-03-14' },
+    3: { start: '2021-03-15', stop: '2021-03-21' },
+    4: { start: '2021-03-22', stop: '2021-03-29' },
+    5: { start: '2021-03-29', stop: '2021-04-04' },
+    6: { start: '2021-04-12', stop: '2021-04-18' },
+    7: { start: '2021-04-19', stop: '2021-04-25' },
+    8: { start: '2021-04-26', stop: '2021-05-02' },
+    9: { start: '2021-05-10', stop: '2021-05-16' },
+    10: { start: '2021-05-17', stop: '2021-05-23' },
+    11: { start: '2021-05-24', stop: '2021-05-30' },
+    12: { start: '2021-05-31', stop: '2021-06-06' },
+    13: { start: '2021-06-07', stop: '2021-03-13' },
+    14: { start: '2021-06-14', stop: '2021-03-20' },
+    15: { start: '2021-06-21', stop: '2021-03-26' },
+    exam: { start: '2021-06-12', stop: '2021-06-26' },
+  },
+
+  2201: {
+    0: { start: '2020-02-24', stop: '2020-03-01' },
+    1: { start: '2020-03-02', stop: '2020-03-08' },
+    2: { start: '2020-03-09', stop: '2020-03-15' },
+    3: { start: '2020-03-16', stCop: '2020-03-22' },
+    4: { start: '2020-03-23', stop: '2020-03-29' },
+    5: { start: '2020-03-30', stop: '2020-04-05' },
+    6: { start: '2020-04-06', stop: '2020-04-12' },
+    7: { start: '2020-04-13', stop: '2020-04-19' },
+    8: { start: '2020-04-20', stop: '2020-04-26' },
+    9: { start: '2020-04-27', stop: '2020-05-03' },
+    10: { start: '2020-05-04', stop: '2020-05-10' },
+    11: { start: '2020-05-11', stop: '2020-05-17' },
+    12: { start: '2020-05-18', stop: '2020-05-24' },
+    13: { start: '2020-05-25', stop: '2020-05-31' },
+    14: { start: '2020-06-01', stop: '2020-06-05' },
+    exam: { start: '2020-06-01', stop: '2020-06-05' },
+  },
+  2203: {
+    0: { start: '2020-05-25', stop: '2020-05-31' },
+    1: { start: '2020-06-01', stop: '2020-06-07' },
+    2: { start: '2020-06-08', stop: '2020-06-14' },
+    3: { start: '2020-06-15', stop: '2020-06-21' },
+    4: { start: '2020-06-22', stop: '2020-06-28' },
+    5: { start: '2020-06-29', stop: '2020-07-05' },
+    6: { start: '2020-07-06', stop: '2020-07-12' },
+    7: { start: '2020-07-13', stop: '2020-07-19' },
+    8: { start: '2020-07-20', stop: '2020-07-26' },
+    9: { start: '2020-07-27', stop: '2020-08-02' },
+    10: { start: '2020-08-03', stop: '2020-08-09' },
+    11: { start: '2020-08-10', stop: '2020-05-17' },
+    12: { start: '2020-08-17', stop: '2020-05-24' },
+    13: { start: '2020-08-24', stop: '2020-05-31' },
+    14: { start: '2020-08-31', stop: '2020-09-06' },
+    exam: { start: '2020-08-31', stop: '2020-09-04' },
+  },
+  2205: {
+    0: { start: '2020-08-24', stop: '2020-09-30' },
+    1: { start: '2020-08-31', stop: '2020-09-06' },
+    2: { start: '2020-09-07', stop: '2020-09-13' },
+    3: { start: '2020-09-14', stop: '2020-09-20' },
+    4: { start: '2020-09-21', stop: '2020-09-27' },
+    5: { start: '2020-09-28', stop: '2020-10-04' },
+    6: { start: '2020-10-05', stop: '2020-10-11' },
+    7: { start: '2020-10-12', stop: '2020-10-19' },
+    8: { start: '2020-10-19', stop: '2020-10-25' },
+    9: { start: '2020-10-26', stop: '2020-11-01' },
+    10: { start: '2020-11-02', stop: '2020-11-08' },
+    11: { start: '2020-11-09', stop: '2020-11-15' },
+    12: { start: '2020-11-16', stop: '2020-11-22' },
+    13: { start: '2020-11-23', stop: '2020-11-29' },
+    14: { start: '2020-11-30', stop: '2020-12-06' },
+    15: { start: '2020-12-07', stop: '2020-12-13' },
+    exam: { start: '2020-12-07', stop: '2020-12-13' },
+  },
+  2207: {
+    0: { start: '2020-11-23', stop: '2020-11-29' },
+    1: { start: '2020-11-30', stop: '2020-12-06' },
+    2: { start: '2020-12-07', stop: '2020-12-13' },
+    3: { start: '2020-12-14', stop: '2020-12-20' },
+    4: { start: '2020-12-21', stop: '2020-12-27' },
+    5: { start: '2020-12-28', stop: '2021-01-03' },
+    6: { start: '2021-01-04', stop: '2021-01-10' },
+    7: { start: '2021-01-11', stop: '2021-01-17' },
+    8: { start: '2021-01-18', stop: '2021-01-24' },
+    9: { start: '2021-01-25', stop: '2021-01-31' },
+    10: { start: '2021-02-01', stop: '2021-02-07' },
+    11: { start: '2021-02-08', stop: '2021-02-14' },
+    12: { start: '2021-02-15', stop: '2021-02-21' },
+    13: { start: '2021-02-22', stop: '2021-02-28' },
+    14: { start: '2021-03-01', stop: '2021-03-07' },
+    15: { start: '2021-03-08', stop: '2021-03-14' },
+    exam: { start: '2021-03-01', stop: '2021-03-07' },
+  },
+  3208: {
+    0: { start: '2020-10-26', stop: '2020-11-01' },
+    1: { start: '2020-11-02', stop: '2020-11-08' },
+    2: { start: '2020-11-09', stop: '2020-11-15' },
+    3: { start: '2020-11-16', stop: '2020-11-22' },
+    4: { start: '2020-11-23', stop: '2020-11-29' },
+    5: { start: '2020-11-30', stop: '2020-12-06' },
+    6: { start: '2020-12-07', stop: '2020-12-13' },
+    7: { start: '2020-12-14', stop: '2020-12-20' },
+    8: { start: '2021-01-04', stop: '2021-01-10' },
+    9: { start: '2021-01-11', stop: '2021-01-17' },
+    10: { start: '2021-01-18', stop: '2021-01-24' },
+    11: { start: '2021-01-25', stop: '2021-01-31' },
+    12: { start: '2021-02-01', stop: '2021-02-07' },
+    13: { start: '2021-02-08', stop: '2021-02-14' },
+    exam: { start: '2021-02-08', stop: '2021-02-20' },
+  },
+  3205: {
+    0: { start: '2020-07-06', stop: '2020-07-12' },
+    1: { start: '2020-07-13', stop: '2020-07-19' },
+    2: { start: '2020-07-20', stop: '2020-08-26' },
+    3: { start: '2020-07-27', stop: '2020-08-02' },
+    4: { start: '2020-08-03', stop: '2020-08-16' },
+    5: { start: '2020-08-17', stop: '2020-08-23' },
+    6: { start: '2020-08-24', stop: '2020-08-30' },
+    7: { start: '2020-08-31', stop: '2020-09-06' },
+    8: { start: '2020-09-07', stop: '2020-09-13' },
+    9: { start: '2020-09-14', stop: '2020-09-20' },
+    10: { start: '2020-09-21', stop: '2020-09-27' },
+    11: { start: '2020-09-28', stop: '2020-10-04' },
+    12: { start: '2020-10-05', stop: '2020-10-11' },
+    13: { start: '2020-10-12', stop: '2020-10-18' },
+    14: { start: '2020-10-19', stop: '2020-10-25' },
+    15: { start: '2020-10-27', stop: '2020-11-01' },
+    exam: { start: '2020-10-12', stop: '2020-10-18' },
+  },
+  3201: {
+    0: { start: '2020-02-17', stop: '2020-02-23' },
+    1: { start: '2020-02-24', stop: '2020-03-01' },
+    2: { start: '2020-03-02', stop: '2020-03-08' },
+    3: { start: '2020-03-09', stop: '2020-03-15' },
+    4: { start: '2020-03-16', stop: '2020-03-22' },
+    5: { start: '2020-03-23', stop: '2020-03-29' },
+    6: { start: '2020-03-30', stop: '2020-04-05' },
+    7: { start: '2020-04-13', stop: '2020-04-19' },
+    8: { start: '2020-04-20', stop: '2020-04-26' },
+    9: { start: '2020-04-27', stop: '2020-05-03' },
+    10: { start: '2020-05-04', stop: '2020-05-10' },
+    11: { start: '2020-05-11', stop: '2020-05-17' },
+    12: { start: '2020-05-18', stop: '2020-05-24' },
+    13: { start: '2020-05-25', stop: '2020-05-31' },
+    exam: { start: '2020-06-01', stop: '2020-06-07' },
+  },
+  3198: {
+    0: { start: '2019-10-21', stop: '2019-10-27' },
+    1: { start: '2019-10-28', stop: '2019-11-03' },
+    2: { start: '2019-11-04', stop: '2019-11-10' },
+    3: { start: '2019-11-11', stop: '2019-11-17' },
+    4: { start: '2019-11-18', stop: '2019-11-24' },
+    5: { start: '2019-11-25', stop: '2019-12-1' },
+    6: { start: '2019-12-02', stop: '2019-12-08' },
+    7: { start: '2019-12-09', stop: '2019-12-15' },
+    8: { start: '2019-12-16', stop: '2019-12-22' },
+    9: { start: '2020-01-06', stop: '2020-01-12' },
+    10: { start: '2020-01-13', stop: '2020-01-19' },
+    11: { start: '2020-01-20', stop: '2020-01-26' },
+    12: { start: '2020-01-27', stop: '2020-02-02' },
+    13: { start: '2020-02-03', stop: '2020-02-09' },
+    exam: { start: '2020-02-06', stop: '2020-02-15' },
+  },
+  2197: {
+    0: { start: '2019-11-18', stop: '2019-11-24' },
+    1: { start: '2019-11-25', stop: '2019-12-01' },
+    2: { start: '2019-12-02', stop: '2019-12-08' },
+    3: { start: '2019-12-09', stop: '2019-12-15' },
+    4: { start: '2019-12-16', stop: '2019-12-22' },
+    5: { start: '2019-12-23', stop: '2019-09-29' },
+    6: { start: '2019-12-30', stop: '2020-01-05' },
+    7: { start: '2020-01-06', stop: '2020-01-12' },
+    8: { start: '2020-01-13', stop: '2020-01-19' },
+    9: { start: '2020-01-20', stop: '2020-01-26' },
+    10: { start: '2020-01-27', stop: '2020-02-02' },
+    11: { start: '2020-02-03', stop: '2020-02-09' },
+    12: { start: '2020-02-10', stop: '2020-02-16' },
+    13: { start: '2019-02-17', stop: '2020-02-23' },
+    14: { start: '2020-02-24', stop: '2020-03-01' },
+    15: { start: '2020-03-02', stop: '2020-03-08' },
+  },
+  2195: {
+    0: { start: '2019-08-19', stop: '2019-09-25' },
+    1: { start: '2019-08-26', stop: '2019-09-01' },
+    2: { start: '2019-09-02', stop: '2019-09-18' },
+    3: { start: '2019-09-09', stop: '2019-09-15' },
+    4: { start: '2019-09-16', stop: '2019-09-22' },
+    5: { start: '2019-09-23', stop: '2019-09-29' },
+    6: { start: '2019-09-30', stop: '2019-10-06' },
+    7: { start: '2019-10-07', stop: '2019-10-13' },
+    8: { start: '2019-10-14', stop: '2019-08-20' },
+    9: { start: '2019-10-21', stop: '2019-10-27' },
+    10: { start: '2019-10-28', stop: '2019-11-03' },
+    11: { start: '2019-11-04', stop: '2019-11-10' },
+    12: { start: '2019-11-11', stop: '2019-11-17' },
+    13: { start: '2019-11-18', stop: '2019-11-24' },
+    14: { start: '2019-11-25', stop: '2019-12-01' },
+    15: { start: '2019-10-07', stop: '2019-10-13' },
+  },
+  3195: {
+    0: { start: '2019-07-01', stop: '2019-07-07' },
+    1: { start: '2019-07-08', stop: '2019-07-14' },
+    2: { start: '2019-07-15', stop: '2019-07-21' },
+    3: { start: '2019-07-22', stop: '2019-07-28' },
+    4: { start: '2019-07-29', stop: '2019-08-04' },
+    5: { start: '2019-08-05', stop: '2019-08-11' },
+    6: { start: '2019-08-19', stop: '2019-08-25' },
+    7: { start: '2019-08-26', stop: '2019-09-01' },
+    8: { start: '2019-09-02', stop: '2019-09-08' },
+    9: { start: '2019-09-09', stop: '2019-09-15' },
+    10: { start: '2019-09-16', stop: '2019-09-22' },
+    11: { start: '2019-09-23', stop: '2019-09-29' },
+    12: { start: '2019-09-30', stop: '2019-10-06' },
+    13: { start: '2019-10-07', stop: '2019-10-13' },
+    14: { start: '2019-10-14', stop: '2019-10-20' },
+    15: { start: '2019-10-21', stop: '2019-10-27' },
+    exam: { start: '2019-10-10', stop: '2019-10-19' },
+  },
+  3191: {
+    0: { start: '2019-02-18', stop: '2019-02-24' },
+    1: { start: '2019-02-25', stop: '2019-03-03' },
+    2: { start: '2019-03-04', stop: '2019-03-10' },
+    3: { start: '2019-03-11', stop: '2019-03-17' },
+    4: { start: '2019-03-18', stop: '2019-03-24' },
+    5: { start: '2019-03-25', stop: '2019-03-31' },
+    6: { start: '2019-04-01', stop: '2019-04-07' },
+    7: { start: '2019-04-08', stop: '2019-04-14' },
+    8: { start: '2019-04-22', stop: '2019-04-28' },
+    9: { start: '2019-04-29', stop: '2019-05-05' },
+    10: { start: '2019-05-06', stop: '2019-05-12' },
+    11: { start: '2019-05-13', stop: '2019-05-19' },
+    12: { start: '2019-05-20', stop: '2019-05-26' },
+    13: { start: '2019-05-27', stop: '2019-06-02' },
+    14: { start: '2019-06-03', stop: '2019-06-09' },
+    15: { start: '2019-06-10', stop: '2019-06-17' },
+    exam: { start: '2019-05-30', stop: '2019-06-08' },
+  },
+};
+
+
+class UniversityDateCalendar {
+  constructor(strm=DEFAULT_PERIOD) {
+    if (UniversityDateCalendar._instance) {
+      return UniversityDateCalendar._instance;
+    }
+    UniversityDateCalendar._instance = this;
+    this.defaultPeriod = strm;
+  }
+
+  /**
+   * @function getWeekDetails
+   * @param {String} period
+   * @param {String} week
+   * @returns {Object} the correct start/stop dates for the givern period/week
+   * null if doesn't exist
+   * if no week specified, returns the object for the STRM that specifies the
+   * weeks
+   */
+  getWeekDetails(week="all", period=this.defaultPeriod) {
+    // by default return the object for the current period
+    if (week==="all") {
+      return CALENDAR[period];
+    }
+
+    // if week is a string starting with "Week" remove
+    // the Week and convert number of integer
+    if (typeof week === 'string' && week.startsWith('Week')) {
+      week = parseInt(week.substring(4));
+    }
+    // only proceed if the period and week are in the CALENDAR
+    if (!(period in CALENDAR)) {
+      return null;
+    } else if (!(week in CALENDAR[period])) {
+      return null;
+    }
+
+    return CALENDAR[period][week];
+  }
+
+  /**
+   * Adaptation of the Card Interface getTermDate
+   * @param {Integer} week - week of university term
+   * @param {Boolean} startWeek - if true, returns the start date of the week
+   * @param {String} dayOfWeek - specify the day to return
+   * @returns {Object} specifying the day, month, year of the week
+   */
+  getDate( week, startWeek=true, dayOfWeek="Monday" ) {
+    let date = {
+      date: "", month: "", week: week, year: 0
+    };
+
+    // lowercase dayOfWeek
+    dayOfWeek = dayOfWeek.toLowerCase();
+
+    // get the details for the given week
+    let weekDetails = this.getWeekDetails(week);
+
+    // if no details for the week, return empty date
+    if (weekDetails === null) {
+      return date;
+    }
+    // weekDetails/date format
+    // 0: { start: "2022-03-07", stop: "2022-03-13" },
+
+    let d = new Date(weekDetails.start);
+
+    const dayToNum = {
+      tuesday: 1, tue: 1, wednesday: 2, wed: 2, thursday: 3, thu: 3,
+      friday: 4, fri: 4, saturday: 5, sat: 5, sunday: 6, sun: 6,
+    };
+
+    if (dayOfWeek!=="monday") {
+      date.day = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.substring(1, 3);
+      if (dayOfWeek in dayToNum) {
+        d.setDate(d.getDate() + dayToNum[dayOfWeek.toLowerCase()]);
+      }
+    }
+
+    date.month = MONTHS[d.getMonth()];
+    date.date = d.getDate();
+    date.year = d.getFullYear();
+
+  return date;
+
+
+  }
+
+  /**
+   * getCurrentPeriod
+   * @returns value matching the current period for a GU blackboard site
+   * If unable figure out the title, return default period
+   */
+
+  getCurrentPeriod() {
+    // GU current period should be in the courseMenu_link element
+    const titleElement = document.getElementById('courseMenu_link');
+    if (titleElement === null) {
+      return this.defaultPeriod;
+    }
+    // the title attribute contains a string with the period (in the courseId)
+    const courseTitle = titleElement.getAttribute('title');
+
+    // get the course id (incl. period) will be in brackets
+    let m = courseTitle.match(/^.*\((.+)\)/);
+    let id;
+    let breakIdRe;
+
+    // we found a course Id (something in brackets), try to get the STRM value
+    if (m) {
+      id = m[1];
+      // break the course Id up into its components
+      // courseCode_STRM_mode
+
+      // Look for OUA Courses e.g. COM10_2211_OT
+      breakIdRe = new RegExp(
+        '^([A-Z]+[0-9]+)_([0-9][0-9][0-9][0-9])_([A-Z][A-Z])$'
+      );
+      m = id.match(breakIdRe);
+
+      // found an actual course site (rather than org site)
+      if (m) {
+        return m[2];
+      }
+
+      // Look for GU mode-based course e.g. 1511QCM_3211_SB
+      breakIdRe = new RegExp(
+        '^([0-9]+[A-Z]+)_([0-9][0-9][0-9][0-9])_([A-Z][A-Z])$'
+      );
+      m = id.match(breakIdRe);
+
+      // found an actual course site (rather than org site)
+      if (m) {
+        // but is it a QCM course
+        if (m[1].includes('QCM')) {
+          return m[2] + 'QCM';
+        }
+        return m[2];
+      }
+
+      // Look for joined GU course e.g. 1511QCM_3211
+      breakIdRe = new RegExp('^([0-9]+[A-Z]+)_([0-9][0-9][0-9][0-9])$');
+
+      m = id.match(breakIdRe);
+
+      if (m) {
+        return m[2];
+      }
+
+      // Look for year long QCM courses e.g. 3526QCM_Y1_3211_SB
+      breakIdRe = new RegExp(
+        '^([0-9]+[A-Z]+)_(Y[0-9])_([0-9][0-9][0-9][0-9])_([A-Z][A-Z])$'
+      );
+
+      m = id.match(breakIdRe);
+      if (m) {
+        return m[3];
+      }
+    }
+    return this.defaultPeriod;
+  }
+}
+
 // src/cc_Controller.js
 /**
  * @class cc_Controller
@@ -6147,6 +6233,8 @@ class cc_ConfigurationStore {
  *   - update Modules page to show the collections and their representations
  *   - in both staff and student view
  */
+
+
 
 
 
@@ -6326,6 +6414,9 @@ class cc_Controller {
 			translate = { 1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 3, 7: 4 };
 		}
 		this.period = translate[this.period];
+
+		// create calendar
+		this.calendar = new UniversityDateCalendar(this.strm);
 	}
 
 

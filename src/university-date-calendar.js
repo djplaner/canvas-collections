@@ -568,8 +568,15 @@ export default class UniversityDateCalendar {
    * @param {String} week
    * @returns {Object} the correct start/stop dates for the givern period/week
    * null if doesn't exist
+   * if no week specified, returns the object for the STRM that specifies the
+   * weeks
    */
-  getWeekDetails(week, period=this.defaultPeriod) {
+  getWeekDetails(week="all", period=this.defaultPeriod) {
+    // by default return the object for the current period
+    if (week==="all") {
+      return CALENDAR[period];
+    }
+
     // if week is a string starting with "Week" remove
     // the Week and convert number of integer
     if (typeof week === 'string' && week.startsWith('Week')) {

@@ -365,7 +365,21 @@ export default class cc_ConfigurationModel {
 		const module = this.findModuleById(moduleId);
 
 		if (module) {
-			module[fieldName] = value;
+			// specify the fields that are for dates, to be handled differently
+			const dateFields = [ 'day', 'week', 'time'];
+
+			if ( dateFields.includes(fieldName) ) {
+				// does module contain a date field
+				if (!module.hasOwnProperty('date')) {
+					module.date = {
+						label: '', day: '', week: '', time: ''
+					};
+				}
+				module.date[fieldName] = value;
+			} else {
+				// set the non-date fields
+				module[fieldName] = value;
+			}
 		}
 	}
 
