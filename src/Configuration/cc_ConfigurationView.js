@@ -37,8 +37,9 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/#add-a-new-collection"
 	},
 	{ 
-		contentText: `Make collection invisible to students.
-		<p><i class="icon-warning"></i> Also unpublish all the collection's modules to be safe.`,
+		contentText: `<p>Make collection invisible to students. 
+		(Note: can't hide the default collection)</p>
+		<p><i class="icon-warning"></i> Also unpublish all the collection's modules to be ensure they are hidden.`,
 		targetSelector: '#cc-about-hide-collection',
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/#hide-a-collection"
@@ -973,12 +974,12 @@ export default class cc_ConfigurationView extends cc_View {
 						</div>
 						<div class="ic-Form-control ic-Form-control--checkbox">
 							<input type="checkbox" id="cc-config-collection-${collectionName}-hide"
-							    class="cc-config-collection-default">
+							    class="cc-config-collection-hide">
 							<label class="ic-Label" for="cc-config-collection-${collectionName}-hide">
 								Hide collection?
+							</label>
 								<a id="cc-about-hide-collection" target="_blank" href="">
 			   					<i class="icon-question"></i></a>
-							</label>
 						</div>
 					</div>
 				</fieldset>
@@ -989,13 +990,16 @@ export default class cc_ConfigurationView extends cc_View {
 			// add the div.cc-existing-collection to div#cc-config-existing-collections
 			existingCollectionsDiv.insertAdjacentHTML('beforeEnd', divExistingCollection);
 
-			// TODO add an event handler for clicking the options
-
 			// set input#cc-config-collection-${collectionName}-default to checked
 			if (defaultCollection === collectionName) {
 				const defaultCheckbox = document.getElementById(`cc-config-collection-${collectionName}-default`);
 				if (defaultCheckbox) {
 					defaultCheckbox.checked = true;
+				}
+				// disable the collections hide checkbox
+				const hideCheckbox = document.getElementById(`cc-config-collection-${collectionName}-hide`);
+				if (hideCheckbox) {
+					hideCheckbox.disabled = true;
 				}
 			}
 			// TODO set input#cc-config-collection-${collectionName}-hide to checked
@@ -1058,6 +1062,11 @@ export default class cc_ConfigurationView extends cc_View {
 		const defaultCheckboxes = document.querySelectorAll('input.cc-config-collection-default');
 		defaultCheckboxes.forEach(checkbox => {
 			checkbox.onchange = (event) => this.controller.changeDefaultCollection(event);
+		});
+		// add event handler for cc-config-collection-hide selection
+		const hideCheckboxes = document.querySelectorAll('input.cc-config-collection-hide');
+		hideCheckboxes.forEach(checkbox => {
+			checkbox.onchange = (event) => this.controller.changeHideCollection(event);
 		});
 		// add event handler for input.cc-existing-collection (the page inputs)
 		const existingCollections = document.querySelectorAll('input.cc-existing-collection');

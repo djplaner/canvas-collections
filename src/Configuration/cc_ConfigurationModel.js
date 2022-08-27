@@ -260,6 +260,15 @@ export default class cc_ConfigurationModel {
 		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute];
 	}
 
+	setCollectionAttribute(collectionName, attribute, value) {
+		DEBUG && console.log(`-------------- cc_ConfigurationModel.setCollectionAttribute()`);
+		if (this.controller.parentController.cc_configuration.COLLECTIONS[collectionName] ) {
+			this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute] = value;
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Modify the collection's representation to the passed value 
 	 * @param {*} collectionName 
