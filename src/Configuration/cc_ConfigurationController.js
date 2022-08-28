@@ -132,6 +132,10 @@ export default class cc_ConfigurationController {
 		this.model.setModuleConfigClass(moduleId, className);
 
 		this.view.display();
+
+		// scroll to div#<moduleId>
+		let element = document.getElementById(moduleId);
+		element.scrollIntoView({ behavior: 'smooth' });
 	}
 
 

@@ -51,6 +51,8 @@ export default class cc_Controller {
 		// string name of last collection viewed
 		this.lastCollectionViewed = null;
 		this.configurationStore = new cc_ConfigurationStore(this);
+		// create calendar
+		this.calendar = new UniversityDateCalendar(this.strm);
 
 
 		// if cc should run, try to get the config
@@ -191,8 +193,6 @@ export default class cc_Controller {
 		}
 		this.period = translate[this.period];
 
-		// create calendar
-		this.calendar = new UniversityDateCalendar(this.strm);
 	}
 
 
@@ -232,6 +232,10 @@ export default class cc_Controller {
 	 * Collections configuration information has been obtained
 	 * Purpose here is to create mergedModuleDetails object which 
 	 * merges the two sets of module information into the one - keyed on module id
+	 * 
+	 * It also adds the following fiels
+	 * - actualNum - which is auto calculated (maybe) version of num
+	 * 
 	 * - Calls this.execute() when done
 	 */
 
@@ -243,6 +247,10 @@ export default class cc_Controller {
 		const collectionsModules = this.cc_configuration.MODULES;
 
 		this.mergedModuleDetails = {};
+
+		// numCalculator use to calculate nums for collections 
+		// is keyed on collectionName and then label to point to an int 
+		let numCalculator = {};
 
 		// merge the two sets of module details into one - keyed on module id
 		for (let i = 0; i < canvasModules.length; i++) {
@@ -263,6 +271,29 @@ export default class cc_Controller {
 					if (!skipFields.includes(key)) {
 						details[key] = ccModule[key];
 					}
+				}
+			}
+
+			// add calculated fields
+			// - if there's num in details, then actualNum is the num
+			if ( details.hasOwnProperty('num') ) {
+				details.actualNum = details.num;
+			} else {
+				// need to auto calculate the num
+				// If there's already an entry in numCalculator for this collectionName and label
+				// then increment it and use that as the actualNum
+				// otherwise create a new entry in numCalculator for this collectionName and label
+				// and set actualNum to 0
+				const collectionName = details.collectionName;
+				const label = details.label;
+				if (numCalculator.hasOwnProperty(collectionName) && numCalculator[collectionName].hasOwnProperty(label)) {
+					details.actualNum = ++numCalculator[collectionName][label];
+				} else {
+					if (!numCalculator.hasOwnProperty(collectionName)) {
+						numCalculator[collectionName] = {};
+					}
+					numCalculator[collectionName][label] = 1;
+					details.actualNum = 1;
 				}
 			}
 			this.mergedModuleDetails[canvasModuleId] = details;

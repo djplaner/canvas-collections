@@ -433,8 +433,8 @@ export default class GriffithCardsView extends cc_View {
 		if (module.label ) {
 			CARD_LABEL = module.label;
 		} 
-		if ( module.num) {
-			CARD_LABEL += ` ${module.num}`;
+		if ( module.actualNum) {
+			CARD_LABEL += ` ${module.actualNum}`;
 			// remove first char from CARD_LABEL if it is a space
 			if (CARD_LABEL.charAt(0)===' ') {
 				CARD_LABEL = CARD_LABEL.substring(1);
