@@ -1021,6 +1021,11 @@ class cc_ConfigurationView extends cc_View {
 			autonumStyle = "color:grey;";
 		}
 
+		let label = "";
+		if (moduleConfig.hasOwnProperty('label')) {
+			label = moduleConfig.label;
+		}
+
 		let showConfigHtml = `
 		<style>
 		   .cc-module-config-collection-representation label {
@@ -1075,7 +1080,7 @@ class cc_ConfigurationView extends cc_View {
 			   				<i class="icon-question cc-module-icon"></i></a>
 						</label> <br />
 						<input type="text" id="cc-module-config-${moduleDetail.id}-label"
-					    	style="width:10rem" value="${moduleConfig.label}" />
+					    	style="width:10rem" value="${label}" />
 					</div>
 					<div>
 				    	<label for="cc-module-config-${moduleDetail.id}-num">Number</label>
