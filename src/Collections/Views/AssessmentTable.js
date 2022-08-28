@@ -30,7 +30,7 @@ const TABLE_STYLES = `
 }
   
 .cc-assessment-container caption { 
-  font-size: 1em;
+  font-size: 0.5em;
   font-weight: 700;
   text-align: left;
 }
@@ -107,7 +107,7 @@ td.descriptionCell {
 
 .cc-assessment-container .responsive-table__heading {
   font-weight: 700;
-  padding-right: 1em;
+  padding-right: 0.5em;
   text-align: left;
   word-break: initial;
 }
@@ -149,6 +149,19 @@ td.descriptionCell {
     display: none;
   }
 }
+
+  .cc-table-header-text {
+    margin-left: 0.5rem;
+  }
+
+  .cc-table-cell-text {
+    margin: 0;
+  }
+
+  .cc-table-cell-text > p {
+    margin: 0.5rem;
+    font-size: 0.8rem;
+  }
 	`;
 
 const TABLE_HTML = `
@@ -165,11 +178,11 @@ const TABLE_HTML = `
       			<caption>{{CAPTION}}</caption>
       			<thead role="rowgroup">
         			<tr role="row">
-          				<th role="columnheader" scope="col">Title</th>
-          				<th role="columnheader" scope="col">Description</th>
-          				<th role="columnheader" scope="col">Weighting</th>
-          				<th role="columnheader" scope="col">Due Date</th>
-          				<th role="columnheader" scope="col">Learning Outcomes</th>
+          				<th role="columnheader" scope="col"><span class="cc-table-header-text">Title</span></th>
+          				<th role="columnheader" scope="col"><span class="cc-table-header-text">Description</span></th>
+          				<th role="columnheader" scope="col"><span class="cc-table-header-text">Weighting</span></th>
+          				<th role="columnheader" scope="col"><span class="cc-table-header-text">Due Date</span></th>
+          				<th role="columnheader" scope="col"><span class="cc-table-header-text">Learning Outcomes</span></th>
 					</tr> 
 				</thead>
    			<tbody>
@@ -183,25 +196,34 @@ const TABLE_ROW_HTML = `
 		  <tr role="row">
           <td role="cell">
             <span class="responsive-table__heading" aria-hidden="true">Title</span>
-            <p><a href="#{{MODULE-ID}}">
+            <div class="cc-table-cell-text"><p><a href="#{{MODULE-ID}}">
               {{TITLE}}
-            </a> </p>
+
+            </a></p> </div>
           </td>
           <td role="cell" class="descriptionCell">
             <span class="responsive-table__heading" aria-hidden="true">Description</span>
+            <div class="cc-table-cell-text">
             {{DESCRIPTION}}
+            </div>
           </td>
           <td role="cell">
             <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
-            <p>{{WEIGHTING}} </p>
+            <div class="cc-table-cell-text">
+            <p>{{WEIGHTING}}</p>
+            </div>
           </td>
           <td role="cell">
             <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
+            <div class="cc-table-cell-text">
             <p>{{DUE-DATE}}</p>
+            </div>
           </td>
           <td role="cell">
             <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            <div class="cc-table-cell-text">
             <p>{{LEARNING-OUTCOMES}}</p>
+            </div>
           </td>
         </tr>
 `;
@@ -216,7 +238,7 @@ export default class AssessmentTableView extends cc_View {
    * @param {Object} controller
    */
   constructor(model, controller) {
-    super(model,controller);
+    super(model, controller);
 
     this.TABLE_HTML = TABLE_HTML;
 
@@ -237,34 +259,56 @@ export default class AssessmentTableView extends cc_View {
     DEBUG && console.log('-------------- AssessmentTable.display()');
     let div = document.getElementById('cc-canvas-collections');
 
+    // remove any existing div.cc-assessment-table
+    let existingDiv = document.querySelector('div.cc-assessment-table');
+    if (existingDiv) {
+      existingDiv.remove();
+    }
 
     // create a simple message div element
     let message = document.createElement('div');
-    message.className = 'cc-message';
+    message.className = 'cc-assessment-table';
 
+    message.innerHTML = this.generateAssessmentTable();
+    div.insertAdjacentElement('beforeend', message);
+
+  }
+
+  /**
+   * Work through module details for this collection and generate HTML with
+   * an assessment table
+   */
+  generateAssessmentTable() {
     let messageHtml = this.TABLE_HTML;
 
     // TODO update the messageHTML
     const description = this.model.getCurrentCollectionDescription();
 
     // add a row for each module belonging to the collection
-    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());
+//    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());
+    // get an array of all modules in display order
+ 		const modules = this.model.getModulesCollections();
+		const currentCollection = this.model.getCurrentCollection();
     let tableRows = '';
-    for (let i = 0; i < collectionsModules.length; i++) {
+    for (let i = 0; i < modules.length; i++) {
+
+      // skip if row doesn't match currentCollection
+      if (modules[i].collection !== currentCollection) {
+        continue;
+      }
       let rowHtml = TABLE_ROW_HTML;
 
-      const dueDate = collectionsModules[i].date;
+      const dueDate = modules[i].date;
       let dueDateString = '';
       if (dueDate && dueDate.month) {
         dueDateString = `${dueDate.month} ${dueDate.date}`;
       }
 
-
       const mapping = {
-        'MODULE-ID': collectionsModules[i].id,
-        'DESCRIPTION': collectionsModules[i].description,
-        'TITLE': collectionsModules[i].name,
-        'TYPE': collectionsModules[i].label,
+        'MODULE-ID': modules[i].id,
+        'DESCRIPTION': modules[i].description,
+        'TITLE': modules[i].name,
+        'TYPE': modules[i].label,
         'DUE-DATE': dueDateString
       };
 
@@ -279,13 +323,11 @@ export default class AssessmentTableView extends cc_View {
     }
     messageHtml = messageHtml.replace(/{{TABLE-ROWS}}/g, tableRows);
 
-
     messageHtml = this.emptyRemainingFields(messageHtml);
-    message.innerHTML = messageHtml;
-    div.insertAdjacentElement('beforeend', message);
+
+    return messageHtml;
 
   }
-
   /**
    * Remove any remaining {{field-name}} from the message HTML
    * @param {String} message 
