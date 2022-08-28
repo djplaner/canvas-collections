@@ -52,5 +52,4 @@ export default class cc_CollectionsController {
 		this.view.display();
 	 }
 
-
 }

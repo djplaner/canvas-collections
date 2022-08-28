@@ -439,24 +439,24 @@ export default class cc_ConfigurationModel {
 		//return this.controller.parentController.moduleDetails[moduleId];
 		return this.controller.parentController.cc_configuration.MODULES[moduleId];
 
-		/*		// get the name for the given moduleId
-				const modulesDetails = this.controller.parentController.moduleDetails;
-				let moduleName = null;
-				for (let i=0; i<modulesDetails.length; i++) {
-					if (modulesDetails[i].id===moduleId) {
-						moduleName = modulesDetails[i].name;
-						break;
-					}
-				}
-		
-				if (!moduleName) {
-					return null;
-				}
-		
-				let modules = this.controller.parentController.cc_configuration.MODULES;
-				if ( modules.hasOwnProperty(moduleName) ) {
-					return modules[moduleName];
-				}
-				return null; */
+	}
+
+	addModuleMetadata(moduleId, fieldName, value) {
+		const module = this.findModuleById(moduleId);
+
+		if (module) {
+			if (!module.hasOwnProperty('metadata')) {
+				module.metadata = {};
+			}
+			module.metadata[fieldName] = value;
+		}
+	}
+
+	deleteModuleMetadata(moduleId, fieldName) {
+		const module = this.findModuleById(moduleId);
+
+		if (module && module.hasOwnProperty('metadata')) {
+			delete module.metadata[fieldName];
+		}
 	}
 }

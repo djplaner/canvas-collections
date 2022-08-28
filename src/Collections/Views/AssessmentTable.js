@@ -304,13 +304,24 @@ export default class AssessmentTableView extends cc_View {
         dueDateString = `${dueDate.month} ${dueDate.date}`;
       }
 
-      const mapping = {
+      let mapping = {
         'MODULE-ID': modules[i].id,
         'DESCRIPTION': modules[i].description,
         'TITLE': modules[i].name,
         'TYPE': modules[i].label,
         'DUE-DATE': dueDateString
       };
+
+      // check metadata for weighting and learning outcomes
+      const metaData = modules[i].metadata;
+      if (metaData) {
+        if (metaData.hasOwnProperty('weighting')) {
+          mapping['WEIGHTING'] = metaData.weighting;
+        }
+        if (metaData.hasOwnProperty('learning outcomes')) {
+          mapping['LEARNING-OUTCOMES'] = metaData['learning outcomes'];
+        }
+      }
 
       // loop through mapping keys and replace the values in the row html
       for (let key in mapping) {

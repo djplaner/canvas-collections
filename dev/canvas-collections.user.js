@@ -455,25 +455,25 @@ class cc_ConfigurationModel {
 		//return this.controller.parentController.moduleDetails[moduleId];
 		return this.controller.parentController.cc_configuration.MODULES[moduleId];
 
-		/*		// get the name for the given moduleId
-				const modulesDetails = this.controller.parentController.moduleDetails;
-				let moduleName = null;
-				for (let i=0; i<modulesDetails.length; i++) {
-					if (modulesDetails[i].id===moduleId) {
-						moduleName = modulesDetails[i].name;
-						break;
-					}
-				}
-		
-				if (!moduleName) {
-					return null;
-				}
-		
-				let modules = this.controller.parentController.cc_configuration.MODULES;
-				if ( modules.hasOwnProperty(moduleName) ) {
-					return modules[moduleName];
-				}
-				return null; */
+	}
+
+	addModuleMetadata(moduleId, fieldName, value) {
+		const module = this.findModuleById(moduleId);
+
+		if (module) {
+			if (!module.hasOwnProperty('metadata')) {
+				module.metadata = {};
+			}
+			module.metadata[fieldName] = value;
+		}
+	}
+
+	deleteModuleMetadata(moduleId, fieldName) {
+		const module = this.findModuleById(moduleId);
+
+		if (module && module.hasOwnProperty('metadata')) {
+			delete module.metadata[fieldName];
+		}
 	}
 }
 
@@ -605,6 +605,14 @@ const CONFIG_VIEW_TOOLTIPS = [
 		targetSelector: "#cc-about-module-number",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/#module-number"
+	},
+	{ 
+		contentText: `Flexibly add, delete, and modify additional information about this module, which
+		may be used by collections and representations - or for your own purposes.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-additional-metadata",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/#additional-metadata"
 	},
 
 
@@ -775,11 +783,28 @@ class cc_ConfigurationView extends cc_View {
 			}
 		}
 
+		// add event handlers for additional metadata
+		// button.cc-module-config-metadata-add 
+		// and i.cc-module-config-metadata-trash calls model.manageModuleMetadata
+		const buttonAddMetadata = document.querySelector(`button.cc-module-config-metadata-add`);
+		if (buttonAddMetadata) {
+			buttonAddMetadata.onclick = (event) => this.controller.manageModuleMetadata(event);
+		}
+		const trashMetadata = document.querySelectorAll(`i.cc-module-config-metadata-delete`);
+		for (let i = 0; i < trashMetadata.length; i++) {
+			const trash = trashMetadata[i];
+			trash.onclick = (event) => this.controller.manageModuleMetadata(event);
+		}
+
+		// add catch all handlers for other module config elements
 		const configDiv = document.querySelector(`#cc-module-config-${id}`);
 		if (configDiv) {
 			const configFields = configDiv.querySelectorAll('input, select');
 			for (let j = 0; j < configFields.length; j++) {
-				configFields[j].onchange = (event) => this.controller.updateModuleConfigField(event);
+				// only add this handler if id does not contain 'metadata-add-'
+				if (configFields[j].id.indexOf('-metadata-add-') === -1) {
+					configFields[j].onchange = (event) => this.controller.updateModuleConfigField(event);
+				}
 				// this to prevent some other strange behavior (introduced by Canvas?)
 				configFields[j].onkeydown = (event) => event.stopPropagation();
 			}
@@ -1026,6 +1051,8 @@ class cc_ConfigurationView extends cc_View {
 			label = moduleConfig.label;
 		}
 
+		const additionalMetaDataHTML = this.getAdditionalMetaDataHTML(moduleDetail);
+
 		let showConfigHtml = `
 		<style>
 		   .cc-module-config-collection-representation label {
@@ -1098,7 +1125,8 @@ class cc_ConfigurationView extends cc_View {
 				</div>
 				<div class="border border-trbl" style="margin-right:1em">
 				    <div style="padding-top:0.5rem;padding-left:0.5rem"><strong>Date</strong> 
-			   			<i class="icon-question cc-module-icon" id="cc-about-module-date"></i>
+					    <a href="" id="cc-about-module-date" target="_blank">
+			   			<i class="icon-question cc-module-icon"></i></a>
 						<div class="cc-calculated-date">${calculatedDate}</div>
 						</div>
 					<div class="cc-module-config-collection-representation"
@@ -1139,6 +1167,7 @@ class cc_ConfigurationView extends cc_View {
 				    <label for="cc-module-config-${moduleDetail.id}-description">Description</label>
 					<div id="cc-module-config-${moduleDetail.id}-description" class="cc-module-config-description" style="height:8rem"> </div>
 				</div>
+				${additionalMetaDataHTML}
 				<div class="cc-module-config-imagePreview">
 <!--				  <div class="cc-preview-container">
 				    <div class="cc-clickable-card" style="width:50%">
@@ -1187,6 +1216,76 @@ class cc_ConfigurationView extends cc_View {
 		// - all the other event handlers
 
 		return showConfigHtml;
+	}
+
+	/**
+	 * Given details of a module generate the HTML for a form to manage additional metadata
+	 * - bordered div with title "Additional metadata"
+	 * - followed by a table with the meta data
+	 * - each row has three columns: name, value, action
+	 * - at least one row for "add new metadata"
+	 * - one each for every entry in module that isn't a standard one
+	 * @param {Object} module 
+	 * @returns {String} HTML for the module configuration form for managing additional meta data
+	 */
+	getAdditionalMetaDataHTML(module) {
+
+		let additionalMetaDataHTML = `
+		<div class="cc-module-config-additional-metadata border border-trbl">
+			<p><strong>Additional metadata</strong>
+			    <a href="" id="cc-about-additional-metadata" target="_blank">
+	   			<i class="icon-question cc-module-icon"></i></a>
+			</p>
+			<table>
+			  <thead>
+				<tr>
+					<th>Name</th>
+					<th>Value</th>
+					<th>Action</th>
+				</tr>
+			  </thead>
+			  <tbody>
+				<tr>
+					<td><input type="text" id="cc-module-config-${module.id}-metadata-add-name"></td>
+					<td><input type="text" id="cc-module-config-${module.id}-metadata-add-value"></td>
+					<td><button id="cc-module-config-${module.id}-metadata-add"
+					    class="cc-module-config-metadata-add">Add</button></td>
+				</tr>
+
+		`;
+
+		// add rows for existing metadata, if any
+		// - stored in dictionary module.metadata
+		// - loop through keys
+		// - add a row for each key
+		// - add a button to delete the row
+		for (let key in module.metadata) {
+			additionalMetaDataHTML += `
+				<tr>
+					<td>
+						<input type="text" id="cc-module-config-${module.id}-metadata-${key}-name"
+							value="${key}" />
+					</td>
+					<td>
+						<input type="text" id="cc-module-config-${module.id}-metadata-${key}-value"
+							value="${module.metadata[key]}" />
+					</td>
+					<td>
+						<i class="icon-trash cc-module-config-metadata-delete" 
+							id="cc-module-config-${module.id}-metadata-${key}-delete"></i>
+					</td>
+				</tr>
+			`;
+		}
+
+
+		additionalMetaDataHTML += `
+		      </tbody>
+			</table>
+		</div>
+		`;
+
+		return additionalMetaDataHTML;
 	}
 
 	/**
@@ -1750,6 +1849,13 @@ input:checked + .cc-slider:before {
 				padding-left: 0.5rem;
 				padding-right: 0.5rem;
 				display:none;
+		   }
+
+		   .cc-module-config-additional-metadata {
+			    margin-top: 0.5rem;
+				margin-bottom: 0.5rem;
+				padding-left: 0.5rem;
+				padding-right: 0.5rem;
 		   }
 
 
@@ -2512,6 +2618,73 @@ class cc_ConfigurationController {
 			this.parentController.collectionsController.view.updateCurrentRepresentation();
 
 			// TODO - redisplay the module configuration view
+			this.view.updateSingleModuleConfig(moduleId);
+		}
+	}
+
+	/**
+	 * Called when use clicks on the add button, the trash icon, or an input
+	 * tag for an existing metadata
+	 * - button id is cc-module-config-<moduleId>-metadata-add
+	 *   - add the metadata name and value to the modules meta data object
+	 *   - name will be in input#cc-module-config-<moduleId>-metadata-add-name
+	 *   - value will be in input#cc-module-config-<moduleId>-metadata-add-value
+	 * - trash icon id is cc-module-config-<moduleId>-metadata-<name>-delete
+	 *   - remove the metadata name and value from the modules meta data object
+	 *   - name will be in input#cc-module-config-<moduleId>-<name>-metadata-name
+	 *   - value will be in input#cc-module-config-<moduleId>-<name>-metadata-value
+	 * - input tag id is cc-module-config-<moduleId>-metadata-<name>-[name|value]
+	 *   - will need to identify which one changed and the other value
+	 *   - if name changed, delete the old key and add a new one
+	 *   - if value changed, update the value
+	 * @param {Event} event 
+	 */
+
+	manageModuleMetadata(event) {
+		// is the target a button or a i element?
+		const target = event.target;
+		const element = target.tagName.toLowerCase();
+		const idString = target.id;
+
+		// handle adding when target is button
+		if (element === 'button') {
+			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-add/)[1]);
+			const name = document.querySelector(`#cc-module-config-${moduleId}-metadata-add-name`).value;
+			const value = document.querySelector(`#cc-module-config-${moduleId}-metadata-add-value`).value;
+
+			if (name === '' ) {
+				alert('Unable to add metadata without a name.');
+				return;
+			}
+			this.model.addModuleMetadata(moduleId, name, value);
+			this.changeMade(true);
+			this.view.updateSingleModuleConfig(moduleId);
+		} else if (element === 'i') {
+			// handle deleting when target is i
+			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-(.*)-delete/)[1]);
+			const name = idString.match(/cc-module-config-(\d+)-metadata-(.*)-delete/)[2];
+			this.model.deleteModuleMetadata(moduleId, name);
+			this.changeMade(true);
+			this.view.updateSingleModuleConfig(moduleId);
+		} else if ( element === 'input') {
+			// handle updating when target is input
+			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-(.*)-(.*)/)[1]);
+			const name = idString.match(/cc-module-config-(\d+)-metadata-(.*)-(.*)/)[2];
+			const fieldName = idString.match(/cc-module-config-(\d+)-metadata-(.*)-(.*)/)[3];
+			const valueChanged = target.value;
+			if (fieldName === 'name') {
+				// the name has changed, delete old field and add new one
+				// valueChanged - contains the new name
+				// need to get the actual value of the metadata
+				let valueElement = document.querySelector(`#cc-module-config-${moduleId}-metadata-${name}-value`);
+				const value = valueElement.value;
+				this.model.deleteModuleMetadata(moduleId, name);
+				this.model.addModuleMetadata(moduleId, valueChanged, value);
+			} else if (fieldName === 'value') {
+				// the value has changed, update the value
+				this.model.updateModuleMetadata(moduleId, name, valueChanged);
+			}
+			this.changeMade(true);
 			this.view.updateSingleModuleConfig(moduleId);
 		}
 	}
@@ -3503,13 +3676,24 @@ class AssessmentTableView extends cc_View {
         dueDateString = `${dueDate.month} ${dueDate.date}`;
       }
 
-      const mapping = {
+      let mapping = {
         'MODULE-ID': modules[i].id,
         'DESCRIPTION': modules[i].description,
         'TITLE': modules[i].name,
         'TYPE': modules[i].label,
         'DUE-DATE': dueDateString
       };
+
+      // check metadata for weighting and learning outcomes
+      const metaData = modules[i].metadata;
+      if (metaData) {
+        if (metaData.hasOwnProperty('weighting')) {
+          mapping['WEIGHTING'] = metaData.weighting;
+        }
+        if (metaData.hasOwnProperty('learning outcomes')) {
+          mapping['LEARNING-OUTCOMES'] = metaData['learning outcomes'];
+        }
+      }
 
       // loop through mapping keys and replace the values in the row html
       for (let key in mapping) {
@@ -5041,7 +5225,6 @@ class cc_CollectionsController {
 		this.model.setCurrentCollection(newCollection);
 		this.view.display();
 	 }
-
 
 }
 

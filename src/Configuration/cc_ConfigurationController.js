@@ -488,5 +488,72 @@ export default class cc_ConfigurationController {
 		}
 	}
 
+	/**
+	 * Called when use clicks on the add button, the trash icon, or an input
+	 * tag for an existing metadata
+	 * - button id is cc-module-config-<moduleId>-metadata-add
+	 *   - add the metadata name and value to the modules meta data object
+	 *   - name will be in input#cc-module-config-<moduleId>-metadata-add-name
+	 *   - value will be in input#cc-module-config-<moduleId>-metadata-add-value
+	 * - trash icon id is cc-module-config-<moduleId>-metadata-<name>-delete
+	 *   - remove the metadata name and value from the modules meta data object
+	 *   - name will be in input#cc-module-config-<moduleId>-<name>-metadata-name
+	 *   - value will be in input#cc-module-config-<moduleId>-<name>-metadata-value
+	 * - input tag id is cc-module-config-<moduleId>-metadata-<name>-[name|value]
+	 *   - will need to identify which one changed and the other value
+	 *   - if name changed, delete the old key and add a new one
+	 *   - if value changed, update the value
+	 * @param {Event} event 
+	 */
+
+	manageModuleMetadata(event) {
+		// is the target a button or a i element?
+		const target = event.target;
+		const element = target.tagName.toLowerCase();
+		const idString = target.id;
+
+		// handle adding when target is button
+		if (element === 'button') {
+			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-add/)[1]);
+			const name = document.querySelector(`#cc-module-config-${moduleId}-metadata-add-name`).value;
+			const value = document.querySelector(`#cc-module-config-${moduleId}-metadata-add-value`).value;
+
+			if (name === '' ) {
+				alert('Unable to add metadata without a name.');
+				return;
+			}
+			this.model.addModuleMetadata(moduleId, name, value);
+			this.changeMade(true);
+			this.view.updateSingleModuleConfig(moduleId);
+		} else if (element === 'i') {
+			// handle deleting when target is i
+			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-(.*)-delete/)[1]);
+			const name = idString.match(/cc-module-config-(\d+)-metadata-(.*)-delete/)[2];
+			this.model.deleteModuleMetadata(moduleId, name);
+			this.changeMade(true);
+			this.view.updateSingleModuleConfig(moduleId);
+		} else if ( element === 'input') {
+			// handle updating when target is input
+			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-(.*)-(.*)/)[1]);
+			const name = idString.match(/cc-module-config-(\d+)-metadata-(.*)-(.*)/)[2];
+			const fieldName = idString.match(/cc-module-config-(\d+)-metadata-(.*)-(.*)/)[3];
+			const valueChanged = target.value;
+			if (fieldName === 'name') {
+				// the name has changed, delete old field and add new one
+				// valueChanged - contains the new name
+				// need to get the actual value of the metadata
+				let valueElement = document.querySelector(`#cc-module-config-${moduleId}-metadata-${name}-value`);
+				const value = valueElement.value;
+				this.model.deleteModuleMetadata(moduleId, name);
+				this.model.addModuleMetadata(moduleId, valueChanged, value);
+			} else if (fieldName === 'value') {
+				// the value has changed, update the value
+				this.model.updateModuleMetadata(moduleId, name, valueChanged);
+			}
+			this.changeMade(true);
+			this.view.updateSingleModuleConfig(moduleId);
+		}
+	}
+
 
 }
