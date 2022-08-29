@@ -576,6 +576,14 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/#hide-a-collection"
 	},
+	{ 
+		contentText: `Update the <em>output page</em> with the collection's current representation
+		`,
+		targetSelector: '#cc-about-update-output-page',
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/#update-page"
+	},
+
 
 	//******** Module configuration */
 	{ 
@@ -1403,6 +1411,19 @@ class cc_ConfigurationView extends cc_View {
 				cursor: pointer;
 			}
 
+			.cc-output-page-not-exists { 
+				display: none ! important;
+			}
+ 
+			.cc-output-page-update {
+				font-size: 0.8rem;
+				margin: 0.5rem;
+			}
+
+			.cc-output-page-update button {
+				font-size: 0.8rem;
+			}
+
 			.cc-config-error {
 				background-color:red;
 				color:white;
@@ -1566,8 +1587,12 @@ class cc_ConfigurationView extends cc_View {
 				includePage="";
 			}
 			let outputPage = this.model.getCollectionAttribute(collectionName, "outputPage");
+			let outputPageExists = "cc-output-page-not-exists";
 			if ( ! outputPage ) {
 				outputPage="";
+			}
+			if (outputPage!=="") {
+				outputPageExists="cc-output-page-exists";
 			}
 			const divExistingCollection = `
 			<div class="cc-existing-collection border border-trbl" id="cc-collection-${collectionName}">
@@ -1597,6 +1622,13 @@ class cc_ConfigurationView extends cc_View {
 					<label for="cc-collection-${collectionName}-output-page">Output page</label>
 				 	<input id="cc-collection-${collectionName}-output-page" 
 					      value="${outputPage}" class="cc-existing-collection" />
+				</div>
+				<div class="cc-collection-representation cc-output-page-update ${outputPageExists}">
+					<button id="cc-collection-${collectionName}-output-page-update"
+					      class="btn">Update output page</button>
+					<a id="cc-about-update-output-page" target="_blank" href="">
+			   			<i class="icon-question"></i></a>
+
 				</div>
 
 				<!-- put the options -->
