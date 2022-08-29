@@ -1,136 +1,30 @@
 # canvas-collections
 
-Improve the functionality of [Canvas LMS](https://www.instructure.com/en-au/canvas) Modules by enabling:
-1. Grouping modules into collections; and,
-2. Flexible and enhanced representations.
+Transform your learners' experience of your course site by improving your site's information architecture and visual design by using the three three key features Collections adds to Canvas:
 
-**Note:** :warning: This project is currently in the early stages of development :construction:. It is known to work as both a userscript and injected into a Canvas instance.  Currently, canvas-collections can parse a JSON configuration file from a Canvas course's files area and generate appropriate representations.
+1. Collections - group Canvas modules according to your design.
+2. Representations - transform the visual design of the Canvas module interface.
+3. Objects - add metadata and affordances to generic Canvas modules to transform that into objects that fit your design and context.
 
-Below you can read more about
+The [Features page](https://djplaner.github.io/canvas-collections/features/) provides more detail and examples of each of these feature. 
 
-- [Why is Canvas Collections needed?](#why)
-- [What does it do?](#what)
-- [Current Status](#status) including screenshots
-- [Related work](#related-work)
+It can be used by an individual teacher or by a whole institution.
 
+See [the Canvas Collections website](https://djplaner.github.io/canvas-collections/) for more information.
 
+### Current Status
 
-## Why?
+Active work on an early version 1 release is underway. It should be released by the end of September 2022.
 
-To address two known limitiations of [the vanilla Canvas Modules page](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-are-Modules/ta-p/6):
-1.  [no way to group modules](https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-group-modules-together/m-p/179757/highlight/true#M84952); and,
-2.  [a very linear, less than engaging presentation](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/).
+## Comparing Vanilla Canvas to Canvas Collections
 
-These limitations negatively impact students' ability to understand and navigate Canvas Modules.
+Both of the following images are of the Module's view of the same Canvas course site with 11 mondules.
 
-The combination of these limitations leads to various issues the negatively impact students' ability to understand and navigate Canvas Modules.
+The left hand image shows the default Canvas interface. A long scroll down the 11 modules.
 
-### No way to group modules
+The right hand image adds Canvas Collections with three collections titled: Why? What? and How?. Each collection can be navigated to separately. Each collection is using a _card_ representation. Hence collections adds a card for each module. Each module has had an image and a description added to help explain the purpose of the module.
 
-For a course with large numbers of modules or which uses modules for very different purposes the inability to group modules is a problem. Available workarounds all [have their limitations](https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-group-modules-together/m-p/179757/highlight/true#M84952) and Instructure ["don't have plans to support nested modules soon"](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383/highlight/true#M50428). Even though the need for this has been identified multiple times since 2015 by numerous Canvas users.
-
-### Less than engaging presentation
-
-The Canvas modules page shows each module and their items in sequence one one page. Problems with this include:
-
-- scroll of death for courses [with "many modules and module items"](https://community.canvaslms.com/t5/Idea-Conversations/Modules-Display-as-Collapsed-by-Default/idi-p/370135); 
-- a less engaging presentation that has not kept up with contemporary web design; and,
-- an assumption that one style of representation will be sufficient for all purposes.
-
-For example, [Card-Based User Interfaces](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/) are now common place and more visually engaging. Such interfaces have been used by [hundreds of courses across the world on Blackboard](https://djon.es/blog/2021/03/12/reflecting-on-the-spread-of-the-card-interface-for-blackboard-learn/) and [at least a couple of institutions](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/) have sought to add this approach to Canvas.
-
-While card-based user interfaces may be visually appealing, they may not be applicable to every purpose.
-
-## What?
-
-Embedded in Canvas, the canvas-collections Javascript aims to provide two additional functions to the standard Canvas Modules page:
-1. Enable modules to be grouped into _Collections_; and,
-2. Allow collections to use different _Representations_.
-
-### Collections
-
-Modules are the standard Canvas way to organise sequences of information. Modules can be designed for different purposes (e.g. content, assessment, resources, etc.). Canvas groups all modules on the same page. Allowing no distinction. Resulting in the modules page containing a long list of modules for different purposes. Decreasing findability.
-
-canvas-collections will allow modules to be grouped into different _collections_ as fits the design of the course. A navigation interface will allow the learner to navigate between different collections of modules. Only the modules for the selected collection will be visible. For example, the following image shows a Canvas course modules page with two collections: _Study Guide_ and _Assessment_. _Study Guide_ is the currently selected collection and hence only modules in that collection are visible.
-
-![](docs/pics/early-collections.png)
-
-### Representations
-
-The standard Canvas modules page shows a list of every module. This is [known to be problematic](https://community.canvaslms.com/t5/Idea-Conversations/Modules-Display-as-Collapsed-by-Default/idi-p/370135) where there are numerous modules. Gaining and understanding of the available modules and navigating between them becomes overwhelming. This has led many teachers to designing their own solutions.
-
-canvas-collections will automatically generate different representations for modules. Whether all of the modules or just the modules in a particular collection. The initial representation will be a card-based representation. A representation illustrated in the image above. 
-
-Each module is represented by a card that can be customised to represent the module and its purpose. The module cards are inserted before the standard Canvas module list. Clicking on a card will take you to the module. Eventually, the cards will support much of [the functionality of the Card Interface](https://www.smashingmagazine.com/2016/10/designing-card-based-user-interfaces/) and new Canvas specific functionality.
-
-The following image illustrates a table-based representation. This is the next planned representation.
-
-![](docs/pics/table-representation.png)
-
-## Status
-
-> :warning: canvas-collections is still under development. Not yet ready for significant use.
-
-You can use canvas-collection in two ways:
-
-1. Individually, as a [userscript](https://en.wikipedia.org/wiki/User_script). 
-  Used for development and experimentation. You run canvas-collections in your web browser and it only impacts what you see. See the [install as userscript page](./docs/install_userscript.md) for how.
-2. Institutionally, by including it in Canvas.
-  If you wanted to use canvas-collections in production (not currently recommended). You us [the Canvas theme editor]() to include the canvas-collections Javascript (either the [minimised](https://raw.githubusercontent.com/djplaner/canvas-collections/main/release/canvas-collections.min.js) or [unminimised](https://raw.githubusercontent.com/djplaner/canvas-collections/main/release/canvas-collections.js) versions) in your Canvas instance.
-
-### Additional Screenshots
-
-Click on the screenshots to see larger versions.
-
-| Default              | Additional configuration |
-:---------------------:|:------------------------:
-![](./docs/default.png?) | ![](./docs/additional.png?)
-
-#### About _Default_
-
-The _Default_ screenshot illustrates canvas-collections working on a standard Canvas modules page. No additional configuration. It is showing the modules page from an instance of the [Growing with Canvas](https://uc.instructure.com/courses/1032076) course. It illustrates early representations of standard Canvas functionality, including:
-- Module requirements progress
-
-    Individual Module items can have [completion requirements](https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-add-requirements-to-a-module/ta-p/1131). If added, canvas-collections adds a circular progress bar to the module card illustrating the percentage of requirements completed.
-- Module status
-
-    The combination of [module pre-requisites and requirements](https://ki.instructure.com/courses/192/pages/locking-material-with-requirements-and-prerequisites) combine to indicate whether a module is completed, in progress, locked or....
-
-#### About _Additional configuration_
-
-The _Additional configuration_ screenshot is from a course where additional configuration has provided further information about the modules, including:
-- Which collection a module belongs to
-
-    Four are defined: Learning Journey; Assessment Essentials; Online Workshops; and, Student Support. _Learning Journey_ is currently displayed. The navigation bar above the cards allow navigation to other collections. Only modules belonging to the current collection are visible.
-- Module date information
-- Module label
-
-    Modules within collections can be further distinguished by labels. e.g. the _Welcome_ module has no label. The _Introduction_ module is labelled _Topic 1_.
-- Module description
-
-    To aid learners in understanding the why and what of a module a short description is added to each module.
-
-
-## Related work
-
-- [Cuyamaca College Cards](https://gcccd.instructure.com/courses/10582/pages/cards?module_item_id=17470) - College specific example of using CSS to enable staff to manually create a card interface
-- [Create Interactive Cards](https://www.howtocanvas.com/theme-editor/interactive-cards) - nicer version of the Cuyamaca College approach
-- [Towards a Modules navigation menu in Instructure Canvas](https://learntech.medsci.ox.ac.uk/wordpress-blog/towards-a-navigation-menu-in-instructure-canvas/) - [github](https://gist.github.com/theotherdy/7983b4d64a2f376ee140673926ca5c07#file-ou-canvas-menu-demo-js)
-
-    Creates a right-hand menu to support navigation within Modules
-- [A dashboard view of Modules in Canvas v2](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas-v2/) - [github](https://github.com/msdlt/canvas-module-tiles/blob/master/canvas-module-tiles.js)
-- [Canvas unpublish hack](https://daveeargle.com/2019/10/25/canvas-unpublish-hack/)
-
-    Small blog post outlining a bit of JS to solve an issue with Canvas. Useful as an example of promises etc.
-- [Module Ids with JS](https://community.canvaslms.com/t5/Canvas-Question-Forum/Module-ID-s-using-javascript/td-p/224060)
-
-    Canvas community post that includes small JS code example using promises etc.
-- [Canvas where am i](https://github.com/msdlt/canvas-where-am-I)
-
-    Does a range of different and neat tweaks
-    - tiles have a drop down box with details of each item (and perhaps a direct link)
-    - adds module/item information to the left hand menu
-    - adds progress icons to the previous/next
-- [Collapse all modules](https://community.canvaslms.com/t5/Canvas-Developers-Group/Collapse-Expand-Modules/ba-p/273122) thread on instructure community around some code shared by an Instructure employee that helps manage collapse all modules
-- [Module filters](https://community.canvaslms.com/t5/Canvas-Developers-Group/Module-Filters/ba-p/278855) - [blog post](https://lyonsinbeta.com/2019/6/experiments-in-product) - JS (from [another instructure employee](https://lyonsinbeta.com/)) to filter items on Modules page. Has some discussion about adding this type of functionality. [github](https://github.com/lyonsinbeta/canvas-module-filters). Doesn't appear to worry/handle dynamic loading of Module cotent
-- [Quick Module Navigation](https://community.canvaslms.com/t5/Canvas-Admin-Blog/Quick-Module-Navigation/ba-p/279697) - JS to enable click on button (on home page) to go directly to appropriate module with other modules collapsed
+| Vanilla Canvas | Canvas Collections |
+| -------------- | ------------------ |
+| [View full-size image](docs/assets/vanillaModules.gif) | [View full-size image](docs/assets/withCanvasCollections.gif) |
+| ![Vanilla Canvas Course Site](docs/assets/vanillaModules.gif) | ![Same site with Canvas Collections](docs/assets/withCanvasCollections.gif) |
