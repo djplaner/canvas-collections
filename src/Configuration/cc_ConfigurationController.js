@@ -19,6 +19,7 @@
 
 import { cc_ConfigurationModel } from './cc_ConfigurationModel.js';
 import { cc_ConfigurationView } from './cc_ConfigurationView.js';
+import { updatePageController } from './updatePageController.js';
 
 const TIME_BETWEEN_SAVES = 10000; // 10 seconds
 
@@ -555,5 +556,30 @@ export default class cc_ConfigurationController {
 		}
 	}
 
+	/**
+	 * Process the event generated when the user hits the "update output page" for a
+	 * collection. The requirement is to "juice" the representation of that collection
+	 * and write it into the Canvas page with the name in the collection's config - outputPage.
+	 * 
+	 * Required process
+	 * - check if the page object can be gotten, error if not
+	 * - generate a string from the representation for the specific collection
+	 * - write the string into the page object
+	 * @param {*} event 
+	 */
 
+	updateOutputPage(event) {
+		alert("You want to update an output page");
+
+		// get the collection name from the event.target.id with the format
+		//     cc-collection-<collection-name>-output-page-update
+		const collectionName = event.target.id.match(/cc-collection-(.*)-output-page-update/)[1];
+
+		// Obtain the collection name and representation for the button clicked
+
+		let updateController = new updatePageController( 
+			collectionName, this.parentController
+			);
+
+	}
 }

@@ -577,7 +577,9 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/#hide-a-collection"
 	},
 	{ 
-		contentText: `Update the <em>output page</em> with the collection's current representation
+		contentText: `Update the <em>output page</em> with the collection's current representation.
+		<p><strong>Note:</strong> This is how you can use Collections with students without it being
+		installed by your institution.</p>
 		`,
 		targetSelector: '#cc-about-update-output-page',
 		animateFunction: "spin",
@@ -802,6 +804,13 @@ class cc_ConfigurationView extends cc_View {
 		for (let i = 0; i < trashMetadata.length; i++) {
 			const trash = trashMetadata[i];
 			trash.onclick = (event) => this.controller.manageModuleMetadata(event);
+		}
+		// button.cc-output-page-update-button
+		// - calls controller.updateOutputPage
+		const updateButtons = document.querySelectorAll(`button.cc-output-page-update-button`);
+		for (let i = 0; i < updateButtons.length; i++) {
+			const updateButton = updateButtons[i];
+			updateButton.onclick = (event) => this.controller.updateOutputPage(event);
 		}
 
 		// add catch all handlers for other module config elements
@@ -1420,8 +1429,10 @@ class cc_ConfigurationView extends cc_View {
 				margin: 0.5rem;
 			}
 
-			.cc-output-page-update button {
+			.cc-output-page-update-button {
 				font-size: 0.8rem;
+				padding: 0.2rem;
+				margin: 0.5rem;
 			}
 
 			.cc-config-error {
@@ -1625,7 +1636,7 @@ class cc_ConfigurationView extends cc_View {
 				</div>
 				<div class="cc-collection-representation cc-output-page-update ${outputPageExists}">
 					<button id="cc-collection-${collectionName}-output-page-update"
-					      class="btn">Update output page</button>
+					      class="btn cc-output-page-update-button">Update output page</button>
 					<a id="cc-about-update-output-page" target="_blank" href="">
 			   			<i class="icon-question"></i></a>
 
@@ -2163,6 +2174,148 @@ input:checked + .cc-slider:before {
 
 }
 
+// src/Configuration/updatePageController.js
+/**
+ * @class updatePageController
+ * @classDesc Supports the updating of an output page (name for a Canvas page) for a
+ *  specific collection and representation. 
+ * 
+ * Constructor takes the name of the collection and the parentController object
+ * Provides the following methods
+ * - getOutputPage 
+ *   - returns true/false if successful
+ *   - creates this.pageObject - the Canvas page object for the output page
+ *   - when successful will call updateOutputPage
+ *   - set error otherwise and spark alert
+ * - updateOutputPage
+ *   - calls getRepresentation to get HTML
+ *     - fails if not successful
+ *   - performs Canvas API to write the HTML
+ * 
+ * - getRepresentation
+ *   - generates HTML for the given collection/representation
+ */
+
+
+class updatePageController {
+
+	/**
+	 * @param {String} collection  - name of Collection to update
+	 * @param {cc_Controller} parentController 
+	 */
+
+	constructor(collection,parentController) {
+		this.collection = collection;
+		this.parentController = parentController;
+
+		// TODO do sanity checks for the presence of these things
+
+		// get the configuration config details from parent controller for the collection
+		this.collectionConfig = this.parentController.cc_configuration.COLLECTIONS[collection];
+		// extract out the outputPageName and representationName
+		this.outputPageName = this.collectionConfig.outputPage;
+		this.representationName = this.collectionConfig.representation;
+
+	    // calculate the URL that canvas will use 
+		// outputPageName transformed by
+		// - all alpha characters to lower case
+		// - all spaces to dashes
+
+		this.outputPageURL = this.outputPageName.toLowerCase().replace(/ /g,'-');
+
+		this.getOutputPage();
+	}
+
+	async getOutputPage() {
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.outputPageURL}`;
+
+		DEBUG && console.log(`updatePageController: getPageContents: callUrl = ${callUrl}`);
+
+		const response = await fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.parentController.csrf,
+			}
+		});
+
+		if (!response.ok) {
+			alert('Unable to update the output page');
+			return;
+		}
+
+		const data = await response.json();
+
+		// data should be the page object
+		// https://canvas.instructure.com/doc/api/pages.html#Page
+		DEBUG && console.log(`updatePageController: getPageContents: json = ${JSON.stringify(data)}`);
+
+		if (data.length===0) {
+			throw new Error(`updatePageController: getPageContents: no config page found`);
+		}
+
+		this.pageObject = data;
+
+		alert("Got the output page");
+
+		this.updateOutputPage();
+	}
+
+	/**
+	 * Only called by getOutputPage will write content to specified output page
+	 * - gets HTML from representation
+	 * - checks to see if pageObject.body contains div.class="cc-output-<collection-name>
+	 *   - if not, then will add it and add the new HTML
+	 *   - if use, will remove the content and update with new HTML
+	 * - Calls the writeOutputPage() function
+	 */
+
+	updateOutputPage() {
+		DEBUG && console.log(`updatePageController: updateOutputPage: pageObject = ${JSON.stringify(this.pageObject)}`);
+
+		this.writeOutputPage();
+	}
+
+	async writeOutputPage() {
+
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.outputPageURL}`;
+
+		DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: callUrl = ${callUrl}`);
+
+		const content = this.pageObject.body;
+
+		let _body = {
+			"wiki_page": {
+				"body": `${content}<p>Plus a bit more</p>`,
+			}
+		};
+
+		const bodyString = JSON.stringify(_body);
+
+		let method = "put";
+
+		const response = await fetch(callUrl, {
+			method: method, credentials: 'include',
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+				"Accept": "application/json; charset=UTF-8",
+				"X-CSRF-Token": this.parentController.csrf,
+			},
+			body: bodyString
+		});
+
+		if (!response.ok) {
+			alert('Unable to update the output page');	
+		} else {
+			alert('Updated the output page');
+		}
+
+	}
+
+
+}
+
 // src/Configuration/cc_ConfigurationController.js
 /**
  * @class cc_ConfigurationController
@@ -2181,6 +2334,7 @@ input:checked + .cc-slider:before {
  *   - change the order of collections
  * 
  */
+
 
 
 
@@ -2721,7 +2875,32 @@ class cc_ConfigurationController {
 		}
 	}
 
+	/**
+	 * Process the event generated when the user hits the "update output page" for a
+	 * collection. The requirement is to "juice" the representation of that collection
+	 * and write it into the Canvas page with the name in the collection's config - outputPage.
+	 * 
+	 * Required process
+	 * - check if the page object can be gotten, error if not
+	 * - generate a string from the representation for the specific collection
+	 * - write the string into the page object
+	 * @param {*} event 
+	 */
 
+	updateOutputPage(event) {
+		alert("You want to update an output page");
+
+		// get the collection name from the event.target.id with the format
+		//     cc-collection-<collection-name>-output-page-update
+		const collectionName = event.target.id.match(/cc-collection-(.*)-output-page-update/)[1];
+
+		// Obtain the collection name and representation for the button clicked
+
+		let updateController = new updatePageController( 
+			collectionName, this.parentController
+			);
+
+	}
 }
 
 // src/Collections/CollectionsModel.js

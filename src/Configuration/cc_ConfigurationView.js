@@ -273,6 +273,13 @@ export default class cc_ConfigurationView extends cc_View {
 			const trash = trashMetadata[i];
 			trash.onclick = (event) => this.controller.manageModuleMetadata(event);
 		}
+		// button.cc-output-page-update-button
+		// - calls controller.updateOutputPage
+		const updateButtons = document.querySelectorAll(`button.cc-output-page-update-button`);
+		for (let i = 0; i < updateButtons.length; i++) {
+			const updateButton = updateButtons[i];
+			updateButton.onclick = (event) => this.controller.updateOutputPage(event);
+		}
 
 		// add catch all handlers for other module config elements
 		const configDiv = document.querySelector(`#cc-module-config-${id}`);
@@ -888,11 +895,12 @@ export default class cc_ConfigurationView extends cc_View {
 			.cc-output-page-update {
 				font-size: 0.8rem;
 				margin: 0.5rem;
-				padding: 0.2rem;
 			}
 
-			.cc-output-page-update button {
+			.cc-output-page-update-button {
 				font-size: 0.8rem;
+				padding: 0.2rem;
+				margin: 0.5rem;
 			}
 
 			.cc-config-error {
@@ -1096,7 +1104,7 @@ export default class cc_ConfigurationView extends cc_View {
 				</div>
 				<div class="cc-collection-representation cc-output-page-update ${outputPageExists}">
 					<button id="cc-collection-${collectionName}-output-page-update"
-					      class="btn">Update output page</button>
+					      class="btn cc-output-page-update-button">Update output page</button>
 					<a id="cc-about-update-output-page" target="_blank" href="">
 			   			<i class="icon-question"></i></a>
 
