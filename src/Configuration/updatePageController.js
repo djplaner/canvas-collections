@@ -39,6 +39,12 @@ export default class updatePageController {
 		this.outputPageName = this.collectionConfig.outputPage;
 		this.representationName = this.collectionConfig.representation;
 
+		// actual representation object ??
+		// parentController.collectionsController.view
+		//   - representations dict keyed on collection name
+		this.representationObject = this.parentController.collectionsController.view.representations[this.collection];
+
+
 	    // calculate the URL that canvas will use 
 		// outputPageName transformed by
 		// - all alpha characters to lower case

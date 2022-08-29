@@ -8,9 +8,15 @@ Transform your learners' experience of your course site by improving your site's
 
 The [Features page](features.md) provides more detail and examples of each of these feature. 
 
-The following animated images offer a comparison between the Modules view of the same Canvas course. On the left using vanilla Canvas. On the right using Canvas Collections.
+### Comparing Vanilla Canvas to Canvas Collections
 
+Both of the following images are of the Module's view of the same Canvas course site with 11 mondules.
 
-| Modules view - vanilla Canvas course site | Modules view - same site with Canvas Collections | 
-| --- | --- |
+The left hand image shows the default Canvas interface. A long scroll down the 11 modules.
+
+The right hand image adds Canvas Collections with three collections titled: Why? What? and How?. Each collection can be navigated to separately. Each collection is using a _card_ representation. Hence collections adds a card for each module. Each module has had an image and a description added to help explain the purpose of the module.
+
+| Vanilla Canvas | Canvas Collections |
+| -------------- | ------------------ |
+| [View full-size image](assets/vanillaModules.gif) | [View full-size image](assets/withCanvasCollections.gif) |
 | ![Vanilla Canvas Course Site](assets/vanillaModules.gif) | ![Same site with Canvas Collections](assets/withCanvasCollections.gif) |
