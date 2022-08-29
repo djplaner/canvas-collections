@@ -2,37 +2,47 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://djplaner.github.io/canvas-collections/</loc>
-         <lastmod>2022-08-26</lastmod>
+         <lastmod>2022-08-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/card-design/</loc>
-         <lastmod>2022-08-26</lastmod>
+         <lastmod>2022-08-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/config_format/</loc>
-         <lastmod>2022-08-26</lastmod>
+         <lastmod>2022-08-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://djplaner.github.io/canvas-collections/getting-started/</loc>
+         <lastmod>2022-08-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/install_userscript/</loc>
-         <lastmod>2022-08-26</lastmod>
+         <lastmod>2022-08-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/reference/</loc>
-         <lastmod>2022-08-26</lastmod>
+         <lastmod>2022-08-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://djplaner.github.io/canvas-collections/walk-throughs/</loc>
+         <lastmod>2022-08-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/dev/module-html-scraping/</loc>
-         <lastmod>2022-08-26</lastmod>
+         <lastmod>2022-08-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/dev/design/design_v1/</loc>
-         <lastmod>2022-08-26</lastmod>
+         <lastmod>2022-08-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

@@ -40,6 +40,7 @@ extra:
 
 nav:
   - Home: index.md
+  - Features: features.md
   - 'Getting Started': getting-started.md
   - 'Walk throughs': walk-throughs.md
   - Reference: reference.md
