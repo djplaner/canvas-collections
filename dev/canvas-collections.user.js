@@ -2216,6 +2216,13 @@ class updatePageController {
 		this.outputPageName = this.collectionConfig.outputPage;
 		this.representationName = this.collectionConfig.representation;
 
+		// actual representation object ??
+		// parentController.collectionsController.view
+		//   - representations dict keyed on collection name
+		this.collectionsView = this.parentController.collectionsController.view;
+		this.representationObject = this.parentController.collectionsController.view.representations[this.collection];
+
+
 	    // calculate the URL that canvas will use 
 		// outputPageName transformed by
 		// - all alpha characters to lower case
@@ -2265,29 +2272,55 @@ class updatePageController {
 	/**
 	 * Only called by getOutputPage will write content to specified output page
 	 * - gets HTML from representation
-	 * - checks to see if pageObject.body contains div.class="cc-output-<collection-name>
-	 *   - if not, then will add it and add the new HTML
-	 *   - if use, will remove the content and update with new HTML
+	 * - checks pageObject.body look for any existing div#cc-output-<collection-name> 
+	 *    - replace with new HTML 
+	 *    - if none exists, add it to the bottom of the page
 	 * - Calls the writeOutputPage() function
 	 */
 
 	updateOutputPage() {
 		DEBUG && console.log(`updatePageController: updateOutputPage: pageObject = ${JSON.stringify(this.pageObject)}`);
 
-		this.writeOutputPage();
+//		const insertContentHtml = this.collectionsView.generateHTML(this.collection)
+		const insertContentHtml = "<p>Here we go, here we go, here we go...bugger off you</p>"
+
+		const originalContent = this.pageObject.body;
+
+		// check content for an existing div#cc-output-<collection-name>
+		const divId = `cc-output-${this.collection}`;
+		// convert content into a DOM object
+		const parser = new DOMParser();
+		const doc = parser.parseFromString(originalContent, "text/html");
+		const div = doc.getElementById(divId);
+		if (div) {
+			// replace the content
+			div.innerHTML = insertContentHtml;
+		} else {
+			// add a new div
+			const newDiv = doc.createElement('div');
+			newDiv.id = divId;
+			newDiv.innerHTML = insertContentHtml;
+			doc.body.appendChild(newDiv);
+		}
+		let newContent = doc.body.innerHTML;
+
+		this.writeOutputPage(newContent);
 	}
 
-	async writeOutputPage() {
+	/**
+	 * Use the Canvas API to update this.collection's output page using the HTML passed in
+	 * @param {String} newContent
+	 */
+
+	async writeOutputPage(newContent) {
 
 		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.outputPageURL}`;
 
-		DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: callUrl = ${callUrl}`);
-
-		const content = this.pageObject.body;
+		DEBUG && console.log(`updatePageController: writeOutputPage: callUrl = ${callUrl}`);
 
 		let _body = {
 			"wiki_page": {
-				"body": `${content}<p>Plus a bit more</p>`,
+				"body": newContent,
 			}
 		};
 
