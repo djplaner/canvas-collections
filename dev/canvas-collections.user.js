@@ -6058,6 +6058,8 @@ class cc_ConfigurationStore {
 		this.parentController.cc_configuration = JSON.parse(config.innerHTML);
 		// double check and possibly convert an old configuration
 		this.configConverted = this.checkConvertOldConfiguration();
+		// double check that we're not an import from another course
+		this.importConverted = this.checkConvertImport();
 
 		// initialise the controller etc
 		DEBUG && console.log(`cc_ConfigurationStore: requestCOnfigPageContents: config`);
@@ -6099,6 +6101,30 @@ class cc_ConfigurationStore {
 		this.parentController.mergeModuleDetails();
 		this.parentController.retrieveLastCollectionViewed();
 		this.parentController.execute();
+	}
+
+	/**
+	 * @descr Check to see if configuration is the result of an import from another course
+	 * i.e. has the same module names (apart maybe from some additions) but different module ids
+	 * - check if this is the case
+	 * - if so, update the configuration
+	 */
+
+	checkConvertImport() {
+		// get the module names from collections configuration - MODULES hash of objects
+		let collectionsNames = [];
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			collectionsNames.push(this.parentController.cc_configuration.MODULES[key].name);
+		}
+
+		// get list of module ids in collections configuration
+		const collectionModuleIds = Object.keys(this.parentController.cc_configuration.MODULES);
+		// get list of module ids from Canvas (moduleDetails - array of objects)
+		const canvasModuleIds = this.parentController.moduleDetails.map((module) => {
+			return module.id;
+		});
+
+
 	}
 
 	/**
@@ -7358,7 +7384,9 @@ class cc_Controller {
 			// do the same for CC module details, but skip some fields
 			let ccModule = collectionsModules[canvasModuleId];
 			if (ccModule) {
+				// collections module name should be updated from canvas
 				const skipFields = ['name'];
+				ccModule.name = canvasModule.name;
 				for (let key in ccModule) {
 					if (!skipFields.includes(key)) {
 						details[key] = ccModule[key];

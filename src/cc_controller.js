@@ -266,7 +266,9 @@ export default class cc_Controller {
 			// do the same for CC module details, but skip some fields
 			let ccModule = collectionsModules[canvasModuleId];
 			if (ccModule) {
+				// collections module name should be updated from canvas
 				const skipFields = ['name'];
+				ccModule.name = canvasModule.name;
 				for (let key in ccModule) {
 					if (!skipFields.includes(key)) {
 						details[key] = ccModule[key];
