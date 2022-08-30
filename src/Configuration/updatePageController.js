@@ -87,8 +87,6 @@ export default class updatePageController {
 
 		this.pageObject = data;
 
-		alert("Got the output page");
-
 		this.updateOutputPage();
 	}
 
@@ -104,8 +102,8 @@ export default class updatePageController {
 	updateOutputPage() {
 		DEBUG && console.log(`updatePageController: updateOutputPage: pageObject = ${JSON.stringify(this.pageObject)}`);
 
-//		const insertContentHtml = this.collectionsView.generateHTML(this.collection)
-		const insertContentHtml = "<p>Here we go, here we go, here we go...bugger off you</p>"
+		const insertContentHtml = this.collectionsView.generateHTML(this.collection,"claytons")
+//		const insertContentHtml = "<p>Here we go, here we go, here we go...bugger off you</p>"
 
 		const originalContent = this.pageObject.body;
 
@@ -163,9 +161,7 @@ export default class updatePageController {
 
 		if (!response.ok) {
 			alert('Unable to update the output page');	
-		} else {
-			alert('Updated the output page');
-		}
+		} 
 
 	}
 

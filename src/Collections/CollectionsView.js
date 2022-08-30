@@ -83,6 +83,41 @@ export default class CollectionsView extends cc_View {
 	}
 
 	/**
+	 * Use the representations and other features to return a HTML string
+	 * for the given collection and its current representation 
+	 * using the specified variety ('' - default, 'claytons' - for the RCE etc), 
+	 * - return undefined if there's an error
+	 * TODO
+	 * - figure out if/how to include navBar
+	 * - give option to include the includePage
+	 * @param {String} collectionName 
+	 * @param {String} variety 
+	 * @return {String} HTML string
+	 */
+
+	generateHTML(collectionName,variety="") {
+		// does the collection have a representation?
+		if (!this.representations[collectionName]) {
+			return undefined;
+		}
+
+		// does the collections representation have a method generateHTML
+		if (!this.representations[collectionName].generateHTML) {
+			alert(`generateHTML not defined for ${collectionName} representation`);
+			return undefined;
+		}
+
+		let html = this.representations[collectionName].generateHTML(collectionName,variety);
+
+		// TODO
+		// - add in the navBar?
+		// - add in the include page?
+
+		return html;
+
+	}
+
+	/**
 	 * Add div#cc-include-page 
 	 * If the current collection has an includePage defined 
 	 * - get it's content and place in div#cc-include-page

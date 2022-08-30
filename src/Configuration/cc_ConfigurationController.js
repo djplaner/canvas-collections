@@ -569,8 +569,6 @@ export default class cc_ConfigurationController {
 	 */
 
 	updateOutputPage(event) {
-		alert("You want to update an output page");
-
 		// get the collection name from the event.target.id with the format
 		//     cc-collection-<collection-name>-output-page-update
 		const collectionName = event.target.id.match(/cc-collection-(.*)-output-page-update/)[1];

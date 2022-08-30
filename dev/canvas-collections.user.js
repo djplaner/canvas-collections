@@ -2264,8 +2264,6 @@ class updatePageController {
 
 		this.pageObject = data;
 
-		alert("Got the output page");
-
 		this.updateOutputPage();
 	}
 
@@ -2281,8 +2279,8 @@ class updatePageController {
 	updateOutputPage() {
 		DEBUG && console.log(`updatePageController: updateOutputPage: pageObject = ${JSON.stringify(this.pageObject)}`);
 
-//		const insertContentHtml = this.collectionsView.generateHTML(this.collection)
-		const insertContentHtml = "<p>Here we go, here we go, here we go...bugger off you</p>"
+		const insertContentHtml = this.collectionsView.generateHTML(this.collection,"claytons")
+//		const insertContentHtml = "<p>Here we go, here we go, here we go...bugger off you</p>"
 
 		const originalContent = this.pageObject.body;
 
@@ -2340,9 +2338,7 @@ class updatePageController {
 
 		if (!response.ok) {
 			alert('Unable to update the output page');	
-		} else {
-			alert('Updated the output page');
-		}
+		} 
 
 	}
 
@@ -2921,8 +2917,6 @@ class cc_ConfigurationController {
 	 */
 
 	updateOutputPage(event) {
-		alert("You want to update an output page");
-
 		// get the collection name from the event.target.id with the format
 		//     cc-collection-<collection-name>-output-page-update
 		const collectionName = event.target.id.match(/cc-collection-(.*)-output-page-update/)[1];
@@ -4024,6 +4018,10 @@ window.CircularProgressBar=function(t){var e={};function n(i){if(e[i])return e[i
  * GriffithCards.js 
  * - implement a view for a Canvas Collection implementing the Card Interface
  *   functionality
+ * 
+ * Has two main functions used by controllers
+ * - display - actively inserts the representation into the DOM
+ * - generateHTML - returns a HTML string version of representation for further use
  */
 
 
@@ -4032,7 +4030,7 @@ window.CircularProgressBar=function(t){var e={};function n(i){if(e[i])return e[i
 
 
 
-const DEFAULT_DATE_LABEL="Commencing";
+const DEFAULT_DATE_LABEL = "Commencing";
 
 class GriffithCardsView extends cc_View {
 
@@ -4065,13 +4063,13 @@ class GriffithCardsView extends cc_View {
 			// old style
 			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
 			this.calendar = this.controller.parentController.calendar;
-		} else if ( 
+		} else if (
 			this.model.hasOwnProperty('controller') &&
-			this.model.controller.hasOwnProperty('parentController') ) {
-				this.calendar = this.model.controller.parentController.calendar;
+			this.model.controller.hasOwnProperty('parentController')) {
+			this.calendar = this.model.controller.parentController.calendar;
 		} else {
 			alert("Another funny calendar miss. Fix it");
-		} 
+		}
 
 
 
@@ -4083,16 +4081,41 @@ class GriffithCardsView extends cc_View {
 		const PROGRESS_BAR_JS = '<script src="https://unpkg.com/circular-progress-bar@2.1.0/public/circular-progress-bar.min.js"></script>';
 		document.body.insertAdjacentHTML('afterbegin', PROGRESS_BAR_JS);
 
-		const cards = this.generateCards();
+		const currentCollection = this.model.getCurrentCollection();
+		const cardsHtml = this.generateHTML(currentCollection);
+		//const cards = this.generateCards();
 
 		div.insertAdjacentElement('beforeend', message);
-		div.insertAdjacentElement('beforeend', cards);
+		// insert cardsHtml before the end of div
+		div.insertAdjacentHTML('beforeend', cardsHtml);
+		//		div.insertAdjacentElement('beforeend', cards);
 
+		// this event generation stuff, probably belongs here, not the HTML
 		this.stopCardDescriptionPropagation();
 		this.makeCardsClickable();
 	}
 
-	generateCards() {
+	/**
+	 * Return a HTML string containing the cards representation for the given collection
+	 * using the specified variety
+	 * TODO
+	 * - add support for different varieties
+	 * @param {String} collectionName 
+	 * @param {String} variety 
+	 */
+	generateHTML(collectionName, variety = '') {
+
+		let cardsHtml = this.generateCards(collectionName);
+
+		if (variety==='claytons') {
+			cardsHtml = this.convertToClaytons(cardsHtml);
+		}
+
+		return cardsHtml;
+
+	}
+
+	generateCards(collectionName) {
 		DEBUG && console.log('-------------- griffithCardsView.generateCards()');
 
 		// create cardCollection div element
@@ -4339,29 +4362,13 @@ class GriffithCardsView extends cc_View {
 		//	let count = 0;
 		//const currentCollection = this.model.getCurrentCollection();
 		const modulesCollections = this.model.getModulesCollections();
-		const currentCollection = this.model.getCurrentCollection();
 		for (let module of modulesCollections) {
 			DEBUG && console.log(module);
 			// still need to skip generate card
 
-			if ( module.collection!==currentCollection ) {
+			if (module.collection !== collectionName) {
 				continue;
 			}
-/*	Moved to CollectionsView			
-			// PROB: module doesn't have a collection
-			if (module.collection !== currentCollection) {
-				// not the right collection, skip this one
-				// set the Canvas module div to display:none
-				// find div.context_module with data-module-id="${module.id}"
-				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
-				if (contextModule) {
-					contextModule.style.display = 'none';
-				}
-				continue;
-			} else {
-				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
-				contextModule.style.display = 'block';
-			} */
 
 			const card = this.generateCard(module);
 			cardCollection.insertAdjacentElement('beforeend', card);
@@ -4369,7 +4376,10 @@ class GriffithCardsView extends cc_View {
 
 		cardCollection = this.addComingSoonCards(cardCollection);
 
-		return cardCollection;
+		// generate HTML version of cardCollection
+		const cardCollectionHTML = cardCollection.outerHTML;
+
+		return cardCollectionHTML;
 	}
 
 	/**
@@ -4386,7 +4396,7 @@ class GriffithCardsView extends cc_View {
 		const collectionsModules = this.model.getCollectionsModules(this.currentCollection);
 
 		// no modules for the current collection
-		if ( ! collectionsModules ) {
+		if (!collectionsModules) {
 			return cardCollection;
 		}
 
@@ -4398,20 +4408,20 @@ class GriffithCardsView extends cc_View {
 		// filter allModules to only include items for this.currentCollection
 		const currentCollectionModules = allModules.filter(
 			module => module.collection === this.model.getCurrentCollection());
-		if (currentCollectionModules.length===collectionsModules.length) {
+		if (currentCollectionModules.length === collectionsModules.length) {
 			return cardCollection;
 		}
 
 		// filter collectionsModules for those that have a comingSoon attribute
 		const comingSoonModules = collectionsModules.filter(module => module.comingSoon);
 
-//		DEBUG && console.log(`################## addComingSoonCards`) && console.log(comingSoonModules);
+		//		DEBUG && console.log(`################## addComingSoonCards`) && console.log(comingSoonModules);
 
 		// loop through each coming soon module and add a card for it
 		for (let module of comingSoonModules) {
-			const card = this.generateCard(module,false);
+			const card = this.generateCard(module, false);
 			// TODO actually want to place this in order
-			const order = module.comingSoon.order-1;
+			const order = module.comingSoon.order - 1;
 			// get a list of all div.cc-clickable-card elements in cardCollection
 			const cards = cardCollection.querySelectorAll('.cc-clickable-card');
 			// insert card before cards[order]
@@ -4428,17 +4438,17 @@ class GriffithCardsView extends cc_View {
 	 * @param {boolean} published is the module published (initially used for "coming soon" cards)
 	 * @returns {DOMElement} for a single card
 	 */
-	generateCard(module, published=true) {
+	generateCard(module, published = true) {
 		const imageUrl = this.generateCardImageUrl(module);
 		const imageSize = this.generateCardImageSize(module);
 
 		const LINK_ITEM = this.generateCardLinkItem(module);
 		const PUBLISHED = this.generateCardPublished(module);
 
-		let DATE_WIDGET="";
+		let DATE_WIDGET = "";
 		// only generateCardDate if module.date includes attributes
 		// week or month and date
-		if ( module.date && (module.date.week || (module.date.month && module.date.date)) ) {
+		if (module.date && (module.date.week || (module.date.month && module.date.date))) {
 			DATE_WIDGET = this.generateCardDate(module.date);
 		}
 
@@ -4452,13 +4462,13 @@ class GriffithCardsView extends cc_View {
 		const EDIT_ITEM = "";
 
 		let CARD_LABEL = "";
-		if (module.label ) {
+		if (module.label) {
 			CARD_LABEL = module.label;
-		} 
-		if ( module.actualNum) {
+		}
+		if (module.actualNum) {
 			CARD_LABEL += ` ${module.actualNum}`;
 			// remove first char from CARD_LABEL if it is a space
-			if (CARD_LABEL.charAt(0)===' ') {
+			if (CARD_LABEL.charAt(0) === ' ') {
 				CARD_LABEL = CARD_LABEL.substring(1);
 			}
 		}
@@ -4494,18 +4504,18 @@ class GriffithCardsView extends cc_View {
 
 		// convert cardHtml into DOM element
 		let wrapper = document.createElement('div');
-		if ( published ) {
-			wrapper.classList.add( 'cc-clickable-card');
+		if (published) {
+			wrapper.classList.add('cc-clickable-card');
 			wrapper.innerHTML = cardHtml;
 		} else {
 			// unpublished card needs a different class and the card link removed
-			wrapper.classList.add( 'cc-coming-soon-card');
+			wrapper.classList.add('cc-coming-soon-card');
 			wrapper.innerHTML = cardHtml;
 			// remove the a.cc-card-link from wrapper
 			wrapper.querySelector('.cc-card-link').remove();
 			// remove the div.cc-card-engage-button if it exists
 			const button = wrapper.querySelector('.cc-card-engage-button');
-			if ( button ) {
+			if (button) {
 				button.remove();
 			}
 		}
@@ -4521,7 +4531,7 @@ class GriffithCardsView extends cc_View {
 		}
 
 		// if wrapper (the card) includes .cc-card-published, then add class unpublished to wrapper
-		if ( wrapper.querySelector('.cc-card-published') ) {
+		if (wrapper.querySelector('.cc-card-published')) {
 			wrapper.classList.add('unpublished');
 		}
 
@@ -4536,7 +4546,7 @@ class GriffithCardsView extends cc_View {
 
 	generateComingSoon(module) {
 		// empty string if there is no coming soon attribute for module
-		if ( ! module.comingSoon ) {
+		if (!module.comingSoon) {
 			return "";
 		}
 
@@ -4564,7 +4574,7 @@ class GriffithCardsView extends cc_View {
 	 * - optional time
 	 * @param {Object} module 
 	 */
-	generateCardDate( dateJson ) {
+	generateCardDate(dateJson) {
 		/* date information in 
 		   All attributes are optional
 		   module.date {
@@ -4580,8 +4590,8 @@ class GriffithCardsView extends cc_View {
 		const date = {
 			"from": {},
 			"to": undefined
-		}; 
-		
+		};
+
 		date.from = this.convertUniDateToReal(dateJson);
 		if (dateJson.endDate) {
 			date.to = this.convertUniDateToReal(dateJson.endDate);
@@ -4617,15 +4627,15 @@ class GriffithCardsView extends cc_View {
 
 		// With week defined, we need to calculate MONTH and DATE based
 		// on university trimester
-		if (firstDate.WEEK!=="") {
+		if (firstDate.WEEK !== "") {
 			// TODO should check for a day, if we wish to get the day
 			let actualDate = {};
-			if (firstDate.DAY==="") {
+			if (firstDate.DAY === "") {
 				// no special day specified, just get the start of the week
 				actualDate = this.calendar.getDate(firstDate.WEEK);
 			} else {
 				// need go get the date for a particular day
-				actualDate = this.calendar.getDate(firstDate.WEEK, false, firstDate.DAY);	
+				actualDate = this.calendar.getDate(firstDate.WEEK, false, firstDate.DAY);
 			}
 			// actualDate { date/month/year }
 			firstDate.DATE = actualDate.date;
@@ -4633,8 +4643,8 @@ class GriffithCardsView extends cc_View {
 		}
 
 		// no date information defined, no date widget
-		if ( firstDate.WEEK==="" && firstDate.TIME=== "" && 
-				firstDate.MONTH === "" && firstDate.DATE === "") {
+		if (firstDate.WEEK === "" && firstDate.TIME === "" &&
+			firstDate.MONTH === "" && firstDate.DATE === "") {
 			return "";
 		}
 		return firstDate;
@@ -4671,11 +4681,11 @@ class GriffithCardsView extends cc_View {
 		// TODO remove the elements that aren't needed
 		// Convert singleDateHtml to dom element
 		let element = new DOMParser().parseFromString(singleDateHtml, 'text/html').body.firstChild;
-		if (date.from.TIME==="") {
+		if (date.from.TIME === "") {
 			// remove the div.cc-card-date-time from element
 			element.removeChild(element.querySelector('.cc-card-date-time'));
 		}
-		if (date.from.WEEK==="" ) {
+		if (date.from.WEEK === "") {
 			// remove the div.cc-card-date-week from element
 			element.removeChild(element.querySelector('.cc-card-date-week'));
 		}
@@ -4683,7 +4693,7 @@ class GriffithCardsView extends cc_View {
 		return element.outerHTML;
 	}
 
-	generateDualDate( date )  {
+	generateDualDate(date) {
 
 		const dualDateHtml = `
 <div class="block rounded-t rounded-b overflow-hidden bg-white text-center w-24 absolute pin-t pin-r">
@@ -4704,7 +4714,7 @@ class GriffithCardsView extends cc_View {
               <div class="w-1/2 text-2xl font-bold">{DATE_STOP}</div>
           </div>
          </div> 
-`; 
+`;
 
 		return dualDateHtml;
 
@@ -4789,7 +4799,7 @@ class GriffithCardsView extends cc_View {
 
 	generateCardImageUrl(module) {
 		let imageUrl = "https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png";
-		if (('image' in module ) && ( module.image !== "")) {
+		if (('image' in module) && (module.image !== "")) {
 			imageUrl = module.image;
 		}
 		return imageUrl;
@@ -4815,11 +4825,11 @@ class GriffithCardsView extends cc_View {
 	 */
 	generateCardImageSize(module) {
 		let imageSize = "";
-		const allowedObjectFit = ['contain', 'cover', 'scale-down','fill'];
-		if ("imageSize" in module && module.imageSize!=="" ) {
+		const allowedObjectFit = ['contain', 'cover', 'scale-down', 'fill'];
+		if ("imageSize" in module && module.imageSize !== "") {
 			if (module.imageSize === "bg-contain") {
 				imageSize = "background-size: contain !important; background-repeat: no-repeat; background-position: center;";
-			} else if ( allowedObjectFit.includes( module.imageSize )){	
+			} else if (allowedObjectFit.includes(module.imageSize)) {
 				imageSize = `object-fit: ${module.imageSize} !important;`;
 			}
 		}
@@ -4904,6 +4914,161 @@ class GriffithCardsView extends cc_View {
 				}
 			});
 		}
+	}
+
+	/**
+	 * Take the default view of cards and convert it into the claytons view
+	 * i.e. ready for injection into the RCE
+	 * @param {String} html 
+	 */
+
+	convertToClaytons(html) {
+		DEBUG && console.log('-------------- GriffithCards::converToClaytons()');
+
+		// convert html to DOM
+		let parser = new DOMParser();
+		let doc = parser.parseFromString(html, "text/html");
+
+		// get the div#cc-canvas-collections
+		// TODO check - is this already there??
+		//let div = doc.getElementById('cc-canvas-collections');
+		let div = doc.getElementById('cc-card-interface');
+		if (!div) {
+			alert('GriffithCards::convertToClaytons() - div#cc-card-interface not found');
+			return html;
+		}
+		// Don't think this is needed here
+		//div = div.cloneNode(true);
+		// remove the div#cc-nav within div.cc-canvas-collections
+/*		let nav = div.querySelector('.cc-nav');
+		if (nav) {
+			nav.remove();
+		} 
+		// remove the div#cc-message within div.cc-canvas-collections
+		let message = div.querySelector('.cc-message');
+		if (message) {
+			message.remove();
+		} */
+		// find all the h3.cc-card-title
+		let h3s = div.querySelectorAll('h3.cc-card-title');
+		// loop through h3s and wrap innerHTML with <strong>
+		for (let i = 0; i < h3s.length; i++) {
+			let h3 = h3s[i];
+			h3.innerHTML = '<strong>' + h3.innerHTML + '</strong>';
+		}
+
+		//----------------- 
+		// remove all div.cc-progress
+		let progresses = div.querySelectorAll('.cc-progress');
+		for (let i = 0; i < progresses.length; i++) {
+			let progress = progresses[i];
+			progress.remove();
+		}
+
+		//---------------
+		// update all the a.cc-card-link and a.gu-engage and add a href
+		let currentUrl = window.location.href;
+		// the current url should be the modules page, remove the # and anything after it
+		currentUrl = currentUrl.split('#')[0];
+		// if no "modules" at end of url, add it
+		if (currentUrl.indexOf('modules') === -1) {
+			currentUrl += '/modules';
+		}
+		let links = div.querySelectorAll('a.cc-card-link');
+		for (let i = 0; i < links.length; i++) {
+			let link = links[i];
+			link.href = currentUrl + link.getAttribute('href');
+		}
+
+		// declare array cardLinks
+		let cardLinks = [];
+		links = div.querySelectorAll('a.gu-engage');
+		for (let i = 0; i < links.length; i++) {
+			let link = links[i];
+			link.href = currentUrl + link.getAttribute('href');
+			// save the link for later use
+			cardLinks[i] = link.href;
+		}
+		// add a link around the img.cc-card-image
+		let images = div.querySelectorAll('img.cc-card-image');
+		for (let i = 0; i < images.length; i++) {
+			let image = images[i];
+			let link = doc.createElement('a');
+			link.classList.add('cc-card-link-image');
+			link.href = currentUrl;
+			link.innerHTML = image.outerHTML;
+			image.parentNode.replaceChild(link, image);
+		}
+		// add a link around cc-card-title innerHTML
+		let titles = div.querySelectorAll('h3.cc-card-title');
+		for (let i = 0; i < titles.length; i++) {
+			let title = titles[i];
+			let link = doc.createElement('a');
+			// set link class to cc-card-link-title
+			link.classList.add('cc-card-link-title');
+			//link.href = currentUrl;
+			link.href = cardLinks[i];
+			link.innerHTML = title.innerHTML;
+			title.innerHTML = link.outerHTML;
+		}
+
+		// change background to #efefef for div.cc-card-content-height
+		// Canvas RCE removes border-bottom-left-radius and right
+		let cardContents = div.querySelectorAll('.cc-card-content-height');
+		for (let i = 0; i < cardContents.length; i++) {
+			let cardContent = cardContents[i];
+			cardContent.style.backgroundColor = '#efefef';
+		}
+		// change background to #efefef for div.cc-card-engage
+		let cardEngages = div.querySelectorAll('.cc-card-engage');
+		for (let i = 0; i < cardEngages.length; i++) {
+			let cardEngage = cardEngages[i];
+			cardEngage.style.backgroundColor = '#efefef';
+		}
+		// change background to #efefef for div.cc-card-flex
+		let cardFlexes = div.querySelectorAll('.cc-card-flex');
+		for (let i = 0; i < cardFlexes.length; i++) {
+			let cardFlex = cardFlexes[i];
+			cardFlex.style.backgroundColor = '#efefef';
+		}
+
+		// find any div.unpublished and remove it
+		let unpublisheds = div.querySelectorAll('.unpublished');
+		for (let i = 0; i < unpublisheds.length; i++) {
+			let unpublished = unpublisheds[i];
+			// only remove if unpublished doesn't contain div.cc-coming-soon-message
+			if (!unpublished.querySelector('.cc-coming-soon-message')) {
+				unpublished.remove();
+			} else {
+				// remove the span.cc-card-published from unpublished
+				let span = unpublished.querySelector('.cc-card-published');
+				if (span) {
+					span.remove();
+				}
+				// set div.cc-card-engage-button to display:none
+				let button = unpublished.querySelector('.cc-card-engage-button');
+				if (button) {
+					button.style.display = 'none';
+				}
+				// remove the a.cc-card-link-title, but keep innerHTML
+				let link = unpublished.querySelector('.cc-card-link-title');
+				if (link) {
+					link.replaceWith(...link.childNodes);
+				}
+				link = unpublished.querySelector('.cc-card-link-image');
+				if (link) {
+					link.replaceWith(...link.childNodes);
+				}
+			}
+		}
+
+		// get the outerHTML of the div#cc-canvas-collections
+		let newHtml = div.outerHTML;
+		// run it through juice
+		let juiceHTML = juice(newHtml);
+
+		return juiceHTML;
+
 	}
 
 }
@@ -5196,6 +5361,41 @@ class CollectionsView extends cc_View {
 
 		// display the current collection using its representation
 		//	this.representationView.display();
+	}
+
+	/**
+	 * Use the representations and other features to return a HTML string
+	 * for the given collection and its current representation 
+	 * using the specified variety ('' - default, 'claytons' - for the RCE etc), 
+	 * - return undefined if there's an error
+	 * TODO
+	 * - figure out if/how to include navBar
+	 * - give option to include the includePage
+	 * @param {String} collectionName 
+	 * @param {String} variety 
+	 * @return {String} HTML string
+	 */
+
+	generateHTML(collectionName,variety="") {
+		// does the collection have a representation?
+		if (!this.representations[collectionName]) {
+			return undefined;
+		}
+
+		// does the collections representation have a method generateHTML
+		if (!this.representations[collectionName].generateHTML) {
+			alert(`generateHTML not defined for ${collectionName} representation`);
+			return undefined;
+		}
+
+		let html = this.representations[collectionName].generateHTML(collectionName,variety);
+
+		// TODO
+		// - add in the navBar?
+		// - add in the include page?
+
+		return html;
+
 	}
 
 	/**
