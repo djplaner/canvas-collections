@@ -17,7 +17,8 @@ An individual install is a two step process:
 
 You should see instructions for downloading (installing) TamperMonkey for your web browser. e.g. the following image for the Firefox browser
 
-![](pics/tamperMonkeyHome.png)
+
+![Screenshot of Canvas Collections userscript install page](pics/tamperMonkeyHome.png)  
 
 ### Click on the left-hand _Download_ button
 
@@ -35,11 +36,43 @@ With TamperMonkey installed you can now install [the canvas-collections userscri
 
 If all is working you should something like the following image. An image showing TamperMonkey providing you with details of the userscript and asking if you wish to install it.
 
-![](pics/tamperMonkeyInstallCanvasCollections.png)
+![](pics/tamperMonkeyInstallCC.png)  
 
 
 ## Turning canvas-collections off
 
-There are two ways to prevent canvas-collections from modifying your view of Canvas modules pages:
-- Disable TamperMonkey (or your userscript manager)
-- Disable the canvas-collection userscript
+There are three ways to prevent canvas-collections from modifying your view of Canvas modules pages:
+
+1. Remove TamperMonkey (or your userscript manager)
+
+    The [TamperMonkey home page](https://www.tampermonkey.net/) includes a video (at the bottom of the page) that demonstrates how to remove it from your specific web browser.
+
+2. Disable TamperMonkey (or your userscript manager)
+3. Disable or remove the canvas-collection userscript
+
+The last two ways rely on using the TamperMonkey icon added to your web browser's toolbar - see the following image.
+
+![](pics/toolBarIcon.png)  
+
+### Disable TamperMonkey
+
+Click the _Enabled_ option shown in the image above to disable TamperMonkey - see the following image. With TamperMonkey disabled, Canvas Collections will not be run.
+
+![](pics/toolbarDisabled.png)  
+
+### Disable or remove the Canvas Collections userscript
+
+By accessing the TamperMonkey _dashboard_ you can disable specific userscripts, including Canvas Collections. The _dahsboard_ is an option provided via the TamperMonkey icons - see the following image.
+
+![](pics/toolbarDashboard.png)  
+
+Clicking on the _dashboard_ option will open the TamperMonkey dashboard. The dashboard will show you all the userscripts you have installed and provide options to 
+
+- enable/disable a userscript; and,
+
+    Note the _Enabled_ column in the following image. Click on the switch to enable/disable a userscript.
+- remove a userscript.
+
+    Note the trashcan icon in the _Actions_ column in the following image. Click on the trashcan icon to remove a userscript.
+
+![](pics/dashboard.png)  
