@@ -31,6 +31,10 @@ theme:
   markdown_extensions:
     - attr_list
     - def_list
+    - pymdownx.emoji:
+        emoji_index: !!python/name:materialx.emoji.twemoji
+        emoji_generator: !!python/name:materialx.emoji.to_svg
+
     - pymdownx.tasklist:
         custom_checkbox: true
 
@@ -44,13 +48,16 @@ nav:
   - Features: features.md
   - Getting Started: #getting-started.md
     - Overview: getting-started/overview.md
-    - Install: 
-      - Types and Pre-requisites: getting-started/types-pre-requisites.md
-      - Individual: getting-started/individual-install.md
-      - Institution: getting-started/institutional-install.md
-    - Configure: getting-started/configure-collections.md
-    - Use: 
-      - Use: getting-started/use-collections.md
+    - 1. Install: 
+      - Types and Pre-requisites: getting-started/install/types-pre-requisites.md
+      - Individual: getting-started/install/individual.md
+      - Institutional: getting-started/install/institutional.md
+    - 2. Configure: 
+      - Is it on: getting-started/configure/is-it-on.md
+      - Course configuration: getting-started/configure/course-configuration.md
+      - Module configuration: getting-started/configure/module-configuration.md
+    - 3. Use: 
+      - Types of Use: getting-started/use/types.md
       - "'Claytons'": getting-started/use/claytons.md
       - Live: getting-started/use/live.md
   - 'Walk throughs': walk-throughs.md

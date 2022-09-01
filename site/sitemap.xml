@@ -2,57 +2,82 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://djplaner.github.io/canvas-collections/</loc>
-         <lastmod>2022-08-29</lastmod>
+         <lastmod>2022-09-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/card-design/</loc>
-         <lastmod>2022-08-29</lastmod>
+         <lastmod>2022-09-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/config_format/</loc>
-         <lastmod>2022-08-29</lastmod>
+         <lastmod>2022-09-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/features/</loc>
-         <lastmod>2022-08-29</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://djplaner.github.io/canvas-collections/getting-started/</loc>
-         <lastmod>2022-08-29</lastmod>
+         <lastmod>2022-09-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/install_userscript/</loc>
-         <lastmod>2022-08-29</lastmod>
+         <lastmod>2022-09-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/reference/</loc>
-         <lastmod>2022-08-29</lastmod>
+         <lastmod>2022-09-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/related-work/</loc>
-         <lastmod>2022-08-29</lastmod>
+         <lastmod>2022-09-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/walk-throughs/</loc>
-         <lastmod>2022-08-29</lastmod>
+         <lastmod>2022-09-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/dev/module-html-scraping/</loc>
-         <lastmod>2022-08-29</lastmod>
+         <lastmod>2022-09-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://djplaner.github.io/canvas-collections/dev/design/design_v1/</loc>
-         <lastmod>2022-08-29</lastmod>
+         <lastmod>2022-09-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://djplaner.github.io/canvas-collections/getting-started/configure-collections/</loc>
+         <lastmod>2022-09-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://djplaner.github.io/canvas-collections/getting-started/overview/</loc>
+         <lastmod>2022-09-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://djplaner.github.io/canvas-collections/getting-started/types-pre-requisites/</loc>
+         <lastmod>2022-09-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://djplaner.github.io/canvas-collections/getting-started/use-collections/</loc>
+         <lastmod>2022-09-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://djplaner.github.io/canvas-collections/getting-started/use/clatyons/</loc>
+         <lastmod>2022-09-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://djplaner.github.io/canvas-collections/getting-started/use/live/</loc>
+         <lastmod>2022-09-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
