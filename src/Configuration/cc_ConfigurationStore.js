@@ -136,8 +136,6 @@ export default class cc_ConfigurationStore {
 		this.parentController.cc_configuration = JSON.parse(config.innerHTML);
 		// double check and possibly convert an old configuration
 		this.configConverted = this.checkConvertOldConfiguration();
-		// double check that we're not an import from another course
-		this.importConverted = this.checkConvertImport();
 
 		// initialise the controller etc
 		DEBUG && console.log(`cc_ConfigurationStore: requestCOnfigPageContents: config`);
@@ -152,7 +150,11 @@ export default class cc_ConfigurationStore {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
+			module.name = this.decodeHTML(module.name);
 		}
+		// double check that we're not an import from another course
+		this.importConverted = this.checkConvertImport();
+
 		// also need to decode the collection names in
 		// - keys for this.cc_configuration.COLLECTIONS
 		// - values in this.cc_configuration.COLLECTIONS_ORDER
@@ -189,18 +191,92 @@ export default class cc_ConfigurationStore {
 	 */
 
 	checkConvertImport() {
-		// get the module names from collections configuration - MODULES hash of objects
-		let collectionsNames = [];
-		for (let key in this.parentController.cc_configuration.MODULES) {
-			collectionsNames.push(this.parentController.cc_configuration.MODULES[key].name);
-		}
-
 		// get list of module ids in collections configuration
-		const collectionModuleIds = Object.keys(this.parentController.cc_configuration.MODULES);
+		const collectionIds = Object.keys(this.parentController.cc_configuration.MODULES);
 		// get list of module ids from Canvas (moduleDetails - array of objects)
-		const canvasModuleIds = this.parentController.moduleDetails.map((module) => {
+		const canvasIds = this.parentController.moduleDetails.map((module) => {
 			return module.id;
 		});
+
+		// get list of commonIds
+		const commonIds = collectionIds.filter((id) => {
+			// convert id to int
+			return canvasIds.includes(parseInt(id));
+		});
+
+		// nothing to do if the lengths of three lists are the same
+		if (collectionIds.length===canvasIds.length && collectionIds.length===commonIds.length) {
+			return false;
+		}
+
+
+		// get the module names from collections configuration - MODULES hash of objects
+		let ccModuleNames = [];
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			ccModuleNames.push(this.parentController.cc_configuration.MODULES[key].name);
+		}
+		let moduleNames = this.parentController.moduleDetails.map((module) => {
+			return module.name;
+		});
+
+		// generate list of names in both moduleNames and ccModuleNames
+		let commonNames = moduleNames.filter((name) => {
+			return ccModuleNames.includes(name);
+		});
+
+		// Use cases at this stage
+		// - brand new import
+		//   - # of modules is the same, 
+		//   - but no similarity in the module ids, and 
+		//   - exact match with module names
+
+		if (collectionIds.length===canvasIds.length ) {
+			// # modules is the same
+			if (commonIds.length===0) {
+				// no commonality in module ids
+				if (
+					commonNames.length===moduleNames.length && 
+					commonNames.length===ccModuleNames.length) {
+					// # of common names == # of ids Canvas and collections
+					// this must be a new import of a course
+					// Replace all the collections modules with the new Canvas module ids
+					// create a hash keyed on module name containing object with both
+					// collections and canvas module ids
+					let nameToId = {};
+					for (let i=0; i<commonNames.length; i++) {
+						const name = commonNames[i];
+						// find the moduleDetails array that contains attribute name
+						const canvasModuleId = this.parentController.moduleDetails.find((module) => {
+							if (module.name===name) {
+								return module.id;
+							}
+						});
+						// loop through objects in cc_configuration.MODULES and return the id
+						// of the object that has the same name
+						const ccModuleId = Object.keys(this.parentController.cc_configuration.MODULES).find((id) => {
+							if (this.parentController.cc_configuration.MODULES[id].name===name) {
+								return id;
+							}
+						});
+						nameToId[name] = {
+							canvasModuleId: canvasModuleId,
+							ccModuleId: ccModuleId
+						};
+					}
+					// loop through entries in nameToId hash
+					for (let name in nameToId) {
+						// replace the ccModuleId with the canvasModuleId
+						this.parentController.cc_configuration.MODULES[nameToId[key].canvasModuleId] = 
+							this.parentController.cc_configuration.MODULES[nameToId[key].ccModuleId];
+						// delete the ccModuleId
+						delete this.parentController.cc_configuration.MODULES[nameToId[key].ccModuleId];
+					}
+				}
+			}
+
+			return true;
+		}
+
 
 
 	}

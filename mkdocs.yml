@@ -42,7 +42,17 @@ extra:
 nav:
   - Home: index.md
   - Features: features.md
-  - 'Getting Started': getting-started.md
+  - Getting Started: #getting-started.md
+    - Overview: getting-started/overview.md
+    - Install: 
+      - Types and Pre-requisites: getting-started/types-pre-requisites.md
+      - Individual: getting-started/individual-install.md
+      - Institution: getting-started/institutional-install.md
+    - Configure: getting-started/configure-collections.md
+    - Use: 
+      - Use: getting-started/use-collections.md
+      - "'Claytons'": getting-started/use/claytons.md
+      - Live: getting-started/use/live.md
   - 'Walk throughs': walk-throughs.md
   - Reference: reference.md
   - 'Related Work': related-work.md
