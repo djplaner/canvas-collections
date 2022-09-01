@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.8
+// @version      0.8.9
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -539,7 +539,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.7a";
+const CC_VERSION = "0.8.9";
 
 const CONFIG_VIEW_TOOLTIPS = [ 
 	{ 

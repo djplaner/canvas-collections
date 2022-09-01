@@ -2,6 +2,8 @@
 
 > **Under Constructions** The Institutional installation method is currently under development. Early testing confirmed it is possible, but no recent work has been done. Current expectations are that this will change early in 2023.
 
+For now, it is expected most people will use the [Individual Install](individual.md) method.
+
 ## How it will work
 
 Canvas Collections is a Javascript application. The [Canvas theme editor](https://community.canvaslms.com/t5/Video-Guide/Theme-Editor-Admins/ta-p/383021) allows authorised people to include Javascript in a Canvas theme. Meaning that Canvas Collections is an available option for all course sites.
