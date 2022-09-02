@@ -65,7 +65,7 @@ nav:
       - Before & after: walk-throughs/new/before-and-after.md
       - Design: walk-throughs/new/design.md
       - Configure Collections: walk-throughs/new/configure-collections.md
-      - Configure Modules: walk-throughs/new/configure-modules/md
+      - Configure Modules: walk-throughs/new/configure-modules.md
     - Making changes:
       - Add a collection: walk-throughs/changes/add-a-collection.md
       - Delete a collection: walk-throughs/changes/delete-a-collection.md
@@ -76,7 +76,7 @@ nav:
       - Collections:
         - Collections: reference/collections/overview.md
       - Representations:
-        - Representations: references/representations/overview.md
+        - Representations: reference/representations/overview.md
       - Objects:
         - Objects: reference/objects/overview.md
   - 'Related Work': related-work.md
