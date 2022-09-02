@@ -266,10 +266,13 @@ export default class cc_ConfigurationStore {
 					// loop through entries in nameToId hash
 					for (let name in nameToId) {
 						// replace the ccModuleId with the canvasModuleId
-						this.parentController.cc_configuration.MODULES[nameToId[key].canvasModuleId] = 
-							this.parentController.cc_configuration.MODULES[nameToId[key].ccModuleId];
+						console.log(`Moving from colelctionsModuleId 
+						${nameToId[name].ccModuleId} to 
+						Canvas Module id: ${nameToId[name].canvasModuleId.id}`);
+						this.parentController.cc_configuration.MODULES[nameToId[name].canvasModuleId.id] = 
+							this.parentController.cc_configuration.MODULES[nameToId[name].ccModuleId];
 						// delete the ccModuleId
-						delete this.parentController.cc_configuration.MODULES[nameToId[key].ccModuleId];
+						delete this.parentController.cc_configuration.MODULES[nameToId[name].ccModuleId.id];
 					}
 				}
 			}
