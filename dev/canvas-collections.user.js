@@ -6078,7 +6078,11 @@ class cc_ConfigurationStore {
 			module.name = this.decodeHTML(module.name);
 		}
 		// double check that we're not an import from another course
-		this.importConverted = this.checkConvertImport();
+		const importConverted = this.checkConvertImport();
+		// and make it gets saved if there was a change
+		if (importConverted) {
+			this.configConverted = importConverted;
+		}
 
 		// also need to decode the collection names in
 		// - keys for this.cc_configuration.COLLECTIONS
