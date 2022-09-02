@@ -23,9 +23,11 @@ Canvas Collections provides different **representations** of the Module view. Ea
 
 *Dig into the example with a focus on the repreentations it uses*
 
-## Objects - adding metadata and affordances to Modules
+## Objects/activities - adding metadata and affordances to Modules
 
-[Canvas Modules](https://www.instructure.com/canvas/resources/all/how-to-use-modules-to-build-courses-in-canvas) are a vanilla tool intended to help structure course content by representing the objects at the centre of your learning design (e.g. day, week, unit, topic, assignment, lecture etc.).
+[Canvas Modules](https://www.instructure.com/canvas/resources/all/how-to-use-modules-to-build-courses-in-canvas) are a vanilla tool intended to help structure course content by representing the objects/activities at the centre of your learning design (e.g. day, week, unit, topic, assignment, lecture etc.). 
+
+Objects/activities that will typically has a range of additional information about them that needs representing. For example, a lecture or week might be occurring on a particular date/time. Most objects/activities will have a purpose/rationale that would be beneficial for students to know.
 
 Transform your modules from Canvas' generic feature into context and design specific objects
 

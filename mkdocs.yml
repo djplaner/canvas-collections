@@ -67,10 +67,16 @@ nav:
       - Configure Collections: walk-throughs/new/configure-collections.md
       - Configure Modules: walk-throughs/new/configure-modules/md
     - Making changes:
-      - List of changes: walk-throughs/changes/list-of-changes.md
       - Add a collection: walk-throughs/changes/add-a-collection.md
       - Delete a collection: walk-throughs/changes/delete-a-collection.md
       - Add a module: walk-throughs/changes/add-a-module.md
     - Student: walk-throughs/student.md
-  - Reference: reference.md
+  - Reference: 
+      - Overview: reference/overview.md
+      - Collections:
+        - Collections: reference/collections/overview.md
+      - Representations:
+        - Representations: references/representations/overview.md
+      - Objects:
+        - Objects: reference/objects/overview.md
   - 'Related Work': related-work.md
