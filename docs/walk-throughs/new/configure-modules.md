@@ -68,9 +68,35 @@ The allocated module now shows _Why?_ as it's collection.
 
 ### Allocate the remaining modules
 
-__placeholder__
+Once all the modules are allocated to collections, the Collections configuration _Existing collections_ section looks like the following: 3 modules in _Why?_; 5 modules in _What?_; and, 5 modules in _How?_.
+
+![](pics/allAllocatedCollections.png)  
+
+The following animated image shows the rest of the interface once all modules are allocated to collections. Some points to note
+
+- Some modules remain _unpublished_.
+
+    The cards representation adds a warning (visible to teachers and designers) identifying unpublished modules. These will not be visible to students.
+
+- Navigation between the three collections works as expected.
+- Clicking on the _Engage_ button on a Card brings that module to focus.
+- The cards are all relatively blank with limited metadata (e.g. images, descriptions etc)
+
+Time to add some additional metadata.
+
+
+![](pics/allModulesAllocatedAnimated.gif)
+
 
 ## Specify additional metadata
+
+As mentioned above, the additional metadata that can be added includes the following list. Each with its own form elements. The following walk-through gives an example of each.
+- Image - associate an image with the module and how it should be scaled to fit with a card.
+- Description - provide a short description or rationale for the module.
+- Collection - used to specify which collection the module belongs to.
+- Label - three elements (label, auto-number, and number) used to specify the module's label and number.
+- Date - specify the date for the module using three elements - day of week; week; and time.
+- Additional metadata - add and remove additional metadata in the form of name/value pairs.
 
 ### Add an image
 
@@ -85,3 +111,6 @@ __placeholder__
 
 
 ### Configure a date
+
+
+### Configure a module for the assessment table representation
