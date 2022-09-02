@@ -1,6 +1,6 @@
 # Institutional
 
-> **Under Constructions** The Institutional installation method is currently under development. Early testing confirmed it is possible, but no recent work has been done. Current expectations are that this will change early in 2023.
+> **Under Construction** The Institutional installation method is currently under development. Early testing confirmed it is possible, but no recent work has been done. Current expectations are that this will change early in 2023.
 
 For now, it is expected most people will use the [Individual Install](individual.md) method.
 

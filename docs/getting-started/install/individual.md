@@ -9,6 +9,8 @@ An individual install is a two step process:
 
 > :question: You install a [userscript manager](https://en.wikipedia.org/wiki/Userscript_manager) into your web browser (not surprisingly) to help manage [userscripts](https://en.wikipedia.org/wiki/Userscript). Small Javascript programs that your browser will run when you view specific web pages. Userscripts customise those web pages to better suit your purposes. e.g. to modify the Canvas modules view by adding Collections.
 
+Once you've completed installation, you can test [if it is working](is-it-working.md).
+
 ## Install a userscript manager - TamperMonkey
 
 [TamperMonkey](https://www.tampermonkey.net/) is a widely used userscript manager. It can be used on most modern web browsers. 

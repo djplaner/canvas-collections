@@ -32,9 +32,7 @@ theme:
     - attr_list
     - def_list
     - pymdownx.emoji:
-        emoji_index: !!python/name:materialx.emoji.twemoji
         emoji_generator: !!python/name:materialx.emoji.to_svg
-
     - pymdownx.tasklist:
         custom_checkbox: true
 
@@ -52,14 +50,27 @@ nav:
       - Types and Pre-requisites: getting-started/install/types-pre-requisites.md
       - Individual: getting-started/install/individual.md
       - Institutional: getting-started/install/institutional.md
+      - Is it working?: getting-started/install/is-it-working.md
     - 2. Configure: 
-      - Is it on: getting-started/configure/is-it-on.md
-      - Course configuration: getting-started/configure/course-configuration.md
-      - Module configuration: getting-started/configure/module-configuration.md
+      - Configuration: getting-started/configure/configuration.md
+      - Collections: getting-started/configure/collections.md
+      - Modules: getting-started/configure/modules.md
     - 3. Use: 
       - Types of Use: getting-started/use/types.md
       - "'Claytons'": getting-started/use/claytons.md
       - Live: getting-started/use/live.md
-  - 'Walk throughs': walk-throughs.md
+  - 'Walk throughs': 
+    - Available walk throughs: walk-throughs/available.md
+    - New course:
+      - Before & after: walk-throughs/new/before-and-after.md
+      - Design: walk-throughs/new/design.md
+      - Configure Collections: walk-throughs/new/configure-collections.md
+      - Configure Modules: walk-throughs/new/configure-modules/md
+    - Making changes:
+      - List of changes: walk-throughs/changes/list-of-changes.md
+      - Add a collection: walk-throughs/changes/add-a-collection.md
+      - Delete a collection: walk-throughs/changes/delete-a-collection.md
+      - Add a module: walk-throughs/changes/add-a-module.md
+    - Student: walk-throughs/student.md
   - Reference: reference.md
   - 'Related Work': related-work.md
