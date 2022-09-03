@@ -194,6 +194,9 @@ export default class updatePageController {
 		if (!response.ok) {
 			alert('Unable to update the output page');	
 		} 
+		const data = await response.json();
+
+		alert(`output page ${this.outputPageName} updated`);
 
 	}
 

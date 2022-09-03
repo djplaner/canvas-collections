@@ -58,7 +58,7 @@ td.descriptionCell {
 }
 
 /* Responsive table styling */
-.cc-assessment-container .responsive-table { 
+.cc-assessment-container .cc-responsive-table { 
   margin-bottom: 0;
   width: 100%;
 }
@@ -105,7 +105,7 @@ td.descriptionCell {
   }
 }
 
-.cc-assessment-container .responsive-table__heading {
+.cc-assessment-container .cc-responsive-table__heading {
   font-weight: 700;
   padding-right: 0.5em;
   text-align: left;
@@ -145,7 +145,7 @@ td.descriptionCell {
     text-align: left;
   }
   
-  .cc-assessment-container .responsive-table__heading {
+  .cc-assessment-container .cc-responsive-table__heading {
     display: none;
   }
 }
@@ -170,7 +170,7 @@ const TABLE_HTML = `
 		</style>
 		<div id="cc-assessment-table" class="cc-assessment-container">
 
-			<table class="responsive-table" role="table">
+			<table class="cc-responsive-table" role="table">
       			<caption>{{CAPTION}}</caption>
       			<thead role="rowgroup">
         			<tr role="row">
@@ -188,35 +188,95 @@ const TABLE_HTML = `
 		</div>
 		`;
 
+const TABLE_HTML_CLAYTONS = `
+<div id="cc-assessment-table" class="cc-assessment-container">
+<table class="cc-assessment-table ic-Table--hover-row ic-Table ic-Table--striped -ic-Table--condensed" 
+   role="table">
+  <thead role="rowgroup">
+    <tr role="row">
+      <th role="columnheader" scope="col" style="width:20%;background-color:#e03e2d">
+        <span style="color:#ffffff">Title</span>
+        </th>
+      <th role="columnheader" scope="col" style="width:40%;background-color:#e03e2d">
+        <span style="color:#ffffff">Description</span>
+        </th>
+      <th role="columnheader" scope="col" style="background-color:#e03e2d">
+        <span style="color:#ffffff">Weighting</span>
+        </th>
+      <th role="columnheader" scope="col" style="background-color:#e03e2d">
+        <span style="color:#ffffff">Due Date</span>
+        </th>
+      <th role="columnheader" scope="col" style="width:10%;background-color:#e03e2d">
+        <span style="color:#ffffff">Learning Outcomes</span>
+        </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{TABLE-ROWS}}
+  </tbody>
+</table>
+</div>
+`;
+
 const TABLE_ROW_HTML = `
 		  <tr role="row">
           <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
+            <span class="cc-responsive-table__heading" aria-hidden="true">Title</span>
             <div class="cc-table-cell-text"><p><a href="#{{MODULE-ID}}">
               {{TITLE}}
 
             </a></p> </div>
           </td>
           <td role="cell" class="descriptionCell">
-            <span class="responsive-table__heading" aria-hidden="true">Description</span>
+            <span class="cc-responsive-table__heading" aria-hidden="true">Description</span>
             <div class="cc-table-cell-text">
             {{DESCRIPTION}}
             </div>
           </td>
           <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
+            <span class="cc-responsive-table__heading" aria-hidden="true">Weighting</span>
             <div class="cc-table-cell-text">
             <p>{{WEIGHTING}}</p>
             </div>
           </td>
           <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
+            <span class="cc-responsive-table__heading" aria-hidden="true">Due Date</span>
             <div class="cc-table-cell-text">
             <p>{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            <span class="cc-responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            <div class="cc-table-cell-text">
+            <p>{{LEARNING-OUTCOMES}}</p>
+            </div>
+          </td>
+        </tr>
+`;
+
+const TABLE_ROW_HTML_CLAYTONS = `
+		  <tr role="row">
+          <td role="cell" style="vertical-align:top; padding: 0.5rem">
+            <div class="cc-table-cell-text"><p><a href="#{{MODULE-ID}}">
+              {{TITLE}}
+            </a></p> </div>
+          </td>
+          <td role="cell" class="descriptionCell" style="vertical-align:top; padding: 0.5rem">
+            <div class="cc-table-cell-text">
+            {{DESCRIPTION}}
+            </div>
+          </td>
+          <td role="cell" style="vertical-align:top;padding:0.5rem">
+            <div class="cc-table-cell-text">
+            <p>{{WEIGHTING}}</p>
+            </div>
+          </td>
+          <td role="cell" style="vertical-align:top;padding:0.5rem">
+            <div class="cc-table-cell-text">
+            <p>{{DUE-DATE}}</p>
+            </div>
+          </td>
+          <td role="cell" style="vertical-align:top;padding:0.5rem">
             <div class="cc-table-cell-text">
             <p>{{LEARNING-OUTCOMES}}</p>
             </div>
@@ -275,8 +335,11 @@ export default class AssessmentTableView extends cc_View {
    * Work through module details for this collection and generate HTML with
    * an assessment table
    */
-  generateHTML(collectionName) {
+  generateHTML(collectionName, variety='') {
     let messageHtml = this.TABLE_HTML;
+    if (variety === 'claytons') {
+      messageHtml = TABLE_HTML_CLAYTONS;
+    }
 
     // TODO update the messageHTML
     const description = this.model.getCurrentCollectionDescription();
@@ -293,6 +356,9 @@ export default class AssessmentTableView extends cc_View {
         continue;
       }
       let rowHtml = TABLE_ROW_HTML;
+      if (variety === 'claytons') {
+        rowHtml = TABLE_ROW_HTML_CLAYTONS;
+      }
 
       const dueDate = modules[i].date;
       let dueDateString = '';
@@ -337,7 +403,7 @@ export default class AssessmentTableView extends cc_View {
       editMode = ccController.editMode;
     }
 
-    if (!editMode) {
+    if (!editMode || variety==='claytons') {
       messageHtml = this.emptyRemainingFields(messageHtml);
     }
 
