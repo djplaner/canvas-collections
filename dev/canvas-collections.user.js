@@ -3863,7 +3863,7 @@ const TABLE_ROW_HTML = `
           <td role="cell">
             <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
             <div class="cc-table-cell-text">
-            <p>{{weighting}}</p>
+            <p>{{WEIGHTING}}</p>
             </div>
           </td>
           <td role="cell">
@@ -3875,7 +3875,7 @@ const TABLE_ROW_HTML = `
           <td role="cell">
             <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
             <div class="cc-table-cell-text">
-            <p>{{learning outcomes}}</p>
+            <p>{{LEARNING-OUTCOMES}}</p>
             </div>
           </td>
         </tr>
@@ -3922,7 +3922,8 @@ class AssessmentTableView extends cc_View {
     let message = document.createElement('div');
     message.className = 'cc-assessment-table';
 
-    message.innerHTML = this.generateHTML();
+		const currentCollection = this.model.getCurrentCollection();
+    message.innerHTML = this.generateHTML(currentCollection);
     div.insertAdjacentElement('beforeend', message);
 
   }
@@ -3931,7 +3932,7 @@ class AssessmentTableView extends cc_View {
    * Work through module details for this collection and generate HTML with
    * an assessment table
    */
-  generateHTML() {
+  generateHTML(collectionName) {
     let messageHtml = this.TABLE_HTML;
 
     // TODO update the messageHTML
@@ -3941,12 +3942,11 @@ class AssessmentTableView extends cc_View {
 //    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());
     // get an array of all modules in display order
  		const modules = this.model.getModulesCollections();
-		const currentCollection = this.model.getCurrentCollection();
     let tableRows = '';
     for (let i = 0; i < modules.length; i++) {
 
       // skip if row doesn't match currentCollection
-      if (modules[i].collection !== currentCollection) {
+      if (modules[i].collection !== collectionName) {
         continue;
       }
       let rowHtml = TABLE_ROW_HTML;
@@ -3978,7 +3978,7 @@ class AssessmentTableView extends cc_View {
 
       // loop through mapping keys and replace the values in the row html
       for (let key in mapping) {
-        if (mapping[key]) {
+        if (mapping.hasOwnProperty(key)) {
           rowHtml = rowHtml.replace(`{{${key}}}`, mapping[key]);
         }
       }
