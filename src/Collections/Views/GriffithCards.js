@@ -614,10 +614,10 @@ export default class GriffithCardsView extends cc_View {
 		if (firstDate.WEEK !== "") {
 			// TODO should check for a day, if we wish to get the day
 			let actualDate = {};
-			if (firstDate.DAY === "") {
+			if (firstDate.DAY === "" && this.hasOwnProperty('calendar')) {
 				// no special day specified, just get the start of the week
 				actualDate = this.calendar.getDate(firstDate.WEEK);
-			} else {
+			} else if (this.hasOwnProperty('calendar')) {
 				// need go get the date for a particular day
 				actualDate = this.calendar.getDate(firstDate.WEEK, false, firstDate.DAY);
 			}

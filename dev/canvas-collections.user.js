@@ -2346,7 +2346,7 @@ class updatePageController {
 
 		// data should be the page object
 		// https://canvas.instructure.com/doc/api/pages.html#Page
-		DEBUG && console.log(`updatePageController: getPageContents: json = ${JSON.stringify(data)}`);
+//		DEBUG && console.log(`updatePageController: getPageContents: json = ${JSON.stringify(data)}`);
 
 		if (data.length===0) {
 			throw new Error(`updatePageController: getPageContents: no config page found`);
@@ -3275,6 +3275,48 @@ class CollectionsModel {
 
 		return collectionModules;
 	}
+
+	/**
+	 * Return a list of collection objects (in collections order) which have defined
+	 * an output page
+	 */
+	getOutputPageCollections() {
+		let collections = [];
+		for (let i = 0; i < this.cc_configuration.COLLECTIONS_ORDER.length; i++) {
+			let collection = this.cc_configuration.COLLECTIONS_ORDER[i];
+			if (this.cc_configuration.COLLECTIONS[collection].hasOwnProperty('outputPage') &&
+				this.cc_configuration.COLLECTIONS[collection].outputPage !== '') {
+					let collectionObj = this.cc_configuration.COLLECTIONS[collection];
+					collectionObj.name = collection;
+				collections.push(collectionObj);
+			}
+		}
+
+		return collections;
+
+	}
+
+	/**
+	 * Given the human readable name for a Canvas page (e.g. "Home Page") translate
+	 * into the page url 
+	 * (e.g. "https://<<hostname>>/courses/<<courseId>>/pages/<<convertedPageName>>)
+	 * Where convertedPageName is the lower-cased page name with spaces replaced by dashes
+	 * TODO
+	 * - This is an actual kludge.  Should be putting the actual URL in there somehow
+	 * @param {String} pageName 
+	 */
+	calculatePageUrl( pageName ) {
+		const courseId = this.controller.parentController.courseId;
+		let pageUrl = this.controller.parentController.documentUrl;
+		// documentUrl format is https://<<hostname>>/courses/<<courseId>>/.*
+		// remove everything after the courseId
+		pageUrl = pageUrl.replace(/\/courses\/\d+\/.*/, `/courses/${courseId}/pages/`);
+
+		// convert the pageName to a URL friendly name
+		let convertedPageName = pageName.toLowerCase().replace(/ /g, '-');
+		pageUrl += convertedPageName;
+		return pageUrl;
+	}
 }
 
 // src/Collections/NavViewWF.js
@@ -3288,8 +3330,8 @@ class CollectionsModel {
 
 
 
-const NAV_WF_TOOLTIPS = [ 
-	{ 
+const NAV_WF_TOOLTIPS = [
+	{
 		contentText: `<p>Collection hidden from students. Any published modules for this collection
 		may be visible to students.</p>`,
 		targetSelector: '#cc-about-hide-collection',
@@ -3324,19 +3366,28 @@ class NavView extends cc_View {
 		// generate the HTML
 		//		let html ='<h1> Hello from NavView </h1>';
 
-		let navBar = this.generateNavBar();
-		div.insertAdjacentElement('beforeend', navBar);
+		//let navBar = this.generateNavBar();
+		let navBarHTML = this.generateHTML();
+		div.insertAdjacentHTML('beforeend', navBarHTML);
 
-		this.addTooltips();		
+		this.addTooltips();
 
 		// add html to div#cc-canvas-collections
 		//		div.insertAdjacentHTML('afterbegin', html);
 	}
 
-	generateNavBar() {
+	/**
+	 * 
+	 * @param {String} collectionName 
+	 * @param {String} variety 
+	 * @returns String HTML containing the navBar
+	 */
+	generateHTML(collectionName = '', variety = '') {
+		if (variety === 'claytons') {
+			return this.generateClaytonsNavBar(collectionName);
+		}
 		let navBar = document.createElement('div');
 		navBar.className = 'cc-nav';
-
 
 		const navBarStyles = `
 		<style>
@@ -3484,10 +3535,52 @@ div.cc-collection-hidden > a {
 		}
 		navBar.appendChild(navList);
 
+		return navBar.outerHTML;
+	}
+
+	/**
+	 * Return HTML for nav bar that is HTML/CSS only. to be inserted into a Canvas
+	 * page as part of the Full Claytons
+	 * @param {String} collectionName 
+	 * @returns {String} HTML for nav bar
+	 */
+	generateClaytonsNavBar(collectionName = '') {
+		let CLAYTONS_NAVBAR_HTML = `
+		<div id="bannerNav">
+		  <ul id="courseBannerNav">
+		  {{NAVBAR_ITEMS}}
+		  </ul>
+	    </div>`;
+
+		// get list of collection details without output pages(including output page)
+		const collectionsOutput = this.model.getOutputPageCollections();
+		const activeLi = ' style="background-color: #c02424"';
+		const activeA = ' style="text-decoration: none;color: #fff; font-weight: bold;font-size:1.2em;"';
+
+		let items = '';
+
+		collectionsOutput.forEach(collection => {
+			let liStyle ='';
+			let aStyle = '';
+			if (collection.name === collectionName) {
+				liStyle = activeLi;
+				aStyle = activeA;
+			}
+			let pageUrl = this.model.calculatePageUrl(collection.outputPage);
+			items = `${items}
+		   <li${liStyle}>
+		     <a${aStyle} href="${pageUrl}">${collection.name}</a>
+		   </li>
+		`;
+
+		});
+
+		// loop through each collection
+		// get the names of collection with output pages
+		// include those collection names in the nav bar
 
 
-
-		return navBar;
+		return CLAYTONS_NAVBAR_HTML.replace('{{NAVBAR_ITEMS}}', items);
 	}
 }
 
@@ -4838,10 +4931,10 @@ class GriffithCardsView extends cc_View {
 		if (firstDate.WEEK !== "") {
 			// TODO should check for a day, if we wish to get the day
 			let actualDate = {};
-			if (firstDate.DAY === "") {
+			if (firstDate.DAY === "" && this.hasOwnProperty('calendar')) {
 				// no special day specified, just get the start of the week
 				actualDate = this.calendar.getDate(firstDate.WEEK);
-			} else {
+			} else if (this.hasOwnProperty('calendar')) {
 				// need go get the date for a particular day
 				actualDate = this.calendar.getDate(firstDate.WEEK, false, firstDate.DAY);
 			}
@@ -5601,7 +5694,8 @@ class CollectionsView extends cc_View {
 
 		// add in the navBar insert it at the beginning of html
 		if (navBar ) {
-			html = `<h1>NAV BAR HERE</h1>${html}`;
+			//html = `<h1>NAV BAR HERE</h1>${html}`;
+			html = `${this.navView.generateHTML(collectionName,variety)}${html}`;
 		}
 		// TODO
 		// - add in the navBar?

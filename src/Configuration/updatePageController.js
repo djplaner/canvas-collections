@@ -114,7 +114,7 @@ export default class updatePageController {
 
 		// data should be the page object
 		// https://canvas.instructure.com/doc/api/pages.html#Page
-		DEBUG && console.log(`updatePageController: getPageContents: json = ${JSON.stringify(data)}`);
+//		DEBUG && console.log(`updatePageController: getPageContents: json = ${JSON.stringify(data)}`);
 
 		if (data.length===0) {
 			throw new Error(`updatePageController: getPageContents: no config page found`);

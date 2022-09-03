@@ -8,8 +8,8 @@
 
 import { cc_View } from '../cc_View.js';
 
-const NAV_WF_TOOLTIPS = [ 
-	{ 
+const NAV_WF_TOOLTIPS = [
+	{
 		contentText: `<p>Collection hidden from students. Any published modules for this collection
 		may be visible to students.</p>`,
 		targetSelector: '#cc-about-hide-collection',
@@ -44,19 +44,28 @@ export default class NavView extends cc_View {
 		// generate the HTML
 		//		let html ='<h1> Hello from NavView </h1>';
 
-		let navBar = this.generateNavBar();
-		div.insertAdjacentElement('beforeend', navBar);
+		//let navBar = this.generateNavBar();
+		let navBarHTML = this.generateHTML();
+		div.insertAdjacentHTML('beforeend', navBarHTML);
 
-		this.addTooltips();		
+		this.addTooltips();
 
 		// add html to div#cc-canvas-collections
 		//		div.insertAdjacentHTML('afterbegin', html);
 	}
 
-	generateNavBar() {
+	/**
+	 * 
+	 * @param {String} collectionName 
+	 * @param {String} variety 
+	 * @returns String HTML containing the navBar
+	 */
+	generateHTML(collectionName = '', variety = '') {
+		if (variety === 'claytons') {
+			return this.generateClaytonsNavBar(collectionName);
+		}
 		let navBar = document.createElement('div');
 		navBar.className = 'cc-nav';
-
 
 		const navBarStyles = `
 		<style>
@@ -204,10 +213,52 @@ div.cc-collection-hidden > a {
 		}
 		navBar.appendChild(navList);
 
+		return navBar.outerHTML;
+	}
+
+	/**
+	 * Return HTML for nav bar that is HTML/CSS only. to be inserted into a Canvas
+	 * page as part of the Full Claytons
+	 * @param {String} collectionName 
+	 * @returns {String} HTML for nav bar
+	 */
+	generateClaytonsNavBar(collectionName = '') {
+		let CLAYTONS_NAVBAR_HTML = `
+		<div id="bannerNav">
+		  <ul id="courseBannerNav">
+		  {{NAVBAR_ITEMS}}
+		  </ul>
+	    </div>`;
+
+		// get list of collection details without output pages(including output page)
+		const collectionsOutput = this.model.getOutputPageCollections();
+		const activeLi = ' style="background-color: #c02424"';
+		const activeA = ' style="text-decoration: none;color: #fff; font-weight: bold;font-size:1.2em;"';
+
+		let items = '';
+
+		collectionsOutput.forEach(collection => {
+			let liStyle ='';
+			let aStyle = '';
+			if (collection.name === collectionName) {
+				liStyle = activeLi;
+				aStyle = activeA;
+			}
+			let pageUrl = this.model.calculatePageUrl(collection.outputPage);
+			items = `${items}
+		   <li${liStyle}>
+		     <a${aStyle} href="${pageUrl}">${collection.name}</a>
+		   </li>
+		`;
+
+		});
+
+		// loop through each collection
+		// get the names of collection with output pages
+		// include those collection names in the nav bar
 
 
-
-		return navBar;
+		return CLAYTONS_NAVBAR_HTML.replace('{{NAVBAR_ITEMS}}', items);
 	}
 }
 

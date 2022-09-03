@@ -112,7 +112,8 @@ export default class CollectionsView extends cc_View {
 
 		// add in the navBar insert it at the beginning of html
 		if (navBar ) {
-			html = `<h1>NAV BAR HERE</h1>${html}`;
+			//html = `<h1>NAV BAR HERE</h1>${html}`;
+			html = `${this.navView.generateHTML(collectionName,variety)}${html}`;
 		}
 		// TODO
 		// - add in the navBar?

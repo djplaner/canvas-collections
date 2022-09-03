@@ -210,4 +210,46 @@ export default class CollectionsModel {
 
 		return collectionModules;
 	}
+
+	/**
+	 * Return a list of collection objects (in collections order) which have defined
+	 * an output page
+	 */
+	getOutputPageCollections() {
+		let collections = [];
+		for (let i = 0; i < this.cc_configuration.COLLECTIONS_ORDER.length; i++) {
+			let collection = this.cc_configuration.COLLECTIONS_ORDER[i];
+			if (this.cc_configuration.COLLECTIONS[collection].hasOwnProperty('outputPage') &&
+				this.cc_configuration.COLLECTIONS[collection].outputPage !== '') {
+					let collectionObj = this.cc_configuration.COLLECTIONS[collection];
+					collectionObj.name = collection;
+				collections.push(collectionObj);
+			}
+		}
+
+		return collections;
+
+	}
+
+	/**
+	 * Given the human readable name for a Canvas page (e.g. "Home Page") translate
+	 * into the page url 
+	 * (e.g. "https://<<hostname>>/courses/<<courseId>>/pages/<<convertedPageName>>)
+	 * Where convertedPageName is the lower-cased page name with spaces replaced by dashes
+	 * TODO
+	 * - This is an actual kludge.  Should be putting the actual URL in there somehow
+	 * @param {String} pageName 
+	 */
+	calculatePageUrl( pageName ) {
+		const courseId = this.controller.parentController.courseId;
+		let pageUrl = this.controller.parentController.documentUrl;
+		// documentUrl format is https://<<hostname>>/courses/<<courseId>>/.*
+		// remove everything after the courseId
+		pageUrl = pageUrl.replace(/\/courses\/\d+\/.*/, `/courses/${courseId}/pages/`);
+
+		// convert the pageName to a URL friendly name
+		let convertedPageName = pageName.toLowerCase().replace(/ /g, '-');
+		pageUrl += convertedPageName;
+		return pageUrl;
+	}
 }
