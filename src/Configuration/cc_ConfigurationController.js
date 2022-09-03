@@ -439,7 +439,8 @@ export default class cc_ConfigurationController {
 			// for an output change, need re-display collections form so that
 			// the update button appears
 			if (pageType==="output") {
-				this.view.updateExistingCollections();
+				//this.view.updateExistingCollections();
+				this.view.showConfig();
 			}
 
 

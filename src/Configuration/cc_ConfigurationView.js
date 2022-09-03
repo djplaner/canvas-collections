@@ -273,13 +273,6 @@ export default class cc_ConfigurationView extends cc_View {
 			const trash = trashMetadata[i];
 			trash.onclick = (event) => this.controller.manageModuleMetadata(event);
 		}
-		// button.cc-output-page-update-button
-		// - calls controller.updateOutputPage
-		const updateButtons = document.querySelectorAll(`button.cc-output-page-update-button`);
-		for (let i = 0; i < updateButtons.length; i++) {
-			const updateButton = updateButtons[i];
-			updateButton.onclick = (event) => this.controller.updateOutputPage(event);
-		}
 
 		// add catch all handlers for other module config elements
 		const configDiv = document.querySelector(`#cc-module-config-${id}`);
@@ -1221,6 +1214,13 @@ export default class cc_ConfigurationView extends cc_View {
 		existingCollections.forEach(collection => {
 			collection.onchange = (event) => this.controller.modifyCollectionPages(event);
 		});
+		// button.cc-output-page-update-button
+		// - calls controller.updateOutputPage
+		const updateButtons = document.querySelectorAll(`button.cc-output-page-update-button`);
+		for (let i = 0; i < updateButtons.length; i++) {
+			const updateButton = updateButtons[i];
+			updateButton.onclick = (event) => this.controller.updateOutputPage(event);
+		}
 	}
 
 

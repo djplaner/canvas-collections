@@ -810,11 +810,11 @@ class cc_ConfigurationView extends cc_View {
 		}
 		// button.cc-output-page-update-button
 		// - calls controller.updateOutputPage
-		const updateButtons = document.querySelectorAll(`button.cc-output-page-update-button`);
+/*		const updateButtons = document.querySelectorAll(`button.cc-output-page-update-button`);
 		for (let i = 0; i < updateButtons.length; i++) {
 			const updateButton = updateButtons[i];
 			updateButton.onclick = (event) => this.controller.updateOutputPage(event);
-		}
+		} */
 
 		// add catch all handlers for other module config elements
 		const configDiv = document.querySelector(`#cc-module-config-${id}`);
@@ -1756,6 +1756,13 @@ class cc_ConfigurationView extends cc_View {
 		existingCollections.forEach(collection => {
 			collection.onchange = (event) => this.controller.modifyCollectionPages(event);
 		});
+		// button.cc-output-page-update-button
+		// - calls controller.updateOutputPage
+		const updateButtons = document.querySelectorAll(`button.cc-output-page-update-button`);
+		for (let i = 0; i < updateButtons.length; i++) {
+			const updateButton = updateButtons[i];
+			updateButton.onclick = (event) => this.controller.updateOutputPage(event);
+		}
 	}
 
 
@@ -2822,7 +2829,8 @@ class cc_ConfigurationController {
 			// for an output change, need re-display collections form so that
 			// the update button appears
 			if (pageType==="output") {
-				this.view.updateExistingCollections();
+				//this.view.updateExistingCollections();
+				this.view.showConfig();
 			}
 
 
