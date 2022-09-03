@@ -478,6 +478,24 @@ class cc_ConfigurationModel {
 			delete module.metadata[fieldName];
 		}
 	}
+
+	/**
+	 * Filter ...cc_configuration.COLLECTIONS to return an array of objects with
+	 * an actual outputPage
+	 */
+	getCollectionsWithOutputPage() {
+		const cc_configuration = this.controller.parentController.cc_configuration;
+		const collections = cc_configuration.COLLECTIONS;
+		// filter collections hash to return an array of objects with an actual outputPage
+		let collectionsWithOutputPages = Object.keys(collections).filter( (collectionName) => {
+			if (collections[collectionName].outputPage &&
+				collections[collectionName].outputPage !== '') {
+				return collectionName;
+			}
+		});
+
+		return collectionsWithOutputPages;
+	}
 }
 
 // src/cc_View.js
@@ -1762,6 +1780,12 @@ class cc_ConfigurationView extends cc_View {
 		if (newCollectionButton) {
 			newCollectionButton.onclick = (event) => this.controller.addNewCollection(event);
 		}
+		// add event handler for adding a new collection button#cc-config-update-full-claytons
+		const fullClaytonsButton = document.querySelector('button#cc-config-update-full-claytons');
+		if (fullClaytonsButton) {
+			fullClaytonsButton.onclick = (event) => this.controller.updateFullClaytons(event);
+		}
+
 		// add event handler for cc-config-collection-default selection
 		const defaultCheckboxes = document.querySelectorAll('input.cc-config-collection-default');
 		defaultCheckboxes.forEach(checkbox => {
@@ -2233,11 +2257,14 @@ class updatePageController {
 	/**
 	 * @param {String} collection  - name of Collection to update
 	 * @param {cc_Controller} parentController 
+	 * @param {boolean} navBar - true if the page should have a navigation bar
+	 *     typically meaning we're using this as part of a Full claytons
 	 */
 
-	constructor(collection,parentController) {
+	constructor(collection,parentController, navBar = false) {
 		this.collection = collection;
 		this.parentController = parentController;
+		this.navBar = navBar;
 
 		// TODO do sanity checks for the presence of these things
 		const collections = this.parentController.cc_configuration.COLLECTIONS;
@@ -2342,7 +2369,7 @@ class updatePageController {
 	updateOutputPage() {
 		DEBUG && console.log(`updatePageController: updateOutputPage: pageObject = ${JSON.stringify(this.pageObject)}`);
 
-		const insertContentHtml = this.collectionsView.generateHTML(this.collection,"claytons")
+		const insertContentHtml = this.collectionsView.generateHTML(this.collection,"claytons",this.navBar);
 //		const insertContentHtml = "<p>Here we go, here we go, here we go...bugger off you</p>"
 
 		const originalContent = this.pageObject.body;
@@ -3002,8 +3029,35 @@ class cc_ConfigurationController {
 		// Obtain the collection name and representation for the button clicked
 
 		let updateController = new updatePageController( 
-			collectionName, this.parentController
+			this.parentController, [ collectionName ]
 			);
+
+	}
+
+	/**
+	 * Update all of the collections with output pages, including the navigation bar between
+	 * the pages - i.e. the full "Claytons"
+	 * - check to see if there is more than one collection with an output page
+	 *   - generate alert if there is
+	 * - call the fullClaytonsController ?? or maybe update updatePageController??
+	 *    DECIDE
+	 * @param {*} event 
+	 */
+
+	updateFullClaytons(event) {
+
+		const collectionsWithOutputPage = this.model.getCollectionsWithOutputPage();
+
+		if (collectionsWithOutputPage.length <= 1) {
+			alert(`Full Claytons needs at least 2 collections with output pages -currently ${collectionsWithOutputPage.length}.`); 
+		}
+
+		for (let collectionName of collectionsWithOutputPage) {
+			console.log(`full claytons updating ${collectionName}`);
+			let updateController = new updatePageController( 
+				collectionName, this.parentController, true
+				);
+		}
 
 	}
 }
@@ -4086,7 +4140,8 @@ class AssessmentTableView extends cc_View {
 
     // only do this if we're not in edit mode
     let editMode = false;
-    const ccController = this.controller.configurationController.parentController;
+    //const ccController = this.controller.configurationController.parentController;
+    const ccController = this.controller.parentController;
     if (ccController) {
       editMode = ccController.editMode;
     }
@@ -5526,10 +5581,11 @@ class CollectionsView extends cc_View {
 	 * - give option to include the includePage
 	 * @param {String} collectionName 
 	 * @param {String} variety 
+	 * @param {boolean} navBar
 	 * @return {String} HTML string
 	 */
 
-	generateHTML(collectionName,variety="") {
+	generateHTML(collectionName,variety="",navBar=false) {
 		// does the collection have a representation?
 		if (!this.representations[collectionName]) {
 			return undefined;
@@ -5543,6 +5599,10 @@ class CollectionsView extends cc_View {
 
 		let html = this.representations[collectionName].generateHTML(collectionName,variety);
 
+		// add in the navBar insert it at the beginning of html
+		if (navBar ) {
+			html = `<h1>NAV BAR HERE</h1>${html}`;
+		}
 		// TODO
 		// - add in the navBar?
 		// - add in the include page?

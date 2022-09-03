@@ -398,7 +398,8 @@ export default class AssessmentTableView extends cc_View {
 
     // only do this if we're not in edit mode
     let editMode = false;
-    const ccController = this.controller.configurationController.parentController;
+    //const ccController = this.controller.configurationController.parentController;
+    const ccController = this.controller.parentController;
     if (ccController) {
       editMode = ccController.editMode;
     }

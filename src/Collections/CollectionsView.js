@@ -92,10 +92,11 @@ export default class CollectionsView extends cc_View {
 	 * - give option to include the includePage
 	 * @param {String} collectionName 
 	 * @param {String} variety 
+	 * @param {boolean} navBar
 	 * @return {String} HTML string
 	 */
 
-	generateHTML(collectionName,variety="") {
+	generateHTML(collectionName,variety="",navBar=false) {
 		// does the collection have a representation?
 		if (!this.representations[collectionName]) {
 			return undefined;
@@ -109,6 +110,10 @@ export default class CollectionsView extends cc_View {
 
 		let html = this.representations[collectionName].generateHTML(collectionName,variety);
 
+		// add in the navBar insert it at the beginning of html
+		if (navBar ) {
+			html = `<h1>NAV BAR HERE</h1>${html}`;
+		}
 		// TODO
 		// - add in the navBar?
 		// - add in the include page?

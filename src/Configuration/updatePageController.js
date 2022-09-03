@@ -25,11 +25,14 @@ export default class updatePageController {
 	/**
 	 * @param {String} collection  - name of Collection to update
 	 * @param {cc_Controller} parentController 
+	 * @param {boolean} navBar - true if the page should have a navigation bar
+	 *     typically meaning we're using this as part of a Full claytons
 	 */
 
-	constructor(collection,parentController) {
+	constructor(collection,parentController, navBar = false) {
 		this.collection = collection;
 		this.parentController = parentController;
+		this.navBar = navBar;
 
 		// TODO do sanity checks for the presence of these things
 		const collections = this.parentController.cc_configuration.COLLECTIONS;
@@ -134,7 +137,7 @@ export default class updatePageController {
 	updateOutputPage() {
 		DEBUG && console.log(`updatePageController: updateOutputPage: pageObject = ${JSON.stringify(this.pageObject)}`);
 
-		const insertContentHtml = this.collectionsView.generateHTML(this.collection,"claytons")
+		const insertContentHtml = this.collectionsView.generateHTML(this.collection,"claytons",this.navBar);
 //		const insertContentHtml = "<p>Here we go, here we go, here we go...bugger off you</p>"
 
 		const originalContent = this.pageObject.body;

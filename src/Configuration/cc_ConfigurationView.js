@@ -1216,6 +1216,12 @@ export default class cc_ConfigurationView extends cc_View {
 		if (newCollectionButton) {
 			newCollectionButton.onclick = (event) => this.controller.addNewCollection(event);
 		}
+		// add event handler for adding a new collection button#cc-config-update-full-claytons
+		const fullClaytonsButton = document.querySelector('button#cc-config-update-full-claytons');
+		if (fullClaytonsButton) {
+			fullClaytonsButton.onclick = (event) => this.controller.updateFullClaytons(event);
+		}
+
 		// add event handler for cc-config-collection-default selection
 		const defaultCheckboxes = document.querySelectorAll('input.cc-config-collection-default');
 		defaultCheckboxes.forEach(checkbox => {

@@ -459,4 +459,22 @@ export default class cc_ConfigurationModel {
 			delete module.metadata[fieldName];
 		}
 	}
+
+	/**
+	 * Filter ...cc_configuration.COLLECTIONS to return an array of objects with
+	 * an actual outputPage
+	 */
+	getCollectionsWithOutputPage() {
+		const cc_configuration = this.controller.parentController.cc_configuration;
+		const collections = cc_configuration.COLLECTIONS;
+		// filter collections hash to return an array of objects with an actual outputPage
+		let collectionsWithOutputPages = Object.keys(collections).filter( (collectionName) => {
+			if (collections[collectionName].outputPage &&
+				collections[collectionName].outputPage !== '') {
+				return collectionName;
+			}
+		});
+
+		return collectionsWithOutputPages;
+	}
 }

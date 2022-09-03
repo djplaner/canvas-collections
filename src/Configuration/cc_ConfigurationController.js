@@ -588,8 +588,35 @@ export default class cc_ConfigurationController {
 		// Obtain the collection name and representation for the button clicked
 
 		let updateController = new updatePageController( 
-			collectionName, this.parentController
+			this.parentController, [ collectionName ]
 			);
+
+	}
+
+	/**
+	 * Update all of the collections with output pages, including the navigation bar between
+	 * the pages - i.e. the full "Claytons"
+	 * - check to see if there is more than one collection with an output page
+	 *   - generate alert if there is
+	 * - call the fullClaytonsController ?? or maybe update updatePageController??
+	 *    DECIDE
+	 * @param {*} event 
+	 */
+
+	updateFullClaytons(event) {
+
+		const collectionsWithOutputPage = this.model.getCollectionsWithOutputPage();
+
+		if (collectionsWithOutputPage.length <= 1) {
+			alert(`Full Claytons needs at least 2 collections with output pages -currently ${collectionsWithOutputPage.length}.`); 
+		}
+
+		for (let collectionName of collectionsWithOutputPage) {
+			console.log(`full claytons updating ${collectionName}`);
+			let updateController = new updatePageController( 
+				collectionName, this.parentController, true
+				);
+		}
 
 	}
 }
