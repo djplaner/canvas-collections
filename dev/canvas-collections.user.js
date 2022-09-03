@@ -504,6 +504,17 @@ class cc_View {
 	addTooltips() {
 		if (this.TOOLTIPS) {
 			html5tooltips(this.TOOLTIPS);
+			// also need to loop through the TOOLTIPS and add the links, if defined
+			for (let tooltip of this.TOOLTIPS) {
+				if (tooltip.href && tooltip.targetSelector) {
+					// find the element with id tooltip.targetSelector
+					const element = document.querySelector(tooltip.targetSelector);
+					if (element) {
+						// set the href of element to tooltip.href
+						element.href = tooltip.href;
+					}
+				}
+			}
 		}
 	}
 
@@ -570,6 +581,15 @@ const CONFIG_VIEW_TOOLTIPS = [
 		targetSelector: "#cc-about-new-collection",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/#add-a-new-collection"
+	},
+	{ 
+		contentText: `<p>Update all configured output pages and include a navigation menu 
+		between them. </p>
+		<p>Best suited when more than one collection has an output page.</p>`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-full-claytons",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview"
 	},
 	{ 
 		contentText: `<p>Make collection invisible to students. 
@@ -1386,9 +1406,10 @@ class cc_ConfigurationView extends cc_View {
 			#cc-config-new-collection {
 			}
 
-			#cc-config-new-collection-button {
+			#cc-config-new-collection-button, #cc-config-update-full-claytons {
 				left: 50%;
 				transform: translateX(-50%);
+				font-size: 0.8em;
 			}
 
 			.cc-existing-collection {
@@ -1505,22 +1526,29 @@ class cc_ConfigurationView extends cc_View {
 			   			<i class="icon-question"></i></a>
 						</p>
 						<div class="cc-config-collection border border-trbl">
-						<div class="ic-Form-control" style="margin-bottom: 0px">
-						  	<input type="text" id="cc-config-new-collection-name" 
-							   placeholder="Name for new collection">
-						</div>
+						  <div class="ic-Form-control" style="margin-bottom: 0px">
+						  	  <input type="text" id="cc-config-new-collection-name" 
+							     placeholder="Name for new collection">
+						  </div>
 
-						<div class="cc-collection-representation">
-							<label for="cc-config-new-collection-representation">Representation</label>
-							<select id="cc-config-new-collection-representation">
-							  ${this.getAvailableRepresentations()}
-							</select>
-						</div>
+						  <div class="cc-collection-representation">
+							  <label for="cc-config-new-collection-representation">Representation</label>
+							  <select id="cc-config-new-collection-representation">
+							    ${this.getAvailableRepresentations()}
+							  </select>
+						  </div>
 
-						<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
-							<button class="btn btn-primary" id="cc-config-new-collection-button">Add</button>
-						</fieldset>
-					</div>
+						  <fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+							  <button class="btn btn-primary" id="cc-config-new-collection-button">Add</button>
+						  </fieldset>
+					  </div>
+						<p>Full "Claytons"
+						<a id="cc-about-full-claytons" target="_blank" href="">
+			   			<i class="icon-question"></i></a> </p>
+						  <fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+							  <button class="btn btn-primary" id="cc-config-update-full-claytons">Update</button>
+						  </fieldset>
+					  
 					</div>
 				  </div>
 				</div>

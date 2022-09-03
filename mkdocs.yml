@@ -77,6 +77,7 @@ nav:
         - Collections: reference/collections/overview.md
       - Representations:
         - Representations: reference/representations/overview.md
+        - Claytons: reference/representations/claytons/overview.md
       - Objects:
         - Objects: reference/objects/overview.md
   - 'Related Work': related-work.md

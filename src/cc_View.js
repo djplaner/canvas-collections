@@ -21,6 +21,17 @@ export default class cc_View {
 	addTooltips() {
 		if (this.TOOLTIPS) {
 			html5tooltips(this.TOOLTIPS);
+			// also need to loop through the TOOLTIPS and add the links, if defined
+			for (let tooltip of this.TOOLTIPS) {
+				if (tooltip.href && tooltip.targetSelector) {
+					// find the element with id tooltip.targetSelector
+					const element = document.querySelector(tooltip.targetSelector);
+					if (element) {
+						// set the href of element to tooltip.href
+						element.href = tooltip.href;
+					}
+				}
+			}
 		}
 	}
 
