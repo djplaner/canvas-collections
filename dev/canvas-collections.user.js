@@ -808,13 +808,6 @@ class cc_ConfigurationView extends cc_View {
 			const trash = trashMetadata[i];
 			trash.onclick = (event) => this.controller.manageModuleMetadata(event);
 		}
-		// button.cc-output-page-update-button
-		// - calls controller.updateOutputPage
-/*		const updateButtons = document.querySelectorAll(`button.cc-output-page-update-button`);
-		for (let i = 0; i < updateButtons.length; i++) {
-			const updateButton = updateButtons[i];
-			updateButton.onclick = (event) => this.controller.updateOutputPage(event);
-		} */
 
 		// add catch all handlers for other module config elements
 		const configDiv = document.querySelector(`#cc-module-config-${id}`);
@@ -2924,6 +2917,7 @@ class cc_ConfigurationController {
 			this.model.addModuleMetadata(moduleId, name, value);
 			this.changeMade(true);
 			this.view.updateSingleModuleConfig(moduleId);
+			this.parentController.updateCurrentRepresentation();
 		} else if (element === 'i') {
 			// handle deleting when target is i
 			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-(.*)-delete/)[1]);
@@ -2931,6 +2925,7 @@ class cc_ConfigurationController {
 			this.model.deleteModuleMetadata(moduleId, name);
 			this.changeMade(true);
 			this.view.updateSingleModuleConfig(moduleId);
+			this.parentController.updateCurrentRepresentation();
 		} else if ( element === 'input') {
 			// handle updating when target is input
 			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-(.*)-(.*)/)[1]);
@@ -2951,6 +2946,7 @@ class cc_ConfigurationController {
 			}
 			this.changeMade(true);
 			this.view.updateSingleModuleConfig(moduleId);
+			this.parentController.updateCurrentRepresentation();
 		}
 	}
 
@@ -3831,10 +3827,6 @@ const TABLE_HTML = `
 		</style>
 		<div id="cc-assessment-table" class="cc-assessment-container">
 
-      <p>
-      {{DESCRIPTION}}
-      </p>
-
 			<table class="responsive-table" role="table">
       			<caption>{{CAPTION}}</caption>
       			<thead role="rowgroup">
@@ -3871,7 +3863,7 @@ const TABLE_ROW_HTML = `
           <td role="cell">
             <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
             <div class="cc-table-cell-text">
-            <p>{{WEIGHTING}}</p>
+            <p>{{weighting}}</p>
             </div>
           </td>
           <td role="cell">
@@ -3883,7 +3875,7 @@ const TABLE_ROW_HTML = `
           <td role="cell">
             <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
             <div class="cc-table-cell-text">
-            <p>{{LEARNING-OUTCOMES}}</p>
+            <p>{{learning outcomes}}</p>
             </div>
           </td>
         </tr>
@@ -3930,7 +3922,7 @@ class AssessmentTableView extends cc_View {
     let message = document.createElement('div');
     message.className = 'cc-assessment-table';
 
-    message.innerHTML = this.generateAssessmentTable();
+    message.innerHTML = this.generateHTML();
     div.insertAdjacentElement('beforeend', message);
 
   }
@@ -3939,7 +3931,7 @@ class AssessmentTableView extends cc_View {
    * Work through module details for this collection and generate HTML with
    * an assessment table
    */
-  generateAssessmentTable() {
+  generateHTML() {
     let messageHtml = this.TABLE_HTML;
 
     // TODO update the messageHTML
@@ -3995,7 +3987,16 @@ class AssessmentTableView extends cc_View {
     }
     messageHtml = messageHtml.replace(/{{TABLE-ROWS}}/g, tableRows);
 
-    messageHtml = this.emptyRemainingFields(messageHtml);
+    // only do this if we're not in edit mode
+    let editMode = false;
+    const ccController = this.controller.configurationController.parentController;
+    if (ccController) {
+      editMode = ccController.editMode;
+    }
+
+    if (!editMode) {
+      messageHtml = this.emptyRemainingFields(messageHtml);
+    }
 
     return messageHtml;
 
@@ -6179,11 +6180,11 @@ class cc_ConfigurationStore {
 
 		// get list of commonIds
 		const commonIds = collectionIds.filter((id) => {
-			// convert id to int
 			return canvasIds.includes(parseInt(id));
 		});
 
 		// nothing to do if the lengths of three lists are the same
+		// - suggesting that collections and Canvas have the same modules
 		if (collectionIds.length===canvasIds.length && collectionIds.length===commonIds.length) {
 			return false;
 		}
@@ -6243,13 +6244,18 @@ class cc_ConfigurationStore {
 						};
 					}
 					// loop through entries in nameToId hash
+					let newModules = {};
 					for (let name in nameToId) {
 						// replace the ccModuleId with the canvasModuleId
-						this.parentController.cc_configuration.MODULES[nameToId[name].canvasModuleId.id] = 
+						//this.parentController.cc_configuration.MODULES[nameToId[name].canvasModuleId.id] = 
+						newModules[nameToId[name].canvasModuleId.id] =
 							this.parentController.cc_configuration.MODULES[nameToId[name].ccModuleId];
+						// set the id attribute of the object to the canvasModuleId
+						newModules[nameToId[name].canvasModuleId.id].id = nameToId[name].canvasModuleId.id;
 						// delete the ccModuleId
-						delete this.parentController.cc_configuration.MODULES[nameToId[name].ccModuleId.id];
+						//delete this.parentController.cc_configuration.MODULES[nameToId[name].ccModuleId.id];
 					}
+					this.parentController.cc_configuration.MODULES = newModules;
 				}
 			}
 

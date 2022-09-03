@@ -204,11 +204,11 @@ export default class cc_ConfigurationStore {
 
 		// get list of commonIds
 		const commonIds = collectionIds.filter((id) => {
-			// convert id to int
 			return canvasIds.includes(parseInt(id));
 		});
 
 		// nothing to do if the lengths of three lists are the same
+		// - suggesting that collections and Canvas have the same modules
 		if (collectionIds.length===canvasIds.length && collectionIds.length===commonIds.length) {
 			return false;
 		}
@@ -268,13 +268,18 @@ export default class cc_ConfigurationStore {
 						};
 					}
 					// loop through entries in nameToId hash
+					let newModules = {};
 					for (let name in nameToId) {
 						// replace the ccModuleId with the canvasModuleId
-						this.parentController.cc_configuration.MODULES[nameToId[name].canvasModuleId.id] = 
+						//this.parentController.cc_configuration.MODULES[nameToId[name].canvasModuleId.id] = 
+						newModules[nameToId[name].canvasModuleId.id] =
 							this.parentController.cc_configuration.MODULES[nameToId[name].ccModuleId];
+						// set the id attribute of the object to the canvasModuleId
+						newModules[nameToId[name].canvasModuleId.id].id = nameToId[name].canvasModuleId.id;
 						// delete the ccModuleId
-						delete this.parentController.cc_configuration.MODULES[nameToId[name].ccModuleId.id];
+						//delete this.parentController.cc_configuration.MODULES[nameToId[name].ccModuleId.id];
 					}
+					this.parentController.cc_configuration.MODULES = newModules;
 				}
 			}
 

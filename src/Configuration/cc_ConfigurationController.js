@@ -534,6 +534,7 @@ export default class cc_ConfigurationController {
 			this.model.addModuleMetadata(moduleId, name, value);
 			this.changeMade(true);
 			this.view.updateSingleModuleConfig(moduleId);
+			this.parentController.updateCurrentRepresentation();
 		} else if (element === 'i') {
 			// handle deleting when target is i
 			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-(.*)-delete/)[1]);
@@ -541,6 +542,7 @@ export default class cc_ConfigurationController {
 			this.model.deleteModuleMetadata(moduleId, name);
 			this.changeMade(true);
 			this.view.updateSingleModuleConfig(moduleId);
+			this.parentController.updateCurrentRepresentation();
 		} else if ( element === 'input') {
 			// handle updating when target is input
 			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-(.*)-(.*)/)[1]);
@@ -561,6 +563,7 @@ export default class cc_ConfigurationController {
 			}
 			this.changeMade(true);
 			this.view.updateSingleModuleConfig(moduleId);
+			this.parentController.updateCurrentRepresentation();
 		}
 	}
 

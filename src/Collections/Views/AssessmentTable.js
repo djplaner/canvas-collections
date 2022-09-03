@@ -170,10 +170,6 @@ const TABLE_HTML = `
 		</style>
 		<div id="cc-assessment-table" class="cc-assessment-container">
 
-      <p>
-      {{DESCRIPTION}}
-      </p>
-
 			<table class="responsive-table" role="table">
       			<caption>{{CAPTION}}</caption>
       			<thead role="rowgroup">
@@ -210,7 +206,7 @@ const TABLE_ROW_HTML = `
           <td role="cell">
             <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
             <div class="cc-table-cell-text">
-            <p>{{WEIGHTING}}</p>
+            <p>{{weighting}}</p>
             </div>
           </td>
           <td role="cell">
@@ -222,7 +218,7 @@ const TABLE_ROW_HTML = `
           <td role="cell">
             <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
             <div class="cc-table-cell-text">
-            <p>{{LEARNING-OUTCOMES}}</p>
+            <p>{{learning outcomes}}</p>
             </div>
           </td>
         </tr>
@@ -269,7 +265,7 @@ export default class AssessmentTableView extends cc_View {
     let message = document.createElement('div');
     message.className = 'cc-assessment-table';
 
-    message.innerHTML = this.generateAssessmentTable();
+    message.innerHTML = this.generateHTML();
     div.insertAdjacentElement('beforeend', message);
 
   }
@@ -278,7 +274,7 @@ export default class AssessmentTableView extends cc_View {
    * Work through module details for this collection and generate HTML with
    * an assessment table
    */
-  generateAssessmentTable() {
+  generateHTML() {
     let messageHtml = this.TABLE_HTML;
 
     // TODO update the messageHTML
@@ -334,7 +330,16 @@ export default class AssessmentTableView extends cc_View {
     }
     messageHtml = messageHtml.replace(/{{TABLE-ROWS}}/g, tableRows);
 
-    messageHtml = this.emptyRemainingFields(messageHtml);
+    // only do this if we're not in edit mode
+    let editMode = false;
+    const ccController = this.controller.configurationController.parentController;
+    if (ccController) {
+      editMode = ccController.editMode;
+    }
+
+    if (!editMode) {
+      messageHtml = this.emptyRemainingFields(messageHtml);
+    }
 
     return messageHtml;
 
