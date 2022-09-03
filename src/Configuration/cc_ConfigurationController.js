@@ -436,6 +436,13 @@ export default class cc_ConfigurationController {
 			// make sure it's saved
 			// update various representations
 
+			// for an output change, need re-display collections form so that
+			// the update button appears
+			if (pageType==="output") {
+				this.view.updateExistingCollections();
+			}
+
+
 			this.changeMade(true);
 
 			// TODO
@@ -572,6 +579,7 @@ export default class cc_ConfigurationController {
 		// get the collection name from the event.target.id with the format
 		//     cc-collection-<collection-name>-output-page-update
 		const collectionName = event.target.id.match(/cc-collection-(.*)-output-page-update/)[1];
+		
 
 		// Obtain the collection name and representation for the button clicked
 
