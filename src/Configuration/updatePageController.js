@@ -32,17 +32,49 @@ export default class updatePageController {
 		this.parentController = parentController;
 
 		// TODO do sanity checks for the presence of these things
+		const collections = this.parentController.cc_configuration.COLLECTIONS;
+		if (!collections) {
+			alert(`updatePageController: no collections defined`);
+			return;
+		}
+		if (!collections.hasOwnProperty(collection)) {
+			alert(`updatePageController: collection ${collection} not defined`);
+			return;
+		}
 
 		// get the configuration config details from parent controller for the collection
 		this.collectionConfig = this.parentController.cc_configuration.COLLECTIONS[collection];
 		// extract out the outputPageName and representationName
+		if (
+			!this.collectionConfig.hasOwnProperty("outputPage") ||
+			this.collectionConfig.outputPage===""
+			) {
+			alert(`updatePageController: collection ${collection} has no outputPageName`);
+			return;
+		}
 		this.outputPageName = this.collectionConfig.outputPage;
 		this.representationName = this.collectionConfig.representation;
 
 		// actual representation object ??
 		// parentController.collectionsController.view
 		//   - representations dict keyed on collection name
+		if (!this.parentController.hasOwnProperty("collectionsController")) {
+			alert(`updatePageController: no collectionsController`);
+			return;
+		}
+		if (!this.parentController.collectionsController.hasOwnProperty("view")) {
+			alert(`updatePageController: no collectionsController.view`);
+			return;
+		}
 		this.collectionsView = this.parentController.collectionsController.view;
+		if (!this.collectionsView.hasOwnProperty("representations")) {
+			alert(`updatePageController: no collectionsController.view.representations`);
+			return;
+		}
+		if (!this.collectionsView.representations.hasOwnProperty(this.collection)) {
+			alert(`updatePageController: no collectionsController.view.representations.${this.collection}`);
+			return;
+		}
 		this.representationObject = this.parentController.collectionsController.view.representations[this.collection];
 
 

@@ -302,7 +302,9 @@ export default class CollectionsView extends cc_View {
 				}
 			} else {
 				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
-				contextModule.style.display = 'block';
+				if (contextModule) {
+					contextModule.style.display = 'block';
+				}
 			}
 		}
 
