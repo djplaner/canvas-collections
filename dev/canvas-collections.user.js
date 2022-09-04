@@ -3370,6 +3370,13 @@ class NavView extends cc_View {
 		let navBarHTML = this.generateHTML();
 		div.insertAdjacentHTML('beforeend', navBarHTML);
 
+		// add event handler
+		const navItems = document.querySelectorAll('li.cc-nav');
+		// loop thru each navItem
+		for (let i=0; i<navItems.length; i+=1) {
+			navItems[i].onclick = (event) => this.controller.navigateCollections(event);
+		}
+
 		this.addTooltips();
 
 		// add html to div#cc-canvas-collections
@@ -3514,7 +3521,7 @@ div.cc-collection-hidden > a {
 			}
 			count += 1;
 
-			navItem.onclick = (event) => this.controller.navigateCollections(event);
+//			navItem.onclick = (event) => this.controller.navigateCollections(event);
 			// TODO probably shouldn't be on this view the click? SHouldn't it be the
 			// controller?, 
 			//navItem.onclick = () => this.collectionsClick(collection, this);
@@ -3997,13 +4004,17 @@ td.descriptionCell {
     margin: 0.5rem;
     font-size: 0.8rem;
   }
+
+  #cc-assessment-table {
+    margin-top: 0.5rem !important;
+  }
 	`;
 
 const TABLE_HTML = `
+		<div id="cc-assessment-table" class="cc-assessment-container">
 		<style>
 			${TABLE_STYLES}
 		</style>
-		<div id="cc-assessment-table" class="cc-assessment-container">
 
 			<table class="cc-responsive-table" role="table">
       			<caption>{{CAPTION}}</caption>

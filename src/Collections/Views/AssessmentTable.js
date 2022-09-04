@@ -162,13 +162,17 @@ td.descriptionCell {
     margin: 0.5rem;
     font-size: 0.8rem;
   }
+
+  #cc-assessment-table {
+    margin-top: 0.5rem !important;
+  }
 	`;
 
 const TABLE_HTML = `
+		<div id="cc-assessment-table" class="cc-assessment-container">
 		<style>
 			${TABLE_STYLES}
 		</style>
-		<div id="cc-assessment-table" class="cc-assessment-container">
 
 			<table class="cc-responsive-table" role="table">
       			<caption>{{CAPTION}}</caption>
