@@ -10,7 +10,7 @@ The [Features page](https://djplaner.github.io/canvas-collections/features/) pro
 
 It can be used by an individual teacher or by a whole institution.
 
-See [the Canvas Collections website](https://djplaner.github.io/canvas-collections/) for more information.
+See [the Canvas Collections documentation site](https://djplaner.github.io/canvas-collections/) for more information.
 
 ### Current Status
 
