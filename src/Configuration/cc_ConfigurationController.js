@@ -619,4 +619,18 @@ export default class cc_ConfigurationController {
 		}
 
 	}
+
+
+	/**
+	 * User has clicked button#cc-collection-<<collectionName>>-apply-module-labels
+	 * to apply all the Collections labels to the names of the Canvas modules in the collection.
+	 * @param {Event} event 
+	 */
+
+	applyModuleLabels(event) {
+		// identify the collection name
+		const collectionName = event.target.id.match(/cc-collection-(.*)-apply-module-labels/)[1];
+		alert(`Applying module labels to ${collectionName}`);
+
+	}
 }

@@ -44,8 +44,6 @@ export default class GriffithCardsView extends cc_View {
 			alert("Another funny calendar miss. Fix it");
 		}
 
-
-
 		this.currentCollection = this.model.getCurrentCollection();
 	}
 

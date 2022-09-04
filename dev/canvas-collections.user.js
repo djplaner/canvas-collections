@@ -624,8 +624,25 @@ const CONFIG_VIEW_TOOLTIPS = [
 		`,
 		targetSelector: '#cc-about-update-output-page',
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/#update-page"
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview#output-page"
 	},
+	{ 
+		contentText: `Specify the name of an existing Canvas page and the content of that page
+		will be displayed before the current collection's representation 
+		(it is <strong>included</strong>)`,
+		targetSelector: '#cc-about-include-page',
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview#include-page"
+	},
+	{ 
+		contentText: `<p>Modify the names of Canvas modules by apply the Collection's label/number</p>
+		`,
+		targetSelector: '#cc-about-apply-module-labels',
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview#apply-label-modules"
+	},
+
+
 
 
 	//******** Module configuration */
@@ -1402,8 +1419,9 @@ class cc_ConfigurationView extends cc_View {
 			}
 
 			.cc-box-body {
-				width: 500px;
+				width: 35em; 
 				padding-left: 0.5em;
+				padding-right: 0.5em;
 				padding-bottom: 1.em;
 			}
 
@@ -1461,13 +1479,11 @@ class cc_ConfigurationView extends cc_View {
  
 			.cc-output-page-update {
 				font-size: 0.8rem;
-				margin: 0.5rem;
 			}
 
-			.cc-output-page-update-button {
+			.cc-output-page-update-button, .cc-apply-module-labels-update-button {
 				font-size: 0.8rem;
 				padding: 0.2rem;
-				margin: 0.5rem;
 			}
 
 			.cc-config-error {
@@ -1667,25 +1683,8 @@ class cc_ConfigurationView extends cc_View {
 					</select>
 				</div>
 				<div class="cc-collection-representation">
-					<label for="cc-collection-${collectionName}-include-page">Include page</label>
-				 	<input id="cc-collection-${collectionName}-include-page" 
-					     value="${includePage}" class="cc-existing-collection" />
-				</div>
-				<div class="cc-collection-representation">
-					<label for="cc-collection-${collectionName}-output-page">Output page</label>
-				 	<input id="cc-collection-${collectionName}-output-page" 
-					      value="${outputPage}" class="cc-existing-collection" />
-				</div>
-				<div class="cc-collection-representation cc-output-page-update ${outputPageExists}">
-					<button id="cc-collection-${collectionName}-output-page-update"
-					      class="btn cc-output-page-update-button">Update output page</button>
-					<a id="cc-about-update-output-page" target="_blank" href="">
-			   			<i class="icon-question"></i></a>
-
-				</div>
-
 				<!-- put the options -->
-				<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+				<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox" style="margin-bottom:0.5em">
 					<div class="ic-Checkbox-group">
 						<div class="ic-Form-control ic-Form-control--checkbox">
 							<input type="checkbox" id="cc-config-collection-${collectionName}-default"
@@ -1705,6 +1704,40 @@ class cc_ConfigurationView extends cc_View {
 						</div>
 					</div>
 				</fieldset>
+				</div>
+
+				<div>
+				  Include page
+					<a id="cc-about-include-page" target="_blank" href="">
+			   			<i class="icon-question"></i></a>
+				  <div style="padding-left:0.5em">
+				 	<input id="cc-collection-${collectionName}-include-page" 
+					     value="${includePage}" class="cc-existing-collection" />
+				  </div>
+				</div>
+				<!-- output page -->
+				<div style="margin-top:0.5em">
+				  Output page
+					<a id="cc-about-update-output-page" target="_blank" href="">
+			   			<i class="icon-question"></i></a>
+				  <div class="cc-collection-representation">
+<!--					<label for="cc-collection-${collectionName}-output-page">Name</label> -->
+				 	<input id="cc-collection-${collectionName}-output-page" 
+					      value="${outputPage}" class="cc-existing-collection" />
+				  <span class="cc-collection-representation cc-output-page-update ${outputPageExists}">
+					<button id="cc-collection-${collectionName}-output-page-update"
+					      class="btn cc-output-page-update-button">Update</button>
+				  </span>
+				</div>
+  			    <div style="display:flex;margin-top:0.5em;margin-bottom:0.5em">
+				  <div style="margin-right:0.5em">
+				  Apply module labels
+					<a id="cc-about-apply-module-labels" target="_blank" href="">
+			   			<i class="icon-question"></i></a>
+					</div>
+					<button id="cc-collection-${collectionName}-apply-module-labels"
+					      class="btn cc-apply-module-labels-update-button">Apply</button>
+
 			</div>
 			`;
 
@@ -1807,6 +1840,13 @@ class cc_ConfigurationView extends cc_View {
 		for (let i = 0; i < updateButtons.length; i++) {
 			const updateButton = updateButtons[i];
 			updateButton.onclick = (event) => this.controller.updateOutputPage(event);
+		}
+		// button.cc-apply-module-labels-update-button
+		// - calls controller.applyModuleLabels
+		const applyModuleLabelsButton = document.querySelectorAll(`button.cc-apply-module-labels-update-button`);
+		for (let i = 0; i < applyModuleLabelsButton.length; i++) {
+			const button = applyModuleLabelsButton[i];
+			button.onclick = (event) => this.controller.applyModuleLabels(event);
 		}
 	}
 
@@ -3058,6 +3098,20 @@ class cc_ConfigurationController {
 				collectionName, this.parentController, true
 				);
 		}
+
+	}
+
+
+	/**
+	 * User has clicked button#cc-collection-<<collectionName>>-apply-module-labels
+	 * to apply all the Collections labels to the names of the Canvas modules in the collection.
+	 * @param {Event} event 
+	 */
+
+	applyModuleLabels(event) {
+		// identify the collection name
+		const collectionName = event.target.id.match(/cc-collection-(.*)-apply-module-labels/)[1];
+		alert(`Applying module labels to ${collectionName}`);
 
 	}
 }
@@ -4390,8 +4444,6 @@ class GriffithCardsView extends cc_View {
 		} else {
 			alert("Another funny calendar miss. Fix it");
 		}
-
-
 
 		this.currentCollection = this.model.getCurrentCollection();
 	}
