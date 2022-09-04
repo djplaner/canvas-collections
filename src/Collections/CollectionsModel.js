@@ -72,7 +72,7 @@ export default class CollectionsModel {
 	}
 
 	getCollectionRepresentation(collection) {
-		if ( !this.cc_configuration.COLLECTIONS.hasOwnProperty(collection) ||
+		if (!this.cc_configuration.COLLECTIONS.hasOwnProperty(collection) ||
 			!this.cc_configuration.COLLECTIONS[collection].hasOwnProperty('representation')) {
 			return null;
 		}
@@ -212,6 +212,32 @@ export default class CollectionsModel {
 	}
 
 	/**
+	 * Given a module hash, return the module.name with any possible label/auto num removed
+	 * @param {*} module 
+	 */
+
+	deLabelModuleName(module) {
+
+		const existingName = module.name;
+		let prepend = "";
+		if (module.label) {
+			prepend = module.label;
+		}
+		if (module.actualNum) {
+			prepend += ` ${module.actualNum}`;
+			// remove first char from CARD_LABEL if it is a space
+			if (prepend.charAt(0) === ' ') {
+				prepend = prepend.substring(1);
+			}
+		}
+		prepend = `${prepend}: `;
+		// modify existingName to remove prepend and any subsequent whitespace
+		const newName = existingName.replace(prepend, '').trim();
+
+		return newName;
+	}
+
+	/**
 	 * Return a list of collection objects (in collections order) which have defined
 	 * an output page
 	 */
@@ -221,8 +247,8 @@ export default class CollectionsModel {
 			let collection = this.cc_configuration.COLLECTIONS_ORDER[i];
 			if (this.cc_configuration.COLLECTIONS[collection].hasOwnProperty('outputPage') &&
 				this.cc_configuration.COLLECTIONS[collection].outputPage !== '') {
-					let collectionObj = this.cc_configuration.COLLECTIONS[collection];
-					collectionObj.name = collection;
+				let collectionObj = this.cc_configuration.COLLECTIONS[collection];
+				collectionObj.name = collection;
 				collections.push(collectionObj);
 			}
 		}
@@ -240,7 +266,7 @@ export default class CollectionsModel {
 	 * - This is an actual kludge.  Should be putting the actual URL in there somehow
 	 * @param {String} pageName 
 	 */
-	calculatePageUrl( pageName ) {
+	calculatePageUrl(pageName) {
 		const courseId = this.controller.parentController.courseId;
 		let pageUrl = this.controller.parentController.documentUrl;
 		// documentUrl format is https://<<hostname>>/courses/<<courseId>>/.*

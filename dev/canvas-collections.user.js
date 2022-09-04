@@ -3389,7 +3389,7 @@ class CollectionsModel {
 	}
 
 	getCollectionRepresentation(collection) {
-		if ( !this.cc_configuration.COLLECTIONS.hasOwnProperty(collection) ||
+		if (!this.cc_configuration.COLLECTIONS.hasOwnProperty(collection) ||
 			!this.cc_configuration.COLLECTIONS[collection].hasOwnProperty('representation')) {
 			return null;
 		}
@@ -3529,6 +3529,32 @@ class CollectionsModel {
 	}
 
 	/**
+	 * Given a module hash, return the module.name with any possible label/auto num removed
+	 * @param {*} module 
+	 */
+
+	deLabelModuleName(module) {
+
+		const existingName = module.name;
+		let prepend = "";
+		if (module.label) {
+			prepend = module.label;
+		}
+		if (module.actualNum) {
+			prepend += ` ${module.actualNum}`;
+			// remove first char from CARD_LABEL if it is a space
+			if (prepend.charAt(0) === ' ') {
+				prepend = prepend.substring(1);
+			}
+		}
+		prepend = `${prepend}: `;
+		// modify existingName to remove prepend and any subsequent whitespace
+		const newName = existingName.replace(prepend, '').trim();
+
+		return newName;
+	}
+
+	/**
 	 * Return a list of collection objects (in collections order) which have defined
 	 * an output page
 	 */
@@ -3538,8 +3564,8 @@ class CollectionsModel {
 			let collection = this.cc_configuration.COLLECTIONS_ORDER[i];
 			if (this.cc_configuration.COLLECTIONS[collection].hasOwnProperty('outputPage') &&
 				this.cc_configuration.COLLECTIONS[collection].outputPage !== '') {
-					let collectionObj = this.cc_configuration.COLLECTIONS[collection];
-					collectionObj.name = collection;
+				let collectionObj = this.cc_configuration.COLLECTIONS[collection];
+				collectionObj.name = collection;
 				collections.push(collectionObj);
 			}
 		}
@@ -3557,7 +3583,7 @@ class CollectionsModel {
 	 * - This is an actual kludge.  Should be putting the actual URL in there somehow
 	 * @param {String} pageName 
 	 */
-	calculatePageUrl( pageName ) {
+	calculatePageUrl(pageName) {
 		const courseId = this.controller.parentController.courseId;
 		let pageUrl = this.controller.parentController.documentUrl;
 		// documentUrl format is https://<<hostname>>/courses/<<courseId>>/.*
@@ -4481,7 +4507,7 @@ class AssessmentTableView extends cc_View {
       let mapping = {
         'MODULE-ID': modules[i].id,
         'DESCRIPTION': modules[i].description,
-        'TITLE': modules[i].name,
+        'TITLE': this.model.deLabelModuleName(modules[i]),
         'TYPE': modules[i].label,
         'DUE-DATE': dueDateString
       };
@@ -5030,6 +5056,8 @@ class GriffithCardsView extends cc_View {
 		const imageUrl = this.generateCardImageUrl(module);
 		const imageSize = this.generateCardImageSize(module);
 
+		const moduleName = this.model.deLabelModuleName(module);
+
 		const LINK_ITEM = this.generateCardLinkItem(module);
 		const PUBLISHED = this.generateCardPublished(module);
 
@@ -5065,7 +5093,7 @@ class GriffithCardsView extends cc_View {
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
 	      <a href="#${module.id}" class="cc-card-link"></a>
-		  <img class="cc-card-image" style="${imageSize}" src="${imageUrl}" alt="Image representing '${module.name}'">
+		  <img class="cc-card-image" style="${imageSize}" src="${imageUrl}" alt="Image representing '${moduleName}'">
       	${DATE_WIDGET}
       	${COMING_SOON}
 	 	${PUBLISHED}
@@ -5073,7 +5101,7 @@ class GriffithCardsView extends cc_View {
       <div class="cc-card-content">
 		<div class=cc-card-label">
 	    	<span class="cc-card-label"> ${CARD_LABEL} </span>
-	    	<h3 class="cc-card-title">${module.name}</h3>
+	    	<h3 class="cc-card-title">${moduleName}</h3>
 		</div>
       	<div class="cc-card-description">
 	  		${description}

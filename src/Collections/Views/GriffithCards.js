@@ -431,6 +431,8 @@ export default class GriffithCardsView extends cc_View {
 		const imageUrl = this.generateCardImageUrl(module);
 		const imageSize = this.generateCardImageSize(module);
 
+		const moduleName = this.model.deLabelModuleName(module);
+
 		const LINK_ITEM = this.generateCardLinkItem(module);
 		const PUBLISHED = this.generateCardPublished(module);
 
@@ -466,7 +468,7 @@ export default class GriffithCardsView extends cc_View {
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
 	      <a href="#${module.id}" class="cc-card-link"></a>
-		  <img class="cc-card-image" style="${imageSize}" src="${imageUrl}" alt="Image representing '${module.name}'">
+		  <img class="cc-card-image" style="${imageSize}" src="${imageUrl}" alt="Image representing '${moduleName}'">
       	${DATE_WIDGET}
       	${COMING_SOON}
 	 	${PUBLISHED}
@@ -474,7 +476,7 @@ export default class GriffithCardsView extends cc_View {
       <div class="cc-card-content">
 		<div class=cc-card-label">
 	    	<span class="cc-card-label"> ${CARD_LABEL} </span>
-	    	<h3 class="cc-card-title">${module.name}</h3>
+	    	<h3 class="cc-card-title">${moduleName}</h3>
 		</div>
       	<div class="cc-card-description">
 	  		${description}

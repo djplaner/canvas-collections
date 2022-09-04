@@ -374,7 +374,7 @@ export default class AssessmentTableView extends cc_View {
       let mapping = {
         'MODULE-ID': modules[i].id,
         'DESCRIPTION': modules[i].description,
-        'TITLE': modules[i].name,
+        'TITLE': this.model.deLabelModuleName(modules[i]),
         'TYPE': modules[i].label,
         'DUE-DATE': dueDateString
       };
