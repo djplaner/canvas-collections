@@ -20,6 +20,7 @@
 import { cc_ConfigurationModel } from './cc_ConfigurationModel.js';
 import { cc_ConfigurationView } from './cc_ConfigurationView.js';
 import { updatePageController } from './updatePageController.js';
+import { moduleLabelApplicator } from './moduleLabelApplicator.js';
 
 const TIME_BETWEEN_SAVES = 10000; // 10 seconds
 
@@ -630,7 +631,9 @@ export default class cc_ConfigurationController {
 	applyModuleLabels(event) {
 		// identify the collection name
 		const collectionName = event.target.id.match(/cc-collection-(.*)-apply-module-labels/)[1];
-		alert(`Applying module labels to ${collectionName}`);
+
+		let applicator = new moduleLabelApplicator(collectionName, this.parentController);
+		applicator.execute();
 
 	}
 }

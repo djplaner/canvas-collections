@@ -200,7 +200,7 @@ export default class cc_Controller {
 	/**
 	 * @descr Generate API request for all information of course's modules
 	 */
-	async requestModuleInformation() {
+	async requestModuleInformation(responseHandler=undefined) {
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: for ${this.courseId}`);
 
 		let callUrl = `/api/v1/courses/${this.courseId}/modules?include=items&per_page=500`;
@@ -224,7 +224,13 @@ export default class cc_Controller {
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(data)}`);
 
 		this.moduleDetails = data;
-		this.configurationStore.getConfiguration();
+
+		// if a response handler has been provided then call it
+		if (responseHandler) {
+			responseHandler(response.ok);
+		} else {
+			this.configurationStore.getConfiguration();
+		}
 	}
 
 	/**
