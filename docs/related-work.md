@@ -9,7 +9,9 @@ Canvas Collections seeks to address long-term limitations in Canvas. Limitations
 And other related work that Collections does not address.
 
 - [Navigation](#navigation) - attempts to improve navigation within modules
-- [Other](#other) - other related work
+- [Other Canvas work](#other-canvas-work) - other related work
+
+Collections is also inspired by [earlier work](#earlier-work).
 
 ## Collections
 
@@ -62,7 +64,7 @@ Not currently aware of anything that does this.
 
     Creates a right-hand menu to support navigation within Modules
 
-## Other
+## Other Canvas Work
 
 - [Canvas unpublish hack](https://daveeargle.com/2019/10/25/canvas-unpublish-hack/)
 
@@ -72,3 +74,11 @@ Not currently aware of anything that does this.
 
     Canvas community post that includes small JS code example using promises etc.
 
+## Earlier Work
+
+- [Card Interface](https://djplaner.github.io/Card-Interface-Tweak/) - direct inspiration for Collections. Javascript that modifies Blackboard Learn pages to add a card interface.
+- [Blackboard Tweaks](http://tweaks.github.io/Tweaks/) - in turn the inspiration for the Card Interface. Earlier work using Javascript to improve Blackboard Lean.
+
+## Academic Literature
+
+Jones, D. (2019). [Exploring knowledge reuse in design for digital learning: Tweaks, H5P, CASA and constructive templates](https://djon.es/blog/2019/08/08/exploring-knowledge-reuse-in-design-for-digital-learning-tweaks-h5p-constructive-templates-and-casa/). In Y. W. Chew, K. M. Chan, & A. Alphonso (Eds.), Personalised Learning. Diverse Goals. One Heart. ASCILITE 2019 (pp. 139–148).

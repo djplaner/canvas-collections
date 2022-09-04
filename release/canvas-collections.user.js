@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.12
+// @version      0.8.13
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -571,7 +571,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.12";
+const CC_VERSION = "0.8.13";
 
 const CONFIG_VIEW_TOOLTIPS = [ 
 	{ 
@@ -3843,22 +3843,22 @@ div.cc-collection-hidden > a {
 	 */
 	generateClaytonsNavBar(collectionName = '') {
 		let CLAYTONS_NAVBAR_HTML = `
-		<div id="bannerNav">
-		  <ul id="courseBannerNav">
+		<div id="cc-nav" style="font-size:small">
+		  <ul style="list-style-type:none;margin:0;padding:0;overflow:hidden;background-color:#eeeeee;display:table;table-layout:fixed;width:100%">
 		  {{NAVBAR_ITEMS}}
 		  </ul>
 	    </div>`;
 
 		// get list of collection details without output pages(including output page)
 		const collectionsOutput = this.model.getOutputPageCollections();
-		const activeLi = ' style="background-color: #c02424"';
-		const activeA = ' style="border-top: none;text-decoration: none;color: #fff; font-weight: bold;font-size:1.2em;"';
+		const activeLi = ' style="display:table-cell;float:none;width:100%;font-weight:bold;background-color:#c12525;"';
+		const activeA = ' style="display:block;text-align:center;text-decoration:none;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;color:#fff;"';
 
 		let items = '';
 
 		collectionsOutput.forEach(collection => {
-			let liStyle ='';
-			let aStyle = ' style="text-decoration:none"';
+			let liStyle =' style="display:table-cell;width:100%;float:none"';
+			let aStyle = ' style="text-decoration:none;display:block;text-align:center;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;border-top:4px solid #eee;"';
 			if (collection.name === collectionName) {
 				liStyle = activeLi;
 				aStyle = activeA;

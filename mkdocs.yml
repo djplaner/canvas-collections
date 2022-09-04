@@ -66,6 +66,7 @@ nav:
       - Design: walk-throughs/new/design.md
       - Configure Collections: walk-throughs/new/configure-collections.md
       - Configure Modules: walk-throughs/new/configure-modules.md
+      - Set up "Claytons": walk-throughs/new/set-up-claytons.md
     - Making changes:
       - Add a collection: walk-throughs/changes/add-a-collection.md
       - Delete a collection: walk-throughs/changes/delete-a-collection.md
