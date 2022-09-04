@@ -6,11 +6,19 @@ There are two ways to install Canvas Collections:
 
 ### Individual
 
-Installed Canvas Collections in your web browser. As a teacher/designer **you** can configure and use Collections in your Canvas course sites. For your students to use Canvas Collections, you will need to use the "Claytons" Collections method. 
+Install Canvas Collections in your web browser. As a teacher/designer you - and only you - can configure and use Collections in your Canvas course sites. For your students others to use Canvas Collections, there are two options:
 
-4. Institutionally.
+1. [Live Collections](../use/live.md); or,
 
-    Installed into your institution's Canvas theme, Canvas Collections can be used by teachers/designers in their Canvas course sites. For students to use Canvas Collections, a teacher/designer must configure the course site using either the "live" or "Claytons" methods.
+    They also install Canvas Collections into their web browser.
+
+2. ["Claytons" Collections](../use/claytons.md).
+
+    You use Canvas Collections to create pages with Collections which others can use without requiring Collections.
+
+### Institutionally.
+
+Installed into your institution's Canvas theme, Canvas Collections can be used by teachers/designers in their Canvas course sites. For students to use Canvas Collections, a teacher/designer must configure the course site using either the "live" or "Claytons" methods.
 
 ## Installation Pre-requisites
 
