@@ -60,7 +60,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		`,
 		targetSelector: '#cc-about-update-output-page',
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview#output-page"
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#output-page"
 	},
 	{ 
 		contentText: `Specify the name of an existing Canvas page and the content of that page
@@ -68,14 +68,16 @@ const CONFIG_VIEW_TOOLTIPS = [
 		(it is <strong>included</strong>)`,
 		targetSelector: '#cc-about-include-page',
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview#include-page"
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#include-page"
 	},
 	{ 
-		contentText: `<p>Modify the names of Canvas modules by apply the Collection's label/number</p>
+		contentText: `<p>🚧🧪☠️ <strong>Warning:</strong> This feature is experimental, under construction, and
+		potentially destructive. Only use as suggested and if you're certain.</p>
+		<p>Modify the names of Canvas modules by apply the Collection's label/number</p>
 		`,
 		targetSelector: '#cc-about-apply-module-labels',
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview#apply-label-modules"
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#apply-module-labels"
 	},
 
 
@@ -1167,7 +1169,7 @@ export default class cc_ConfigurationView extends cc_View {
 				</div>
   			    <div style="display:flex;margin-top:0.5em;margin-bottom:0.5em">
 				  <div style="margin-right:0.5em">
-				  Apply module labels
+				  🧪Apply module labels ☠️
 					<a id="cc-about-apply-module-labels" target="_blank" href="">
 			   			<i class="icon-question"></i></a>
 					</div>

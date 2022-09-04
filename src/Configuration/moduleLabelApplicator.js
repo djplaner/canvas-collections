@@ -98,6 +98,11 @@ export default class moduleLabelApplicator {
 					prepend = prepend.substring(1);
 				}
 			}
+			// if oldName already starts with prepend, then continue
+			// also picks up if prepend is empty
+			if (oldName.startsWith(prepend)) {
+				continue;
+			}
 			const newName = `${prepend}: ${oldName}`;
 
 			// TODO - need to identify old prepends

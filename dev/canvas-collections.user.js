@@ -636,6 +636,8 @@ const CONFIG_VIEW_TOOLTIPS = [
 	},
 	{ 
 		contentText: `<p>Modify the names of Canvas modules by apply the Collection's label/number</p>
+		<p>🚧🧪☠️ <strong>Warning:</strong> This feature is experimental, under construction, and
+		potentially destructive. Only use as suggested and if you're certain.</p>
 		`,
 		targetSelector: '#cc-about-apply-module-labels',
 		animateFunction: "spin",
@@ -1731,7 +1733,7 @@ class cc_ConfigurationView extends cc_View {
 				</div>
   			    <div style="display:flex;margin-top:0.5em;margin-bottom:0.5em">
 				  <div style="margin-right:0.5em">
-				  Apply module labels
+				  🧪Apply module labels🧪
 					<a id="cc-about-apply-module-labels" target="_blank" href="">
 			   			<i class="icon-question"></i></a>
 					</div>
@@ -2578,6 +2580,10 @@ class moduleLabelApplicator {
 				if (prepend.charAt(0) === ' ') {
 					prepend = prepend.substring(1);
 				}
+			}
+			// if oldName already starts with prepend, then continue
+			if (oldName.startsWith(prepend)) {
+				continue;
 			}
 			const newName = `${prepend}: ${oldName}`;
 
