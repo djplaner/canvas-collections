@@ -1002,6 +1002,19 @@
     Existing Collections
   </a>
   
+    <nav class="md-nav" aria-label="Existing Collections">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apply-module-labels" class="md-nav__link">
+    Apply module labels
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1191,6 +1204,19 @@
     Existing Collections
   </a>
   
+    <nav class="md-nav" aria-label="Existing Collections">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apply-module-labels" class="md-nav__link">
+    Apply module labels
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1212,9 +1238,9 @@
 
 
 <h1 id="collections">Collections</h1>
-<h3 id="add-a-new-collection">Add a new collection</h3>
+<h2 id="add-a-new-collection">Add a new collection</h2>
 <p><em>Insert instructions on how to add a new collection</em></p>
-<h3 id="existing-collections">Existing Collections</h3>
+<h2 id="existing-collections">Existing Collections</h2>
 <p>This list of already existing collections allows you to </p>
 <ul>
 <li>Change the order of the collections</li>
@@ -1229,6 +1255,49 @@
 </ul>
 </li>
 </ul>
+<h3 id="apply-module-labels">Apply module labels</h3>
+<blockquote>
+<p>🚧🧪☠️ <strong>Warning:</strong> This feature is experimental, under construction, and potentially destructive. Only use as suggested and if you're certain.</p>
+</blockquote>
+<p>Each module can be allocated a label and a label "number" - see <a href="../../objects/overview/">the Objects reference for more</a>. A label identifies a module as a certain type of object, for example <em>Lecture</em>, <em>Workshop</em>, <em>Week</em> etc. A label "number" provides a way to indicate a sequence of objects of a certain type, for example <em>Lecture 1</em>, <em>Lecture 2</em>, <em>Lecture 3</em> etc.</p>
+<p>To improve way finding, it makes sense to use labels and label numbers in two places:</p>
+<ol>
+<li>The representation of the module provided by Collections; and,</li>
+<li>The name of the module used by Canvas.</li>
+</ol>
+<p>However, as shown in the following table, doing this requires updating information in two separate places. With multiple modules this may become a tedious and error-prone process.</p>
+<table>
+<thead>
+<tr>
+<th>Place</th>
+<th>End Result</th>
+<th>Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Collections' Representation</td>
+<td><img alt="" src="../pics/labelRepresentation.png" /></td>
+<td><img alt="" src="../pics/labelStorage.png" /></td>
+</tr>
+<tr>
+<td>Canvas</td>
+<td><img alt="" src="../pics/labelModuleName.png" /></td>
+<td><img alt="" src="../pics/moduleNameStorage.png" /></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Apply module labels</strong> is intended to semi-automate this process. It will (🚧<strong>not quite yet</strong>🚧) provide a way to automatically modify Canvas module names to include the relevant Collections' label and label number.</p>
+<p>For example, the following image shows a Canvas module view with three collections. The current collection <em>Why?</em> contains two modules.  These modules have been allocated the label <em>Why</em> and are using Collection's auto-numbering. However, the module names do not include the label or label number.</p>
+<p><img alt="" src="../pics/moduleLabelsBefore.png" />  </p>
+<p>Fixing this could be done by manually editing the module names. Alternatively, the <strong>Apply module labels</strong> feature could be used to automatically update the module names. As shown in the following image, the process is</p>
+<ol>
+<li>Open the <em>Collections Configuration</em> dialog.</li>
+<li>Click the <em>Apply module label</em> button for the relevant collection.</li>
+<li>Step through the alerts as Collections updates progress.</li>
+<li>Reload the module page to observed the modified module names (this step is likely to disappear in future)</li>
+</ol>
+<p><img alt="" src="../pics/applyModuleLabelAnimation.gif" /></p>
 
 
 

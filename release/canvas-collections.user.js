@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.11
+// @version      0.8.12
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -477,6 +477,24 @@ class cc_ConfigurationModel {
 			delete module.metadata[fieldName];
 		}
 	}
+
+	/**
+	 * Filter ...cc_configuration.COLLECTIONS to return an array of objects with
+	 * an actual outputPage
+	 */
+	getCollectionsWithOutputPage() {
+		const cc_configuration = this.controller.parentController.cc_configuration;
+		const collections = cc_configuration.COLLECTIONS;
+		// filter collections hash to return an array of objects with an actual outputPage
+		let collectionsWithOutputPages = Object.keys(collections).filter( (collectionName) => {
+			if (collections[collectionName].outputPage &&
+				collections[collectionName].outputPage !== '') {
+				return collectionName;
+			}
+		});
+
+		return collectionsWithOutputPages;
+	}
 }
 
 /**
@@ -502,6 +520,17 @@ class cc_View {
 	addTooltips() {
 		if (this.TOOLTIPS) {
 			html5tooltips(this.TOOLTIPS);
+			// also need to loop through the TOOLTIPS and add the links, if defined
+			for (let tooltip of this.TOOLTIPS) {
+				if (tooltip.href && tooltip.targetSelector) {
+					// find the element with id tooltip.targetSelector
+					const element = document.querySelector(tooltip.targetSelector);
+					if (element) {
+						// set the href of element to tooltip.href
+						element.href = tooltip.href;
+					}
+				}
+			}
 		}
 	}
 
@@ -542,7 +571,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.11";
+const CC_VERSION = "0.8.12";
 
 const CONFIG_VIEW_TOOLTIPS = [ 
 	{ 
@@ -569,6 +598,15 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/#add-a-new-collection"
 	},
 	{ 
+		contentText: `<p>Update all configured output pages and include a navigation menu 
+		between them. </p>
+		<p>Best suited when more than one collection has an output page.</p>`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-full-claytons",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview"
+	},
+	{ 
 		contentText: `<p>Make collection invisible to students. 
 		(Note: can't hide the default collection)</p>
 		<p><i class="icon-warning"></i> Also unpublish all the collection's modules to be ensure they are hidden.`,
@@ -583,8 +621,27 @@ const CONFIG_VIEW_TOOLTIPS = [
 		`,
 		targetSelector: '#cc-about-update-output-page',
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/#update-page"
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#output-page"
 	},
+	{ 
+		contentText: `Specify the name of an existing Canvas page and the content of that page
+		will be displayed before the current collection's representation 
+		(it is <strong>included</strong>)`,
+		targetSelector: '#cc-about-include-page',
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#include-page"
+	},
+	{ 
+		contentText: `<p>🚧🧪☠️ <strong>Warning:</strong> This feature is experimental, under construction, and
+		potentially destructive. Only use as suggested and if you're certain.</p>
+		<p>Modify the names of Canvas modules by apply the Collection's label/number</p>
+		`,
+		targetSelector: '#cc-about-apply-module-labels',
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#apply-module-labels"
+	},
+
+
 
 
 	//******** Module configuration */
@@ -804,13 +861,6 @@ class cc_ConfigurationView extends cc_View {
 		for (let i = 0; i < trashMetadata.length; i++) {
 			const trash = trashMetadata[i];
 			trash.onclick = (event) => this.controller.manageModuleMetadata(event);
-		}
-		// button.cc-output-page-update-button
-		// - calls controller.updateOutputPage
-		const updateButtons = document.querySelectorAll(`button.cc-output-page-update-button`);
-		for (let i = 0; i < updateButtons.length; i++) {
-			const updateButton = updateButtons[i];
-			updateButton.onclick = (event) => this.controller.updateOutputPage(event);
 		}
 
 		// add catch all handlers for other module config elements
@@ -1368,8 +1418,9 @@ class cc_ConfigurationView extends cc_View {
 			}
 
 			.cc-box-body {
-				width: 500px;
+				width: 35em; 
 				padding-left: 0.5em;
+				padding-right: 0.5em;
 				padding-bottom: 1.em;
 			}
 
@@ -1390,9 +1441,10 @@ class cc_ConfigurationView extends cc_View {
 			#cc-config-new-collection {
 			}
 
-			#cc-config-new-collection-button {
+			#cc-config-new-collection-button, #cc-config-update-full-claytons {
 				left: 50%;
 				transform: translateX(-50%);
+				font-size: 0.8em;
 			}
 
 			.cc-existing-collection {
@@ -1426,13 +1478,11 @@ class cc_ConfigurationView extends cc_View {
  
 			.cc-output-page-update {
 				font-size: 0.8rem;
-				margin: 0.5rem;
 			}
 
-			.cc-output-page-update-button {
+			.cc-output-page-update-button, .cc-apply-module-labels-update-button {
 				font-size: 0.8rem;
 				padding: 0.2rem;
-				margin: 0.5rem;
 			}
 
 			.cc-config-error {
@@ -1509,22 +1559,29 @@ class cc_ConfigurationView extends cc_View {
 			   			<i class="icon-question"></i></a>
 						</p>
 						<div class="cc-config-collection border border-trbl">
-						<div class="ic-Form-control" style="margin-bottom: 0px">
-						  	<input type="text" id="cc-config-new-collection-name" 
-							   placeholder="Name for new collection">
-						</div>
+						  <div class="ic-Form-control" style="margin-bottom: 0px">
+						  	  <input type="text" id="cc-config-new-collection-name" 
+							     placeholder="Name for new collection">
+						  </div>
 
-						<div class="cc-collection-representation">
-							<label for="cc-config-new-collection-representation">Representation</label>
-							<select id="cc-config-new-collection-representation">
-							  ${this.getAvailableRepresentations()}
-							</select>
-						</div>
+						  <div class="cc-collection-representation">
+							  <label for="cc-config-new-collection-representation">Representation</label>
+							  <select id="cc-config-new-collection-representation">
+							    ${this.getAvailableRepresentations()}
+							  </select>
+						  </div>
 
-						<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
-							<button class="btn btn-primary" id="cc-config-new-collection-button">Add</button>
-						</fieldset>
-					</div>
+						  <fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+							  <button class="btn btn-primary" id="cc-config-new-collection-button">Add</button>
+						  </fieldset>
+					  </div>
+						<p>Full "Claytons"
+						<a id="cc-about-full-claytons" target="_blank" href="">
+			   			<i class="icon-question"></i></a> </p>
+						  <fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+							  <button class="btn btn-primary" id="cc-config-update-full-claytons">Update</button>
+						  </fieldset>
+					  
 					</div>
 				  </div>
 				</div>
@@ -1625,25 +1682,8 @@ class cc_ConfigurationView extends cc_View {
 					</select>
 				</div>
 				<div class="cc-collection-representation">
-					<label for="cc-collection-${collectionName}-include-page">Include page</label>
-				 	<input id="cc-collection-${collectionName}-include-page" 
-					     value="${includePage}" class="cc-existing-collection" />
-				</div>
-				<div class="cc-collection-representation">
-					<label for="cc-collection-${collectionName}-output-page">Output page</label>
-				 	<input id="cc-collection-${collectionName}-output-page" 
-					      value="${outputPage}" class="cc-existing-collection" />
-				</div>
-				<div class="cc-collection-representation cc-output-page-update ${outputPageExists}">
-					<button id="cc-collection-${collectionName}-output-page-update"
-					      class="btn cc-output-page-update-button">Update output page</button>
-					<a id="cc-about-update-output-page" target="_blank" href="">
-			   			<i class="icon-question"></i></a>
-
-				</div>
-
 				<!-- put the options -->
-				<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+				<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox" style="margin-bottom:0.5em">
 					<div class="ic-Checkbox-group">
 						<div class="ic-Form-control ic-Form-control--checkbox">
 							<input type="checkbox" id="cc-config-collection-${collectionName}-default"
@@ -1663,6 +1703,40 @@ class cc_ConfigurationView extends cc_View {
 						</div>
 					</div>
 				</fieldset>
+				</div>
+
+				<div>
+				  Include page
+					<a id="cc-about-include-page" target="_blank" href="">
+			   			<i class="icon-question"></i></a>
+				  <div style="padding-left:0.5em">
+				 	<input id="cc-collection-${collectionName}-include-page" 
+					     value="${includePage}" class="cc-existing-collection" />
+				  </div>
+				</div>
+				<!-- output page -->
+				<div style="margin-top:0.5em">
+				  Output page
+					<a id="cc-about-update-output-page" target="_blank" href="">
+			   			<i class="icon-question"></i></a>
+				  <div class="cc-collection-representation">
+<!--					<label for="cc-collection-${collectionName}-output-page">Name</label> -->
+				 	<input id="cc-collection-${collectionName}-output-page" 
+					      value="${outputPage}" class="cc-existing-collection" />
+				  <span class="cc-collection-representation cc-output-page-update ${outputPageExists}">
+					<button id="cc-collection-${collectionName}-output-page-update"
+					      class="btn cc-output-page-update-button">Update</button>
+				  </span>
+				</div>
+  			    <div style="display:flex;margin-top:0.5em;margin-bottom:0.5em">
+				  <div style="margin-right:0.5em">
+				  🧪Apply module labels ☠️
+					<a id="cc-about-apply-module-labels" target="_blank" href="">
+			   			<i class="icon-question"></i></a>
+					</div>
+					<button id="cc-collection-${collectionName}-apply-module-labels"
+					      class="btn cc-apply-module-labels-update-button">Apply</button>
+
 			</div>
 			`;
 
@@ -1738,6 +1812,12 @@ class cc_ConfigurationView extends cc_View {
 		if (newCollectionButton) {
 			newCollectionButton.onclick = (event) => this.controller.addNewCollection(event);
 		}
+		// add event handler for adding a new collection button#cc-config-update-full-claytons
+		const fullClaytonsButton = document.querySelector('button#cc-config-update-full-claytons');
+		if (fullClaytonsButton) {
+			fullClaytonsButton.onclick = (event) => this.controller.updateFullClaytons(event);
+		}
+
 		// add event handler for cc-config-collection-default selection
 		const defaultCheckboxes = document.querySelectorAll('input.cc-config-collection-default');
 		defaultCheckboxes.forEach(checkbox => {
@@ -1753,6 +1833,20 @@ class cc_ConfigurationView extends cc_View {
 		existingCollections.forEach(collection => {
 			collection.onchange = (event) => this.controller.modifyCollectionPages(event);
 		});
+		// button.cc-output-page-update-button
+		// - calls controller.updateOutputPage
+		const updateButtons = document.querySelectorAll(`button.cc-output-page-update-button`);
+		for (let i = 0; i < updateButtons.length; i++) {
+			const updateButton = updateButtons[i];
+			updateButton.onclick = (event) => this.controller.updateOutputPage(event);
+		}
+		// button.cc-apply-module-labels-update-button
+		// - calls controller.applyModuleLabels
+		const applyModuleLabelsButton = document.querySelectorAll(`button.cc-apply-module-labels-update-button`);
+		for (let i = 0; i < applyModuleLabelsButton.length; i++) {
+			const button = applyModuleLabelsButton[i];
+			button.onclick = (event) => this.controller.applyModuleLabels(event);
+		}
 	}
 
 
@@ -2201,24 +2295,59 @@ class updatePageController {
 	/**
 	 * @param {String} collection  - name of Collection to update
 	 * @param {cc_Controller} parentController 
+	 * @param {boolean} navBar - true if the page should have a navigation bar
+	 *     typically meaning we're using this as part of a Full claytons
 	 */
 
-	constructor(collection,parentController) {
+	constructor(collection,parentController, navBar = false) {
 		this.collection = collection;
 		this.parentController = parentController;
+		this.navBar = navBar;
 
 		// TODO do sanity checks for the presence of these things
+		const collections = this.parentController.cc_configuration.COLLECTIONS;
+		if (!collections) {
+			alert(`updatePageController: no collections defined`);
+			return;
+		}
+		if (!collections.hasOwnProperty(collection)) {
+			alert(`updatePageController: collection ${collection} not defined`);
+			return;
+		}
 
 		// get the configuration config details from parent controller for the collection
 		this.collectionConfig = this.parentController.cc_configuration.COLLECTIONS[collection];
 		// extract out the outputPageName and representationName
+		if (
+			!this.collectionConfig.hasOwnProperty("outputPage") ||
+			this.collectionConfig.outputPage===""
+			) {
+			alert(`updatePageController: collection ${collection} has no outputPageName`);
+			return;
+		}
 		this.outputPageName = this.collectionConfig.outputPage;
 		this.representationName = this.collectionConfig.representation;
 
 		// actual representation object ??
 		// parentController.collectionsController.view
 		//   - representations dict keyed on collection name
+		if (!this.parentController.hasOwnProperty("collectionsController")) {
+			alert(`updatePageController: no collectionsController`);
+			return;
+		}
+		if (!this.parentController.collectionsController.hasOwnProperty("view")) {
+			alert(`updatePageController: no collectionsController.view`);
+			return;
+		}
 		this.collectionsView = this.parentController.collectionsController.view;
+		if (!this.collectionsView.hasOwnProperty("representations")) {
+			alert(`updatePageController: no collectionsController.view.representations`);
+			return;
+		}
+		if (!this.collectionsView.representations.hasOwnProperty(this.collection)) {
+			alert(`updatePageController: no collectionsController.view.representations.${this.collection}`);
+			return;
+		}
 		this.representationObject = this.parentController.collectionsController.view.representations[this.collection];
 
 
@@ -2255,7 +2384,7 @@ class updatePageController {
 
 		// data should be the page object
 		// https://canvas.instructure.com/doc/api/pages.html#Page
-		DEBUG && console.log(`updatePageController: getPageContents: json = ${JSON.stringify(data)}`);
+//		DEBUG && console.log(`updatePageController: getPageContents: json = ${JSON.stringify(data)}`);
 
 		if (data.length===0) {
 			throw new Error(`updatePageController: getPageContents: no config page found`);
@@ -2278,7 +2407,7 @@ class updatePageController {
 	updateOutputPage() {
 		DEBUG && console.log(`updatePageController: updateOutputPage: pageObject = ${JSON.stringify(this.pageObject)}`);
 
-		const insertContentHtml = this.collectionsView.generateHTML(this.collection,"claytons")
+		const insertContentHtml = this.collectionsView.generateHTML(this.collection,"claytons",this.navBar);
 //		const insertContentHtml = "<p>Here we go, here we go, here we go...bugger off you</p>"
 
 		const originalContent = this.pageObject.body;
@@ -2338,9 +2467,211 @@ class updatePageController {
 		if (!response.ok) {
 			alert('Unable to update the output page');	
 		} 
+		const data = await response.json();
+
+		alert(`output page ${this.outputPageName} updated`);
 
 	}
 
+
+}
+
+/**
+ * @class moduleLabelApplicator
+ * @classDesc Update names of all modules that belong to a collection by pre-pending
+ * appropriate module label/nums to the name.
+ * 
+ * Constructor takes the name of the collection and the parentController object
+ * and does the following
+ * - Update the data on the course modules and update all appropriate value
+ *   To ensure we have the latest names
+ * - calculateNewModuleNames
+ *   - extract the names of the existing modules
+ *   - go thru each and develop what the new name will be
+ *     TODO may show those names for approval
+ * - updateAllModules
+ *   - iterate through each module and use updateModule
+ *     do it all in one
+ *      
+ */
+
+
+class moduleLabelApplicator {
+
+	/**
+	 * @param {String} collection  - name of Collection to update
+	 * @param {cc_Controller} parentController 
+	 */
+
+	constructor(collectionName, parentController) {
+		this.collectionName = collectionName;
+		this.parentController = parentController;
+
+		// TODO do sanity checks for the presence of these things
+		/*		const collections = this.parentController.cc_configuration.COLLECTIONS;
+				if (!collections) {
+					alert(`moduleLabelApplicator: no collections defined`);
+					return;
+				}
+				if (!collections.hasOwnProperty(collectionName)) {
+					alert(`moduleLabelApplicator: collection ${collectionName} not defined`);
+					return;
+				} */
+	}
+
+	execute() {
+		// update the module details using the controller, but get it pass
+		// along to the calculateNewModuleNames method
+		this.parentController.requestModuleInformation(this.checkModulesUpdated.bind(this));
+	}
+
+	/**
+	 * @method checkModulesUpdated
+	 * @description Called once Canvas module details update is been attempted.
+	 * Figure out if it worked and act accordingly
+	 * @param {Boolean} ok - was the module update successful?
+	 */
+
+	checkModulesUpdated(ok) {
+
+		if (!ok) {
+			alert(`moduleLabelApplicator: module update failed`);
+			return;
+		}
+
+		// merge the module details to ensure all up to date
+		// - this is also where the num is auto calculated
+		this.parentController.mergeModuleDetails();
+
+		// calculate the new module names
+		this.calculateNewModuleNames();
+	}
+
+	/**
+	 * @method calculateNewModuleNames
+	 * @description Go through the modules for this collection. Calculate the new names
+	 * and store them in this.newNames hash keyed on module Id and containing the new name
+	 * - but only put them in if there is a difference
+	 * 
+	 */
+	calculateNewModuleNames() {
+		// reinitialise
+		this.newNames = [];
+
+		const modulesCollections = this.getModulesCollections();
+		for (let module of modulesCollections) {
+			if (module.collection !== this.collectionName) {
+				continue;
+			}
+
+			const oldName = module.name;
+			let prepend = "";
+			if (module.label) {
+				prepend = module.label;
+			}
+			if (module.actualNum) {
+				prepend += ` ${module.actualNum}`;
+				// remove first char from CARD_LABEL if it is a space
+				if (prepend.charAt(0) === ' ') {
+					prepend = prepend.substring(1);
+				}
+			}
+			// if oldName already starts with prepend, then continue
+			// also picks up if prepend is empty
+			if (oldName.startsWith(prepend)) {
+				continue;
+			}
+			const newName = `${prepend}: ${oldName}`;
+
+			// TODO - need to identify old prepends
+
+			if (newName !== oldName) {
+				this.newNames.push( { id : module.id, newName : newName } );
+				console.log(`------------- moduleLabelApplicator: ${oldName} -> ${prepend}: ${oldName}`);
+				console.log(module);
+				console.log(`-------------`);
+			}
+		}
+
+		this.updateNewModuleNames();
+	}
+
+	/**
+	 * Update all the new module names - one by one
+	 * 1. Are there any new names to update?
+	 * 2. Yes, then update the first one - async
+	 * 3. Once complete, was it successful?
+	 *    - update the numUpdatedNames
+	 */
+
+	async updateNewModuleNames() {
+		if (this.newNames.length === 0) {
+			alert(`moduleLabelApplicator: no new names to update`);
+			return;
+		}
+
+		const updateModule = this.newNames[0];
+
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/modules/${updateModule.id}`;
+
+		DEBUG && console.log(`moduleLabelApplicator: updateNewModuleNames: callUrl = ${callUrl}`);
+
+		let _body = {
+			"module": {
+				"name": updateModule.newName
+			}
+		};
+
+		let method = "put";
+
+		const bodyString = JSON.stringify(_body);
+
+		const response = await fetch(callUrl, {
+			method: method, credentials: 'include',
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+				"Accept": "application/json; charset=UTF-8",
+				"X-CSRF-Token": this.parentController.csrf,
+			},
+			body: bodyString
+		});
+
+		if (!response.ok) {
+			alert(`Problem creating config ${response.status} - `);
+			return;
+		}
+
+		alert(`moduleLabelApplicator: updated ${updateModule.newName}`);
+		// remove the one we've just successfully added and do the next
+		this.newNames.shift();
+		this.updateNewModuleNames();
+	}
+
+	/**
+	 * Kludge duplication of a method in CollectionsModel that will provide a list of
+	 * modules ordered by position
+	 * @param {*} collectionName 
+	 * @returns 
+	 */
+	getModulesCollections(collectionName = null) {
+		// mergedDetails is a hash of all modules keyed on id
+		const mergedDetails = this.parentController.mergedModuleDetails;
+
+		if (collectionName === null) {
+			let values = Object.values(mergedDetails);
+			// sort the objects in the values array by their "position" numeric attribute
+			values.sort((a, b) => a.position - b.position);
+			// if no collectionName, convert hash of dicts mergedDetails into an array of dicts
+			return values;
+		}
+		// filter modulesCollections array to those that have an attribute collection==collectionName
+		//const collectionModules = this.modulesCollections.filter(module => module.collection === collectionName); */
+
+		// create array of dicts from mergedDetails where the collection is collectionName
+		const collectionModules = Object.keys(mergedDetails).filter(key => mergedDetails[key].collection === collectionName);
+
+		return collectionModules;
+	}
 
 }
 
@@ -2361,6 +2692,7 @@ class updatePageController {
  *   - change the order of collections
  * 
  */
+
 
 
 
@@ -2782,6 +3114,14 @@ class cc_ConfigurationController {
 			// make sure it's saved
 			// update various representations
 
+			// for an output change, need re-display collections form so that
+			// the update button appears
+			if (pageType==="output") {
+				//this.view.updateExistingCollections();
+				this.view.showConfig();
+			}
+
+
 			this.changeMade(true);
 
 			// TODO
@@ -2872,6 +3212,7 @@ class cc_ConfigurationController {
 			this.model.addModuleMetadata(moduleId, name, value);
 			this.changeMade(true);
 			this.view.updateSingleModuleConfig(moduleId);
+			this.parentController.updateCurrentRepresentation();
 		} else if (element === 'i') {
 			// handle deleting when target is i
 			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-(.*)-delete/)[1]);
@@ -2879,6 +3220,7 @@ class cc_ConfigurationController {
 			this.model.deleteModuleMetadata(moduleId, name);
 			this.changeMade(true);
 			this.view.updateSingleModuleConfig(moduleId);
+			this.parentController.updateCurrentRepresentation();
 		} else if ( element === 'input') {
 			// handle updating when target is input
 			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-(.*)-(.*)/)[1]);
@@ -2899,6 +3241,7 @@ class cc_ConfigurationController {
 			}
 			this.changeMade(true);
 			this.view.updateSingleModuleConfig(moduleId);
+			this.parentController.updateCurrentRepresentation();
 		}
 	}
 
@@ -2918,12 +3261,56 @@ class cc_ConfigurationController {
 		// get the collection name from the event.target.id with the format
 		//     cc-collection-<collection-name>-output-page-update
 		const collectionName = event.target.id.match(/cc-collection-(.*)-output-page-update/)[1];
+		
 
 		// Obtain the collection name and representation for the button clicked
 
 		let updateController = new updatePageController( 
-			collectionName, this.parentController
+			collectionName, this.parentController, 
 			);
+
+	}
+
+	/**
+	 * Update all of the collections with output pages, including the navigation bar between
+	 * the pages - i.e. the full "Claytons"
+	 * - check to see if there is more than one collection with an output page
+	 *   - generate alert if there is
+	 * - call the fullClaytonsController ?? or maybe update updatePageController??
+	 *    DECIDE
+	 * @param {*} event 
+	 */
+
+	updateFullClaytons(event) {
+
+		const collectionsWithOutputPage = this.model.getCollectionsWithOutputPage();
+
+		if (collectionsWithOutputPage.length <= 1) {
+			alert(`Full Claytons needs at least 2 collections with output pages -currently ${collectionsWithOutputPage.length}.`); 
+		}
+
+		for (let collectionName of collectionsWithOutputPage) {
+			console.log(`full claytons updating ${collectionName}`);
+			let updateController = new updatePageController( 
+				collectionName, this.parentController, true
+				);
+		}
+
+	}
+
+
+	/**
+	 * User has clicked button#cc-collection-<<collectionName>>-apply-module-labels
+	 * to apply all the Collections labels to the names of the Canvas modules in the collection.
+	 * @param {Event} event 
+	 */
+
+	applyModuleLabels(event) {
+		// identify the collection name
+		const collectionName = event.target.id.match(/cc-collection-(.*)-apply-module-labels/)[1];
+
+		let applicator = new moduleLabelApplicator(collectionName, this.parentController);
+		applicator.execute();
 
 	}
 }
@@ -3002,7 +3389,7 @@ class CollectionsModel {
 	}
 
 	getCollectionRepresentation(collection) {
-		if ( !this.cc_configuration.COLLECTIONS.hasOwnProperty(collection) ||
+		if (!this.cc_configuration.COLLECTIONS.hasOwnProperty(collection) ||
 			!this.cc_configuration.COLLECTIONS[collection].hasOwnProperty('representation')) {
 			return null;
 		}
@@ -3140,6 +3527,87 @@ class CollectionsModel {
 
 		return collectionModules;
 	}
+
+	/**
+	 * Given a module hash, return the module.name with any possible label/auto num removed
+	 * @param {*} module 
+	 */
+
+	deLabelModuleName(module) {
+
+		const existingName = module.name;
+		let prepend = "";
+		if (module.label) {
+			prepend = module.label;
+		}
+		if (module.actualNum) {
+			prepend += ` ${module.actualNum}`;
+			// remove first char from CARD_LABEL if it is a space
+			if (prepend.charAt(0) === ' ') {
+				prepend = prepend.substring(1);
+			}
+		}
+		prepend = `${prepend}: `;
+		// modify existingName to remove prepend and any subsequent whitespace
+		const newName = existingName.replace(prepend, '').trim();
+
+		return newName;
+	}
+
+	/**
+	 * Return a list of collection objects (in collections order) which have defined
+	 * an output page
+	 */
+	getOutputPageCollections() {
+		let collections = [];
+		for (let i = 0; i < this.cc_configuration.COLLECTIONS_ORDER.length; i++) {
+			let collection = this.cc_configuration.COLLECTIONS_ORDER[i];
+			if (this.cc_configuration.COLLECTIONS[collection].hasOwnProperty('outputPage') &&
+				this.cc_configuration.COLLECTIONS[collection].outputPage !== '') {
+				let collectionObj = this.cc_configuration.COLLECTIONS[collection];
+				collectionObj.name = collection;
+				collections.push(collectionObj);
+			}
+		}
+
+		return collections;
+
+	}
+
+	/**
+	 * Given the human readable name for a Canvas page (e.g. "Home Page") translate
+	 * into the page url 
+	 * (e.g. "https://<<hostname>>/courses/<<courseId>>/pages/<<convertedPageName>>)
+	 * Where convertedPageName is the lower-cased page name with spaces replaced by dashes
+	 * TODO
+	 * - This is an actual kludge.  Should be putting the actual URL in there somehow
+	 * @param {String} pageName 
+	 */
+	calculatePageUrl(pageName) {
+		const courseId = this.controller.parentController.courseId;
+		let pageUrl = this.controller.parentController.documentUrl;
+		// documentUrl format is https://<<hostname>>/courses/<<courseId>>/.*
+		// remove everything after the courseId
+		pageUrl = pageUrl.replace(/\/courses\/\d+\/.*/, `/courses/${courseId}/pages/`);
+
+		// convert the pageName to a URL friendly name
+		let convertedPageName = pageName.toLowerCase().replace(/ /g, '-');
+		pageUrl += convertedPageName;
+		return pageUrl;
+	}
+
+	/**
+	 * Return the full URL for the current Canvas course sites modules view 
+	 * Format
+	 *   https://<<hostname>>/courses<<courseid>>/modules
+	 * @returns {String} URL
+	 */
+	getModuleViewUrl() {
+		let modulesUrl = this.controller.parentController.documentUrl;
+
+		return modulesUrl;
+
+	}
 }
 
 /**
@@ -3152,8 +3620,8 @@ class CollectionsModel {
 
 
 
-const NAV_WF_TOOLTIPS = [ 
-	{ 
+const NAV_WF_TOOLTIPS = [
+	{
 		contentText: `<p>Collection hidden from students. Any published modules for this collection
 		may be visible to students.</p>`,
 		targetSelector: '#cc-about-hide-collection',
@@ -3188,19 +3656,35 @@ class NavView extends cc_View {
 		// generate the HTML
 		//		let html ='<h1> Hello from NavView </h1>';
 
-		let navBar = this.generateNavBar();
-		div.insertAdjacentElement('beforeend', navBar);
+		//let navBar = this.generateNavBar();
+		let navBarHTML = this.generateHTML();
+		div.insertAdjacentHTML('beforeend', navBarHTML);
 
-		this.addTooltips();		
+		// add event handler
+		const navItems = document.querySelectorAll('li.cc-nav');
+		// loop thru each navItem
+		for (let i=0; i<navItems.length; i+=1) {
+			navItems[i].onclick = (event) => this.controller.navigateCollections(event);
+		}
+
+		this.addTooltips();
 
 		// add html to div#cc-canvas-collections
 		//		div.insertAdjacentHTML('afterbegin', html);
 	}
 
-	generateNavBar() {
+	/**
+	 * 
+	 * @param {String} collectionName 
+	 * @param {String} variety 
+	 * @returns String HTML containing the navBar
+	 */
+	generateHTML(collectionName = '', variety = '') {
+		if (variety === 'claytons') {
+			return this.generateClaytonsNavBar(collectionName);
+		}
 		let navBar = document.createElement('div');
 		navBar.className = 'cc-nav';
-
 
 		const navBarStyles = `
 		<style>
@@ -3327,7 +3811,7 @@ div.cc-collection-hidden > a {
 			}
 			count += 1;
 
-			navItem.onclick = (event) => this.controller.navigateCollections(event);
+//			navItem.onclick = (event) => this.controller.navigateCollections(event);
 			// TODO probably shouldn't be on this view the click? SHouldn't it be the
 			// controller?, 
 			//navItem.onclick = () => this.collectionsClick(collection, this);
@@ -3348,10 +3832,52 @@ div.cc-collection-hidden > a {
 		}
 		navBar.appendChild(navList);
 
+		return navBar.outerHTML;
+	}
+
+	/**
+	 * Return HTML for nav bar that is HTML/CSS only. to be inserted into a Canvas
+	 * page as part of the Full Claytons
+	 * @param {String} collectionName 
+	 * @returns {String} HTML for nav bar
+	 */
+	generateClaytonsNavBar(collectionName = '') {
+		let CLAYTONS_NAVBAR_HTML = `
+		<div id="bannerNav">
+		  <ul id="courseBannerNav">
+		  {{NAVBAR_ITEMS}}
+		  </ul>
+	    </div>`;
+
+		// get list of collection details without output pages(including output page)
+		const collectionsOutput = this.model.getOutputPageCollections();
+		const activeLi = ' style="background-color: #c02424"';
+		const activeA = ' style="border-top: none;text-decoration: none;color: #fff; font-weight: bold;font-size:1.2em;"';
+
+		let items = '';
+
+		collectionsOutput.forEach(collection => {
+			let liStyle ='';
+			let aStyle = ' style="text-decoration:none"';
+			if (collection.name === collectionName) {
+				liStyle = activeLi;
+				aStyle = activeA;
+			}
+			let pageUrl = this.model.calculatePageUrl(collection.outputPage);
+			items = `${items}
+		   <li${liStyle}>
+		     <a${aStyle} href="${pageUrl}">${collection.name}</a>
+		   </li>
+		`;
+
+		});
+
+		// loop through each collection
+		// get the names of collection with output pages
+		// include those collection names in the nav bar
 
 
-
-		return navBar;
+		return CLAYTONS_NAVBAR_HTML.replace('{{NAVBAR_ITEMS}}', items);
 	}
 }
 
@@ -3661,7 +4187,7 @@ td.descriptionCell {
 }
 
 /* Responsive table styling */
-.cc-assessment-container .responsive-table { 
+.cc-assessment-container .cc-responsive-table { 
   margin-bottom: 0;
   width: 100%;
 }
@@ -3708,7 +4234,7 @@ td.descriptionCell {
   }
 }
 
-.cc-assessment-container .responsive-table__heading {
+.cc-assessment-container .cc-responsive-table__heading {
   font-weight: 700;
   padding-right: 0.5em;
   text-align: left;
@@ -3748,7 +4274,7 @@ td.descriptionCell {
     text-align: left;
   }
   
-  .cc-assessment-container .responsive-table__heading {
+  .cc-assessment-container .cc-responsive-table__heading {
     display: none;
   }
 }
@@ -3765,19 +4291,19 @@ td.descriptionCell {
     margin: 0.5rem;
     font-size: 0.8rem;
   }
+
+  #cc-assessment-table {
+    margin-top: 0.5rem !important;
+  }
 	`;
 
 const TABLE_HTML = `
+		<div id="cc-assessment-table" class="cc-assessment-container">
 		<style>
 			${TABLE_STYLES}
 		</style>
-		<div id="cc-assessment-table" class="cc-assessment-container">
 
-      <p>
-      {{DESCRIPTION}}
-      </p>
-
-			<table class="responsive-table" role="table">
+			<table class="cc-responsive-table" role="table">
       			<caption>{{CAPTION}}</caption>
       			<thead role="rowgroup">
         			<tr role="row">
@@ -3795,35 +4321,95 @@ const TABLE_HTML = `
 		</div>
 		`;
 
+const TABLE_HTML_CLAYTONS = `
+<div id="cc-assessment-table" class="cc-assessment-container">
+<table class="cc-assessment-table ic-Table--hover-row ic-Table ic-Table--striped -ic-Table--condensed" 
+   role="table">
+  <thead role="rowgroup">
+    <tr role="row">
+      <th role="columnheader" scope="col" style="width:20%;background-color:#e03e2d">
+        <span style="color:#ffffff">Title</span>
+        </th>
+      <th role="columnheader" scope="col" style="width:40%;background-color:#e03e2d">
+        <span style="color:#ffffff">Description</span>
+        </th>
+      <th role="columnheader" scope="col" style="background-color:#e03e2d">
+        <span style="color:#ffffff">Weighting</span>
+        </th>
+      <th role="columnheader" scope="col" style="background-color:#e03e2d">
+        <span style="color:#ffffff">Due Date</span>
+        </th>
+      <th role="columnheader" scope="col" style="width:10%;background-color:#e03e2d">
+        <span style="color:#ffffff">Learning Outcomes</span>
+        </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{TABLE-ROWS}}
+  </tbody>
+</table>
+</div>
+`;
+
 const TABLE_ROW_HTML = `
 		  <tr role="row">
           <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Title</span>
+            <span class="cc-responsive-table__heading" aria-hidden="true">Title</span>
             <div class="cc-table-cell-text"><p><a href="#{{MODULE-ID}}">
               {{TITLE}}
 
             </a></p> </div>
           </td>
           <td role="cell" class="descriptionCell">
-            <span class="responsive-table__heading" aria-hidden="true">Description</span>
+            <span class="cc-responsive-table__heading" aria-hidden="true">Description</span>
             <div class="cc-table-cell-text">
             {{DESCRIPTION}}
             </div>
           </td>
           <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Weighting</span>
+            <span class="cc-responsive-table__heading" aria-hidden="true">Weighting</span>
             <div class="cc-table-cell-text">
             <p>{{WEIGHTING}}</p>
             </div>
           </td>
           <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Due Date</span>
+            <span class="cc-responsive-table__heading" aria-hidden="true">Due Date</span>
             <div class="cc-table-cell-text">
             <p>{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell">
-            <span class="responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            <span class="cc-responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
+            <div class="cc-table-cell-text">
+            <p>{{LEARNING-OUTCOMES}}</p>
+            </div>
+          </td>
+        </tr>
+`;
+
+const TABLE_ROW_HTML_CLAYTONS = `
+		  <tr role="row">
+          <td role="cell" style="vertical-align:top; padding: 0.5rem">
+            <div class="cc-table-cell-text"><p><a href="{{MODULE-ID}}">
+              {{TITLE}}
+            </a></p> </div>
+          </td>
+          <td role="cell" class="descriptionCell" style="vertical-align:top; padding: 0.5rem">
+            <div class="cc-table-cell-text">
+            {{DESCRIPTION}}
+            </div>
+          </td>
+          <td role="cell" style="vertical-align:top;padding:0.5rem">
+            <div class="cc-table-cell-text">
+            <p>{{WEIGHTING}}</p>
+            </div>
+          </td>
+          <td role="cell" style="vertical-align:top;padding:0.5rem">
+            <div class="cc-table-cell-text">
+            <p>{{DUE-DATE}}</p>
+            </div>
+          </td>
+          <td role="cell" style="vertical-align:top;padding:0.5rem">
             <div class="cc-table-cell-text">
             <p>{{LEARNING-OUTCOMES}}</p>
             </div>
@@ -3872,7 +4458,8 @@ class AssessmentTableView extends cc_View {
     let message = document.createElement('div');
     message.className = 'cc-assessment-table';
 
-    message.innerHTML = this.generateAssessmentTable();
+		const currentCollection = this.model.getCurrentCollection();
+    message.innerHTML = this.generateHTML(currentCollection);
     div.insertAdjacentElement('beforeend', message);
 
   }
@@ -3881,8 +4468,11 @@ class AssessmentTableView extends cc_View {
    * Work through module details for this collection and generate HTML with
    * an assessment table
    */
-  generateAssessmentTable() {
+  generateHTML(collectionName, variety='') {
     let messageHtml = this.TABLE_HTML;
+    if (variety === 'claytons') {
+      messageHtml = TABLE_HTML_CLAYTONS;
+    }
 
     // TODO update the messageHTML
     const description = this.model.getCurrentCollectionDescription();
@@ -3891,15 +4481,18 @@ class AssessmentTableView extends cc_View {
 //    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());
     // get an array of all modules in display order
  		const modules = this.model.getModulesCollections();
-		const currentCollection = this.model.getCurrentCollection();
+    const modulesUrl = this.model.getModuleViewUrl();
     let tableRows = '';
     for (let i = 0; i < modules.length; i++) {
 
       // skip if row doesn't match currentCollection
-      if (modules[i].collection !== currentCollection) {
+      if (modules[i].collection !== collectionName) {
         continue;
       }
       let rowHtml = TABLE_ROW_HTML;
+      if (variety === 'claytons') {
+        rowHtml = TABLE_ROW_HTML_CLAYTONS;
+      }
 
       const dueDate = modules[i].date;
       let dueDateString = '';
@@ -3910,10 +4503,15 @@ class AssessmentTableView extends cc_View {
       let mapping = {
         'MODULE-ID': modules[i].id,
         'DESCRIPTION': modules[i].description,
-        'TITLE': modules[i].name,
+        'TITLE': this.model.deLabelModuleName(modules[i]),
         'TYPE': modules[i].label,
         'DUE-DATE': dueDateString
       };
+
+      // for a claytons view - MODULE-ID needs to become a full link
+      if (variety === 'claytons') {
+        mapping['MODULE-ID'] = `${modulesUrl}/#${modules[i].id}`;
+      }
 
       // check metadata for weighting and learning outcomes
       const metaData = modules[i].metadata;
@@ -3928,7 +4526,7 @@ class AssessmentTableView extends cc_View {
 
       // loop through mapping keys and replace the values in the row html
       for (let key in mapping) {
-        if (mapping[key]) {
+        if (mapping.hasOwnProperty(key)) {
           rowHtml = rowHtml.replace(`{{${key}}}`, mapping[key]);
         }
       }
@@ -3937,7 +4535,17 @@ class AssessmentTableView extends cc_View {
     }
     messageHtml = messageHtml.replace(/{{TABLE-ROWS}}/g, tableRows);
 
-    messageHtml = this.emptyRemainingFields(messageHtml);
+    // only do this if we're not in edit mode
+    let editMode = false;
+    //const ccController = this.controller.configurationController.parentController;
+    const ccController = this.controller.parentController;
+    if (ccController) {
+      editMode = ccController.editMode;
+    }
+
+    if (!editMode || variety==='claytons') {
+      messageHtml = this.emptyRemainingFields(messageHtml);
+    }
 
     return messageHtml;
 
@@ -3987,19 +4595,23 @@ class CollectionOnlyView extends cc_View {
 		DEBUG && console.log('-------------- TableView.display()');
 		let div = document.getElementById('cc-canvas-collections');
 
-		const description = this.model.getCurrentCollectionDescription();
+//		const description = this.model.getCurrentCollectionDescription();
 
 		// create a simple message div element
 		let message = document.createElement('div');
 		message.className = 'cc-message';
 
-		if (description) {
-			message.innerHTML = description;
-		}
+		const currentCollection = this.model.getCurrentCollection();
+		message.innerHTML = this.generateHTML(currentCollection);
 
 		div.insertAdjacentElement('beforeend', message);
 
 	}
+
+	generateHTML(collectionName) {
+		return '';
+	}
+
 }
 
 window.CircularProgressBar=function(t){var e={};function n(i){if(e[i])return e[i].exports;var r=e[i]={i:i,l:!1,exports:{}};return t[i].call(r.exports,r,r.exports,n),r.l=!0,r.exports}return n.m=t,n.c=e,n.d=function(t,e,i){n.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:i})},n.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},n.t=function(t,e){if(1&e&&(t=n(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var i=Object.create(null);if(n.r(i),Object.defineProperty(i,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var r in t)n.d(i,r,function(e){return t[e]}.bind(null,r));return i},n.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},n.p="",n(n.s=1)}([function(t,e,n){t.exports=function(){"use strict";const t=function(t,e){const n="number"==typeof t?{value:t}:t;Object.entries(n).map(([t,n])=>e(n,t))};function e(t,e){this.start=new Date/1e3,this.time=e,this.from=t,this.current=t,this.to=t,this.speed=0}return e.prototype.get=function(t){const e=t/1e3-this.start;if(e<0)throw new Error("Cannot read in the past");return e>=this.time?this.to:this.to-((t,e,n,i)=>(e*n+2*t)/n**3*i**3+-(2*e*n+3*t)/n**2*i**2+e*i+t)(this.to-this.from,this.speed,this.time,e)},e.prototype.getSpeed=function(t){const e=t/1e3-this.start;return e>=this.time?0:((t,e,n,i)=>(e*n+2*t)/n**3*3*i**2+-(2*e*n+3*t)/n**2*2*i+e)(this.to-this.from,this.speed,this.time,e)},e.prototype.set=function(t,e){const n=new Date,i=this.get(n);return this.speed=this.getSpeed(n),this.start=n/1e3,this.from=i,this.to=t,e&&(this.time=e),i},function(n,i=300){return"number"==typeof n&&(n={value:n}),t(n,(t,r)=>{const o=new e(t,i/1e3);Object.defineProperty(n,"_"+r,{value:o}),Object.defineProperty(n,r,{get:()=>o.get(new Date),set:t=>o.set(t),enumerable:!0})}),Object.defineProperty(n,"get",{get:()=>function(t="value",e=new Date){return this["_"+t].get(e)}}),Object.defineProperty(n,"set",{get:()=>function(e,n=0){t(e,(t,e)=>{this["_"+e].set(t,n/1e3)})}}),n}}()},function(t,e,n){"use strict";n.r(e),n.d(e,"default",(function(){return f}));var i=n(0),r=n.n(i);n(2);const o=(t,e)=>{Object.keys(e).forEach(n=>t.style[n]=e[n])},s=Symbol("_values"),a=Symbol("_interpolated"),c=Symbol("_text"),u=Symbol("_update"),l=Symbol("_lastUpdate"),h=Symbol("_animationFrame");class f{constructor(t=0,e){this.options={...f.defaultOptions,...e},this.node=document.createElement("div"),this.node.className="circular-progress-bar",o(this.node,{width:`${this.options.size}px`,height:`${this.options.size}px`});const n=document.createElement("div");n.className="circular-progress-bar_value";const i=(100-this.options.barsWidth)/100*this.options.size;o(n,{background:this.options.valueBackground,width:`${i}px`,height:`${i}px`,top:`${this.options.barsWidth/2}%`,left:`${this.options.barsWidth/2}%`}),this.node.appendChild(n),this[c]=document.createElement("div"),this[c].className="circular-progress-bar_value_text",o(this[c],{lineHeight:`${i}px`,fontSize:`${i/3}px`}),n.appendChild(this[c]);const s=Array.isArray(t)?t:[t];this[a]=r()(s),this[u]=this[u].bind(this),this.values=s}get value(){return this.values[0]}get values(){return this[s]}set value(t){this.values=[t]}set values(t){if(this[s]=t,t.length!==this[a].length){const e=new Date,n=this[a].map((t,e)=>this[a][`_${e}`]);for(;n.length&&0===n[n.length-1].get(e);)n.length-=1;const{length:i}=n;this[a]=r()(new Array(Math.max(i,t.length)).fill(0));for(let t=0;t<i;++t){const i=n[t],r=this[a][`_${t}`];r.time=0,r.to=i.get(e)}t.push(...new Array(Math.max(0,i-t.length)).fill(0))}this[a].set(t,this.options.transitionTime),this[l]=performance.now(),this[h]=this[u](0);const e=this[s].reduce((t,e)=>t+e,0);let n="";if(e>=this.options.max&&this.options.valueWhenDone)n=this.options.valueWhenDone;else{let t=this.values.length>1?e:this.values[0];"%"===this.options.valueUnit&&(t/=this.options.max/100),n=`${t.toFixed(this.options.valueDecimals)}${this.options.valueUnit}`}this.options.showValue&&(this[c].textContent=n)}appendTo(t){t.appendChild(this.node)}remove(){this.node.remove()}static get defaultOptions(){return{size:150,barsWidth:20,max:100,showValue:!0,valueDecimals:0,valueUnit:"%",valueBackground:"#333",colors:["#0484d1","#e53b44","#2ce8f4","#ffe762","#63c64d","#fb922b"],background:"rgba(0, 0, 0, .3)",transitionTime:500,valueWhenDone:null}}}f.prototype[u]=function(t){if(t>this[l]+this.options.transitionTime)return;this[h]&&cancelAnimationFrame(this[h]),this[h]=requestAnimationFrame(this[u]);let e=0;const n=this[a].map((t,n)=>{const i=t/this.options.max*100;if(i<.1)return null;const r=`${o=this.options.colors,s=n,o[s%o.length]} ${e}% ${e+i}%`;var o,s;return e+=i+.1,r}).filter(t=>t);e<100&&n.push(`transparent ${e}% 100%`),this.node.style.background=`conic-gradient(${n.join(",")}) ${this.options.background}`}},function(t,e,n){var i=n(3),r=n(4);"string"==typeof(r=r.__esModule?r.default:r)&&(r=[[t.i,r,""]]);var o={insert:"head",singleton:!1},s=(i(r,o),r.locals?r.locals:{});t.exports=s},function(t,e,n){"use strict";var i,r=function(){return void 0===i&&(i=Boolean(window&&document&&document.all&&!window.atob)),i},o=function(){var t={};return function(e){if(void 0===t[e]){var n=document.querySelector(e);if(window.HTMLIFrameElement&&n instanceof window.HTMLIFrameElement)try{n=n.contentDocument.head}catch(t){n=null}t[e]=n}return t[e]}}(),s=[];function a(t){for(var e=-1,n=0;n<s.length;n++)if(s[n].identifier===t){e=n;break}return e}function c(t,e){for(var n={},i=[],r=0;r<t.length;r++){var o=t[r],c=e.base?o[0]+e.base:o[0],u=n[c]||0,l="".concat(c," ").concat(u);n[c]=u+1;var h=a(l),f={css:o[1],media:o[2],sourceMap:o[3]};-1!==h?(s[h].references++,s[h].updater(f)):s.push({identifier:l,updater:v(f,e),references:1}),i.push(l)}return i}function u(t){var e=document.createElement("style"),i=t.attributes||{};if(void 0===i.nonce){var r=n.nc;r&&(i.nonce=r)}if(Object.keys(i).forEach((function(t){e.setAttribute(t,i[t])})),"function"==typeof t.insert)t.insert(e);else{var s=o(t.insert||"head");if(!s)throw new Error("Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.");s.appendChild(e)}return e}var l,h=(l=[],function(t,e){return l[t]=e,l.filter(Boolean).join("\n")});function f(t,e,n,i){var r=n?"":i.media?"@media ".concat(i.media," {").concat(i.css,"}"):i.css;if(t.styleSheet)t.styleSheet.cssText=h(e,r);else{var o=document.createTextNode(r),s=t.childNodes;s[e]&&t.removeChild(s[e]),s.length?t.insertBefore(o,s[e]):t.appendChild(o)}}function p(t,e,n){var i=n.css,r=n.media,o=n.sourceMap;if(r?t.setAttribute("media",r):t.removeAttribute("media"),o&&btoa&&(i+="\n/*# sourceMappingURL=data:application/json;base64,".concat(btoa(unescape(encodeURIComponent(JSON.stringify(o))))," */")),t.styleSheet)t.styleSheet.cssText=i;else{for(;t.firstChild;)t.removeChild(t.firstChild);t.appendChild(document.createTextNode(i))}}var d=null,m=0;function v(t,e){var n,i,r;if(e.singleton){var o=m++;n=d||(d=u(e)),i=f.bind(null,n,o,!1),r=f.bind(null,n,o,!0)}else n=u(e),i=p.bind(null,n,e),r=function(){!function(t){if(null===t.parentNode)return!1;t.parentNode.removeChild(t)}(n)};return i(t),function(e){if(e){if(e.css===t.css&&e.media===t.media&&e.sourceMap===t.sourceMap)return;i(t=e)}else r()}}t.exports=function(t,e){(e=e||{}).singleton||"boolean"==typeof e.singleton||(e.singleton=r());var n=c(t=t||[],e);return function(t){if(t=t||[],"[object Array]"===Object.prototype.toString.call(t)){for(var i=0;i<n.length;i++){var r=a(n[i]);s[r].references--}for(var o=c(t,e),u=0;u<n.length;u++){var l=a(n[u]);0===s[l].references&&(s[l].updater(),s.splice(l,1))}n=o}}}},function(t,e,n){(e=n(5)(!1)).push([t.i,".circular-progress-bar {\n  display: inline-block;\n  border-radius: 50%;\n}\n.circular-progress-bar .circular-progress-bar_value {\n  position: relative;\n  display: inline-block;\n  border-radius: 50%;\n}\n.circular-progress-bar .circular-progress-bar_value .circular-progress-bar_value_text {\n  text-align: center;\n  font-family: monospace;\n  color: #fff;\n  mix-blend-mode: difference;\n}\n",""]),t.exports=e},function(t,e,n){"use strict";t.exports=function(t){var e=[];return e.toString=function(){return this.map((function(e){var n=function(t,e){var n=t[1]||"",i=t[3];if(!i)return n;if(e&&"function"==typeof btoa){var r=(s=i,a=btoa(unescape(encodeURIComponent(JSON.stringify(s)))),c="sourceMappingURL=data:application/json;charset=utf-8;base64,".concat(a),"/*# ".concat(c," */")),o=i.sources.map((function(t){return"/*# sourceURL=".concat(i.sourceRoot||"").concat(t," */")}));return[n].concat(o).concat([r]).join("\n")}var s,a,c;return[n].join("\n")}(e,t);return e[2]?"@media ".concat(e[2]," {").concat(n,"}"):n})).join("")},e.i=function(t,n,i){"string"==typeof t&&(t=[[null,t,""]]);var r={};if(i)for(var o=0;o<this.length;o++){var s=this[o][0];null!=s&&(r[s]=!0)}for(var a=0;a<t.length;a++){var c=[].concat(t[a]);i&&r[c[0]]||(n&&(c[2]?c[2]="".concat(n," and ").concat(c[2]):c[2]=n),e.push(c))}},e}}]).default;
@@ -4032,6 +4644,24 @@ class GriffithCardsView extends cc_View {
 	constructor(model, controller) {
 		super(model, controller);
 
+		// if this.controller has parentController property 
+		// TODO clean up this KLUDGE
+		if (
+			this.controller.hasOwnProperty('parentController') &&
+			this.controller.parentController.hasOwnProperty('calendar')
+		) {
+			// old style
+			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
+			this.calendar = this.controller.parentController.calendar;
+		} else if (
+			this.model.hasOwnProperty('controller') &&
+			this.model.controller.hasOwnProperty('parentController') &&
+			this.model.controller.parentController.hasOwnProperty('calendar')) {
+			this.calendar = this.model.controller.parentController.calendar;
+		} else {
+			alert("Another funny calendar miss. Fix it");
+		}
+
 		this.currentCollection = this.model.getCurrentCollection();
 	}
 
@@ -4047,19 +4677,6 @@ class GriffithCardsView extends cc_View {
 	display() {
 		DEBUG && console.log('-------------- GriffithCardsView.display()');
 		let div = document.getElementById('cc-canvas-collections');
-
-		// if this.controller has parentController property 
-		if (this.controller.hasOwnProperty('parentController')) {
-			// old style
-			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
-			this.calendar = this.controller.parentController.calendar;
-		} else if (
-			this.model.hasOwnProperty('controller') &&
-			this.model.controller.hasOwnProperty('parentController')) {
-			this.calendar = this.model.controller.parentController.calendar;
-		} else {
-			alert("Another funny calendar miss. Fix it");
-		}
 
 
 
@@ -4432,6 +5049,8 @@ class GriffithCardsView extends cc_View {
 		const imageUrl = this.generateCardImageUrl(module);
 		const imageSize = this.generateCardImageSize(module);
 
+		const moduleName = this.model.deLabelModuleName(module);
+
 		const LINK_ITEM = this.generateCardLinkItem(module);
 		const PUBLISHED = this.generateCardPublished(module);
 
@@ -4467,7 +5086,7 @@ class GriffithCardsView extends cc_View {
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
 	      <a href="#${module.id}" class="cc-card-link"></a>
-		  <img class="cc-card-image" style="${imageSize}" src="${imageUrl}" alt="Image representing '${module.name}'">
+		  <img class="cc-card-image" style="${imageSize}" src="${imageUrl}" alt="Image representing '${moduleName}'">
       	${DATE_WIDGET}
       	${COMING_SOON}
 	 	${PUBLISHED}
@@ -4475,7 +5094,7 @@ class GriffithCardsView extends cc_View {
       <div class="cc-card-content">
 		<div class=cc-card-label">
 	    	<span class="cc-card-label"> ${CARD_LABEL} </span>
-	    	<h3 class="cc-card-title">${module.name}</h3>
+	    	<h3 class="cc-card-title">${moduleName}</h3>
 		</div>
       	<div class="cc-card-description">
 	  		${description}
@@ -4620,10 +5239,10 @@ class GriffithCardsView extends cc_View {
 		if (firstDate.WEEK !== "") {
 			// TODO should check for a day, if we wish to get the day
 			let actualDate = {};
-			if (firstDate.DAY === "") {
+			if (firstDate.DAY === "" && this.hasOwnProperty('calendar')) {
 				// no special day specified, just get the start of the week
 				actualDate = this.calendar.getDate(firstDate.WEEK);
-			} else {
+			} else if (this.hasOwnProperty('calendar')) {
 				// need go get the date for a particular day
 				actualDate = this.calendar.getDate(firstDate.WEEK, false, firstDate.DAY);
 			}
@@ -5360,10 +5979,11 @@ class CollectionsView extends cc_View {
 	 * - give option to include the includePage
 	 * @param {String} collectionName 
 	 * @param {String} variety 
+	 * @param {boolean} navBar
 	 * @return {String} HTML string
 	 */
 
-	generateHTML(collectionName,variety="") {
+	generateHTML(collectionName,variety="",navBar=false) {
 		// does the collection have a representation?
 		if (!this.representations[collectionName]) {
 			return undefined;
@@ -5377,6 +5997,11 @@ class CollectionsView extends cc_View {
 
 		let html = this.representations[collectionName].generateHTML(collectionName,variety);
 
+		// add in the navBar insert it at the beginning of html
+		if (navBar ) {
+			//html = `<h1>NAV BAR HERE</h1>${html}`;
+			html = `${this.navView.generateHTML(collectionName,variety)}${html}`;
+		}
 		// TODO
 		// - add in the navBar?
 		// - add in the include page?
@@ -5570,7 +6195,9 @@ class CollectionsView extends cc_View {
 				}
 			} else {
 				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
-				contextModule.style.display = 'block';
+				if (contextModule) {
+					contextModule.style.display = 'block';
+				}
 			}
 		}
 
@@ -6059,7 +6686,11 @@ class cc_ConfigurationStore {
 			module.name = this.decodeHTML(module.name);
 		}
 		// double check that we're not an import from another course
-		this.importConverted = this.checkConvertImport();
+		const importConverted = this.checkConvertImport();
+		// and make it gets saved if there was a change
+		if (importConverted) {
+			this.configConverted = importConverted;
+		}
 
 		// also need to decode the collection names in
 		// - keys for this.cc_configuration.COLLECTIONS
@@ -6106,11 +6737,11 @@ class cc_ConfigurationStore {
 
 		// get list of commonIds
 		const commonIds = collectionIds.filter((id) => {
-			// convert id to int
 			return canvasIds.includes(parseInt(id));
 		});
 
 		// nothing to do if the lengths of three lists are the same
+		// - suggesting that collections and Canvas have the same modules
 		if (collectionIds.length===canvasIds.length && collectionIds.length===commonIds.length) {
 			return false;
 		}
@@ -6170,13 +6801,18 @@ class cc_ConfigurationStore {
 						};
 					}
 					// loop through entries in nameToId hash
+					let newModules = {};
 					for (let name in nameToId) {
 						// replace the ccModuleId with the canvasModuleId
-						this.parentController.cc_configuration.MODULES[nameToId[key].canvasModuleId] = 
-							this.parentController.cc_configuration.MODULES[nameToId[key].ccModuleId];
+						//this.parentController.cc_configuration.MODULES[nameToId[name].canvasModuleId.id] = 
+						newModules[nameToId[name].canvasModuleId.id] =
+							this.parentController.cc_configuration.MODULES[nameToId[name].ccModuleId];
+						// set the id attribute of the object to the canvasModuleId
+						newModules[nameToId[name].canvasModuleId.id].id = nameToId[name].canvasModuleId.id;
 						// delete the ccModuleId
-						delete this.parentController.cc_configuration.MODULES[nameToId[key].ccModuleId];
+						//delete this.parentController.cc_configuration.MODULES[nameToId[name].ccModuleId.id];
 					}
+					this.parentController.cc_configuration.MODULES = newModules;
 				}
 			}
 
@@ -7376,7 +8012,7 @@ class cc_Controller {
 	/**
 	 * @descr Generate API request for all information of course's modules
 	 */
-	async requestModuleInformation() {
+	async requestModuleInformation(responseHandler=undefined) {
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: for ${this.courseId}`);
 
 		let callUrl = `/api/v1/courses/${this.courseId}/modules?include=items&per_page=500`;
@@ -7400,7 +8036,13 @@ class cc_Controller {
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: json = ${JSON.stringify(data)}`);
 
 		this.moduleDetails = data;
-		this.configurationStore.getConfiguration();
+
+		// if a response handler has been provided then call it
+		if (responseHandler) {
+			responseHandler(response.ok);
+		} else {
+			this.configurationStore.getConfiguration();
+		}
 	}
 
 	/**
