@@ -26,6 +26,26 @@ export default class GriffithCardsView extends cc_View {
 	constructor(model, controller) {
 		super(model, controller);
 
+		// if this.controller has parentController property 
+		// TODO clean up this KLUDGE
+		if (
+			this.controller.hasOwnProperty('parentController') &&
+			this.controller.parentController.hasOwnProperty('calendar')
+		) {
+			// old style
+			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
+			this.calendar = this.controller.parentController.calendar;
+		} else if (
+			this.model.hasOwnProperty('controller') &&
+			this.model.controller.hasOwnProperty('parentController') &&
+			this.model.controller.parentController.hasOwnProperty('calendar')) {
+			this.calendar = this.model.controller.parentController.calendar;
+		} else {
+			alert("Another funny calendar miss. Fix it");
+		}
+
+
+
 		this.currentCollection = this.model.getCurrentCollection();
 	}
 
@@ -41,19 +61,6 @@ export default class GriffithCardsView extends cc_View {
 	display() {
 		DEBUG && console.log('-------------- GriffithCardsView.display()');
 		let div = document.getElementById('cc-canvas-collections');
-
-		// if this.controller has parentController property 
-		if (this.controller.hasOwnProperty('parentController')) {
-			// old style
-			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
-			this.calendar = this.controller.parentController.calendar;
-		} else if (
-			this.model.hasOwnProperty('controller') &&
-			this.model.controller.hasOwnProperty('parentController')) {
-			this.calendar = this.model.controller.parentController.calendar;
-		} else {
-			alert("Another funny calendar miss. Fix it");
-		}
 
 
 

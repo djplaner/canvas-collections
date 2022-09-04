@@ -252,4 +252,17 @@ export default class CollectionsModel {
 		pageUrl += convertedPageName;
 		return pageUrl;
 	}
+
+	/**
+	 * Return the full URL for the current Canvas course sites modules view 
+	 * Format
+	 *   https://<<hostname>>/courses<<courseid>>/modules
+	 * @returns {String} URL
+	 */
+	getModuleViewUrl() {
+		let modulesUrl = this.controller.parentController.documentUrl;
+
+		return modulesUrl;
+
+	}
 }

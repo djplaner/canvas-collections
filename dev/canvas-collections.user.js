@@ -3029,7 +3029,7 @@ class cc_ConfigurationController {
 		// Obtain the collection name and representation for the button clicked
 
 		let updateController = new updatePageController( 
-			this.parentController, [ collectionName ]
+			collectionName, this.parentController, 
 			);
 
 	}
@@ -3317,6 +3317,19 @@ class CollectionsModel {
 		pageUrl += convertedPageName;
 		return pageUrl;
 	}
+
+	/**
+	 * Return the full URL for the current Canvas course sites modules view 
+	 * Format
+	 *   https://<<hostname>>/courses<<courseid>>/modules
+	 * @returns {String} URL
+	 */
+	getModuleViewUrl() {
+		let modulesUrl = this.controller.parentController.documentUrl;
+
+		return modulesUrl;
+
+	}
 }
 
 // src/Collections/NavViewWF.js
@@ -3562,13 +3575,13 @@ div.cc-collection-hidden > a {
 		// get list of collection details without output pages(including output page)
 		const collectionsOutput = this.model.getOutputPageCollections();
 		const activeLi = ' style="background-color: #c02424"';
-		const activeA = ' style="text-decoration: none;color: #fff; font-weight: bold;font-size:1.2em;"';
+		const activeA = ' style="border-top: none;text-decoration: none;color: #fff; font-weight: bold;font-size:1.2em;"';
 
 		let items = '';
 
 		collectionsOutput.forEach(collection => {
 			let liStyle ='';
-			let aStyle = '';
+			let aStyle = ' style="text-decoration:none"';
 			if (collection.name === collectionName) {
 				liStyle = activeLi;
 				aStyle = activeA;
@@ -4103,7 +4116,7 @@ const TABLE_ROW_HTML = `
 const TABLE_ROW_HTML_CLAYTONS = `
 		  <tr role="row">
           <td role="cell" style="vertical-align:top; padding: 0.5rem">
-            <div class="cc-table-cell-text"><p><a href="#{{MODULE-ID}}">
+            <div class="cc-table-cell-text"><p><a href="{{MODULE-ID}}">
               {{TITLE}}
             </a></p> </div>
           </td>
@@ -4194,6 +4207,7 @@ class AssessmentTableView extends cc_View {
 //    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());
     // get an array of all modules in display order
  		const modules = this.model.getModulesCollections();
+    const modulesUrl = this.model.getModuleViewUrl();
     let tableRows = '';
     for (let i = 0; i < modules.length; i++) {
 
@@ -4219,6 +4233,11 @@ class AssessmentTableView extends cc_View {
         'TYPE': modules[i].label,
         'DUE-DATE': dueDateString
       };
+
+      // for a claytons view - MODULE-ID needs to become a full link
+      if (variety === 'claytons') {
+        mapping['MODULE-ID'] = `${modulesUrl}/#${modules[i].id}`;
+      }
 
       // check metadata for weighting and learning outcomes
       const metaData = modules[i].metadata;
@@ -4354,6 +4373,26 @@ class GriffithCardsView extends cc_View {
 	constructor(model, controller) {
 		super(model, controller);
 
+		// if this.controller has parentController property 
+		// TODO clean up this KLUDGE
+		if (
+			this.controller.hasOwnProperty('parentController') &&
+			this.controller.parentController.hasOwnProperty('calendar')
+		) {
+			// old style
+			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
+			this.calendar = this.controller.parentController.calendar;
+		} else if (
+			this.model.hasOwnProperty('controller') &&
+			this.model.controller.hasOwnProperty('parentController') &&
+			this.model.controller.parentController.hasOwnProperty('calendar')) {
+			this.calendar = this.model.controller.parentController.calendar;
+		} else {
+			alert("Another funny calendar miss. Fix it");
+		}
+
+
+
 		this.currentCollection = this.model.getCurrentCollection();
 	}
 
@@ -4369,19 +4408,6 @@ class GriffithCardsView extends cc_View {
 	display() {
 		DEBUG && console.log('-------------- GriffithCardsView.display()');
 		let div = document.getElementById('cc-canvas-collections');
-
-		// if this.controller has parentController property 
-		if (this.controller.hasOwnProperty('parentController')) {
-			// old style
-			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
-			this.calendar = this.controller.parentController.calendar;
-		} else if (
-			this.model.hasOwnProperty('controller') &&
-			this.model.controller.hasOwnProperty('parentController')) {
-			this.calendar = this.model.controller.parentController.calendar;
-		} else {
-			alert("Another funny calendar miss. Fix it");
-		}
 
 
 

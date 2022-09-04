@@ -240,13 +240,13 @@ div.cc-collection-hidden > a {
 		// get list of collection details without output pages(including output page)
 		const collectionsOutput = this.model.getOutputPageCollections();
 		const activeLi = ' style="background-color: #c02424"';
-		const activeA = ' style="text-decoration: none;color: #fff; font-weight: bold;font-size:1.2em;"';
+		const activeA = ' style="border-top: none;text-decoration: none;color: #fff; font-weight: bold;font-size:1.2em;"';
 
 		let items = '';
 
 		collectionsOutput.forEach(collection => {
 			let liStyle ='';
-			let aStyle = '';
+			let aStyle = ' style="text-decoration:none"';
 			if (collection.name === collectionName) {
 				liStyle = activeLi;
 				aStyle = activeA;

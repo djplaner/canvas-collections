@@ -261,7 +261,7 @@ const TABLE_ROW_HTML = `
 const TABLE_ROW_HTML_CLAYTONS = `
 		  <tr role="row">
           <td role="cell" style="vertical-align:top; padding: 0.5rem">
-            <div class="cc-table-cell-text"><p><a href="#{{MODULE-ID}}">
+            <div class="cc-table-cell-text"><p><a href="{{MODULE-ID}}">
               {{TITLE}}
             </a></p> </div>
           </td>
@@ -352,6 +352,7 @@ export default class AssessmentTableView extends cc_View {
 //    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());
     // get an array of all modules in display order
  		const modules = this.model.getModulesCollections();
+    const modulesUrl = this.model.getModuleViewUrl();
     let tableRows = '';
     for (let i = 0; i < modules.length; i++) {
 
@@ -377,6 +378,11 @@ export default class AssessmentTableView extends cc_View {
         'TYPE': modules[i].label,
         'DUE-DATE': dueDateString
       };
+
+      // for a claytons view - MODULE-ID needs to become a full link
+      if (variety === 'claytons') {
+        mapping['MODULE-ID'] = `${modulesUrl}/#${modules[i].id}`;
+      }
 
       // check metadata for weighting and learning outcomes
       const metaData = modules[i].metadata;
