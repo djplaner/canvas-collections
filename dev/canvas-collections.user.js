@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.12
+// @version      0.8.13
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -574,7 +574,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.13";
+const CC_VERSION = "0.8.14";
 
 const CONFIG_VIEW_TOOLTIPS = [ 
 	{ 
@@ -684,6 +684,21 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/#additional-metadata"
 	},
+		{ 
+		contentText: `Specify how the image will be scaled to fit the available space`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-image-scale",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
+	},
+	{ 
+		contentText: `Provide the URL for an image to associate with this module.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-image-url",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
+	},
+
 
 
 ];
@@ -1028,7 +1043,8 @@ class cc_ConfigurationView extends cc_View {
 			imageSize = "contain";
 			moduleConfig.imageSize = imageSize;
 		}
-		const options = ['scale-down', 'fill', 'contain', 'cover', 'none'];
+		const options = [
+		'contain', 'cover', 'fill', 'fit', 'scale-down', 'none'];
 		for (let i = 0; i < options.length; i++) {
 			let selected = '';
 			const option = options[i];
@@ -1224,13 +1240,19 @@ class cc_ConfigurationView extends cc_View {
 		    </div>
 			<div style="margin-right:1em">
 				<div class="cc-module-config-collection-representation">
-					<label for="cc-collection-representation-${moduleDetail.id}-imageSize">Image size</label>
-<!--					<input id="cc-module-config-${moduleDetail.id}-imageSize" value="${moduleConfig.imageSize}"> -->
+					<label for="cc-collection-representation-${moduleDetail.id}-imageSize">Image scale
+						<a id="cc-about-image-scale" target="_blank" href="">
+			   				<i class="icon-question cc-module-icon"></i></a>
+
+					</label>
 		   		       <select id="cc-module-config-${moduleDetail.id}-imageSize">
 					      ${imageSizeOptions}
 						</select>
 					<br clear="all" />
-					<label for="cc-module-config-collection-representation-${moduleDetail.id}-image">Image URL</label>
+					<label for="cc-module-config-collection-representation-${moduleDetail.id}-image">Image URL
+											<a id="cc-about-image-url" target="_blank" href="">
+			   				<i class="icon-question cc-module-icon"></i></a>
+					</label>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
 					        value="${moduleConfig.image}">
 					<br clear="all" />

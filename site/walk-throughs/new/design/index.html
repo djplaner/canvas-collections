@@ -807,6 +807,26 @@
     What are the relevant metadata for each module?
   </a>
   
+    <nav class="md-nav" aria-label="What are the relevant metadata for each module?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reusing-metadata-in-different-representations" class="md-nav__link">
+    Reusing metadata in different representations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-different-metadata-please-suggest" class="md-nav__link">
+    Adding different metadata - please suggest
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1296,6 +1316,26 @@
     What are the relevant metadata for each module?
   </a>
   
+    <nav class="md-nav" aria-label="What are the relevant metadata for each module?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reusing-metadata-in-different-representations" class="md-nav__link">
+    Reusing metadata in different representations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-different-metadata-please-suggest" class="md-nav__link">
+    Adding different metadata - please suggest
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1422,7 +1462,55 @@
 <p>As a fairly simple course focused more on self-paced information access and not connected to a formal course the modules aren't representative of something formal like a week, lecture, tutorial, theme.</p>
 <p>However, the intent was to make sure that "students" of the course could clearly navigate to where they needed to go and have a bit of fun along the way.</p>
 <h2 id="what-are-the-relevant-metadata-for-each-module">What are the relevant metadata for each module?</h2>
-<p><strong>more to come here</strong></p>
+<p>The following table summarises the metadata currently supported by Canvas Collections and a description of current common uses. The image after that table provides a visual representation of how the metadata is used in the Cards representation.</p>
+<p>The <em>Configure Modules</em> page provides examples of <a href="../configure-modules/#specifying-additional-metadata">specifying additional metadata</a> for a module.</p>
+<table>
+<thead>
+<tr>
+<th>Metadata</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Collection</td>
+<td>The collection the module belongs to</td>
+<td><a href="../configure-modules/#allocate-the-modules">Allocate modules</a> as per your design</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>Some HTML intended to provide students with a description or rationale for the object represented by the module</td>
+<td>e.g. a synopsis or a <a href="https://www.magnifylearningin.org/driving-questions">driving question</a></td>
+</tr>
+<tr>
+<td>Image</td>
+<td>A visual image to represent the module</td>
+<td>Most commonly used with the Cards representation (e.g. <a href="../configure-modules/#add-an-image">add an image</a>)</td>
+</tr>
+<tr>
+<td>Label &amp; Number</td>
+<td>Explicitly identify a module as a particular object (the label) and its position in the collection (the number - which can be auto calculated)</td>
+<td><em>Lecture 1</em>, <em>Topic 5</em>, <em>Workshop</em> are <a href="../configure-modules/#add-a-label-and-number">some examples</a></td>
+</tr>
+<tr>
+<td>Date &amp; Date Label</td>
+<td>Specify the day/time when the activity occurs, is due etc. Through a combination of a date and a label (e.g. due, commencing etc)</td>
+<td><em>Due Week 1 May 5</em> or <em>Happening 5pm Fri Week 1 May 9</em> are <a href="../configure-modules/#add-a-date-and-date-label">some examples</a></td>
+</tr>
+<tr>
+<td>Additional metadata</td>
+<td>A flexible method for specifying any additional metadata in the form of pairs of name and value</td>
+<td>The <em>AssessmentTable</em> representation can use additional meta data with the names <em>learning outcomes</em> and <em>weighting</em></td>
+</tr>
+</tbody>
+</table>
+<p><img alt="" src="../pics/metaDataLabeled.png" />  </p>
+<h3 id="reusing-metadata-in-different-representations">Reusing metadata in different representations</h3>
+<p>Collections can use different representations to change visual appearance. For example, the following image (<em>AssessmentTable</em> representation) is the same collection (partially) shown in the above image (<em>GriffithCards</em> representation). It illustrates how a different representation reuses some metadata (description and date) and ignores other metadata (image, engage). It also shows how <em>additional metadata</em> (e.g. <em>learning outcomes</em> and <em>weighting</em> can be used in one representation (assessment table) but ignored in another (Griffith Cards).</p>
+<p><img alt="" src="../pics/sameMetaDataAssessment.png" />  </p>
+<h3 id="adding-different-metadata-please-suggest">Adding different metadata - please suggest</h3>
+<p>This support will continue to be expanded over time. In particular, in response to your suggestions. One way to make a suggestion is to <a href="https://github.com/djplaner/canvas-collections/issues/new">raise an issue describing the suggestion</a> on the Collections repository. </p>
 
 
 

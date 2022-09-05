@@ -58,5 +58,29 @@ However, the intent was to make sure that "students" of the course could clearly
 
 ## What are the relevant metadata for each module?
 
-**more to come here**
+The following table summarises the metadata currently supported by Canvas Collections and a description of current common uses. The image after that table provides a visual representation of how the metadata is used in the Cards representation.
 
+
+The _Configure Modules_ page provides examples of [specifying additional metadata](./configure-modules.md#specifying-additional-metadata) for a module.
+
+| Metadata | Description | Example |
+| --- | --- | --- |
+| Collection | The collection the module belongs to | [Allocate modules](./configure-modules.md#allocate-the-modules) as per your design | 
+| Description | Some HTML intended to provide students with a description or rationale for the object represented by the module | e.g. a synopsis or a [driving question](https://www.magnifylearningin.org/driving-questions) |
+| Image | A visual image to represent the module | Most commonly used with the Cards representation (e.g. [add an image](./configure-modules.md#add-an-image)) |
+| Label & Number | Explicitly identify a module as a particular object (the label) and its position in the collection (the number - which can be auto calculated) | _Lecture 1_, _Topic 5_, _Workshop_ are [some examples](./configure-modules.md#add-a-label-and-number) |
+| Date & Date Label | Specify the day/time when the activity occurs, is due etc. Through a combination of a date and a label (e.g. due, commencing etc) | _Due Week 1 May 5_ or _Happening 5pm Fri Week 1 May 9_ are [some examples](./configure-modules.md#add-a-date-and-date-label) |
+| Additional metadata | A flexible method for specifying any additional metadata in the form of pairs of name and value | The _AssessmentTable_ representation can use additional meta data with the names _learning outcomes_ and _weighting_ |
+
+
+![](pics/metaDataLabeled.png)  
+
+### Reusing metadata in different representations
+
+Collections can use different representations to change visual appearance. For example, the following image (_AssessmentTable_ representation) is the same collection (partially) shown in the above image (_GriffithCards_ representation). It illustrates how a different representation reuses some metadata (description and date) and ignores other metadata (image, engage). It also shows how _additional metadata_ (e.g. _learning outcomes_ and _weighting_ can be used in one representation (assessment table) but ignored in another (Griffith Cards).
+
+![](pics/sameMetaDataAssessment.png)  
+
+### Adding different metadata - please suggest
+
+This support will continue to be expanded over time. In particular, in response to your suggestions. One way to make a suggestion is to [raise an issue describing the suggestion](https://github.com/djplaner/canvas-collections/issues/new) on the Collections repository. 
