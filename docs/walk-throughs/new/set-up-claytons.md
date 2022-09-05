@@ -70,4 +70,8 @@ The "Full Claytons" differs from "update" in two ways:
 1. All _output pages_ are updated.
 2. Each _output page_ will contain the collection's representation **AND** a navigation bar that enables navigation between the pages.
 
-"Full Claytons" has its own _Update_ button in the Collections configuration dialog. Click this and Collections will update each page in turn.
+"Full Claytons" has its own _Update_ button in the Collections configuration dialog. Click this and Collections will update each page in turn. 
+
+The following image looks at each individual page before applying "Full Claytons". Showing the pages don't have any content. It then shows the process of applying "Full Claytons". Then it revisits one of the pages and reloads the page to see the updated content. The navigation bar - added by "Full Claytons" - is then used to navigate to the other pages.
+
+![](pics/fullClaytonsAnimation.gif)

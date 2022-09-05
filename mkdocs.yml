@@ -71,6 +71,8 @@ nav:
       - Add a collection: walk-throughs/changes/add-a-collection.md
       - Delete a collection: walk-throughs/changes/delete-a-collection.md
       - Add a module: walk-throughs/changes/add-a-module.md
+    - ⚗️ Advanced:
+      - Multi-collection, one page Claytons: walk-throughs/advanced/multi-collection-one-page.md
     - Student: walk-throughs/student.md
   - Reference: 
       - Overview: reference/overview.md
