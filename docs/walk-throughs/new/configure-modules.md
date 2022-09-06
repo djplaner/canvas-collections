@@ -135,17 +135,60 @@ Image scale is implemented and constrained by a standard [CSS property called _o
 
 ![](pics/imageScaleAnimated.gif)
 
+#### Image URL
 
+The _Image URL_ is a simple text field. The URL can be a web address (e.g. a URL on the open web) or a Canvas file URL. The following animated image demonstrates the process of obtaining a URL for an image within a Canvas course's files area and using it with Collections.
 
-
+![](pics/imageUrlAnimated.gif)
 
 ### Add a label and a number
 
+The label helps identify to the student that a Canvas module is a _Lecture_, _Workshop_, _Assignment_ or some other context/learning design specific object. It helps them understand why, what, and how to engage with the module. The number helps establish the order of the objects.
 
-### Configure auto-number labels
+A label is simple any sequence of characters (including emojis). 
 
+There are two options for the number:
+
+1. _Auto-number_ - the number is automatically calculated based on the order of the modules in the collection. The first lecture will be _Lecture 1_ the second _Lecture 2_ and so on. This is the default.
+2. _Explicitly specified string_ - i.e. you can manually specify any sequence of characters, including emojis, or leave it blank.
+
+The _Auto-number_ option is provided to enable modules to be moved around during re-design without having to manually update the number. 
+
+#### Auto number example
+
+For the current (somewhat contrived) example, it's been decided that the three modules in the _Why?_ collection will be labelled _Why 1_, _Why 2_ and _Why 3_. To achieve this, all three modules can be configured using the following approach for _label_ and _number_. Note that the _Auto-number_ checkbox is checked.
+
+![](pics/whyAutoNumberForm.png)  
+
+With all three _Why?_ collection modules configured this way the representation looks like this.
+
+![](pics/autoLabel.png)
+
+#### Explicitly specified string examples
+
+Both label and number can include any characters you provide - including emojis etc. To explicitly specify a string for the number, you first need to uncheck the _Auto-number_ checkbox. The following image shows the _Why 2_ module label modified to include an emoji, and the number modified to include a string of characters (including an emoji).
+
+![](pics/explicitNumberExample.png)  
+
+With similar changes to the label and number for the other two _Why?_ modules the representation looks (for a short time) like the following image.
+
+![](pics/explictNumberRepresentation.png)  
 
 ### Add a date and date label
 
 
 ### Configure a module for the assessment table representation
+
+The _assessment table_ representation - as the name suggests - is explicitly designed to represent the collection of assessment information for a course. Consequently, it includes (and perhaps requires) some assessment specific metadata, summarised in the following table.
+
+| Purpose | Source | Description |
+| --- | --- | --- |
+| Title | Name of the Canvas module containing assessment information | The title of the assessment item |
+| Description | The standard Collections description | A summary of the assessment item |
+| Due Date | The standard Collections date | The date the assessment item is due or perhaps a date range when the assessment is available |
+| Weighting | Additional Collection's metadata with the name _weighting_ | The % weight of the assessment item |
+| Learning outcomes | Additional Collection's metadata with the name _learning outcomes_ | The learning outcomes that the assessment item is intended to assess |
+
+The first three are standard metadata already explained above. The last two are additional metadata that can be added to any module. The following animated image demonstrates the process of adding these to an assessment table representation.
+
+![](pics/assessmentTableMetadataAnimated.gif)
