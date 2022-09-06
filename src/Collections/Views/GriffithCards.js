@@ -93,7 +93,6 @@ export default class GriffithCardsView extends cc_View {
 	 * @param {String} variety 
 	 */
 	generateHTML(collectionName, variety = '') {
-
 		let cardsHtml = this.generateCards(collectionName);
 
 		if (variety==='claytons') {
@@ -174,7 +173,32 @@ export default class GriffithCardsView extends cc_View {
 		.cc-card-image {
 			height: 10rem;
 			width: 100%;
+		}
+
+		.cc-object-fit-old-kludge {
+			background-size: contain !important; 
+			background-repeat: no-repeat; 
+			background-position: center;
+		}
+
+		.cc-object-fit-cover {
 			object-fit: cover;
+		}
+
+		.cc-object-fit-contain {
+			object-fit: contain;
+		}
+
+		.cc-object-fit-fill {
+			object-fit: fill;
+		}
+
+		.cc-object-fit-scale-down {
+			object-fit: scale-down;
+		}
+
+		.cc-object-fit-none {
+			object-fit: none;
 		}
 
 		.cc-card-content-height {
@@ -464,17 +488,20 @@ export default class GriffithCardsView extends cc_View {
 			}
 		}
 
+		// escModuleName is a version of moduleName with all HTML and special characters escaped
+		let escModuleName = moduleName.replace(/(["'])/g, "\\$1");
+
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
 	      <a href="#${module.id}" class="cc-card-link"></a>
-		  <img class="cc-card-image" style="${imageSize}" src="${imageUrl}" alt="Image representing '${moduleName}'">
+		  <img class="cc-card-image ${imageSize}" src="${imageUrl}" alt="Image representing '${escModuleName}'">
       	${DATE_WIDGET}
       	${COMING_SOON}
 	 	${PUBLISHED}
 	  <div class="cc-card-content-height">
       <div class="cc-card-content">
-		<div class=cc-card-label">
+		<div class="cc-card-label">
 	    	<span class="cc-card-label"> ${CARD_LABEL} </span>
 	    	<h3 class="cc-card-title">${moduleName}</h3>
 		</div>
@@ -806,11 +833,7 @@ export default class GriffithCardsView extends cc_View {
 	}
 
 	/**
-	 * module.imageSize will contain user spec for sizing the background image for a card
-	 * Options are
-	 * - bg-contain
-	 * - bg-cover
-	 * These need to be supplemented 
+	 * @descr figures out what CSS class fits for the image based on the CSS object fit values
 	 * @param {Object} module 
 	 * @returns 
 	 */
@@ -819,9 +842,12 @@ export default class GriffithCardsView extends cc_View {
 		const allowedObjectFit = ['contain', 'cover', 'scale-down', 'fill'];
 		if ("imageSize" in module && module.imageSize !== "") {
 			if (module.imageSize === "bg-contain") {
-				imageSize = "background-size: contain !important; background-repeat: no-repeat; background-position: center;";
+				// some sort of dodgy kludge to handle legacy methods
+				//imageSize = "background-size: contain !important; background-repeat: no-repeat; background-position: center;";
+				imageSize = "cc-object-fit-old-kludge";
 			} else if (allowedObjectFit.includes(module.imageSize)) {
-				imageSize = `object-fit: ${module.imageSize} !important;`;
+				imageSize = `cc-object-fit-${module.imageSize}`;
+//				imageSize = `object-fit: ${module.imageSize} !important;`;
 			}
 		}
 		return imageSize;
@@ -947,6 +973,8 @@ export default class GriffithCardsView extends cc_View {
 			let h3 = h3s[i];
 			h3.innerHTML = '<strong>' + h3.innerHTML + '</strong>';
 		}
+
+
 
 		//----------------- 
 		// remove all div.cc-progress

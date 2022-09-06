@@ -1,0 +1,33 @@
+<style>
+
+/* card image - scaling */
+.cc-object-fit-old-kludge {
+	background-size: contain !important;
+	background-repeat: no-repeat;
+	background-position: center;
+	";
+
+}
+
+.cc-object-fit-cover {
+	object-fit: cover;
+}
+
+.cc-object-fit-contain {
+	object-fit: contain;
+}
+
+.cc-object-fit-fill {
+	object-fit: fill;
+}
+
+.cc-object-fit-scale-down {
+	object-fit: scale-down;
+}
+
+.cc-object-fit-none {
+	object-fit: none;
+}
+
+
+</style>

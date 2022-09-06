@@ -1,0 +1,1874 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Improve the visual identity and information architecture of the Canvas LMS">
+      
+      
+        <meta name="author" content="David Jones">
+      
+      
+        <link rel="canonical" href="https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.4.0">
+    
+    
+      
+        <title>Configure Modules - Canvas Collections</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.69437709.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.cbb835fc.min.css">
+        
+      
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arial:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Arial";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#configure-the-modules" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Canvas Collections" class="md-header__button md-logo" aria-label="Canvas Collections" data-md-component="logo">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Canvas Collections
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Configure Modules
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="red" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/djplaner/canvas-collections" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../features/" class="md-tabs__link">
+      Features
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../getting-started/overview/" class="md-tabs__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../available/" class="md-tabs__link md-tabs__link--active">
+        Walk throughs
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../reference/overview/" class="md-tabs__link">
+        Reference
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../related-work/" class="md-tabs__link">
+      Related Work
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Canvas Collections" class="md-nav__button md-logo" aria-label="Canvas Collections" data-md-component="logo">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    Canvas Collections
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/djplaner/canvas-collections" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../features/" class="md-nav__link">
+        Features
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Getting Started
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Getting Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/overview/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          1. Install
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="1. Install" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          1. Install
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/install/types-pre-requisites/" class="md-nav__link">
+        Types and Pre-requisites
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/install/individual/" class="md-nav__link">
+        Individual
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/install/institutional/" class="md-nav__link">
+        Institutional
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/install/is-it-working/" class="md-nav__link">
+        Is it working?
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          2. Configure
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="2. Configure" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          2. Configure
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/configure/configuration/" class="md-nav__link">
+        Configuration
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/configure/collections/" class="md-nav__link">
+        Collections
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/configure/modules/" class="md-nav__link">
+        Modules
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          3. Use
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="3. Use" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          3. Use
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/use/types/" class="md-nav__link">
+        Types of Use
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/use/claytons/" class="md-nav__link">
+        'Claytons'
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/use/live/" class="md-nav__link">
+        Live
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Walk throughs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Walk throughs" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Walk throughs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../available/" class="md-nav__link">
+        Available walk throughs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2">
+          New course
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="New course" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          New course
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../before-and-after/" class="md-nav__link">
+        Before & after
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../design/" class="md-nav__link">
+        Design
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-collections/" class="md-nav__link">
+        Configure Collections
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Configure Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Configure Modules
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introducing-the-module-configuration-area" class="md-nav__link">
+    Introducing the module configuration area
+  </a>
+  
+    <nav class="md-nav" aria-label="Introducing the module configuration area">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#find-the-module-configuration-area" class="md-nav__link">
+    Find the module configuration area
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#open-the-module-configuration-area" class="md-nav__link">
+    Open the module configuration area
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#allocate-the-modules" class="md-nav__link">
+    Allocate the modules
+  </a>
+  
+    <nav class="md-nav" aria-label="Allocate the modules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examine-the-change" class="md-nav__link">
+    Examine the change
+  </a>
+  
+    <nav class="md-nav" aria-label="Examine the change">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#module-only-appears-when-its-collection-is-current" class="md-nav__link">
+    Module only appears when its collection is current
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#module-is-represented-using-the-collections-representation" class="md-nav__link">
+    Module is represented using the collection's representation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#module-configuration-area-lists-the-allocated-collection" class="md-nav__link">
+    Module configuration area lists the allocated collection
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allocate-the-remaining-modules" class="md-nav__link">
+    Allocate the remaining modules
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#specify-additional-metadata" class="md-nav__link">
+    Specify additional metadata
+  </a>
+  
+    <nav class="md-nav" aria-label="Specify additional metadata">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-a-description" class="md-nav__link">
+    Add a description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-an-image" class="md-nav__link">
+    Add an image
+  </a>
+  
+    <nav class="md-nav" aria-label="Add an image">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-scale" class="md-nav__link">
+    Image scale
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-url" class="md-nav__link">
+    Image URL
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-a-label-and-a-number" class="md-nav__link">
+    Add a label and a number
+  </a>
+  
+    <nav class="md-nav" aria-label="Add a label and a number">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto-number-example" class="md-nav__link">
+    Auto number example
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explicitly-specified-string-examples" class="md-nav__link">
+    Explicitly specified string examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-a-date-and-date-label" class="md-nav__link">
+    Add a date and date label
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-a-module-for-the-assessment-table-representation" class="md-nav__link">
+    Configure a module for the assessment table representation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../set-up-claytons/" class="md-nav__link">
+        Set up "Claytons"
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_3">
+          Making changes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Making changes" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_3">
+          <span class="md-nav__icon md-icon"></span>
+          Making changes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changes/add-a-collection/" class="md-nav__link">
+        Add a collection
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changes/delete-a-collection/" class="md-nav__link">
+        Delete a collection
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changes/add-a-module/" class="md-nav__link">
+        Add a module
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_4" type="checkbox" id="__nav_4_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_4">
+          ⚗️ Advanced
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="⚗️ Advanced" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_4">
+          <span class="md-nav__icon md-icon"></span>
+          ⚗️ Advanced
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/multi-collection-one-page/" class="md-nav__link">
+        Multi-collection, one page Claytons
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../student/" class="md-nav__link">
+        Student
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/overview/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_2" type="checkbox" id="__nav_5_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_2">
+          Collections
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Collections" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_2">
+          <span class="md-nav__icon md-icon"></span>
+          Collections
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/collections/overview/" class="md-nav__link">
+        Collections
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_3">
+          Representations
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Representations" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_3">
+          <span class="md-nav__icon md-icon"></span>
+          Representations
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/representations/overview/" class="md-nav__link">
+        Representations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/representations/claytons/overview/" class="md-nav__link">
+        Claytons
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4" type="checkbox" id="__nav_5_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_4">
+          Objects
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Objects" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_4">
+          <span class="md-nav__icon md-icon"></span>
+          Objects
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/objects/overview/" class="md-nav__link">
+        Objects
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../related-work/" class="md-nav__link">
+        Related Work
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introducing-the-module-configuration-area" class="md-nav__link">
+    Introducing the module configuration area
+  </a>
+  
+    <nav class="md-nav" aria-label="Introducing the module configuration area">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#find-the-module-configuration-area" class="md-nav__link">
+    Find the module configuration area
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#open-the-module-configuration-area" class="md-nav__link">
+    Open the module configuration area
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#allocate-the-modules" class="md-nav__link">
+    Allocate the modules
+  </a>
+  
+    <nav class="md-nav" aria-label="Allocate the modules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examine-the-change" class="md-nav__link">
+    Examine the change
+  </a>
+  
+    <nav class="md-nav" aria-label="Examine the change">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#module-only-appears-when-its-collection-is-current" class="md-nav__link">
+    Module only appears when its collection is current
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#module-is-represented-using-the-collections-representation" class="md-nav__link">
+    Module is represented using the collection's representation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#module-configuration-area-lists-the-allocated-collection" class="md-nav__link">
+    Module configuration area lists the allocated collection
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allocate-the-remaining-modules" class="md-nav__link">
+    Allocate the remaining modules
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#specify-additional-metadata" class="md-nav__link">
+    Specify additional metadata
+  </a>
+  
+    <nav class="md-nav" aria-label="Specify additional metadata">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-a-description" class="md-nav__link">
+    Add a description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-an-image" class="md-nav__link">
+    Add an image
+  </a>
+  
+    <nav class="md-nav" aria-label="Add an image">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-scale" class="md-nav__link">
+    Image scale
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-url" class="md-nav__link">
+    Image URL
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-a-label-and-a-number" class="md-nav__link">
+    Add a label and a number
+  </a>
+  
+    <nav class="md-nav" aria-label="Add a label and a number">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto-number-example" class="md-nav__link">
+    Auto number example
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explicitly-specified-string-examples" class="md-nav__link">
+    Explicitly specified string examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-a-date-and-date-label" class="md-nav__link">
+    Add a date and date label
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-a-module-for-the-assessment-table-representation" class="md-nav__link">
+    Configure a module for the assessment table representation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+  <a href="https://github.com/djplaner/canvas-collections/edit/master/docs/walk-throughs/new/configure-modules.md" title="Edit this page" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+
+<h1 id="configure-the-modules">Configure the modules</h1>
+<p>Having <a href="../design/">designed our use of collections</a> and <a href="../configure-collections/">configured our collections</a>, we reach the last step - configuring the modules.</p>
+<p>There are two parts to this step</p>
+<ol>
+<li>
+<p>Allocate the modules to a collection; and,</p>
+<p>Only modules that are allocated to a collection will be displayed.</p>
+</li>
+<li>
+<p>Specify metadata.</p>
+<p>This additional information about each module is used by representations to modify how the module is displayed.</p>
+</li>
+</ol>
+<h2 id="introducing-the-module-configuration-area">Introducing the module configuration area</h2>
+<p>For teachers and designers, Canvas Collections adds a module specific configuration area to each Module. This is how you configure each module.</p>
+<h3 id="find-the-module-configuration-area">Find the module configuration area</h3>
+<p>Each module's configuration area will be visible (to teachers and designers) just under the module title - circled in red below. By default the module configuration area is closed.</p>
+<p><img alt="" src="../pics/findModuleConfig.png" />  </p>
+<h3 id="open-the-module-configuration-area">Open the module configuration area</h3>
+<p>As with the Collections configuration area, you open the module configuration area by clicking on the small arrow. This will open the module configuration area and reveal the module's metadata.</p>
+<p>The following image shows an early version of the module configuration area, currently the major areas of the module configuration area, includes:</p>
+<ul>
+<li>Collection - used to specify which collection the module belongs to.</li>
+<li>Label - three elements (label, auto-number, and number) used to specify the module's label and number.</li>
+<li>Date - specify the date for the module using three elements - day of week; week; and time.</li>
+<li>Image - associate an image with the module and how it should be scaled to fit with a card.</li>
+<li>Description - provide a short description or rationale for the module.</li>
+<li>Additional metadata - add and remove additional metadata in the form of name/value pairs.</li>
+</ul>
+<p>Use these form elements to set and change the module configuration.</p>
+<p><img alt="" src="../pics/emptyModuleConfig.png" />  </p>
+<h2 id="allocate-the-modules">Allocate the modules</h2>
+<p>The <em>Collections</em> element will contain a list of the current collections. Use the menu to choose one.  When you change the collection allocation for a module, your view of Collections will change in a number of ways.</p>
+<p><img alt="" src="../pics/allocateModule.png" />  </p>
+<h3 id="examine-the-change">Examine the change</h3>
+<h4 id="module-only-appears-when-its-collection-is-current">Module only appears when its collection is current</h4>
+<p>For example, the <em>Improve Canvas' organisation of course content</em> module was allocated to the <em>Why?</em> collection.  It is not visible when viewing the <em>What?</em> collection.</p>
+<p><img alt="" src="../pics/noModuleCollectionCurrent.png" />  </p>
+<h4 id="module-is-represented-using-the-collections-representation">Module is represented using the collection's representation</h4>
+<p>The <em>Why?</em> collection was configured to use the <em>GriffithCards</em> representation. Hence the newly allocated module is represented as a card - a rather bare card.</p>
+<p><img alt="" src="../pics/oneModuleCurrentCOllection.png" />  </p>
+<h4 id="module-configuration-area-lists-the-allocated-collection">Module configuration area lists the allocated collection</h4>
+<p>The allocated module now shows <em>Why?</em> as it's collection.</p>
+<p><img alt="" src="../pics/moduleConfigAllocatd.png" />  </p>
+<h3 id="allocate-the-remaining-modules">Allocate the remaining modules</h3>
+<p>Once all the modules are allocated to collections, the Collections configuration <em>Existing collections</em> section looks like the following: 3 modules in <em>Why?</em>; 5 modules in <em>What?</em>; and, 5 modules in <em>How?</em>.</p>
+<p><img alt="" src="../pics/allAllocatedCollections.png" />  </p>
+<p>The following animated image shows the rest of the interface once all modules are allocated to collections. Some points to note</p>
+<ul>
+<li>
+<p>Some modules remain <em>unpublished</em>.</p>
+<p>The cards representation adds a warning (visible to teachers and designers) identifying unpublished modules. These will not be visible to students.</p>
+</li>
+<li>
+<p>Navigation between the three collections works as expected.</p>
+</li>
+<li>Clicking on the <em>Engage</em> button on a Card brings that module to focus.</li>
+<li>The cards are all relatively blank with limited metadata (e.g. images, descriptions etc)</li>
+</ul>
+<p>Time to add some additional metadata.</p>
+<p><img alt="" src="../pics/allModulesAllocatedAnimated.gif" /></p>
+<h2 id="specify-additional-metadata">Specify additional metadata</h2>
+<p>As mentioned above, the additional metadata that can be added includes the following list. Each with its own form elements. The following walk-through gives an example of each.</p>
+<blockquote>
+<p><em>Note:</em> As soon as metadata is changed, the module's representation will be updated.</p>
+</blockquote>
+<p>| Metadata | Description |
+| --- | --- | --- |
+| Description | Some HTML intended to provide students with a description or rationale for the object represented by the module |
+| Image | A visual image to represent the module | 
+| Label &amp; Number | Explicitly identify a module as a particular object (the label) and its position in the collection (the number - which can be auto calculated) | 
+| Date &amp; Date Label | Specify the day/time when the activity occurs, is due etc. Through a combination of a date and a label (e.g. due, commencing etc) | 
+| Additional metadata | A flexible method for specifying any additional metadata in the form of pairs of name and value | </p>
+<h3 id="add-a-description">Add a description</h3>
+<p>The description is best used to provide students with additional information about what, why and how they might engage with the activities and information contained by a module. The description is a relative short piece of text entered using a simple visual editor under the description heading of the module configuration area.</p>
+<table>
+<thead>
+<tr>
+<th>Entry</th>
+<th>Representation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="" src="../pics/descriptionEntry.png" /></td>
+<td><img alt="" src="../pics/descriptionChange.png" /></td>
+</tr>
+</tbody>
+</table>
+<h3 id="add-an-image">Add an image</h3>
+<p>The ability to add an image to each module is a powerful way to improve the visual design of ca course and help student way finding by providing a strong, unique a visual representation of the module. </p>
+<p>Collections uses two pieces of metadata to specify the image and how it is displayed:</p>
+<ol>
+<li>The <em>Image URL</em> - the web location where the image can be viewed by users of the Canvas course site (e.g. typically the files area of the course site, or on the open web)</li>
+<li>The <em>Image scale</em> - how the image is scaled to fit within the available space - possibilities are outlined in the following table.</li>
+</ol>
+<h4 id="image-scale">Image scale</h4>
+<p>Image scale is implemented and constrained by a standard <a href="https://www.w3schools.com/cssref/css3_pr_object-fit.asp">CSS property called <em>object-fit</em></a>. The following table outlines the possible values for <em>object-fit</em> that appear in the <em>Image scale</em> drop down in Collections. The animated image below demonstrates how different values affect the display of the image.</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cover</code></td>
+<td>The image is scaled to fit the available space, maintaining the aspect ratio. The image is cropped to fit the available space.</td>
+</tr>
+<tr>
+<td><code>contain</code></td>
+<td>The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped.</td>
+</tr>
+<tr>
+<td><code>fill</code></td>
+<td>The image is scaled to fill the available space, maintaining the aspect ratio. The image is cropped to fit the available space.</td>
+</tr>
+<tr>
+<td><code>fit</code></td>
+<td>The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped.</td>
+</tr>
+<tr>
+<td><code>none</code></td>
+<td>The image is not scaled.</td>
+</tr>
+<tr>
+<td><code>scale-down</code></td>
+<td>The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped.</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="" src="../pics/imageScaleAnimated.gif" /></p>
+<h4 id="image-url">Image URL</h4>
+<p>The <em>Image URL</em> is a simple text field. The URL can be a web address (e.g. a URL on the open web) or a Canvas file URL. The following animated image demonstrates the process of obtaining a URL for an image within a Canvas course's files area and using it with Collections.</p>
+<p><img alt="" src="../pics/imageUrlAnimated.gif" /></p>
+<h3 id="add-a-label-and-a-number">Add a label and a number</h3>
+<p>The label helps identify to the student that a Canvas module is a <em>Lecture</em>, <em>Workshop</em>, <em>Assignment</em> or some other context/learning design specific object. It helps them understand why, what, and how to engage with the module. The number helps establish the order of the objects.</p>
+<p>A label is simple any sequence of characters (including emojis). </p>
+<p>There are two options for the number:</p>
+<ol>
+<li><em>Auto-number</em> - the number is automatically calculated based on the order of the modules in the collection. The first lecture will be <em>Lecture 1</em> the second <em>Lecture 2</em> and so on. This is the default.</li>
+<li><em>Explicitly specified string</em> - i.e. you can manually specify any sequence of characters, including emojis, or leave it blank.</li>
+</ol>
+<p>The <em>Auto-number</em> option is provided to enable modules to be moved around during re-design without having to manually update the number. </p>
+<h4 id="auto-number-example">Auto number example</h4>
+<p>For the current (somewhat contrived) example, it's been decided that the three modules in the <em>Why?</em> collection will be labelled <em>Why 1</em>, <em>Why 2</em> and <em>Why 3</em>. To achieve this, all three modules can be configured using the following approach for <em>label</em> and <em>number</em>. Note that the <em>Auto-number</em> checkbox is checked.</p>
+<p><img alt="" src="../pics/whyAutoNumberForm.png" />  </p>
+<p>With all three <em>Why?</em> collection modules configured this way the representation looks like this.</p>
+<p><img alt="" src="../pics/autoLabel.png" /></p>
+<h4 id="explicitly-specified-string-examples">Explicitly specified string examples</h4>
+<p>Both label and number can include any characters you provide - including emojis etc. To explicitly specify a string for the number, you first need to uncheck the <em>Auto-number</em> checkbox. The following image shows the <em>Why 2</em> module label modified to include an emoji, and the number modified to include a string of characters (including an emoji).</p>
+<p><img alt="" src="../pics/explicitNumberExample.png" />  </p>
+<p>With similar changes to the label and number for the other two <em>Why?</em> modules the representation looks (for a short time) like the following image.</p>
+<p><img alt="" src="../pics/explictNumberRepresentation.png" />  </p>
+<h3 id="add-a-date-and-date-label">Add a date and date label</h3>
+<h3 id="configure-a-module-for-the-assessment-table-representation">Configure a module for the assessment table representation</h3>
+<p>The <em>assessment table</em> representation - as the name suggests - is explicitly designed to represent the collection of assessment information for a course. Consequently, it includes (and perhaps requires) some assessment specific metadata, summarised in the following table.</p>
+<table>
+<thead>
+<tr>
+<th>Purpose</th>
+<th>Source</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Title</td>
+<td>Name of the Canvas module containing assessment information</td>
+<td>The title of the assessment item</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>The standard Collections description</td>
+<td>A summary of the assessment item</td>
+</tr>
+<tr>
+<td>Due Date</td>
+<td>The standard Collections date</td>
+<td>The date the assessment item is due or perhaps a date range when the assessment is available</td>
+</tr>
+<tr>
+<td>Weighting</td>
+<td>Additional Collection's metadata with the name <em>weighting</em></td>
+<td>The % weight of the assessment item</td>
+</tr>
+<tr>
+<td>Learning outcomes</td>
+<td>Additional Collection's metadata with the name <em>learning outcomes</em></td>
+<td>The learning outcomes that the assessment item is intended to assess</td>
+</tr>
+</tbody>
+</table>
+<p>The first three are standard metadata already explained above. The last two are additional metadata that can be added to any module. The following animated image demonstrates the process of adding these to an assessment table representation.</p>
+<p><img alt="" src="../pics/assessmentTableMetadataAnimated.gif" /></p>
+
+
+
+
+              
+            </article>
+            
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../configure-collections/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Configure Collections" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Configure Collections
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../set-up-claytons/" class="md-footer__link md-footer__link--next" aria-label="Next: Set up &#34;Claytons&#34;" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Set up "Claytons"
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/djplaner" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.1.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections"], "search": "../../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.9c69f0bc.min.js"></script>
+      
+    
+  </body>
+</html>

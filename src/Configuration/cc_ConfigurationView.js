@@ -10,7 +10,7 @@
 
 import { cc_View } from '../cc_View.js';
 
-const CC_VERSION = "0.8.14";
+const CC_VERSION = "0.8.15";
 
 const CONFIG_VIEW_TOOLTIPS = [ 
 	{ 
@@ -479,8 +479,7 @@ export default class cc_ConfigurationView extends cc_View {
 			imageSize = "contain";
 			moduleConfig.imageSize = imageSize;
 		}
-		const options = [
-		'contain', 'cover', 'fill', 'fit', 'scale-down', 'none'];
+		const options = [ 'none', 'contain', 'cover', 'fill', 'scale-down'];
 		for (let i = 0; i < options.length; i++) {
 			let selected = '';
 			const option = options[i];
