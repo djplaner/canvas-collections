@@ -37,8 +37,7 @@ As outlined in the Design Plus [Custom CSS page](https://cidilabs.instructure.co
 
 The custom CSS features needs to be turned on for each page. The vendor provides [this documentation for the process](https://cidilabs.instructure.com/courses/102/pages/custom-css?module_item_id=3372). The following animated image demonstrates.
 
+Starting with the Claytons page with the badly scaled images. The page is edited and with Design Plus available the Design Plus tools option is available in the top left hand corner. Open that and turn on the Custom CSS option.  Once turned on a the "Custom CSS On" label appears in the Canvas editor. Save the page and notice how the scaling of the images changes.
 
-
-
-### 4. Check the page
+![](pics/customCssOnAnimated.gif)
 

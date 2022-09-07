@@ -74,7 +74,9 @@ nav:
     - ⚗️ Advanced:
       - Multi-collection, one page Claytons: walk-throughs/advanced/multi-collection-one-page.md
       - Fix Claytons Card CSS: walk-throughs/advanced/fix-claytons-card-css.md
-    - Student: walk-throughs/student.md
+    - Navigating the site: 
+      - Student - live: walk-throughs/navigating/student-live.md
+      - Student - Claytons: walk-throughs/navigating/student-claytons.md
   - Reference: 
       - Overview: reference/overview.md
       - Collections:
