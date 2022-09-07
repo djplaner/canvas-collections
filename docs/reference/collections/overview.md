@@ -18,6 +18,17 @@ This list of already existing collections allows you to
     * include page
     * output page
 
+### Hide a collection
+
+Configure a collection so that students will not see it.
+
+### Output page
+
+Specify the name of an **existing** page in the Canvas course site, when the _Update_ button is hit the page will be updated with a Claytons version of the collection's current representation. 
+
+### Include page
+
+Specify the name of an **existing** page in the Canvas course site. When the collection is viewed, the contents of the page will be included before the collection's representation - just after the navigation bar.
 
 ### Apply module labels
 

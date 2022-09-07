@@ -1,12 +1,12 @@
 # Canvas Collections
 
-Transform your learners' experience of your course site by improving your site's information architecture and visual design by using the three three key features Collections adds to Canvas:
+Transform your learners' experience of your Canvas course site by improving your site's information architecture and visual design (see the comparison images below) by using Canvas Collection's three three key features:
 
-1. Collections - group Canvas modules according to your design.
-2. Representations - transform the visual design of the Canvas module interface.
-3. Objects - add metadata and affordances to generic Canvas modules to transform that into objects that fit your design and context.
+1. Collections - group Canvas modules into context and design specific collections.
+2. Representations - transform the visual design of each collection in appropriate ways.
+3. Objects (activities) - transform generic Canvas modules into context and design specific objects/activities by adding metadata and affordances.
 
-Use the following table as a map for what the rest of this site has to offer. Below is a simple comparison of what Collections can provide.
+Use the following table as a map for what the rest of this site has to offer.
 
 | Section | Purpose |
 | --- | --- |
@@ -18,13 +18,21 @@ Use the following table as a map for what the rest of this site has to offer. Be
 
 ## Comparing Vanilla Canvas to Canvas Collections
 
-Both of the following images are of the Module's view of the same Canvas course site with 11 mondules.
-
-The left hand image shows the default Canvas interface. A long scroll down the 11 modules.
-
-The right hand image adds Canvas Collections with three collections titled: Why? What? and How?. Each collection can be navigated to separately. Each collection is using a _card_ representation. Hence collections adds a card for each module. Each module has had an image and a description added to help explain the purpose of the module.
+Both of the following images are of the Module's view of the same Canvas course site with 11 modules.
 
 | Vanilla Canvas | Canvas Collections (live) |
 | -------------- | ------------------ |
 | [View full-size image](assets/vanillaModules.gif) | [View full-size image](assets/withCanvasCollections.gif) |
 | ![Vanilla Canvas Course Site](assets/vanillaModules.gif) | ![Same site with Canvas Collections](assets/withCanvasCollections.gif) |
+
+### Vanilla Canvas
+
+The left hand image shows the vanilla Canvas interface. A long scroll down the 11 modules. Each module is represented with a clear, but boring and generic list of names of modules and items. With a few icons thrown in.
+
+### Canvas Collections
+
+The right hand image shows the same course site with Canvas Collections (live version). It demonstrates the features of Collections in the following ways:
+
+1. Collections - the 11 modules are divided into three collections titled: Why? What? and How?. The purpose of this site is to introduce Canvas Collections. The collection titles are chosen to fit that purpose meaningfully. Each collection can be navigated separately. 
+2. Representations - each collection is using a _card_ user interface. One of three (more to come) representations available. A [card user interface](https://www.nngroup.com/articles/cards-component/) is a common contemporary interface with known benefits, including its visual capability and responsiveness. Changing representations is done by selecting from those available.
+3. Objects - each module has had an image and a description added. Both add more context and sign-posting to aid the student in understanding the purpose of the module.

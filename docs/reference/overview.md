@@ -8,11 +8,10 @@ The features offered by Canvas Collections can be grouped into three categories:
 
 - Representations 
 
-    Change how each collection is represented to the learner.
+    Choose from different visual designs for each collection.
 
-- Modules
+- Objects (modules)
 
-    Provide additional information about individual Canvas modules and use that information to modify their behaviour.
-
+    Transform vanilla Canvas modules into design and context specific objects through additional metadata and affordances.
 
 

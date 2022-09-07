@@ -10,7 +10,7 @@
 
 import { cc_View } from '../cc_View.js';
 
-const CC_VERSION = "0.8.16";
+const CC_VERSION = "0.8.17";
 
 const CONFIG_VIEW_TOOLTIPS = [ 
 	{ 
@@ -22,19 +22,20 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/"
 	},
 	{ 
+		// to complete
 		contentText: `The list of current collections for your course and where you 
 				can modify their order, appearance etc.<p>Click to learn more</p>`, 
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-existing-collections",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/#existing-collections"
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#existing-collections"
 	},
 	{ 
 		contentText: `Where to add a new collection to your site`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-new-collection",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/#add-a-new-collection"
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
 	},
 	{ 
 		contentText: `<p>Update all configured output pages and include a navigation menu 
@@ -51,7 +52,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		<p><i class="icon-warning"></i> Also unpublish all the collection's modules to be ensure they are hidden.`,
 		targetSelector: '#cc-about-hide-collection',
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/#hide-a-collection"
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#hide-a-collection"
 	},
 	{ 
 		contentText: `Update the <em>output page</em> with the collection's current representation.
@@ -89,20 +90,28 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-collection",
 		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/"
+	},
+	{ 
+		contentText: `Describe why, what or how the module relates to the students' learning`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-description",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#description"
 	},
 	{ 
 		contentText: `Describe the type of object the module represents (e.g. lecture, theme etc.)`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-label",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/#module-label"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#label-and-number"
 	},
 	{ 
 		contentText: `Specify a date based on the week of the study period`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-date",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/#module-date"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#date"
 	},
 	{ 
 		contentText: `If and how a label specific number will be calculated for the module 
@@ -110,7 +119,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-number",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/#module-number"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#label-and-number"
 	},
 	{ 
 		contentText: `Flexibly add, delete, and modify additional information about this module, which
@@ -118,21 +127,22 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-additional-metadata",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/#additional-metadata"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#additional-metadata"
 	},
 		{ 
 		contentText: `Specify how the image will be scaled to fit the available space`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-image-scale",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
+//		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/image-scale"
 	},
 	{ 
 		contentText: `Provide the URL for an image to associate with this module.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-image-url",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/image"
 	},
 
 
@@ -675,23 +685,32 @@ export default class cc_ConfigurationView extends cc_View {
 		    </div>
 			<div style="margin-right:1em">
 				<div class="cc-module-config-collection-representation">
-					<label for="cc-collection-representation-${moduleDetail.id}-imageSize">Image scale
+					<label for="cc-collection-representation-${moduleDetail.id}-imageSize"
+					     style="float:left">
+					Image scale
+					</label>
 						<a id="cc-about-image-scale" target="_blank" href="">
 			   				<i class="icon-question cc-module-icon"></i></a>
-
-					</label>
 		   		       <select id="cc-module-config-${moduleDetail.id}-imageSize">
 					      ${imageSizeOptions}
 						</select>
 					<br clear="all" />
-					<label for="cc-module-config-collection-representation-${moduleDetail.id}-image">Image URL
+					<label for="cc-module-config-collection-representation-${moduleDetail.id}-image"     
+					    style="float:left">
+						Image URL
+					</label>
 											<a id="cc-about-image-url" target="_blank" href="">
 			   				<i class="icon-question cc-module-icon"></i></a>
-					</label>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
 					        value="${moduleConfig.image}">
 					<br clear="all" />
-				    <label for="cc-module-config-${moduleDetail.id}-description">Description</label>
+					  
+				    <label for="cc-module-config-${moduleDetail.id}-description" 
+					   style="float:left">
+					Description
+					</label>
+							<a id="cc-about-module-description" target="_blank" href="">
+			   				<i class="icon-question cc-module-icon"></i></a>
 					<div id="cc-module-config-${moduleDetail.id}-description" class="cc-module-config-description" style="height:8rem"> </div>
 				</div>
 				${additionalMetaDataHTML}

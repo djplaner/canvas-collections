@@ -1178,14 +1178,14 @@
       
       
         <label class="md-nav__link" for="__nav_5_4">
-          Objects
+          Objects (Modules)
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Objects" data-md-level="2">
+      <nav class="md-nav" aria-label="Objects (Modules)" data-md-level="2">
         <label class="md-nav__title" for="__nav_5_4">
           <span class="md-nav__icon md-icon"></span>
-          Objects
+          Objects (Modules)
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -1200,6 +1200,8 @@
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
+      
+        
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
@@ -1217,6 +1219,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1225,8 +1229,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#objects-aka-activities" class="md-nav__link">
-    Objects (aka Activities)
+  <a href="#description" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#image" class="md-nav__link">
+    Image
+  </a>
+  
+    <nav class="md-nav" aria-label="Image">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-url" class="md-nav__link">
+    Image url
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-scale" class="md-nav__link">
+    Image scale
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#labels-and-numbers" class="md-nav__link">
+    Labels and Numbers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#date" class="md-nav__link">
+    Date
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-metadata" class="md-nav__link">
+    Additional Metadata
   </a>
   
 </li>
@@ -1285,6 +1337,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1293,8 +1347,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#objects-aka-activities" class="md-nav__link">
-    Objects (aka Activities)
+  <a href="#description" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#image" class="md-nav__link">
+    Image
+  </a>
+  
+    <nav class="md-nav" aria-label="Image">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-url" class="md-nav__link">
+    Image url
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-scale" class="md-nav__link">
+    Image scale
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#labels-and-numbers" class="md-nav__link">
+    Labels and Numbers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#date" class="md-nav__link">
+    Date
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-metadata" class="md-nav__link">
+    Additional Metadata
   </a>
   
 </li>
@@ -1317,10 +1419,38 @@
 
 
 
-  <h1>Objects</h1>
-
-<h2 id="objects-aka-activities">Objects (aka Activities)</h2>
-<p><em>insert description of options available for modules and module configuration</em></p>
+<h1 id="objects-aka-activities">Objects (aka Activities)</h1>
+<p>Vanilla Canvas modules can only provide the information and functionality provided by vanilla Canvas. Design (e.g. that the module is a lecture or assessment) and context specific (e.g. the date it is due) information can be added to the module name. But this is limited and manual.</p>
+<p>A key feature of Collections is the ability to specify additional metadata and functionality for Canvas modules as a way to transform them into design and context specific objects. To better support and visually express your course's learning design.</p>
+<h2 id="description">Description</h2>
+<p>A description of the object that will be displayed in most representations to provide students with a way to answer what, why, how or some other question about the module. How (and perhaps if) the description is shown to the student will depend on the relevant collection's representation.</p>
+<h2 id="image">Image</h2>
+<p>Associate an image with the module. Useful for providing a visual representation of the module and contributing to the overall visual design of the course. Images are specified by two pieces of metadata:</p>
+<ol>
+<li>Image url - the web location where the image can be viewed.</li>
+<li>Image scale - how the image should be scaled to fit within the available space.</li>
+</ol>
+<h3 id="image-url">Image url</h3>
+<h3 id="image-scale">Image scale</h3>
+<h2 id="labels-and-numbers">Labels and Numbers</h2>
+<p>Many course designs use modules to represent common objects (e.g. lectures, tutorials, workshops, assessments, themes, topics etc.). Often a course will have multiple such objects (e.g. topic 1, topic 2, topic 3). Labels and numbers provide a means to explicitly identify such objects and their sequence. This information is used in different ways by each representation.</p>
+<p>Collections provides the ability for you to explicitly specify the number for each module OR it can auto calculate the number based on the module's position in the collection.</p>
+<h2 id="date">Date</h2>
+<p>It is common for a design specific object (e.g. topic, assignments, lecture etc.) to occur at a specific date and time. It is also common (within a University context) for these dates and times to be scheduled at the same time each study period (aka trimester, semester, study session etc). This commonly leads to two strategies:</p>
+<ol>
+<li>Generic dates - specify the date in a study period independent way (e.g. "Week 1", "Week 2", "Week 3" etc.). No upkeep is required, but students are expected to translate the generic dates into specific calendar dates.</li>
+<li>Specific dates - specify the actual calendar date (e.g. 1st Marc). Requires manual updating each study period, but students can easily see the specific date.</li>
+</ol>
+<p>Collections can take on the task of translating generic dates into calendar specific dates. It identifies the study period for the current course site and translates a generic date into the appropriate specific date based on the institution's academic calendar.</p>
+<blockquote>
+<p>🚧 <strong>Note:</strong> This feature is currently under construction. Currently, the following restrictions apply:</p>
+<ul>
+<li>Only generic dates can be provided.</li>
+<li>Generic dates only work for Griffith University.</li>
+</ul>
+</blockquote>
+<h2 id="additional-metadata">Additional Metadata</h2>
+<p>For various reasons you may wish to provide additional metadata about a module. The <em>additional metadata</em> area enables this. You can add (and delete) any additional metadata in the form of name/value pairs.</p>
 
 
 
