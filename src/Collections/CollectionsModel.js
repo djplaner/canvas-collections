@@ -219,6 +219,7 @@ export default class CollectionsModel {
 	deLabelModuleName(module) {
 
 		const existingName = module.name;
+
 		let prepend = "";
 		if (module.label) {
 			prepend = module.label;
@@ -231,8 +232,12 @@ export default class CollectionsModel {
 			}
 		}
 		prepend = `${prepend}: `;
-		// modify existingName to remove prepend and any subsequent whitespace
-		const newName = existingName.replace(prepend, '').trim();
+		let newName = existingName;
+		if ( prepend!==': ') {
+			// if we've not empty label and number
+			// modify existingName to remove prepend and any subsequent whitespace
+			newName = existingName.replace(prepend, '').trim();
+		}
 
 		return newName;
 	}

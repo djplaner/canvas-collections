@@ -69,7 +69,14 @@ As with the previous example, the _output page_ for each collection needs to be 
 
 ### Use Collections to update the pages
 
-There are two options that could be used to update the pages: _update_ the output page; or, _Full Claytons_. _Full Claytons_ has the advantage of doing all collections at once. However, it as the current disadvantage of adding a navigation bar - which is not necessary as we're only using a single page.
+There are two options that could be used to update the pages summarised in the following tabe.
+
+| Method | Description | Features |
+| --- | --- | --- |
+: _update_ the output page | Click the _update_ button or each collection | Updates the page with just each collection's representation (no navigation bar) |
+| _Full Claytons_ | Click the _Full Claytons_ and all collections with output pages will be updated | Adds both the collection's representation and a navigation bar |
+
+> ❗️ **Note:** If placing multiple collections onto a single page, you probably do NOT want to use _Full Claytons_.
 
 Hence the approach shown in the following animated image uses the _update_ output page option. The image shows that each collection can be updated and its results checked before proceeding.
 

@@ -10,7 +10,7 @@
 
 import { cc_View } from '../cc_View.js';
 
-const CC_VERSION = "0.8.15";
+const CC_VERSION = "0.8.16";
 
 const CONFIG_VIEW_TOOLTIPS = [ 
 	{ 

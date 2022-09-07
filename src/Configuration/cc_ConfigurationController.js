@@ -589,7 +589,7 @@ export default class cc_ConfigurationController {
 		// Obtain the collection name and representation for the button clicked
 
 		let updateController = new updatePageController( 
-			collectionName, this.parentController, 
+			collectionName, this.parentController 
 			);
 
 	}

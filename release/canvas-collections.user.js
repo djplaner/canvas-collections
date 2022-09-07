@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.15
+// @version      0.8.16
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -571,7 +571,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.15";
+const CC_VERSION = "0.8.16";
 
 const CONFIG_VIEW_TOOLTIPS = [ 
 	{ 
@@ -3557,6 +3557,7 @@ class CollectionsModel {
 	deLabelModuleName(module) {
 
 		const existingName = module.name;
+
 		let prepend = "";
 		if (module.label) {
 			prepend = module.label;
@@ -3569,8 +3570,12 @@ class CollectionsModel {
 			}
 		}
 		prepend = `${prepend}: `;
-		// modify existingName to remove prepend and any subsequent whitespace
-		const newName = existingName.replace(prepend, '').trim();
+		let newName = existingName;
+		if ( prepend!==': ') {
+			// if we've not empty label and number
+			// modify existingName to remove prepend and any subsequent whitespace
+			newName = existingName.replace(prepend, '').trim();
+		}
 
 		return newName;
 	}
