@@ -18,7 +18,7 @@ Use the following table as a map for what the rest of this site has to offer.
 
 ## Comparing Vanilla Canvas to Canvas Collections
 
-Both of the following images are of the Module's view of the same Canvas course site with 11 modules.
+Both of the following images are of the Module's view of the same Canvas course site with 11 modules - with and without Canvas Collections.
 
 | Vanilla Canvas | Canvas Collections (live) |
 | -------------- | ------------------ |

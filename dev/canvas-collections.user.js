@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.16
+// @version      0.8.17
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -574,7 +574,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.17";
+const CC_VERSION = "0.8.18";
 
 const CONFIG_VIEW_TOOLTIPS = [ 
 	{ 
@@ -4593,7 +4593,6 @@ class GriffithCardsView extends cc_View {
 			margin-top: 0.5em !important;
 			flex-wrap: wrap;
 			display: flex;
-			margin: -0.75rem
 		}
 
 		.cc-clickable-card, .cc-coming-soon-card {

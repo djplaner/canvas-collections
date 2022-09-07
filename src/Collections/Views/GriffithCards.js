@@ -124,7 +124,6 @@ export default class GriffithCardsView extends cc_View {
 			margin-top: 0.5em !important;
 			flex-wrap: wrap;
 			display: flex;
-			margin: -0.75rem
 		}
 
 		.cc-clickable-card, .cc-coming-soon-card {
