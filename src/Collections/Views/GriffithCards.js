@@ -1030,9 +1030,17 @@ export default class GriffithCardsView extends cc_View {
 			title.innerHTML = link.outerHTML;
 		}
 
+		// change border style for all div.cc-card
+		let cards = div.querySelectorAll('div.cc-card-flex');
+		for (let i = 0; i < cards.length; i++) {
+			let card = cards[i];
+			card.style.borderStyle = 'outset';
+			card.style.borderRadius = "1em";
+		}
+
 		// change background to #efefef for div.cc-card-content-height
 		// Canvas RCE removes border-bottom-left-radius and right
-		let cardContents = div.querySelectorAll('.cc-card-content-height');
+/*		let cardContents = div.querySelectorAll('.cc-card-content-height');
 		for (let i = 0; i < cardContents.length; i++) {
 			let cardContent = cardContents[i];
 			cardContent.style.backgroundColor = '#efefef';
@@ -1042,13 +1050,13 @@ export default class GriffithCardsView extends cc_View {
 		for (let i = 0; i < cardEngages.length; i++) {
 			let cardEngage = cardEngages[i];
 			cardEngage.style.backgroundColor = '#efefef';
-		}
+		} 
 		// change background to #efefef for div.cc-card-flex
 		let cardFlexes = div.querySelectorAll('.cc-card-flex');
 		for (let i = 0; i < cardFlexes.length; i++) {
 			let cardFlex = cardFlexes[i];
 			cardFlex.style.backgroundColor = '#efefef';
-		}
+		} */
 
 		// find any div.unpublished and remove it
 		let unpublisheds = div.querySelectorAll('.unpublished');
