@@ -1,9 +1,17 @@
 # Collections 
 
+Collections are a core feature of Canvas Collections. Collections provide a way to organise modules into design and context specific groups of modules - a [feature long requested] by the Canvas Community.
+
+Collections allows you to
+
+- [Add a new collection](#add-a-new-collection.md) by specifying the name and representation.
+- Manage [existing collections](#manage-existing-collections.md) in a variety of ways.
+
 ## Add a new collection
 
-_Insert instructions on how to add a new collection_
+To add a new collection you set two initial properties for the collection
 
+![](pics/addNewCollection.png)  
 
 ## Existing Collections
 

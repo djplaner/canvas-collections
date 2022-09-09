@@ -45,6 +45,7 @@ Other modifications
 
 This typically involves hand-crafting HTML and CSS - whilst working within the constraints of the Canvas Rich Content Editor (RCE) - in a Canvas page.
 
+- [Create full navigation using pages](http://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/) 
 - [Creating an inviting course home page](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236)
 - [Homw sweet home pages without tables](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Home-Sweet-Homepages-without-Tables/ba-p/275079)
 

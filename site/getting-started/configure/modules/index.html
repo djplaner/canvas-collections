@@ -69,6 +69,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#modules-configure" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -554,10 +559,50 @@
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         Modules
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#module-properties" class="md-nav__link">
+    Module properties
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-configure-a-module" class="md-nav__link">
+    How to configure a module
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1251,6 +1296,30 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#module-properties" class="md-nav__link">
+    Module properties
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-configure-a-module" class="md-nav__link">
+    How to configure a module
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1268,9 +1337,58 @@
 
 
 
-  <h1>Modules</h1>
-
-
+<h1 id="modules-configure">Modules - configure</h1>
+<p>Canvas Collections provides additional module properties. These help transform vanilla Canvas modules into context and design specific objects (e.g. workshop, topic, lecture, etc) as part of your Canvas site. These properties are then used by Canvas collections to modify how these objects (aka Modules) are represented to visitors.</p>
+<p>Below is a summary and simple demonstration of these properties. For more insight, please refer to:</p>
+<ul>
+<li>An <a href="../../../walk-throughs/new/configure-modules/">example of configuring modules</a> for a new course.</li>
+<li>The <a href="../../../reference/objects/overview/">objects reference page</a>.</li>
+</ul>
+<h2 id="module-properties">Module properties</h2>
+<table>
+<thead>
+<tr>
+<th>Properties</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Collection</td>
+<td>Which of the collections the module belongs to.</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>A short collection of HTML that can be used to describe the why, how, what or other relevant information students need to know about the module.</td>
+</tr>
+<tr>
+<td>Image URL and scale</td>
+<td>Each module can be represented by an image (provided as a URL). The image is then scaled to fit within the available space.</td>
+</tr>
+<tr>
+<td>Label and number</td>
+<td>The label is typically used to explicitly identify the module as a particular type of object. The number specifies the sequence of related objects. e.g. Lecture 1, Lecture 2</td>
+</tr>
+<tr>
+<td>Date (or date range) and date label</td>
+<td>Hint to students when the object will become important.</td>
+</tr>
+<tr>
+<td>Additional metadata</td>
+<td>Open ended list of name/value pairs used to provide any additional metadata.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-to-configure-a-module">How to configure a module</h2>
+<p>The primary steps are:</p>
+<ol>
+<li>Make sure that Canvas Collections is turned on for the course.</li>
+<li>Move to the module you wish to configure.</li>
+<li>Open the Canvas Collections module configuration area.</li>
+<li>Use the module configuration area to modify the module properties.</li>
+</ol>
+<p>The <a href="../../../walk-throughs/new/configure-modules/">example of configuring modules</a> for a new course provides a more detailed description of these steps. The following animated image provides a simple demonstration.</p>
+<p><img alt="" src="../pics/configuringModulesAnimated.gif" /></p>
 
 
 

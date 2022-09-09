@@ -2,9 +2,17 @@
 
 ## The Problem
 
-For Card images to appear properly, they often need to be scaled. This works with the live version of Canvas Collections, but may not with the Claytons version. For example, the following images showing the same collection's representation, both live and Claytons.
+The Card representation relies on various HTML/CSS features. This works well with the live version of Collections, but there are problems with the Claytons version. The following two images demonstrate. The differences include:
 
-In particular, note the scaling of the first and last images. In the live version they are much narrower due to the [aspect ratio](https://en.wikipedia.org/wiki/Aspect_ratio_(image)) of the image. In the Claytons version, the images are much wider.
+- The card images are not always scaled properly.
+- There is now drop shadow on the Claytons version and hence the background colour is changed in response.
+- The heading is transformed into a link that is less than visually appealing.
+- The change in transparency when you hover over a card does not work in the Claytons version.
+
+There is a way to fix this, if you have access to the Design Plus tool.
+
+> ⚠️ **Note:** The solution used here will not work on the Canvas Mobile app. Hence the view will default to the standard Claytons version.
+
 
 | Live | Claytons |
 | ---- | -------- |
@@ -13,7 +21,7 @@ In particular, note the scaling of the first and last images. In the live versio
 
 ## The Cause
 
-Claytons Collections writes HTML and CSS to a Canvas page. Canvas only allows certain types of HTML and CSS in the content of pages - specified in [this HTML Editor Allowlist](https://tr-learncanvas.s3.amazonaws.com/docs/Canvas_HTML_Editor_Allowlist.pdf). The CSS ```object-fit``` property - used to scale images - is actively removed by Canvas.
+Claytons Collections writes HTML and CSS to a Canvas page. Canvas only allows certain types of HTML and CSS in the content of pages - specified in [this HTML Editor Allowlist](https://tr-learncanvas.s3.amazonaws.com/docs/Canvas_HTML_Editor_Allowlist.pdf). The CSS features used to implement the missing features are actively removed by Canvas.
 
 ## One Fix - Design Plus
 

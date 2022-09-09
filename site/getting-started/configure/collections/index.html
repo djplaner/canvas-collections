@@ -548,9 +548,54 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Collections
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Collections
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#collection-properties" class="md-nav__link">
+    Collection properties
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collection-operations" class="md-nav__link">
+    Collection operations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-configure-collections" class="md-nav__link">
+    How to configure collections
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1261,6 +1306,35 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#collection-properties" class="md-nav__link">
+    Collection properties
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collection-operations" class="md-nav__link">
+    Collection operations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-configure-collections" class="md-nav__link">
+    How to configure collections
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1277,7 +1351,92 @@
 
 
 
-<h1 id="configuring-collections">Configuring Collections</h1>
+<h1 id="configuring-collections">Configuring collections</h1>
+<p><em>Collections</em> are used to organise modules into different groups (aka <em>collections</em>). By grouping and representing modules in course specific ways you can help your students understand and use your Canvas site.</p>
+<p>Canvas Collections support for collections includes properties and operations. Both are leveraged to support your design.  Below there is a summary of the collection properties and operations and a summary of how to configure collections. For more insight, please refer to: </p>
+<ul>
+<li>An <a href="../../../walk-throughs/new/configure-collections/">example of configuring collections</a> for a new course.</li>
+<li>The <a href="../../../reference/collections/overview/">collections reference page</a>.</li>
+</ul>
+<h2 id="collection-properties">Collection properties</h2>
+<table>
+<thead>
+<tr>
+<th>Properties</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Name</td>
+<td>Name is included in the navigation bar used to move between collections. Should be contextually meaningful and purposeful</td>
+</tr>
+<tr>
+<td>Representation</td>
+<td>If and what additional visualisation of the collections modules will be visible. There are currently <a href="../../../reference/representations/overview/">three options</a>.</td>
+</tr>
+<tr>
+<td>Default collection</td>
+<td>The collection visitors see when they first visit the modules view.</td>
+</tr>
+<tr>
+<td>Include page</td>
+<td>The name of an existing Canvas course page. The content of this page will be included before the representation.</td>
+</tr>
+<tr>
+<td>Output page</td>
+<td>The name of an existing Canvas course page. The <a href="../../../reference/representations/claytons/overview/">Claytons representation</a> of the collection will be written to this page when <em>updated</em> or <em>Full Claytons</em>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="collection-operations">Collection operations</h2>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Add</td>
+<td>Add a new collection by providing a name and selecting a representation.</td>
+</tr>
+<tr>
+<td>Delete</td>
+<td>Remove a collection. The modules from the collection will remain. As will any module configuration information.</td>
+</tr>
+<tr>
+<td>Re-order</td>
+<td>Change the order in which collections are displayed in the navigation bar.</td>
+</tr>
+<tr>
+<td>Hide</td>
+<td>Prevent students from being able to see a collection and (easily) see the modules with in it.  **NOTE:: Do not use this feature to prevent student access to a module, use Canvas' publish option.</td>
+</tr>
+<tr>
+<td>Update the output page</td>
+<td>Modify the nominated output page (if there is one) with the latest representation of the collection.</td>
+</tr>
+<tr>
+<td>Full "Claytons"</td>
+<td>Modify the nominated output pages of all collections with an output page, including adding in a navigation bar on each page.</td>
+</tr>
+<tr>
+<td>🧪 Apply module labels ☠️</td>
+<td><strong>Experimental</strong> Modify the name of each Canvas module in a collection to use the module <a href="../../../reference/objects/overview/#label">label</a> and <a href="../../../reference/objects/overview/#number">number</a> properties.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-to-configure-collections">How to configure collections</h2>
+<p>The primary steps are:</p>
+<ol>
+<li>Make sure that Canvas Collections is turned on for the course.</li>
+<li>Open the collections configuration area.</li>
+<li>Use the collections configuration area to modify the collections properties and use the collections functionality.</li>
+</ol>
+<p>The <a href="../../../walk-throughs/new/configure-collections/">example of configuring collections</a> provides more detail on how to configure collections. The following animated image provides a simple demonstration.</p>
+<p><img alt="" src="../pics/configuringCollectionsAnimated.gif" /></p>
 
 
 
