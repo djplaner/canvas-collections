@@ -169,7 +169,7 @@ td.descriptionCell {
 	`;
 
 const TABLE_HTML = `
-		<div id="cc-assessment-table" class="cc-assessment-container">
+		<div id="cc-assessment-table" class="cc-assessment-container cc-representation">
 		<style>
 			${TABLE_STYLES}
 		</style>
