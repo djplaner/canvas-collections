@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.17
+// @version      0.8.18
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -3073,7 +3073,8 @@ class cc_ConfigurationController {
 		this.changeMade(true);
 
 		// update the display
-		this.parentController.collectionsController.view.updateCurrentRepresentation();
+		//this.parentController.collectionsController.view.updateCurrentRepresentation();
+		this.parentController.collectionsController.view.display();
 	}
 
 	/**

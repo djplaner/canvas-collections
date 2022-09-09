@@ -350,7 +350,8 @@ export default class cc_ConfigurationController {
 		this.changeMade(true);
 
 		// update the display
-		this.parentController.collectionsController.view.updateCurrentRepresentation();
+		//this.parentController.collectionsController.view.updateCurrentRepresentation();
+		this.parentController.collectionsController.view.display();
 	}
 
 	/**
