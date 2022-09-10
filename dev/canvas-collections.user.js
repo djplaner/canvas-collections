@@ -3223,7 +3223,7 @@ class cc_ConfigurationController {
 		// autonum is checkbox, it's value is checked
 		if (fieldName==="autonum") {
 			value = event.target.checked;
-		}
+		} 
 
 		this.model.changeModuleConfig(moduleId, fieldName, value);
 		this.changeMade(true);
@@ -3402,11 +3402,20 @@ class CollectionsModel {
 
 		// if currentCollection is undefined set it to the default
 		if (this.currentCollection === undefined) {
-			if (this.controller.parentController.lastCollectionViewed &&
-				this.controller.parentController.lastCollectionViewed !== "") {
-				this.currentCollection = this.controller.parentController.lastCollectionViewed;
-			} else {
-				this.currentCollection = this.getDefaultCollection();
+			// check to see for parentController.URLCollectionNum 
+			if ( this.controller.parentController.hasOwnProperty('URLCollectionNum') ) {
+				let URLCollectionNum = this.controller.parentController.URLCollectionNum;
+				// if URLCollectionNum is an integer and > 0 and < COLLECTIONS_ORDER.length
+				if (
+					Number.isInteger(URLCollectionNum) && URLCollectionNum >= 0 && 
+					URLCollectionNum < this.cc_configuration.COLLECTIONS_ORDER.length) {
+					this.currentCollection = this.cc_configuration.COLLECTIONS_ORDER[URLCollectionNum];
+				} else if (this.controller.parentController.lastCollectionViewed &&
+				    this.controller.parentController.lastCollectionViewed !== "") {
+				    this.currentCollection = this.controller.parentController.lastCollectionViewed;
+			    } else {
+				    this.currentCollection = this.getDefaultCollection();
+			    }
 			}
 		}
 	}
@@ -3421,6 +3430,17 @@ class CollectionsModel {
 
 	setCurrentCollection(newCollection) {
 		this.currentCollection = newCollection;
+
+		// Following is an attempt to modify the URL to include the proper link
+		// However Canvas changes it back - try another route
+		// what sequence number is this collectin in COLLECTIONS_ORDER
+/*		const collectionIndex = this.cc_configuration.COLLECTIONS_ORDER.indexOf(newCollection);
+		// change the browser URL to append cc-collection-<collectionIndex> using History API
+		let url = window.location.href;
+		// remove any #.* from url
+		url = url.replace(/#.*$/, '');
+		const newUrl = `${url}#cc-collection-${collectionIndex}`;
+		window.history.pushState({}, '', newUrl); */
 	}
 
 	getCollections() {
@@ -3737,7 +3757,7 @@ class NavView extends cc_View {
 		// loop thru each navItem
 		for (let i=0; i<navItems.length; i+=1) {
 			navItems[i].onclick = (event) => this.controller.navigateCollections(event);
-		}
+		} 
 
 		this.addTooltips();
 
@@ -3846,6 +3866,12 @@ div.cc-collection-hidden > a {
 		let count = 0;
 		let navList = document.createElement('ul');
 		// iterate through all the collections
+		let collectionNum = 1;
+		let currentUrl  = window.location.href;
+		let newUrl = new URL(currentUrl);
+
+		
+		
 		for (let collection of this.model.getCollectionNames()) {
 			let navClass = ['li', 'mr-4'];
 			let style = 'cc-nav';
@@ -3868,8 +3894,10 @@ div.cc-collection-hidden > a {
 				}
 			}
 
+			newUrl.hash = `cc-collection-${collectionNum}`;
+			collectionNum += 1;
 
-			let navElement = `<a href="#">${icon} ${collection}</a> `;
+			let navElement = `<a href="${newUrl.href}">${icon} ${collection}</a> `;
 			let navItem = document.createElement('li');
 			navItem.className = "cc-nav";
 
@@ -8239,8 +8267,19 @@ class cc_Controller {
 		const location = window.location.href;
 
 		// replace # at end of string
-		this.documentUrl = window.location.href;
-		this.documentUrl = this.documentUrl.replace(/#$/, '');
+		let url = new URL(window.location.href);
+
+		// check if there's a cc-collection-\d+ in the hash
+		let hash = url.hash;
+		if (hash) {
+			let checkNum = hash.match(/cc-collection-(\d+)/);
+			if (checkNum) {
+				this.URLCollectionNum = parseInt(checkNum[1])-1;
+			}
+		}
+		url.hash = '';
+		this.documentUrl = url.href; //window.location.href;
+		//this.documentUrl = this.documentUrl.replace(/#$/, '');
 
 		// courseId
 		// Following adapted from https://github.com/msdlt/canvas-where-am-I	

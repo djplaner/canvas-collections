@@ -53,7 +53,7 @@ export default class NavView extends cc_View {
 		// loop thru each navItem
 		for (let i=0; i<navItems.length; i+=1) {
 			navItems[i].onclick = (event) => this.controller.navigateCollections(event);
-		}
+		} 
 
 		this.addTooltips();
 
@@ -162,6 +162,12 @@ div.cc-collection-hidden > a {
 		let count = 0;
 		let navList = document.createElement('ul');
 		// iterate through all the collections
+		let collectionNum = 1;
+		let currentUrl  = window.location.href;
+		let newUrl = new URL(currentUrl);
+
+		
+		
 		for (let collection of this.model.getCollectionNames()) {
 			let navClass = ['li', 'mr-4'];
 			let style = 'cc-nav';
@@ -184,8 +190,10 @@ div.cc-collection-hidden > a {
 				}
 			}
 
+			newUrl.hash = `cc-collection-${collectionNum}`;
+			collectionNum += 1;
 
-			let navElement = `<a href="#">${icon} ${collection}</a> `;
+			let navElement = `<a href="${newUrl.href}">${icon} ${collection}</a> `;
 			let navItem = document.createElement('li');
 			navItem.className = "cc-nav";
 

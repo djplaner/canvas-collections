@@ -19,11 +19,20 @@ export default class CollectionsModel {
 
 		// if currentCollection is undefined set it to the default
 		if (this.currentCollection === undefined) {
-			if (this.controller.parentController.lastCollectionViewed &&
-				this.controller.parentController.lastCollectionViewed !== "") {
-				this.currentCollection = this.controller.parentController.lastCollectionViewed;
-			} else {
-				this.currentCollection = this.getDefaultCollection();
+			// check to see for parentController.URLCollectionNum 
+			if ( this.controller.parentController.hasOwnProperty('URLCollectionNum') ) {
+				let URLCollectionNum = this.controller.parentController.URLCollectionNum;
+				// if URLCollectionNum is an integer and > 0 and < COLLECTIONS_ORDER.length
+				if (
+					Number.isInteger(URLCollectionNum) && URLCollectionNum >= 0 && 
+					URLCollectionNum < this.cc_configuration.COLLECTIONS_ORDER.length) {
+					this.currentCollection = this.cc_configuration.COLLECTIONS_ORDER[URLCollectionNum];
+				} else if (this.controller.parentController.lastCollectionViewed &&
+				    this.controller.parentController.lastCollectionViewed !== "") {
+				    this.currentCollection = this.controller.parentController.lastCollectionViewed;
+			    } else {
+				    this.currentCollection = this.getDefaultCollection();
+			    }
 			}
 		}
 	}
@@ -38,6 +47,17 @@ export default class CollectionsModel {
 
 	setCurrentCollection(newCollection) {
 		this.currentCollection = newCollection;
+
+		// Following is an attempt to modify the URL to include the proper link
+		// However Canvas changes it back - try another route
+		// what sequence number is this collectin in COLLECTIONS_ORDER
+/*		const collectionIndex = this.cc_configuration.COLLECTIONS_ORDER.indexOf(newCollection);
+		// change the browser URL to append cc-collection-<collectionIndex> using History API
+		let url = window.location.href;
+		// remove any #.* from url
+		url = url.replace(/#.*$/, '');
+		const newUrl = `${url}#cc-collection-${collectionIndex}`;
+		window.history.pushState({}, '', newUrl); */
 	}
 
 	getCollections() {

@@ -500,8 +500,19 @@ export default class cc_Controller {
 		const location = window.location.href;
 
 		// replace # at end of string
-		this.documentUrl = window.location.href;
-		this.documentUrl = this.documentUrl.replace(/#$/, '');
+		let url = new URL(window.location.href);
+
+		// check if there's a cc-collection-\d+ in the hash
+		let hash = url.hash;
+		if (hash) {
+			let checkNum = hash.match(/cc-collection-(\d+)/);
+			if (checkNum) {
+				this.URLCollectionNum = parseInt(checkNum[1])-1;
+			}
+		}
+		url.hash = '';
+		this.documentUrl = url.href; //window.location.href;
+		//this.documentUrl = this.documentUrl.replace(/#$/, '');
 
 		// courseId
 		// Following adapted from https://github.com/msdlt/canvas-where-am-I	
