@@ -375,7 +375,7 @@ export default class cc_ConfigurationModel {
 
 		if (module) {
 			// specify the fields that are for dates, to be handled differently
-			const dateFields = [ 'day', 'week', 'time'];
+			const dateFields = [ 'day', 'week', 'time', 'date-label'];
 
 			if ( dateFields.includes(fieldName) ) {
 				// does module contain a date field
@@ -384,7 +384,13 @@ export default class cc_ConfigurationModel {
 						label: '', day: '', week: '', time: ''
 					};
 				}
+				if (fieldName==='date-label') {
+					fieldName='label';
+				}
+
 				module.date[fieldName] = value;
+				// changed date field, finished
+				return true;
 			} 
 
 			// if autonum then

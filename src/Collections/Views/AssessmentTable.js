@@ -246,7 +246,7 @@ const TABLE_ROW_HTML = `
           <td role="cell">
             <span class="cc-responsive-table__heading" aria-hidden="true">Due Date</span>
             <div class="cc-table-cell-text">
-            <p>{{DUE-DATE}}</p>
+            <p>{{DATE-LABEL}}<br />{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell">
@@ -277,7 +277,7 @@ const TABLE_ROW_HTML_CLAYTONS = `
           </td>
           <td role="cell" style="vertical-align:top;padding:0.5rem">
             <div class="cc-table-cell-text">
-            <p>{{DUE-DATE}}</p>
+            <p>{{DATE-LABEL}}<br />{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell" style="vertical-align:top;padding:0.5rem">
@@ -304,7 +304,7 @@ export default class AssessmentTableView extends cc_View {
 
     this.TABLE_HTML_FIELD_NAMES = [
       'DESCRIPTION', 'CAPTION', 'TABLE-ROWS',
-      'TITLE', 'TYPE', 'DUE-DATE', 'WEIGHTING', 'LEARNING-OUTCOMES',
+      'TITLE', 'TYPE', 'DATE-LABEL', 'DUE-DATE', 'WEIGHTING', 'LEARNING-OUTCOMES',
       'DESCRIPTION', 'MODULE-ID'
     ];
 
@@ -366,9 +366,15 @@ export default class AssessmentTableView extends cc_View {
       }
 
       const dueDate = modules[i].date;
+      let dateLabel = '';
       let dueDateString = '';
-      if (dueDate && dueDate.month) {
-        dueDateString = `${dueDate.month} ${dueDate.date}`;
+      if (dueDate ) {
+        if ( dueDate.month) {
+          dueDateString = `${dueDate.month} ${dueDate.date}`;
+        }
+        if ( dueDate.label ) {
+          dateLabel = dueDate.label;
+        }
       }
 
       let mapping = {
@@ -376,7 +382,8 @@ export default class AssessmentTableView extends cc_View {
         'DESCRIPTION': modules[i].description,
         'TITLE': this.model.deLabelModuleName(modules[i]),
         'TYPE': modules[i].label,
-        'DUE-DATE': dueDateString
+        'DUE-DATE': dueDateString,
+        'DATE-LABEL': dateLabel
       };
 
       // for a claytons view - MODULE-ID needs to become a full link

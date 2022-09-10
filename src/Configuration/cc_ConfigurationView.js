@@ -12,6 +12,8 @@ import { cc_View } from '../cc_View.js';
 
 const CC_VERSION = "0.8.18";
 
+const CV_DEFAULT_DATE_LABEL = "Commencing";
+
 const CONFIG_VIEW_TOOLTIPS = [ 
 	{ 
 		contentText: `Use Canvas Collections to improve the learner experience of 
@@ -555,6 +557,13 @@ export default class cc_ConfigurationView extends cc_View {
 			dayOfWeekOptions += `<option value="${dayValue}" ${selected}>${day}</option>`;
 		}
 
+		// calculate value for dateLabel
+		let dateLabel = CV_DEFAULT_DATE_LABEL;
+		// if moduleDetail has a date property and that has a label property change date label
+		if (moduleDetail.hasOwnProperty('date') && moduleDetail.date.hasOwnProperty('label')) {
+			dateLabel = moduleDetail.date.label;
+		}
+
 		// TODO calculate the date based on settings and using calendar
 		let calculatedDate=this.calculateDate( dateInfo );
 		
@@ -662,6 +671,9 @@ export default class cc_ConfigurationView extends cc_View {
 						</div>
 					<div class="cc-module-config-collection-representation"
 					    style="padding-top:1rem; padding-left:3rem">
+				    	<label for="cc-module-config-${moduleDetail.id}-date-label">Date label</label>
+						<input type="text" id="cc-module-config-${moduleDetail.id}-date-label"
+						   style="width:10rem" value="${dateLabel}" /><br />
 				    	<label for="cc-module-config-${moduleDetail.id}-day">Day of week</label>
 						<select id="cc-module-config-${moduleDetail.id}-day">
 		                  ${dayOfWeekOptions}

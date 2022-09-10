@@ -14,7 +14,7 @@ import { cc_View } from '../../cc_View.js';
 
 import { CircularProgressBar } from "../../../node_modules/circular-progress-bar/public/circular-progress-bar.min.js";
 
-const DEFAULT_DATE_LABEL = "Commencing";
+//const DEFAULT_DATE_LABEL = "Commencing";
 
 export default class GriffithCardsView extends cc_View {
 
@@ -293,6 +293,10 @@ export default class GriffithCardsView extends cc_View {
 			border-left-width: 1px;
 			border-right-width: 1px;
 			border-top-width: 1px;
+		}
+
+		.cc-card-hide {
+			display: none;
 		}
 
 		.cc-card-date-week {
@@ -630,7 +634,7 @@ export default class GriffithCardsView extends cc_View {
 
 		let firstDate = {};
 
-		firstDate.DATE_LABEL = dateJson.label || DEFAULT_DATE_LABEL;
+		firstDate.DATE_LABEL = dateJson.label || '';
 
 		firstDate.WEEK = dateJson.week || "";
 		firstDate.DAY = dateJson.day || ""; // is this the right default
@@ -675,9 +679,14 @@ export default class GriffithCardsView extends cc_View {
 
 	convertDateToHtml(date) {
 
+		let extraDateLabelClass = '';
+		if (date.from.DATE_LABEL === '') {
+			extraDateLabelClass = ' cc-card-hide';
+		}
+
 		const singleDateHtml = `
 		<div class="cc-card-date">
-		  <div class="cc-card-date-label">
+		  <div class="cc-card-date-label${extraDateLabelClass}">
              ${date.from.DATE_LABEL}
           </div>
 		  <div class="cc-card-date-week">

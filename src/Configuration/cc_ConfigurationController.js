@@ -482,7 +482,7 @@ export default class cc_ConfigurationController {
 		// autonum is checkbox, it's value is checked
 		if (fieldName==="autonum") {
 			value = event.target.checked;
-		}
+		} 
 
 		this.model.changeModuleConfig(moduleId, fieldName, value);
 		this.changeMade(true);

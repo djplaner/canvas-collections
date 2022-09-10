@@ -394,7 +394,7 @@ class cc_ConfigurationModel {
 
 		if (module) {
 			// specify the fields that are for dates, to be handled differently
-			const dateFields = [ 'day', 'week', 'time'];
+			const dateFields = [ 'day', 'week', 'time', 'date-label'];
 
 			if ( dateFields.includes(fieldName) ) {
 				// does module contain a date field
@@ -403,7 +403,13 @@ class cc_ConfigurationModel {
 						label: '', day: '', week: '', time: ''
 					};
 				}
+				if (fieldName==='date-label') {
+					fieldName='label';
+				}
+
 				module.date[fieldName] = value;
+				// changed date field, finished
+				return true;
 			} 
 
 			// if autonum then
@@ -575,6 +581,8 @@ class cc_View {
 
 
 const CC_VERSION = "0.8.18";
+
+const CV_DEFAULT_DATE_LABEL = "Commencing";
 
 const CONFIG_VIEW_TOOLTIPS = [ 
 	{ 
@@ -1119,6 +1127,13 @@ class cc_ConfigurationView extends cc_View {
 			dayOfWeekOptions += `<option value="${dayValue}" ${selected}>${day}</option>`;
 		}
 
+		// calculate value for dateLabel
+		let dateLabel = CV_DEFAULT_DATE_LABEL;
+		// if moduleDetail has a date property and that has a label property change date label
+		if (moduleDetail.hasOwnProperty('date') && moduleDetail.date.hasOwnProperty('label')) {
+			dateLabel = moduleDetail.date.label;
+		}
+
 		// TODO calculate the date based on settings and using calendar
 		let calculatedDate=this.calculateDate( dateInfo );
 		
@@ -1226,6 +1241,9 @@ class cc_ConfigurationView extends cc_View {
 						</div>
 					<div class="cc-module-config-collection-representation"
 					    style="padding-top:1rem; padding-left:3rem">
+				    	<label for="cc-module-config-${moduleDetail.id}-date-label">Date label</label>
+						<input type="text" id="cc-module-config-${moduleDetail.id}-date-label"
+						   style="width:10rem" value="${dateLabel}" /><br />
 				    	<label for="cc-module-config-${moduleDetail.id}-day">Day of week</label>
 						<select id="cc-module-config-${moduleDetail.id}-day">
 		                  ${dayOfWeekOptions}
@@ -4224,7 +4242,7 @@ const TABLE_ROW_HTML = `
           <td role="cell">
             <span class="cc-responsive-table__heading" aria-hidden="true">Due Date</span>
             <div class="cc-table-cell-text">
-            <p>{{DUE-DATE}}</p>
+            <p>{{DATE-LABEL}}<br />{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell">
@@ -4255,7 +4273,7 @@ const TABLE_ROW_HTML_CLAYTONS = `
           </td>
           <td role="cell" style="vertical-align:top;padding:0.5rem">
             <div class="cc-table-cell-text">
-            <p>{{DUE-DATE}}</p>
+            <p>{{DATE-LABEL}}<br />{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell" style="vertical-align:top;padding:0.5rem">
@@ -4282,7 +4300,7 @@ class AssessmentTableView extends cc_View {
 
     this.TABLE_HTML_FIELD_NAMES = [
       'DESCRIPTION', 'CAPTION', 'TABLE-ROWS',
-      'TITLE', 'TYPE', 'DUE-DATE', 'WEIGHTING', 'LEARNING-OUTCOMES',
+      'TITLE', 'TYPE', 'DATE-LABEL', 'DUE-DATE', 'WEIGHTING', 'LEARNING-OUTCOMES',
       'DESCRIPTION', 'MODULE-ID'
     ];
 
@@ -4344,9 +4362,15 @@ class AssessmentTableView extends cc_View {
       }
 
       const dueDate = modules[i].date;
+      let dateLabel = '';
       let dueDateString = '';
-      if (dueDate && dueDate.month) {
-        dueDateString = `${dueDate.month} ${dueDate.date}`;
+      if (dueDate ) {
+        if ( dueDate.month) {
+          dueDateString = `${dueDate.month} ${dueDate.date}`;
+        }
+        if ( dueDate.label ) {
+          dateLabel = dueDate.label;
+        }
       }
 
       let mapping = {
@@ -4354,7 +4378,8 @@ class AssessmentTableView extends cc_View {
         'DESCRIPTION': modules[i].description,
         'TITLE': this.model.deLabelModuleName(modules[i]),
         'TYPE': modules[i].label,
-        'DUE-DATE': dueDateString
+        'DUE-DATE': dueDateString,
+        'DATE-LABEL': dateLabel
       };
 
       // for a claytons view - MODULE-ID needs to become a full link
@@ -4484,7 +4509,7 @@ window.CircularProgressBar=function(t){var e={};function n(i){if(e[i])return e[i
 
 
 
-const DEFAULT_DATE_LABEL = "Commencing";
+//const DEFAULT_DATE_LABEL = "Commencing";
 
 class GriffithCardsView extends cc_View {
 
@@ -4763,6 +4788,10 @@ class GriffithCardsView extends cc_View {
 			border-left-width: 1px;
 			border-right-width: 1px;
 			border-top-width: 1px;
+		}
+
+		.cc-card-hide {
+			display: none;
 		}
 
 		.cc-card-date-week {
@@ -5100,7 +5129,7 @@ class GriffithCardsView extends cc_View {
 
 		let firstDate = {};
 
-		firstDate.DATE_LABEL = dateJson.label || DEFAULT_DATE_LABEL;
+		firstDate.DATE_LABEL = dateJson.label || '';
 
 		firstDate.WEEK = dateJson.week || "";
 		firstDate.DAY = dateJson.day || ""; // is this the right default
@@ -5145,9 +5174,14 @@ class GriffithCardsView extends cc_View {
 
 	convertDateToHtml(date) {
 
+		let extraDateLabelClass = '';
+		if (date.from.DATE_LABEL === '') {
+			extraDateLabelClass = ' cc-card-hide';
+		}
+
 		const singleDateHtml = `
 		<div class="cc-card-date">
-		  <div class="cc-card-date-label">
+		  <div class="cc-card-date-label${extraDateLabelClass}">
              ${date.from.DATE_LABEL}
           </div>
 		  <div class="cc-card-date-week">
