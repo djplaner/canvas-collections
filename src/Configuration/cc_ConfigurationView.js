@@ -24,42 +24,32 @@ const CC_UNPUBLISHED_HTML = `
  </div>
 `;
 
-const CONFIG_VIEW_TOOLTIPS = [ 
-	{ 
+const CONFIG_VIEW_TOOLTIPS = [
+	{
 		contentText: `Use Canvas Collections to improve the learner experience of 
-		your site by generatively enhancing the information architecture and visual design.`, 
+		your site by generatively enhancing the information architecture and visual design.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-collections",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/"
 	},
-	{ 
-		contentText: `The <span id="cc-cc-page"><em>Canvas Collections Configuration</em></span> page is unpublished. Meaning
-		the live Collections view will be visible in "Student View" or for students.
-		<p>Any Claytons Collections pages will be visible, if they are published.</p>
-		`,
-		maxWidth: `250px`,
-		targetSelector: "#cc-about-unpublished",
-		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished.html"
-	},
-	{ 
+	{
 		// to complete
 		contentText: `The list of current collections for your course and where you 
-				can modify their order, appearance etc.<p>Click to learn more</p>`, 
+				can modify their order, appearance etc.<p>Click to learn more</p>`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-existing-collections",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#existing-collections"
 	},
-	{ 
+	{
 		contentText: `Where to add a new collection to your site`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-new-collection",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
 	},
-	{ 
+	{
 		contentText: `<p>Update all configured output pages and include a navigation menu 
 		between them. </p>
 		<p>Best suited when more than one collection has an output page.</p>`,
@@ -68,7 +58,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview"
 	},
-	{ 
+	{
 		contentText: `<p>Make collection invisible to students. 
 		(Note: can't hide the default collection)</p>
 		<p><i class="icon-warning"></i> Also unpublish all the collection's modules to be ensure they are hidden.`,
@@ -76,7 +66,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#hide-a-collection"
 	},
-	{ 
+	{
 		contentText: `Update the <em>output page</em> with the collection's current representation.
 		<p><strong>Note:</strong> This is how you can use Collections with students without it being
 		installed by your institution.</p>
@@ -85,7 +75,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#output-page"
 	},
-	{ 
+	{
 		contentText: `Specify the name of an existing Canvas page and the content of that page
 		will be displayed before the current collection's representation 
 		(it is <strong>included</strong>)`,
@@ -93,7 +83,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#include-page"
 	},
-	{ 
+	{
 		contentText: `<p>🚧🧪☠️ <strong>Warning:</strong> This feature is experimental, under construction, and
 		potentially destructive. Only use as suggested and if you're certain.</p>
 		<p>Modify the names of Canvas modules by apply the Collection's label/number</p>
@@ -107,43 +97,43 @@ const CONFIG_VIEW_TOOLTIPS = [
 
 
 	//******** Module configuration */
-	{ 
+	{
 		contentText: `Which collection does this module belong to?`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-collection",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/"
 	},
-	{ 
+	{
 		contentText: `Describe why, what or how the module relates to the students' learning`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-description",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#description"
 	},
-	{ 
+	{
 		contentText: `Describe the type of object the module represents (e.g. lecture, theme etc.)`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-label",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#label-and-number"
 	},
-	{ 
+	{
 		contentText: `Specify a date based on the week of the study period`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-date",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#date"
 	},
-	{ 
+	{
 		contentText: `If and how a label specific number will be calculated for the module 
-		(e.g. <em>Lecture 1</em> or <em>Workshop 5</em>)<p>Auto number or specify a value.</p>`,  
+		(e.g. <em>Lecture 1</em> or <em>Workshop 5</em>)<p>Auto number or specify a value.</p>`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-number",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#label-and-number"
 	},
-	{ 
+	{
 		contentText: `Flexibly add, delete, and modify additional information about this module, which
 		may be used by collections and representations - or for your own purposes.`,
 		maxWidth: `250px`,
@@ -151,15 +141,15 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#additional-metadata"
 	},
-		{ 
+	{
 		contentText: `Specify how the image will be scaled to fit the available space`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-image-scale",
 		animateFunction: "spin",
-//		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
+		//		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/image-scale"
 	},
-	{ 
+	{
 		contentText: `Provide the URL for an image to associate with this module.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-image-url",
@@ -184,11 +174,11 @@ export default class cc_ConfigurationView extends cc_View {
 		this.TOOLTIPS = CONFIG_VIEW_TOOLTIPS;
 	}
 
-/*	addCollectionsConfigTooltips() {
-		if (this.TOOLTIPS) {
-			html5tooltips(this.TOOLTIPS);
-		}
-	} */
+	/*	addCollectionsConfigTooltips() {
+			if (this.TOOLTIPS) {
+				html5tooltips(this.TOOLTIPS);
+			}
+		} */
 
 	/**
 	 * @descr Modify the canvas page to show the cc title, switch, and drop arrow.
@@ -226,8 +216,34 @@ export default class cc_ConfigurationView extends cc_View {
 			this.addModuleConfiguration();
 		}
 
-//		this.addCollectionsConfigTooltips();
+		//		this.addCollectionsConfigTooltips();
 		this.addTooltips();
+	}
+
+	addTooltips() {
+		const courseId = this.model.getCourseId();
+		const configPageUrl = `https://${window.location.host}/courses/${courseId}/pages/canvas-collections-configuration`;
+
+		// Add any local customisation to the tooltips
+		let unpublished =
+		{
+			contentText: `The <a href="${configPageUrl}" target="_blank">
+			<em>Canvas Collections Configuration</em> page</a> is unpublished. Meaning
+		the live Collections view will be visible in "Student View" or for students.
+		<p>Any Claytons Collections pages will be visible, if they are published.</p>
+		`,
+			maxWidth: `250px`,
+			targetSelector: "#cc-about-unpublished",
+			animateFunction: "spin",
+			persistent: true,
+			href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished.html"
+		};
+
+		// append unpublished onto this.TOOLTIPS
+		this.TOOLTIPS.push(unpublished);
+
+		// call the parent class method
+		super.addTooltips();
 	}
 
 	/**
@@ -511,7 +527,7 @@ export default class cc_ConfigurationView extends cc_View {
 			imageSize = "contain";
 			moduleConfig.imageSize = imageSize;
 		}
-		const options = [ 'none', 'contain', 'cover', 'fill', 'scale-down'];
+		const options = ['none', 'contain', 'cover', 'fill', 'scale-down'];
 		for (let i = 0; i < options.length; i++) {
 			let selected = '';
 			const option = options[i];
@@ -585,8 +601,8 @@ export default class cc_ConfigurationView extends cc_View {
 		}
 
 		// TODO calculate the date based on settings and using calendar
-		let calculatedDate=this.calculateDate( dateInfo );
-		
+		let calculatedDate = this.calculateDate(dateInfo);
+
 		// calculate the number elements for the form
 		// - if no module.num then it's auto calculate
 		//     - show a selected checkbox for auto  
@@ -1162,16 +1178,16 @@ export default class cc_ConfigurationView extends cc_View {
 			);
 			// TODO set these to collection values
 			let includePage = this.model.getCollectionAttribute(collectionName, "includePage");
-			if ( ! includePage ) {
-				includePage="";
+			if (!includePage) {
+				includePage = "";
 			}
 			let outputPage = this.model.getCollectionAttribute(collectionName, "outputPage");
 			let outputPageExists = "cc-output-page-not-exists";
-			if ( ! outputPage ) {
-				outputPage="";
+			if (!outputPage) {
+				outputPage = "";
 			}
-			if (outputPage!=="") {
-				outputPageExists="cc-output-page-exists";
+			if (outputPage !== "") {
+				outputPageExists = "cc-output-page-exists";
 			}
 			const divExistingCollection = `
 			<div class="cc-existing-collection border border-trbl" id="cc-collection-${collectionName}">
@@ -1761,25 +1777,25 @@ input:checked + .cc-slider:before {
 	 * Return "No set date" if no date is set
 	 * @param {Object} dateInfo - object with keys label, week, date, month, day, time
 	 */
-	calculateDate( dateInfo) {
+	calculateDate(dateInfo) {
 		// valid date combinations will be
 		// 1. week
 		// 2. week and day
 		// 3. week and day and time
 		// - must have a week
 
-		if (dateInfo.week==='') {
+		if (dateInfo.week === '') {
 			return "No date set";
 		}
 
 		let calcDate = {};
 
-		if (dateInfo.day==='') {
+		if (dateInfo.day === '') {
 			// no day
-			calcDate = this.controller.parentController.calendar.getDate( dateInfo.week);
+			calcDate = this.controller.parentController.calendar.getDate(dateInfo.week);
 		} else {
 			calcDate = this.controller.parentController.calendar.getDate(
-				dateInfo.week, false, dateInfo.day 
+				dateInfo.week, false, dateInfo.day
 			);
 		}
 		let dateString = `${calcDate.date} ${calcDate.month} ${calcDate.year}`;
@@ -1787,7 +1803,7 @@ input:checked + .cc-slider:before {
 		if (calcDate.hasOwnProperty('day')) {
 			dateString = `${calcDate.day} ${dateString}`;
 		}
-		if (dateInfo.time!=='') {
+		if (dateInfo.time !== '') {
 			// no time
 			dateString = `${dateInfo.time} ${dateString}`;
 		}

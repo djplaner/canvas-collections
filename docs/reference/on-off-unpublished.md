@@ -41,3 +41,12 @@ Canvas Collections configuration information (e.g. what are the collections for 
 
 As per standard Canvas practice, [unpublished pages are invisible to students](https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-publish-or-unpublish-a-page-as-an-instructor/ta-p/592). If the _Canvas Collections Configuration_ page is unpublished, then students are unable to interact with Canvas Collections and they will see the vanilla Canvas modules view. This also applies to teacher/designer roles when [using _Student View_](https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-view-a-course-as-a-test-student-using-Student-View/ta-p/1122).
 
+If the _Canvas Collections Configuration_ page is unpublished an _Unpublished_ warning will appear next to the Canvas Collections box - as shown in the following image.
+
+![](pics/unpublished.png)  
+
+Hover your mouse over the question mark icon in the _Unpublished_ warning to see an explanatory message, but also access a link to the configuration page. Click that link and the page will open in a new browser, ready for you to publish it.
+
+After publishing the configuration page, you will need to reload/refresh the Modules view for Collections to remove the _Unpublished_ warning.
+
+![](pics/unPublishToolTip.png)  

@@ -48,6 +48,10 @@ export default class cc_ConfigurationModel {
 		return this.controller.parentController.published;
 	}
 
+	getCourseId() {
+		return this.controller.parentController.courseId;
+	}
+
 	turnOn() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOn()`);
 		this.controller.parentController.ccOn = true;
