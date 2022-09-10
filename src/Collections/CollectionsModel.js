@@ -27,12 +27,12 @@ export default class CollectionsModel {
 					Number.isInteger(URLCollectionNum) && URLCollectionNum >= 0 &&
 					URLCollectionNum < this.cc_configuration.COLLECTIONS_ORDER.length) {
 					this.currentCollection = this.cc_configuration.COLLECTIONS_ORDER[URLCollectionNum];
-				} else if (this.controller.parentController.lastCollectionViewed &&
+				} 
+			} else if (this.controller.parentController.lastCollectionViewed &&
 					this.controller.parentController.lastCollectionViewed !== "") {
 					this.currentCollection = this.controller.parentController.lastCollectionViewed;
-				} else {
+			} else {
 					this.currentCollection = this.getDefaultCollection();
-				}
 			}
 		}
 	}

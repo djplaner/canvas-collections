@@ -41,6 +41,13 @@ export default class cc_ConfigurationModel {
 		return this.controller.parentController.ccOn;
 	}
 
+	/**
+	 * @descr return true iff the Canvas Collections Configuration page is published
+	 */
+	isPublished() {
+		return this.controller.parentController.published;
+	}
+
 	turnOn() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOn()`);
 		this.controller.parentController.ccOn = true;

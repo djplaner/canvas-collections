@@ -79,6 +79,7 @@ nav:
       - Student - Claytons: walk-throughs/navigating/student-claytons.md
   - Reference: 
       - Overview: reference/overview.md
+      - On, off, & unpublished: reference/on-off-unpublished.md
       - Collections:
         - Collections: reference/collections/overview.md
       - Representations:

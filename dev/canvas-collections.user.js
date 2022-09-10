@@ -60,6 +60,13 @@ class cc_ConfigurationModel {
 		return this.controller.parentController.ccOn;
 	}
 
+	/**
+	 * @descr return true iff the Canvas Collections Configuration page is published
+	 */
+	isPublished() {
+		return this.controller.parentController.published;
+	}
+
 	turnOn() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.turnOn()`);
 		this.controller.parentController.ccOn = true;
@@ -584,6 +591,16 @@ const CC_VERSION = "0.8.18";
 
 const CV_DEFAULT_DATE_LABEL = "Commencing";
 
+const CC_UNPUBLISHED_HTML = `
+<div class="cc-unpublished"> 
+  <span style="padding-top: 0.25em;padding-right:0.25em">
+  Unpublished</span>
+  <a id="cc-about-unpublished" target="_blank" href=""> 
+     <i class="icon-question"></i>
+  </a>
+ </div>
+`;
+
 const CONFIG_VIEW_TOOLTIPS = [ 
 	{ 
 		contentText: `Use Canvas Collections to improve the learner experience of 
@@ -592,6 +609,16 @@ const CONFIG_VIEW_TOOLTIPS = [
 		targetSelector: "#cc-about-collections",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/"
+	},
+	{ 
+		contentText: `The <span id="cc-cc-page"><em>Canvas Collections Configuration</em></span> page is unpublished. Meaning
+		the live Collections view will be visible in "Student View" or for students.
+		<p>Any Claytons Collections pages will be visible, if they are published.</p>
+		`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-unpublished",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished.html"
 	},
 	{ 
 		// to complete
@@ -1944,6 +1971,11 @@ class cc_ConfigurationView extends cc_View {
 			return;
 		}
 
+		let published = "";
+		if (!this.model.isPublished()) {
+			published = CC_UNPUBLISHED_HTML;
+		}
+
 		/*
 		30px - 2em
 		17px - 1.2em
@@ -2025,6 +2057,17 @@ input:checked + .cc-slider:before {
 	color: var(--ic-brand-font-color-dark);
 	display: flex;
 	position:relative;
+}
+
+.cc-unpublished {
+    display: flex;
+    font-size: .75em;
+    background-color: #ffe08a;
+    align-items: center;
+    border-radius: .5em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    height: 2em;
 }
 
 .cc-switch-title {
@@ -2156,6 +2199,7 @@ input:checked + .cc-slider:before {
 		  <button class="cc-save-button" id="cc-save-button">Save</button>
 	    </div>
 	   </div>
+	   ${published}
 		`;
 
 
@@ -3410,12 +3454,12 @@ class CollectionsModel {
 					Number.isInteger(URLCollectionNum) && URLCollectionNum >= 0 &&
 					URLCollectionNum < this.cc_configuration.COLLECTIONS_ORDER.length) {
 					this.currentCollection = this.cc_configuration.COLLECTIONS_ORDER[URLCollectionNum];
-				} else if (this.controller.parentController.lastCollectionViewed &&
+				} 
+			} else if (this.controller.parentController.lastCollectionViewed &&
 					this.controller.parentController.lastCollectionViewed !== "") {
 					this.currentCollection = this.controller.parentController.lastCollectionViewed;
-				} else {
+			} else {
 					this.currentCollection = this.getDefaultCollection();
-				}
 			}
 		}
 	}
@@ -6626,6 +6670,7 @@ class cc_ConfigurationStore {
 		}
 
 		this.pageObject = data;
+		this.parentController.published = this.pageObject.published;
 		// TODO error checking
 
 		const parsed = new DOMParser().parseFromString(data.body, 'text/html');

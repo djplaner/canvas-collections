@@ -125,6 +125,7 @@ export default class cc_ConfigurationStore {
 		}
 
 		this.pageObject = data;
+		this.parentController.published = this.pageObject.published;
 		// TODO error checking
 
 		const parsed = new DOMParser().parseFromString(data.body, 'text/html');
