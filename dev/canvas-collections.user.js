@@ -3403,19 +3403,19 @@ class CollectionsModel {
 		// if currentCollection is undefined set it to the default
 		if (this.currentCollection === undefined) {
 			// check to see for parentController.URLCollectionNum 
-			if ( this.controller.parentController.hasOwnProperty('URLCollectionNum') ) {
+			if (this.controller.parentController.hasOwnProperty('URLCollectionNum')) {
 				let URLCollectionNum = this.controller.parentController.URLCollectionNum;
 				// if URLCollectionNum is an integer and > 0 and < COLLECTIONS_ORDER.length
 				if (
-					Number.isInteger(URLCollectionNum) && URLCollectionNum >= 0 && 
+					Number.isInteger(URLCollectionNum) && URLCollectionNum >= 0 &&
 					URLCollectionNum < this.cc_configuration.COLLECTIONS_ORDER.length) {
 					this.currentCollection = this.cc_configuration.COLLECTIONS_ORDER[URLCollectionNum];
 				} else if (this.controller.parentController.lastCollectionViewed &&
-				    this.controller.parentController.lastCollectionViewed !== "") {
-				    this.currentCollection = this.controller.parentController.lastCollectionViewed;
-			    } else {
-				    this.currentCollection = this.getDefaultCollection();
-			    }
+					this.controller.parentController.lastCollectionViewed !== "") {
+					this.currentCollection = this.controller.parentController.lastCollectionViewed;
+				} else {
+					this.currentCollection = this.getDefaultCollection();
+				}
 			}
 		}
 	}
@@ -3434,13 +3434,13 @@ class CollectionsModel {
 		// Following is an attempt to modify the URL to include the proper link
 		// However Canvas changes it back - try another route
 		// what sequence number is this collectin in COLLECTIONS_ORDER
-/*		const collectionIndex = this.cc_configuration.COLLECTIONS_ORDER.indexOf(newCollection);
-		// change the browser URL to append cc-collection-<collectionIndex> using History API
-		let url = window.location.href;
-		// remove any #.* from url
-		url = url.replace(/#.*$/, '');
-		const newUrl = `${url}#cc-collection-${collectionIndex}`;
-		window.history.pushState({}, '', newUrl); */
+		/*		const collectionIndex = this.cc_configuration.COLLECTIONS_ORDER.indexOf(newCollection);
+				// change the browser URL to append cc-collection-<collectionIndex> using History API
+				let url = window.location.href;
+				// remove any #.* from url
+				url = url.replace(/#.*$/, '');
+				const newUrl = `${url}#cc-collection-${collectionIndex}`;
+				window.history.pushState({}, '', newUrl); */
 	}
 
 	getCollections() {
@@ -3636,7 +3636,7 @@ class CollectionsModel {
 		}
 		prepend = `${prepend}: `;
 		let newName = existingName;
-		if ( prepend!==': ') {
+		if (prepend !== ': ') {
 			// if we've not empty label and number
 			// modify existingName to remove prepend and any subsequent whitespace
 			newName = existingName.replace(prepend, '').trim();
@@ -3699,6 +3699,15 @@ class CollectionsModel {
 		return modulesUrl;
 
 	}
+
+	convertFrom24To12Format(time24) {
+		const [sHours, minutes] = time24.match(/([0-9]{1,2}):([0-9]{2})/).slice(1);
+		const period = +sHours < 12 ? 'AM' : 'PM';
+		const hours = +sHours % 12 || 12;
+
+		return `${hours}:${minutes} ${period}`;
+	}
+
 }
 
 // src/Collections/NavViewWF.js
@@ -5160,11 +5169,17 @@ class GriffithCardsView extends cc_View {
 		firstDate.DATE_LABEL = dateJson.label || '';
 
 		firstDate.WEEK = dateJson.week || "";
-		firstDate.DAY = dateJson.day || ""; // is this the right default
+		firstDate.DAY = dateJson.day || "Monday"; // is this the right default
+		// remove all but the first three letters of the day
+		firstDate.DAY = firstDate.DAY.substring(0, 3);
 		// Week needs more work to add the the day and string "Week"
 		// Also it should be HTML
 
 		firstDate.TIME = dateJson.time || "";
+		// convert 24 hour time into 12 hour time
+		if (firstDate.TIME) {
+			firstDate.TIME = this.model.convertFrom24To12Format(firstDate.TIME);
+		}
 
 		firstDate.MONTH = dateJson.month || "";
 		firstDate.DATE = dateJson.date || "";

@@ -637,11 +637,17 @@ export default class GriffithCardsView extends cc_View {
 		firstDate.DATE_LABEL = dateJson.label || '';
 
 		firstDate.WEEK = dateJson.week || "";
-		firstDate.DAY = dateJson.day || ""; // is this the right default
+		firstDate.DAY = dateJson.day || "Monday"; // is this the right default
+		// remove all but the first three letters of the day
+		firstDate.DAY = firstDate.DAY.substring(0, 3);
 		// Week needs more work to add the the day and string "Week"
 		// Also it should be HTML
 
 		firstDate.TIME = dateJson.time || "";
+		// convert 24 hour time into 12 hour time
+		if (firstDate.TIME) {
+			firstDate.TIME = this.model.convertFrom24To12Format(firstDate.TIME);
+		}
 
 		firstDate.MONTH = dateJson.month || "";
 		firstDate.DATE = dateJson.date || "";
