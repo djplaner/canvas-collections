@@ -7069,7 +7069,15 @@ class cc_ConfigurationStore {
 			this.parentController.hasOwnProperty('cc_configuration') &&
 			this.parentController.cc_configuration.hasOwnProperty('MODULES')) {
 
-			const courseFilesUrl = `${window.location.hostname}/files/`;
+			// files URL might be 
+			// - direct or 
+			//    https://lms.griffith.edu.au/files/
+			// - via the course
+			//    https://lms.../courses/12345/files/
+			// - or without the hostname starting with /
+
+			const filesUrl = `${window.location.hostname}/files/`;
+			const courseFilesUrl = `${window.location.hostname}/courses/${this.parentController.courseId}/files/`;
 			// loop thru each module in cc_configuration
 			// - if it has an image, add an img element to the div.cc-card-images
 			//   with the image URL
@@ -7077,8 +7085,19 @@ class cc_ConfigurationStore {
 			for (let moduleId in this.parentController.cc_configuration.MODULES) {
 				const module = this.parentController.cc_configuration.MODULES[moduleId];
 
+				if (!module.image) {
+					continue;
+				}
+				// add the hostname to module.image if it doesn't have it
+				if (module.image.startsWith('/')) {
+					module.image = `${window.location.hostname}${module.image}`;
+				}
+
 				// if module has an image and it contains courseFilesUrl
-				if (module.image && module.image.includes(courseFilesUrl)) {
+				if (
+					module.image.includes(courseFilesUrl) ||
+					module.image.includes(filesUrl)
+				) {
 					images += `
 					<img src="${module.image}" id="cc-moduleImage-${moduleId}" class="cc-moduleImage" />
 					`;
