@@ -116,14 +116,22 @@ export default class cc_Controller {
 	 */
 
 	generateSTRM() {
-		let objectCourseCode = this.courseObject.course_code;
-		// canvasCourseCode in format "some text (some code)" get the code
-		let canvasCourseCode = objectCourseCode.match(/\(([^)]+)\)/)[1];
-
 		this.courseCode = undefined;
 		this.strm = undefined;
 
+		// try to get the course code 
+		let objectCourseCode = this.courseObject.course_code;
+		let canvasCourseCode = "";
 
+		// does objectCourseCode contain a pair of brackets?
+		let brackets = objectCourseCode.match(/\(([^)]+)\)/);
+		if (!brackets) {
+			// no brackets, no strm, go with default, but create calendar
+			// before we leave
+			this.calendar = new UniversityDateCalendar(this.strm);
+			return;
+		}
+		canvasCourseCode = objectCourseCode.match(/\(([^)]+)\)/)[1];
 
 		// is it a DEV course
 		if (canvasCourseCode.startsWith('DEV_')) {

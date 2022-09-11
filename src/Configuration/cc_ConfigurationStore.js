@@ -245,27 +245,30 @@ export default class cc_ConfigurationStore {
 	 */
 
 	checkConvertImport(courseImages) {
-		// get the courseId from courseImages
-		let imagesCourseId = courseImages.id.replace('cc-course-', '');
-		const actualCourseId = this.parentController.courseId;
 
-		// no need to go further if the course ids are the same
-		if ( imagesCourseId === actualCourseId ) {
-			return false;
-		}
+		if (courseImages && courseImages.id) {
+			// get the courseId from courseImages, if there is any
+			let imagesCourseId = courseImages.id.replace('cc-course-', '');
+			const actualCourseId = this.parentController.courseId;
 
-		// get all the img.cc-moduleImage
-		const images = courseImages.querySelectorAll('img.cc-moduleImage');
-
-		// loop thru each image
-		images.forEach((image) => {
-			const moduleId = image.id.replace('cc-moduleImage-', '');
-			// if cc_configuration.MODULES has a module with this id
-			// modify the image
-			if (this.parentController.cc_configuration.MODULES[moduleId]) {
-				this.parentController.cc_configuration.MODULES[moduleId].image = image.src;
+			// no need to go further if the course ids are the same
+			if (imagesCourseId === actualCourseId) {
+				return false;
 			}
-		});
+
+			// get all the img.cc-moduleImage
+			const images = courseImages.querySelectorAll('img.cc-moduleImage');
+
+			// loop thru each image
+			images.forEach((image) => {
+				const moduleId = image.id.replace('cc-moduleImage-', '');
+				// if cc_configuration.MODULES has a module with this id
+				// modify the image
+				if (this.parentController.cc_configuration.MODULES[moduleId]) {
+					this.parentController.cc_configuration.MODULES[moduleId].image = image.src;
+				}
+			});
+		}
 
 		// get list of module ids in collections configuration
 		const collectionIds = Object.keys(this.parentController.cc_configuration.MODULES);
