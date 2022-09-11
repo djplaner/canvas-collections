@@ -6708,13 +6708,46 @@ class cc_ConfigurationStore {
 		this.parentController.published = this.pageObject.published;
 		// TODO error checking
 
+		this.parseNewPageBody();
+
+
+
+		// create a structure that merges Canvas and Collections module information
+		this.parentController.mergeModuleDetails();
+		this.parentController.retrieveLastCollectionViewed();
+		this.parentController.execute();
+	}
+
+	/**
+	 * A new config page has been retrieved, parse the this.pageObject.body
+	 * and re-configure cc_configuration
+	 * 
+	 * Two main divs that need to parsed/processes
+	 * - div.cc_json contains the encoded JSON data for Collections configuration
+	 * - div.cc-card-images 
+	 *   - has an id set to cc-course-<courseId>
+	 *     If this courseId doesn't match the current courseId, the course has been
+	 *     copied and we need to try and update
+	 *   - contains a collection of img elements for any module collections images that
+	 *     are in the course files area.
+	 *     If the courseId indicates a course copy, we will need to modify the cc_configuration
+	 *     for those modules to point to point to the image URLs
+	 */
+
+	parseNewPageBody() {
+		const data = this.pageObject;
+
 		const parsed = new DOMParser().parseFromString(data.body, 'text/html');
+
+		// Collections configuration is in div.cc_json
 		let config = parsed.querySelector('div.cc_json');
 		if (!config) {
 			throw new Error(`cc_ConfigurationStore: requestConfigPageContents: no div.cc_json found in page`);
 		}
 
+
 		this.parentController.cc_configuration = JSON.parse(config.innerHTML);
+
 		// double check and possibly convert an old configuration
 		this.configConverted = this.checkConvertOldConfiguration();
 
@@ -6734,7 +6767,8 @@ class cc_ConfigurationStore {
 			module.name = this.decodeHTML(module.name);
 		}
 		// double check that we're not an import from another course
-		const importConverted = this.checkConvertImport();
+		let courseImages = parsed.querySelector('div.cc-card-images');
+		const importConverted = this.checkConvertImport(courseImages);
 		// and make it gets saved if there was a change
 		if (importConverted) {
 			this.configConverted = importConverted;
@@ -6761,11 +6795,6 @@ class cc_ConfigurationStore {
 			this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
 
 
-
-		// create a structure that merges Canvas and Collections module information
-		this.parentController.mergeModuleDetails();
-		this.parentController.retrieveLastCollectionViewed();
-		this.parentController.execute();
 	}
 
 	/**
@@ -6773,9 +6802,36 @@ class cc_ConfigurationStore {
 	 * i.e. has the same module names (apart maybe from some additions) but different module ids
 	 * - check if this is the case
 	 * - if so, update the configuration
+	 * @param {HTMLElement} courseImages - the content from div.cc-card-images in config file
+	 *   provides the courseId when the config was saved, plus a list of image URLs for card
+	 *   images that were in the files area.
+	 *   A different course id suggests we need to import. If so, the image URLs will need to
+	 *   be updated in cc_configuration.
 	 */
 
-	checkConvertImport() {
+	checkConvertImport(courseImages) {
+		// get the courseId from courseImages
+		let imagesCourseId = courseImages.id.replace('cc-course-', '');
+		const actualCourseId = this.parentController.courseId;
+
+		// no need to go further if the course ids are the same
+		if ( imagesCourseId === actualCourseId ) {
+			return false;
+		}
+
+		// get all the img.cc-moduleImage
+		const images = courseImages.querySelectorAll('img.cc-moduleImage');
+
+		// loop thru each image
+		images.forEach((image) => {
+			const moduleId = image.id.replace('cc-moduleImage-', '');
+			// if cc_configuration.MODULES has a module with this id
+			// modify the image
+			if (this.parentController.cc_configuration.MODULES[moduleId]) {
+				this.parentController.cc_configuration.MODULES[moduleId].image = image.src;
+			}
+		});
+
 		// get list of module ids in collections configuration
 		const collectionIds = Object.keys(this.parentController.cc_configuration.MODULES);
 		// get list of module ids from Canvas (moduleDetails - array of objects)
@@ -7024,14 +7080,13 @@ class cc_ConfigurationStore {
 				// if module has an image and it contains courseFilesUrl
 				if (module.image && module.image.includes(courseFilesUrl)) {
 					images += `
-					<img src="${module.image}" id="cc-moduleImage-${moduleId}" />
+					<img src="${module.image}" id="cc-moduleImage-${moduleId}" class="cc-moduleImage" />
 					`;
 				}
 			}
 
 			content = content.replace('{{COURSE_IMAGES}}', images);
 		}
-
 
 		return content;
 	}
@@ -7286,6 +7341,25 @@ const CALENDAR = {
     15: { start: "2022-06-27", stop: "2022-07-03" },
     exam: { start: "2022-06-13", stop: "2022-06-25" },
   },
+  '2222': {
+    0: { start: "2022-03-07", stop: "2022-03-13" },
+    1: { start: "2022-03-14", stop: "2022-03-20" },
+    2: { start: "2022-03-21", stop: "2022-03-28" },
+    3: { start: "2022-03-28", stop: "2022-04-03" },
+    4: { start: "2022-04-04", stop: "2022-04-10" },
+    5: { start: "2022-04-18", stop: "2022-04-24" },
+    6: { start: "2022-04-25", stop: "2022-05-01" },
+    7: { start: "2022-05-02", stop: "2022-05-08" },
+    8: { start: "2022-05-09", stop: "2022-05-15" },
+    9: { start: "2022-05-16", stop: "2022-05-22" },
+    10: { start: "2022-05-23", stop: "2022-05-29" },
+    11: { start: "2022-05-30", stop: "2022-06-05" },
+    12: { start: "2022-06-06", stop: "2022-06-12" },
+    13: { start: "2022-06-13", stop: "2022-06-19" },
+    14: { start: "2022-06-20", stop: "2022-06-26" },
+    15: { start: "2022-06-27", stop: "2022-07-03" },
+    exam: { start: "2022-06-13", stop: "2022-06-25" },
+  },
   '3221QCM': {
     0: { start: "2022-02-21", stop: "2022-02-27" },
     1: { start: "2022-02-28", stop: "2022-03-06" },
@@ -7324,6 +7398,25 @@ const CALENDAR = {
     15: { start: "2022-10-31", stop: "2022-11-06" },
     exam: { start: "2022-10-20", stop: "2022-10-29" },
   },
+  '2224': {
+    0: { start: "2022-07-11", stop: "2022-07-17" },
+    1: { start: "2022-07-18", stop: "2022-07-24" },
+    2: { start: "2022-07-25", stop: "2022-07-31" },
+    3: { start: "2022-08-01", stop: "2022-08-07" },
+    4: { start: "2022-08-08", stop: "2022-08-14" },
+    5: { start: "2022-08-22", stop: "2022-08-28" },
+    6: { start: "2022-08-29", stop: "2022-09-04" },
+    7: { start: "2022-09-05", stop: "2022-09-11" },
+    8: { start: "2022-09-12", stop: "2022-09-18" },
+    9: { start: "2022-09-19", stop: "2022-09-25" },
+    10: { start: "2022-09-26", stop: "2022-10-02" },
+    11: { start: "2022-10-03", stop: "2022-10-09" },
+    12: { start: "2022-10-10", stop: "2022-10-16" },
+    13: { start: "2022-10-17", stop: "2022-10-23" },
+    14: { start: "2022-10-24", stop: "2022-10-30" },
+    15: { start: "2022-10-31", stop: "2022-11-06" },
+    exam: { start: "2022-10-20", stop: "2022-10-29" },
+  },
   '3225QCM': {
     0: { start: "2022-07-18", stop: "2022-07-24" },
     1: { start: "2022-07-25", stop: "2022-07-31" },
@@ -7344,6 +7437,25 @@ const CALENDAR = {
     exam: { start: "2022-11-07", stop: "2022-11-19" },
   },
   3228: {
+    0: { start: "2022-10-31", stop: "2022-11-06" },
+    1: { start: "2022-11-07", stop: "2022-11-13" },
+    2: { start: "2022-11-14", stop: "2022-11-20" },
+    3: { start: "2022-11-21", stop: "2022-11-27" },
+    4: { start: "2022-11-28", stop: "2022-12-04" },
+    5: { start: "2022-12-05", stop: "2022-12-11" },
+    6: { start: "2022-12-12", stop: "2022-12-18" },
+    7: { start: "2022-12-19", stop: "2022-12-25" },
+    8: { start: "2023-01-09", stop: "2023-01-15" },
+    9: { start: "2023-01-16", stop: "2023-01-22" },
+    10: { start: "2023-01-23", stop: "2023-01-29" },
+    11: { start: "2023-01-30", stop: "2023-02-05" },
+    12: { start: "2023-02-06", stop: "2023-02-12" },
+    13: { start: "2023-02-13", stop: "2023-02-19" },
+    14: { start: "2023-02-20", stop: "2023-02-26" },
+    15: { start: "2023-02-27", stop: "2023-03-05" },
+    //    exam: { start: "2023-02-17", stop: "2023-02-26" },
+  },
+  2226: {
     0: { start: "2022-10-31", stop: "2022-11-06" },
     1: { start: "2022-11-07", stop: "2022-11-13" },
     2: { start: "2022-11-14", stop: "2022-11-20" },
@@ -7964,7 +8076,7 @@ class cc_Controller {
 		this.lastCollectionViewed = null;
 		this.configurationStore = new cc_ConfigurationStore(this);
 		// create calendar
-		this.calendar = new UniversityDateCalendar(this.strm);
+		//this.calendar = new UniversityDateCalendar(this.strm);
 
 
 		// if cc should run, try to get the config
@@ -8028,10 +8140,14 @@ class cc_Controller {
 	 */
 
 	generateSTRM() {
-		const canvasCourseCode = this.courseObject.course_code;
+		let objectCourseCode = this.courseObject.course_code;
+		// canvasCourseCode in format "some text (some code)" get the code
+		let canvasCourseCode = objectCourseCode.match(/\(([^)]+)\)/)[1];
 
 		this.courseCode = undefined;
 		this.strm = undefined;
+
+
 
 		// is it a DEV course
 		if (canvasCourseCode.startsWith('DEV_')) {
@@ -8042,16 +8158,28 @@ class cc_Controller {
 				this.courseCode = match[1];
 				this.strm = match[2];
 			}
-		} else {
-			// use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
-			const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
-			const match = regex.exec(canvasCourseCode);
-			if (match) {
-				this.courseCode = match[1];
-				this.strm = match[2];
-			}
+			this.calendar = new UniversityDateCalendar(this.strm);
+			this.parseStrm();
+			return;
+		} 
+
+		// Is it a standard course, possible formats are
+		// coursecode_strm
+		// coursecode_strm_campus
+
+		// use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
+		//const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
+		// match a course code - first group - any chars but _
+		// match four digits (strm)
+		// optionally other stuff
+		const regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
+		const match = regex.exec(canvasCourseCode);
+		if (match) {
+			this.courseCode = match[1];
+			this.strm = match[2];
 		}
 
+		this.calendar = new UniversityDateCalendar(this.strm);
 		this.parseStrm();
 
 		console.log(`------------ ${this.strm} period ${this.period} year ${this.year}`);

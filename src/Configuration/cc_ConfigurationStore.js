@@ -143,13 +143,46 @@ export default class cc_ConfigurationStore {
 		this.parentController.published = this.pageObject.published;
 		// TODO error checking
 
+		this.parseNewPageBody();
+
+
+
+		// create a structure that merges Canvas and Collections module information
+		this.parentController.mergeModuleDetails();
+		this.parentController.retrieveLastCollectionViewed();
+		this.parentController.execute();
+	}
+
+	/**
+	 * A new config page has been retrieved, parse the this.pageObject.body
+	 * and re-configure cc_configuration
+	 * 
+	 * Two main divs that need to parsed/processes
+	 * - div.cc_json contains the encoded JSON data for Collections configuration
+	 * - div.cc-card-images 
+	 *   - has an id set to cc-course-<courseId>
+	 *     If this courseId doesn't match the current courseId, the course has been
+	 *     copied and we need to try and update
+	 *   - contains a collection of img elements for any module collections images that
+	 *     are in the course files area.
+	 *     If the courseId indicates a course copy, we will need to modify the cc_configuration
+	 *     for those modules to point to point to the image URLs
+	 */
+
+	parseNewPageBody() {
+		const data = this.pageObject;
+
 		const parsed = new DOMParser().parseFromString(data.body, 'text/html');
+
+		// Collections configuration is in div.cc_json
 		let config = parsed.querySelector('div.cc_json');
 		if (!config) {
 			throw new Error(`cc_ConfigurationStore: requestConfigPageContents: no div.cc_json found in page`);
 		}
 
+
 		this.parentController.cc_configuration = JSON.parse(config.innerHTML);
+
 		// double check and possibly convert an old configuration
 		this.configConverted = this.checkConvertOldConfiguration();
 
@@ -169,7 +202,8 @@ export default class cc_ConfigurationStore {
 			module.name = this.decodeHTML(module.name);
 		}
 		// double check that we're not an import from another course
-		const importConverted = this.checkConvertImport();
+		let courseImages = parsed.querySelector('div.cc-card-images');
+		const importConverted = this.checkConvertImport(courseImages);
 		// and make it gets saved if there was a change
 		if (importConverted) {
 			this.configConverted = importConverted;
@@ -196,11 +230,6 @@ export default class cc_ConfigurationStore {
 			this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
 
 
-
-		// create a structure that merges Canvas and Collections module information
-		this.parentController.mergeModuleDetails();
-		this.parentController.retrieveLastCollectionViewed();
-		this.parentController.execute();
 	}
 
 	/**
@@ -208,9 +237,36 @@ export default class cc_ConfigurationStore {
 	 * i.e. has the same module names (apart maybe from some additions) but different module ids
 	 * - check if this is the case
 	 * - if so, update the configuration
+	 * @param {HTMLElement} courseImages - the content from div.cc-card-images in config file
+	 *   provides the courseId when the config was saved, plus a list of image URLs for card
+	 *   images that were in the files area.
+	 *   A different course id suggests we need to import. If so, the image URLs will need to
+	 *   be updated in cc_configuration.
 	 */
 
-	checkConvertImport() {
+	checkConvertImport(courseImages) {
+		// get the courseId from courseImages
+		let imagesCourseId = courseImages.id.replace('cc-course-', '');
+		const actualCourseId = this.parentController.courseId;
+
+		// no need to go further if the course ids are the same
+		if ( imagesCourseId === actualCourseId ) {
+			return false;
+		}
+
+		// get all the img.cc-moduleImage
+		const images = courseImages.querySelectorAll('img.cc-moduleImage');
+
+		// loop thru each image
+		images.forEach((image) => {
+			const moduleId = image.id.replace('cc-moduleImage-', '');
+			// if cc_configuration.MODULES has a module with this id
+			// modify the image
+			if (this.parentController.cc_configuration.MODULES[moduleId]) {
+				this.parentController.cc_configuration.MODULES[moduleId].image = image.src;
+			}
+		});
+
 		// get list of module ids in collections configuration
 		const collectionIds = Object.keys(this.parentController.cc_configuration.MODULES);
 		// get list of module ids from Canvas (moduleDetails - array of objects)
@@ -459,14 +515,13 @@ export default class cc_ConfigurationStore {
 				// if module has an image and it contains courseFilesUrl
 				if (module.image && module.image.includes(courseFilesUrl)) {
 					images += `
-					<img src="${module.image}" id="cc-moduleImage-${moduleId}" />
+					<img src="${module.image}" id="cc-moduleImage-${moduleId}" class="cc-moduleImage" />
 					`;
 				}
 			}
 
 			content = content.replace('{{COURSE_IMAGES}}', images);
 		}
-
 
 		return content;
 	}

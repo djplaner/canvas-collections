@@ -24,8 +24,13 @@ Whether you can use these functionality sets depends on the _on_, _off_, and _un
 | Off | Published | Teacher/designer roles can only turn Collections on. | All roles see the vanilla Canvas modules view |
 | Off | Unpublished | Teacher/designer roles can only turn Collections on. | All roles see the vanilla Canvas modules view |
 
+> ❗ **Note:** As explained below, admin roles are [treated slightly differently](#the-admin-role-difference)
 
-## On or off
+## What you see and can do?
+
+Exactly what you see in the various states depends - as mentioned above - on your role in the course. The following provides screenshots and descriptions of these differences.
+
+### On or off
 
 If Canvas Collections is installed, teacher/designer roles will always be able to see the Canvas Collections box at the top of the Canvas modules view. A part of this box is the _on_ or _off_ toggle. The following image has the Canvas Collections box circled in red. The toggle is turned off and thus the rest of the page shows the vanilla Canvas modules view.
 
@@ -35,7 +40,7 @@ Click the toggle and Canvas Collections will turn on. The following image shows 
 
 ![](../getting-started/install/pics/cc_on.png)  
 
-## Published or unpublished
+### Published or unpublished
 
 Canvas Collections configuration information (e.g. what are the collections for your course, which modules belong to which collections etc.) are stored in your Canvas course in the Canvas page titled _Canvas Collections Configuration_.  
 
@@ -50,3 +55,14 @@ Hover your mouse over the question mark icon in the _Unpublished_ warning to see
 After publishing the configuration page, you will need to reload/refresh the Modules view for Collections to remove the _Unpublished_ warning.
 
 ![](pics/unPublishToolTip.png)  
+
+### The admin role difference
+
+[Admin roles](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-is-the-Admin-role/ta-p/78) are a different type of Canvas user role. Admin roles can access a course site without having either a teacher/designer or student role in the course. Admin roles will not be included on [the _People_ page](https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-use-the-People-page-in-a-course-as-an-instructor/ta-p/667).
+
+In terms of Canvas Collections' sets of interaction functionality, Admin roles can (regardless of on, off, or unpublished):
+
+1. Configure - will not be able to configure Canvas Collections
+2. Interact - will be able to interact with Canvas Collections
+
+In order to configure Canvas Collections a person with an admin role must be given a teacher or designer role with the course.

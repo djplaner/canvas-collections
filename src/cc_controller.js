@@ -52,7 +52,7 @@ export default class cc_Controller {
 		this.lastCollectionViewed = null;
 		this.configurationStore = new cc_ConfigurationStore(this);
 		// create calendar
-		this.calendar = new UniversityDateCalendar(this.strm);
+		//this.calendar = new UniversityDateCalendar(this.strm);
 
 
 		// if cc should run, try to get the config
@@ -116,10 +116,14 @@ export default class cc_Controller {
 	 */
 
 	generateSTRM() {
-		const canvasCourseCode = this.courseObject.course_code;
+		let objectCourseCode = this.courseObject.course_code;
+		// canvasCourseCode in format "some text (some code)" get the code
+		let canvasCourseCode = objectCourseCode.match(/\(([^)]+)\)/)[1];
 
 		this.courseCode = undefined;
 		this.strm = undefined;
+
+
 
 		// is it a DEV course
 		if (canvasCourseCode.startsWith('DEV_')) {
@@ -130,16 +134,28 @@ export default class cc_Controller {
 				this.courseCode = match[1];
 				this.strm = match[2];
 			}
-		} else {
-			// use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
-			const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
-			const match = regex.exec(canvasCourseCode);
-			if (match) {
-				this.courseCode = match[1];
-				this.strm = match[2];
-			}
+			this.calendar = new UniversityDateCalendar(this.strm);
+			this.parseStrm();
+			return;
+		} 
+
+		// Is it a standard course, possible formats are
+		// coursecode_strm
+		// coursecode_strm_campus
+
+		// use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
+		//const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
+		// match a course code - first group - any chars but _
+		// match four digits (strm)
+		// optionally other stuff
+		const regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
+		const match = regex.exec(canvasCourseCode);
+		if (match) {
+			this.courseCode = match[1];
+			this.strm = match[2];
 		}
 
+		this.calendar = new UniversityDateCalendar(this.strm);
 		this.parseStrm();
 
 		console.log(`------------ ${this.strm} period ${this.period} year ${this.year}`);
