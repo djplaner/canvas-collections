@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.18
+// @version      0.8.19
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -57,6 +57,17 @@ class cc_ConfigurationModel {
 	isOn() {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.isOn() - ${this.controller.parentController.ccOn}`);
 		return this.controller.parentController.ccOn;
+	}
+
+	/**
+	 * @descr return true iff the Canvas Collections Configuration page is published
+	 */
+	isPublished() {
+		return this.controller.parentController.published;
+	}
+
+	getCourseId() {
+		return this.controller.parentController.courseId;
 	}
 
 	turnOn() {
@@ -393,7 +404,7 @@ class cc_ConfigurationModel {
 
 		if (module) {
 			// specify the fields that are for dates, to be handled differently
-			const dateFields = [ 'day', 'week', 'time'];
+			const dateFields = [ 'day', 'week', 'time', 'date-label'];
 
 			if ( dateFields.includes(fieldName) ) {
 				// does module contain a date field
@@ -402,7 +413,13 @@ class cc_ConfigurationModel {
 						label: '', day: '', week: '', time: ''
 					};
 				}
+				if (fieldName==='date-label') {
+					fieldName='label';
+				}
+
 				module.date[fieldName] = value;
+				// changed date field, finished
+				return true;
 			} 
 
 			// if autonum then
@@ -571,34 +588,46 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.18";
+const CC_VERSION = "0.8.19";
 
-const CONFIG_VIEW_TOOLTIPS = [ 
-	{ 
+const CV_DEFAULT_DATE_LABEL = "Commencing";
+
+const CC_UNPUBLISHED_HTML = `
+<div class="cc-unpublished"> 
+  <span style="padding-top: 0.25em;padding-right:0.25em">
+  Unpublished</span>
+  <a id="cc-about-unpublished" target="_blank" href=""> 
+     <i class="icon-question"></i>
+  </a>
+ </div>
+`;
+
+const CONFIG_VIEW_TOOLTIPS = [
+	{
 		contentText: `Use Canvas Collections to improve the learner experience of 
-		your site by generatively enhancing the information architecture and visual design.`, 
+		your site by generatively enhancing the information architecture and visual design.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-collections",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/"
 	},
-	{ 
+	{
 		// to complete
 		contentText: `The list of current collections for your course and where you 
-				can modify their order, appearance etc.<p>Click to learn more</p>`, 
+				can modify their order, appearance etc.<p>Click to learn more</p>`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-existing-collections",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#existing-collections"
 	},
-	{ 
+	{
 		contentText: `Where to add a new collection to your site`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-new-collection",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
 	},
-	{ 
+	{
 		contentText: `<p>Update all configured output pages and include a navigation menu 
 		between them. </p>
 		<p>Best suited when more than one collection has an output page.</p>`,
@@ -607,7 +636,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview"
 	},
-	{ 
+	{
 		contentText: `<p>Make collection invisible to students. 
 		(Note: can't hide the default collection)</p>
 		<p><i class="icon-warning"></i> Also unpublish all the collection's modules to be ensure they are hidden.`,
@@ -615,7 +644,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#hide-a-collection"
 	},
-	{ 
+	{
 		contentText: `Update the <em>output page</em> with the collection's current representation.
 		<p><strong>Note:</strong> This is how you can use Collections with students without it being
 		installed by your institution.</p>
@@ -624,7 +653,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#output-page"
 	},
-	{ 
+	{
 		contentText: `Specify the name of an existing Canvas page and the content of that page
 		will be displayed before the current collection's representation 
 		(it is <strong>included</strong>)`,
@@ -632,7 +661,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#include-page"
 	},
-	{ 
+	{
 		contentText: `<p>🚧🧪☠️ <strong>Warning:</strong> This feature is experimental, under construction, and
 		potentially destructive. Only use as suggested and if you're certain.</p>
 		<p>Modify the names of Canvas modules by apply the Collection's label/number</p>
@@ -646,43 +675,43 @@ const CONFIG_VIEW_TOOLTIPS = [
 
 
 	//******** Module configuration */
-	{ 
+	{
 		contentText: `Which collection does this module belong to?`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-collection",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/"
 	},
-	{ 
+	{
 		contentText: `Describe why, what or how the module relates to the students' learning`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-description",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#description"
 	},
-	{ 
+	{
 		contentText: `Describe the type of object the module represents (e.g. lecture, theme etc.)`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-label",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#label-and-number"
 	},
-	{ 
+	{
 		contentText: `Specify a date based on the week of the study period`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-date",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#date"
 	},
-	{ 
+	{
 		contentText: `If and how a label specific number will be calculated for the module 
-		(e.g. <em>Lecture 1</em> or <em>Workshop 5</em>)<p>Auto number or specify a value.</p>`,  
+		(e.g. <em>Lecture 1</em> or <em>Workshop 5</em>)<p>Auto number or specify a value.</p>`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-number",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#label-and-number"
 	},
-	{ 
+	{
 		contentText: `Flexibly add, delete, and modify additional information about this module, which
 		may be used by collections and representations - or for your own purposes.`,
 		maxWidth: `250px`,
@@ -690,15 +719,15 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#additional-metadata"
 	},
-		{ 
+	{
 		contentText: `Specify how the image will be scaled to fit the available space`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-image-scale",
 		animateFunction: "spin",
-//		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
+		//		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/image-scale"
 	},
-	{ 
+	{
 		contentText: `Provide the URL for an image to associate with this module.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-image-url",
@@ -723,11 +752,11 @@ class cc_ConfigurationView extends cc_View {
 		this.TOOLTIPS = CONFIG_VIEW_TOOLTIPS;
 	}
 
-/*	addCollectionsConfigTooltips() {
-		if (this.TOOLTIPS) {
-			html5tooltips(this.TOOLTIPS);
-		}
-	} */
+	/*	addCollectionsConfigTooltips() {
+			if (this.TOOLTIPS) {
+				html5tooltips(this.TOOLTIPS);
+			}
+		} */
 
 	/**
 	 * @descr Modify the canvas page to show the cc title, switch, and drop arrow.
@@ -765,8 +794,34 @@ class cc_ConfigurationView extends cc_View {
 			this.addModuleConfiguration();
 		}
 
-//		this.addCollectionsConfigTooltips();
+		//		this.addCollectionsConfigTooltips();
 		this.addTooltips();
+	}
+
+	addTooltips() {
+		const courseId = this.model.getCourseId();
+		const configPageUrl = `https://${window.location.host}/courses/${courseId}/pages/canvas-collections-configuration`;
+
+		// Add any local customisation to the tooltips
+		let unpublished =
+		{
+			contentText: `The <a href="${configPageUrl}" target="_blank">
+			<em>Canvas Collections Configuration</em> page</a> is unpublished. Meaning
+		the live Collections view will be visible in "Student View" or for students.
+		<p>Any Claytons Collections pages will be visible, if they are published.</p>
+		`,
+			maxWidth: `250px`,
+			targetSelector: "#cc-about-unpublished",
+			animateFunction: "spin",
+			persistent: true,
+			href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished.html"
+		};
+
+		// append unpublished onto this.TOOLTIPS
+		this.TOOLTIPS.push(unpublished);
+
+		// call the parent class method
+		super.addTooltips();
 	}
 
 	/**
@@ -1050,7 +1105,7 @@ class cc_ConfigurationView extends cc_View {
 			imageSize = "contain";
 			moduleConfig.imageSize = imageSize;
 		}
-		const options = [ 'none', 'contain', 'cover', 'fill', 'scale-down'];
+		const options = ['none', 'contain', 'cover', 'fill', 'scale-down'];
 		for (let i = 0; i < options.length; i++) {
 			let selected = '';
 			const option = options[i];
@@ -1116,9 +1171,16 @@ class cc_ConfigurationView extends cc_View {
 			dayOfWeekOptions += `<option value="${dayValue}" ${selected}>${day}</option>`;
 		}
 
-		// TODO calculate the date based on settings and using calendar
-		let calculatedDate=this.calculateDate( dateInfo );
-		
+		// calculate value for dateLabel
+		let dateLabel = CV_DEFAULT_DATE_LABEL;
+		// if moduleDetail has a date property and that has a label property change date label
+		if (moduleDetail.hasOwnProperty('date') && moduleDetail.date.hasOwnProperty('label')) {
+			dateLabel = moduleDetail.date.label;
+		}
+
+		// TODO need to handle both start and end
+		let calculatedDate = this.calculateDate(dateInfo);
+
 		// calculate the number elements for the form
 		// - if no module.num then it's auto calculate
 		//     - show a selected checkbox for auto  
@@ -1216,13 +1278,20 @@ class cc_ConfigurationView extends cc_View {
 					<br clear="all" />
 				</div>
 				<div class="border border-trbl" style="margin-right:1em">
-				    <div style="padding-top:0.5rem;padding-left:0.5rem"><strong>Date</strong> 
-					    <a href="" id="cc-about-module-date" target="_blank">
-			   			<i class="icon-question cc-module-icon"></i></a>
-						<div class="cc-calculated-date">${calculatedDate}</div>
+		   			<div id="cc-module-config-${moduleDetail.id}-date-start">
+				    	<div style="padding-top:0.5rem;padding-left:0.5rem" 
+						     class="cc-module-config-date">
+							<strong>Date</strong> 
+					    	<a href="" id="cc-about-module-date" target="_blank">
+			   				<i class="icon-question cc-module-icon"></i></a>
+							<div class="cc-calculated-date">${calculatedDate}</div>
 						</div>
+					</div>
 					<div class="cc-module-config-collection-representation"
 					    style="padding-top:1rem; padding-left:3rem">
+				    	<label for="cc-module-config-${moduleDetail.id}-date-label">Date label</label>
+						<input type="text" id="cc-module-config-${moduleDetail.id}-date-label"
+						   style="width:10rem" value="${dateLabel}" /><br />
 				    	<label for="cc-module-config-${moduleDetail.id}-day">Day of week</label>
 						<select id="cc-module-config-${moduleDetail.id}-day">
 		                  ${dayOfWeekOptions}
@@ -1242,6 +1311,7 @@ class cc_ConfigurationView extends cc_View {
 						</aeon-datepicker>
 					</div>
 					<br clear="all" />
+
 				</div>
 		    </div>
 			<div style="margin-right:1em">
@@ -1276,37 +1346,6 @@ class cc_ConfigurationView extends cc_View {
 				</div>
 				${additionalMetaDataHTML}
 				<div class="cc-module-config-imagePreview">
-<!--				  <div class="cc-preview-container">
-				    <div class="cc-clickable-card" style="width:50%">
-					  <div class="cc-card" aria-label="Preview">
-					    <div class="cc-card-flex">
-							<img class="cc-card-image" src="${moduleConfig.image}" 
-							   style="object-fit: ${moduleConfig.imageSize};"
-							   alt="${Image} representing ${moduleConfig.name}" />
-							<div class="cc-card-date">
-							  <div class="cc-card-date-label">${dateInfo.label}</div>
-							  <div class="cc-card-date-week">${dateInfo.week}</div>
-							  <div class="cc-card-date-month"> </div>
-							  <div class="cc-card-date-date"> </div>
-							</div>
-							<div class="cc-card-content-height">
-							  <div class="cc-card-content">
-							    <div class="cc-card-label">
-								  <span class="cc-card-label">${moduleConfig.label}
-								     ${moduleConfig.num}</span>
-								  <h3 class="cc-card-title">${moduleDetail.name}</h3>
- 					        	<div class="cc-card-description"> ${moduleConfig.description} </div>
-
-								</div>
-							</div>
-							<div class="cc-card-engage">
-							  <div class="cc-card-engage-button">
-							    <a class="gu-engage">Engage</a></div>
-							</div>
-						</div>
-					  </div>
-					</div>
-				</div> --> <!-- TODO should replace this with a call to the proper representation view -->
 							 
 				  </div>
 				</div>
@@ -1691,16 +1730,16 @@ class cc_ConfigurationView extends cc_View {
 			);
 			// TODO set these to collection values
 			let includePage = this.model.getCollectionAttribute(collectionName, "includePage");
-			if ( ! includePage ) {
-				includePage="";
+			if (!includePage) {
+				includePage = "";
 			}
 			let outputPage = this.model.getCollectionAttribute(collectionName, "outputPage");
 			let outputPageExists = "cc-output-page-not-exists";
-			if ( ! outputPage ) {
-				outputPage="";
+			if (!outputPage) {
+				outputPage = "";
 			}
-			if (outputPage!=="") {
-				outputPageExists="cc-output-page-exists";
+			if (outputPage !== "") {
+				outputPageExists = "cc-output-page-exists";
 			}
 			const divExistingCollection = `
 			<div class="cc-existing-collection border border-trbl" id="cc-collection-${collectionName}">
@@ -1923,6 +1962,11 @@ class cc_ConfigurationView extends cc_View {
 			return;
 		}
 
+		let published = "";
+		if (!this.model.isPublished()) {
+			published = CC_UNPUBLISHED_HTML;
+		}
+
 		/*
 		30px - 2em
 		17px - 1.2em
@@ -2004,6 +2048,17 @@ input:checked + .cc-slider:before {
 	color: var(--ic-brand-font-color-dark);
 	display: flex;
 	position:relative;
+}
+
+.cc-unpublished {
+    display: flex;
+    font-size: .75em;
+    background-color: #ffe08a;
+    align-items: center;
+    border-radius: .5em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    height: 2em;
 }
 
 .cc-switch-title {
@@ -2135,6 +2190,7 @@ input:checked + .cc-slider:before {
 		  <button class="cc-save-button" id="cc-save-button">Save</button>
 	    </div>
 	   </div>
+	   ${published}
 		`;
 
 
@@ -2272,26 +2328,27 @@ input:checked + .cc-slider:before {
 	 * version of the date using the calendar to calculate
 	 * Return "No set date" if no date is set
 	 * @param {Object} dateInfo - object with keys label, week, date, month, day, time
+	 *     moving to haveing .start and .end
 	 */
-	calculateDate( dateInfo) {
+	calculateDate(dateInfo) {
 		// valid date combinations will be
 		// 1. week
 		// 2. week and day
 		// 3. week and day and time
 		// - must have a week
 
-		if (dateInfo.week==='') {
+		if (dateInfo.week === '') {
 			return "No date set";
 		}
 
 		let calcDate = {};
 
-		if (dateInfo.day==='') {
+		if (dateInfo.day === '') {
 			// no day
-			calcDate = this.controller.parentController.calendar.getDate( dateInfo.week);
+			calcDate = this.controller.parentController.calendar.getDate(dateInfo.week);
 		} else {
 			calcDate = this.controller.parentController.calendar.getDate(
-				dateInfo.week, false, dateInfo.day 
+				dateInfo.week, false, dateInfo.day
 			);
 		}
 		let dateString = `${calcDate.date} ${calcDate.month} ${calcDate.year}`;
@@ -2299,7 +2356,7 @@ input:checked + .cc-slider:before {
 		if (calcDate.hasOwnProperty('day')) {
 			dateString = `${calcDate.day} ${dateString}`;
 		}
-		if (dateInfo.time!=='') {
+		if (dateInfo.time !== '') {
 			// no time
 			dateString = `${dateInfo.time} ${dateString}`;
 		}
@@ -3067,7 +3124,8 @@ class cc_ConfigurationController {
 		this.changeMade(true);
 
 		// update the display
-		this.parentController.collectionsController.view.updateCurrentRepresentation();
+		//this.parentController.collectionsController.view.updateCurrentRepresentation();
+		this.parentController.collectionsController.view.display();
 	}
 
 	/**
@@ -3198,7 +3256,7 @@ class cc_ConfigurationController {
 		// autonum is checkbox, it's value is checked
 		if (fieldName==="autonum") {
 			value = event.target.checked;
-		}
+		} 
 
 		this.model.changeModuleConfig(moduleId, fieldName, value);
 		this.changeMade(true);
@@ -3376,11 +3434,20 @@ class CollectionsModel {
 
 		// if currentCollection is undefined set it to the default
 		if (this.currentCollection === undefined) {
-			if (this.controller.parentController.lastCollectionViewed &&
-				this.controller.parentController.lastCollectionViewed !== "") {
-				this.currentCollection = this.controller.parentController.lastCollectionViewed;
+			// check to see for parentController.URLCollectionNum 
+			if (this.controller.parentController.hasOwnProperty('URLCollectionNum')) {
+				let URLCollectionNum = this.controller.parentController.URLCollectionNum;
+				// if URLCollectionNum is an integer and > 0 and < COLLECTIONS_ORDER.length
+				if (
+					Number.isInteger(URLCollectionNum) && URLCollectionNum >= 0 &&
+					URLCollectionNum < this.cc_configuration.COLLECTIONS_ORDER.length) {
+					this.currentCollection = this.cc_configuration.COLLECTIONS_ORDER[URLCollectionNum];
+				} 
+			} else if (this.controller.parentController.lastCollectionViewed &&
+					this.controller.parentController.lastCollectionViewed !== "") {
+					this.currentCollection = this.controller.parentController.lastCollectionViewed;
 			} else {
-				this.currentCollection = this.getDefaultCollection();
+					this.currentCollection = this.getDefaultCollection();
 			}
 		}
 	}
@@ -3395,6 +3462,17 @@ class CollectionsModel {
 
 	setCurrentCollection(newCollection) {
 		this.currentCollection = newCollection;
+
+		// Following is an attempt to modify the URL to include the proper link
+		// However Canvas changes it back - try another route
+		// what sequence number is this collectin in COLLECTIONS_ORDER
+		/*		const collectionIndex = this.cc_configuration.COLLECTIONS_ORDER.indexOf(newCollection);
+				// change the browser URL to append cc-collection-<collectionIndex> using History API
+				let url = window.location.href;
+				// remove any #.* from url
+				url = url.replace(/#.*$/, '');
+				const newUrl = `${url}#cc-collection-${collectionIndex}`;
+				window.history.pushState({}, '', newUrl); */
 	}
 
 	getCollections() {
@@ -3590,7 +3668,7 @@ class CollectionsModel {
 		}
 		prepend = `${prepend}: `;
 		let newName = existingName;
-		if ( prepend!==': ') {
+		if (prepend !== ': ') {
 			// if we've not empty label and number
 			// modify existingName to remove prepend and any subsequent whitespace
 			newName = existingName.replace(prepend, '').trim();
@@ -3653,6 +3731,15 @@ class CollectionsModel {
 		return modulesUrl;
 
 	}
+
+	convertFrom24To12Format(time24) {
+		const [sHours, minutes] = time24.match(/([0-9]{1,2}):([0-9]{2})/).slice(1);
+		const period = +sHours < 12 ? 'AM' : 'PM';
+		const hours = +sHours % 12 || 12;
+
+		return `${hours}:${minutes} ${period}`;
+	}
+
 }
 
 /**
@@ -3710,7 +3797,7 @@ class NavView extends cc_View {
 		// loop thru each navItem
 		for (let i=0; i<navItems.length; i+=1) {
 			navItems[i].onclick = (event) => this.controller.navigateCollections(event);
-		}
+		} 
 
 		this.addTooltips();
 
@@ -3819,6 +3906,12 @@ div.cc-collection-hidden > a {
 		let count = 0;
 		let navList = document.createElement('ul');
 		// iterate through all the collections
+		let collectionNum = 1;
+		let currentUrl  = window.location.href;
+		let newUrl = new URL(currentUrl);
+
+		
+		
 		for (let collection of this.model.getCollectionNames()) {
 			let navClass = ['li', 'mr-4'];
 			let style = 'cc-nav';
@@ -3841,8 +3934,10 @@ div.cc-collection-hidden > a {
 				}
 			}
 
+			newUrl.hash = `cc-collection-${collectionNum}`;
+			collectionNum += 1;
 
-			let navElement = `<a href="#">${icon} ${collection}</a> `;
+			let navElement = `<a href="${newUrl.href}">${icon} ${collection}</a> `;
 			let navItem = document.createElement('li');
 			navItem.className = "cc-nav";
 
@@ -4136,7 +4231,7 @@ td.descriptionCell {
 	`;
 
 const TABLE_HTML = `
-		<div id="cc-assessment-table" class="cc-assessment-container">
+		<div id="cc-assessment-table" class="cc-assessment-container cc-representation">
 		<style>
 			${TABLE_STYLES}
 		</style>
@@ -4213,7 +4308,7 @@ const TABLE_ROW_HTML = `
           <td role="cell">
             <span class="cc-responsive-table__heading" aria-hidden="true">Due Date</span>
             <div class="cc-table-cell-text">
-            <p>{{DUE-DATE}}</p>
+            <p>{{DATE-LABEL}}<br />{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell">
@@ -4244,7 +4339,7 @@ const TABLE_ROW_HTML_CLAYTONS = `
           </td>
           <td role="cell" style="vertical-align:top;padding:0.5rem">
             <div class="cc-table-cell-text">
-            <p>{{DUE-DATE}}</p>
+            <p>{{DATE-LABEL}}<br />{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell" style="vertical-align:top;padding:0.5rem">
@@ -4271,7 +4366,7 @@ class AssessmentTableView extends cc_View {
 
     this.TABLE_HTML_FIELD_NAMES = [
       'DESCRIPTION', 'CAPTION', 'TABLE-ROWS',
-      'TITLE', 'TYPE', 'DUE-DATE', 'WEIGHTING', 'LEARNING-OUTCOMES',
+      'TITLE', 'TYPE', 'DATE-LABEL', 'DUE-DATE', 'WEIGHTING', 'LEARNING-OUTCOMES',
       'DESCRIPTION', 'MODULE-ID'
     ];
 
@@ -4333,9 +4428,15 @@ class AssessmentTableView extends cc_View {
       }
 
       const dueDate = modules[i].date;
+      let dateLabel = '';
       let dueDateString = '';
-      if (dueDate && dueDate.month) {
-        dueDateString = `${dueDate.month} ${dueDate.date}`;
+      if (dueDate ) {
+        if ( dueDate.month) {
+          dueDateString = `${dueDate.month} ${dueDate.date}`;
+        }
+        if ( dueDate.label ) {
+          dateLabel = dueDate.label;
+        }
       }
 
       let mapping = {
@@ -4343,7 +4444,8 @@ class AssessmentTableView extends cc_View {
         'DESCRIPTION': modules[i].description,
         'TITLE': this.model.deLabelModuleName(modules[i]),
         'TYPE': modules[i].label,
-        'DUE-DATE': dueDateString
+        'DUE-DATE': dueDateString,
+        'DATE-LABEL': dateLabel
       };
 
       // for a claytons view - MODULE-ID needs to become a full link
@@ -4470,7 +4572,7 @@ window.CircularProgressBar=function(t){var e={};function n(i){if(e[i])return e[i
 
 
 
-const DEFAULT_DATE_LABEL = "Commencing";
+//const DEFAULT_DATE_LABEL = "Commencing";
 
 class GriffithCardsView extends cc_View {
 
@@ -4609,6 +4711,7 @@ class GriffithCardsView extends cc_View {
 		.cc-card {
 			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1);
 			background-color: #fff;
+			border-radius: 1em;
 		}
 
 		.cc-card-flex {
@@ -4749,6 +4852,10 @@ class GriffithCardsView extends cc_View {
 			border-left-width: 1px;
 			border-right-width: 1px;
 			border-top-width: 1px;
+		}
+
+		.cc-card-hide {
+			display: none;
 		}
 
 		.cc-card-date-week {
@@ -5086,14 +5193,20 @@ class GriffithCardsView extends cc_View {
 
 		let firstDate = {};
 
-		firstDate.DATE_LABEL = dateJson.label || DEFAULT_DATE_LABEL;
+		firstDate.DATE_LABEL = dateJson.label || '';
 
 		firstDate.WEEK = dateJson.week || "";
-		firstDate.DAY = dateJson.day || ""; // is this the right default
+		firstDate.DAY = dateJson.day || "Monday"; // is this the right default
+		// remove all but the first three letters of the day
+		firstDate.DAY = firstDate.DAY.substring(0, 3);
 		// Week needs more work to add the the day and string "Week"
 		// Also it should be HTML
 
 		firstDate.TIME = dateJson.time || "";
+		// convert 24 hour time into 12 hour time
+		if (firstDate.TIME) {
+			firstDate.TIME = this.model.convertFrom24To12Format(firstDate.TIME);
+		}
 
 		firstDate.MONTH = dateJson.month || "";
 		firstDate.DATE = dateJson.date || "";
@@ -5131,9 +5244,14 @@ class GriffithCardsView extends cc_View {
 
 	convertDateToHtml(date) {
 
+		let extraDateLabelClass = '';
+		if (date.from.DATE_LABEL === '') {
+			extraDateLabelClass = ' cc-card-hide';
+		}
+
 		const singleDateHtml = `
 		<div class="cc-card-date">
-		  <div class="cc-card-date-label">
+		  <div class="cc-card-date-label${extraDateLabelClass}">
              ${date.from.DATE_LABEL}
           </div>
 		  <div class="cc-card-date-week">
@@ -5486,9 +5604,17 @@ class GriffithCardsView extends cc_View {
 			title.innerHTML = link.outerHTML;
 		}
 
+		// change border style for all div.cc-card
+		let cards = div.querySelectorAll('div.cc-card-flex');
+		for (let i = 0; i < cards.length; i++) {
+			let card = cards[i];
+			card.style.borderStyle = 'outset';
+			card.style.borderRadius = "1em";
+		}
+
 		// change background to #efefef for div.cc-card-content-height
 		// Canvas RCE removes border-bottom-left-radius and right
-		let cardContents = div.querySelectorAll('.cc-card-content-height');
+/*		let cardContents = div.querySelectorAll('.cc-card-content-height');
 		for (let i = 0; i < cardContents.length; i++) {
 			let cardContent = cardContents[i];
 			cardContent.style.backgroundColor = '#efefef';
@@ -5498,13 +5624,13 @@ class GriffithCardsView extends cc_View {
 		for (let i = 0; i < cardEngages.length; i++) {
 			let cardEngage = cardEngages[i];
 			cardEngage.style.backgroundColor = '#efefef';
-		}
+		} 
 		// change background to #efefef for div.cc-card-flex
 		let cardFlexes = div.querySelectorAll('.cc-card-flex');
 		for (let i = 0; i < cardFlexes.length; i++) {
 			let cardFlex = cardFlexes[i];
 			cardFlex.style.backgroundColor = '#efefef';
-		}
+		} */
 
 		// find any div.unpublished and remove it
 		let unpublisheds = div.querySelectorAll('.unpublished');
@@ -6410,6 +6536,18 @@ class juiceController {
 // - The HTML template for the configuration page - CONFIGURATION_PAGE_TEMPLATE
 // - The dict template for most of the configuration form - DEFAULT_CONFIGURATION_TEMPLATE
 
+/**
+ * - div.cc-config-explanation
+ *   User facing detail about the purpose of the file, a warning, and the time it was
+ *   last updated
+ * - div.cc_json
+ *   Invisible, encoded JSON representation of collections configuration data
+ * - div.cc-card-images id="cc-course-<courseId>" 
+ *   Invisible, collection of img elements for any module collections images that
+ *   are in the course files area. Placed here to help with course copy (i.e. Canvas
+ *   will update these URLs which Collections will then handle)
+ */
+
 const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 <div class="cc-config-explanation">
 <div style="float:left;padding:0.5em">
@@ -6427,6 +6565,9 @@ const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 <div class="cc_json" style="display:none">
  {{CONFIG}}
  </div>
+<div class="cc-card-images" id="cc-course-{{COURSE_ID}}" style="display:none">
+ {{COURSE_IMAGES}}
+</div>
 `;
 
 const DEFAULT_CONFIGURATION_TEMPLATE = {
@@ -6503,7 +6644,7 @@ class cc_ConfigurationStore {
 		});
 
 		if (!response.ok) {
-			if (response.status===404) {
+			if (response.status === 404) {
 				// page doesn't exist, so create it
 				this.initialiseConfigPage();
 			}
@@ -6516,20 +6657,54 @@ class cc_ConfigurationStore {
 		// https://canvas.instructure.com/doc/api/pages.html#Page
 		DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: json = ${JSON.stringify(data)}`);
 
-		if (data.length===0) {
+		if (data.length === 0) {
 			throw new Error(`cc_ConfigurationStore: requestConfigPageContents: no config page found`);
 		}
 
 		this.pageObject = data;
+		this.parentController.published = this.pageObject.published;
 		// TODO error checking
 
+		this.parseNewPageBody();
+
+
+
+		// create a structure that merges Canvas and Collections module information
+		this.parentController.mergeModuleDetails();
+		this.parentController.retrieveLastCollectionViewed();
+		this.parentController.execute();
+	}
+
+	/**
+	 * A new config page has been retrieved, parse the this.pageObject.body
+	 * and re-configure cc_configuration
+	 * 
+	 * Two main divs that need to parsed/processes
+	 * - div.cc_json contains the encoded JSON data for Collections configuration
+	 * - div.cc-card-images 
+	 *   - has an id set to cc-course-<courseId>
+	 *     If this courseId doesn't match the current courseId, the course has been
+	 *     copied and we need to try and update
+	 *   - contains a collection of img elements for any module collections images that
+	 *     are in the course files area.
+	 *     If the courseId indicates a course copy, we will need to modify the cc_configuration
+	 *     for those modules to point to point to the image URLs
+	 */
+
+	parseNewPageBody() {
+		const data = this.pageObject;
+
 		const parsed = new DOMParser().parseFromString(data.body, 'text/html');
+
+		// Collections configuration is in div.cc_json
 		let config = parsed.querySelector('div.cc_json');
 		if (!config) {
 			throw new Error(`cc_ConfigurationStore: requestConfigPageContents: no div.cc_json found in page`);
 		}
 
+
 		this.parentController.cc_configuration = JSON.parse(config.innerHTML);
+
 		// double check and possibly convert an old configuration
 		this.configConverted = this.checkConvertOldConfiguration();
 
@@ -6547,9 +6722,14 @@ class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
+			// need to check the URL for image as the RCE screws with the URL
+			if (module.image.startsWith('/')) {
+				module.image = `https://${window.location.hostname}${module.image}`;
+			}
 		}
 		// double check that we're not an import from another course
-		const importConverted = this.checkConvertImport();
+		let courseImages = parsed.querySelector('div.cc-card-images');
+		const importConverted = this.checkConvertImport(courseImages);
 		// and make it gets saved if there was a change
 		if (importConverted) {
 			this.configConverted = importConverted;
@@ -6576,11 +6756,6 @@ class cc_ConfigurationStore {
 			this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
 
 
-
-		// create a structure that merges Canvas and Collections module information
-		this.parentController.mergeModuleDetails();
-		this.parentController.retrieveLastCollectionViewed();
-		this.parentController.execute();
 	}
 
 	/**
@@ -6588,9 +6763,39 @@ class cc_ConfigurationStore {
 	 * i.e. has the same module names (apart maybe from some additions) but different module ids
 	 * - check if this is the case
 	 * - if so, update the configuration
+	 * @param {HTMLElement} courseImages - the content from div.cc-card-images in config file
+	 *   provides the courseId when the config was saved, plus a list of image URLs for card
+	 *   images that were in the files area.
+	 *   A different course id suggests we need to import. If so, the image URLs will need to
+	 *   be updated in cc_configuration.
 	 */
 
-	checkConvertImport() {
+	checkConvertImport(courseImages) {
+
+		if (courseImages && courseImages.id) {
+			// get the courseId from courseImages, if there is any
+			let imagesCourseId = courseImages.id.replace('cc-course-', '');
+			const actualCourseId = this.parentController.courseId;
+
+			// no need to go further if the course ids are the same
+			if (imagesCourseId === actualCourseId) {
+				return false;
+			}
+
+			// get all the img.cc-moduleImage
+			const images = courseImages.querySelectorAll('img.cc-moduleImage');
+
+			// loop thru each image
+			images.forEach((image) => {
+				const moduleId = image.id.replace('cc-moduleImage-', '');
+				// if cc_configuration.MODULES has a module with this id
+				// modify the image
+				if (this.parentController.cc_configuration.MODULES[moduleId]) {
+					this.parentController.cc_configuration.MODULES[moduleId].image = image.src;
+				}
+			});
+		}
+
 		// get list of module ids in collections configuration
 		const collectionIds = Object.keys(this.parentController.cc_configuration.MODULES);
 		// get list of module ids from Canvas (moduleDetails - array of objects)
@@ -6605,7 +6810,7 @@ class cc_ConfigurationStore {
 
 		// nothing to do if the lengths of three lists are the same
 		// - suggesting that collections and Canvas have the same modules
-		if (collectionIds.length===canvasIds.length && collectionIds.length===commonIds.length) {
+		if (collectionIds.length === canvasIds.length && collectionIds.length === commonIds.length) {
 			return false;
 		}
 
@@ -6630,31 +6835,31 @@ class cc_ConfigurationStore {
 		//   - but no similarity in the module ids, and 
 		//   - exact match with module names
 
-		if (collectionIds.length===canvasIds.length ) {
+		if (collectionIds.length === canvasIds.length) {
 			// # modules is the same
-			if (commonIds.length===0) {
+			if (commonIds.length === 0) {
 				// no commonality in module ids
 				if (
-					commonNames.length===moduleNames.length && 
-					commonNames.length===ccModuleNames.length) {
+					commonNames.length === moduleNames.length &&
+					commonNames.length === ccModuleNames.length) {
 					// # of common names == # of ids Canvas and collections
 					// this must be a new import of a course
 					// Replace all the collections modules with the new Canvas module ids
 					// create a hash keyed on module name containing object with both
 					// collections and canvas module ids
 					let nameToId = {};
-					for (let i=0; i<commonNames.length; i++) {
+					for (let i = 0; i < commonNames.length; i++) {
 						const name = commonNames[i];
 						// find the moduleDetails array that contains attribute name
 						const canvasModuleId = this.parentController.moduleDetails.find((module) => {
-							if (module.name===name) {
+							if (module.name === name) {
 								return module.id;
 							}
 						});
 						// loop through objects in cc_configuration.MODULES and return the id
 						// of the object that has the same name
 						const ccModuleId = Object.keys(this.parentController.cc_configuration.MODULES).find((id) => {
-							if (this.parentController.cc_configuration.MODULES[id].name===name) {
+							if (this.parentController.cc_configuration.MODULES[id].name === name) {
 								return id;
 							}
 						});
@@ -6735,30 +6940,7 @@ class cc_ConfigurationStore {
 
 		DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: callUrl = ${callUrl}`);
 
-		// construct the new content for the page
-		// - boiler plate description HTML to start
-		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
-		// - div.json containing
-		//   - JSON stringify of this.parentController.cc_configuration
-		//   - however, each module needs to have it's description encoded as HTML
-		for (let key in this.parentController.cc_configuration.MODULES) {
-			const module = this.parentController.cc_configuration.MODULES[key];
-			module.description = this.encodeHTML(module.description);
-		}
-		content = content.replace('{{CONFIG}}',
-			JSON.stringify(this.parentController.cc_configuration));
-
-		// now de-encode the description for the page
-		for (let key in this.parentController.cc_configuration.MODULES) {
-			const module = this.parentController.cc_configuration.MODULES[key];
-			module.description = this.decodeHTML(module.description);
-		}
-
-
-		// get the current time as string
-		let time = new Date().toISOString();
-
-		content = content.replace('{{VISIBLE_TEXT}}', `<p>saved at ${time}</p>`);
+		const content = this.generateConfigPageContent();
 
 		let _body = {
 			"wiki_page": {
@@ -6803,6 +6985,99 @@ class cc_ConfigurationStore {
 	}
 
 	/**
+	 * Generate and return the HTML to be added into the Canvas Collections Configuration page
+	 * including
+	 * - div.cc-config-explanation
+	 *   User facing detail about the purpose of the file, a warning, and the time it was
+	 *   last updated
+	 * - div.cc_json
+	 *   Invisible, encoded JSON representation of collections configuration data
+	 * - div.cc-card-images id="cc-course-<courseId>" 
+	 *   Invisible, collection of img elements for any module collections images that
+	 *   are in the course files area. Placed here to help with course copy (i.e. Canvas
+	 *   will update these URLs which Collections will then handle)
+	 */
+
+	generateConfigPageContent() {
+
+		// construct the new content for the page
+		// - boiler plate description HTML to start
+		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
+
+				if (this.hasOwnProperty('parentController') &&
+			this.parentController.hasOwnProperty('cc_configuration') &&
+			this.parentController.cc_configuration.hasOwnProperty('MODULES')) {
+
+			// files URL might be 
+			// - direct or 
+			//    https://lms.griffith.edu.au/files/
+			// - via the course
+			//    https://lms.../courses/12345/files/
+			// - or without the hostname starting with /
+
+			const filesUrl = `${window.location.hostname}/files/`;
+			const courseFilesUrl = `${window.location.hostname}/courses/${this.parentController.courseId}/files/`;
+			// loop thru each module in cc_configuration
+			// - if it has an image, add an img element to the div.cc-card-images
+			//   with the image URL
+			let images = '';
+			for (let moduleId in this.parentController.cc_configuration.MODULES) {
+				const module = this.parentController.cc_configuration.MODULES[moduleId];
+
+				if (!module.image) {
+					continue;
+				}
+				// add the hostname to module.image if it doesn't have it
+				if (module.image.startsWith('/')) {
+					module.image = `https://${window.location.hostname}${module.image}`;
+				}
+
+				// if module has an image and it contains courseFilesUrl
+				if (
+					module.image.includes(courseFilesUrl) ||
+					module.image.includes(filesUrl)
+				) {
+					images += `
+					<img src="${module.image}" id="cc-moduleImage-${moduleId}" class="cc-moduleImage" />
+					`;
+				}
+			}
+
+			content = content.replace('{{COURSE_IMAGES}}', images);
+		}
+
+		// - div.json containing
+		//   - JSON stringify of this.parentController.cc_configuration
+		//   - however, each module needs to have it's description encoded as HTML
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			const module = this.parentController.cc_configuration.MODULES[key];
+			module.description = this.encodeHTML(module.description);
+		}
+		content = content.replace('{{CONFIG}}',
+			JSON.stringify(this.parentController.cc_configuration));
+
+		// now de-encode the description for the page
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			const module = this.parentController.cc_configuration.MODULES[key];
+			module.description = this.decodeHTML(module.description);
+		}
+
+		// get the current time as string
+		//let time = new Date().toISOString();
+		let time = new Date().toLocaleString();
+
+		content = content.replace('{{VISIBLE_TEXT}}', `<p>saved at ${time}</p>`);
+
+		content = content.replace('{{COURSE_ID}}', this.parentController.courseId);
+
+		//<div class="cc-card-images" id="cc-course{{COURSE_ID}}" style="display:none"></div>
+
+
+		return content;
+	}
+
+
+	/**
 	 * @descr update the contents of the configuration page (this.pageObject.pageId) with 
 	 * the this.parentController.cc_configuration as JSON
 	 * *IMPORTANT* normally initialiseConfigPage will call this
@@ -6821,7 +7096,7 @@ class cc_ConfigurationStore {
 		for (let key in this.parentController.cc_configuration.MODULES) {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.encodeHTML(module.description);
-		} 
+		}
 		content = content.replace('{{CONFIG}}',
 			JSON.stringify(this.parentController.cc_configuration));
 
@@ -7050,6 +7325,25 @@ const CALENDAR = {
     15: { start: "2022-06-27", stop: "2022-07-03" },
     exam: { start: "2022-06-13", stop: "2022-06-25" },
   },
+  '2222': {
+    0: { start: "2022-03-07", stop: "2022-03-13" },
+    1: { start: "2022-03-14", stop: "2022-03-20" },
+    2: { start: "2022-03-21", stop: "2022-03-28" },
+    3: { start: "2022-03-28", stop: "2022-04-03" },
+    4: { start: "2022-04-04", stop: "2022-04-10" },
+    5: { start: "2022-04-18", stop: "2022-04-24" },
+    6: { start: "2022-04-25", stop: "2022-05-01" },
+    7: { start: "2022-05-02", stop: "2022-05-08" },
+    8: { start: "2022-05-09", stop: "2022-05-15" },
+    9: { start: "2022-05-16", stop: "2022-05-22" },
+    10: { start: "2022-05-23", stop: "2022-05-29" },
+    11: { start: "2022-05-30", stop: "2022-06-05" },
+    12: { start: "2022-06-06", stop: "2022-06-12" },
+    13: { start: "2022-06-13", stop: "2022-06-19" },
+    14: { start: "2022-06-20", stop: "2022-06-26" },
+    15: { start: "2022-06-27", stop: "2022-07-03" },
+    exam: { start: "2022-06-13", stop: "2022-06-25" },
+  },
   '3221QCM': {
     0: { start: "2022-02-21", stop: "2022-02-27" },
     1: { start: "2022-02-28", stop: "2022-03-06" },
@@ -7088,6 +7382,25 @@ const CALENDAR = {
     15: { start: "2022-10-31", stop: "2022-11-06" },
     exam: { start: "2022-10-20", stop: "2022-10-29" },
   },
+  '2224': {
+    0: { start: "2022-07-11", stop: "2022-07-17" },
+    1: { start: "2022-07-18", stop: "2022-07-24" },
+    2: { start: "2022-07-25", stop: "2022-07-31" },
+    3: { start: "2022-08-01", stop: "2022-08-07" },
+    4: { start: "2022-08-08", stop: "2022-08-14" },
+    5: { start: "2022-08-22", stop: "2022-08-28" },
+    6: { start: "2022-08-29", stop: "2022-09-04" },
+    7: { start: "2022-09-05", stop: "2022-09-11" },
+    8: { start: "2022-09-12", stop: "2022-09-18" },
+    9: { start: "2022-09-19", stop: "2022-09-25" },
+    10: { start: "2022-09-26", stop: "2022-10-02" },
+    11: { start: "2022-10-03", stop: "2022-10-09" },
+    12: { start: "2022-10-10", stop: "2022-10-16" },
+    13: { start: "2022-10-17", stop: "2022-10-23" },
+    14: { start: "2022-10-24", stop: "2022-10-30" },
+    15: { start: "2022-10-31", stop: "2022-11-06" },
+    exam: { start: "2022-10-20", stop: "2022-10-29" },
+  },
   '3225QCM': {
     0: { start: "2022-07-18", stop: "2022-07-24" },
     1: { start: "2022-07-25", stop: "2022-07-31" },
@@ -7108,6 +7421,25 @@ const CALENDAR = {
     exam: { start: "2022-11-07", stop: "2022-11-19" },
   },
   3228: {
+    0: { start: "2022-10-31", stop: "2022-11-06" },
+    1: { start: "2022-11-07", stop: "2022-11-13" },
+    2: { start: "2022-11-14", stop: "2022-11-20" },
+    3: { start: "2022-11-21", stop: "2022-11-27" },
+    4: { start: "2022-11-28", stop: "2022-12-04" },
+    5: { start: "2022-12-05", stop: "2022-12-11" },
+    6: { start: "2022-12-12", stop: "2022-12-18" },
+    7: { start: "2022-12-19", stop: "2022-12-25" },
+    8: { start: "2023-01-09", stop: "2023-01-15" },
+    9: { start: "2023-01-16", stop: "2023-01-22" },
+    10: { start: "2023-01-23", stop: "2023-01-29" },
+    11: { start: "2023-01-30", stop: "2023-02-05" },
+    12: { start: "2023-02-06", stop: "2023-02-12" },
+    13: { start: "2023-02-13", stop: "2023-02-19" },
+    14: { start: "2023-02-20", stop: "2023-02-26" },
+    15: { start: "2023-02-27", stop: "2023-03-05" },
+    //    exam: { start: "2023-02-17", stop: "2023-02-26" },
+  },
+  2226: {
     0: { start: "2022-10-31", stop: "2022-11-06" },
     1: { start: "2022-11-07", stop: "2022-11-13" },
     2: { start: "2022-11-14", stop: "2022-11-20" },
@@ -7517,7 +7849,10 @@ class UniversityDateCalendar {
       return UniversityDateCalendar._instance;
     }
     UniversityDateCalendar._instance = this;
-    this.defaultPeriod = strm;
+    this.defaultPeriod = DEFAULT_PERIOD;
+    if (strm && CALENDAR[strm]) {
+      this.defaultPeriod = strm;
+    }
   }
 
   /**
@@ -7727,7 +8062,7 @@ class cc_Controller {
 		this.lastCollectionViewed = null;
 		this.configurationStore = new cc_ConfigurationStore(this);
 		// create calendar
-		this.calendar = new UniversityDateCalendar(this.strm);
+		//this.calendar = new UniversityDateCalendar(this.strm);
 
 
 		// if cc should run, try to get the config
@@ -7791,10 +8126,22 @@ class cc_Controller {
 	 */
 
 	generateSTRM() {
-		const canvasCourseCode = this.courseObject.course_code;
-
 		this.courseCode = undefined;
 		this.strm = undefined;
+
+		// try to get the course code 
+		let objectCourseCode = this.courseObject.course_code;
+		let canvasCourseCode = "";
+
+		// does objectCourseCode contain a pair of brackets?
+		let brackets = objectCourseCode.match(/\(([^)]+)\)/);
+		if (!brackets) {
+			// no brackets, no strm, go with default, but create calendar
+			// before we leave
+			this.calendar = new UniversityDateCalendar(this.strm);
+			return;
+		}
+		canvasCourseCode = objectCourseCode.match(/\(([^)]+)\)/)[1];
 
 		// is it a DEV course
 		if (canvasCourseCode.startsWith('DEV_')) {
@@ -7805,16 +8152,28 @@ class cc_Controller {
 				this.courseCode = match[1];
 				this.strm = match[2];
 			}
-		} else {
-			// use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
-			const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
-			const match = regex.exec(canvasCourseCode);
-			if (match) {
-				this.courseCode = match[1];
-				this.strm = match[2];
-			}
+			this.calendar = new UniversityDateCalendar(this.strm);
+			this.parseStrm();
+			return;
+		} 
+
+		// Is it a standard course, possible formats are
+		// coursecode_strm
+		// coursecode_strm_campus
+
+		// use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
+		//const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
+		// match a course code - first group - any chars but _
+		// match four digits (strm)
+		// optionally other stuff
+		const regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
+		const match = regex.exec(canvasCourseCode);
+		if (match) {
+			this.courseCode = match[1];
+			this.strm = match[2];
 		}
 
+		this.calendar = new UniversityDateCalendar(this.strm);
 		this.parseStrm();
 
 		console.log(`------------ ${this.strm} period ${this.period} year ${this.year}`);
@@ -8175,8 +8534,19 @@ class cc_Controller {
 		const location = window.location.href;
 
 		// replace # at end of string
-		this.documentUrl = window.location.href;
-		this.documentUrl = this.documentUrl.replace(/#$/, '');
+		let url = new URL(window.location.href);
+
+		// check if there's a cc-collection-\d+ in the hash
+		let hash = url.hash;
+		if (hash) {
+			let checkNum = hash.match(/cc-collection-(\d+)/);
+			if (checkNum) {
+				this.URLCollectionNum = parseInt(checkNum[1])-1;
+			}
+		}
+		url.hash = '';
+		this.documentUrl = url.href; //window.location.href;
+		//this.documentUrl = this.documentUrl.replace(/#$/, '');
 
 		// courseId
 		// Following adapted from https://github.com/msdlt/canvas-where-am-I	

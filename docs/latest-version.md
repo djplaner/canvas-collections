@@ -1,10 +1,10 @@
-# Latest Version **0.8.18**
+# Latest Version **0.8.19**
 
 Canvas Collections remains very much under active development. New versions with new features (and bug fixes) are released weekly. It is recommended to always have [the latest version installed](./getting-started/install/types-pre-requisites.md).
 
 ## Current Status
 
-version 0.8.18 of Canvas Collections is
+version **0.8.19** of Canvas Collections
 
 - Should work on all Canvas instances, but intended largely for use at Griffith University
 
@@ -19,4 +19,3 @@ version 0.8.18 of Canvas Collections is
 As shown in the following image, teacher/designer roles can see the version details (circled in red) in the Collections box at the top of the modules page.
 
 ![](pics/version.png)  
-

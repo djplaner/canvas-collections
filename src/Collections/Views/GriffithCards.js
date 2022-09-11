@@ -153,6 +153,7 @@ export default class GriffithCardsView extends cc_View {
 		.cc-card {
 			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1);
 			background-color: #fff;
+			border-radius: 1em;
 		}
 
 		.cc-card-flex {

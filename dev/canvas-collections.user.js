@@ -591,7 +591,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.18";
+const CC_VERSION = "0.8.19";
 
 const CV_DEFAULT_DATE_LABEL = "Commencing";
 
@@ -4724,6 +4724,7 @@ class GriffithCardsView extends cc_View {
 		.cc-card {
 			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1);
 			background-color: #fff;
+			border-radius: 1em;
 		}
 
 		.cc-card-flex {
