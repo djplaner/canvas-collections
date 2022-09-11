@@ -616,7 +616,10 @@ export default class UniversityDateCalendar {
       return UniversityDateCalendar._instance;
     }
     UniversityDateCalendar._instance = this;
-    this.defaultPeriod = strm;
+    this.defaultPeriod = DEFAULT_PERIOD;
+    if (strm && CALENDAR[strm]) {
+      this.defaultPeriod = strm;
+    }
   }
 
   /**

@@ -541,19 +541,13 @@ export default class cc_ConfigurationView extends cc_View {
 		// - eventually will need to handle the CSS 
 		// - perhaps with a date view?
 		let dateInfo = {
-			start: {
-				label: '', week: '', date: '',
-				month: '', day: '', time: ''
-			},
-			end: {
-				label: '', week: '', date: '',
-				month: '', day: '', time: ''
-			}
+			label: '', week: '', date: '',
+			month: '', day: '', time: ''
 		};
 		if (moduleConfig.date) {
 			for (const dateField in dateInfo) {
 				if (moduleConfig.date.hasOwnProperty(dateField)) {
-					dateInfo.start[dateField] = moduleConfig.date[dateField];
+					dateInfo[dateField] = moduleConfig.date[dateField];
 				}
 			}
 		}
@@ -575,7 +569,7 @@ export default class cc_ConfigurationView extends cc_View {
 		for (let i = 0; i < weeks.length; i++) {
 			let selected = '';
 			const week = weeks[i];
-			if (week === dateInfo.start.week) {
+			if (week === dateInfo.week) {
 				selected = 'selected';
 			}
 			let weekValue = week;
@@ -589,7 +583,7 @@ export default class cc_ConfigurationView extends cc_View {
 		for (let i = 0; i < days.length; i++) {
 			let selected = '';
 			const day = days[i];
-			if (day === dateInfo.start.day) {
+			if (day === dateInfo.day) {
 				selected = 'selected';
 			}
 			let dayValue = day;
@@ -607,7 +601,7 @@ export default class cc_ConfigurationView extends cc_View {
 		}
 
 		// TODO need to handle both start and end
-		let calculatedDate = this.calculateDate(dateInfo.start);
+		let calculatedDate = this.calculateDate(dateInfo);
 
 		// calculate the number elements for the form
 		// - if no module.num then it's auto calculate
@@ -634,20 +628,6 @@ export default class cc_ConfigurationView extends cc_View {
 		}
 
 		const additionalMetaDataHTML = this.getAdditionalMetaDataHTML(moduleDetail);
-
-		//---------------------------
-		// now to handle the dateRange
-
-		const dateRangeChecked = ""; // "checked" if dateRange
-		const dayOfWeekEndOptions = '';
-		const weekEndOptions = '';
-
-		// define the various hard-coded (boo) CSS for various classes
-		let dateStyle = "";
-		let dateStartStyle = ' style="display:none;"';
-		let dateRangeStyle = "";
-		let dateEndStyle = ' style="display:none;"';
-		let dateEndDetailStyle = 'display:none;'; // no need for style="
 
 		let showConfigHtml = `
 		<style>
@@ -720,17 +700,11 @@ export default class cc_ConfigurationView extends cc_View {
 					<br clear="all" />
 				</div>
 				<div class="border border-trbl" style="margin-right:1em">
-		   			<div id="cc-module-config-${moduleDetail.id}-date-start"${dateStyle}>
+		   			<div id="cc-module-config-${moduleDetail.id}-date-start">
 				    	<div style="padding-top:0.5rem;padding-left:0.5rem" 
 						     class="cc-module-config-date">
 							<strong>Date</strong> 
 					    	<a href="" id="cc-about-module-date" target="_blank">
-			   				<i class="icon-question cc-module-icon"></i></a>
-							<div class="cc-calculated-date">${calculatedDate}</div>
-						</div>
-						<div class="cc-module-config-date-start"${dateStartStyle}>
-						    <strong>Start Date</strong>
-					    	<a href="" id="cc-about-module-start-date" target="_blank">
 			   				<i class="icon-question cc-module-icon"></i></a>
 							<div class="cc-calculated-date">${calculatedDate}</div>
 						</div>
@@ -755,49 +729,10 @@ export default class cc_ConfigurationView extends cc_View {
 					   		}
 					   	</style>
 						<aeon-datepicker local="en-au">
-						<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="${dateInfo.start.time}" />
+						<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="${dateInfo.time}" />
 						</aeon-datepicker>
 					</div>
 					<br clear="all" />
-					<!-- start date range -->
-				    <div style="padding-bottom:0.5rem;padding-left:0.5rem"
-					    id="cc-module-config-${moduleDetail.id}-date-end">
-						<div class="cc-module-config-range"${dateRangeStyle}>
-					    	<label for="cc-module-config-${moduleDetail.id}-date-range">
-						   		<strong>Date Range</strong> 
-							</label>
-					    	<a href="" id="cc-about-module-date" target="_blank">
-			   				<i class="icon-question cc-module-icon"></i></a>
-							<input type="checkbox" id="cc-module-config-${moduleDetail.id}-date-range" ${dateRangeChecked} />
-						</div>
-						<div class="cc-module-config-date-end"${dateEndStyle}>
-						    <strong>End Date</strong>
-					    	<a href="" id="cc-about-module-end-date" target="_blank">
-			   				<i class="icon-question cc-module-icon"></i></a>
-						</div>
-					</div>
-					<div class="cc-module-config-collection-representation"
-					    id="cc-module-config-${moduleDetail.id}-date-end-detail"
-					    style="padding-top:1rem; padding-left:3rem;${dateEndDetailStyle}">
-				    	<label for="cc-module-config-${moduleDetail.id}-day-end">Day of week</label>
-						<select id="cc-module-config-${moduleDetail.id}-day-end">
-		                  ${dayOfWeekEndOptions}
-						</select> <br />
-						<label for="cc-module-config-${moduleDetail.id}-week-end">Week</label>
-						<select id="cc-module-config-${moduleDetail.id}-week-end">
-		   		           ${weekEndOptions}}	
-						</select> <br />
-						<label for="cc-module-config-${moduleDetail.id}-time-end">Time</label>
-						<style>
-					   		input[readonly] {
-							display:none;
-					   		}
-					   	</style>
-						<aeon-datepicker local="en-au">
-						<input type="time" id="cc-module-config-${moduleDetail.id}-time-end" 
-						    name="time" value="${dateInfo.end.time}" />
-						</aeon-datepicker>
-					</div>
 
 				</div>
 		    </div>

@@ -200,6 +200,10 @@ export default class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
+			// need to check the URL for image as the RCE screws with the URL
+			if (module.image.startsWith('/')) {
+				module.image = `https://${window.location.hostname}${module.image}`;
+			}
 		}
 		// double check that we're not an import from another course
 		let courseImages = parsed.querySelector('div.cc-card-images');
@@ -477,6 +481,49 @@ export default class cc_ConfigurationStore {
 		// construct the new content for the page
 		// - boiler plate description HTML to start
 		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
+
+				if (this.hasOwnProperty('parentController') &&
+			this.parentController.hasOwnProperty('cc_configuration') &&
+			this.parentController.cc_configuration.hasOwnProperty('MODULES')) {
+
+			// files URL might be 
+			// - direct or 
+			//    https://lms.griffith.edu.au/files/
+			// - via the course
+			//    https://lms.../courses/12345/files/
+			// - or without the hostname starting with /
+
+			const filesUrl = `${window.location.hostname}/files/`;
+			const courseFilesUrl = `${window.location.hostname}/courses/${this.parentController.courseId}/files/`;
+			// loop thru each module in cc_configuration
+			// - if it has an image, add an img element to the div.cc-card-images
+			//   with the image URL
+			let images = '';
+			for (let moduleId in this.parentController.cc_configuration.MODULES) {
+				const module = this.parentController.cc_configuration.MODULES[moduleId];
+
+				if (!module.image) {
+					continue;
+				}
+				// add the hostname to module.image if it doesn't have it
+				if (module.image.startsWith('/')) {
+					module.image = `https://${window.location.hostname}${module.image}`;
+				}
+
+				// if module has an image and it contains courseFilesUrl
+				if (
+					module.image.includes(courseFilesUrl) ||
+					module.image.includes(filesUrl)
+				) {
+					images += `
+					<img src="${module.image}" id="cc-moduleImage-${moduleId}" class="cc-moduleImage" />
+					`;
+				}
+			}
+
+			content = content.replace('{{COURSE_IMAGES}}', images);
+		}
+
 		// - div.json containing
 		//   - JSON stringify of this.parentController.cc_configuration
 		//   - however, each module needs to have it's description encoded as HTML
@@ -503,47 +550,6 @@ export default class cc_ConfigurationStore {
 
 		//<div class="cc-card-images" id="cc-course{{COURSE_ID}}" style="display:none"></div>
 
-		if (this.hasOwnProperty('parentController') &&
-			this.parentController.hasOwnProperty('cc_configuration') &&
-			this.parentController.cc_configuration.hasOwnProperty('MODULES')) {
-
-			// files URL might be 
-			// - direct or 
-			//    https://lms.griffith.edu.au/files/
-			// - via the course
-			//    https://lms.../courses/12345/files/
-			// - or without the hostname starting with /
-
-			const filesUrl = `${window.location.hostname}/files/`;
-			const courseFilesUrl = `${window.location.hostname}/courses/${this.parentController.courseId}/files/`;
-			// loop thru each module in cc_configuration
-			// - if it has an image, add an img element to the div.cc-card-images
-			//   with the image URL
-			let images = '';
-			for (let moduleId in this.parentController.cc_configuration.MODULES) {
-				const module = this.parentController.cc_configuration.MODULES[moduleId];
-
-				if (!module.image) {
-					continue;
-				}
-				// add the hostname to module.image if it doesn't have it
-				if (module.image.startsWith('/')) {
-					module.image = `${window.location.hostname}${module.image}`;
-				}
-
-				// if module has an image and it contains courseFilesUrl
-				if (
-					module.image.includes(courseFilesUrl) ||
-					module.image.includes(filesUrl)
-				) {
-					images += `
-					<img src="${module.image}" id="cc-moduleImage-${moduleId}" class="cc-moduleImage" />
-					`;
-				}
-			}
-
-			content = content.replace('{{COURSE_IMAGES}}', images);
-		}
 
 		return content;
 	}

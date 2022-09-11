@@ -1122,19 +1122,13 @@ class cc_ConfigurationView extends cc_View {
 		// - eventually will need to handle the CSS 
 		// - perhaps with a date view?
 		let dateInfo = {
-			start: {
-				label: '', week: '', date: '',
-				month: '', day: '', time: ''
-			},
-			end: {
-				label: '', week: '', date: '',
-				month: '', day: '', time: ''
-			}
+			label: '', week: '', date: '',
+			month: '', day: '', time: ''
 		};
 		if (moduleConfig.date) {
 			for (const dateField in dateInfo) {
 				if (moduleConfig.date.hasOwnProperty(dateField)) {
-					dateInfo.start[dateField] = moduleConfig.date[dateField];
+					dateInfo[dateField] = moduleConfig.date[dateField];
 				}
 			}
 		}
@@ -1156,7 +1150,7 @@ class cc_ConfigurationView extends cc_View {
 		for (let i = 0; i < weeks.length; i++) {
 			let selected = '';
 			const week = weeks[i];
-			if (week === dateInfo.start.week) {
+			if (week === dateInfo.week) {
 				selected = 'selected';
 			}
 			let weekValue = week;
@@ -1170,7 +1164,7 @@ class cc_ConfigurationView extends cc_View {
 		for (let i = 0; i < days.length; i++) {
 			let selected = '';
 			const day = days[i];
-			if (day === dateInfo.start.day) {
+			if (day === dateInfo.day) {
 				selected = 'selected';
 			}
 			let dayValue = day;
@@ -1188,7 +1182,7 @@ class cc_ConfigurationView extends cc_View {
 		}
 
 		// TODO need to handle both start and end
-		let calculatedDate = this.calculateDate(dateInfo.start);
+		let calculatedDate = this.calculateDate(dateInfo);
 
 		// calculate the number elements for the form
 		// - if no module.num then it's auto calculate
@@ -1215,20 +1209,6 @@ class cc_ConfigurationView extends cc_View {
 		}
 
 		const additionalMetaDataHTML = this.getAdditionalMetaDataHTML(moduleDetail);
-
-		//---------------------------
-		// now to handle the dateRange
-
-		const dateRangeChecked = ""; // "checked" if dateRange
-		const dayOfWeekEndOptions = '';
-		const weekEndOptions = '';
-
-		// define the various hard-coded (boo) CSS for various classes
-		let dateStyle = "";
-		let dateStartStyle = ' style="display:none;"';
-		let dateRangeStyle = "";
-		let dateEndStyle = ' style="display:none;"';
-		let dateEndDetailStyle = 'display:none;'; // no need for style="
 
 		let showConfigHtml = `
 		<style>
@@ -1301,17 +1281,11 @@ class cc_ConfigurationView extends cc_View {
 					<br clear="all" />
 				</div>
 				<div class="border border-trbl" style="margin-right:1em">
-		   			<div id="cc-module-config-${moduleDetail.id}-date-start"${dateStyle}>
+		   			<div id="cc-module-config-${moduleDetail.id}-date-start">
 				    	<div style="padding-top:0.5rem;padding-left:0.5rem" 
 						     class="cc-module-config-date">
 							<strong>Date</strong> 
 					    	<a href="" id="cc-about-module-date" target="_blank">
-			   				<i class="icon-question cc-module-icon"></i></a>
-							<div class="cc-calculated-date">${calculatedDate}</div>
-						</div>
-						<div class="cc-module-config-date-start"${dateStartStyle}>
-						    <strong>Start Date</strong>
-					    	<a href="" id="cc-about-module-start-date" target="_blank">
 			   				<i class="icon-question cc-module-icon"></i></a>
 							<div class="cc-calculated-date">${calculatedDate}</div>
 						</div>
@@ -1336,49 +1310,10 @@ class cc_ConfigurationView extends cc_View {
 					   		}
 					   	</style>
 						<aeon-datepicker local="en-au">
-						<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="${dateInfo.start.time}" />
+						<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="${dateInfo.time}" />
 						</aeon-datepicker>
 					</div>
 					<br clear="all" />
-					<!-- start date range -->
-				    <div style="padding-bottom:0.5rem;padding-left:0.5rem"
-					    id="cc-module-config-${moduleDetail.id}-date-end">
-						<div class="cc-module-config-range"${dateRangeStyle}>
-					    	<label for="cc-module-config-${moduleDetail.id}-date-range">
-						   		<strong>Date Range</strong> 
-							</label>
-					    	<a href="" id="cc-about-module-date" target="_blank">
-			   				<i class="icon-question cc-module-icon"></i></a>
-							<input type="checkbox" id="cc-module-config-${moduleDetail.id}-date-range" ${dateRangeChecked} />
-						</div>
-						<div class="cc-module-config-date-end"${dateEndStyle}>
-						    <strong>End Date</strong>
-					    	<a href="" id="cc-about-module-end-date" target="_blank">
-			   				<i class="icon-question cc-module-icon"></i></a>
-						</div>
-					</div>
-					<div class="cc-module-config-collection-representation"
-					    id="cc-module-config-${moduleDetail.id}-date-end-detail"
-					    style="padding-top:1rem; padding-left:3rem;${dateEndDetailStyle}">
-				    	<label for="cc-module-config-${moduleDetail.id}-day-end">Day of week</label>
-						<select id="cc-module-config-${moduleDetail.id}-day-end">
-		                  ${dayOfWeekEndOptions}
-						</select> <br />
-						<label for="cc-module-config-${moduleDetail.id}-week-end">Week</label>
-						<select id="cc-module-config-${moduleDetail.id}-week-end">
-		   		           ${weekEndOptions}}	
-						</select> <br />
-						<label for="cc-module-config-${moduleDetail.id}-time-end">Time</label>
-						<style>
-					   		input[readonly] {
-							display:none;
-					   		}
-					   	</style>
-						<aeon-datepicker local="en-au">
-						<input type="time" id="cc-module-config-${moduleDetail.id}-time-end" 
-						    name="time" value="${dateInfo.end.time}" />
-						</aeon-datepicker>
-					</div>
 
 				</div>
 		    </div>
@@ -6805,6 +6740,10 @@ class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
+			// need to check the URL for image as the RCE screws with the URL
+			if (module.image.startsWith('/')) {
+				module.image = `https://${window.location.hostname}${module.image}`;
+			}
 		}
 		// double check that we're not an import from another course
 		let courseImages = parsed.querySelector('div.cc-card-images');
@@ -7082,6 +7021,49 @@ class cc_ConfigurationStore {
 		// construct the new content for the page
 		// - boiler plate description HTML to start
 		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
+
+				if (this.hasOwnProperty('parentController') &&
+			this.parentController.hasOwnProperty('cc_configuration') &&
+			this.parentController.cc_configuration.hasOwnProperty('MODULES')) {
+
+			// files URL might be 
+			// - direct or 
+			//    https://lms.griffith.edu.au/files/
+			// - via the course
+			//    https://lms.../courses/12345/files/
+			// - or without the hostname starting with /
+
+			const filesUrl = `${window.location.hostname}/files/`;
+			const courseFilesUrl = `${window.location.hostname}/courses/${this.parentController.courseId}/files/`;
+			// loop thru each module in cc_configuration
+			// - if it has an image, add an img element to the div.cc-card-images
+			//   with the image URL
+			let images = '';
+			for (let moduleId in this.parentController.cc_configuration.MODULES) {
+				const module = this.parentController.cc_configuration.MODULES[moduleId];
+
+				if (!module.image) {
+					continue;
+				}
+				// add the hostname to module.image if it doesn't have it
+				if (module.image.startsWith('/')) {
+					module.image = `https://${window.location.hostname}${module.image}`;
+				}
+
+				// if module has an image and it contains courseFilesUrl
+				if (
+					module.image.includes(courseFilesUrl) ||
+					module.image.includes(filesUrl)
+				) {
+					images += `
+					<img src="${module.image}" id="cc-moduleImage-${moduleId}" class="cc-moduleImage" />
+					`;
+				}
+			}
+
+			content = content.replace('{{COURSE_IMAGES}}', images);
+		}
+
 		// - div.json containing
 		//   - JSON stringify of this.parentController.cc_configuration
 		//   - however, each module needs to have it's description encoded as HTML
@@ -7108,47 +7090,6 @@ class cc_ConfigurationStore {
 
 		//<div class="cc-card-images" id="cc-course{{COURSE_ID}}" style="display:none"></div>
 
-		if (this.hasOwnProperty('parentController') &&
-			this.parentController.hasOwnProperty('cc_configuration') &&
-			this.parentController.cc_configuration.hasOwnProperty('MODULES')) {
-
-			// files URL might be 
-			// - direct or 
-			//    https://lms.griffith.edu.au/files/
-			// - via the course
-			//    https://lms.../courses/12345/files/
-			// - or without the hostname starting with /
-
-			const filesUrl = `${window.location.hostname}/files/`;
-			const courseFilesUrl = `${window.location.hostname}/courses/${this.parentController.courseId}/files/`;
-			// loop thru each module in cc_configuration
-			// - if it has an image, add an img element to the div.cc-card-images
-			//   with the image URL
-			let images = '';
-			for (let moduleId in this.parentController.cc_configuration.MODULES) {
-				const module = this.parentController.cc_configuration.MODULES[moduleId];
-
-				if (!module.image) {
-					continue;
-				}
-				// add the hostname to module.image if it doesn't have it
-				if (module.image.startsWith('/')) {
-					module.image = `${window.location.hostname}${module.image}`;
-				}
-
-				// if module has an image and it contains courseFilesUrl
-				if (
-					module.image.includes(courseFilesUrl) ||
-					module.image.includes(filesUrl)
-				) {
-					images += `
-					<img src="${module.image}" id="cc-moduleImage-${moduleId}" class="cc-moduleImage" />
-					`;
-				}
-			}
-
-			content = content.replace('{{COURSE_IMAGES}}', images);
-		}
 
 		return content;
 	}
@@ -7927,7 +7868,10 @@ class UniversityDateCalendar {
       return UniversityDateCalendar._instance;
     }
     UniversityDateCalendar._instance = this;
-    this.defaultPeriod = strm;
+    this.defaultPeriod = DEFAULT_PERIOD;
+    if (strm && CALENDAR[strm]) {
+      this.defaultPeriod = strm;
+    }
   }
 
   /**
