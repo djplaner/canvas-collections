@@ -6579,6 +6579,18 @@ class juiceController {
 // - The HTML template for the configuration page - CONFIGURATION_PAGE_TEMPLATE
 // - The dict template for most of the configuration form - DEFAULT_CONFIGURATION_TEMPLATE
 
+/**
+ * - div.cc-config-explanation
+ *   User facing detail about the purpose of the file, a warning, and the time it was
+ *   last updated
+ * - div.cc_json
+ *   Invisible, encoded JSON representation of collections configuration data
+ * - div.cc-card-images id="cc-course-<courseId>" 
+ *   Invisible, collection of img elements for any module collections images that
+ *   are in the course files area. Placed here to help with course copy (i.e. Canvas
+ *   will update these URLs which Collections will then handle)
+ */
+
 const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 <div class="cc-config-explanation">
 <div style="float:left;padding:0.5em">
@@ -6596,6 +6608,9 @@ const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 <div class="cc_json" style="display:none">
  {{CONFIG}}
  </div>
+<div class="cc-card-images" id="cc-course-{{COURSE_ID}}" style="display:none">
+ {{COURSE_IMAGES}}
+</div>
 `;
 
 const DEFAULT_CONFIGURATION_TEMPLATE = {
@@ -6672,7 +6687,7 @@ class cc_ConfigurationStore {
 		});
 
 		if (!response.ok) {
-			if (response.status===404) {
+			if (response.status === 404) {
 				// page doesn't exist, so create it
 				this.initialiseConfigPage();
 			}
@@ -6685,7 +6700,7 @@ class cc_ConfigurationStore {
 		// https://canvas.instructure.com/doc/api/pages.html#Page
 		DEBUG && console.log(`cc_ConfigurationStore: requestConfigPageContents: json = ${JSON.stringify(data)}`);
 
-		if (data.length===0) {
+		if (data.length === 0) {
 			throw new Error(`cc_ConfigurationStore: requestConfigPageContents: no config page found`);
 		}
 
@@ -6775,7 +6790,7 @@ class cc_ConfigurationStore {
 
 		// nothing to do if the lengths of three lists are the same
 		// - suggesting that collections and Canvas have the same modules
-		if (collectionIds.length===canvasIds.length && collectionIds.length===commonIds.length) {
+		if (collectionIds.length === canvasIds.length && collectionIds.length === commonIds.length) {
 			return false;
 		}
 
@@ -6800,31 +6815,31 @@ class cc_ConfigurationStore {
 		//   - but no similarity in the module ids, and 
 		//   - exact match with module names
 
-		if (collectionIds.length===canvasIds.length ) {
+		if (collectionIds.length === canvasIds.length) {
 			// # modules is the same
-			if (commonIds.length===0) {
+			if (commonIds.length === 0) {
 				// no commonality in module ids
 				if (
-					commonNames.length===moduleNames.length && 
-					commonNames.length===ccModuleNames.length) {
+					commonNames.length === moduleNames.length &&
+					commonNames.length === ccModuleNames.length) {
 					// # of common names == # of ids Canvas and collections
 					// this must be a new import of a course
 					// Replace all the collections modules with the new Canvas module ids
 					// create a hash keyed on module name containing object with both
 					// collections and canvas module ids
 					let nameToId = {};
-					for (let i=0; i<commonNames.length; i++) {
+					for (let i = 0; i < commonNames.length; i++) {
 						const name = commonNames[i];
 						// find the moduleDetails array that contains attribute name
 						const canvasModuleId = this.parentController.moduleDetails.find((module) => {
-							if (module.name===name) {
+							if (module.name === name) {
 								return module.id;
 							}
 						});
 						// loop through objects in cc_configuration.MODULES and return the id
 						// of the object that has the same name
 						const ccModuleId = Object.keys(this.parentController.cc_configuration.MODULES).find((id) => {
-							if (this.parentController.cc_configuration.MODULES[id].name===name) {
+							if (this.parentController.cc_configuration.MODULES[id].name === name) {
 								return id;
 							}
 						});
@@ -6905,30 +6920,7 @@ class cc_ConfigurationStore {
 
 		DEBUG && console.log(`cc_ConfigurationStore: saveConfigPage: callUrl = ${callUrl}`);
 
-		// construct the new content for the page
-		// - boiler plate description HTML to start
-		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
-		// - div.json containing
-		//   - JSON stringify of this.parentController.cc_configuration
-		//   - however, each module needs to have it's description encoded as HTML
-		for (let key in this.parentController.cc_configuration.MODULES) {
-			const module = this.parentController.cc_configuration.MODULES[key];
-			module.description = this.encodeHTML(module.description);
-		}
-		content = content.replace('{{CONFIG}}',
-			JSON.stringify(this.parentController.cc_configuration));
-
-		// now de-encode the description for the page
-		for (let key in this.parentController.cc_configuration.MODULES) {
-			const module = this.parentController.cc_configuration.MODULES[key];
-			module.description = this.decodeHTML(module.description);
-		}
-
-
-		// get the current time as string
-		let time = new Date().toISOString();
-
-		content = content.replace('{{VISIBLE_TEXT}}', `<p>saved at ${time}</p>`);
+		const content = this.generateConfigPageContent();
 
 		let _body = {
 			"wiki_page": {
@@ -6973,6 +6965,79 @@ class cc_ConfigurationStore {
 	}
 
 	/**
+	 * Generate and return the HTML to be added into the Canvas Collections Configuration page
+	 * including
+	 * - div.cc-config-explanation
+	 *   User facing detail about the purpose of the file, a warning, and the time it was
+	 *   last updated
+	 * - div.cc_json
+	 *   Invisible, encoded JSON representation of collections configuration data
+	 * - div.cc-card-images id="cc-course-<courseId>" 
+	 *   Invisible, collection of img elements for any module collections images that
+	 *   are in the course files area. Placed here to help with course copy (i.e. Canvas
+	 *   will update these URLs which Collections will then handle)
+	 */
+
+	generateConfigPageContent() {
+
+		// construct the new content for the page
+		// - boiler plate description HTML to start
+		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
+		// - div.json containing
+		//   - JSON stringify of this.parentController.cc_configuration
+		//   - however, each module needs to have it's description encoded as HTML
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			const module = this.parentController.cc_configuration.MODULES[key];
+			module.description = this.encodeHTML(module.description);
+		}
+		content = content.replace('{{CONFIG}}',
+			JSON.stringify(this.parentController.cc_configuration));
+
+		// now de-encode the description for the page
+		for (let key in this.parentController.cc_configuration.MODULES) {
+			const module = this.parentController.cc_configuration.MODULES[key];
+			module.description = this.decodeHTML(module.description);
+		}
+
+		// get the current time as string
+		//let time = new Date().toISOString();
+		let time = new Date().toLocaleString();
+
+		content = content.replace('{{VISIBLE_TEXT}}', `<p>saved at ${time}</p>`);
+
+		content = content.replace('{{COURSE_ID}}', this.parentController.courseId);
+
+		//<div class="cc-card-images" id="cc-course{{COURSE_ID}}" style="display:none"></div>
+
+		if (this.hasOwnProperty('parentController') &&
+			this.parentController.hasOwnProperty('cc_configuration') &&
+			this.parentController.cc_configuration.hasOwnProperty('MODULES')) {
+
+			const courseFilesUrl = `${window.location.hostname}/files/`;
+			// loop thru each module in cc_configuration
+			// - if it has an image, add an img element to the div.cc-card-images
+			//   with the image URL
+			let images = '';
+			for (let moduleId in this.parentController.cc_configuration.MODULES) {
+				const module = this.parentController.cc_configuration.MODULES[moduleId];
+
+				// if module has an image and it contains courseFilesUrl
+				if (module.image && module.image.includes(courseFilesUrl)) {
+					images += `
+					<img src="${module.image}" id="cc-moduleImage-${moduleId}" />
+					`;
+				}
+			}
+
+			content = content.replace('{{COURSE_IMAGES}}', images);
+		}
+
+
+		return content;
+	}
+
+
+	/**
 	 * @descr update the contents of the configuration page (this.pageObject.pageId) with 
 	 * the this.parentController.cc_configuration as JSON
 	 * *IMPORTANT* normally initialiseConfigPage will call this
@@ -6991,7 +7056,7 @@ class cc_ConfigurationStore {
 		for (let key in this.parentController.cc_configuration.MODULES) {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.encodeHTML(module.description);
-		} 
+		}
 		content = content.replace('{{CONFIG}}',
 			JSON.stringify(this.parentController.cc_configuration));
 

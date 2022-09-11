@@ -12,14 +12,14 @@
         <meta name="author" content="David Jones">
       
       
-        <link rel="canonical" href="https://djplaner.github.io/canvas-collections/walk-throughs/advanced/multi-collection-one-page/">
+        <link rel="canonical" href="https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/">
       
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.4.2">
     
     
       
-        <title>Multi-collection, one page Claytons - Canvas Collections</title>
+        <title>Configure Modules - Canvas Collections</title>
       
     
     
@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#multi-collection-one-page-claytons" class="md-skip">
+        <a href="#configure-the-modules" class="md-skip">
           Skip to content
         </a>
       
@@ -104,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Multi-collection, one page Claytons
+              Configure Modules
             
           </span>
         </div>
@@ -695,14 +695,16 @@
               
   
   
+    
+  
   
     
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" checked>
       
       
       
@@ -725,7 +727,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../new/before-and-after/" class="md-nav__link">
+      <a href="../before-and-after/" class="md-nav__link">
         Before & after
       </a>
     </li>
@@ -739,7 +741,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../new/design/" class="md-nav__link">
+      <a href="../design/" class="md-nav__link">
         Design
       </a>
     </li>
@@ -753,7 +755,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../new/configure-collections/" class="md-nav__link">
+      <a href="../configure-collections/" class="md-nav__link">
         Configure Collections
       </a>
     </li>
@@ -765,11 +767,214 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../new/configure-modules/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Configure Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Configure Modules
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introducing-the-module-configuration-area" class="md-nav__link">
+    Introducing the module configuration area
+  </a>
+  
+    <nav class="md-nav" aria-label="Introducing the module configuration area">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#find-the-module-configuration-area" class="md-nav__link">
+    Find the module configuration area
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#open-the-module-configuration-area" class="md-nav__link">
+    Open the module configuration area
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#allocate-the-modules" class="md-nav__link">
+    Allocate the modules
+  </a>
+  
+    <nav class="md-nav" aria-label="Allocate the modules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examine-the-change" class="md-nav__link">
+    Examine the change
+  </a>
+  
+    <nav class="md-nav" aria-label="Examine the change">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#module-only-appears-when-its-collection-is-current" class="md-nav__link">
+    Module only appears when its collection is current
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#module-is-represented-using-the-collections-representation" class="md-nav__link">
+    Module is represented using the collection's representation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#module-configuration-area-lists-the-allocated-collection" class="md-nav__link">
+    Module configuration area lists the allocated collection
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allocate-the-remaining-modules" class="md-nav__link">
+    Allocate the remaining modules
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#specify-additional-metadata" class="md-nav__link">
+    Specify additional metadata
+  </a>
+  
+    <nav class="md-nav" aria-label="Specify additional metadata">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-a-description" class="md-nav__link">
+    Add a description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-an-image" class="md-nav__link">
+    Add an image
+  </a>
+  
+    <nav class="md-nav" aria-label="Add an image">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-scale" class="md-nav__link">
+    Image scale
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-url" class="md-nav__link">
+    Image URL
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-a-label-and-a-number" class="md-nav__link">
+    Add a label and a number
+  </a>
+  
+    <nav class="md-nav" aria-label="Add a label and a number">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto-number-example" class="md-nav__link">
+    Auto number example
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explicitly-specified-string-examples" class="md-nav__link">
+    Explicitly specified string examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-a-date-and-date-label" class="md-nav__link">
+    Add a date and date label
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-a-module-for-the-assessment-table-representation" class="md-nav__link">
+    Configure a module for the assessment table representation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -781,7 +986,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../new/set-up-claytons/" class="md-nav__link">
+      <a href="../set-up-claytons/" class="md-nav__link">
         Set up "Claytons"
       </a>
     </li>
@@ -877,16 +1082,14 @@
               
   
   
-    
-  
   
     
       
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_4" type="checkbox" id="__nav_4_4" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_4" type="checkbox" id="__nav_4_4" >
       
       
       
@@ -907,154 +1110,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Multi-collection, one page Claytons
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../advanced/multi-collection-one-page/" class="md-nav__link">
         Multi-collection, one page Claytons
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#the-process" class="md-nav__link">
-    The Process
-  </a>
-  
-    <nav class="md-nav" aria-label="The Process">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#configure-canvas-collections" class="md-nav__link">
-    Configure Canvas Collections
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#how-many-collections-for-claytons" class="md-nav__link">
-    How many collections for Claytons?
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#how-many-pages" class="md-nav__link">
-    🆕 How many pages?
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#create-or-identify-the-pages-required" class="md-nav__link">
-    Create (or identify) the page(s) required.
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#set-up-the-pages-add-each-collections-output-div" class="md-nav__link">
-    Set up the page(s) - add each collection's output div
-  </a>
-  
-    <nav class="md-nav" aria-label="Set up the page(s) - add each collection's output div">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#background" class="md-nav__link">
-    Background
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#one-div-per-collection" class="md-nav__link">
-    One div per collection
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#specify-the-collections-output-page" class="md-nav__link">
-    Specify the collection's output page
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#use-collections-to-update-the-pages" class="md-nav__link">
-    Use Collections to update the pages
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#make-it-fancy" class="md-nav__link">
-    Make it fancy
-  </a>
-  
-    <nav class="md-nav" aria-label="Make it fancy">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#adding-a-title-for-each-collection" class="md-nav__link">
-    Adding a title for each collection
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#put-the-collections-into-accordions" class="md-nav__link">
-    Put the collections into accordions
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1066,7 +1126,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fix-claytons-card-css/" class="md-nav__link">
+      <a href="../../advanced/fix-claytons-card-css/" class="md-nav__link">
         Fix Claytons Card CSS
       </a>
     </li>
@@ -1415,59 +1475,65 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-process" class="md-nav__link">
-    The Process
+  <a href="#introducing-the-module-configuration-area" class="md-nav__link">
+    Introducing the module configuration area
   </a>
   
-    <nav class="md-nav" aria-label="The Process">
+    <nav class="md-nav" aria-label="Introducing the module configuration area">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#configure-canvas-collections" class="md-nav__link">
-    Configure Canvas Collections
+  <a href="#find-the-module-configuration-area" class="md-nav__link">
+    Find the module configuration area
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#how-many-collections-for-claytons" class="md-nav__link">
-    How many collections for Claytons?
+  <a href="#open-the-module-configuration-area" class="md-nav__link">
+    Open the module configuration area
   </a>
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#how-many-pages" class="md-nav__link">
-    🆕 How many pages?
-  </a>
+      </ul>
+    </nav>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#create-or-identify-the-pages-required" class="md-nav__link">
-    Create (or identify) the page(s) required.
+      
+        <li class="md-nav__item">
+  <a href="#allocate-the-modules" class="md-nav__link">
+    Allocate the modules
   </a>
   
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#set-up-the-pages-add-each-collections-output-div" class="md-nav__link">
-    Set up the page(s) - add each collection's output div
-  </a>
-  
-    <nav class="md-nav" aria-label="Set up the page(s) - add each collection's output div">
+    <nav class="md-nav" aria-label="Allocate the modules">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#background" class="md-nav__link">
-    Background
+  <a href="#examine-the-change" class="md-nav__link">
+    Examine the change
+  </a>
+  
+    <nav class="md-nav" aria-label="Examine the change">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#module-only-appears-when-its-collection-is-current" class="md-nav__link">
+    Module only appears when its collection is current
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#one-div-per-collection" class="md-nav__link">
-    One div per collection
+  <a href="#module-is-represented-using-the-collections-representation" class="md-nav__link">
+    Module is represented using the collection's representation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#module-configuration-area-lists-the-allocated-collection" class="md-nav__link">
+    Module configuration area lists the allocated collection
   </a>
   
 </li>
@@ -1478,43 +1544,97 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#specify-the-collections-output-page" class="md-nav__link">
-    Specify the collection's output page
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#use-collections-to-update-the-pages" class="md-nav__link">
-    Use Collections to update the pages
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#make-it-fancy" class="md-nav__link">
-    Make it fancy
-  </a>
-  
-    <nav class="md-nav" aria-label="Make it fancy">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#adding-a-title-for-each-collection" class="md-nav__link">
-    Adding a title for each collection
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#put-the-collections-into-accordions" class="md-nav__link">
-    Put the collections into accordions
+  <a href="#allocate-the-remaining-modules" class="md-nav__link">
+    Allocate the remaining modules
   </a>
   
 </li>
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#specify-additional-metadata" class="md-nav__link">
+    Specify additional metadata
+  </a>
+  
+    <nav class="md-nav" aria-label="Specify additional metadata">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-a-description" class="md-nav__link">
+    Add a description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-an-image" class="md-nav__link">
+    Add an image
+  </a>
+  
+    <nav class="md-nav" aria-label="Add an image">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-scale" class="md-nav__link">
+    Image scale
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-url" class="md-nav__link">
+    Image URL
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-a-label-and-a-number" class="md-nav__link">
+    Add a label and a number
+  </a>
+  
+    <nav class="md-nav" aria-label="Add a label and a number">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto-number-example" class="md-nav__link">
+    Auto number example
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explicitly-specified-string-examples" class="md-nav__link">
+    Explicitly specified string examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-a-date-and-date-label" class="md-nav__link">
+    Add a date and date label
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-a-module-for-the-assessment-table-representation" class="md-nav__link">
+    Configure a module for the assessment table representation
+  </a>
   
 </li>
         
@@ -1535,95 +1655,208 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/djplaner/canvas-collections/edit/master/docs/walk-throughs/advanced/multi-collection-one-page.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/djplaner/canvas-collections/edit/master/docs/walk-throughs/new/configure-modules.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-<h1 id="multi-collection-one-page-claytons">Multi-collection, one page Claytons</h1>
-<p>Claytons Collections provides a way to create a Canvas page that contains a Collection's representation. It provides <a href="../../new/set-up-claytons/#use-collections-to-update-the-pages">two methods you can use</a>:</p>
+<h1 id="configure-the-modules">Configure the modules</h1>
+<p>Having <a href="../design/">designed our use of collections</a> and <a href="../configure-collections/">configured our collections</a>, we reach the last step - configuring the modules.</p>
+<p>There are two parts to this step</p>
 <ol>
-<li>Update a single page using the <em>output page</em></li>
-<li>Update multiple pages using <em>Full Claytons</em></li>
+<li>
+<p>Allocate the modules to a collection; and,</p>
+<p>Only modules that are allocated to a collection will be displayed.</p>
+</li>
+<li>
+<p>Specify metadata.</p>
+<p>This additional information about each module is used by representations to modify how the module is displayed.</p>
+</li>
 </ol>
-<p>Typically, this is used to place each collection's representation onto its own page. For example, the following animated image that shows the process of placing the representations for three collections (<em>Why?</em>, <em>What?</em>, and <em>How?</em>) onto three separate pages (with the same names).</p>
-<p>The following shows how you can place the representations for these same three collections (<em>Why?</em>, <em>What?</em>, and <em>How?</em>) onto a single page.</p>
-<p><img alt="" src="../../new/pics/fullClaytonsAnimation.gif" /></p>
-<h2 id="the-process">The Process</h2>
-<p>The process for doing this is almost the same as used on the <a href="../../new/set-up-claytons/">setting up Claytons Collections page</a>. </p>
-<ol>
-<li>Configure Canvas Collections</li>
-<li>How many collections for Claytons?</li>
-<li>🆕 How many pages?</li>
-<li>Create (or identify) the page(s) required.</li>
-<li>Set up the page(s)</li>
-<li>Specify the collection's output page</li>
-<li>Use Collections to update the pages</li>
-</ol>
-<p>Once the basics are setup, you can also <a href="#make-it-fancy">make it fancy</a></p>
-<h3 id="configure-canvas-collections">Configure Canvas Collections</h3>
-<p>This only works if Collections is configured for your course. The example here will be using the same course and Collections configuration as <a href="../../new/set-up-claytons/#configure-canvas-collections">the previous example</a>.</p>
-<h3 id="how-many-collections-for-claytons">How many collections for Claytons?</h3>
-<p>As with <a href="../../new/set-up-claytons/#how-many-collections-for-claytons">the previous example</a> the following will use all three available collections. You can choose as many as you like, but since the aim is to include the representations from multiple collections, you'll need at least two.</p>
-<h3 id="how-many-pages">🆕 How many pages?</h3>
-<p>Previously, the example used a single page for each collection. This time, the example will use a single page for all three collections. </p>
-<p>If you're are using less than one page per per collection, you'll need to perform the "set up the page(s)" step below.</p>
-<h3 id="create-or-identify-the-pages-required">Create (or identify) the page(s) required.</h3>
-<p>Currently, Collections will not create the pages for you. You'll need to be sure that all the required Canvas pages exist.</p>
-<h3 id="set-up-the-pages-add-each-collections-output-div">Set up the page(s) - add each collection's output div</h3>
-<h4 id="background">Background</h4>
-<p>When Claytons Collections updates a Canvas page it places the HTML for that collections' representation into a <a href="https://www.w3schools.com/tags/tag_div.ASP">HTML <div> tag</a> - a common why to group related HTML. Apart from the HTML, the <div> tag also has an identifier unique to the collection and Claytons Collections. For example, the following image shows the HTML for the <em>How?</em> page from <a href="../../new/set-up-claytons/">the previous example</a> where the <em>How?</em> page contained the representation for the <em>How?</em> collection.</p>
-<p>In the image, the <div> tag identifier has been circled in red <code>&lt;div id="cc-output-How?"&gt;</code>. The first part of the identifier is consistent <code>cc-output-</code> for Canvas Collections output. The last part of the identifier is the name of the collection <code>How?</code>.</p>
-<p><img alt="" src="../pics/divId.png" />  </p>
-<h4 id="one-div-per-collection">One div per collection</h4>
-<p>If you want to have the representation of more than one collection on a single page OR if you want to specify exactly where the representation is placed on the page, you'll need to add a <div> tag for each collection.</p>
-<p>For this example, all three collections will be placed on a single page titled <code>All together</code> with the following order: <em>Why?</em>, <em>What?</em>, and <em>How?</em>. The following image shows the HTML for the <code>All together</code> page with the <div> tags and identifiers added.</p>
-<p><img alt="" src="../pics/allThreeDivs.png" />  </p>
-<h3 id="specify-the-collections-output-page">Specify the collection's output page</h3>
-<p>As with the previous example, the <em>output page</em> for each collection needs to be specified. This time, the <em>output page</em> for each collection will be the <code>All together</code> page. As illustrated in the following image.</p>
-<p><img alt="" src="../pics/alLTogehterCollections.png" />  </p>
-<h3 id="use-collections-to-update-the-pages">Use Collections to update the pages</h3>
-<p>There are two options that could be used to update the pages summarised in the following tabe.</p>
+<h2 id="introducing-the-module-configuration-area">Introducing the module configuration area</h2>
+<p>For teachers and designers, Canvas Collections adds a module specific configuration area to each Module. This is how you configure each module.</p>
+<h3 id="find-the-module-configuration-area">Find the module configuration area</h3>
+<p>Each module's configuration area will be visible (to teachers and designers) just under the module title - circled in red below. By default the module configuration area is closed.</p>
+<p><img alt="" src="../pics/findModuleConfig.png" />  </p>
+<h3 id="open-the-module-configuration-area">Open the module configuration area</h3>
+<p>As with the Collections configuration area, you open the module configuration area by clicking on the small arrow. This will open the module configuration area and reveal the module's metadata.</p>
+<p>The following image shows an early version of the module configuration area, currently the major areas of the module configuration area, includes:</p>
+<ul>
+<li>Collection - used to specify which collection the module belongs to.</li>
+<li>Label - three elements (label, auto-number, and number) used to specify the module's label and number.</li>
+<li>Date - specify the date for the module using three elements - day of week; week; and time.</li>
+<li>Image - associate an image with the module and how it should be scaled to fit with a card.</li>
+<li>Description - provide a short description or rationale for the module.</li>
+<li>Additional metadata - add and remove additional metadata in the form of name/value pairs.</li>
+</ul>
+<p>Use these form elements to set and change the module configuration.</p>
+<p><img alt="" src="../pics/emptyModuleConfig.png" />  </p>
+<h2 id="allocate-the-modules">Allocate the modules</h2>
+<p>The <em>Collections</em> element will contain a list of the current collections. Use the menu to choose one.  When you change the collection allocation for a module, your view of Collections will change in a number of ways.</p>
+<p><img alt="" src="../pics/allocateModule.png" />  </p>
+<h3 id="examine-the-change">Examine the change</h3>
+<h4 id="module-only-appears-when-its-collection-is-current">Module only appears when its collection is current</h4>
+<p>For example, the <em>Improve Canvas' organisation of course content</em> module was allocated to the <em>Why?</em> collection.  It is not visible when viewing the <em>What?</em> collection.</p>
+<p><img alt="" src="../pics/noModuleCollectionCurrent.png" />  </p>
+<h4 id="module-is-represented-using-the-collections-representation">Module is represented using the collection's representation</h4>
+<p>The <em>Why?</em> collection was configured to use the <em>GriffithCards</em> representation. Hence the newly allocated module is represented as a card - a rather bare card.</p>
+<p><img alt="" src="../pics/oneModuleCurrentCOllection.png" />  </p>
+<h4 id="module-configuration-area-lists-the-allocated-collection">Module configuration area lists the allocated collection</h4>
+<p>The allocated module now shows <em>Why?</em> as it's collection.</p>
+<p><img alt="" src="../pics/moduleConfigAllocatd.png" />  </p>
+<h3 id="allocate-the-remaining-modules">Allocate the remaining modules</h3>
+<p>Once all the modules are allocated to collections, the Collections configuration <em>Existing collections</em> section looks like the following: 3 modules in <em>Why?</em>; 5 modules in <em>What?</em>; and, 5 modules in <em>How?</em>.</p>
+<p><img alt="" src="../pics/allAllocatedCollections.png" />  </p>
+<p>The following animated image shows the rest of the interface once all modules are allocated to collections. Some points to note</p>
+<ul>
+<li>
+<p>Some modules remain <em>unpublished</em>.</p>
+<p>The cards representation adds a warning (visible to teachers and designers) identifying unpublished modules. These will not be visible to students.</p>
+</li>
+<li>
+<p>Navigation between the three collections works as expected.</p>
+</li>
+<li>Clicking on the <em>Engage</em> button on a Card brings that module to focus.</li>
+<li>The cards are all relatively blank with limited metadata (e.g. images, descriptions etc)</li>
+</ul>
+<p>Time to add some additional metadata.</p>
+<p><img alt="" src="../pics/allModulesAllocatedAnimated.gif" /></p>
+<h2 id="specify-additional-metadata">Specify additional metadata</h2>
+<p>As mentioned above, the additional metadata that can be added includes the following list. Each with its own form elements. The following walk-through gives an example of each.</p>
+<blockquote>
+<p><em>Note:</em> As soon as metadata is changed, the module's representation will be updated.</p>
+</blockquote>
+<p>| Metadata | Description |
+| --- | --- | --- |
+| Description | Some HTML intended to provide students with a description or rationale for the object represented by the module |
+| Image | A visual image to represent the module | 
+| Label &amp; Number | Explicitly identify a module as a particular object (the label) and its position in the collection (the number - which can be auto calculated) | 
+| Date &amp; Date Label | Specify the day/time when the activity occurs, is due etc. Through a combination of a date and a label (e.g. due, commencing etc) | 
+| Additional metadata | A flexible method for specifying any additional metadata in the form of pairs of name and value | </p>
+<h3 id="add-a-description">Add a description</h3>
+<p>The description is best used to provide students with additional information about what, why and how they might engage with the activities and information contained by a module. The description is a relative short piece of text entered using a simple visual editor under the description heading of the module configuration area.</p>
 <table>
 <thead>
 <tr>
-<th>Method</th>
-<th>Description</th>
-<th>Features</th>
+<th>Entry</th>
+<th>Representation</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>: <em>update</em> the output page</td>
-<td>Click the <em>update</em> button or each collection</td>
-<td>Updates the page with just each collection's representation (no navigation bar)</td>
-</tr>
-<tr>
-<td><em>Full Claytons</em></td>
-<td>Click the <em>Full Claytons</em> and all collections with output pages will be updated</td>
-<td>Adds both the collection's representation and a navigation bar</td>
+<td><img alt="" src="../pics/descriptionEntry.png" /></td>
+<td><img alt="" src="../pics/descriptionChange.png" /></td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p>❗️ <strong>Note:</strong> If placing multiple collections onto a single page, you probably do NOT want to use <em>Full Claytons</em>.</p>
-</blockquote>
-<p>Hence the approach shown in the following animated image uses the <em>update</em> output page option. The image shows that each collection can be updated and its results checked before proceeding.</p>
-<p><img alt="" src="../pics/onePageMultiCollectionAnimated.gif" /></p>
-<h3 id="make-it-fancy">Make it fancy</h3>
-<p>With all this set up, you now have a Canvas page into which you can update the collections' representations. At the moment, the page just has each representation one after the other, you may want to make it a bit fancier than that by, for example</p>
+<h3 id="add-an-image">Add an image</h3>
+<p>The ability to add an image to each module is a powerful way to improve the visual design of ca course and help student way finding by providing a strong, unique a visual representation of the module. </p>
+<p>Collections uses two pieces of metadata to specify the image and how it is displayed:</p>
 <ol>
-<li>Adding a title for each collection.</li>
-<li>Turning each collection into an accordion.</li>
+<li>The <em>Image URL</em> - the web location where the image can be viewed by users of the Canvas course site (e.g. typically the files area of the course site, or on the open web)</li>
+<li>The <em>Image scale</em> - how the image is scaled to fit within the available space - possibilities are outlined in the following table.</li>
 </ol>
-<p>Or some other idea you can translate into HTML. </p>
-<h4 id="adding-a-title-for-each-collection">Adding a title for each collection</h4>
-<p>All that's need to achieve this is to edit the <em>All together</em> page and place appropriate headings between each collection's representation.</p>
-<p><img alt="" src="../pics/fancyHeading.gif" /></p>
-<h4 id="put-the-collections-into-accordions">Put the collections into accordions</h4>
-<p>Or with another bit of fancy HTML you can make accordions.</p>
-<p><img alt="" src="../pics/fancyAccordions.gif" /></p>
+<h4 id="image-scale">Image scale</h4>
+<p>Image scale is implemented and constrained by a standard <a href="https://www.w3schools.com/cssref/css3_pr_object-fit.asp">CSS property called <em>object-fit</em></a>. The following table outlines the possible values for <em>object-fit</em> that appear in the <em>Image scale</em> drop down in Collections. The animated image below demonstrates how different values affect the display of the image.</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cover</code></td>
+<td>The image is scaled to fit the available space, maintaining the aspect ratio. The image is cropped to fit the available space.</td>
+</tr>
+<tr>
+<td><code>contain</code></td>
+<td>The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped.</td>
+</tr>
+<tr>
+<td><code>fill</code></td>
+<td>The image is scaled to fill the available space, maintaining the aspect ratio. The image is cropped to fit the available space.</td>
+</tr>
+<tr>
+<td><code>fit</code></td>
+<td>The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped.</td>
+</tr>
+<tr>
+<td><code>none</code></td>
+<td>The image is not scaled.</td>
+</tr>
+<tr>
+<td><code>scale-down</code></td>
+<td>The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped.</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="" src="../pics/imageScaleAnimated.gif" /></p>
+<h4 id="image-url">Image URL</h4>
+<p>The <em>Image URL</em> is a simple text field. The URL can be a web address (e.g. a URL on the open web) or a Canvas file URL. The following animated image demonstrates the process of obtaining a URL for an image within a Canvas course's files area and using it with Collections.</p>
+<p><img alt="" src="../pics/imageUrlAnimated.gif" /></p>
+<h3 id="add-a-label-and-a-number">Add a label and a number</h3>
+<p>The label helps identify to the student that a Canvas module is a <em>Lecture</em>, <em>Workshop</em>, <em>Assignment</em> or some other context/learning design specific object. It helps them understand why, what, and how to engage with the module. The number helps establish the order of the objects.</p>
+<p>A label is simple any sequence of characters (including emojis). </p>
+<p>There are two options for the number:</p>
+<ol>
+<li><em>Auto-number</em> - the number is automatically calculated based on the order of the modules in the collection. The first lecture will be <em>Lecture 1</em> the second <em>Lecture 2</em> and so on. This is the default.</li>
+<li><em>Explicitly specified string</em> - i.e. you can manually specify any sequence of characters, including emojis, or leave it blank.</li>
+</ol>
+<p>The <em>Auto-number</em> option is provided to enable modules to be moved around during re-design without having to manually update the number. </p>
+<h4 id="auto-number-example">Auto number example</h4>
+<p>For the current (somewhat contrived) example, it's been decided that the three modules in the <em>Why?</em> collection will be labelled <em>Why 1</em>, <em>Why 2</em> and <em>Why 3</em>. To achieve this, all three modules can be configured using the following approach for <em>label</em> and <em>number</em>. Note that the <em>Auto-number</em> checkbox is checked.</p>
+<p><img alt="" src="../pics/whyAutoNumberForm.png" />  </p>
+<p>With all three <em>Why?</em> collection modules configured this way the representation looks like this.</p>
+<p><img alt="" src="../pics/autoLabel.png" /></p>
+<h4 id="explicitly-specified-string-examples">Explicitly specified string examples</h4>
+<p>Both label and number can include any characters you provide - including emojis etc. To explicitly specify a string for the number, you first need to uncheck the <em>Auto-number</em> checkbox. The following image shows the <em>Why 2</em> module label modified to include an emoji, and the number modified to include a string of characters (including an emoji).</p>
+<p><img alt="" src="../pics/explicitNumberExample.png" />  </p>
+<p>With similar changes to the label and number for the other two <em>Why?</em> modules the representation looks (for a short time) like the following image.</p>
+<p><img alt="" src="../pics/explictNumberRepresentation.png" />  </p>
+<h3 id="add-a-date-and-date-label">Add a date and date label</h3>
+<h3 id="configure-a-module-for-the-assessment-table-representation">Configure a module for the assessment table representation</h3>
+<p>The <em>assessment table</em> representation - as the name suggests - is explicitly designed to represent the collection of assessment information for a course. Consequently, it includes (and perhaps requires) some assessment specific metadata, summarised in the following table.</p>
+<table>
+<thead>
+<tr>
+<th>Purpose</th>
+<th>Source</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Title</td>
+<td>Name of the Canvas module containing assessment information</td>
+<td>The title of the assessment item</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>The standard Collections description</td>
+<td>A summary of the assessment item</td>
+</tr>
+<tr>
+<td>Due Date</td>
+<td>The standard Collections date</td>
+<td>The date the assessment item is due or perhaps a date range when the assessment is available</td>
+</tr>
+<tr>
+<td>Weighting</td>
+<td>Additional Collection's metadata with the name <em>weighting</em></td>
+<td>The % weight of the assessment item</td>
+</tr>
+<tr>
+<td>Learning outcomes</td>
+<td>Additional Collection's metadata with the name <em>learning outcomes</em></td>
+<td>The learning outcomes that the assessment item is intended to assess</td>
+</tr>
+</tbody>
+</table>
+<p>The first three are standard metadata already explained above. The last two are additional metadata that can be added to any module. The following animated image demonstrates the process of adding these to an assessment table representation.</p>
+<p><img alt="" src="../pics/assessmentTableMetadataAnimated.gif" /></p>
 
 
 
@@ -1642,7 +1875,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../../changes/add-a-module/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Add a module" rel="prev">
+        <a href="../configure-collections/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Configure Collections" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -1651,20 +1884,20 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Add a module
+              Configure Collections
             </div>
           </div>
         </a>
       
       
         
-        <a href="../fix-claytons-card-css/" class="md-footer__link md-footer__link--next" aria-label="Next: Fix Claytons Card CSS" rel="next">
+        <a href="../set-up-claytons/" class="md-footer__link md-footer__link--next" aria-label="Next: Set up &#34;Claytons&#34;" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Fix Claytons Card CSS
+              Set up "Claytons"
             </div>
           </div>
           <div class="md-footer__button md-icon">
