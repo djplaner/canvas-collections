@@ -498,7 +498,7 @@ export default class GriffithCardsView extends cc_View {
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
-	      <a href="#${module.id}" class="cc-card-link"></a>
+	      <a href="#module_${module.id}" class="cc-card-link"></a>
 		  <img class="cc-card-image ${imageSize}" src="${imageUrl}" alt="Image representing '${escModuleName}'">
       	${DATE_WIDGET}
       	${COMING_SOON}
@@ -874,7 +874,7 @@ export default class GriffithCardsView extends cc_View {
 <!--	    <p>&nbsp;<br /> &nbsp;</p> -->
 		<div class="cc-card-engage">
 			 <div class="cc-card-engage-button">
-	       		<a href="#${module.id}" class="gu-engage">
+	       		<a href="#module_${module.id}" class="gu-engage">
 			   ${engage}
 			 </a>
 	         </div>

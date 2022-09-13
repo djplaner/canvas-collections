@@ -4317,7 +4317,7 @@ const TABLE_ROW_HTML = `
 		  <tr role="row">
           <td role="cell">
             <span class="cc-responsive-table__heading" aria-hidden="true">Title</span>
-            <div class="cc-table-cell-text"><p><a href="#{{MODULE-ID}}">
+            <div class="cc-table-cell-text"><p><a href="{{MODULE-ID}}">
               {{TITLE}}
 
             </a></p> </div>
@@ -4469,7 +4469,8 @@ class AssessmentTableView extends cc_View {
       }
 
       let mapping = {
-        'MODULE-ID': modules[i].id,
+        //'MODULE-ID': modules[i].id,
+        'MODULE-ID': `${modulesUrl}/#${modules[i].id}`,
         'DESCRIPTION': modules[i].description,
         'TITLE': this.model.deLabelModuleName(modules[i]),
         'TYPE': modules[i].label,
@@ -4479,7 +4480,7 @@ class AssessmentTableView extends cc_View {
 
       // for a claytons view - MODULE-ID needs to become a full link
       if (variety === 'claytons') {
-        mapping['MODULE-ID'] = `${modulesUrl}/#${modules[i].id}`;
+        mapping['MODULE-ID'] = `${modulesUrl}#module_${modules[i].id}`;
       }
 
       // check metadata for weighting and learning outcomes
@@ -5088,7 +5089,7 @@ class GriffithCardsView extends cc_View {
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
-	      <a href="#${module.id}" class="cc-card-link"></a>
+	      <a href="#module_${module.id}" class="cc-card-link"></a>
 		  <img class="cc-card-image ${imageSize}" src="${imageUrl}" alt="Image representing '${escModuleName}'">
       	${DATE_WIDGET}
       	${COMING_SOON}
@@ -5464,7 +5465,7 @@ class GriffithCardsView extends cc_View {
 <!--	    <p>&nbsp;<br /> &nbsp;</p> -->
 		<div class="cc-card-engage">
 			 <div class="cc-card-engage-button">
-	       		<a href="#${module.id}" class="gu-engage">
+	       		<a href="#module_${module.id}" class="gu-engage">
 			   ${engage}
 			 </a>
 	         </div>

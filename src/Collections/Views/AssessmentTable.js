@@ -226,7 +226,7 @@ const TABLE_ROW_HTML = `
 		  <tr role="row">
           <td role="cell">
             <span class="cc-responsive-table__heading" aria-hidden="true">Title</span>
-            <div class="cc-table-cell-text"><p><a href="#{{MODULE-ID}}">
+            <div class="cc-table-cell-text"><p><a href="{{MODULE-ID}}">
               {{TITLE}}
 
             </a></p> </div>
@@ -378,7 +378,8 @@ export default class AssessmentTableView extends cc_View {
       }
 
       let mapping = {
-        'MODULE-ID': modules[i].id,
+        //'MODULE-ID': modules[i].id,
+        'MODULE-ID': `${modulesUrl}/#${modules[i].id}`,
         'DESCRIPTION': modules[i].description,
         'TITLE': this.model.deLabelModuleName(modules[i]),
         'TYPE': modules[i].label,
@@ -388,7 +389,7 @@ export default class AssessmentTableView extends cc_View {
 
       // for a claytons view - MODULE-ID needs to become a full link
       if (variety === 'claytons') {
-        mapping['MODULE-ID'] = `${modulesUrl}/#${modules[i].id}`;
+        mapping['MODULE-ID'] = `${modulesUrl}#module_${modules[i].id}`;
       }
 
       // check metadata for weighting and learning outcomes
