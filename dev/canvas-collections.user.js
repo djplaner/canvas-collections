@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.18
+// @version      0.8.19
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -433,6 +433,16 @@ class cc_ConfigurationModel {
 					module.num = '';
 				}
 			}
+
+			// if field is image, 
+			if (fieldName === 'image') {
+				// use regex to check if value contains open and close iframe tags
+				const match = value.toLowerCase().match(/^.*(<iframe.*?src=".*?".*?<\/iframe>).*$/);
+				if (match) {
+					value = match[1];
+				}
+			}
+
 
 			module[fieldName] = value;
 		}
@@ -1117,6 +1127,14 @@ class cc_ConfigurationView extends cc_View {
 			}
 			imageSizeOptions += `<option value="${option}" ${selected}>${option}</option>`;
 		}
+
+		// encode an iframe in moduleConfig.image
+		const match = moduleConfig.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
+		let imageUrl = moduleConfig.image;
+		if (match) {
+			imageUrl = this.controller.parentController.configurationStore.encodeHTML(imageUrl);
+		}
+
 		// TODO need to generate the date information
 		// - current kludge just handles the case when there is no date
 		// - eventually will need to handle the CSS 
@@ -1336,7 +1354,8 @@ class cc_ConfigurationView extends cc_View {
 											<a id="cc-about-image-url" target="_blank" href="">
 			   				<i class="icon-question cc-module-icon"></i></a>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
-					        value="${moduleConfig.image}">
+					        value="${imageUrl}">
+					        <!-- value="${moduleConfig.image}"> -->
 					<br clear="all" />
 					  
 				    <label for="cc-module-config-${moduleDetail.id}-description" 
@@ -6741,6 +6760,7 @@ class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
+			module.image = this.decodeHTML(module.image);
 			// need to check the URL for image as the RCE screws with the URL
 			if (module.image.startsWith('/')) {
 				module.image = `https://${window.location.hostname}${module.image}`;
@@ -7071,14 +7091,20 @@ class cc_ConfigurationStore {
 		for (let key in this.parentController.cc_configuration.MODULES) {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.encodeHTML(module.description);
+			module.collection = this.encodeHTML(module.collection);
+			module.image = this.encodeHTML(module.image);
+			module.name = this.encodeHTML(module.name);
 		}
-		content = content.replace('{{CONFIG}}',
-			JSON.stringify(this.parentController.cc_configuration));
+//		content = content.replace('{{CONFIG}}',
+	//		JSON.stringify(this.parentController.cc_configuration));
 
 		// now de-encode the description for the page
 		for (let key in this.parentController.cc_configuration.MODULES) {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.decodeHTML(module.description);
+			module.collection = this.decodeHTML(module.collection);
+			module.name = this.decodeHTML(module.name);
+			module.url = this.decodeHTML(module.url);
 		}
 
 		// get the current time as string
@@ -7173,13 +7199,16 @@ class cc_ConfigurationStore {
 	decodeHTML(html) {
 		var txt = document.createElement("textarea");
 		txt.innerHTML = html;
-		return txt.value;
+		let value = txt.value;
+		// replace any &quot; with "
+		value = value.replace(/&quot;/g, '"');
+		return value;
 	}
 
 	encodeHTML(html) {
 		let txt = document.createElement("textarea");
 		txt.innerHTML = html;
-		return txt.innerHTML;
+		return txt.innerHTML.replace(/"/g, '&quot;');
 	}
 
 	/**

@@ -415,6 +415,16 @@ export default class cc_ConfigurationModel {
 				}
 			}
 
+			// if field is image, 
+			if (fieldName === 'image') {
+				// use regex to check if value contains open and close iframe tags
+				const match = value.toLowerCase().match(/^.*(<iframe.*?src=".*?".*?<\/iframe>).*$/);
+				if (match) {
+					value = match[1];
+				}
+			}
+
+
 			module[fieldName] = value;
 		}
 	}

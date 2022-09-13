@@ -200,6 +200,7 @@ export default class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
+			module.image = this.decodeHTML(module.image);
 			// need to check the URL for image as the RCE screws with the URL
 			if (module.image.startsWith('/')) {
 				module.image = `https://${window.location.hostname}${module.image}`;
@@ -530,6 +531,9 @@ export default class cc_ConfigurationStore {
 		for (let key in this.parentController.cc_configuration.MODULES) {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.encodeHTML(module.description);
+			module.collection = this.encodeHTML(module.collection);
+			module.image = this.encodeHTML(module.image);
+			module.name = this.encodeHTML(module.name);
 		}
 		content = content.replace('{{CONFIG}}',
 			JSON.stringify(this.parentController.cc_configuration));
@@ -538,6 +542,9 @@ export default class cc_ConfigurationStore {
 		for (let key in this.parentController.cc_configuration.MODULES) {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.decodeHTML(module.description);
+			module.collection = this.decodeHTML(module.collection);
+			module.name = this.decodeHTML(module.name);
+			module.url = this.decodeHTML(module.url);
 		}
 
 		// get the current time as string
@@ -632,13 +639,16 @@ export default class cc_ConfigurationStore {
 	decodeHTML(html) {
 		var txt = document.createElement("textarea");
 		txt.innerHTML = html;
-		return txt.value;
+		let value = txt.value;
+		// replace any &quot; with "
+		value = value.replace(/&quot;/g, '"');
+		return value;
 	}
 
 	encodeHTML(html) {
 		let txt = document.createElement("textarea");
 		txt.innerHTML = html;
-		return txt.innerHTML;
+		return txt.innerHTML.replace(/"/g, '&quot;');
 	}
 
 	/**

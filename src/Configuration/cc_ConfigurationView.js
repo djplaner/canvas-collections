@@ -536,6 +536,14 @@ export default class cc_ConfigurationView extends cc_View {
 			}
 			imageSizeOptions += `<option value="${option}" ${selected}>${option}</option>`;
 		}
+
+		// encode an iframe in moduleConfig.image
+		const match = moduleConfig.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
+		let imageUrl = moduleConfig.image;
+		if (match) {
+			imageUrl = this.controller.parentController.configurationStore.encodeHTML(imageUrl);
+		}
+
 		// TODO need to generate the date information
 		// - current kludge just handles the case when there is no date
 		// - eventually will need to handle the CSS 
@@ -755,7 +763,8 @@ export default class cc_ConfigurationView extends cc_View {
 											<a id="cc-about-image-url" target="_blank" href="">
 			   				<i class="icon-question cc-module-icon"></i></a>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
-					        value="${moduleConfig.image}">
+					        value="${imageUrl}">
+					        <!-- value="${moduleConfig.image}"> -->
 					<br clear="all" />
 					  
 				    <label for="cc-module-config-${moduleDetail.id}-description" 
