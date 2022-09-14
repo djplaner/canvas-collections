@@ -12,6 +12,8 @@ theme:
   name: material
   font:
     text: Arial
+  plugins:
+    - social
   palette:
     - scheme: default
       primary: red

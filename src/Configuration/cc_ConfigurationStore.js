@@ -483,7 +483,7 @@ export default class cc_ConfigurationStore {
 		// - boiler plate description HTML to start
 		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
 
-				if (this.hasOwnProperty('parentController') &&
+		if (this.hasOwnProperty('parentController') &&
 			this.parentController.hasOwnProperty('cc_configuration') &&
 			this.parentController.cc_configuration.hasOwnProperty('MODULES')) {
 
@@ -535,8 +535,10 @@ export default class cc_ConfigurationStore {
 			module.image = this.encodeHTML(module.image);
 			module.name = this.encodeHTML(module.name);
 		}
-		content = content.replace('{{CONFIG}}',
-			JSON.stringify(this.parentController.cc_configuration));
+		let safeContent = JSON.stringify(this.parentController.cc_configuration);
+		if (safeContent) {
+			content = content.replace('{{CONFIG}}', safeContent);
+		}
 
 		// now de-encode the description for the page
 		for (let key in this.parentController.cc_configuration.MODULES) {
@@ -544,7 +546,7 @@ export default class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
-			module.url = this.decodeHTML(module.url);
+			module.image = this.decodeHTML(module.image);
 		}
 
 		// get the current time as string
@@ -641,14 +643,22 @@ export default class cc_ConfigurationStore {
 		txt.innerHTML = html;
 		let value = txt.value;
 		// replace any &quot; with "
-		value = value.replace(/&quot;/g, '"');
+		value = value.replaceAll(/&quot;/g, '"');
 		return value;
 	}
 
-	encodeHTML(html) {
+	encodeHTML(html, json = true) {
 		let txt = document.createElement("textarea");
 		txt.innerHTML = html;
-		return txt.innerHTML.replace(/"/g, '&quot;');
+		let value = txt.innerHTML;
+		if (json) {
+			// for Canvas JSON, escape the quotes
+			return value.replaceAll(/"/g, '\"');
+
+		} else {
+			// for not JSON (i.e. HTML) encode the quotes
+			return value.replaceAll(/"/g, '&quot;');
+		}
 	}
 
 	/**

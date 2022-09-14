@@ -236,7 +236,7 @@ export default class cc_ConfigurationView extends cc_View {
 			targetSelector: "#cc-about-unpublished",
 			animateFunction: "spin",
 			persistent: true,
-			href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished.html"
+			href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
 		};
 
 		// append unpublished onto this.TOOLTIPS
@@ -541,7 +541,7 @@ export default class cc_ConfigurationView extends cc_View {
 		const match = moduleConfig.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
 		let imageUrl = moduleConfig.image;
 		if (match) {
-			imageUrl = this.controller.parentController.configurationStore.encodeHTML(imageUrl);
+			imageUrl = this.controller.parentController.configurationStore.encodeHTML(imageUrl,false);
 		}
 
 		// TODO need to generate the date information

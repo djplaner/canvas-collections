@@ -456,8 +456,6 @@ export default class GriffithCardsView extends cc_View {
 	 * @returns {DOMElement} for a single card
 	 */
 	generateCard(module, published = true) {
-		const imageUrl = this.generateCardImageUrl(module);
-		const imageSize = this.generateCardImageSize(module);
 
 		const moduleName = this.model.deLabelModuleName(module);
 
@@ -470,6 +468,8 @@ export default class GriffithCardsView extends cc_View {
 		if (module.date && (module.date.week || (module.date.month && module.date.date))) {
 			DATE_WIDGET = this.generateCardDate(module.date);
 		}
+
+		let IMAGE_IFRAME = this.generateCardImage(module);
 
 		const description = module.description;
 
@@ -492,14 +492,12 @@ export default class GriffithCardsView extends cc_View {
 			}
 		}
 
-		// escModuleName is a version of moduleName with all HTML and special characters escaped
-		let escModuleName = moduleName.replace(/(["'])/g, "\\$1");
 
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
 	      <a href="#module_${module.id}" class="cc-card-link"></a>
-		  <img class="cc-card-image ${imageSize}" src="${imageUrl}" alt="Image representing '${escModuleName}'">
+		  ${IMAGE_IFRAME}
       	${DATE_WIDGET}
       	${COMING_SOON}
 	 	${PUBLISHED}
@@ -560,6 +558,28 @@ export default class GriffithCardsView extends cc_View {
 		return wrapper;
 	}
 
+	/**
+	 * Given details of a module, generate HTML string for the module.image representation
+	 * Two possible cases
+	 * 1. module.image is the URL for an image
+	 * 2. module.image is the HTML for an iframe 
+	 */
+
+	generateCardImage(module) {
+
+		// is module.image an iframe?
+		const match = module.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
+		if (match) {
+			return module.image;
+		}
+		const imageUrl = this.generateCardImageUrl(module);
+		const imageSize = this.generateCardImageSize(module);
+		// escModuleName is a version of moduleName with all HTML and special characters escaped
+		let escModuleName = module.name.replace(/(["'])/g, "\\$1");
+
+		return `<img class="cc-card-image ${imageSize}" src="${imageUrl}" 
+		 				alt="Image representing '${escModuleName}'"> `;
+	}
 	/**
 	 * generate a coming soon html element for the current module
 	 * @param {Object} module 

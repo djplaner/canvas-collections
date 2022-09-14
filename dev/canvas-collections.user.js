@@ -827,7 +827,7 @@ class cc_ConfigurationView extends cc_View {
 			targetSelector: "#cc-about-unpublished",
 			animateFunction: "spin",
 			persistent: true,
-			href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished.html"
+			href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
 		};
 
 		// append unpublished onto this.TOOLTIPS
@@ -1132,7 +1132,7 @@ class cc_ConfigurationView extends cc_View {
 		const match = moduleConfig.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
 		let imageUrl = moduleConfig.image;
 		if (match) {
-			imageUrl = this.controller.parentController.configurationStore.encodeHTML(imageUrl);
+			imageUrl = this.controller.parentController.configurationStore.encodeHTML(imageUrl,false);
 		}
 
 		// TODO need to generate the date information
@@ -5047,8 +5047,6 @@ class GriffithCardsView extends cc_View {
 	 * @returns {DOMElement} for a single card
 	 */
 	generateCard(module, published = true) {
-		const imageUrl = this.generateCardImageUrl(module);
-		const imageSize = this.generateCardImageSize(module);
 
 		const moduleName = this.model.deLabelModuleName(module);
 
@@ -5061,6 +5059,8 @@ class GriffithCardsView extends cc_View {
 		if (module.date && (module.date.week || (module.date.month && module.date.date))) {
 			DATE_WIDGET = this.generateCardDate(module.date);
 		}
+
+		let IMAGE_IFRAME = this.generateCardImage(module);
 
 		const description = module.description;
 
@@ -5083,14 +5083,12 @@ class GriffithCardsView extends cc_View {
 			}
 		}
 
-		// escModuleName is a version of moduleName with all HTML and special characters escaped
-		let escModuleName = moduleName.replace(/(["'])/g, "\\$1");
 
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
 	      <a href="#module_${module.id}" class="cc-card-link"></a>
-		  <img class="cc-card-image ${imageSize}" src="${imageUrl}" alt="Image representing '${escModuleName}'">
+		  ${IMAGE_IFRAME}
       	${DATE_WIDGET}
       	${COMING_SOON}
 	 	${PUBLISHED}
@@ -5151,6 +5149,28 @@ class GriffithCardsView extends cc_View {
 		return wrapper;
 	}
 
+	/**
+	 * Given details of a module, generate HTML string for the module.image representation
+	 * Two possible cases
+	 * 1. module.image is the URL for an image
+	 * 2. module.image is the HTML for an iframe 
+	 */
+
+	generateCardImage(module) {
+
+		// is module.image an iframe?
+		const match = module.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
+		if (match) {
+			return module.image;
+		}
+		const imageUrl = this.generateCardImageUrl(module);
+		const imageSize = this.generateCardImageSize(module);
+		// escModuleName is a version of moduleName with all HTML and special characters escaped
+		let escModuleName = module.name.replace(/(["'])/g, "\\$1");
+
+		return `<img class="cc-card-image ${imageSize}" src="${imageUrl}" 
+		 				alt="Image representing '${escModuleName}'"> `;
+	}
 	/**
 	 * generate a coming soon html element for the current module
 	 * @param {Object} module 
@@ -7044,7 +7064,7 @@ class cc_ConfigurationStore {
 		// - boiler plate description HTML to start
 		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
 
-				if (this.hasOwnProperty('parentController') &&
+		if (this.hasOwnProperty('parentController') &&
 			this.parentController.hasOwnProperty('cc_configuration') &&
 			this.parentController.cc_configuration.hasOwnProperty('MODULES')) {
 
@@ -7096,8 +7116,10 @@ class cc_ConfigurationStore {
 			module.image = this.encodeHTML(module.image);
 			module.name = this.encodeHTML(module.name);
 		}
-//		content = content.replace('{{CONFIG}}',
-	//		JSON.stringify(this.parentController.cc_configuration));
+		let safeContent = JSON.stringify(this.parentController.cc_configuration);
+		if (safeContent) {
+			content = content.replace('{{CONFIG}}', safeContent);
+		}
 
 		// now de-encode the description for the page
 		for (let key in this.parentController.cc_configuration.MODULES) {
@@ -7105,7 +7127,7 @@ class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
-			module.url = this.decodeHTML(module.url);
+			module.image = this.decodeHTML(module.image);
 		}
 
 		// get the current time as string
@@ -7202,14 +7224,22 @@ class cc_ConfigurationStore {
 		txt.innerHTML = html;
 		let value = txt.value;
 		// replace any &quot; with "
-		value = value.replace(/&quot;/g, '"');
+		value = value.replaceAll(/&quot;/g, '"');
 		return value;
 	}
 
-	encodeHTML(html) {
+	encodeHTML(html, json = true) {
 		let txt = document.createElement("textarea");
 		txt.innerHTML = html;
-		return txt.innerHTML.replace(/"/g, '&quot;');
+		let value = txt.innerHTML;
+		if (json) {
+			// for Canvas JSON, escape the quotes
+			return value.replaceAll(/"/g, '\\"');
+
+		} else {
+			// for not JSON (i.e. HTML) encode the quotes
+			return value.replaceAll(/"/g, '&quot;');
+		}
 	}
 
 	/**
