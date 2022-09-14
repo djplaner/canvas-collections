@@ -365,15 +365,18 @@ export default class AssessmentTableView extends cc_View {
         rowHtml = TABLE_ROW_HTML_CLAYTONS;
       }
 
-      const dueDate = modules[i].date;
+      let calendarDate = this.generateCalendarDate(modules[i].date);
+      // just work with a single date for now (date range to come)
+      //const dueDate = modules[i].date;
+      const dueDate = calendarDate.from;
       let dateLabel = '';
       let dueDateString = '';
       if (dueDate ) {
-        if ( dueDate.month) {
-          dueDateString = `${dueDate.month} ${dueDate.date}`;
+        if ( dueDate.MONTH) {
+          dueDateString = `${dueDate.MONTH} ${dueDate.DATE}`;
         }
-        if ( dueDate.label ) {
-          dateLabel = dueDate.label;
+        if ( modules[i].date.label ) {
+          dateLabel = modules[i].date.label;
         }
       }
 

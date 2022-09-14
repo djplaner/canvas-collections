@@ -544,6 +544,24 @@ class cc_View {
 	constructor(model, controller) {
 		this.model = model;
 		this.controller = controller;
+
+		// if this.controller has parentController property 
+		// TODO clean up this KLUDGE
+		if (
+			this.controller.hasOwnProperty('parentController') &&
+			this.controller.parentController.hasOwnProperty('calendar')
+		) {
+			// old style
+			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
+			this.calendar = this.controller.parentController.calendar;
+		} else if (
+			this.model.hasOwnProperty('controller') &&
+			this.model.controller.hasOwnProperty('parentController') &&
+			this.model.controller.parentController.hasOwnProperty('calendar')) {
+			this.calendar = this.model.controller.parentController.calendar;
+		} else {
+			alert("Another funny calendar miss. Fix it");
+		}
 	}
 
 	addTooltips() {
@@ -586,7 +604,100 @@ class cc_View {
 	}
 
 
+	/**
+ * Generate the HTML for the date widget, features include
+ * - single date or date period
+ * - university week date
+ * - specific date
+ * - optional time
+ * @param {Object} module 
+ */
+	generateCalendarDate(dateJson) {
+		/* date information in 
+		   All attributes are optional
+		   module.date {
+
+			label:
+			week:  
+			day:
+			month:
+			date:
+			endDate: { repeat all of first date, except label}
+		} */
+
+		const date = {
+			"from": {},
+			"to": undefined
+		};
+
+		date.from = this.convertUniDateToReal(dateJson);
+		if (dateJson.endDate) {
+			date.to = this.convertUniDateToReal(dateJson.endDate);
+			this.generateDualDate(date);
+		}
+		return date;
+
+//		return this.convertDateToHtml(date);
+
 	}
+
+	/**
+	 * Take a Uni date in "JSON" format and convert to an object with 
+	 * actual real dates
+	 * @param {Object} dateJson 
+	 * @returns 
+	 */
+
+	convertUniDateToReal(dateJson) {
+
+		let firstDate = {};
+
+		firstDate.DATE_LABEL = dateJson.label || '';
+
+		firstDate.WEEK = dateJson.week || "";
+		firstDate.DAY = dateJson.day || "Monday"; // is this the right default
+		// remove all but the first three letters of the day
+		firstDate.DAY = firstDate.DAY.substring(0, 3);
+		// Week needs more work to add the the day and string "Week"
+		// Also it should be HTML
+
+		firstDate.TIME = dateJson.time || "";
+		// convert 24 hour time into 12 hour time
+		if (firstDate.TIME) {
+			firstDate.TIME = this.model.convertFrom24To12Format(firstDate.TIME);
+		}
+
+		firstDate.MONTH = dateJson.month || "";
+		firstDate.DATE = dateJson.date || "";
+
+		// With week defined, we need to calculate MONTH and DATE based
+		// on university trimester
+		if (firstDate.WEEK !== "") {
+			// TODO should check for a day, if we wish to get the day
+			let actualDate = {};
+			if (firstDate.DAY === "" && this.hasOwnProperty('calendar')) {
+				// no special day specified, just get the start of the week
+				actualDate = this.calendar.getDate(firstDate.WEEK);
+			} else if (this.hasOwnProperty('calendar')) {
+				// need go get the date for a particular day
+				actualDate = this.calendar.getDate(firstDate.WEEK, false, firstDate.DAY);
+			}
+			// actualDate { date/month/year }
+			firstDate.DATE = actualDate.date;
+			firstDate.MONTH = actualDate.month;
+		}
+
+		// no date information defined, no date widget
+		if (firstDate.WEEK === "" && firstDate.TIME === "" &&
+			firstDate.MONTH === "" && firstDate.DATE === "") {
+			return "";
+		}
+		return firstDate;
+	}
+
+
+
+}
 
 // src/Configuration/cc_ConfigurationView.js
 /**
@@ -4456,15 +4567,18 @@ class AssessmentTableView extends cc_View {
         rowHtml = TABLE_ROW_HTML_CLAYTONS;
       }
 
-      const dueDate = modules[i].date;
+      let calendarDate = this.generateCalendarDate(modules[i].date);
+      // just work with a single date for now (date range to come)
+      //const dueDate = modules[i].date;
+      const dueDate = calendarDate.from;
       let dateLabel = '';
       let dueDateString = '';
       if (dueDate ) {
-        if ( dueDate.month) {
-          dueDateString = `${dueDate.month} ${dueDate.date}`;
+        if ( dueDate.MONTH) {
+          dueDateString = `${dueDate.MONTH} ${dueDate.DATE}`;
         }
-        if ( dueDate.label ) {
-          dateLabel = dueDate.label;
+        if ( modules[i].date.label ) {
+          dateLabel = modules[i].date.label;
         }
       }
 
@@ -7234,7 +7348,7 @@ class cc_ConfigurationStore {
 		let value = txt.innerHTML;
 		if (json) {
 			// for Canvas JSON, escape the quotes
-			return value.replaceAll(/"/g, '\\"');
+			return value.replaceAll(/"/g, '\"');
 
 		} else {
 			// for not JSON (i.e. HTML) encode the quotes
