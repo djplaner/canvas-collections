@@ -97,6 +97,10 @@ export default class cc_View {
 			endDate: { repeat all of first date, except label}
 		} */
 
+		if (!dateJson) {
+			return undefined;
+		}
+
 		const date = {
 			"from": {},
 			"to": undefined
@@ -124,7 +128,10 @@ export default class cc_View {
 
 		let firstDate = {};
 
-		firstDate.DATE_LABEL = dateJson.label || '';
+		firstDate.DATE_LABEL = "";
+		if (dateJson.hasOwnProperty('label')) {
+			firstDate.DATE_LABEL = dateJson.label;
+		} 
 
 		firstDate.WEEK = dateJson.week || "";
 		firstDate.DAY = dateJson.day || "Monday"; // is this the right default

@@ -311,6 +311,36 @@ export default class cc_ConfigurationView extends cc_View {
 		// insert moduleConfigHtml afterend of moduleHeader
 		moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
 
+		//----------------------------
+		// Now able to use JS to make various mods to the form
+
+		// Add the image url input#cc-module-config-${moduleDetail.id}-image - need to set the value
+		// to the image url
+		const imageInput = document.getElementById(`cc-module-config-${moduleDetail.id}-image`);
+		if (imageInput) {
+			imageInput.value = moduleDetail.image;
+		}
+		// add the label cc-module-config-${moduleDetail.id}-label"
+		const labelInput = document.getElementById(`cc-module-config-${moduleDetail.id}-label`);
+		if (labelInput && moduleDetail.label) {
+			labelInput.value = moduleDetail.label;
+		}
+		// add the meta data stuff
+
+		for (let key in moduleDetail.metadata) {
+			// cc-module-config-${moduleDetail.id}-metadata-${key}-name is set to key
+			// cc-module-config-${moduleDetail.id}-metadata-${key}-value is set to moduleDetail.metadata[key]
+			const nameInput = document.getElementById(`cc-module-config-${moduleDetail.id}-metadata-${key}-name`);
+			if (nameInput) {
+				nameInput.value = key;
+			}
+			const valueInput = document.getElementById(`cc-module-config-${moduleDetail.id}-metadata-${key}-value`);
+			if (valueInput) {
+				valueInput.value = moduleDetail.metadata[key];
+			}
+		}
+
+
 		// try to start tinymce editor on the textarea
 		//tinymce.init( {selector: 'textarea'});
 
@@ -538,11 +568,11 @@ export default class cc_ConfigurationView extends cc_View {
 		}
 
 		// encode an iframe in moduleConfig.image
-		const match = moduleConfig.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
+/*		const match = moduleConfig.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
 		let imageUrl = moduleConfig.image;
 		if (match) {
 			imageUrl = this.controller.parentController.configurationStore.encodeHTML(imageUrl,false);
-		}
+		} */
 
 		// TODO need to generate the date information
 		// - current kludge just handles the case when there is no date
@@ -630,10 +660,12 @@ export default class cc_ConfigurationView extends cc_View {
 			autonumStyle = "color:grey;";
 		}
 
-		let label = "";
+/*		let label = "";
 		if (moduleConfig.hasOwnProperty('label')) {
 			label = moduleConfig.label;
-		}
+			// quote any " in the label
+			label = label.replaceAll(/"/g, '&quot;');
+		} */
 
 		const additionalMetaDataHTML = this.getAdditionalMetaDataHTML(moduleDetail);
 
@@ -691,7 +723,7 @@ export default class cc_ConfigurationView extends cc_View {
 			   				<i class="icon-question cc-module-icon"></i></a>
 						</label> <br />
 						<input type="text" id="cc-module-config-${moduleDetail.id}-label"
-					    	style="width:10rem" value="${label}" />
+					    	style="width:10rem" value="" />
 					</div>
 					<div>
 				    	<label for="cc-module-config-${moduleDetail.id}-num">Number</label>
@@ -763,7 +795,7 @@ export default class cc_ConfigurationView extends cc_View {
 											<a id="cc-about-image-url" target="_blank" href="">
 			   				<i class="icon-question cc-module-icon"></i></a>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
-					        value="${imageUrl}">
+					        value="">
 					        <!-- value="${moduleConfig.image}"> -->
 					<br clear="all" />
 					  
@@ -841,11 +873,11 @@ export default class cc_ConfigurationView extends cc_View {
 				<tr>
 					<td>
 						<input type="text" id="cc-module-config-${module.id}-metadata-${key}-name"
-							value="${key}" />
+							value="" />
 					</td>
 					<td>
 						<input type="text" id="cc-module-config-${module.id}-metadata-${key}-value"
-							value="${module.metadata[key]}" />
+							value="" />
 					</td>
 					<td>
 						<i class="icon-trash cc-module-config-metadata-delete" 

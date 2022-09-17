@@ -625,6 +625,10 @@ class cc_View {
 			endDate: { repeat all of first date, except label}
 		} */
 
+		if (!dateJson) {
+			return undefined;
+		}
+
 		const date = {
 			"from": {},
 			"to": undefined
@@ -652,7 +656,10 @@ class cc_View {
 
 		let firstDate = {};
 
-		firstDate.DATE_LABEL = dateJson.label || '';
+		firstDate.DATE_LABEL = "";
+		if (dateJson.hasOwnProperty('label')) {
+			firstDate.DATE_LABEL = dateJson.label;
+		} 
 
 		firstDate.WEEK = dateJson.week || "";
 		firstDate.DAY = dateJson.day || "Monday"; // is this the right default
@@ -1013,6 +1020,36 @@ class cc_ConfigurationView extends cc_View {
 		// insert moduleConfigHtml afterend of moduleHeader
 		moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
 
+		//----------------------------
+		// Now able to use JS to make various mods to the form
+
+		// Add the image url input#cc-module-config-${moduleDetail.id}-image - need to set the value
+		// to the image url
+		const imageInput = document.getElementById(`cc-module-config-${moduleDetail.id}-image`);
+		if (imageInput) {
+			imageInput.value = moduleDetail.image;
+		}
+		// add the label cc-module-config-${moduleDetail.id}-label"
+		const labelInput = document.getElementById(`cc-module-config-${moduleDetail.id}-label`);
+		if (labelInput && moduleDetail.label) {
+			labelInput.value = moduleDetail.label;
+		}
+		// add the meta data stuff
+
+		for (let key in moduleDetail.metadata) {
+			// cc-module-config-${moduleDetail.id}-metadata-${key}-name is set to key
+			// cc-module-config-${moduleDetail.id}-metadata-${key}-value is set to moduleDetail.metadata[key]
+			const nameInput = document.getElementById(`cc-module-config-${moduleDetail.id}-metadata-${key}-name`);
+			if (nameInput) {
+				nameInput.value = key;
+			}
+			const valueInput = document.getElementById(`cc-module-config-${moduleDetail.id}-metadata-${key}-value`);
+			if (valueInput) {
+				valueInput.value = moduleDetail.metadata[key];
+			}
+		}
+
+
 		// try to start tinymce editor on the textarea
 		//tinymce.init( {selector: 'textarea'});
 
@@ -1240,11 +1277,11 @@ class cc_ConfigurationView extends cc_View {
 		}
 
 		// encode an iframe in moduleConfig.image
-		const match = moduleConfig.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
+/*		const match = moduleConfig.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
 		let imageUrl = moduleConfig.image;
 		if (match) {
 			imageUrl = this.controller.parentController.configurationStore.encodeHTML(imageUrl,false);
-		}
+		} */
 
 		// TODO need to generate the date information
 		// - current kludge just handles the case when there is no date
@@ -1332,10 +1369,12 @@ class cc_ConfigurationView extends cc_View {
 			autonumStyle = "color:grey;";
 		}
 
-		let label = "";
+/*		let label = "";
 		if (moduleConfig.hasOwnProperty('label')) {
 			label = moduleConfig.label;
-		}
+			// quote any " in the label
+			label = label.replaceAll(/"/g, '&quot;');
+		} */
 
 		const additionalMetaDataHTML = this.getAdditionalMetaDataHTML(moduleDetail);
 
@@ -1393,7 +1432,7 @@ class cc_ConfigurationView extends cc_View {
 			   				<i class="icon-question cc-module-icon"></i></a>
 						</label> <br />
 						<input type="text" id="cc-module-config-${moduleDetail.id}-label"
-					    	style="width:10rem" value="${label}" />
+					    	style="width:10rem" value="" />
 					</div>
 					<div>
 				    	<label for="cc-module-config-${moduleDetail.id}-num">Number</label>
@@ -1465,7 +1504,7 @@ class cc_ConfigurationView extends cc_View {
 											<a id="cc-about-image-url" target="_blank" href="">
 			   				<i class="icon-question cc-module-icon"></i></a>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
-					        value="${imageUrl}">
+					        value="">
 					        <!-- value="${moduleConfig.image}"> -->
 					<br clear="all" />
 					  
@@ -1543,11 +1582,11 @@ class cc_ConfigurationView extends cc_View {
 				<tr>
 					<td>
 						<input type="text" id="cc-module-config-${module.id}-metadata-${key}-name"
-							value="${key}" />
+							value="" />
 					</td>
 					<td>
 						<input type="text" id="cc-module-config-${module.id}-metadata-${key}-value"
-							value="${module.metadata[key]}" />
+							value="" />
 					</td>
 					<td>
 						<i class="icon-trash cc-module-config-metadata-delete" 
@@ -4531,7 +4570,7 @@ class AssessmentTableView extends cc_View {
     let message = document.createElement('div');
     message.className = 'cc-assessment-table';
 
-		const currentCollection = this.model.getCurrentCollection();
+    const currentCollection = this.model.getCurrentCollection();
     message.innerHTML = this.generateHTML(currentCollection);
     div.insertAdjacentElement('beforeend', message);
 
@@ -4541,7 +4580,7 @@ class AssessmentTableView extends cc_View {
    * Work through module details for this collection and generate HTML with
    * an assessment table
    */
-  generateHTML(collectionName, variety='') {
+  generateHTML(collectionName, variety = '') {
     let messageHtml = this.TABLE_HTML;
     if (variety === 'claytons') {
       messageHtml = TABLE_HTML_CLAYTONS;
@@ -4551,9 +4590,9 @@ class AssessmentTableView extends cc_View {
     const description = this.model.getCurrentCollectionDescription();
 
     // add a row for each module belonging to the collection
-//    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());
+    //    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());
     // get an array of all modules in display order
- 		const modules = this.model.getModulesCollections();
+    const modules = this.model.getModulesCollections();
     const modulesUrl = this.model.getModuleViewUrl();
     let tableRows = '';
     for (let i = 0; i < modules.length; i++) {
@@ -4567,18 +4606,22 @@ class AssessmentTableView extends cc_View {
         rowHtml = TABLE_ROW_HTML_CLAYTONS;
       }
 
-      let calendarDate = this.generateCalendarDate(modules[i].date);
-      // just work with a single date for now (date range to come)
-      //const dueDate = modules[i].date;
-      const dueDate = calendarDate.from;
       let dateLabel = '';
       let dueDateString = '';
-      if (dueDate ) {
-        if ( dueDate.MONTH) {
-          dueDateString = `${dueDate.MONTH} ${dueDate.DATE}`;
-        }
-        if ( modules[i].date.label ) {
-          dateLabel = modules[i].date.label;
+      let calendarDate = this.generateCalendarDate(modules[i].date);
+
+      if (calendarDate) {
+
+        // just work with a single date for now (date range to come)
+        //const dueDate = modules[i].date;
+        const dueDate = calendarDate.from;
+        if (dueDate) {
+          if (dueDate.MONTH) {
+            dueDateString = `${dueDate.MONTH} ${dueDate.DATE}`;
+          }
+          if (modules[i].date.label) {
+            dateLabel = modules[i].date.label;
+          }
         }
       }
 
@@ -4627,7 +4670,7 @@ class AssessmentTableView extends cc_View {
       editMode = ccController.editMode;
     }
 
-    if (!editMode || variety==='claytons') {
+    if (!editMode || variety === 'claytons') {
       messageHtml = this.emptyRemainingFields(messageHtml);
     }
 
@@ -7338,7 +7381,7 @@ class cc_ConfigurationStore {
 		txt.innerHTML = html;
 		let value = txt.value;
 		// replace any &quot; with "
-		value = value.replaceAll(/&quot;/g, '"');
+//		value = value.replaceAll(/&quot;/g, '"');
 		return value;
 	}
 
@@ -7346,14 +7389,15 @@ class cc_ConfigurationStore {
 		let txt = document.createElement("textarea");
 		txt.innerHTML = html;
 		let value = txt.innerHTML;
-		if (json) {
+/*		if (json) {
 			// for Canvas JSON, escape the quotes
 			return value.replaceAll(/"/g, '\"');
 
 		} else {
 			// for not JSON (i.e. HTML) encode the quotes
 			return value.replaceAll(/"/g, '&quot;');
-		}
+		} */
+		return value;
 	}
 
 	/**

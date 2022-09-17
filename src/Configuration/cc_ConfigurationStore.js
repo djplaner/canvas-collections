@@ -643,7 +643,7 @@ export default class cc_ConfigurationStore {
 		txt.innerHTML = html;
 		let value = txt.value;
 		// replace any &quot; with "
-		value = value.replaceAll(/&quot;/g, '"');
+//		value = value.replaceAll(/&quot;/g, '"');
 		return value;
 	}
 
@@ -651,14 +651,15 @@ export default class cc_ConfigurationStore {
 		let txt = document.createElement("textarea");
 		txt.innerHTML = html;
 		let value = txt.innerHTML;
-		if (json) {
+/*		if (json) {
 			// for Canvas JSON, escape the quotes
 			return value.replaceAll(/"/g, '\"');
 
 		} else {
 			// for not JSON (i.e. HTML) encode the quotes
 			return value.replaceAll(/"/g, '&quot;');
-		}
+		} */
+		return value;
 	}
 
 	/**

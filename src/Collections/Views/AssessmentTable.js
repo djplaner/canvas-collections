@@ -329,7 +329,7 @@ export default class AssessmentTableView extends cc_View {
     let message = document.createElement('div');
     message.className = 'cc-assessment-table';
 
-		const currentCollection = this.model.getCurrentCollection();
+    const currentCollection = this.model.getCurrentCollection();
     message.innerHTML = this.generateHTML(currentCollection);
     div.insertAdjacentElement('beforeend', message);
 
@@ -339,7 +339,7 @@ export default class AssessmentTableView extends cc_View {
    * Work through module details for this collection and generate HTML with
    * an assessment table
    */
-  generateHTML(collectionName, variety='') {
+  generateHTML(collectionName, variety = '') {
     let messageHtml = this.TABLE_HTML;
     if (variety === 'claytons') {
       messageHtml = TABLE_HTML_CLAYTONS;
@@ -349,9 +349,9 @@ export default class AssessmentTableView extends cc_View {
     const description = this.model.getCurrentCollectionDescription();
 
     // add a row for each module belonging to the collection
-//    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());
+    //    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());
     // get an array of all modules in display order
- 		const modules = this.model.getModulesCollections();
+    const modules = this.model.getModulesCollections();
     const modulesUrl = this.model.getModuleViewUrl();
     let tableRows = '';
     for (let i = 0; i < modules.length; i++) {
@@ -365,18 +365,22 @@ export default class AssessmentTableView extends cc_View {
         rowHtml = TABLE_ROW_HTML_CLAYTONS;
       }
 
-      let calendarDate = this.generateCalendarDate(modules[i].date);
-      // just work with a single date for now (date range to come)
-      //const dueDate = modules[i].date;
-      const dueDate = calendarDate.from;
       let dateLabel = '';
       let dueDateString = '';
-      if (dueDate ) {
-        if ( dueDate.MONTH) {
-          dueDateString = `${dueDate.MONTH} ${dueDate.DATE}`;
-        }
-        if ( modules[i].date.label ) {
-          dateLabel = modules[i].date.label;
+      let calendarDate = this.generateCalendarDate(modules[i].date);
+
+      if (calendarDate) {
+
+        // just work with a single date for now (date range to come)
+        //const dueDate = modules[i].date;
+        const dueDate = calendarDate.from;
+        if (dueDate) {
+          if (dueDate.MONTH) {
+            dueDateString = `${dueDate.MONTH} ${dueDate.DATE}`;
+          }
+          if (modules[i].date.label) {
+            dateLabel = modules[i].date.label;
+          }
         }
       }
 
@@ -425,7 +429,7 @@ export default class AssessmentTableView extends cc_View {
       editMode = ccController.editMode;
     }
 
-    if (!editMode || variety==='claytons') {
+    if (!editMode || variety === 'claytons') {
       messageHtml = this.emptyRemainingFields(messageHtml);
     }
 
