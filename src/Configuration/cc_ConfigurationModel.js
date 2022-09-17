@@ -68,6 +68,23 @@ export default class cc_ConfigurationModel {
 		return this.configShowing;
 	}
 
+	/**
+	 * @descr return the current value for the strm (study period) as a calculated by
+	 * the calendar, if there is no current calculate value, return the default 
+	 * @returns String - the current value for the strm (study period) or the default
+	 * containing "(default)"
+	 */
+	getStrm() {
+		if (this.controller.parentController.hasOwnProperty('calendar') &&
+			this.controller.parentController.calendar.hasOwnProperty('currentStrm') &&
+			this.controller.parentController.calendar.currentStrm) {
+			return this.controller.parentController.calendar.strm;
+		} else if ( this.controller.parentController.hasOwnProperty('calendar') ){
+			return `${this.controller.parentController.calendar.defaultPeriod} (default)`;
+		}
+		return "";
+	}
+
 	/*
 	 * REturn hash of all modules keyed on moduleId
 	**/

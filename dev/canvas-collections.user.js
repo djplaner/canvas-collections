@@ -87,6 +87,23 @@ class cc_ConfigurationModel {
 		return this.configShowing;
 	}
 
+	/**
+	 * @descr return the current value for the strm (study period) as a calculated by
+	 * the calendar, if there is no current calculate value, return the default 
+	 * @returns String - the current value for the strm (study period) or the default
+	 * containing "(default)"
+	 */
+	getStrm() {
+		if (this.controller.parentController.hasOwnProperty('calendar') &&
+			this.controller.parentController.calendar.hasOwnProperty('currentStrm') &&
+			this.controller.parentController.calendar.currentStrm) {
+			return this.controller.parentController.calendar.strm;
+		} else if ( this.controller.parentController.hasOwnProperty('calendar') ){
+			return `${this.controller.parentController.calendar.defaultPeriod} (default)`;
+		}
+		return "";
+	}
+
 	/*
 	 * REturn hash of all modules keyed on moduleId
 	**/
@@ -865,18 +882,22 @@ const CONFIG_VIEW_TOOLTIPS = [
 		targetSelector: "#cc-about-module-image-scale",
 		animateFunction: "spin",
 		//		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/image-scale"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-scale"
 	},
 	{
 		contentText: `Provide the URL for an image to associate with this module.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-image-url",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/image"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image"
 	},
-
-
-
+	{
+		contentText: `Specifies the specific calendar used to translate "Monday Week 1" into a date.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-strm",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#study-period"
+	},
 ];
 
 class cc_ConfigurationView extends cc_View {
@@ -1378,6 +1399,8 @@ class cc_ConfigurationView extends cc_View {
 			autonumStyle = "color:grey;";
 		}
 
+		const currentStrm = this.model.getStrm();
+
 /*		let label = "";
 		if (moduleConfig.hasOwnProperty('label')) {
 			label = moduleConfig.label;
@@ -1420,6 +1443,12 @@ class cc_ConfigurationView extends cc_View {
 			   display: inline;
 			   background-color: #eee;
 			   padding: 0.5em
+		   }
+		
+		   .cc-current-strm {
+			   font-size: 0.8rem;
+			   margin-left: 4rem;
+			   margin-top: 0.5rem
 		   }
 		</style>
 
@@ -1465,6 +1494,11 @@ class cc_ConfigurationView extends cc_View {
 					    	<a href="" id="cc-about-module-date" target="_blank">
 			   				<i class="icon-question cc-module-icon"></i></a>
 							<div class="cc-calculated-date">${calculatedDate}</div>
+							<div class="cc-current-strm">
+							   <strong>Study Period</strong>
+					    	 	<a href="" id="cc-about-module-strm" target="_blank">
+			   					<i class="icon-question cc-module-icon"></i></a>
+								${currentStrm}</div>
 						</div>
 					</div>
 					<div class="cc-module-config-collection-representation"

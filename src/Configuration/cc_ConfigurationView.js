@@ -147,18 +147,22 @@ const CONFIG_VIEW_TOOLTIPS = [
 		targetSelector: "#cc-about-module-image-scale",
 		animateFunction: "spin",
 		//		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/image-scale"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-scale"
 	},
 	{
 		contentText: `Provide the URL for an image to associate with this module.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-image-url",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/image"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image"
 	},
-
-
-
+	{
+		contentText: `Specifies the specific calendar used to translate "Monday Week 1" into a date.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-strm",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#study-period"
+	},
 ];
 
 export default class cc_ConfigurationView extends cc_View {
@@ -660,6 +664,8 @@ export default class cc_ConfigurationView extends cc_View {
 			autonumStyle = "color:grey;";
 		}
 
+		const currentStrm = this.model.getStrm();
+
 /*		let label = "";
 		if (moduleConfig.hasOwnProperty('label')) {
 			label = moduleConfig.label;
@@ -702,6 +708,12 @@ export default class cc_ConfigurationView extends cc_View {
 			   display: inline;
 			   background-color: #eee;
 			   padding: 0.5em
+		   }
+		
+		   .cc-current-strm {
+			   font-size: 0.7rem;
+			   margin-left: 3rem;
+			   margin-top: 0.5rem
 		   }
 		</style>
 
@@ -747,6 +759,11 @@ export default class cc_ConfigurationView extends cc_View {
 					    	<a href="" id="cc-about-module-date" target="_blank">
 			   				<i class="icon-question cc-module-icon"></i></a>
 							<div class="cc-calculated-date">${calculatedDate}</div>
+							<div class="cc-current-strm">
+							   <strong>Study Period</strong>
+					    	 	<a href="" id="cc-about-module-strm" target="_blank">
+			   					<i class="icon-question cc-module-icon"></i></a>
+								${currentStrm}</div>
 						</div>
 					</div>
 					<div class="cc-module-config-collection-representation"

@@ -40,6 +40,12 @@ Collections can take on the task of translating generic dates into calendar spec
 > - Only generic dates can be provided.
 > - Generic dates only work for Griffith University.
 
+### Study Period
+
+At Griffith University, the course code typically includes a term code. A four digital number identifying the study (aka teaching) period.  Collections attempts to extract the term code from the course code, which is then used to map generic dates to specific calendar dates. If the term code cannot be extracted, Collections defaults to the current study period.
+
+See [the Griffith course id explanation page](https://intranet.secure.griffith.edu.au/computing/using-learning-at-griffith/staff/administration/course-ID) for more information about term codes.
+
 ## Additional Metadata
 
 For various reasons you may wish to provide additional metadata about a module. The _additional metadata_ area enables this. You can add (and delete) any additional metadata in the form of name/value pairs.
