@@ -1823,6 +1823,9 @@ input:checked + .cc-slider:before {
 			// no time
 			dateString = `${dateInfo.time} ${dateString}`;
 		}
+		if (dateInfo.hasOwnProperty('label') && dateInfo.label !== '') {
+			dateString = `${dateInfo.label} ${dateString}`;
+		}
 		return dateString;
 	}
 
