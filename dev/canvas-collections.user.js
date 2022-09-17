@@ -443,6 +443,15 @@ class cc_ConfigurationModel {
 				}
 			}
 
+			// what about metadata fields, 
+			// is fieldName in format metadata-<field-name>-value
+			const match = fieldName.match(/^metadata-(.*)-value$/);
+			if (match) {
+				// if so, then fieldName is the metadata field name
+				fieldName = match[1];
+				module.metadata[fieldName] = value;
+				return true;
+			}
 
 			module[fieldName] = value;
 		}
