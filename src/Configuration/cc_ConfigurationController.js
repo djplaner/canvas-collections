@@ -518,6 +518,7 @@ export default class cc_ConfigurationController {
 	 */
 
 	manageModuleMetadata(event) {
+
 		// is the target a button or a i element?
 		const target = event.target;
 		const element = target.tagName.toLowerCase();
@@ -526,7 +527,13 @@ export default class cc_ConfigurationController {
 		// handle adding when target is button
 		if (element === 'button') {
 			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-add/)[1]);
+			// before getting the name, checkValidity
 			const name = document.querySelector(`#cc-module-config-${moduleId}-metadata-add-name`).value;
+			// generate alert if name contains " characters
+			if ( name.includes('"') ) {
+				alert(`Metadata name cannot contain " characters`);
+				return;
+			}
 			const value = document.querySelector(`#cc-module-config-${moduleId}-metadata-add-value`).value;
 
 			if (name === '' ) {

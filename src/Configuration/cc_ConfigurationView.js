@@ -873,7 +873,7 @@ export default class cc_ConfigurationView extends cc_View {
 				<tr>
 					<td>
 						<input type="text" id="cc-module-config-${module.id}-metadata-${key}-name"
-							value="" />
+							value="" pattern="[^\"]"/>
 					</td>
 					<td>
 						<input type="text" id="cc-module-config-${module.id}-metadata-${key}-value"
