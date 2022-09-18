@@ -8,17 +8,45 @@ A key feature of Collections is the ability to specify additional metadata and f
 
 A description of the object that will be displayed in most representations to provide students with a way to answer what, why, how or some other question about the module. How (and perhaps if) the description is shown to the student will depend on the relevant collection's representation.
 
-## Image
+## Image (or iframe)
 
-Associate an image with the module. Useful for providing a visual representation of the module and contributing to the overall visual design of the course. Images are specified by two pieces of metadata:
+Associate an image or an iframe with the module. Typically used to provide a visual representation of the module, contributing to the overall visual design of the course, and possibly helping students build conceptual associations. 
+
+Images are specified by two pieces of metadata:
 
 1. Image url - the web location where the image can be viewed.
 2. Image scale - how the image should be scaled to fit within the available space.
 
-### Image url
+An iframe is specified by entering the complete iframe embed code into the Image url field. iframes are automatically scaled to fit within the available space.
+
+### Image url (or iframe)
+
+Designed to contain either:
+
+1. The URL for an image to be displayed.
+
+    See the [Image URL](../../../walk-throughs/new/configure-modules/#image-url) section of the [Configure Modules walk-through](../../../walk-throughs/new/configure-modules) for more information, including demonstration of how to get the URL of an image in the Canvas files area.
+
+2. The embed code for [an iframe](https://www.hostinger.com/tutorials/what-is-iframe/) (e.g. a YouTube/Vimeo/Stream/Studio etc video)
+
+    Copy and paste the full embed code from a video-hosting (or some other) service and it will be embedded where the image would normally appear.
 
 ### Image scale
 
+Image scale is implemented using a standard [CSS property called object-fit](https://www.w3schools.com/cssref/css3_pr_object-fit.asp). The following table outlines the possible values for object-fit. These values appear in the Image scale drop down when configuring a module. 
+
+See the [Image Scale](../../../walk-throughs/new/configure-modules/#image-scale) section of the [Configure Modules walk-through](../../../walk-throughs/new/configure-modules) for more information, including an animation of the impact of the different values.
+
+
+
+| Value | 	Description |
+| --- | --- |
+| cover |	The image is scaled to fit the available space, maintaining the aspect ratio. The image is cropped to fit the available space. |
+| contain | 	The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped. |
+| fill |	The image is scaled to fill the available space, maintaining the aspect ratio. The image is cropped to fit the available space. |
+| fit |	The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped. |
+| none |	The image is not scaled. |
+| scale-down | 	The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped. |
 
 ## Labels and Numbers
 

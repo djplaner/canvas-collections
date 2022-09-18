@@ -1264,16 +1264,16 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#image" class="md-nav__link">
-    Image
+  <a href="#image-or-iframe" class="md-nav__link">
+    Image (or iframe)
   </a>
   
-    <nav class="md-nav" aria-label="Image">
+    <nav class="md-nav" aria-label="Image (or iframe)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#image-url" class="md-nav__link">
-    Image url
+  <a href="#image-url-or-iframe" class="md-nav__link">
+    Image url (or iframe)
   </a>
   
 </li>
@@ -1410,16 +1410,16 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#image" class="md-nav__link">
-    Image
+  <a href="#image-or-iframe" class="md-nav__link">
+    Image (or iframe)
   </a>
   
-    <nav class="md-nav" aria-label="Image">
+    <nav class="md-nav" aria-label="Image (or iframe)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#image-url" class="md-nav__link">
-    Image url
+  <a href="#image-url-or-iframe" class="md-nav__link">
+    Image url (or iframe)
   </a>
   
 </li>
@@ -1495,14 +1495,63 @@
 <p>A key feature of Collections is the ability to specify additional metadata and functionality for Canvas modules as a way to transform them into design and context specific objects. To better support and visually express your course's learning design.</p>
 <h2 id="description">Description</h2>
 <p>A description of the object that will be displayed in most representations to provide students with a way to answer what, why, how or some other question about the module. How (and perhaps if) the description is shown to the student will depend on the relevant collection's representation.</p>
-<h2 id="image">Image</h2>
-<p>Associate an image with the module. Useful for providing a visual representation of the module and contributing to the overall visual design of the course. Images are specified by two pieces of metadata:</p>
+<h2 id="image-or-iframe">Image (or iframe)</h2>
+<p>Associate an image or an iframe with the module. Typically used to provide a visual representation of the module, contributing to the overall visual design of the course, and possibly helping students build conceptual associations. </p>
+<p>Images are specified by two pieces of metadata:</p>
 <ol>
 <li>Image url - the web location where the image can be viewed.</li>
 <li>Image scale - how the image should be scaled to fit within the available space.</li>
 </ol>
-<h3 id="image-url">Image url</h3>
+<p>An iframe is specified by entering the complete iframe embed code into the Image url field. iframes are automatically scaled to fit within the available space.</p>
+<h3 id="image-url-or-iframe">Image url (or iframe)</h3>
+<p>Designed to contain either:</p>
+<ol>
+<li>
+<p>The URL for an image to be displayed.</p>
+<p>See the <a href="../../../walk-throughs/new/configure-modules/#image-url">Image URL</a> section of the <a href="../../../walk-throughs/new/configure-modules">Configure Modules walk-through</a> for more information, including demonstration of how to get the URL of an image in the Canvas files area.</p>
+</li>
+<li>
+<p>The embed code for <a href="https://www.hostinger.com/tutorials/what-is-iframe/">an iframe</a> (e.g. a YouTube/Vimeo/Stream/Studio etc video)</p>
+<p>Copy and paste the full embed code from a video-hosting (or some other) service and it will be embedded where the image would normally appear.</p>
+</li>
+</ol>
 <h3 id="image-scale">Image scale</h3>
+<p>Image scale is implemented using a standard <a href="https://www.w3schools.com/cssref/css3_pr_object-fit.asp">CSS property called object-fit</a>. The following table outlines the possible values for object-fit. These values appear in the Image scale drop down when configuring a module. </p>
+<p>See the <a href="../../../walk-throughs/new/configure-modules/#image-scale">Image Scale</a> section of the <a href="../../../walk-throughs/new/configure-modules">Configure Modules walk-through</a> for more information, including an animation of the impact of the different values.</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cover</td>
+<td>The image is scaled to fit the available space, maintaining the aspect ratio. The image is cropped to fit the available space.</td>
+</tr>
+<tr>
+<td>contain</td>
+<td>The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped.</td>
+</tr>
+<tr>
+<td>fill</td>
+<td>The image is scaled to fill the available space, maintaining the aspect ratio. The image is cropped to fit the available space.</td>
+</tr>
+<tr>
+<td>fit</td>
+<td>The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped.</td>
+</tr>
+<tr>
+<td>none</td>
+<td>The image is not scaled.</td>
+</tr>
+<tr>
+<td>scale-down</td>
+<td>The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped.</td>
+</tr>
+</tbody>
+</table>
 <h2 id="labels-and-numbers">Labels and Numbers</h2>
 <p>Many course designs use modules to represent common objects (e.g. lectures, tutorials, workshops, assessments, themes, topics etc.). Often a course will have multiple such objects (e.g. topic 1, topic 2, topic 3). Labels and numbers provide a means to explicitly identify such objects and their sequence. This information is used in different ways by each representation.</p>
 <p>Collections provides the ability for you to explicitly specify the number for each module OR it can auto calculate the number based on the module's position in the collection.</p>

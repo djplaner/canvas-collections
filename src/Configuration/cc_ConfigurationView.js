@@ -163,6 +163,13 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#study-period"
 	},
+	{
+		contentText: `Provide an image url or an iframe to associate with the object. Typically with the card view.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-image-url",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-url"
+	}
 ];
 
 export default class cc_ConfigurationView extends cc_View {

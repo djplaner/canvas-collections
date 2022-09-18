@@ -898,6 +898,13 @@ const CONFIG_VIEW_TOOLTIPS = [
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#study-period"
 	},
+	{
+		contentText: `Provide an image url or an iframe to associate with the object. Typically with the card view.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-image-url",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-url"
+	},
 ];
 
 class cc_ConfigurationView extends cc_View {
@@ -1446,8 +1453,8 @@ class cc_ConfigurationView extends cc_View {
 		   }
 		
 		   .cc-current-strm {
-			   font-size: 0.8rem;
-			   margin-left: 4rem;
+			   font-size: 0.7rem;
+			   margin-left: 3rem;
 			   margin-top: 0.5rem
 		   }
 		</style>
@@ -5365,6 +5372,7 @@ class GriffithCardsView extends cc_View {
 	 * 1. module.image is the URL for an image
 	 * 2. module.image is the HTML for an iframe 
 	 */
+
 
 	generateCardImage(module) {
 

@@ -565,6 +565,7 @@ export default class GriffithCardsView extends cc_View {
 	 * 2. module.image is the HTML for an iframe 
 	 */
 
+
 	generateCardImage(module) {
 
 		// is module.image an iframe?
