@@ -432,12 +432,32 @@ export default class cc_ConfigurationModel {
 				}
 			}
 
-			// if field is image, 
-			if (fieldName === 'image') {
+			// if field is image, and there is actually a value in it,
+			// perform some extra checks
+			if (fieldName === 'image' && value !== '') {
 				// use regex to check if value contains open and close iframe tags
 				const match = value.toLowerCase().match(/^.*(<iframe.*?src=".*?".*?<\/iframe>).*$/);
 				if (match) {
 					value = match[1];
+					// prepare the iframe for use, let the user know if there's
+					// any changes
+					const updatedValue = this.prepareIframe(value);
+					if (updatedValue !== value) {
+						value = updatedValue;
+						alert(`The iframe has been updated to work better with Collections. Changes include
+1. Modify width and height to fit.
+2. Remove any style attributes.`);
+					}
+				} else {
+					// check that the value is a valid URL
+					if (!value.match(/^https?:\/\/.*/)) {
+						alert(`The image url field must be either a valid URL or valid iframe. It appears to be neither. 
+
+Current value is
+
+${value}`);
+						return false;
+					}
 				}
 			}
 
@@ -453,6 +473,35 @@ export default class cc_ConfigurationModel {
 
 			module[fieldName] = value;
 		}
+	}
+
+	/**
+	 * Given the HTML string for an iframe modify it to
+	 * - replace any height/width values with height="auto" width="100%"
+	 * - remove any style attributes
+	 * @param {String} iframe 
+	 * @returns {String} the updated iframe
+	 */
+
+	prepareIframe(iframe) {
+
+		// replace any height/width values with height="auto" width="100%"
+		iframe = iframe.replace(/height=".*?"/, 'height="auto"');
+		iframe = iframe.replace(/width=".*?"/, 'width="100%"');
+
+		// if there is no height attribute, add it
+		if (!iframe.match(/height=".*?"/)) {
+			iframe = iframe.replace(/<iframe/, '<iframe height="auto"');
+		}
+		// if there is no width attribute, add it
+		if (!iframe.match(/width=".*?"/)) {
+			iframe = iframe.replace(/<iframe/, '<iframe width="100%"');
+		}
+
+		// remove any style attributes
+		iframe = iframe.replace(/style=".*?"/, '');
+
+		return iframe;
 	}
 
 	/**
