@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.19
+// @version      0.8.20
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -794,7 +794,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.20";
+const CC_VERSION = "0.8.21";
 
 const CV_DEFAULT_DATE_LABEL = "Commencing";
 
@@ -1075,6 +1075,7 @@ class cc_ConfigurationView extends cc_View {
 
 			this.addSingleModuleConfiguration(moduleHeader, moduleDetail, id);
 		}
+		this.addTooltips();
 	}
 
 	addSingleModuleConfiguration(moduleHeader, moduleDetail, id) {
@@ -3949,7 +3950,7 @@ class CollectionsModel {
 		let regex = new RegExp(`^${prepend}\\s*[:-]\\s*`);
 
 		if (module.actualNum) {
-			regex = new RegExp(`^${prepend}\\s${module.actualNum}\\s*[:-]\\s*`);
+			regex = new RegExp(`^${prepend}\\s*${module.actualNum}\\s*[:-]\\s*`);
 			prepend += ` ${module.actualNum}`;
 			// remove first char from CARD_LABEL if it is a space
 			if (prepend.charAt(0) === ' ') {
