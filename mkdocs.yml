@@ -30,13 +30,13 @@ theme:
     - navigation.tabs.sticky
     - navigation.sections
 
-  markdown_extensions:
-    - attr_list
-    - def_list
-    - pymdownx.emoji:
-        emoji_generator: !!python/name:materialx.emoji.to_svg
-    - pymdownx.tasklist:
-        custom_checkbox: true
+markdown_extensions:
+  - attr_list
+  - def_list
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.tasklist:
+      custom_checkbox: true
 
 extra:
   social:

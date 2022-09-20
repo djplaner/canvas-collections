@@ -240,11 +240,16 @@ export default class CollectionsModel {
 
 		const existingName = module.name;
 
+
 		let prepend = "";
 		if (module.label) {
 			prepend = module.label;
 		}
+
+		let regex = new RegExp(`^${prepend}\\s*[:-]\\s*`);
+
 		if (module.actualNum) {
+			regex = new RegExp(`^${prepend}\\s${module.actualNum}\\s*[:-]\\s*`);
 			prepend += ` ${module.actualNum}`;
 			// remove first char from CARD_LABEL if it is a space
 			if (prepend.charAt(0) === ' ') {
@@ -256,7 +261,8 @@ export default class CollectionsModel {
 		if (prepend !== ': ') {
 			// if we've not empty label and number
 			// modify existingName to remove prepend and any subsequent whitespace
-			newName = existingName.replace(prepend, '').trim();
+		//	newName = existingName.replace(prepend, '').trim();
+			newName = existingName.replace(regex, '').trim();
 		}
 
 		return newName;

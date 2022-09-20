@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.8.19
+// @version      0.8.20
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -84,6 +84,23 @@ class cc_ConfigurationModel {
 
 	getConfigShowing() {
 		return this.configShowing;
+	}
+
+	/**
+	 * @descr return the current value for the strm (study period) as a calculated by
+	 * the calendar, if there is no current calculate value, return the default 
+	 * @returns String - the current value for the strm (study period) or the default
+	 * containing "(default)"
+	 */
+	getStrm() {
+		if (this.controller.parentController.hasOwnProperty('calendar') &&
+			this.controller.parentController.calendar.hasOwnProperty('currentStrm') &&
+			this.controller.parentController.calendar.currentStrm) {
+			return this.controller.parentController.calendar.strm;
+		} else if ( this.controller.parentController.hasOwnProperty('calendar') ){
+			return `${this.controller.parentController.calendar.defaultPeriod} (default)`;
+		}
+		return "";
 	}
 
 	/*
@@ -433,8 +450,76 @@ class cc_ConfigurationModel {
 				}
 			}
 
+			// if field is image, and there is actually a value in it,
+			// perform some extra checks
+			if (fieldName === 'image' && value !== '') {
+				// use regex to check if value contains open and close iframe tags
+				const match = value.toLowerCase().match(/^.*(<iframe.*?src=".*?".*?<\/iframe>).*$/);
+				if (match) {
+					value = match[1];
+					// prepare the iframe for use, let the user know if there's
+					// any changes
+					const updatedValue = this.prepareIframe(value);
+					if (updatedValue !== value) {
+						value = updatedValue;
+						alert(`The iframe has been updated to work better with Collections. Changes include
+1. Modify width and height to fit.
+2. Remove any style attributes.`);
+					}
+				} else {
+					// check that the value is a valid URL
+					if (!value.match(/^https?:\/\/.*/)) {
+						alert(`The image url field must be either a valid URL or valid iframe. It appears to be neither. 
+
+Current value is
+
+${value}`);
+						return false;
+					}
+				}
+			}
+
+			// what about metadata fields, 
+			// is fieldName in format metadata-<field-name>-value
+			const match = fieldName.match(/^metadata-(.*)-value$/);
+			if (match) {
+				// if so, then fieldName is the metadata field name
+				fieldName = match[1];
+				module.metadata[fieldName] = value;
+				return true;
+			}
+
 			module[fieldName] = value;
 		}
+	}
+
+	/**
+	 * Given the HTML string for an iframe modify it to
+	 * - replace any height/width values with height="auto" width="100%"
+	 * - remove any style attributes
+	 * @param {String} iframe 
+	 * @returns {String} the updated iframe
+	 */
+
+	prepareIframe(iframe) {
+
+		// replace any height/width values with height="auto" width="100%"
+		iframe = iframe.replace(/height=".*?"/, 'height="auto"');
+		iframe = iframe.replace(/width=".*?"/, 'width="100%"');
+
+		// if there is no height attribute, add it
+		if (!iframe.match(/height=".*?"/)) {
+			iframe = iframe.replace(/<iframe/, '<iframe height="auto"');
+		}
+		// if there is no width attribute, add it
+		if (!iframe.match(/width=".*?"/)) {
+			iframe = iframe.replace(/<iframe/, '<iframe width="100%"');
+		}
+
+		// remove any style attributes
+		iframe = iframe.replace(/style=".*?"/, '');
+
+		return iframe;
 	}
 
 	/**
@@ -532,6 +617,24 @@ class cc_View {
 	constructor(model, controller) {
 		this.model = model;
 		this.controller = controller;
+
+		// if this.controller has parentController property 
+		// TODO clean up this KLUDGE
+		if (
+			this.controller.hasOwnProperty('parentController') &&
+			this.controller.parentController.hasOwnProperty('calendar')
+		) {
+			// old style
+			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
+			this.calendar = this.controller.parentController.calendar;
+		} else if (
+			this.model.hasOwnProperty('controller') &&
+			this.model.controller.hasOwnProperty('parentController') &&
+			this.model.controller.parentController.hasOwnProperty('calendar')) {
+			this.calendar = this.model.controller.parentController.calendar;
+		} else {
+			alert("Another funny calendar miss. Fix it");
+		}
 	}
 
 	addTooltips() {
@@ -574,7 +677,107 @@ class cc_View {
 	}
 
 
+	/**
+ * Generate the HTML for the date widget, features include
+ * - single date or date period
+ * - university week date
+ * - specific date
+ * - optional time
+ * @param {Object} module 
+ */
+	generateCalendarDate(dateJson) {
+		/* date information in 
+		   All attributes are optional
+		   module.date {
+
+			label:
+			week:  
+			day:
+			month:
+			date:
+			endDate: { repeat all of first date, except label}
+		} */
+
+		if (!dateJson) {
+			return undefined;
+		}
+
+		const date = {
+			"from": {},
+			"to": undefined
+		};
+
+		date.from = this.convertUniDateToReal(dateJson);
+		if (dateJson.endDate) {
+			date.to = this.convertUniDateToReal(dateJson.endDate);
+			this.generateDualDate(date);
+		}
+		return date;
+
+//		return this.convertDateToHtml(date);
+
 	}
+
+	/**
+	 * Take a Uni date in "JSON" format and convert to an object with 
+	 * actual real dates
+	 * @param {Object} dateJson 
+	 * @returns 
+	 */
+
+	convertUniDateToReal(dateJson) {
+
+		let firstDate = {};
+
+		firstDate.DATE_LABEL = "";
+		if (dateJson.hasOwnProperty('label')) {
+			firstDate.DATE_LABEL = dateJson.label;
+		} 
+
+		firstDate.WEEK = dateJson.week || "";
+		firstDate.DAY = dateJson.day || "Monday"; // is this the right default
+		// remove all but the first three letters of the day
+		firstDate.DAY = firstDate.DAY.substring(0, 3);
+		// Week needs more work to add the the day and string "Week"
+		// Also it should be HTML
+
+		firstDate.TIME = dateJson.time || "";
+		// convert 24 hour time into 12 hour time
+		if (firstDate.TIME) {
+			firstDate.TIME = this.model.convertFrom24To12Format(firstDate.TIME);
+		}
+
+		firstDate.MONTH = dateJson.month || "";
+		firstDate.DATE = dateJson.date || "";
+
+		// With week defined, we need to calculate MONTH and DATE based
+		// on university trimester
+		if (firstDate.WEEK !== "") {
+			// TODO should check for a day, if we wish to get the day
+			let actualDate = {};
+			if (firstDate.DAY === "" && this.hasOwnProperty('calendar')) {
+				// no special day specified, just get the start of the week
+				actualDate = this.calendar.getDate(firstDate.WEEK);
+			} else if (this.hasOwnProperty('calendar')) {
+				// need go get the date for a particular day
+				actualDate = this.calendar.getDate(firstDate.WEEK, false, firstDate.DAY);
+			}
+			// actualDate { date/month/year }
+			firstDate.DATE = actualDate.date;
+			firstDate.MONTH = actualDate.month;
+		}
+
+		// no date information defined, no date widget
+		if (firstDate.WEEK === "" && firstDate.TIME === "" &&
+			firstDate.MONTH === "" && firstDate.DATE === "") {
+			return "";
+		}
+		return firstDate;
+	}
+
+
+
+}
 
 /**
  * cc_ConfigurationView.js 
@@ -588,7 +791,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.19";
+const CC_VERSION = "0.8.20";
 
 const CV_DEFAULT_DATE_LABEL = "Commencing";
 
@@ -725,18 +928,29 @@ const CONFIG_VIEW_TOOLTIPS = [
 		targetSelector: "#cc-about-module-image-scale",
 		animateFunction: "spin",
 		//		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/image-scale"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-scale"
 	},
 	{
 		contentText: `Provide the URL for an image to associate with this module.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-image-url",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/image"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image"
 	},
-
-
-
+	{
+		contentText: `Specifies the specific calendar used to translate "Monday Week 1" into a date.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-strm",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#study-period"
+	},
+	{
+		contentText: `Provide an image url or an iframe to associate with the object. Typically with the card view.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-image-url",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-url"
+	}
 ];
 
 class cc_ConfigurationView extends cc_View {
@@ -814,7 +1028,7 @@ class cc_ConfigurationView extends cc_View {
 			targetSelector: "#cc-about-unpublished",
 			animateFunction: "spin",
 			persistent: true,
-			href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished.html"
+			href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
 		};
 
 		// append unpublished onto this.TOOLTIPS
@@ -888,6 +1102,36 @@ class cc_ConfigurationView extends cc_View {
 
 		// insert moduleConfigHtml afterend of moduleHeader
 		moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
+
+		//----------------------------
+		// Now able to use JS to make various mods to the form
+
+		// Add the image url input#cc-module-config-${moduleDetail.id}-image - need to set the value
+		// to the image url
+		const imageInput = document.getElementById(`cc-module-config-${moduleDetail.id}-image`);
+		if (imageInput) {
+			imageInput.value = moduleDetail.image;
+		}
+		// add the label cc-module-config-${moduleDetail.id}-label"
+		const labelInput = document.getElementById(`cc-module-config-${moduleDetail.id}-label`);
+		if (labelInput && moduleDetail.label) {
+			labelInput.value = moduleDetail.label;
+		}
+		// add the meta data stuff
+
+		for (let key in moduleDetail.metadata) {
+			// cc-module-config-${moduleDetail.id}-metadata-${key}-name is set to key
+			// cc-module-config-${moduleDetail.id}-metadata-${key}-value is set to moduleDetail.metadata[key]
+			const nameInput = document.getElementById(`cc-module-config-${moduleDetail.id}-metadata-${key}-name`);
+			if (nameInput) {
+				nameInput.value = key;
+			}
+			const valueInput = document.getElementById(`cc-module-config-${moduleDetail.id}-metadata-${key}-value`);
+			if (valueInput) {
+				valueInput.value = moduleDetail.metadata[key];
+			}
+		}
+
 
 		// try to start tinymce editor on the textarea
 		//tinymce.init( {selector: 'textarea'});
@@ -1114,6 +1358,14 @@ class cc_ConfigurationView extends cc_View {
 			}
 			imageSizeOptions += `<option value="${option}" ${selected}>${option}</option>`;
 		}
+
+		// encode an iframe in moduleConfig.image
+/*		const match = moduleConfig.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
+		let imageUrl = moduleConfig.image;
+		if (match) {
+			imageUrl = this.controller.parentController.configurationStore.encodeHTML(imageUrl,false);
+		} */
+
 		// TODO need to generate the date information
 		// - current kludge just handles the case when there is no date
 		// - eventually will need to handle the CSS 
@@ -1200,10 +1452,14 @@ class cc_ConfigurationView extends cc_View {
 			autonumStyle = "color:grey;";
 		}
 
-		let label = "";
+		const currentStrm = this.model.getStrm();
+
+/*		let label = "";
 		if (moduleConfig.hasOwnProperty('label')) {
 			label = moduleConfig.label;
-		}
+			// quote any " in the label
+			label = label.replaceAll(/"/g, '&quot;');
+		} */
 
 		const additionalMetaDataHTML = this.getAdditionalMetaDataHTML(moduleDetail);
 
@@ -1241,6 +1497,12 @@ class cc_ConfigurationView extends cc_View {
 			   background-color: #eee;
 			   padding: 0.5em
 		   }
+		
+		   .cc-current-strm {
+			   font-size: 0.7rem;
+			   margin-left: 3rem;
+			   margin-top: 0.5rem
+		   }
 		</style>
 
 		<div class="cc-module-config-detail">
@@ -1261,7 +1523,7 @@ class cc_ConfigurationView extends cc_View {
 			   				<i class="icon-question cc-module-icon"></i></a>
 						</label> <br />
 						<input type="text" id="cc-module-config-${moduleDetail.id}-label"
-					    	style="width:10rem" value="${label}" />
+					    	style="width:10rem" value="" />
 					</div>
 					<div>
 				    	<label for="cc-module-config-${moduleDetail.id}-num">Number</label>
@@ -1285,6 +1547,11 @@ class cc_ConfigurationView extends cc_View {
 					    	<a href="" id="cc-about-module-date" target="_blank">
 			   				<i class="icon-question cc-module-icon"></i></a>
 							<div class="cc-calculated-date">${calculatedDate}</div>
+							<div class="cc-current-strm">
+							   <strong>Study Period</strong>
+					    	 	<a href="" id="cc-about-module-strm" target="_blank">
+			   					<i class="icon-question cc-module-icon"></i></a>
+								${currentStrm}</div>
 						</div>
 					</div>
 					<div class="cc-module-config-collection-representation"
@@ -1333,7 +1600,8 @@ class cc_ConfigurationView extends cc_View {
 											<a id="cc-about-image-url" target="_blank" href="">
 			   				<i class="icon-question cc-module-icon"></i></a>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
-					        value="${moduleConfig.image}">
+					        value="">
+					        <!-- value="${moduleConfig.image}"> -->
 					<br clear="all" />
 					  
 				    <label for="cc-module-config-${moduleDetail.id}-description" 
@@ -1410,11 +1678,11 @@ class cc_ConfigurationView extends cc_View {
 				<tr>
 					<td>
 						<input type="text" id="cc-module-config-${module.id}-metadata-${key}-name"
-							value="${key}" />
+							value="" pattern="[^\"]"/>
 					</td>
 					<td>
 						<input type="text" id="cc-module-config-${module.id}-metadata-${key}-value"
-							value="${module.metadata[key]}" />
+							value="" />
 					</td>
 					<td>
 						<i class="icon-trash cc-module-config-metadata-delete" 
@@ -2360,6 +2628,9 @@ input:checked + .cc-slider:before {
 			// no time
 			dateString = `${dateInfo.time} ${dateString}`;
 		}
+		if (dateInfo.hasOwnProperty('label') && dateInfo.label !== '') {
+			dateString = `${dateInfo.label} ${dateString}`;
+		}
 		return dateString;
 	}
 
@@ -3292,6 +3563,7 @@ class cc_ConfigurationController {
 	 */
 
 	manageModuleMetadata(event) {
+
 		// is the target a button or a i element?
 		const target = event.target;
 		const element = target.tagName.toLowerCase();
@@ -3300,7 +3572,13 @@ class cc_ConfigurationController {
 		// handle adding when target is button
 		if (element === 'button') {
 			const moduleId = parseInt(idString.match(/cc-module-config-(\d+)-metadata-add/)[1]);
+			// before getting the name, checkValidity
 			const name = document.querySelector(`#cc-module-config-${moduleId}-metadata-add-name`).value;
+			// generate alert if name contains " characters
+			if ( name.includes('"') ) {
+				alert(`Metadata name cannot contain " characters`);
+				return;
+			}
 			const value = document.querySelector(`#cc-module-config-${moduleId}-metadata-add-value`).value;
 
 			if (name === '' ) {
@@ -3655,11 +3933,16 @@ class CollectionsModel {
 
 		const existingName = module.name;
 
+
 		let prepend = "";
 		if (module.label) {
 			prepend = module.label;
 		}
+
+		let regex = new RegExp(`^${prepend}\\s*[:-]\\s*`);
+
 		if (module.actualNum) {
+			regex = new RegExp(`^${prepend}\\s${module.actualNum}\\s*[:-]\\s*`);
 			prepend += ` ${module.actualNum}`;
 			// remove first char from CARD_LABEL if it is a space
 			if (prepend.charAt(0) === ' ') {
@@ -3671,7 +3954,8 @@ class CollectionsModel {
 		if (prepend !== ': ') {
 			// if we've not empty label and number
 			// modify existingName to remove prepend and any subsequent whitespace
-			newName = existingName.replace(prepend, '').trim();
+		//	newName = existingName.replace(prepend, '').trim();
+			newName = existingName.replace(regex, '').trim();
 		}
 
 		return newName;
@@ -3733,11 +4017,14 @@ class CollectionsModel {
 	}
 
 	convertFrom24To12Format(time24) {
-		const [sHours, minutes] = time24.match(/([0-9]{1,2}):([0-9]{2})/).slice(1);
-		const period = +sHours < 12 ? 'AM' : 'PM';
-		const hours = +sHours % 12 || 12;
-
-		return `${hours}:${minutes} ${period}`;
+		const timeMatch = time24.match(/([0-9]{1,2}):([0-9]{2})/)
+		if (timeMatch) {
+			const [sHours, minutes] = timeMatch.slice(1);
+			const period = +sHours < 12 ? 'AM' : 'PM';
+			const hours = +sHours % 12 || 12;
+			return `${hours}:${minutes} ${period}`;
+		}
+		return time24;
 	}
 
 }
@@ -4288,7 +4575,7 @@ const TABLE_ROW_HTML = `
 		  <tr role="row">
           <td role="cell">
             <span class="cc-responsive-table__heading" aria-hidden="true">Title</span>
-            <div class="cc-table-cell-text"><p><a href="#{{MODULE-ID}}">
+            <div class="cc-table-cell-text"><p><a href="{{MODULE-ID}}">
               {{TITLE}}
 
             </a></p> </div>
@@ -4391,7 +4678,7 @@ class AssessmentTableView extends cc_View {
     let message = document.createElement('div');
     message.className = 'cc-assessment-table';
 
-		const currentCollection = this.model.getCurrentCollection();
+    const currentCollection = this.model.getCurrentCollection();
     message.innerHTML = this.generateHTML(currentCollection);
     div.insertAdjacentElement('beforeend', message);
 
@@ -4401,7 +4688,7 @@ class AssessmentTableView extends cc_View {
    * Work through module details for this collection and generate HTML with
    * an assessment table
    */
-  generateHTML(collectionName, variety='') {
+  generateHTML(collectionName, variety = '') {
     let messageHtml = this.TABLE_HTML;
     if (variety === 'claytons') {
       messageHtml = TABLE_HTML_CLAYTONS;
@@ -4411,9 +4698,9 @@ class AssessmentTableView extends cc_View {
     const description = this.model.getCurrentCollectionDescription();
 
     // add a row for each module belonging to the collection
-//    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());
+    //    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());
     // get an array of all modules in display order
- 		const modules = this.model.getModulesCollections();
+    const modules = this.model.getModulesCollections();
     const modulesUrl = this.model.getModuleViewUrl();
     let tableRows = '';
     for (let i = 0; i < modules.length; i++) {
@@ -4427,20 +4714,28 @@ class AssessmentTableView extends cc_View {
         rowHtml = TABLE_ROW_HTML_CLAYTONS;
       }
 
-      const dueDate = modules[i].date;
       let dateLabel = '';
       let dueDateString = '';
-      if (dueDate ) {
-        if ( dueDate.month) {
-          dueDateString = `${dueDate.month} ${dueDate.date}`;
-        }
-        if ( dueDate.label ) {
-          dateLabel = dueDate.label;
+      let calendarDate = this.generateCalendarDate(modules[i].date);
+
+      if (calendarDate) {
+
+        // just work with a single date for now (date range to come)
+        //const dueDate = modules[i].date;
+        const dueDate = calendarDate.from;
+        if (dueDate) {
+          if (dueDate.MONTH) {
+            dueDateString = `${dueDate.MONTH} ${dueDate.DATE}`;
+          }
+          if (modules[i].date.label) {
+            dateLabel = modules[i].date.label;
+          }
         }
       }
 
       let mapping = {
-        'MODULE-ID': modules[i].id,
+        //'MODULE-ID': modules[i].id,
+        'MODULE-ID': `${modulesUrl}/#${modules[i].id}`,
         'DESCRIPTION': modules[i].description,
         'TITLE': this.model.deLabelModuleName(modules[i]),
         'TYPE': modules[i].label,
@@ -4450,7 +4745,7 @@ class AssessmentTableView extends cc_View {
 
       // for a claytons view - MODULE-ID needs to become a full link
       if (variety === 'claytons') {
-        mapping['MODULE-ID'] = `${modulesUrl}/#${modules[i].id}`;
+        mapping['MODULE-ID'] = `${modulesUrl}#module_${modules[i].id}`;
       }
 
       // check metadata for weighting and learning outcomes
@@ -4483,7 +4778,7 @@ class AssessmentTableView extends cc_View {
       editMode = ccController.editMode;
     }
 
-    if (!editMode || variety==='claytons') {
+    if (!editMode || variety === 'claytons') {
       messageHtml = this.emptyRemainingFields(messageHtml);
     }
 
@@ -5014,8 +5309,6 @@ class GriffithCardsView extends cc_View {
 	 * @returns {DOMElement} for a single card
 	 */
 	generateCard(module, published = true) {
-		const imageUrl = this.generateCardImageUrl(module);
-		const imageSize = this.generateCardImageSize(module);
 
 		const moduleName = this.model.deLabelModuleName(module);
 
@@ -5028,6 +5321,8 @@ class GriffithCardsView extends cc_View {
 		if (module.date && (module.date.week || (module.date.month && module.date.date))) {
 			DATE_WIDGET = this.generateCardDate(module.date);
 		}
+
+		let IMAGE_IFRAME = this.generateCardImage(module);
 
 		const description = module.description;
 
@@ -5050,14 +5345,12 @@ class GriffithCardsView extends cc_View {
 			}
 		}
 
-		// escModuleName is a version of moduleName with all HTML and special characters escaped
-		let escModuleName = moduleName.replace(/(["'])/g, "\\$1");
 
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
-	      <a href="#${module.id}" class="cc-card-link"></a>
-		  <img class="cc-card-image ${imageSize}" src="${imageUrl}" alt="Image representing '${escModuleName}'">
+	      <a href="#module_${module.id}" class="cc-card-link"></a>
+		  ${IMAGE_IFRAME}
       	${DATE_WIDGET}
       	${COMING_SOON}
 	 	${PUBLISHED}
@@ -5118,6 +5411,29 @@ class GriffithCardsView extends cc_View {
 		return wrapper;
 	}
 
+	/**
+	 * Given details of a module, generate HTML string for the module.image representation
+	 * Two possible cases
+	 * 1. module.image is the URL for an image
+	 * 2. module.image is the HTML for an iframe 
+	 */
+
+
+	generateCardImage(module) {
+
+		// is module.image an iframe?
+		const match = module.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
+		if (match) {
+			return module.image;
+		}
+		const imageUrl = this.generateCardImageUrl(module);
+		const imageSize = this.generateCardImageSize(module);
+		// escModuleName is a version of moduleName with all HTML and special characters escaped
+		let escModuleName = module.name.replace(/(["'])/g, "\\$1");
+
+		return `<img class="cc-card-image ${imageSize}" src="${imageUrl}" 
+		 				alt="Image representing '${escModuleName}'"> `;
+	}
 	/**
 	 * generate a coming soon html element for the current module
 	 * @param {Object} module 
@@ -5432,7 +5748,7 @@ class GriffithCardsView extends cc_View {
 <!--	    <p>&nbsp;<br /> &nbsp;</p> -->
 		<div class="cc-card-engage">
 			 <div class="cc-card-engage-button">
-	       		<a href="#${module.id}" class="gu-engage">
+	       		<a href="#module_${module.id}" class="gu-engage">
 			   ${engage}
 			 </a>
 	         </div>
@@ -6722,6 +7038,7 @@ class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
+			module.image = this.decodeHTML(module.image);
 			// need to check the URL for image as the RCE screws with the URL
 			if (module.image.startsWith('/')) {
 				module.image = `https://${window.location.hostname}${module.image}`;
@@ -7004,7 +7321,7 @@ class cc_ConfigurationStore {
 		// - boiler plate description HTML to start
 		let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
 
-				if (this.hasOwnProperty('parentController') &&
+		if (this.hasOwnProperty('parentController') &&
 			this.parentController.hasOwnProperty('cc_configuration') &&
 			this.parentController.cc_configuration.hasOwnProperty('MODULES')) {
 
@@ -7052,14 +7369,22 @@ class cc_ConfigurationStore {
 		for (let key in this.parentController.cc_configuration.MODULES) {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.encodeHTML(module.description);
+			module.collection = this.encodeHTML(module.collection);
+			module.image = this.encodeHTML(module.image);
+			module.name = this.encodeHTML(module.name);
 		}
-		content = content.replace('{{CONFIG}}',
-			JSON.stringify(this.parentController.cc_configuration));
+		let safeContent = JSON.stringify(this.parentController.cc_configuration);
+		if (safeContent) {
+			content = content.replace('{{CONFIG}}', safeContent);
+		}
 
 		// now de-encode the description for the page
 		for (let key in this.parentController.cc_configuration.MODULES) {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.decodeHTML(module.description);
+			module.collection = this.decodeHTML(module.collection);
+			module.name = this.decodeHTML(module.name);
+			module.image = this.decodeHTML(module.image);
 		}
 
 		// get the current time as string
@@ -7154,13 +7479,25 @@ class cc_ConfigurationStore {
 	decodeHTML(html) {
 		var txt = document.createElement("textarea");
 		txt.innerHTML = html;
-		return txt.value;
+		let value = txt.value;
+		// replace any &quot; with "
+//		value = value.replaceAll(/&quot;/g, '"');
+		return value;
 	}
 
-	encodeHTML(html) {
+	encodeHTML(html, json = true) {
 		let txt = document.createElement("textarea");
 		txt.innerHTML = html;
-		return txt.innerHTML;
+		let value = txt.innerHTML;
+/*		if (json) {
+			// for Canvas JSON, escape the quotes
+			return value.replaceAll(/"/g, '\"');
+
+		} else {
+			// for not JSON (i.e. HTML) encode the quotes
+			return value.replaceAll(/"/g, '&quot;');
+		} */
+		return value;
 	}
 
 	/**

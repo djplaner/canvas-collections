@@ -794,7 +794,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.19";
+const CC_VERSION = "0.8.20";
 
 const CV_DEFAULT_DATE_LABEL = "Commencing";
 
@@ -3940,11 +3940,16 @@ class CollectionsModel {
 
 		const existingName = module.name;
 
+
 		let prepend = "";
 		if (module.label) {
 			prepend = module.label;
 		}
+
+		let regex = new RegExp(`^${prepend}\\s*[:-]\\s*`);
+
 		if (module.actualNum) {
+			regex = new RegExp(`^${prepend}\\s${module.actualNum}\\s*[:-]\\s*`);
 			prepend += ` ${module.actualNum}`;
 			// remove first char from CARD_LABEL if it is a space
 			if (prepend.charAt(0) === ' ') {
@@ -3956,7 +3961,8 @@ class CollectionsModel {
 		if (prepend !== ': ') {
 			// if we've not empty label and number
 			// modify existingName to remove prepend and any subsequent whitespace
-			newName = existingName.replace(prepend, '').trim();
+		//	newName = existingName.replace(prepend, '').trim();
+			newName = existingName.replace(regex, '').trim();
 		}
 
 		return newName;
