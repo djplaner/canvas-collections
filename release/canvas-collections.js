@@ -774,7 +774,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.20";
+const CC_VERSION = "0.8.23";
 
 const CV_DEFAULT_DATE_LABEL = "Commencing";
 
@@ -1055,6 +1055,7 @@ class cc_ConfigurationView extends cc_View {
 
 			this.addSingleModuleConfiguration(moduleHeader, moduleDetail, id);
 		}
+		this.addTooltips();
 	}
 
 	addSingleModuleConfiguration(moduleHeader, moduleDetail, id) {
@@ -3925,7 +3926,7 @@ class CollectionsModel {
 		let regex = new RegExp(`^${prepend}\\s*[:-]\\s*`);
 
 		if (module.actualNum) {
-			regex = new RegExp(`^${prepend}\\s${module.actualNum}\\s*[:-]\\s*`);
+			regex = new RegExp(`^${prepend}\\s*${module.actualNum}\\s*[:-]\\s*`);
 			prepend += ` ${module.actualNum}`;
 			// remove first char from CARD_LABEL if it is a space
 			if (prepend.charAt(0) === ' ') {
@@ -8406,14 +8407,18 @@ class cc_Controller {
 	}
 
 	/**
-	 * @descr Examine course object's sis_course_id attribute in an attempt
+	 * @descr Examine Canvas course object's course_code attribute in an attempt
 	 * to extract the STRM and subsequently calculate the year, period and
 	 * other data
 	 * 
-	 * STRMs come in three flavours
-	 * 1. None - e.g. an org site **this is currently an assumption**
-	 * 2. Production - courseCode-strm-*-*
-	 * 3. Dev - DEV_courseCode_STRM
+	 * Production sites:
+	 *    Organisational Communication (COM31_2226)
+	 * 
+	 * DEV sites:
+	 *    DEV_2515LHS_3228
+	 * 
+	 * ORG sites:
+	 *     AEL_SHOW1
 	 * 
 	 * TODO rejig based on scapeLib/parseCourseInstanceId (ael-automation)
 	 * In particular to handle the "YP" course ids
@@ -8428,29 +8433,33 @@ class cc_Controller {
 		let canvasCourseCode = "";
 
 		// does objectCourseCode contain a pair of brackets?
+		// if not, we've got a dev site or an org site
 		let brackets = objectCourseCode.match(/\(([^)]+)\)/);
 		if (!brackets) {
-			// no brackets, no strm, go with default, but create calendar
-			// before we leave
-			this.calendar = new UniversityDateCalendar(this.strm);
-			return;
-		}
-		canvasCourseCode = objectCourseCode.match(/\(([^)]+)\)/)[1];
-
-		// is it a DEV course
-		if (canvasCourseCode.startsWith('DEV_')) {
-			// use regex ^DEV_([^_]*)_([\d]*)$ to extract the course code and STRM
-			const regex = /^DEV_([^_]*)_([\d]*)$/;
-			const match = regex.exec(canvasCourseCode);
-			if (match) {
-				this.courseCode = match[1];
-				this.strm = match[2];
+			// is it a DEV course
+			if (objectCourseCode.startsWith('DEV_')) {
+				// use regex ^DEV_([^_]*)_([\d]*)$ to extract the course code and STRM
+				const regex = /^DEV_([^_]*)_([\d]*)$/;
+				const match = regex.exec(objectCourseCode);
+				if (match) {
+					this.courseCode = match[1];
+					this.strm = match[2];
+				}
+				this.calendar = new UniversityDateCalendar(this.strm);
+				this.parseStrm();
+				return;
 			}
+			// no brackets, not a dev site, go with default, but create calendar
+			// before we leave
+			// TODO - this should check to see if Canvas Collections has a default
+			//  STRM defined
 			this.calendar = new UniversityDateCalendar(this.strm);
-			this.parseStrm();
 			return;
 		} 
+		canvasCourseCode = objectCourseCode.match(/\(([^)]+)\)/)[1];
 
+
+		// We've got brackets in course code, suggesting that it's a production course site
 		// Is it a standard course, possible formats are
 		// coursecode_strm
 		// coursecode_strm_campus
@@ -8528,7 +8537,7 @@ class cc_Controller {
 	/**
 	 * @descr Generate API request for all information of course's modules
 	 */
-	async requestModuleInformation(responseHandler=undefined) {
+	async requestModuleInformation(responseHandler = undefined) {
 		DEBUG && console.log(`cc_Controller: requestModuleInformation: for ${this.courseId}`);
 
 		let callUrl = `/api/v1/courses/${this.courseId}/modules?include=items&per_page=500`;
@@ -8612,7 +8621,7 @@ class cc_Controller {
 
 			// add calculated fields
 			// - if there's num in details, then actualNum is the num
-			if ( details.hasOwnProperty('num') ) {
+			if (details.hasOwnProperty('num')) {
 				details.actualNum = details.num;
 			} else {
 				// need to auto calculate the num
@@ -8835,7 +8844,7 @@ class cc_Controller {
 		if (hash) {
 			let checkNum = hash.match(/cc-collection-(\d+)/);
 			if (checkNum) {
-				this.URLCollectionNum = parseInt(checkNum[1])-1;
+				this.URLCollectionNum = parseInt(checkNum[1]) - 1;
 			}
 		}
 		url.hash = '';
@@ -8919,7 +8928,7 @@ class cc_Controller {
 	retrieveLastCollectionViewed() {
 		// get hostname
 		let hostname = window.location.hostname;
-		this. lastCollectionViewed = localStorage.getItem(`cc-${hostname}-${this.courseId}-last-collection`);
+		this.lastCollectionViewed = localStorage.getItem(`cc-${hostname}-${this.courseId}-last-collection`);
 	}
 
 	setLastCollectionViewed(collectionName) {
