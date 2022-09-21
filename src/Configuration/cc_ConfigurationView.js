@@ -10,7 +10,7 @@
 
 import { cc_View } from '../cc_View.js';
 
-const CC_VERSION = "0.8.23";
+const CC_VERSION = "0.8.24";
 
 const CV_DEFAULT_DATE_LABEL = "Commencing";
 
@@ -159,7 +159,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 	{
 		contentText: `Specifies the specific calendar used to translate "Monday Week 1" into a date.`,
 		maxWidth: `250px`,
-		targetSelector: "#cc-about-module-strm",
+		targetSelector: "#cc-about-module-studyPeriod",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#study-period"
 	},
@@ -672,7 +672,7 @@ export default class cc_ConfigurationView extends cc_View {
 			autonumStyle = "color:grey;";
 		}
 
-		const currentStrm = this.model.getStrm();
+		const currentStudyPeriod = this.model.getStudyPeriod();
 
 /*		let label = "";
 		if (moduleConfig.hasOwnProperty('label')) {
@@ -718,7 +718,7 @@ export default class cc_ConfigurationView extends cc_View {
 			   padding: 0.5em
 		   }
 		
-		   .cc-current-strm {
+		   .cc-current-studyPeriod {
 			   font-size: 0.7rem;
 			   margin-left: 3rem;
 			   margin-top: 0.5rem
@@ -767,11 +767,11 @@ export default class cc_ConfigurationView extends cc_View {
 					    	<a href="" id="cc-about-module-date" target="_blank">
 			   				<i class="icon-question cc-module-icon"></i></a>
 							<div class="cc-calculated-date">${calculatedDate}</div>
-							<div class="cc-current-strm">
+							<div class="cc-current-studyPeriod">
 							   <strong>Study Period</strong>
-					    	 	<a href="" id="cc-about-module-strm" target="_blank">
+					    	 	<a href="" id="cc-about-module-studyPeriod" target="_blank">
 			   					<i class="icon-question cc-module-icon"></i></a>
-								${currentStrm}</div>
+								${currentStudyPeriod}</div>
 						</div>
 					</div>
 					<div class="cc-module-config-collection-representation"

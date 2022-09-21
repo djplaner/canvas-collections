@@ -120,61 +120,28 @@ export default class cc_Controller {
 	 */
 
 	generateSTRM() {
-		this.courseCode = undefined;
-		this.strm = undefined;
-
-		// try to get the course code 
-		let objectCourseCode = this.courseObject.course_code;
-		let canvasCourseCode = "";
-
-		// does objectCourseCode contain a pair of brackets?
-		// if not, we've got a dev site or an org site
-		let brackets = objectCourseCode.match(/\(([^)]+)\)/);
-		if (!brackets) {
-			// is it a DEV course
-			if (objectCourseCode.startsWith('DEV_')) {
-				// use regex ^DEV_([^_]*)_([\d]*)$ to extract the course code and STRM
-				const regex = /^DEV_([^_]*)_([\d]*)$/;
-				const match = regex.exec(objectCourseCode);
-				if (match) {
-					this.courseCode = match[1];
-					this.strm = match[2];
-				}
-				this.calendar = new UniversityDateCalendar(this.strm);
-				this.parseStrm();
-				return;
-			}
-			// no brackets, not a dev site, go with default, but create calendar
-			// before we leave
-			// TODO - this should check to see if Canvas Collections has a default
-			//  STRM defined
-			this.calendar = new UniversityDateCalendar(this.strm);
-			return;
-		} 
-		canvasCourseCode = objectCourseCode.match(/\(([^)]+)\)/)[1];
-
-
-		// We've got brackets in course code, suggesting that it's a production course site
-		// Is it a standard course, possible formats are
-		// coursecode_strm
-		// coursecode_strm_campus
-
-		// use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
-		//const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
-		// match a course code - first group - any chars but _
-		// match four digits (strm)
-		// optionally other stuff
-		const regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
-		const match = regex.exec(canvasCourseCode);
-		if (match) {
-			this.courseCode = match[1];
-			this.strm = match[2];
+		if ( ! this.hasOwnProperty('calendar')) {
+			this.calendar = new UniversityDateCalendar();
 		}
 
-		this.calendar = new UniversityDateCalendar(this.strm);
+		// TODO this is where we might check if there is an existing default
+		// study period already set and thus bypass getCurrentPeriod
+
+
+		// we pass course_code to calendar because it's the main object that is
+		// available to all users. the sis_course_id might be better but students
+		// don't see it
+		this.studyPeriod = this.calendar.getCurrentPeriod(this.courseObject.course_code);
+		this.calendar.setStudyPeriod(this.studyPeriod);
+		// aboutStudyPeriod is an object with human readable information about the
+		// study period - typically strings for
+		// - year - full year
+		// - period - descriptive name for the period
+		// - type - string specifying the type of study period
+//		this.aboutStudyPeriod = this.calendar.parseStudyPeriod(this.studyPeriod);
+
 		this.parseStrm();
 
-		console.log(`------------ ${this.strm} period ${this.period} year ${this.year}`);
 	}
 
 	/**

@@ -77,9 +77,9 @@ class cc_ConfigurationModel {
 	 */
 	getStrm() {
 		if (this.controller.parentController.hasOwnProperty('calendar') &&
-			this.controller.parentController.calendar.hasOwnProperty('currentStrm') &&
-			this.controller.parentController.calendar.currentStrm) {
-			return this.controller.parentController.calendar.strm;
+			this.controller.parentController.hasOwnProperty('strm') &&
+			this.controller.parentController.strm) {
+			return this.controller.parentController.strm;
 		} else if ( this.controller.parentController.hasOwnProperty('calendar') ){
 			return `${this.controller.parentController.calendar.defaultPeriod} (default)`;
 		}
@@ -774,7 +774,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.23";
+const CC_VERSION = "0.8.24";
 
 const CV_DEFAULT_DATE_LABEL = "Commencing";
 

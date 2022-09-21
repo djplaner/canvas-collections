@@ -32,8 +32,6 @@ export default class GriffithCardsView extends cc_View {
 			this.controller.hasOwnProperty('parentController') &&
 			this.controller.parentController.hasOwnProperty('calendar')
 		) {
-			// old style
-			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
 			this.calendar = this.controller.parentController.calendar;
 		} else if (
 			this.model.hasOwnProperty('controller') &&
