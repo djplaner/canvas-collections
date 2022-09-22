@@ -26,21 +26,6 @@ export default class GriffithCardsView extends cc_View {
 	constructor(model, controller) {
 		super(model, controller);
 
-		// if this.controller has parentController property 
-		// TODO clean up this KLUDGE
-		if (
-			this.controller.hasOwnProperty('parentController') &&
-			this.controller.parentController.hasOwnProperty('calendar')
-		) {
-			this.calendar = this.controller.parentController.calendar;
-		} else if (
-			this.model.hasOwnProperty('controller') &&
-			this.model.controller.hasOwnProperty('parentController') &&
-			this.model.controller.parentController.hasOwnProperty('calendar')) {
-			this.calendar = this.model.controller.parentController.calendar;
-		} else {
-			alert("Another funny calendar miss. Fix it");
-		}
 
 		this.currentCollection = this.model.getCurrentCollection();
 	}
@@ -616,116 +601,62 @@ export default class GriffithCardsView extends cc_View {
 	 * @param {Object} module 
 	 */
 	generateCardDate(dateJson) {
-		/* date information in 
-		   All attributes are optional
-		   module.date {
-
-			label:
-			week:  
-			day:
-			month:
-			date:
-			endDate: { repeat all of first date, except label}
-		} */
-
-		const date = {
-			"from": {},
-			"to": undefined
-		};
-
-		date.from = this.convertUniDateToReal(dateJson);
-		if (dateJson.endDate) {
-			date.to = this.convertUniDateToReal(dateJson.endDate);
-			this.generateDualDate(date);
-		}
-
-		return this.convertDateToHtml(date);
-
-	}
-
-	/**
-	 * Take a Uni date in "JSON" format and convert to an object with 
-	 * actual real dates
-	 * @param {Object} dateJson 
-	 * @returns 
-	 */
-
-	convertUniDateToReal(dateJson) {
-
-		let firstDate = {};
-
-		firstDate.DATE_LABEL = dateJson.label || '';
-
-		firstDate.WEEK = dateJson.week || "";
-		firstDate.DAY = dateJson.day || "Monday"; // is this the right default
-		// remove all but the first three letters of the day
-		firstDate.DAY = firstDate.DAY.substring(0, 3);
-		// Week needs more work to add the the day and string "Week"
-		// Also it should be HTML
-
-		firstDate.TIME = dateJson.time || "";
-		// convert 24 hour time into 12 hour time
-		if (firstDate.TIME) {
-			firstDate.TIME = this.model.convertFrom24To12Format(firstDate.TIME);
-		}
-
-		firstDate.MONTH = dateJson.month || "";
-		firstDate.DATE = dateJson.date || "";
-
-		// With week defined, we need to calculate MONTH and DATE based
-		// on university trimester
-		if (firstDate.WEEK !== "") {
-			// TODO should check for a day, if we wish to get the day
-			let actualDate = {};
-			if (firstDate.DAY === "" && this.hasOwnProperty('calendar')) {
-				// no special day specified, just get the start of the week
-				actualDate = this.calendar.getDate(firstDate.WEEK);
-			} else if (this.hasOwnProperty('calendar')) {
-				// need go get the date for a particular day
-				actualDate = this.calendar.getDate(firstDate.WEEK, false, firstDate.DAY);
-			}
-			// actualDate { date/month/year }
-			firstDate.DATE = actualDate.date;
-			firstDate.MONTH = actualDate.month;
-		}
-
-		// no date information defined, no date widget
-		if (firstDate.WEEK === "" && firstDate.TIME === "" &&
-			firstDate.MONTH === "" && firstDate.DATE === "") {
-			return "";
-		}
-		return firstDate;
+		this.model.addCalendarDate(dateJson);
+		return this.convertDateToHtml(dateJson);
 	}
 
 	/**
 	 * Convert from and to dates to HTML
 	 * @param {Object} date with two attributes from and to
 	 * @returns  HTML
+	 * date object format
+	 *   - label - ignore here (string)
+	 *   - week - the week of the study period (string)
+	 *   - day - full string containing day of the week
+	 *   - time - string with time
+	 *   - to
+	 *     - which also contains week, day, time
+	 *   this method will add/modify existing values for both the main level and the "to" date
+	 *   - month - three letter string month name
+	 *   - date - numeric data of the month (string)
 	 */
 
 	convertDateToHtml(date) {
 
 		let extraDateLabelClass = '';
-		if (date.from.DATE_LABEL === '') {
+		if (date.label === '') {
 			extraDateLabelClass = ' cc-card-hide';
+		}
+
+		// create day const with the first 3 letters of date.day
+		const day = date.day.substring(0, 3);
+		const month = date.month.substring(0, 3);
+		let time = '';
+		if (date.time) {
+			time = this.model.convertFrom24To12Format(date.time);
+		}
+
+		// if there's a to date, call generateDualDate
+		if ( date.hasOwnProperty('to') ) {
+			return this.generateDualDate(date);
 		}
 
 		const singleDateHtml = `
 		<div class="cc-card-date">
 		  <div class="cc-card-date-label${extraDateLabelClass}">
-             ${date.from.DATE_LABEL}
+             ${date.label}
           </div>
 		  <div class="cc-card-date-week">
-          	${date.from.DAY} Week ${date.from.WEEK}
+          	${day} Week ${date.week}
 		  </div>
 		  <div class="cc-card-date-time">
-          ${date.from.TIME}
+          ${time}
 		  </div>
 		  <div class="cc-card-date-month">
-      	     ${date.from.MONTH}
+      	     ${month}
           </div>
 		  <div class="cc-card-date-date">
-      	     ${date.from.DATE}
+      	     ${date.date}
           </div>
         </div>
 		`;
@@ -733,11 +664,11 @@ export default class GriffithCardsView extends cc_View {
 		// TODO remove the elements that aren't needed
 		// Convert singleDateHtml to dom element
 		let element = new DOMParser().parseFromString(singleDateHtml, 'text/html').body.firstChild;
-		if (date.from.TIME === "") {
+		if (time === "") {
 			// remove the div.cc-card-date-time from element
 			element.removeChild(element.querySelector('.cc-card-date-time'));
 		}
-		if (date.from.WEEK === "") {
+		if (date.week === "") {
 			// remove the div.cc-card-date-week from element
 			element.removeChild(element.querySelector('.cc-card-date-week'));
 		}

@@ -16,6 +16,22 @@ export default class CollectionsModel {
 		// merge the Canvas module and Collections configurations
 		// replace this with live use of  parentController.mergedModuleDetails
 		//this.createModuleCollections();
+		// if this.controller has parentController property 
+		// TODO clean up this KLUDGE
+		if (
+			this.controller.hasOwnProperty('parentController') &&
+			this.controller.parentController.hasOwnProperty('calendar')
+		) {
+			this.calendar = this.controller.parentController.calendar;
+		} else if (
+			this.model.hasOwnProperty('controller') &&
+			this.model.controller.hasOwnProperty('parentController') &&
+			this.model.controller.parentController.hasOwnProperty('calendar')) {
+			this.calendar = this.model.controller.parentController.calendar;
+		} else {
+			alert("Another funny calendar miss. Fix it");
+		}
+
 
 		// if currentCollection is undefined set it to the default
 		if (this.currentCollection === undefined) {
@@ -27,12 +43,12 @@ export default class CollectionsModel {
 					Number.isInteger(URLCollectionNum) && URLCollectionNum >= 0 &&
 					URLCollectionNum < this.cc_configuration.COLLECTIONS_ORDER.length) {
 					this.currentCollection = this.cc_configuration.COLLECTIONS_ORDER[URLCollectionNum];
-				} 
+				}
 			} else if (this.controller.parentController.lastCollectionViewed &&
-					this.controller.parentController.lastCollectionViewed !== "") {
-					this.currentCollection = this.controller.parentController.lastCollectionViewed;
+				this.controller.parentController.lastCollectionViewed !== "") {
+				this.currentCollection = this.controller.parentController.lastCollectionViewed;
 			} else {
-					this.currentCollection = this.getDefaultCollection();
+				this.currentCollection = this.getDefaultCollection();
 			}
 		}
 	}
@@ -261,7 +277,7 @@ export default class CollectionsModel {
 		if (prepend !== ': ') {
 			// if we've not empty label and number
 			// modify existingName to remove prepend and any subsequent whitespace
-		//	newName = existingName.replace(prepend, '').trim();
+			//	newName = existingName.replace(prepend, '').trim();
 			newName = existingName.replace(regex, '').trim();
 		}
 
@@ -333,5 +349,88 @@ export default class CollectionsModel {
 		}
 		return time24;
 	}
+
+	/**
+	 * Take a collections date object and modify it by adding in the 
+	 * real calendar dates - using University date calendar
+	 * @param {Object} date 
+	 *   attributes include
+	 *   - label - ignore here (string)
+	 *   - week - the week of the study period (string)
+	 *   - day - full string containing day of the week
+	 *   - time - string with time
+	 *   - to
+	 *     - which also contains week, day, time
+	 *   this method will add/modify existing values for both the main level and the "to" date
+	 *   - month - three letter string month name
+	 *   - date - numeric data of the month (string)
+	 */
+
+	addCalendarDate(date) {
+
+		//		let firstDate = {};
+
+		//		firstDate.DATE_LABEL = dateJson.label || '';
+
+		//		firstDate.WEEK = dateJson.week || "";
+
+		// add the day, if it isn't there
+		if (!date.hasOwnProperty('day')) {
+			date.day = 'Monday';
+		}
+		// TODO what about "to"
+
+		//		firstDate.DAY = dateJson.day || "Monday"; // is this the right default
+		// remove all but the first three letters of the day
+		// move this into the specific view
+		//		firstDate.DAY = firstDate.DAY.substring(0, 3);
+		// Week needs more work to add the the day and string "Week"
+		// Also it should be HTML
+
+		//		firstDate.TIME = dateJson.time || "";
+		// convert 24 hour time into 12 hour time
+		// TODO move to view
+		//		if (firstDate.TIME) {
+		//		firstDate.TIME = this.model.convertFrom24To12Format(firstDate.TIME);
+		//}
+
+		// these will be calculated each time
+		//		firstDate.MONTH = dateJson.month || "";
+		//	firstDate.DATE = dateJson.date || "";
+
+		// add the specific date for from and to
+		this.updateDate(date);
+		this.updateDate(date.to);
+	}
+
+
+	/**
+	 * Given data struct, if it's not null, use calendar.getDate to update
+	 * the date and month fields 
+	 * @param {*} date 
+	 */
+
+	updateDate(date) {
+
+		// do nothing if the date is not defined or we don't have a calendar
+		if (!date || !this.hasOwnProperty('calendar')) {
+			return;
+		}
+		// also if there's no defined week property
+
+		// With week defined, we need to calculate MONTH and DATE based
+		// on university trimester
+		if (!date.hasOwnProperty('week') || date.week === "") {
+			return;
+		}
+
+		const actualDate = this.calendar.getDate(date.week, false, date.day);
+		// actualDate { date/month/year }
+		const fields = ['date', 'month', 'year'];
+		for (let i = 0; i < fields.length; i++) {
+			date[fields[i]] = actualDate[fields[i]];
+		}
+	}
+
 
 }
