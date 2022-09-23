@@ -120,9 +120,9 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#label-and-number"
 	},
 	{
-		contentText: `Specify a date based on the week of the study period`,
+		contentText: `Add a single date or date range and a label relative to a specific study period. `,
 		maxWidth: `250px`,
-		targetSelector: "#cc-about-module-date",
+		targetSelector: "#cc-about-module-date-start",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#date"
 	},
@@ -158,7 +158,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image"
 	},
 	{
-		contentText: `Specifies the specific calendar used to translate "Monday Week 1" into a date.`,
+		contentText: `Specifies which study period's calendar will be used to translate "Monday Week 1" into a calendar date.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-studyPeriod",
 		animateFunction: "spin",
@@ -581,11 +581,11 @@ export default class cc_ConfigurationView extends cc_View {
 		}
 
 		// encode an iframe in moduleConfig.image
-/*		const match = moduleConfig.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
-		let imageUrl = moduleConfig.image;
-		if (match) {
-			imageUrl = this.controller.parentController.configurationStore.encodeHTML(imageUrl,false);
-		} */
+		/*		const match = moduleConfig.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
+				let imageUrl = moduleConfig.image;
+				if (match) {
+					imageUrl = this.controller.parentController.configurationStore.encodeHTML(imageUrl,false);
+				} */
 
 		// TODO need to generate the date information
 		// - current kludge just handles the case when there is no date
@@ -593,17 +593,32 @@ export default class cc_ConfigurationView extends cc_View {
 		// - perhaps with a date view?
 		let dateInfo = {
 			label: '', week: '', date: '',
-			month: '', day: '', time: ''
+			month: '', day: '', time: '',
+			to: {
+				week: '', date: '',
+				month: '', day: '', time: '',
+			}
 		};
 		if (moduleConfig.date) {
+			// set the values for dateInfo for start date
 			for (const dateField in dateInfo) {
-				if (moduleConfig.date.hasOwnProperty(dateField)) {
+				if (dateField!=='to' && moduleConfig.date.hasOwnProperty(dateField)) {
 					dateInfo[dateField] = moduleConfig.date[dateField];
+				}
+			}
+			// do the same for the to date - if there is one
+			if (moduleConfig.date.hasOwnProperty('to')) {
+				for (const dateField in dateInfo.to) {
+					if (moduleConfig.date.to.hasOwnProperty(dateField)) {
+						dateInfo.to[dateField] = moduleConfig.date.to[dateField];
+					}
 				}
 			}
 		}
 		let weekOptions = '';
+		let toWeekOptions = '';
 		let dayOfWeekOptions = '';
+		let toDayOfWeekOptions = '';
 		// week options needs to be integers for each of the weeks in current calendar
 		// TODO get it from the calendar
 
@@ -675,12 +690,12 @@ export default class cc_ConfigurationView extends cc_View {
 
 		const currentStudyPeriod = this.model.getStudyPeriod();
 
-/*		let label = "";
-		if (moduleConfig.hasOwnProperty('label')) {
-			label = moduleConfig.label;
-			// quote any " in the label
-			label = label.replaceAll(/"/g, '&quot;');
-		} */
+		/*		let label = "";
+				if (moduleConfig.hasOwnProperty('label')) {
+					label = moduleConfig.label;
+					// quote any " in the label
+					label = label.replaceAll(/"/g, '&quot;');
+				} */
 
 		const additionalMetaDataHTML = this.getAdditionalMetaDataHTML(moduleDetail);
 
@@ -714,15 +729,16 @@ export default class cc_ConfigurationView extends cc_View {
 
 		   .cc-calculated-date {
 			   font-size: 0.8rem;
-			   display: inline;
 			   background-color: #eee;
 			   padding: 0.5em
+			   margin-left: 3rem;
+			   margin-top: 0.5rem
 		   }
 		
 		   .cc-current-studyPeriod {
 			   font-size: 0.7rem;
-			   margin-left: 3rem;
-			   margin-top: 0.5rem
+			   display: inline;
+			   margin-left: 2rem;
 		   }
 		</style>
 
@@ -760,47 +776,27 @@ export default class cc_ConfigurationView extends cc_View {
 					</div>
 					<br clear="all" />
 				</div>
+				<div class="border border-trbl" style="margin-right:1em">
 				<sl-tab-group>
-				  <sl-tab slot="nav" panel="general">General</sl-tab>
-  <sl-tab slot="nav" panel="custom">Custom</sl-tab>
-  <sl-tab slot="nav" panel="advanced">Advanced</sl-tab>
-  <sl-tab slot="nav" panel="disabled" disabled>Disabled</sl-tab>
+				  <sl-tab slot="nav" panel="cc-module-config-${moduleDetail.id}-date-start">Start Date</sl-tab>
+				  <sl-tab slot="nav" panel="cc-module-config-${moduleDetail.id}-date-stop">Stop Date</sl-tab>
+				  <sl-tab slot="nav" panel="cc-module-config-${moduleDetail.id}-coming-soon">Coming Soon</sl-tab>
 
-  <sl-tab-panel name="general">This is the general tab panel.</sl-tab-panel>
-  <sl-tab-panel name="custom">This is the custom tab panel.</sl-tab-panel>
-  <sl-tab-panel name="advanced">This is the advanced tab panel.</sl-tab-panel>
-  <sl-tab-panel name="disabled">This is a disabled tab panel.</sl-tab-panel>
-				</sl-tab-group>
-				<div class="enhanceable_content tabs border border-trbl" style="margin-right:1em">
-				  <ul>
-    				<li><a href="#cc-module-config-${moduleDetail.id}-date-start">Start Date</a> 
-        				<a href="" id="cc-about-module-date" target="_blank"> 
-						<i class="icon-question cc-module-icon"></i></a> 
-					</li>
-    				<li><a href="#cc-module-config-${moduleDetail.id}-date-stop">Stop Date</a> 
-        				<a href="" id="cc-about-module-date-stop" target="_blank"> 
-						<i class="icon-question cc-module-icon"></i></a> 
-					</li> 
-					<li><a href="#cc-module-config-9945-date-coming-soon">Coming Soon</a> 
-        				<a href="" id="cc-about-module-coming-soon" target="_blank"> 
-						<i class="icon-question cc-module-icon"></i></a> 
-					</li> 
-				</ul>
-
+ 			      <sl-tab-panel name="cc-module-config-${moduleDetail.id}-date-start">
 		   			<div id="cc-module-config-${moduleDetail.id}-date-start">
 					    <div>
 				    		<div style="padding-top:0.5rem;padding-left:0.5rem" 
 						     class="cc-module-config-date">
 								<strong>Date</strong> 
-					    		<a href="" id="cc-about-module-date" target="_blank">
+					    		<a href="" id="cc-about-module-date-start" target="_blank">
 			   					<i class="icon-question cc-module-icon"></i></a>
-								<div class="cc-calculated-date">${calculatedDate}</div>
 								<div class="cc-current-studyPeriod">
 							   		<strong>Study Period</strong>
 					    	 		<a href="" id="cc-about-module-studyPeriod" target="_blank">
 			   						<i class="icon-question cc-module-icon"></i></a>
 									${currentStudyPeriod}</div>
 								</div>
+								<div class="cc-calculated-date">${calculatedDate}</div>
 							</div>
 							<div class="cc-module-config-collection-representation"
 					    		style="padding-top:1rem; padding-left:3rem">
@@ -828,11 +824,61 @@ export default class cc_ConfigurationView extends cc_View {
 							<br clear="all" />
 						</div>
 					</div>
-		   			<div id="cc-module-config-${moduleDetail.id}-date-stop">
+					</sl-tab-panel>
+				    <sl-tab-panel name="cc-module-config-${moduleDetail.id}-date-stop">
+		   			  <div id="cc-module-config-${moduleDetail.id}-date-stop">
+					    <div>
+        				<a href="" id="cc-about-module-date-stop" target="_blank"> 
+						<i class="icon-question cc-module-icon"></i></a> 
+				    		<div style="padding-top:0.5rem;padding-left:0.5rem" 
+						     class="cc-module-config-date">
+								<strong>Stop Date</strong> 
+					    		<a href="" id="cc-about-module-date-sttop" target="_blank">
+			   					<i class="icon-question cc-module-icon"></i></a>
+								<div class="cc-current-studyPeriod">
+							   		<strong>Study Period</strong>
+					    	 		<a href="" id="cc-about-module-studyPeriod" target="_blank">
+			   						<i class="icon-question cc-module-icon"></i></a>
+									${currentStudyPeriod}</div>
+								</div>
+								<div class="cc-calculated-date">${calculatedDate}</div>
+							</div>
+							<div class="cc-module-config-collection-representation"
+					    		style="padding-top:1rem; padding-left:3rem">
+<!-- no date label for stop date				    			<label for="cc-module-config-${moduleDetail.id}-date-label">Date label</label>
+								<input type="text" id="cc-module-config-${moduleDetail.id}-date-label"
+						   			style="width:10rem" value="${dateLabel}" /><br /> -->
+				    			<label for="cc-module-config-${moduleDetail.id}-day-to">Day of week</label>
+								<select id="cc-module-config-${moduleDetail.id}-day-to">
+		                  			${toDayOfWeekOptions}
+								</select> <br />
+								<label for="cc-module-config-${moduleDetail.id}-week-to">Week</label>
+								<select id="cc-module-config-${moduleDetail.id}-week-to">
+		   		           			${toWeekOptions}}	
+								</select> <br />
+								<label for="cc-module-config-${moduleDetail.id}-time-to">Time</label>
+								<style>
+					   				input[readonly] {
+										display:none;
+					   				}
+					   			</style>
+								<aeon-datepicker local="en-au">
+									<input type="time" id="cc-module-config-${moduleDetail.id}-time-to" name="time" value="${dateInfo.to.time}" />
+								</aeon-datepicker>
+							</div>
+							<br clear="all" />
+						</div>
+
 					</div>
+					</sl-tab-panel>
+				    <sl-tab-panel name="cc-module-config-${moduleDetail.id}-coming-soon">
 		   			<div id="cc-module-config-${moduleDetail.id}-coming-soon">
+        				<a href="" id="cc-about-module-coming-soon" target="_blank"> 
+						<i class="icon-question cc-module-icon"></i></a> 
 					</div>
-	    		</div>
+					</sl-tab-panel>
+				</sl-tab-group>
+			</div>
 
 			<div style="margin-right:1em">
 				<div class="cc-module-config-collection-representation">
@@ -840,7 +886,7 @@ export default class cc_ConfigurationView extends cc_View {
 					     style="float:left">
 					Image scale
 					</label>
-						<a id="cc-about-image-scale" target="_blank" href="">
+						<a id="cc-about-module-image-scale" target="_blank" href="">
 			   				<i class="icon-question cc-module-icon"></i></a>
 		   		       <select id="cc-module-config-${moduleDetail.id}-imageSize">
 					      ${imageSizeOptions}
@@ -850,7 +896,7 @@ export default class cc_ConfigurationView extends cc_View {
 					    style="float:left">
 						Image URL
 					</label>
-											<a id="cc-about-image-url" target="_blank" href="">
+											<a id="cc-about-module-image-url" target="_blank" href="">
 			   				<i class="icon-question cc-module-icon"></i></a>
 					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
 					        value="">
