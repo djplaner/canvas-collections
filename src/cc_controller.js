@@ -32,6 +32,8 @@ export default class cc_Controller {
 	 */
 	constructor() {
 		DEBUG && console.log('-------------- cc_Controller.constructor()');
+		this.injectShoelace();
+
 
 		// Use document location to set various values controlling operation
 		this.setContext();
@@ -65,6 +67,26 @@ export default class cc_Controller {
 			// should create this.courseObject
 			this.requestCourseObject();
 		}
+	}
+
+	/**
+	 * Kludge attempt to inject shoelace component library
+	 */
+	injectShoelace() {
+		const checkShoelace = document.querySelector('#shoelace.js');
+		if ( checkShoelace) {
+			return;
+		}
+		const shoelaceScript = document.createElement('script');
+		shoelaceScript.type = 'module';
+		shoelaceScript.id = 'shoelace.js';
+		shoelaceScript.src = 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.83/dist/shoelace.js';
+		document.head.appendChild(shoelaceScript);
+
+		const shoelaceLink = document.createElement('link');
+		shoelaceLink.rel = 'stylesheet';
+		shoelaceLink.href = 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.83/dist/themes/light.css';
+		document.head.appendChild(shoelaceLink);
 	}
 
 	/**

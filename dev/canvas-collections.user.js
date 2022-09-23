@@ -793,6 +793,7 @@ class cc_View {
 
 
 
+
 const CC_VERSION = "0.8.24";
 
 const CV_DEFAULT_DATE_LABEL = "Commencing";
@@ -1542,48 +1543,80 @@ class cc_ConfigurationView extends cc_View {
 					</div>
 					<br clear="all" />
 				</div>
-				<div class="border border-trbl" style="margin-right:1em">
+				<sl-tab-group>
+				  <sl-tab slot="nav" panel="general">General</sl-tab>
+  <sl-tab slot="nav" panel="custom">Custom</sl-tab>
+  <sl-tab slot="nav" panel="advanced">Advanced</sl-tab>
+  <sl-tab slot="nav" panel="disabled" disabled>Disabled</sl-tab>
+
+  <sl-tab-panel name="general">This is the general tab panel.</sl-tab-panel>
+  <sl-tab-panel name="custom">This is the custom tab panel.</sl-tab-panel>
+  <sl-tab-panel name="advanced">This is the advanced tab panel.</sl-tab-panel>
+  <sl-tab-panel name="disabled">This is a disabled tab panel.</sl-tab-panel>
+				</sl-tab-group>
+				<div class="enhanceable_content tabs border border-trbl" style="margin-right:1em">
+				  <ul>
+    				<li><a href="#cc-module-config-${moduleDetail.id}-date-start">Start Date</a> 
+        				<a href="" id="cc-about-module-date" target="_blank"> 
+						<i class="icon-question cc-module-icon"></i></a> 
+					</li>
+    				<li><a href="#cc-module-config-${moduleDetail.id}-date-stop">Stop Date</a> 
+        				<a href="" id="cc-about-module-date-stop" target="_blank"> 
+						<i class="icon-question cc-module-icon"></i></a> 
+					</li> 
+					<li><a href="#cc-module-config-9945-date-coming-soon">Coming Soon</a> 
+        				<a href="" id="cc-about-module-coming-soon" target="_blank"> 
+						<i class="icon-question cc-module-icon"></i></a> 
+					</li> 
+				</ul>
+
 		   			<div id="cc-module-config-${moduleDetail.id}-date-start">
-				    	<div style="padding-top:0.5rem;padding-left:0.5rem" 
+					    <div>
+				    		<div style="padding-top:0.5rem;padding-left:0.5rem" 
 						     class="cc-module-config-date">
-							<strong>Date</strong> 
-					    	<a href="" id="cc-about-module-date" target="_blank">
-			   				<i class="icon-question cc-module-icon"></i></a>
-							<div class="cc-calculated-date">${calculatedDate}</div>
-							<div class="cc-current-studyPeriod">
-							   <strong>Study Period</strong>
-					    	 	<a href="" id="cc-about-module-studyPeriod" target="_blank">
+								<strong>Date</strong> 
+					    		<a href="" id="cc-about-module-date" target="_blank">
 			   					<i class="icon-question cc-module-icon"></i></a>
-								${currentStudyPeriod}</div>
+								<div class="cc-calculated-date">${calculatedDate}</div>
+								<div class="cc-current-studyPeriod">
+							   		<strong>Study Period</strong>
+					    	 		<a href="" id="cc-about-module-studyPeriod" target="_blank">
+			   						<i class="icon-question cc-module-icon"></i></a>
+									${currentStudyPeriod}</div>
+								</div>
+							</div>
+							<div class="cc-module-config-collection-representation"
+					    		style="padding-top:1rem; padding-left:3rem">
+				    			<label for="cc-module-config-${moduleDetail.id}-date-label">Date label</label>
+								<input type="text" id="cc-module-config-${moduleDetail.id}-date-label"
+						   			style="width:10rem" value="${dateLabel}" /><br />
+				    			<label for="cc-module-config-${moduleDetail.id}-day">Day of week</label>
+								<select id="cc-module-config-${moduleDetail.id}-day">
+		                  			${dayOfWeekOptions}
+								</select> <br />
+								<label for="cc-module-config-${moduleDetail.id}-week">Week</label>
+								<select id="cc-module-config-${moduleDetail.id}-week">
+		   		           			${weekOptions}}	
+								</select> <br />
+								<label for="cc-module-config-${moduleDetail.id}-time">Time</label>
+								<style>
+					   				input[readonly] {
+										display:none;
+					   				}
+					   			</style>
+								<aeon-datepicker local="en-au">
+									<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="${dateInfo.time}" />
+								</aeon-datepicker>
+							</div>
+							<br clear="all" />
 						</div>
 					</div>
-					<div class="cc-module-config-collection-representation"
-					    style="padding-top:1rem; padding-left:3rem">
-				    	<label for="cc-module-config-${moduleDetail.id}-date-label">Date label</label>
-						<input type="text" id="cc-module-config-${moduleDetail.id}-date-label"
-						   style="width:10rem" value="${dateLabel}" /><br />
-				    	<label for="cc-module-config-${moduleDetail.id}-day">Day of week</label>
-						<select id="cc-module-config-${moduleDetail.id}-day">
-		                  ${dayOfWeekOptions}
-						</select> <br />
-						<label for="cc-module-config-${moduleDetail.id}-week">Week</label>
-						<select id="cc-module-config-${moduleDetail.id}-week">
-		   		           ${weekOptions}}	
-						</select> <br />
-						<label for="cc-module-config-${moduleDetail.id}-time">Time</label>
-						<style>
-					   		input[readonly] {
-							display:none;
-					   		}
-					   	</style>
-						<aeon-datepicker local="en-au">
-						<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="${dateInfo.time}" />
-						</aeon-datepicker>
+		   			<div id="cc-module-config-${moduleDetail.id}-date-stop">
 					</div>
-					<br clear="all" />
+		   			<div id="cc-module-config-${moduleDetail.id}-coming-soon">
+					</div>
+	    		</div>
 
-				</div>
-		    </div>
 			<div style="margin-right:1em">
 				<div class="cc-module-config-collection-representation">
 					<label for="cc-collection-representation-${moduleDetail.id}-imageSize"
@@ -5269,25 +5302,60 @@ class GriffithCardsView extends cc_View {
 			padding-top: 0.25rem;
 			padding-bottom: 0.25rem;
 			border-color: black;
-			border-left-width: 1px;
-			border-right-width: 1px;
 			border-top-width: 1px;
 			font-size: 0.9rem;
 			line-height: 1rem;
+		}
+
+		.cc-card-date-dual-month {
+			text-align:center;
+			align-items: stretch;
+			display: flex;
+			color: white;
+			background-color: red;
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+			border-color: black;
+			border-top-width: 1px;
+		}
+
+		.cc-card-date-month-from {
+			width:50%;
+		}
+		.cc-card-date-month-to {
+			width:50%;
 		}
 
 		.cc-card-date-date {
 			padding-top: 0.25rem;
 			padding-bottom: 0.25rem;
 			border-left-width: 1px;
-			border-bottom-width: 1px;
-			border-right-width: 1px;
 			border-bottom-right-radius: 0.25rem;
 			border-bottom-left-radius: 0.25rem;
 			border-color: black;
 			font-size: 0.9rem;
 			font-weight: bold;
 			line-height: 1rem;
+		}
+
+		.cc-card-date-dual-date {
+			text-align:center;
+			padding-top: 0.25rem;
+			align-items: stretch;
+			display: flex;
+			border-left-width: 1px;
+			border-right-width: 1px;
+			border-bottom-right-radius: 0.25rem;
+			border-bottom-left-radius: 0.25rem;
+			border-color: black;
+		}
+
+		.cc-card-date-date-from {
+			width:50%;
+		}
+
+		.cc-card-date-date-to {
+			width:50%;
 		}
 
 		.cc-progress {
@@ -5566,43 +5634,8 @@ class GriffithCardsView extends cc_View {
 	 * @param {Object} module 
 	 */
 	generateCardDate(dateJson) {
-		/* date information in 
-		   All attributes are optional
-		   module.date {
-
-			label:
-			week:  
-			day:
-			month:
-			date:
-			endDate: { repeat all of first date, except label}
-		} */
-
-		const date = {
-			"from": {},
-			"to": undefined
-		};
-
 		this.model.addCalendarDate(dateJson);
-
-/*		date.from = this.convertUniDateToReal(dateJson);
-		if (dateJson.endDate) {
-			date.to = this.convertUniDateToReal(dateJson.endDate);
-			this.generateDualDate(date);
-		} */
-
 		return this.convertDateToHtml(dateJson);
-
-	}
-
-	/**
-	 * Take a Uni date in "JSON" format and convert to an object with 
-	 * actual real dates
-	 * @param {Object} dateJson 
-	 * @returns 
-	 */
-
-	convertUniDateToReal(dateJson) {
 	}
 
 	/**
@@ -5634,6 +5667,11 @@ class GriffithCardsView extends cc_View {
 		let time = '';
 		if (date.time) {
 			time = this.model.convertFrom24To12Format(date.time);
+		}
+
+		// if there's a to date, call generateDualDate
+		if ( date.hasOwnProperty('to') ) {
+			return this.generateDualDate(date);
 		}
 
 		const singleDateHtml = `
@@ -5671,30 +5709,72 @@ class GriffithCardsView extends cc_View {
 		return element.outerHTML;
 	}
 
-	generateDualDate(date) {
+	/**
+	 * Given a date object that contains both a to/from date. Generate appropriate card html
+	 * @param {Object} date 
+	 * @returns String of HTML
+	 */
 
+	generateDualDate(date) {
+		const fromDate = date.day.substring(0, 3);
+		const toDate = date.to.day.substring(0, 3);
+		const fromMonth = date.month.substring(0, 3);
+		const toMonth = date.to.month.substring(0, 3);
+		let fromTime = '';
+		if (date.time) {
+			fromTime = this.model.convertFrom24To12Format(date.time);
+		}
+		let toTime = '';
+		if (date.to.time) {
+			toTime = this.model.convertFrom24To12Format(date.to.time);
+		}
+
+		const week = `${date.week} to ${date.to.week}`;
+
+		// create week showing "Week X to X"
 		const dualDateHtml = `
-<div class="block rounded-t rounded-b overflow-hidden bg-white text-center w-24 absolute pin-t pin-r">
-          <div class="bg-black text-white py-1 text-xs border-l border-r border-black">
-             {DATE_LABEL}
+		<div class="cc-card-date">
+		  <div class="cc-card-date-label">
+             ${date.label}
           </div>
-          {WEEK}
-          {DAYS}
-          {TIME}
-          <div class="bg-red text-white flex items-stretch py-1 border-l border-r border-black">
-              <div class="w-1/2 flex-grow">{MONTH_START}</div>
-              <div class="flex items-stretch border-l border-black flex-grow  -mt-1 -mb-1"></div>
-              <div class="w-1/2">{MONTH_STOP}</div>
+		  <div class="cc-card-date-week">
+          	Week ${week}
+		  </div>
+		  <div class="cc-card-date-dual-day">
+		  	<div class="cc-card-date-day-from">${fromDate}</div>
+			<div class="cc-card-date-day-to">${toDate}</div>
+		  </div>
+		  <div class="cc-card-date-dual-time">
+		    <div class="cc-card-date-time-from">${fromTime}</div>
+            <div class="cc-card-date-time-to">${toTime}</div>
+		  </div>
+		  <div class="cc-card-date-dual-month">
+		     <div class="cc-card-date-month-from">${fromMonth}</div>
+			 <div class="cc-card-date-month-to">${toMonth}</div>	
           </div>
-          <div class="border-l border-r border-b text-center flex border-black items-stretch pt-1">
-      	     <div class="w-1/2 text-2xl flex-grow font-bold">{DATE_START}</div>
-      	     <div class="flex font-bolditems-stretch border-l border-black flex-grow -mt-1"></div>
-              <div class="w-1/2 text-2xl font-bold">{DATE_STOP}</div>
+		  <div class="cc-card-date-dual-date">
+		     <div class="cc-card-date-date-from">${date.date}</div>
+		     <div class="cc-card-date-date-to">${date.to.date}</div>
           </div>
-         </div> 
+        </div>
 `;
 
-		return dualDateHtml;
+		// TODO remove the elements that aren't needed
+		// Convert singleDateHtml to dom element
+		let element = new DOMParser().parseFromString(dualDateHtml, 'text/html').body.firstChild;
+		if (date.label==="") {
+			element.removeChild(element.querySelector('.cc-card-date-label'));
+		}
+		if (toTime === "" && fromTime === "") {
+			// remove the div.cc-card-date-time from element
+			element.removeChild(element.querySelector('.cc-card-date-dual-time'));
+		}
+		if (toDate.week === "" && fromDate.week === "") {
+			// remove the div.cc-card-date-week from element
+			element.removeChild(element.querySelector('.cc-card-date-dual-week'));
+		}
+		// return element converted to string
+		return element.outerHTML;
 
 	}
 
@@ -8457,6 +8537,8 @@ class cc_Controller {
 	 */
 	constructor() {
 		DEBUG && console.log('-------------- cc_Controller.constructor()');
+		this.injectShoelace();
+
 
 		// Use document location to set various values controlling operation
 		this.setContext();
@@ -8490,6 +8572,26 @@ class cc_Controller {
 			// should create this.courseObject
 			this.requestCourseObject();
 		}
+	}
+
+	/**
+	 * Kludge attempt to inject shoelace component library
+	 */
+	injectShoelace() {
+		const checkShoelace = document.querySelector('#shoelace.js');
+		if ( checkShoelace) {
+			return;
+		}
+		const shoelaceScript = document.createElement('script');
+		shoelaceScript.type = 'module';
+		shoelaceScript.id = 'shoelace.js';
+		shoelaceScript.src = 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.83/dist/shoelace.js';
+		document.head.appendChild(shoelaceScript);
+
+		const shoelaceLink = document.createElement('link');
+		shoelaceLink.rel = 'stylesheet';
+		shoelaceLink.href = 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.83/dist/themes/light.css';
+		document.head.appendChild(shoelaceLink);
 	}
 
 	/**
