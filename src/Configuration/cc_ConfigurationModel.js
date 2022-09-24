@@ -403,20 +403,29 @@ export default class cc_ConfigurationModel {
 
 		if (module) {
 			// specify the fields that are for dates, to be handled differently
-			const dateFields = [ 'day', 'week', 'time', 'date-label'];
+			const dateFields = [ 
+				'day', 'week', 'time', 'date-label',
+				'day-to', 'week-to', 'time-to'
+			];
 
 			if ( dateFields.includes(fieldName) ) {
 				// does module contain a date field
 				if (!module.hasOwnProperty('date')) {
 					module.date = {
-						label: '', day: '', week: '', time: ''
+						label: '', day: '', week: '', time: '',
+						to: { day: '', week: '', time: '' }
 					};
 				}
 				if (fieldName==='date-label') {
 					fieldName='label';
 				}
 
-				module.date[fieldName] = value;
+				if (fieldName.includes('-to')) {
+					fieldName = fieldName.replace('-to', '');
+					module.date.to[fieldName] = value;
+				} else {
+					module.date[fieldName] = value;
+				}
 				// changed date field, finished
 				return true;
 			} 

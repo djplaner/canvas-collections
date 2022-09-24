@@ -422,20 +422,29 @@ class cc_ConfigurationModel {
 
 		if (module) {
 			// specify the fields that are for dates, to be handled differently
-			const dateFields = [ 'day', 'week', 'time', 'date-label'];
+			const dateFields = [ 
+				'day', 'week', 'time', 'date-label',
+				'day-to', 'week-to', 'time-to'
+			];
 
 			if ( dateFields.includes(fieldName) ) {
 				// does module contain a date field
 				if (!module.hasOwnProperty('date')) {
 					module.date = {
-						label: '', day: '', week: '', time: ''
+						label: '', day: '', week: '', time: '',
+						to: { day: '', week: '', time: '' }
 					};
 				}
 				if (fieldName==='date-label') {
 					fieldName='label';
 				}
 
-				module.date[fieldName] = value;
+				if (fieldName.includes('-to')) {
+					fieldName = fieldName.replace('-to', '');
+					module.date.to[fieldName] = value;
+				} else {
+					module.date[fieldName] = value;
+				}
 				// changed date field, finished
 				return true;
 			} 
@@ -793,7 +802,6 @@ class cc_View {
 
 
 
-
 const CC_VERSION = "0.8.24";
 
 const CV_DEFAULT_DATE_LABEL = "Commencing";
@@ -903,11 +911,25 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#label-and-number"
 	},
 	{
-		contentText: `Add a single date or date range and a label relative to a specific study period. `,
+		contentText: `Specify a date or date range (with a label). Date is relative to a specific study period. `,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-date-start",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#date"
+	},
+	{
+		contentText: `Specify the 'stop' date in a date range. Date is relative to a specific study period.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-date-stop",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#date"
+	},
+	{
+		contentText: `Specify a date and message describing when the module will be available.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-coming-soon",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#coming-soon"
 	},
 	{
 		contentText: `If and how a label specific number will be calculated for the module 
@@ -943,7 +965,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 	{
 		contentText: `Specifies which study period's calendar will be used to translate "Monday Week 1" into a calendar date.`,
 		maxWidth: `250px`,
-		targetSelector: "#cc-about-module-studyPeriod",
+		targetSelector: ".cc-about-module-studyPeriod",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#study-period"
 	},
@@ -1304,6 +1326,71 @@ class cc_ConfigurationView extends cc_View {
 	}
 
 	/**
+	 * Given an object with date information, generate two lists of HTML options representing
+	 * - dayOptions
+	 *   List of days of the week with any specified day selected
+	 * - dayOfWeekOptions
+	 *   List of week options for the current study period with any specified week selected
+	 * And return an object with those attributes
+	 * @param {Object} dateInfo 
+	 * @returns {Object} - two attribute object (dayOfWeekOptions, weekOptions)
+	 */
+
+	calculateDayWeekOptions(dateInfo) {
+		let weekOptions = '';
+		let dayOfWeekOptions = '';
+
+		let setWeek='Not chosen';
+		if (dateInfo && dateInfo.hasOwnProperty('week')) {
+			setWeek = dateInfo.week;
+		}
+		let setDayOfWeek = 'Not chosen';
+		if (dateInfo && dateInfo.hasOwnProperty('dayOfWeek')) {
+			setDayOfWeek = dateInfo.dayOfWeek;
+		}
+
+		//---------- week Options
+		// current calendar located
+		let calendar = this.controller.parentController.calendar;
+		// weeks is an object/dict of weeks
+		const periodWeeks = calendar.getWeekDetails();
+		let weeks = ['Not chosen'];
+		// get the keys for periodWeeks and add to weeks array
+		for (const week in periodWeeks) {
+			weeks.push(week);
+		}
+
+		for (let i = 0; i < weeks.length; i++) {
+			let selected = '';
+			const week = weeks[i];
+			if (week === setWeek) {
+				selected = 'selected';
+			}
+			let weekValue = week;
+			if (week === 'Not chosen') {
+				weekValue = '';
+			}
+			weekOptions += `<option value="${weekValue}" ${selected}>${week}</option>`;
+		}
+
+		const days = ['Not chosen', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+		for (let i = 0; i < days.length; i++) {
+			let selected = '';
+			const day = days[i];
+			if (day === setDayOfWeek) {
+				selected = 'selected';
+			}
+			let dayValue = day;
+			if (day === 'Not chosen') {
+				dayValue = '';
+			}
+			dayOfWeekOptions += `<option value="${dayValue}" ${selected}>${day}</option>`;
+		}
+
+		return { dayOfWeekOptions, weekOptions };
+	}
+
+	/**
 	 * @descr generate the div.cc-module-config-details for the module
 	 * @param {Object} moduleDetail
 	 * @returns {string} html
@@ -1328,6 +1415,9 @@ class cc_ConfigurationView extends cc_View {
 		console.log(moduleConfig);
 
 		const date = "";
+		let comingSoonDate = "<em>No coming soon configured</em>";
+		let comingSoonLabel = "";
+		let comingSoonTime = "";
 
 		let moduleCollection = "";
 		if (moduleConfig.hasOwnProperty('collection') && moduleConfig.collection !== "") {
@@ -1398,49 +1488,21 @@ class cc_ConfigurationView extends cc_View {
 				}
 			}
 		}
-		let weekOptions = '';
+/*		let weekOptions = '';
 		let toWeekOptions = '';
+		let comingSoonWeekOptions = '';
 		let dayOfWeekOptions = '';
 		let toDayOfWeekOptions = '';
-		// week options needs to be integers for each of the weeks in current calendar
-		// TODO get it from the calendar
+		let comingSoonDayOfWeekOptions = ''; */
 
-		// current calendar located
-		let calendar = this.controller.parentController.calendar;
-		// weeks is an object/dict of weeks
-		const periodWeeks = calendar.getWeekDetails();
-		let weeks = ['Not chosen'];
-		// get the keys for periodWeeks and add to weeks array
-		for (const week in periodWeeks) {
-			weeks.push(week);
+		const dateOptions = this.calculateDayWeekOptions(dateInfo);
+		const toDateOptions = this.calculateDayWeekOptions(dateInfo.to);
+		let comingSoon = null;
+		if (moduleConfig.hasOwnProperty('comingSoon')) {
+			comingSoon = moduleConfig.comingSoon;
 		}
+		const comingSoonDateOptions = this.calculateDayWeekOptions(moduleConfig.comingSoon)
 
-		for (let i = 0; i < weeks.length; i++) {
-			let selected = '';
-			const week = weeks[i];
-			if (week === dateInfo.week) {
-				selected = 'selected';
-			}
-			let weekValue = week;
-			if (week === 'Not chosen') {
-				weekValue = '';
-			}
-			weekOptions += `<option value="${weekValue}" ${selected}>${week}</option>`;
-		}
-
-		const days = ['Not chosen', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-		for (let i = 0; i < days.length; i++) {
-			let selected = '';
-			const day = days[i];
-			if (day === dateInfo.day) {
-				selected = 'selected';
-			}
-			let dayValue = day;
-			if (day === 'Not chosen') {
-				dayValue = '';
-			}
-			dayOfWeekOptions += `<option value="${dayValue}" ${selected}>${day}</option>`;
-		}
 
 		// calculate value for dateLabel
 		let dateLabel = CV_DEFAULT_DATE_LABEL;
@@ -1552,7 +1614,7 @@ class cc_ConfigurationView extends cc_View {
 						<br />
 						<span class="cc-config-autonum" style="${autonumStyle}">Auto-number:
 					   		<input type="checkbox" id="cc-module-config-${moduleDetail.id}-autonum" ${autonumChecked} 
-							    style="position:relative: top:-0.25rem; ${autonumStyle}" />
+							    style="position:relative; top:-0.25rem; ${autonumStyle}" />
 						</span>
 						<input type="text" id="cc-module-config-${moduleDetail.id}-num" 
 					     	value="${moduleConfig.num}" style="width:3rem;${numStyle}" />
@@ -1568,14 +1630,14 @@ class cc_ConfigurationView extends cc_View {
  			      <sl-tab-panel name="cc-module-config-${moduleDetail.id}-date-start">
 		   			<div id="cc-module-config-${moduleDetail.id}-date-start">
 					    <div>
-				    		<div style="padding-top:0.5rem;padding-left:0.5rem" 
+				    		<div style="padding-left:0.5rem" 
 						     class="cc-module-config-date">
-								<strong>Date</strong> 
+								<strong>(Start) Date</strong> 
 					    		<a href="" id="cc-about-module-date-start" target="_blank">
 			   					<i class="icon-question cc-module-icon"></i></a>
 								<div class="cc-current-studyPeriod">
 							   		<strong>Study Period</strong>
-					    	 		<a href="" id="cc-about-module-studyPeriod" target="_blank">
+					    	 		<a href="" class="cc-about-module-studyPeriod" target="_blank">
 			   						<i class="icon-question cc-module-icon"></i></a>
 									${currentStudyPeriod}</div>
 								</div>
@@ -1588,11 +1650,11 @@ class cc_ConfigurationView extends cc_View {
 						   			style="width:10rem" value="${dateLabel}" /><br />
 				    			<label for="cc-module-config-${moduleDetail.id}-day">Day of week</label>
 								<select id="cc-module-config-${moduleDetail.id}-day">
-		                  			${dayOfWeekOptions}
+		                  			${dateOptions.dayOfWeekOptions}
 								</select> <br />
 								<label for="cc-module-config-${moduleDetail.id}-week">Week</label>
 								<select id="cc-module-config-${moduleDetail.id}-week">
-		   		           			${weekOptions}}	
+		   		           			${dateOptions.weekOptions}}	
 								</select> <br />
 								<label for="cc-module-config-${moduleDetail.id}-time">Time</label>
 								<style>
@@ -1606,21 +1668,18 @@ class cc_ConfigurationView extends cc_View {
 							</div>
 							<br clear="all" />
 						</div>
-					</div>
 					</sl-tab-panel>
 				    <sl-tab-panel name="cc-module-config-${moduleDetail.id}-date-stop">
 		   			  <div id="cc-module-config-${moduleDetail.id}-date-stop">
 					    <div>
-        				<a href="" id="cc-about-module-date-stop" target="_blank"> 
-						<i class="icon-question cc-module-icon"></i></a> 
-				    		<div style="padding-top:0.5rem;padding-left:0.5rem" 
+				    		<div style="padding-left:0.5rem" 
 						     class="cc-module-config-date">
 								<strong>Stop Date</strong> 
-					    		<a href="" id="cc-about-module-date-sttop" target="_blank">
+					    		<a href="" id="cc-about-module-date-stop" target="_blank">
 			   					<i class="icon-question cc-module-icon"></i></a>
 								<div class="cc-current-studyPeriod">
 							   		<strong>Study Period</strong>
-					    	 		<a href="" id="cc-about-module-studyPeriod" target="_blank">
+					    	 		<a href="" class="cc-about-module-studyPeriod" target="_blank">
 			   						<i class="icon-question cc-module-icon"></i></a>
 									${currentStudyPeriod}</div>
 								</div>
@@ -1628,16 +1687,13 @@ class cc_ConfigurationView extends cc_View {
 							</div>
 							<div class="cc-module-config-collection-representation"
 					    		style="padding-top:1rem; padding-left:3rem">
-<!-- no date label for stop date				    			<label for="cc-module-config-${moduleDetail.id}-date-label">Date label</label>
-								<input type="text" id="cc-module-config-${moduleDetail.id}-date-label"
-						   			style="width:10rem" value="${dateLabel}" /><br /> -->
 				    			<label for="cc-module-config-${moduleDetail.id}-day-to">Day of week</label>
 								<select id="cc-module-config-${moduleDetail.id}-day-to">
-		                  			${toDayOfWeekOptions}
+		                  			${toDateOptions.dayOfWeekOptions}
 								</select> <br />
 								<label for="cc-module-config-${moduleDetail.id}-week-to">Week</label>
 								<select id="cc-module-config-${moduleDetail.id}-week-to">
-		   		           			${toWeekOptions}}	
+		   		           			${toDateOptions.weekOptions}}	
 								</select> <br />
 								<label for="cc-module-config-${moduleDetail.id}-time-to">Time</label>
 								<style>
@@ -1651,16 +1707,51 @@ class cc_ConfigurationView extends cc_View {
 							</div>
 							<br clear="all" />
 						</div>
-
-					</div>
 					</sl-tab-panel>
 				    <sl-tab-panel name="cc-module-config-${moduleDetail.id}-coming-soon">
 		   			<div id="cc-module-config-${moduleDetail.id}-coming-soon">
-        				<a href="" id="cc-about-module-coming-soon" target="_blank"> 
-						<i class="icon-question cc-module-icon"></i></a> 
+					    <div>
+				    		<div style="padding-left:0.5rem" 
+						     class="cc-module-config-date">
+								<strong>Coming Soon</strong> 
+					    		<a href="" id="cc-about-module-coming-soon" target="_blank">
+			   					<i class="icon-question cc-module-icon"></i></a>
+								<div class="cc-current-studyPeriod">
+							   		<strong>Study Period</strong>
+					    	 		<a href="" class="cc-about-module-studyPeriod" target="_blank">
+			   						<i class="icon-question cc-module-icon"></i></a>
+								</div>
+								<div class="cc-calculated-date">${comingSoonDate}</div>
+							</div>
+							<div class="cc-module-config-collection-representation"
+					    		style="padding-top:1rem; padding-left:3rem">
+				    			<label for="cc-module-config-${moduleDetail.id}-coming-soon-label">Label</label>
+								<input type="text" id="cc-module-config-${moduleDetail.id}-coming-soon-label"
+						   			style="width:10rem" value="${comingSoonLabel}" /><br />
+				    			<label for="cc-module-config-${moduleDetail.id}-coming-soon-day">Day of week</label>
+								<select id="cc-module-config-${moduleDetail.id}-coming-soon-day">
+		                  			${comingSoonDateOptions.dayOfWeekOptions}
+								</select> <br />
+								<label for="cc-module-config-${moduleDetail.id}-coming-soon-week">Week</label>
+								<select id="cc-module-config-${moduleDetail.id}-coming-soon-week">
+		   		           			${comingSoonDateOptions.weekOptions}}	
+								</select> <br />
+								<label for="cc-module-config-${moduleDetail.id}-coming-soon-time">Time</label>
+								<style>
+					   				input[readonly] {
+										display:none;
+					   				}
+					   			</style>
+								<aeon-datepicker local="en-au">
+									<input type="time" id="cc-module-config-${moduleDetail.id}-coming-soon-time" name="time" value="${comingSoonTime}" />
+								</aeon-datepicker>
+							</div>
+							<br clear="all" />
+						</div>
 					</div>
 					</sl-tab-panel>
 				</sl-tab-group>
+				</div>
 			</div>
 
 			<div style="margin-right:1em">
