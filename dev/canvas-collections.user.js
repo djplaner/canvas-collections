@@ -5236,7 +5236,7 @@ class GriffithCardsView extends cc_View {
 	generateHTML(collectionName, variety = '') {
 		let cardsHtml = this.generateCards(collectionName);
 
-		if (variety==='claytons') {
+		if (variety === 'claytons') {
 			cardsHtml = this.convertToClaytons(cardsHtml);
 		}
 
@@ -5848,6 +5848,14 @@ class GriffithCardsView extends cc_View {
 	 */
 
 	convertDateToHtml(date) {
+		const fields = ['day', 'week', 'time'];
+		let singleDate = "";
+		for (let field of fields) {
+			if (date.hasOwnProperty(field)) {
+				singleDate = `${singleDate}${date[field]}`;
+			}
+		}
+
 
 		let extraDateLabelClass = '';
 		if (date.label === '') {
@@ -5863,18 +5871,26 @@ class GriffithCardsView extends cc_View {
 		}
 
 		// if there's a to date, call generateDualDate
-		if ( date.hasOwnProperty('to') ) {
+		if (date.hasOwnProperty('to')) {
 			// only generate dual date if there are values in to
 			let dualDate = "";
-			const fields = ['day', 'week', 'time'];
 			for (let field of fields) {
-				if (date.to.hasOwnProperty(field) ) {
+				if (date.to.hasOwnProperty(field)) {
 					dualDate = `${dualDate}${date.to[field]}`;
 				}
 			}
-			if (dualDate!=="") {
+			// is there no value set for to date?
+			if (dualDate !== "") {
+				if (singleDate==="") {
+					// if also no value set for from date, then no date displayed
+					return '';
+				}
+				// but if both from and to dates have some value
 				return this.generateDualDate(date);
 			}
+		}
+		if (singleDate==="") {
+			return '';
 		}
 
 		const singleDateHtml = `
@@ -5930,16 +5946,16 @@ class GriffithCardsView extends cc_View {
 			week: ""
 		};
 
-		if (date.hasOwnProperty('week') ) {
+		if (date.hasOwnProperty('week')) {
 			showDate.week = `${date.week}`;
 		}
-		if (date.hasOwnProperty('day') ) {
+		if (date.hasOwnProperty('day')) {
 			showDate.fromDay = date.day.substring(0, 3);
 		}
-		if (date.hasOwnProperty('date')){
+		if (date.hasOwnProperty('date')) {
 			showDate.fromDate = date.date;
 		}
-		if (date.hasOwnProperty('month') ) {
+		if (date.hasOwnProperty('month')) {
 			showDate.fromMonth = date.month.substring(0, 3);
 		}
 		if (date.hasOwnProperty('time')) {
@@ -5995,7 +6011,7 @@ class GriffithCardsView extends cc_View {
 		// TODO remove the elements that aren't needed
 		// Convert singleDateHtml to dom element
 		let element = new DOMParser().parseFromString(dualDateHtml, 'text/html').body.firstChild;
-		if (date.label==="") {
+		if (date.label === "") {
 			element.removeChild(element.querySelector('.cc-card-date-label'));
 		}
 		if (showDate.toTime === "" && showDate.fromTime === "") {
@@ -6120,7 +6136,7 @@ class GriffithCardsView extends cc_View {
 				imageSize = "cc-object-fit-old-kludge";
 			} else if (allowedObjectFit.includes(module.imageSize)) {
 				imageSize = `cc-object-fit-${module.imageSize}`;
-//				imageSize = `object-fit: ${module.imageSize} !important;`;
+				//				imageSize = `object-fit: ${module.imageSize} !important;`;
 			}
 		}
 		return imageSize;
@@ -6230,15 +6246,15 @@ class GriffithCardsView extends cc_View {
 		// Don't think this is needed here
 		//div = div.cloneNode(true);
 		// remove the div#cc-nav within div.cc-canvas-collections
-/*		let nav = div.querySelector('.cc-nav');
-		if (nav) {
-			nav.remove();
-		} 
-		// remove the div#cc-message within div.cc-canvas-collections
-		let message = div.querySelector('.cc-message');
-		if (message) {
-			message.remove();
-		} */
+		/*		let nav = div.querySelector('.cc-nav');
+				if (nav) {
+					nav.remove();
+				} 
+				// remove the div#cc-message within div.cc-canvas-collections
+				let message = div.querySelector('.cc-message');
+				if (message) {
+					message.remove();
+				} */
 		// find all the h3.cc-card-title
 		let h3s = div.querySelectorAll('h3.cc-card-title');
 		// loop through h3s and wrap innerHTML with <strong>
@@ -6314,23 +6330,23 @@ class GriffithCardsView extends cc_View {
 
 		// change background to #efefef for div.cc-card-content-height
 		// Canvas RCE removes border-bottom-left-radius and right
-/*		let cardContents = div.querySelectorAll('.cc-card-content-height');
-		for (let i = 0; i < cardContents.length; i++) {
-			let cardContent = cardContents[i];
-			cardContent.style.backgroundColor = '#efefef';
-		}
-		// change background to #efefef for div.cc-card-engage
-		let cardEngages = div.querySelectorAll('.cc-card-engage');
-		for (let i = 0; i < cardEngages.length; i++) {
-			let cardEngage = cardEngages[i];
-			cardEngage.style.backgroundColor = '#efefef';
-		} 
-		// change background to #efefef for div.cc-card-flex
-		let cardFlexes = div.querySelectorAll('.cc-card-flex');
-		for (let i = 0; i < cardFlexes.length; i++) {
-			let cardFlex = cardFlexes[i];
-			cardFlex.style.backgroundColor = '#efefef';
-		} */
+		/*		let cardContents = div.querySelectorAll('.cc-card-content-height');
+				for (let i = 0; i < cardContents.length; i++) {
+					let cardContent = cardContents[i];
+					cardContent.style.backgroundColor = '#efefef';
+				}
+				// change background to #efefef for div.cc-card-engage
+				let cardEngages = div.querySelectorAll('.cc-card-engage');
+				for (let i = 0; i < cardEngages.length; i++) {
+					let cardEngage = cardEngages[i];
+					cardEngage.style.backgroundColor = '#efefef';
+				} 
+				// change background to #efefef for div.cc-card-flex
+				let cardFlexes = div.querySelectorAll('.cc-card-flex');
+				for (let i = 0; i < cardFlexes.length; i++) {
+					let cardFlex = cardFlexes[i];
+					cardFlex.style.backgroundColor = '#efefef';
+				} */
 
 		// find any div.unpublished and remove it
 		let unpublisheds = div.querySelectorAll('.unpublished');

@@ -31,6 +31,9 @@ theme:
     - navigation.sections
 
 markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
   - attr_list
   - def_list
   - pymdownx.emoji:

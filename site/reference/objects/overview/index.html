@@ -1298,16 +1298,51 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#date" class="md-nav__link">
-    Date
+  <a href="#dates" class="md-nav__link">
+    Dates
   </a>
   
-    <nav class="md-nav" aria-label="Date">
+    <nav class="md-nav" aria-label="Dates">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#study-period" class="md-nav__link">
     Study Period
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#date-types" class="md-nav__link">
+    Date types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#start-date" class="md-nav__link">
+    Start Date
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stop-date" class="md-nav__link">
+    Stop Date
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#representation-of-dates" class="md-nav__link">
+    Representation of dates
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coming-soon" class="md-nav__link">
+    Coming Soon
   </a>
   
 </li>
@@ -1444,16 +1479,51 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#date" class="md-nav__link">
-    Date
+  <a href="#dates" class="md-nav__link">
+    Dates
   </a>
   
-    <nav class="md-nav" aria-label="Date">
+    <nav class="md-nav" aria-label="Dates">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#study-period" class="md-nav__link">
     Study Period
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#date-types" class="md-nav__link">
+    Date types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#start-date" class="md-nav__link">
+    Start Date
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stop-date" class="md-nav__link">
+    Stop Date
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#representation-of-dates" class="md-nav__link">
+    Representation of dates
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coming-soon" class="md-nav__link">
+    Coming Soon
   </a>
   
 </li>
@@ -1556,23 +1626,103 @@
 <h2 id="labels-and-numbers">Labels and Numbers</h2>
 <p>Many course designs use modules to represent common objects (e.g. lectures, tutorials, workshops, assessments, themes, topics etc.). Often a course will have multiple such objects (e.g. topic 1, topic 2, topic 3). Labels and numbers provide a means to explicitly identify such objects and their sequence. This information is used in different ways by each representation.</p>
 <p>Collections provides the ability for you to explicitly specify the number for each module OR it can auto calculate the number based on the module's position in the collection.</p>
-<h2 id="date">Date</h2>
-<p>It is common for a design specific object (e.g. topic, assignments, lecture etc.) to occur at a specific date and time. It is also common (within a University context) for these dates and times to be scheduled at the same time each study period (aka trimester, semester, study session etc). This commonly leads to two strategies:</p>
+<h2 id="dates">Dates</h2>
+<p>Collections allows you to specify the date, time, or date/time range. In a University context, such dates are typically given with reference to a given study period (aka semester, trimester, study session etc.). For example, Monday Week 1 of Trimester 1 will be a different date for Monday Week 1 of Trimester 2.</p>
+<p>This commonly leads to two strategies:</p>
 <ol>
 <li>Generic dates - specify the date in a study period independent way (e.g. "Week 1", "Week 2", "Week 3" etc.). No upkeep is required, but students are expected to translate the generic dates into specific calendar dates.</li>
-<li>Specific dates - specify the actual calendar date (e.g. 1st Marc). Requires manual updating each study period, but students can easily see the specific date.</li>
+<li>Specific dates - specify the actual calendar date (e.g. 1st March). Requires manual updating each study period, but students can easily see the specific date.</li>
 </ol>
 <p>Collections can take on the task of translating generic dates into calendar specific dates. It identifies the study period for the current course site and translates a generic date into the appropriate specific date based on the institution's academic calendar.</p>
-<blockquote>
-<p>🚧 <strong>Note:</strong> This feature is currently under construction. Currently, the following restrictions apply:</p>
-<ul>
-<li>Only generic dates can be provided.</li>
-<li>Generic dates only work for Griffith University.</li>
-</ul>
-</blockquote>
+<div class="admonition note">
+<p class="admonition-title">Dates is workable, but under construction</p>
+<p><img alt="🚧" class="emojione" src="https://twemoji.maxcdn.com/v/latest/svg/1f6a7.svg" title=":construction:" /> Currently, dates can only be specified using generic dates and Griffith University study periods.</p>
+</div>
 <h3 id="study-period">Study Period</h3>
 <p>At Griffith University, the course code typically includes a term code. A four digital number identifying the study (aka teaching) period.  Collections attempts to extract the term code from the course code, which is then used to map generic dates to specific calendar dates. If the term code cannot be extracted, Collections defaults to the current study period.</p>
 <p>See <a href="https://intranet.secure.griffith.edu.au/computing/using-learning-at-griffith/staff/administration/course-ID">the Griffith course id explanation page</a> for more information about term codes.</p>
+<p>Collections will display the label - circled in red in the following image - for the study period it is using to generate calendar dates.</p>
+<p><img alt="" src="../pics/calculatedStudyPeriod.png" />  </p>
+<h3 id="date-types">Date types</h3>
+<p>As summarised in the following table, the date area of the Module configuration dialog allows you to specify dates for three different purposes.</p>
+<table>
+<thead>
+<tr>
+<th>Date type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Start Date</td>
+<td>Either a one-off date or the start date of a date range</td>
+</tr>
+<tr>
+<td>Stop Date</td>
+<td>The end date of a date range</td>
+</tr>
+<tr>
+<td>Coming Soon</td>
+<td><img alt="🚧" class="emojione" src="https://twemoji.maxcdn.com/v/latest/svg/1f6a7.svg" title=":construction:" /> A date indicating when a module will become available to students</td>
+</tr>
+</tbody>
+</table>
+<p>All three date types are available from the same space via a tabbed interface. As illustrated by the following animated image, each date type provides a similar (but not the same) interface.</p>
+<p><img alt="" src="../pics/dateTypesAnimated.gif" /></p>
+<h3 id="start-date">Start Date</h3>
+<p>Start date can specify either a one-off date or the start of a date range. The following table summarises the values you can specify for a start date.</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Default value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Date label</td>
+<td>Commencing</td>
+<td>A text label that will be added before the date (range). e.g. "Starts" or "Due".</td>
+</tr>
+<tr>
+<td>Day of week</td>
+<td><em>Not Chosen</em></td>
+<td>The full name of the day of the week for the date</td>
+</tr>
+<tr>
+<td>Week</td>
+<td><em>Not Chosen</em></td>
+<td>The number of the week within the study period in which the date occurs.</td>
+</tr>
+<tr>
+<td>Time</td>
+<td></td>
+<td>The time of day (if any) for the date.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="stop-date">Stop Date</h3>
+<p>Stop date specifies the final date in a date range. A stop date can be assigned all of the same values as a Start date (see previous table), except for the Date label.</p>
+<h3 id="representation-of-dates">Representation of dates</h3>
+<p>How dates are displayed to the student depends on the combination of:</p>
+<ol>
+<li>The design of the current representation for a collection.</li>
+<li>What dates have been configured.</li>
+</ol>
+<p>The following animated image demonstrates how the representation of a date changes through the following stages:</p>
+<ol>
+<li>No date has been configured for the cards representation.</li>
+<li>A start date is partially and then fully configured.</li>
+<li>The representation is changed to the assessment table representation and then back to the cards.</li>
+<li>A stop date is partially and then almost fully configured (the week is not specified, hence no final date).</li>
+</ol>
+<p><img alt="" src="../pics/configureDatesAnimated.gif" /></p>
+<h3 id="coming-soon">Coming Soon</h3>
+<div class="admonition note">
+<p class="admonition-title">Coming Soon is under construction</p>
+<p><img alt="🏗️" class="emojione" src="https://twemoji.maxcdn.com/v/latest/svg/1f3d7.svg" title=":construction_site:" /> The "Coming Soon" feature is currently being developed. It will be an adaptation of the <a href="https://djplaner.github.io/Card-Interface-Tweak/customiseACard/#making-a-coming-soon-card">Card Interface "Coming Soon" feature</a> for Canvas.</p>
+</div>
 <h2 id="additional-metadata">Additional Metadata</h2>
 <p>For various reasons you may wish to provide additional metadata about a module. The <em>additional metadata</em> area enables this. You can add (and delete) any additional metadata in the form of name/value pairs.</p>
 
