@@ -367,20 +367,33 @@ export default class AssessmentTableView extends cc_View {
 
       let dateLabel = '';
       let dueDateString = '';
+      // get the calendar date info if necessary and any other
+      // standard updates - redefine this if required
       let calendarDate = this.generateCalendarDate(modules[i].date);
 
       if (calendarDate) {
+        // dueDateString format will be
+        // [time] [day] [date] [month] [year]
+        // with that repeated after a " - " if there's a to
+        const dateFields = ['time', 'day', 'date', 'month', 'year'];
+        dateFields.forEach( field => {
+          if (calendarDate.hasOwnProperty(field) && calendarDate[field] !== "") {
+            dueDateString = `${dueDateString} ${calendarDate[field]}`;
+          }
+        });
 
-        // just work with a single date for now (date range to come)
-        //const dueDate = modules[i].date;
-        const dueDate = calendarDate.from;
-        if (dueDate) {
-          if (dueDate.MONTH) {
-            dueDateString = `${dueDate.MONTH} ${dueDate.DATE}`;
-          }
-          if (modules[i].date.label) {
-            dateLabel = modules[i].date.label;
-          }
+        // add the to values
+        if (calendarDate.hasOwnProperty('to')) {
+          dueDateString = `${dueDateString} - `;
+          dateFields.forEach( field => {
+            if (calendarDate.to.hasOwnProperty(field) && calendarDate.to[field] !== "") {
+              dueDateString = `${dueDateString} ${calendarDate.to[field]}`;
+            }
+          });
+        }
+
+        if (calendarDate.label) {
+          dateLabel = calendarDate.label;
         }
       }
 

@@ -715,15 +715,22 @@ class cc_View {
 			return undefined;
 		}
 
-		const date = {
-			"from": {},
-			"to": undefined
-		};
+		let date = {};
 
-		date.from = this.convertUniDateToReal(dateJson);
-		if (dateJson.endDate) {
-			date.to = this.convertUniDateToReal(dateJson.endDate);
-			this.generateDualDate(date);
+		date = this.convertUniDateToReal(dateJson);
+		if (dateJson.hasOwnProperty('to') ) {
+			// check that date.to actually has some values
+			let dualDate = "";
+			const fields = ['day', 'week', 'time'];
+			for (let field of fields) {
+				if (dateJson.to.hasOwnProperty(field) ) {
+					dualDate = `${dualDate}${dateJson.to[field]}`;
+				}
+			}
+			if (dualDate!=="") {
+				date.to = this.convertUniDateToReal(dateJson.to);
+			}
+			//this.generateDualDate(date);
 		}
 		return date;
 
@@ -742,47 +749,47 @@ class cc_View {
 
 		let firstDate = {};
 
-		firstDate.DATE_LABEL = "";
+		firstDate.label = "";
 		if (dateJson.hasOwnProperty('label')) {
-			firstDate.DATE_LABEL = dateJson.label;
+			firstDate.label = dateJson.label;
 		} 
 
-		firstDate.WEEK = dateJson.week || "";
-		firstDate.DAY = dateJson.day || "Monday"; // is this the right default
+		firstDate.week = dateJson.week || "";
+		firstDate.day = dateJson.day || "Monday"; // is this the right default
 		// remove all but the first three letters of the day
-		firstDate.DAY = firstDate.DAY.substring(0, 3);
+		firstDate.day = firstDate.day.substring(0, 3);
 		// Week needs more work to add the the day and string "Week"
 		// Also it should be HTML
 
-		firstDate.TIME = dateJson.time || "";
+		firstDate.time = dateJson.time || "";
 		// convert 24 hour time into 12 hour time
-		if (firstDate.TIME) {
-			firstDate.TIME = this.model.convertFrom24To12Format(firstDate.TIME);
+		if (firstDate.time) {
+			firstDate.time = this.model.convertFrom24To12Format(firstDate.time);
 		}
 
-		firstDate.MONTH = dateJson.month || "";
-		firstDate.DATE = dateJson.date || "";
+		firstDate.month = dateJson.month || "";
+		firstDate.date = dateJson.date || "";
 
 		// With week defined, we need to calculate MONTH and DATE based
 		// on university trimester
-		if (firstDate.WEEK !== "") {
+		if (firstDate.week !== "") {
 			// TODO should check for a day, if we wish to get the day
 			let actualDate = {};
-			if (firstDate.DAY === "" && this.hasOwnProperty('calendar')) {
+			if (firstDate.day === "" && this.hasOwnProperty('calendar')) {
 				// no special day specified, just get the start of the week
-				actualDate = this.calendar.getDate(firstDate.WEEK);
+				actualDate = this.calendar.getDate(firstDate.week);
 			} else if (this.hasOwnProperty('calendar')) {
 				// need go get the date for a particular day
-				actualDate = this.calendar.getDate(firstDate.WEEK, false, firstDate.DAY);
+				actualDate = this.calendar.getDate(firstDate.week, false, firstDate.day);
 			}
 			// actualDate { date/month/year }
-			firstDate.DATE = actualDate.date;
-			firstDate.MONTH = actualDate.month;
+			firstDate.date = actualDate.date;
+			firstDate.month = actualDate.month;
 		}
 
 		// no date information defined, no date widget
-		if (firstDate.WEEK === "" && firstDate.TIME === "" &&
-			firstDate.MONTH === "" && firstDate.DATE === "") {
+		if (firstDate.week === "" && firstDate.time === "" &&
+			firstDate.month === "" && firstDate.date === "") {
 			return "";
 		}
 		return firstDate;
@@ -4998,20 +5005,33 @@ class AssessmentTableView extends cc_View {
 
       let dateLabel = '';
       let dueDateString = '';
+      // get the calendar date info if necessary and any other
+      // standard updates - redefine this if required
       let calendarDate = this.generateCalendarDate(modules[i].date);
 
       if (calendarDate) {
+        // dueDateString format will be
+        // [time] [day] [date] [month] [year]
+        // with that repeated after a " - " if there's a to
+        const dateFields = ['time', 'day', 'date', 'month', 'year'];
+        dateFields.forEach( field => {
+          if (calendarDate.hasOwnProperty(field) && calendarDate[field] !== "") {
+            dueDateString = `${dueDateString} ${calendarDate[field]}`;
+          }
+        });
 
-        // just work with a single date for now (date range to come)
-        //const dueDate = modules[i].date;
-        const dueDate = calendarDate.from;
-        if (dueDate) {
-          if (dueDate.MONTH) {
-            dueDateString = `${dueDate.MONTH} ${dueDate.DATE}`;
-          }
-          if (modules[i].date.label) {
-            dateLabel = modules[i].date.label;
-          }
+        // add the to values
+        if (calendarDate.hasOwnProperty('to')) {
+          dueDateString = `${dueDateString} - `;
+          dateFields.forEach( field => {
+            if (calendarDate.to.hasOwnProperty(field) && calendarDate.to[field] !== "") {
+              dueDateString = `${dueDateString} ${calendarDate.to[field]}`;
+            }
+          });
+        }
+
+        if (calendarDate.label) {
+          dateLabel = calendarDate.label;
         }
       }
 
