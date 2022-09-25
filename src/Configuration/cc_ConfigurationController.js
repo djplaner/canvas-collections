@@ -593,12 +593,20 @@ export default class cc_ConfigurationController {
 		//     cc-collection-<collection-name>-output-page-update
 		const collectionName = event.target.id.match(/cc-collection-(.*)-output-page-update/)[1];
 		
+		// what's the value of element #cc-config-full-claytons-navigation-option
+		const navigationOption = document.querySelector('#cc-config-full-claytons-navigation-option');
+		let navigationOptionValue = "1";
+		if (navigationOption) {
+			navigationOptionValue = navigationOption.value;
+		}
+
 
 		// Obtain the collection name and representation for the button clicked
 
 		let updateController = new updatePageController( 
-			collectionName, this.parentController 
+			collectionName, this.parentController, navigationOptionValue 
 			);
+		updateController.execute();
 
 	}
 
@@ -614,7 +622,14 @@ export default class cc_ConfigurationController {
 
 	updateFullClaytons(event) {
 
+		// get all the collections with output pages
 		const collectionsWithOutputPage = this.model.getCollectionsWithOutputPage();
+		// what's the value of element #cc-config-full-claytons-navigation-option
+		const navigationOption = document.querySelector('#cc-config-full-claytons-navigation-option');
+		let navigationOptionValue = "1";
+		if (navigationOption) {
+			navigationOptionValue = navigationOption.value;
+		}
 
 		if (collectionsWithOutputPage.length <= 1) {
 			alert(`Full Claytons needs at least 2 collections with output pages -currently ${collectionsWithOutputPage.length}.`); 
@@ -623,8 +638,9 @@ export default class cc_ConfigurationController {
 		for (let collectionName of collectionsWithOutputPage) {
 			console.log(`full claytons updating ${collectionName}`);
 			let updateController = new updatePageController( 
-				collectionName, this.parentController, true
+				collectionName, this.parentController, navigationOptionValue
 				);
+			updateController.execute();
 		}
 
 	}

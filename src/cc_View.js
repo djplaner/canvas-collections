@@ -95,31 +95,44 @@ export default class cc_View {
 			date:
 			endDate: { repeat all of first date, except label}
 		} */
-
 		if (!dateJson) {
 			return undefined;
 		}
 
+		const fields = ['day', 'week', 'time'];
+		let singleDate = "";
+		for (let field of fields) {
+			if (dateJson.hasOwnProperty(field)) {
+				singleDate = `${singleDate}${dateJson[field]}`;
+			}
+		}
+
+
 		let date = {};
 
 		date = this.convertUniDateToReal(dateJson);
-		if (dateJson.hasOwnProperty('to') ) {
+		if (dateJson.hasOwnProperty('to')) {
 			// check that date.to actually has some values
 			let dualDate = "";
-			const fields = ['day', 'week', 'time'];
 			for (let field of fields) {
-				if (dateJson.to.hasOwnProperty(field) ) {
+				if (dateJson.to.hasOwnProperty(field)) {
 					dualDate = `${dualDate}${dateJson.to[field]}`;
 				}
 			}
-			if (dualDate!=="") {
+			if (dualDate !== "") {
+				if (singleDate==="") {
+					return {};
+				}
 				date.to = this.convertUniDateToReal(dateJson.to);
 			}
 			//this.generateDualDate(date);
 		}
+		if (singleDate==="" ) {
+			return {};
+		}
 		return date;
 
-//		return this.convertDateToHtml(date);
+		//		return this.convertDateToHtml(date);
 
 	}
 
@@ -137,7 +150,7 @@ export default class cc_View {
 		firstDate.label = "";
 		if (dateJson.hasOwnProperty('label')) {
 			firstDate.label = dateJson.label;
-		} 
+		}
 
 		firstDate.week = dateJson.week || "";
 		firstDate.day = dateJson.day || "Monday"; // is this the right default

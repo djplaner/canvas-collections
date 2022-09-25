@@ -50,13 +50,19 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
 	},
 	{
-		contentText: `<p>Update all configured output pages and include a navigation menu 
-		between them. </p>
+		contentText: `<p>Update all configured output pages and (possibly) include a navigation menu</p>
 		<p>Best suited when more than one collection has an output page.</p>`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-full-claytons",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview"
+	},
+	{
+		contentText: `<p>Choose if and what navigation scheme is implemented between all configured output pages.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-full-claytons-navigation-option",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/navigation-option"
 	},
 	{
 		contentText: `<p>Make collection invisible to students. 
@@ -1306,10 +1312,32 @@ export default class cc_ConfigurationView extends cc_View {
 						<p>Full "Claytons"
 						<a id="cc-about-full-claytons" target="_blank" href="">
 			   			<i class="icon-question"></i></a> </p>
+						<div>
+						  <style>
+						    #cc-config-full-claytons-navigation-option::part(button-group) {
+								font-size: 0.75rem;
+							}
+
+						    #cc-config-full-claytons-navigation-option::part(base):active {
+								background: var(--ic-brand-button--primary-bgd);
+								color: var(--ic-brand-button--primary-text);
+							}
+						  </style>
+						  <label for="cc-config-full-claytons-navigation-option">Navigation Option
+						<a id="cc-about-full-claytons-navigation-option" target="_blank" href="">
+			   			<i class="icon-question"></i></a> </p>
+						  </label>
+						  <sl-radio-group id="cc-config-full-claytons-navigation-option" value="2">
+						    <sl-radio-button value="1">None</sl-radio-button>
+							<sl-radio-button value="2">Pages</sl-radio-button>
+							<sl-radio-button value="3">Tabs</sl-radio-button>
+						  </sl-radio-group>
+					  	</div>
+						<div style="margin-top: 0.5rem">
 						  <fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
 							  <button class="btn btn-primary" id="cc-config-update-full-claytons">Update</button>
 						  </fieldset>
-					  
+					    </div> 
 					</div>
 				  </div>
 				</div>

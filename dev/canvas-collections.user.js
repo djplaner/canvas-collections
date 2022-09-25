@@ -710,31 +710,44 @@ class cc_View {
 			date:
 			endDate: { repeat all of first date, except label}
 		} */
-
 		if (!dateJson) {
 			return undefined;
 		}
 
+		const fields = ['day', 'week', 'time'];
+		let singleDate = "";
+		for (let field of fields) {
+			if (dateJson.hasOwnProperty(field)) {
+				singleDate = `${singleDate}${dateJson[field]}`;
+			}
+		}
+
+
 		let date = {};
 
 		date = this.convertUniDateToReal(dateJson);
-		if (dateJson.hasOwnProperty('to') ) {
+		if (dateJson.hasOwnProperty('to')) {
 			// check that date.to actually has some values
 			let dualDate = "";
-			const fields = ['day', 'week', 'time'];
 			for (let field of fields) {
-				if (dateJson.to.hasOwnProperty(field) ) {
+				if (dateJson.to.hasOwnProperty(field)) {
 					dualDate = `${dualDate}${dateJson.to[field]}`;
 				}
 			}
-			if (dualDate!=="") {
+			if (dualDate !== "") {
+				if (singleDate==="") {
+					return {};
+				}
 				date.to = this.convertUniDateToReal(dateJson.to);
 			}
 			//this.generateDualDate(date);
 		}
+		if (singleDate==="" ) {
+			return {};
+		}
 		return date;
 
-//		return this.convertDateToHtml(date);
+		//		return this.convertDateToHtml(date);
 
 	}
 
@@ -752,7 +765,7 @@ class cc_View {
 		firstDate.label = "";
 		if (dateJson.hasOwnProperty('label')) {
 			firstDate.label = dateJson.label;
-		} 
+		}
 
 		firstDate.week = dateJson.week || "";
 		firstDate.day = dateJson.day || "Monday"; // is this the right default
@@ -852,13 +865,19 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
 	},
 	{
-		contentText: `<p>Update all configured output pages and include a navigation menu 
-		between them. </p>
+		contentText: `<p>Update all configured output pages and (possibly) include a navigation menu</p>
 		<p>Best suited when more than one collection has an output page.</p>`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-full-claytons",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview"
+	},
+	{
+		contentText: `<p>Choose if and what navigation scheme is implemented between all configured output pages.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-full-claytons-navigation-option",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/navigation-option"
 	},
 	{
 		contentText: `<p>Make collection invisible to students. 
@@ -2108,10 +2127,32 @@ class cc_ConfigurationView extends cc_View {
 						<p>Full "Claytons"
 						<a id="cc-about-full-claytons" target="_blank" href="">
 			   			<i class="icon-question"></i></a> </p>
+						<div>
+						  <style>
+						    #cc-config-full-claytons-navigation-option::part(button-group) {
+								font-size: 0.75rem;
+							}
+
+						    #cc-config-full-claytons-navigation-option::part(base):active {
+								background: var(--ic-brand-button--primary-bgd);
+								color: var(--ic-brand-button--primary-text);
+							}
+						  </style>
+						  <label for="cc-config-full-claytons-navigation-option">Navigation Option
+						<a id="cc-about-full-claytons-navigation-option" target="_blank" href="">
+			   			<i class="icon-question"></i></a> </p>
+						  </label>
+						  <sl-radio-group id="cc-config-full-claytons-navigation-option" value="2">
+						    <sl-radio-button value="1">None</sl-radio-button>
+							<sl-radio-button value="2">Pages</sl-radio-button>
+							<sl-radio-button value="3">Tabs</sl-radio-button>
+						  </sl-radio-group>
+					  	</div>
+						<div style="margin-top: 0.5rem">
 						  <fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
 							  <button class="btn btn-primary" id="cc-config-update-full-claytons">Update</button>
 						  </fieldset>
-					  
+					    </div> 
 					</div>
 				  </div>
 				</div>
@@ -2842,19 +2883,24 @@ input:checked + .cc-slider:before {
  */
 
 
+
+
 class updatePageController {
 
 	/**
 	 * @param {String} collection  - name of Collection to update
 	 * @param {cc_Controller} parentController 
-	 * @param {boolean} navBar - true if the page should have a navigation bar
-	 *     typically meaning we're using this as part of a Full claytons
+	 * @param {String} navOption - integer value representing how to do navigation
+	 *    1 - none
+	 *    2 - pages - the nav bar assumes separate output pages for each collection and page
+	 *        based navigation
+	 *    3 - tabs - assumes all collections on the same page and tab based navigation 
 	 */
 
-	constructor(collection,parentController, navBar = false) {
+	constructor(collection,parentController, navOption = "2") {
 		this.collection = collection;
 		this.parentController = parentController;
-		this.navBar = navBar;
+		this.navOption = navOption;
 
 		// TODO do sanity checks for the presence of these things
 		const collections = this.parentController.cc_configuration.COLLECTIONS;
@@ -2910,7 +2956,16 @@ class updatePageController {
 
 		this.outputPageURL = this.outputPageName.toLowerCase().replace(/ /g,'-');
 
+//		this.getOutputPage();
+	}
+
+
+	/**
+	 * Start the process of updating the given page
+	 */
+	execute() {
 		this.getOutputPage();
+		// the follow up updateOutputPage will be called by getOutputPage
 	}
 
 	async getOutputPage() {
@@ -2959,7 +3014,7 @@ class updatePageController {
 	updateOutputPage() {
 		DEBUG && console.log(`updatePageController: updateOutputPage: pageObject = ${JSON.stringify(this.pageObject)}`);
 
-		const insertContentHtml = this.collectionsView.generateHTML(this.collection,"claytons",this.navBar);
+		const insertContentHtml = this.collectionsView.generateHTML(this.collection,"claytons",this.navOption);
 //		const insertContentHtml = "<p>Here we go, here we go, here we go...bugger off you</p>"
 
 		const originalContent = this.pageObject.body;
@@ -3824,12 +3879,20 @@ class cc_ConfigurationController {
 		//     cc-collection-<collection-name>-output-page-update
 		const collectionName = event.target.id.match(/cc-collection-(.*)-output-page-update/)[1];
 		
+		// what's the value of element #cc-config-full-claytons-navigation-option
+		const navigationOption = document.querySelector('#cc-config-full-claytons-navigation-option');
+		let navigationOptionValue = "1";
+		if (navigationOption) {
+			navigationOptionValue = navigationOption.value;
+		}
+
 
 		// Obtain the collection name and representation for the button clicked
 
 		let updateController = new updatePageController( 
-			collectionName, this.parentController 
+			collectionName, this.parentController, navigationOptionValue 
 			);
+		updateController.execute();
 
 	}
 
@@ -3845,7 +3908,14 @@ class cc_ConfigurationController {
 
 	updateFullClaytons(event) {
 
+		// get all the collections with output pages
 		const collectionsWithOutputPage = this.model.getCollectionsWithOutputPage();
+		// what's the value of element #cc-config-full-claytons-navigation-option
+		const navigationOption = document.querySelector('#cc-config-full-claytons-navigation-option');
+		let navigationOptionValue = "1";
+		if (navigationOption) {
+			navigationOptionValue = navigationOption.value;
+		}
 
 		if (collectionsWithOutputPage.length <= 1) {
 			alert(`Full Claytons needs at least 2 collections with output pages -currently ${collectionsWithOutputPage.length}.`); 
@@ -3854,8 +3924,9 @@ class cc_ConfigurationController {
 		for (let collectionName of collectionsWithOutputPage) {
 			console.log(`full claytons updating ${collectionName}`);
 			let updateController = new updatePageController( 
-				collectionName, this.parentController, true
+				collectionName, this.parentController, navigationOptionValue
 				);
+			updateController.execute();
 		}
 
 	}
@@ -4386,8 +4457,15 @@ class NavView extends cc_View {
 	 * @returns String HTML containing the navBar
 	 */
 	generateHTML(collectionName = '', variety = '') {
-		if (variety === 'claytons') {
+		if (variety === '2') {
 			return this.generateClaytonsNavBar(collectionName);
+		}
+		if (variety === '3') {
+			return this.generateTabNavBar(collectionName);
+		}
+		if (variety!=='') {
+			alert(`NavView.generateHTML() - unknown variety: ${variety}`);
+			return '';
 		}
 		let navBar = document.createElement('div');
 		navBar.className = 'cc-nav';
@@ -4593,6 +4671,53 @@ div.cc-collection-hidden > a {
 
 		return CLAYTONS_NAVBAR_HTML.replace('{{NAVBAR_ITEMS}}', items);
 	}
+
+	/**
+	 * Return HTML for nav bar that is HTML/CSS only. to be inserted into a Canvas
+	 * page as part of the Full Claytons
+	 * @param {String} collectionName 
+	 * @returns {String} HTML for nav bar
+	 */
+	generateTabNavBar(collectionName = '') {
+		let CLAYTONS_NAVBAR_HTML = `
+		<div id="cc-nav" class="enhanceable_content tabs" style="font-size:small">
+		  <ul style="list-style-type:none;margin:0;padding:0;overflow:hidden;background-color:#eeeeee;display:table;table-layout:fixed;width:100%">
+		  {{NAVBAR_ITEMS}}
+		  </ul>
+	    </div>`;
+
+		// get list of collection details without output pages(including output page)
+		const collectionsOutput = this.model.getOutputPageCollections();
+		const activeLi = ' style="display:table-cell;float:none;width:100%;font-weight:bold;background-color:#c12525;"';
+		const activeA = ' style="display:block;text-align:center;text-decoration:none;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;color:#fff;"';
+
+		let items = '';
+
+		collectionsOutput.forEach(collection => {
+			let liStyle =' style="display:table-cell;width:100%;float:none"';
+			let aStyle = ' style="text-decoration:none;display:block;text-align:center;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;border-top:4px solid #eee;"';
+			if (collection.name === collectionName) {
+				liStyle = activeLi;
+				aStyle = activeA;
+			}
+//			let pageUrl = this.model.calculatePageUrl(collection.outputPage);
+			let pageUrl = `#cc-output-${collection.name}`;
+			items = `${items}
+		   <li${liStyle}>
+		     <a${aStyle} href="${pageUrl}">${collection.name}</a>
+		   </li>
+		`;
+
+		});
+
+		// loop through each collection
+		// get the names of collection with output pages
+		// include those collection names in the nav bar
+
+
+		return CLAYTONS_NAVBAR_HTML.replace('{{NAVBAR_ITEMS}}', items);
+	}
+
 }
 
 // src/Collections/Views/Table.js
@@ -6687,11 +6812,11 @@ class CollectionsView extends cc_View {
 	 * - give option to include the includePage
 	 * @param {String} collectionName 
 	 * @param {String} variety 
-	 * @param {boolean} navBar
+	 * @param {String} navOption
 	 * @return {String} HTML string
 	 */
 
-	generateHTML(collectionName,variety="",navBar=false) {
+	generateHTML(collectionName,variety="",navOption="2") {
 		// does the collection have a representation?
 		if (!this.representations[collectionName]) {
 			return undefined;
@@ -6706,9 +6831,9 @@ class CollectionsView extends cc_View {
 		let html = this.representations[collectionName].generateHTML(collectionName,variety);
 
 		// add in the navBar insert it at the beginning of html
-		if (navBar ) {
+		if (navOption ) {
 			//html = `<h1>NAV BAR HERE</h1>${html}`;
-			html = `${this.navView.generateHTML(collectionName,variety)}${html}`;
+			html = `${this.navView.generateHTML(collectionName,navOption)}${html}`;
 		}
 		// TODO
 		// - add in the navBar?

@@ -68,8 +68,15 @@ export default class NavView extends cc_View {
 	 * @returns String HTML containing the navBar
 	 */
 	generateHTML(collectionName = '', variety = '') {
-		if (variety === 'claytons') {
+		if (variety === '2') {
 			return this.generateClaytonsNavBar(collectionName);
+		}
+		if (variety === '3') {
+			return this.generateTabNavBar(collectionName);
+		}
+		if (variety!=='') {
+			alert(`NavView.generateHTML() - unknown variety: ${variety}`);
+			return '';
 		}
 		let navBar = document.createElement('div');
 		navBar.className = 'cc-nav';
@@ -275,5 +282,51 @@ div.cc-collection-hidden > a {
 
 		return CLAYTONS_NAVBAR_HTML.replace('{{NAVBAR_ITEMS}}', items);
 	}
+
+	/**
+	 *
+	 * @param {String} collectionName 
+	 * @returns {String} HTML for nav bar
+	 */
+	generateTabNavBar(collectionName = '') {
+		let CLAYTONS_NAVBAR_HTML = `
+		<div id="cc-nav" class="enhanceable_content tabs" style="font-size:small">
+		  <ul style="list-style-type:none;margin:0;padding:0;overflow:hidden;background-color:#eeeeee;display:table;table-layout:fixed;width:100%">
+		  {{NAVBAR_ITEMS}}
+		  </ul>
+	    </div>`;
+
+		// get list of collection details without output pages(including output page)
+		const collectionsOutput = this.model.getOutputPageCollections();
+		const activeLi = ' style="display:table-cell;float:none;width:100%;font-weight:bold;background-color:#c12525;"';
+		const activeA = ' style="display:block;text-align:center;text-decoration:none;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;color:#fff;"';
+
+		let items = '';
+
+		collectionsOutput.forEach(collection => {
+			let liStyle =' style="display:table-cell;width:100%;float:none"';
+			let aStyle = ' style="text-decoration:none;display:block;text-align:center;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;border-top:4px solid #eee;"';
+			if (collection.name === collectionName) {
+				liStyle = activeLi;
+				aStyle = activeA;
+			}
+//			let pageUrl = this.model.calculatePageUrl(collection.outputPage);
+			let pageUrl = `#cc-output-${collection.name}`;
+			items = `${items}
+		   <li${liStyle}>
+		     <a${aStyle} href="${pageUrl}">${collection.name}</a>
+		   </li>
+		`;
+
+		});
+
+		// loop through each collection
+		// get the names of collection with output pages
+		// include those collection names in the nav bar
+
+
+		return CLAYTONS_NAVBAR_HTML.replace('{{NAVBAR_ITEMS}}', items);
+	}
+
 }
 
