@@ -416,6 +416,9 @@ export default class cc_ConfigurationModel {
 						to: { day: '', week: '', time: '' }
 					};
 				}
+				if (!module.date.hasOwnProperty('to')) {
+					module.date.to = { day: '', week: '', time: '' };
+				}
 				if (fieldName==='date-label') {
 					fieldName='label';
 				}

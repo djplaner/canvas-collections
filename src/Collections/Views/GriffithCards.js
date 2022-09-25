@@ -298,6 +298,16 @@ export default class GriffithCardsView extends cc_View {
 			padding-bottom: 0.25rem;
 		}
 
+		.cc-card-date-dual-time {
+			display: flex;
+			font-size: 0.7rem;
+			color: black;
+			background-color: #fff382;	
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+		}
+
+
 		.cc-card-date-month {
 			color: white;
 			background-color: red;
@@ -358,6 +368,29 @@ export default class GriffithCardsView extends cc_View {
 
 		.cc-card-date-date-to {
 			width:50%;
+		}
+
+		.cc-card-date-time-from {
+			width: 50%;
+		}
+		.cc-card-date-time-to {
+			width: 50%;
+		}
+
+		.cc-card-date-day {
+			font-size: 0.7rem;
+		}
+
+		.cc-card-date-day-from {
+			width: 50%;
+		}
+		.cc-card-date-day-to {
+			width: 50%;
+		}
+
+		.cc-card-date-dual-day {
+			display:flex;
+			font-size: 0.7rem;
 		}
 
 		.cc-progress {
@@ -664,7 +697,7 @@ export default class GriffithCardsView extends cc_View {
 		}
 
 		// create day const with the first 3 letters of date.day
-		const day = date.day.substring(0, 3);
+		const day = date.day || "Monday"; //date.day.substring(0, 3);
 		const month = date.month.substring(0, 3);
 		let time = '';
 		if (date.time) {
@@ -673,7 +706,17 @@ export default class GriffithCardsView extends cc_View {
 
 		// if there's a to date, call generateDualDate
 		if ( date.hasOwnProperty('to') ) {
-			return this.generateDualDate(date);
+			// only generate dual date if there are values in to
+			let dualDate = "";
+			const fields = ['day', 'week', 'time'];
+			for (let field of fields) {
+				if (date.to.hasOwnProperty(field) ) {
+					dualDate = `${dualDate}${date.to[field]}`;
+				}
+			}
+			if (dualDate!=="") {
+				return this.generateDualDate(date);
+			}
 		}
 
 		const singleDateHtml = `
@@ -682,10 +725,13 @@ export default class GriffithCardsView extends cc_View {
              ${date.label}
           </div>
 		  <div class="cc-card-date-week">
-          	${day} Week ${date.week}
+          	Week ${date.week}
 		  </div>
 		  <div class="cc-card-date-time">
           ${time}
+		  </div>
+		  <div class="cc-card-date-day">
+		    ${day}
 		  </div>
 		  <div class="cc-card-date-month">
       	     ${month}
@@ -718,20 +764,47 @@ export default class GriffithCardsView extends cc_View {
 	 */
 
 	generateDualDate(date) {
-		const fromDate = date.day.substring(0, 3);
-		const toDate = date.to.day.substring(0, 3);
-		const fromMonth = date.month.substring(0, 3);
-		const toMonth = date.to.month.substring(0, 3);
-		let fromTime = '';
-		if (date.time) {
-			fromTime = this.model.convertFrom24To12Format(date.time);
+
+		let showDate = {
+			fromDay: "", toDay: "",
+			fromDate: "", toDate: "", fromMonth: "", toMonth: "",
+			fromTime: "", toTime: "",
+			week: ""
+		};
+
+		if (date.hasOwnProperty('week') ) {
+			showDate.week = `${date.week}`;
 		}
-		let toTime = '';
-		if (date.to.time) {
-			toTime = this.model.convertFrom24To12Format(date.to.time);
+		if (date.hasOwnProperty('day') ) {
+			showDate.fromDay = date.day.substring(0, 3);
+		}
+		if (date.hasOwnProperty('date')){
+			showDate.fromDate = date.date;
+		}
+		if (date.hasOwnProperty('month') ) {
+			showDate.fromMonth = date.month.substring(0, 3);
+		}
+		if (date.hasOwnProperty('time')) {
+			showDate.fromTime = this.model.convertFrom24To12Format(date.time);
 		}
 
-		const week = `${date.week} to ${date.to.week}`;
+		if (date.hasOwnProperty('to')) {
+			if (date.to.hasOwnProperty('date')) {
+				showDate.toDate = date.to.date;
+			}
+			if (date.to.hasOwnProperty('week')) {
+				showDate.week = `${showDate.week} - ${date.to.week}`;
+			}
+			if (date.to.hasOwnProperty('day')) {
+				showDate.toDay = date.to.day.substring(0, 3) || "Mon";
+			}
+			if (date.to.hasOwnProperty('month')) {
+				showDate.toMonth = date.to.month.substring(0, 3);
+			}
+			if (date.to.hasOwnProperty('time')) {
+				showDate.toTime = this.model.convertFrom24To12Format(date.to.time);
+			}
+		}
 
 		// create week showing "Week X to X"
 		const dualDateHtml = `
@@ -740,23 +813,23 @@ export default class GriffithCardsView extends cc_View {
              ${date.label}
           </div>
 		  <div class="cc-card-date-week">
-          	Week ${week}
-		  </div>
-		  <div class="cc-card-date-dual-day">
-		  	<div class="cc-card-date-day-from">${fromDate}</div>
-			<div class="cc-card-date-day-to">${toDate}</div>
+          	Week ${showDate.week}
 		  </div>
 		  <div class="cc-card-date-dual-time">
-		    <div class="cc-card-date-time-from">${fromTime}</div>
-            <div class="cc-card-date-time-to">${toTime}</div>
+		    <div class="cc-card-date-time-from">${showDate.fromTime}</div>
+            <div class="cc-card-date-time-to">${showDate.toTime}</div>
 		  </div>
+		  <div class="cc-card-date-dual-day">
+		  	<div class="cc-card-date-day-from">${showDate.fromDay}</div>
+			<div class="cc-card-date-day-to">${showDate.toDay}</div>
+		  </div> 
 		  <div class="cc-card-date-dual-month">
-		     <div class="cc-card-date-month-from">${fromMonth}</div>
-			 <div class="cc-card-date-month-to">${toMonth}</div>	
+		     <div class="cc-card-date-month-from">${showDate.fromMonth}</div>
+			 <div class="cc-card-date-month-to">${showDate.toMonth}</div>	
           </div>
 		  <div class="cc-card-date-dual-date">
-		     <div class="cc-card-date-date-from">${date.date}</div>
-		     <div class="cc-card-date-date-to">${date.to.date}</div>
+		     <div class="cc-card-date-date-from">${showDate.fromDate}</div>
+		     <div class="cc-card-date-date-to">${showDate.toDate}</div>
           </div>
         </div>
 `;
@@ -767,11 +840,11 @@ export default class GriffithCardsView extends cc_View {
 		if (date.label==="") {
 			element.removeChild(element.querySelector('.cc-card-date-label'));
 		}
-		if (toTime === "" && fromTime === "") {
+		if (showDate.toTime === "" && showDate.fromTime === "") {
 			// remove the div.cc-card-date-time from element
 			element.removeChild(element.querySelector('.cc-card-date-dual-time'));
 		}
-		if (toDate.week === "" && fromDate.week === "") {
+		if (showDate.toWeek === "" && showdate.fromWeek === "") {
 			// remove the div.cc-card-date-week from element
 			element.removeChild(element.querySelector('.cc-card-date-dual-week'));
 		}

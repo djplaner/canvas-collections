@@ -553,8 +553,8 @@ export default class cc_ConfigurationView extends cc_View {
 			setWeek = dateInfo.week;
 		}
 		let setDayOfWeek = 'Not chosen';
-		if (dateInfo && dateInfo.hasOwnProperty('dayOfWeek')) {
-			setDayOfWeek = dateInfo.dayOfWeek;
+		if (dateInfo && dateInfo.hasOwnProperty('day')) {
+			setDayOfWeek = dateInfo.day;
 		}
 
 		//---------- week Options
