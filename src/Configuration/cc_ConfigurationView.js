@@ -50,15 +50,19 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
 	},
 	{
-		contentText: `<p>Update all configured output pages and (possibly) include a navigation menu</p>
-		<p>Best suited when more than one collection has an output page.</p>`,
+		contentText: `<p>Update all configured output pages and choose a navigation scheme.</p>`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-full-claytons",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview"
 	},
 	{
-		contentText: `<p>Choose if and what navigation scheme is implemented between all configured output pages.`,
+		contentText: `<p>Three navigation options:</p>
+		<ol>
+		  <li> None - no navigation between pages/collections. </li>
+		  <li> Pages - collections on separate pages with navigation between. </li>
+		  <li> Tabs - multiple collections on a page with tab navigation. </li>
+		</ol>`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-full-claytons-navigation-option",
 		animateFunction: "spin",

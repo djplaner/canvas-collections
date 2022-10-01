@@ -865,15 +865,19 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
 	},
 	{
-		contentText: `<p>Update all configured output pages and (possibly) include a navigation menu</p>
-		<p>Best suited when more than one collection has an output page.</p>`,
+		contentText: `<p>Update all configured output pages and choose a navigation scheme.</p>`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-full-claytons",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview"
 	},
 	{
-		contentText: `<p>Choose if and what navigation scheme is implemented between all configured output pages.`,
+		contentText: `<p>Three navigation options:</p>
+		<ol>
+		  <li> None - no navigation between pages/collections. </li>
+		  <li> Pages - collections on separate pages with navigation between. </li>
+		  <li> Tabs - multiple collections on a page with tab navigation. </li>
+		</ol>`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-full-claytons-navigation-option",
 		animateFunction: "spin",
@@ -2963,8 +2967,10 @@ class updatePageController {
 	/**
 	 * Start the process of updating the given page
 	 */
-	execute() {
-		this.getOutputPage();
+	async execute() {
+		let promise = await new Promise((resolve, reject) => {
+			this.getOutputPage();
+		});
 		// the follow up updateOutputPage will be called by getOutputPage
 	}
 
@@ -3049,11 +3055,19 @@ class updatePageController {
 
 		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.outputPageURL}`;
 
+		const CIDI_LABS_CUSTOM_CSS = `
+		<div id="kl_custom_css">&nbsp;</div>
+		`;
+		// check if newContent already contains CIDI_LABS_CUSTOM_CSS
+		if (newContent.indexOf(CIDI_LABS_CUSTOM_CSS)===-1) {
+			newContent = CIDI_LABS_CUSTOM_CSS + newContent;
+		}
+
 		DEBUG && console.log(`updatePageController: writeOutputPage: callUrl = ${callUrl}`);
 
 		let _body = {
 			"wiki_page": {
-				"body": newContent,
+				"body": newContent
 			}
 		};
 
@@ -3906,7 +3920,7 @@ class cc_ConfigurationController {
 	 * @param {*} event 
 	 */
 
-	updateFullClaytons(event) {
+	async updateFullClaytons(event) {
 
 		// get all the collections with output pages
 		const collectionsWithOutputPage = this.model.getCollectionsWithOutputPage();
@@ -3926,7 +3940,8 @@ class cc_ConfigurationController {
 			let updateController = new updatePageController( 
 				collectionName, this.parentController, navigationOptionValue
 				);
-			updateController.execute();
+			let result = await updateController.execute();
+			alert(result);
 		}
 
 	}
@@ -4454,19 +4469,35 @@ class NavView extends cc_View {
 	 * 
 	 * @param {String} collectionName 
 	 * @param {String} variety 
-	 * @returns String HTML containing the navBar
+	 * @returns Evaluate variety and figure out which navBar HTML string to return
 	 */
 	generateHTML(collectionName = '', variety = '') {
 		if (variety === '2') {
-			return this.generateClaytonsNavBar(collectionName);
+			return this.generatePageNavBar(collectionName);
 		}
 		if (variety === '3') {
 			return this.generateTabNavBar(collectionName);
 		}
-		if (variety!=='') {
+		if (variety==='1') {
+			return '';
+		}
+		if (variety!=='' ) {
+			// oops, not the default variety and not a value we've recognised
 			alert(`NavView.generateHTML() - unknown variety: ${variety}`);
 			return '';
 		}
+
+		return this.generateLiveNavBar(collectionName);
+	}
+
+	/**
+	 * @descr generate a navBar with a list of collections to be shown
+	 * during live collections
+	 * @param {String} collectionName
+	 */
+
+	generateLiveNavBar(collectionName) {
+
 		let navBar = document.createElement('div');
 		navBar.className = 'cc-nav';
 
@@ -4628,12 +4659,12 @@ div.cc-collection-hidden > a {
 	}
 
 	/**
-	 * Return HTML for nav bar that is HTML/CSS only. to be inserted into a Canvas
-	 * page as part of the Full Claytons
+	 * Return HTML for nav bar that is HTML/CSS only designed to be used to connect
+	 * collections on different pages.
 	 * @param {String} collectionName 
 	 * @returns {String} HTML for nav bar
 	 */
-	generateClaytonsNavBar(collectionName = '') {
+	generatePageNavBar(collectionName = '') {
 		let CLAYTONS_NAVBAR_HTML = `
 		<div id="cc-nav" style="font-size:small">
 		  <ul style="list-style-type:none;margin:0;padding:0;overflow:hidden;background-color:#eeeeee;display:table;table-layout:fixed;width:100%">
@@ -4673,8 +4704,7 @@ div.cc-collection-hidden > a {
 	}
 
 	/**
-	 * Return HTML for nav bar that is HTML/CSS only. to be inserted into a Canvas
-	 * page as part of the Full Claytons
+	 *
 	 * @param {String} collectionName 
 	 * @returns {String} HTML for nav bar
 	 */
@@ -6823,7 +6853,7 @@ class CollectionsView extends cc_View {
 		}
 
 		// does the collections representation have a method generateHTML
-		if (!this.representations[collectionName].generateHTML) {
+		if (typeof this.representations[collectionName].generateHTML !== 'function') {
 			alert(`generateHTML not defined for ${collectionName} representation`);
 			return undefined;
 		}
@@ -6832,11 +6862,15 @@ class CollectionsView extends cc_View {
 
 		// add in the navBar insert it at the beginning of html
 		if (navOption ) {
-			//html = `<h1>NAV BAR HERE</h1>${html}`;
-			html = `${this.navView.generateHTML(collectionName,navOption)}${html}`;
+			// depending on the navOption, we'll append the navBar differently
+			// - none (1) there is no navBar
+			// - paged (2) prepend the navBar
+			// - tab (3) there is no navBar
+			if (navOption ==="2") {
+				html = `${this.navView.generateHTML(collectionName,navOption)}${html}`;
+			}
 		}
 		// TODO
-		// - add in the navBar?
 		// - add in the include page?
 
 		return html;

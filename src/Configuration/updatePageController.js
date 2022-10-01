@@ -100,8 +100,8 @@ export default class updatePageController {
 	/**
 	 * Start the process of updating the given page
 	 */
-	execute() {
-		this.getOutputPage();
+	async execute() {
+			this.getOutputPage();
 		// the follow up updateOutputPage will be called by getOutputPage
 	}
 
@@ -186,11 +186,19 @@ export default class updatePageController {
 
 		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.outputPageURL}`;
 
+		const CIDI_LABS_CUSTOM_CSS = `
+		<div id="kl_custom_css">&nbsp;</div>
+		`;
+		// check if newContent already contains CIDI_LABS_CUSTOM_CSS
+		if (newContent.indexOf(CIDI_LABS_CUSTOM_CSS)===-1) {
+			newContent = CIDI_LABS_CUSTOM_CSS + newContent;
+		}
+
 		DEBUG && console.log(`updatePageController: writeOutputPage: callUrl = ${callUrl}`);
 
 		let _body = {
 			"wiki_page": {
-				"body": newContent,
+				"body": newContent
 			}
 		};
 

@@ -640,7 +640,8 @@ export default class cc_ConfigurationController {
 			let updateController = new updatePageController( 
 				collectionName, this.parentController, navigationOptionValue
 				);
-			updateController.execute();
+			let result = updateController.execute();
+			alert(result);
 		}
 
 	}

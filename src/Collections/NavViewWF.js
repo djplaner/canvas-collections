@@ -65,19 +65,35 @@ export default class NavView extends cc_View {
 	 * 
 	 * @param {String} collectionName 
 	 * @param {String} variety 
-	 * @returns String HTML containing the navBar
+	 * @returns Evaluate variety and figure out which navBar HTML string to return
 	 */
 	generateHTML(collectionName = '', variety = '') {
 		if (variety === '2') {
-			return this.generateClaytonsNavBar(collectionName);
+			return this.generatePageNavBar(collectionName);
 		}
 		if (variety === '3') {
 			return this.generateTabNavBar(collectionName);
 		}
-		if (variety!=='') {
+		if (variety==='1') {
+			return '';
+		}
+		if (variety!=='' ) {
+			// oops, not the default variety and not a value we've recognised
 			alert(`NavView.generateHTML() - unknown variety: ${variety}`);
 			return '';
 		}
+
+		return this.generateLiveNavBar(collectionName);
+	}
+
+	/**
+	 * @descr generate a navBar with a list of collections to be shown
+	 * during live collections
+	 * @param {String} collectionName
+	 */
+
+	generateLiveNavBar(collectionName) {
+
 		let navBar = document.createElement('div');
 		navBar.className = 'cc-nav';
 
@@ -239,12 +255,12 @@ div.cc-collection-hidden > a {
 	}
 
 	/**
-	 * Return HTML for nav bar that is HTML/CSS only. to be inserted into a Canvas
-	 * page as part of the Full Claytons
+	 * Return HTML for nav bar that is HTML/CSS only designed to be used to connect
+	 * collections on different pages.
 	 * @param {String} collectionName 
 	 * @returns {String} HTML for nav bar
 	 */
-	generateClaytonsNavBar(collectionName = '') {
+	generatePageNavBar(collectionName = '') {
 		let CLAYTONS_NAVBAR_HTML = `
 		<div id="cc-nav" style="font-size:small">
 		  <ul style="list-style-type:none;margin:0;padding:0;overflow:hidden;background-color:#eeeeee;display:table;table-layout:fixed;width:100%">

@@ -103,7 +103,7 @@ export default class CollectionsView extends cc_View {
 		}
 
 		// does the collections representation have a method generateHTML
-		if (!this.representations[collectionName].generateHTML) {
+		if (typeof this.representations[collectionName].generateHTML !== 'function') {
 			alert(`generateHTML not defined for ${collectionName} representation`);
 			return undefined;
 		}
@@ -112,11 +112,15 @@ export default class CollectionsView extends cc_View {
 
 		// add in the navBar insert it at the beginning of html
 		if (navOption ) {
-			//html = `<h1>NAV BAR HERE</h1>${html}`;
-			html = `${this.navView.generateHTML(collectionName,navOption)}${html}`;
+			// depending on the navOption, we'll append the navBar differently
+			// - none (1) there is no navBar
+			// - paged (2) prepend the navBar
+			// - tab (3) there is no navBar
+			if (navOption ==="2") {
+				html = `${this.navView.generateHTML(collectionName,navOption)}${html}`;
+			}
 		}
 		// TODO
-		// - add in the navBar?
 		// - add in the include page?
 
 		return html;
