@@ -665,7 +665,7 @@ export default class cc_ConfigurationController {
 	completeFullClaytons(pageController) {
 		let outcomes = pageController.generateOutcomesString();
 
-		alert(`Full Claytons update is complete: ${outcomes}`)
+		alert(`Full Claytons update ${outcomes}`)
 	}
 
 

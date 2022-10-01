@@ -610,6 +610,39 @@ ${value}`);
 
 		return collectionsWithOutputPages;
 	}
+
+	/**
+	 * @function getPagesWithMultipleCollections
+	 * @descr Identify pages used by multiple collections.
+	 * @returns {Dictionary} key is page name, value is array of collection names
+	 */
+	getPagesWithMultipleCollections() {
+		const collections = this.controller.parentController.cc_configuration.COLLECTIONS;
+		const pages = {};
+		// for each collection
+		Object.keys(collections).forEach( (collectionName) => {
+			// if there's an output page
+			if (collections[collectionName].outputPage &&
+				collections[collectionName].outputPage !== '') {
+				// if the page is not in the pages dictionary
+				if (!pages.hasOwnProperty(collections[collectionName].outputPage)) {
+					// add it with an array containing the collection name
+					pages[collections[collectionName].outputPage] = [collectionName];
+				} else {
+					// otherwise add the collection name to the array
+					pages[collections[collectionName].outputPage].push(collectionName);
+				}
+			}
+		});
+
+		for ( let pageName in pages) {
+			if (pages[pageName].length < 2) {
+				delete pages[pageName];
+			}
+		}
+
+		return pages;
+	}
 }
 
 // src/cc_View.js
@@ -2875,10 +2908,18 @@ input:checked + .cc-slider:before {
  * - creates a task array with details of all the collections with output pages to update
  * - also an empty completedTasks array with details of what happened
  * 
- * Execute - starts the chain of methods
+ * Execute - starts the chain of methods - the standard
  * - getOutputPage (will call complete if no more tasks) 
  * - updatePageContent
  * - writeOutputPage
+ * 
+ * If navOption===3 (tabs) there is also a need to wrap pages with multiple collections
+ * with tabbed nav bar - hence another sequence
+ * - tabNavExecute
+ *   - tasks is those pages with multiple collections
+ *   - getOutputPage
+ *   - updatePageContent
+ *   - writeOutputPage
  */
 
 
@@ -2902,63 +2943,6 @@ class updatePageController {
 		this.createTaskLists();
 
 		this.checkTaskList();
-
-
-		// TODO do sanity checks for the presence of these things
-		/*const collections = this.parentController.cc_configuration.COLLECTIONS;
-		if (!collections) {
-			alert(`updatePageController: no collections defined`);
-			return;
-		}
-		if (!collections.hasOwnProperty(collection)) {
-			alert(`updatePageController: collection ${collection} not defined`);
-			return;
-		}
-
-		// get the configuration config details from parent controller for the collection
-		this.collectionConfig = this.parentController.cc_configuration.COLLECTIONS[collection];
-		// extract out the outputPageName and representationName
-		if (
-			!this.collectionConfig.hasOwnProperty("outputPage") ||
-			this.collectionConfig.outputPage===""
-			) {
-			alert(`updatePageController: collection ${collection} has no outputPageName`);
-			return;
-		}
-		this.outputPageName = this.collectionConfig.outputPage;
-		this.representationName = this.collectionConfig.representation; 
-
-		// actual representation object ??
-		// parentController.collectionsController.view
-		//   - representations dict keyed on collection name
-		if (!this.parentController.hasOwnProperty("collectionsController")) {
-			alert(`updatePageController: no collectionsController`);
-			return;
-		}
-		if (!this.parentController.collectionsController.hasOwnProperty("view")) {
-			alert(`updatePageController: no collectionsController.view`);
-			return;
-		}
-		if (!this.collectionsView.hasOwnProperty("representations")) {
-			alert(`updatePageController: no collectionsController.view.representations`);
-			return;
-		}
-		if (!this.collectionsView.representations.hasOwnProperty(this.collection)) {
-			alert(`updatePageController: no collectionsController.view.representations.${this.collection}`);
-			return;
-		}
-		this.representationObject = this.parentController.collectionsController.view.representations[this.collection];
-		*/
-
-
-	    // calculate the URL that canvas will use 
-		// outputPageName transformed by
-		// - all alpha characters to lower case
-		// - all spaces to dashes
-
-		//this.outputPageURL = this.outputPageName.toLowerCase().replace(/ /g,'-');
-
-//		this.getOutputPage();
 	}
 
 	/**
@@ -2970,13 +2954,17 @@ class updatePageController {
 	 */
 
 	createTaskLists() {
-		this.tasks = [];
-		const collections = this.configurationController.model.getCollectionsWithOutputPage();
+		this.tasks = []; // tasks to do
+		this.completedTasks = [];
 
-		// for each collection, construct a task object containing, names for the relevant
+		/* Standard task list - update each collection's output page */
+		// for each collection, create task Object
 		// - collection
-		// - output page and output page url
+		// - outputPage and outputPageURL
 		// - representation
+		// - completed/error/errors
+
+		const collections = this.configurationController.model.getCollectionsWithOutputPage();
 
 		for (let collection of collections) {
 			const collectionConfig = this.parentController.cc_configuration.COLLECTIONS[collection];
@@ -2990,7 +2978,31 @@ class updatePageController {
 				completed: false, error: false, errors: []
 			} );
 		}
-		this.completedTasks = [];
+
+		if (this.navOption!=="3") {
+			return;
+		}
+
+		/* add the "tab" task list as it's navOption===3 i.e. tabs */
+		// One task for each page with multiple collections
+		// For each page, create task object
+		// - collections **this is the check in updateContent**
+		// - outputPage and outputPageURL
+		// - representation
+		// - completed/error/errors
+
+		const pagesWithMultipleCollections = this.configurationController.model.getPagesWithMultipleCollections();
+		// loop through dictionary of pages with multiple collections
+		for (let pageName in pagesWithMultipleCollections) {
+			const collections = pagesWithMultipleCollections[pageName];
+			const outputPageURL = pageName.toLowerCase().replace(/ /g,'-');
+
+			this.tasks.push( {
+				collections: collections, outputPage: pageName, outputPageURL: outputPageURL,
+				completed: false, error: false, errors: []
+			} );
+		}
+
 	}
 
 	/**
@@ -3008,8 +3020,12 @@ class updatePageController {
 			const outputPages = this.tasks.map( task => task.outputPage );
 			const uniqueOutputPages = [...new Set(outputPages)];
 			if (outputPages.length !== uniqueOutputPages.length) {
-				this.errors.push(`Multiple collections with the same output page.
-				Common output pages include: ${uniqueOutputPages.toString()}`);
+				this.errors.push(
+					`"Pages" nav option doesn't work with pages used by multiple collections\nPage(s) used multiple times include: ${uniqueOutputPages.toString()}`
+					);
+				// this is a fatal error - no point in continuing
+				this.completedTasks = this.tasks;
+				this.tasks = [];
 			}
 		}
 	}
@@ -3020,8 +3036,9 @@ class updatePageController {
 	 */
 	execute() {
 		if (this.errors.length!==0) {
-			alert(`updatePageController: execute: can't got errors ${this.errors.toString()}`);
+			//alert(`Full Claytons not possible. execute: can't got errors ${this.errors.toString()}`);
 			this.configurationController.completeFullClaytons(this);
+			return;
 		} 
 		this.getOutputPage();
 	} 
@@ -3070,7 +3087,76 @@ class updatePageController {
 		} 
 		this.tasks[0].pageObject = data;
 
-		this.updateOutputContent();
+		if (this.tasks[0].hasOwnProperty('collection')) {
+			this.updateOutputContent();
+		} else {
+			this.updateTabContent();
+		}
+	}
+
+	/**
+	 * @function updateOutputContent
+	 * @descr Task is focused on a page with multiple collections. Aiming to wrap
+	 * a new "tab" interface around the collection divs. Once complete call writeOutputPage
+	 * 
+	 * Self generate the tab interface based on the collection names
+	 * 
+	 * Two options: 
+	 * 1. tab interface already there - div#cc-nav exists
+	 *    - the collections should be there
+	 *    - extract them and their content from the existing page
+	 *    - remove them all from the page (this includes some recently added)
+	 *    - insert them into new div#cc-nav
+	 *    - delete the existing div#cc-nav
+	 * 2. tab interface not there - div#cc-nav does not exist
+	 *    - tab interface will be appended at the end of the page
+	 *    - any existing collection divs will be removed from the page
+	 *    - inserted into the new tab interface (in order of collections)
+	 */
+	updateTabContent() {
+		if ( ! this.tasks[0].hasOwnProperty('pageObject') ) {
+			this.errorFirstTask(`No pageObject for ${this.tasks[0].outputPageURL}`);
+			return;
+		}
+		const pageObject = this.tasks[0].pageObject;
+		const collectionNames = this.tasks[0].collections;
+		const escCollectionNames = collectionNames.map(
+			(collectionName) => collectionName.replace(/ /g,'-')
+		);
+		const originalContent = pageObject.body;
+
+
+		// start parsing what's in the existing content
+		const parser = new DOMParser();
+		const doc = parser.parseFromString(originalContent, "text/html");
+
+		// remove (and save) all the divs for the collections
+		let collectionDivHTML = "";
+		for (let i=0; i<escCollectionNames.length; i++) {
+			const divId = `cc-output-${escCollectionNames[i]}`;
+			const collectionDiv = doc.getElementById(divId);
+			if (collectionDiv) {
+//				collectionDivs.push(collectionDiv);
+				collectionDivHTML += collectionDiv.outerHTML;
+				collectionDiv.remove();
+			}
+		}
+
+		// get the tab interface HTML from navView
+		let tabInterfaceHtml = this.generateTabHtml(collectionNames,collectionDivHTML);
+
+		// check if there's a tab interface already there
+		const navDiv = doc.getElementById('cc-nav');
+		if (navDiv) {
+			// replace the existing navDiv with tabInterfaceHTML
+			navDiv.innerHTML = tabInterfaceHtml;
+		} else {
+			doc.body.insertAdjacentHTML('beforeend',tabInterfaceHtml);
+		}
+
+		// update the new page content and write the output page
+		this.tasks[0].newContent = doc.body.innerHTML;
+		this.writeOutputPage();
 	}
 
 	/**
@@ -3090,6 +3176,7 @@ class updatePageController {
 		DEBUG && console.log(`updatePageController: updateOutputPage: pageObject = ${JSON.stringify(this.pageObject)}`);
 
 		let collectionName = this.tasks[0].collection;
+		const escCollectionName = collectionName.replace(/ /g,'-');
 		const insertContentHtml = this.collectionsView.generateHTML(
 			collectionName,"claytons",this.navOption
 			);
@@ -3097,7 +3184,7 @@ class updatePageController {
 		const originalContent = pageObject.body;
 
 		// check content for an existing div#cc-output-<collection-name>
-		const divId = `cc-output-${collectionName}`;
+		const divId = `cc-output-${escCollectionName}`;
 
 		// convert content into a DOM object
 		const parser = new DOMParser();
@@ -3113,6 +3200,23 @@ class updatePageController {
 			newDiv.innerHTML = insertContentHtml;
 			doc.body.appendChild(newDiv);
 		}
+
+		// remove the nav bar stuff if we're none navOption
+		if (this.navOption === '1') {
+			// remove any ul.cc-nav
+			const navUl = doc.querySelector('ul.cc-nav');
+			if (navUl) {
+				navUl.remove();
+			}
+
+			// unwrap any div#cc-nav
+			const navDiv = doc.getElementById('cc-nav');
+			if (navDiv) {
+				navDiv.outerHTML = navDiv.innerHTML;
+			}
+		}
+
+
 		this.tasks[0].newContent = doc.body.innerHTML;
 
 		this.writeOutputPage();
@@ -3176,7 +3280,13 @@ class updatePageController {
 			this.errorFirstTask(`No data provided for page ${outputPageURL}`);
 			return;
 		} else {
-			alert(`Updated output page ${outputPageURL} for collection ${this.tasks[0].collection}`);
+			if (this.tasks[0].hasOwnProperty('collection')) {
+				// we're updating a single page for a collection
+				alert(`Updated output page ${outputPageURL} for collection ${this.tasks[0].collection}`);
+			} else if (this.navOption==="3" && this.tasks[0].hasOwnProperty('collections')) {
+				// we've been adding a tab interface
+				alert(`Add tab navigation to ${outputPageURL}`);
+			}
 			// finish up a successful task by moving it to completed
 			let finishedTask = this.tasks.shift();
 			finishedTask.completed = true;
@@ -3214,17 +3324,56 @@ class updatePageController {
 		let completed = this.completedTasks.filter( task => task.completed === true ).length;
 		// how many completed tasks with error === true
 		let errors = this.completedTasks.filter( task => task.error === true ).length;
-		let summary = `Completed ${completed} of ${completedTasks} tasks with ${errors} errors.`;
+		let endSummary = '';
+		if (errors>0) {
+			endSummary = ` with ${errors} errors`;
+		}
+		let summary = `completed ${completed} of ${completedTasks} tasks${endSummary}.`;
 
 		for (let task of this.completedTasks) {
 			if (task.error) {
 				summary += `\n- ${task.collection} - ${task.outputPageURL} - errors - ${task.errors.join("\n     ")}`;
-			} else {
+			} else if (task.completed) {
 				summary += `\n- ${task.collection} - ${task.outputPageURL} - success`;
 			}
 		}
 
+		if (this.errors.length>0) {
+			summary += `\n\nErrors:\n${this.errors.join("\n")}`;
+		}
+
 		return summary;
+
+	}
+	
+	/**
+	 * @function generateTabHtml
+	 * @desc Generate the HTML for the tabs based on collection names 
+	 * @param {Array} collectionNames 
+	 * @returns {String} Canvas tab html
+	 */
+
+	generateTabHtml(collectionNames,collectionDivHTML) {
+		let navBarHTML = '';
+
+		for (let collectionName of collectionNames) {
+			// remove spaces from collectionName
+			let escCollectionName = collectionName.replace(/ /g,'-');
+
+        	navBarHTML = `${navBarHTML}
+<li style="display: table-cell; width: 100%; float: none;">
+    <a style="float: none;text-decoration: none; display: block; text-align: center; padding: 1.5em 1em; font-size: 1.3em;" 
+        href="#cc-output-${escCollectionName}">${collectionName}</a></li>`;
+		}
+
+		return `
+<div id="cc-nav" class="enhanceable_content tabs" style="font-size: small;">
+  <ul class="cc-nav" style="list-style-type: none; margin: 0; padding: 0; overflow: hidden; background-color: #eeeeee; display: table; table-layout: fixed; width: 100%;">
+    ${navBarHTML}
+  </ul>
+
+  ${collectionDivHTML}
+</div>`;
 
 	}
 }
@@ -4097,7 +4246,7 @@ class cc_ConfigurationController {
 	completeFullClaytons(pageController) {
 		let outcomes = pageController.generateOutcomesString();
 
-		alert(`Full Claytons update is complete: ${outcomes}`)
+		alert(`Full Claytons update ${outcomes}`)
 	}
 
 
@@ -4873,7 +5022,7 @@ div.cc-collection-hidden > a {
 		// get list of collection details without output pages(including output page)
 		const collectionsOutput = this.model.getOutputPageCollections();
 		const activeLi = ' style="display:table-cell;float:none;width:100%;font-weight:bold;background-color:#c12525;"';
-		const activeA = ' style="display:block;text-align:center;text-decoration:none;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;color:#fff;"';
+		const activeA = ' style="display:block;float:none;text-align:center;text-decoration:none;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;color:#fff;"';
 
 		let items = '';
 

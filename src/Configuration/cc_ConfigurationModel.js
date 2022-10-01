@@ -591,4 +591,37 @@ ${value}`);
 
 		return collectionsWithOutputPages;
 	}
+
+	/**
+	 * @function getPagesWithMultipleCollections
+	 * @descr Identify pages used by multiple collections.
+	 * @returns {Dictionary} key is page name, value is array of collection names
+	 */
+	getPagesWithMultipleCollections() {
+		const collections = this.controller.parentController.cc_configuration.COLLECTIONS;
+		const pages = {};
+		// for each collection
+		Object.keys(collections).forEach( (collectionName) => {
+			// if there's an output page
+			if (collections[collectionName].outputPage &&
+				collections[collectionName].outputPage !== '') {
+				// if the page is not in the pages dictionary
+				if (!pages.hasOwnProperty(collections[collectionName].outputPage)) {
+					// add it with an array containing the collection name
+					pages[collections[collectionName].outputPage] = [collectionName];
+				} else {
+					// otherwise add the collection name to the array
+					pages[collections[collectionName].outputPage].push(collectionName);
+				}
+			}
+		});
+
+		for ( let pageName in pages) {
+			if (pages[pageName].length < 2) {
+				delete pages[pageName];
+			}
+		}
+
+		return pages;
+	}
 }
