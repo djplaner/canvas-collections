@@ -1,22 +1,17 @@
 /**
  * @class updatePageController
- * @classDesc Supports the updating of an output page (name for a Canvas page) for a
- *  specific collection and representation. 
+ * @classDesc Supports the updating of all necessary Collections with output pages.
+ * Updating each collection's output page needs to be done completely before moving
+ * onto the next one. e.g. where multiple collections have the same output page
  * 
- * Constructor takes the name of the collection and the parentController object
- * Provides the following methods
- * - getOutputPage 
- *   - returns true/false if successful
- *   - creates this.pageObject - the Canvas page object for the output page
- *   - when successful will call updateOutputPage
- *   - set error otherwise and spark alert
- * - updateOutputPage
- *   - calls getRepresentation to get HTML
- *     - fails if not successful
- *   - performs Canvas API to write the HTML
+ * Constructor takes a configurationController, and a final call back prepares
+ * - creates a task array with details of all the collections with output pages to update
+ * - also an empty completedTasks array with details of what happened
  * 
- * - getRepresentation
- *   - generates HTML for the given collection/representation
+ * Execute - starts the chain of methods
+ * - getOutputPage (will call complete if no more tasks) 
+ * - updatePageContent
+ * - writeOutputPage
  */
 
 
@@ -25,22 +20,25 @@
 export default class updatePageController {
 
 	/**
-	 * @param {String} collection  - name of Collection to update
-	 * @param {cc_Controller} parentController 
-	 * @param {String} navOption - integer value representing how to do navigation
-	 *    1 - none
-	 *    2 - pages - the nav bar assumes separate output pages for each collection and page
-	 *        based navigation
-	 *    3 - tabs - assumes all collections on the same page and tab based navigation 
+	 * @param {Object} configurationController  - name of Collection to update
+	 * @param {Integer} navOption - which navOption, currently
+	 *    1 - none, 2 - page, 3 - tabs
+	 * passed to the views
 	 */
 
-	constructor(collection,parentController, navOption = "2") {
-		this.collection = collection;
-		this.parentController = parentController;
+	constructor(configurationController, navOption = "2") {
+		this.configurationController = configurationController;
+		this.parentController = this.configurationController.parentController;
+		this.collectionsView = this.parentController.collectionsController.view;
 		this.navOption = navOption;
 
+		this.createTaskLists();
+
+		this.checkTaskList();
+
+
 		// TODO do sanity checks for the presence of these things
-		const collections = this.parentController.cc_configuration.COLLECTIONS;
+		/*const collections = this.parentController.cc_configuration.COLLECTIONS;
 		if (!collections) {
 			alert(`updatePageController: no collections defined`);
 			return;
@@ -61,7 +59,7 @@ export default class updatePageController {
 			return;
 		}
 		this.outputPageName = this.collectionConfig.outputPage;
-		this.representationName = this.collectionConfig.representation;
+		this.representationName = this.collectionConfig.representation; 
 
 		// actual representation object ??
 		// parentController.collectionsController.view
@@ -74,7 +72,6 @@ export default class updatePageController {
 			alert(`updatePageController: no collectionsController.view`);
 			return;
 		}
-		this.collectionsView = this.parentController.collectionsController.view;
 		if (!this.collectionsView.hasOwnProperty("representations")) {
 			alert(`updatePageController: no collectionsController.view.representations`);
 			return;
@@ -84,6 +81,7 @@ export default class updatePageController {
 			return;
 		}
 		this.representationObject = this.parentController.collectionsController.view.representations[this.collection];
+		*/
 
 
 	    // calculate the URL that canvas will use 
@@ -91,26 +89,99 @@ export default class updatePageController {
 		// - all alpha characters to lower case
 		// - all spaces to dashes
 
-		this.outputPageURL = this.outputPageName.toLowerCase().replace(/ /g,'-');
+		//this.outputPageURL = this.outputPageName.toLowerCase().replace(/ /g,'-');
 
 //		this.getOutputPage();
 	}
 
-
 	/**
-	 * Start the process of updating the given page
+	 * createTaskLists
+	 * - create the tasks and completed arrays
+	 * - tasks contains name of each collection with an output page
+	 *   i.e. a task to complete
+	 * - completed array is empty ready to be filled by the pipeline functions
 	 */
-	async execute() {
-			this.getOutputPage();
-		// the follow up updateOutputPage will be called by getOutputPage
+
+	createTaskLists() {
+		this.tasks = [];
+		const collections = this.configurationController.model.getCollectionsWithOutputPage();
+
+		// for each collection, construct a task object containing, names for the relevant
+		// - collection
+		// - output page and output page url
+		// - representation
+
+		for (let collection of collections) {
+			const collectionConfig = this.parentController.cc_configuration.COLLECTIONS[collection];
+			const outputPageName = collectionConfig.outputPage;
+			const representationName = collectionConfig.representation; 
+		    const outputPageURL = outputPageName.toLowerCase().replace(/ /g,'-');
+
+			this.tasks.push( {
+				collection: collection, outputPage: outputPageName, outputPageURL: outputPageURL,
+				representation: representationName,
+				completed: false, error: false, errors: []
+			} );
+		}
+		this.completedTasks = [];
 	}
 
+	/**
+	 * checkTaskList()
+	 * - examine the collections with output pages (this.tasks) to check that
+	 *   - if navOption=2 there are no collections with the same output page
+	 * - if any errors add string to this.errors
+	 */
+	checkTaskList() {
+		this.errors = [];
+
+		// if navOption=2 there should be no collections with the same output page
+		if (this.navOption === "2" && this.tasks.length > 1) {
+			// check for duplicates
+			const outputPages = this.tasks.map( task => task.outputPage );
+			const uniqueOutputPages = [...new Set(outputPages)];
+			if (outputPages.length !== uniqueOutputPages.length) {
+				this.errors.push(`Multiple collections with the same output page.
+				Common output pages include: ${uniqueOutputPages.toString()}`);
+			}
+		}
+	}
+
+	/**
+	 * Start the update process
+	 * - but check there are no errors
+	 */
+	execute() {
+		if (this.errors.length!==0) {
+			alert(`updatePageController: execute: can't got errors ${this.errors.toString()}`);
+			this.configurationController.completeFullClaytons(this);
+		} 
+		this.getOutputPage();
+	} 
+
+	/**
+	 * @descr getOutputPage
+	 * - check if there's an object in this.tasks
+	 * - if not, call completeFullClaytons (the hard coded call back), otherwise
+	 * - fetch the page content from Canvas 
+	 * - if any errors
+	 *   - call th error handler
+	 * - call updateOutputContent
+	 * @returns 
+	 */
+
 	async getOutputPage() {
-		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.outputPageURL}`;
+		// check if there's an object in this.tasks
+		if (this.tasks.length===0) {
+			this.configurationController.completeFullClaytons(this);
+			return;
+		}
+		const courseId = this.configurationController.parentController.courseId;
+		const outputPageURL = this.tasks[0].outputPageURL;
 
-		DEBUG && console.log(`updatePageController: getPageContents: callUrl = ${callUrl}`);
+		let callUrl = `/api/v1/courses/${courseId}/pages/${outputPageURL}`;
 
-		const response = await fetch(callUrl, {
+		let response = await fetch( callUrl, {
 			method: 'GET', credentials: 'include',
 			headers: {
 				"Content-Type": "application/json",
@@ -120,44 +191,47 @@ export default class updatePageController {
 		});
 
 		if (!response.ok) {
-			alert('Unable to update the output page');
+			this.errorFirstTask(`Unable to get page ${outputPageURL} from Canvas`);
 			return;
-		}
+		} 
 
 		const data = await response.json();
 
-		// data should be the page object
-		// https://canvas.instructure.com/doc/api/pages.html#Page
-//		DEBUG && console.log(`updatePageController: getPageContents: json = ${JSON.stringify(data)}`);
+		if ( data.length===0 ) {
+			this.errorFirstTask(`No data provided for page ${outputPageURL}`);
+			return;
+		} 
+		this.tasks[0].pageObject = data;
 
-		if (data.length===0) {
-			throw new Error(`updatePageController: getPageContents: no config page found`);
-		}
-
-		this.pageObject = data;
-
-		this.updateOutputPage();
+		this.updateOutputContent();
 	}
 
 	/**
-	 * Only called by getOutputPage will write content to specified output page
-	 * - gets HTML from representation
-	 * - checks pageObject.body look for any existing div#cc-output-<collection-name> 
-	 *    - replace with new HTML 
-	 *    - if none exists, add it to the bottom of the page
-	 * - Calls the writeOutputPage() function
+	 * Apparently we've gotten the page content (pageObject) for the first task in tasks
+	 * - use the representation to get new content for the task's collection
+	 * - either append/update the content to the div#cc-output-<collection-name> 
 	 */
 
-	updateOutputPage() {
+	updateOutputContent() {
+
+		if ( ! this.tasks[0].hasOwnProperty('pageObject') ) {
+			this.errorFirstTask(`No pageObject for ${this.tasks[0].outputPageURL}`);
+			return;
+		}
+		const pageObject = this.tasks[0].pageObject;
+
 		DEBUG && console.log(`updatePageController: updateOutputPage: pageObject = ${JSON.stringify(this.pageObject)}`);
 
-		const insertContentHtml = this.collectionsView.generateHTML(this.collection,"claytons",this.navOption);
-//		const insertContentHtml = "<p>Here we go, here we go, here we go...bugger off you</p>"
+		let collectionName = this.tasks[0].collection;
+		const insertContentHtml = this.collectionsView.generateHTML(
+			collectionName,"claytons",this.navOption
+			);
 
-		const originalContent = this.pageObject.body;
+		const originalContent = pageObject.body;
 
 		// check content for an existing div#cc-output-<collection-name>
-		const divId = `cc-output-${this.collection}`;
+		const divId = `cc-output-${collectionName}`;
+
 		// convert content into a DOM object
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(originalContent, "text/html");
@@ -172,9 +246,9 @@ export default class updatePageController {
 			newDiv.innerHTML = insertContentHtml;
 			doc.body.appendChild(newDiv);
 		}
-		let newContent = doc.body.innerHTML;
+		this.tasks[0].newContent = doc.body.innerHTML;
 
-		this.writeOutputPage(newContent);
+		this.writeOutputPage();
 	}
 
 	/**
@@ -182,9 +256,17 @@ export default class updatePageController {
 	 * @param {String} newContent
 	 */
 
-	async writeOutputPage(newContent) {
+	async writeOutputPage() {
+		if ( ! this.tasks[0].hasOwnProperty('newContent') ) {
+			this.errorFirstTask(`No newContent for ${this.tasks[0].outputPageURL}`);
+			return;
+		}
 
-		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.outputPageURL}`;
+		let newContent = this.tasks[0].newContent;
+		const courseId = this.configurationController.parentController.courseId;
+		const outputPageURL = this.tasks[0].outputPageURL;
+
+		let callUrl = `/api/v1/courses/${courseId}/pages/${outputPageURL}`;
 
 		const CIDI_LABS_CUSTOM_CSS = `
 		<div id="kl_custom_css">&nbsp;</div>
@@ -206,7 +288,7 @@ export default class updatePageController {
 
 		let method = "put";
 
-		const response = await fetch(callUrl, {
+		let response = await fetch(callUrl, {
 			method: method, credentials: 'include',
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
@@ -217,13 +299,65 @@ export default class updatePageController {
 		});
 
 		if (!response.ok) {
-			alert('Unable to update the output page');	
+			this.errorFirstTask(`Unable to update page ${outputPageURL} in Canvas`);
+			return;
 		} 
-		const data = await response.json();
 
-		alert(`output page ${this.outputPageName} updated`);
+		let data = await response.json();
 
+		if (data.length===0) {
+			this.errorFirstTask(`No data provided for page ${outputPageURL}`);
+			return;
+		} else {
+			alert(`Updated output page ${outputPageURL} for collection ${this.tasks[0].collection}`);
+			// finish up a successful task by moving it to completed
+			let finishedTask = this.tasks.shift();
+			finishedTask.completed = true;
+			this.completedTasks.push(finishedTask);
+			// start the next task
+			this.getOutputPage();
+		}
 	}
 
+	/**
+	 * @function errorFirstTask
+	 * @desc Accept an error string that needs to be applied to the first task
+	 * Which is then removed from the tasks array and added to to completed
+	 * Start the next task
+	 * @param {*} error 
+	 */
+	errorFirstTask(error) {
+		let errorTask = this.tasks.shift();
+		errorTask.error = true;
+		errorTask.errors.push(error);
+		this.completedTasks.push(errorTask);
+		this.getOutputPage();
+	}
 
+	/**
+	 * @function generateOutcomesString
+	 * @desc Generate a string summarising outcomes
+	 * @returns {String}
+	 */
+
+	generateOutcomesString() {
+		// how many completedTasks?
+		let completedTasks = this.completedTasks.length;
+		// how many completed tasks with completed === true
+		let completed = this.completedTasks.filter( task => task.completed === true ).length;
+		// how many completed tasks with error === true
+		let errors = this.completedTasks.filter( task => task.error === true ).length;
+		let summary = `Completed ${completed} of ${completedTasks} tasks with ${errors} errors.`;
+
+		for (let task of this.completedTasks) {
+			if (task.error) {
+				summary += `\n- ${task.collection} - ${task.outputPageURL} - errors - ${task.errors.join("\n     ")}`;
+			} else {
+				summary += `\n- ${task.collection} - ${task.outputPageURL} - success`;
+			}
+		}
+
+		return summary;
+
+	}
 }

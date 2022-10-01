@@ -622,6 +622,18 @@ export default class cc_ConfigurationController {
 
 	updateFullClaytons(event) {
 
+		// get setting for navigation option for full claytons
+		const navigationOption = document.querySelector('#cc-config-full-claytons-navigation-option');
+		let navigationOptionValue = "1";
+		if (navigationOption) {
+			navigationOptionValue = navigationOption.value;
+		}
+
+		let updateController = new updatePageController(this,navigationOptionValue);
+		updateController.execute();
+
+
+		/** old version 
 		// get all the collections with output pages
 		const collectionsWithOutputPage = this.model.getCollectionsWithOutputPage();
 		// what's the value of element #cc-config-full-claytons-navigation-option
@@ -641,9 +653,19 @@ export default class cc_ConfigurationController {
 				collectionName, this.parentController, navigationOptionValue
 				);
 			let result = updateController.execute();
-			alert(result);
 		}
+		*/
+	}
 
+	/**
+	 * Call back used by updatPageController when work is finished (perhaps with errors)
+	 * @param {Object} pageController 
+	 */
+
+	completeFullClaytons(pageController) {
+		let outcomes = pageController.generateOutcomesString();
+
+		alert(`Full Claytons update is complete: ${outcomes}`)
 	}
 
 
