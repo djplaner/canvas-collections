@@ -652,4 +652,51 @@ export default class cc_ConfigurationController {
 		applicator.execute();
 
 	}
+
+	/**
+	 * @function manageBannerTabShow
+	 * @description Callback function for a module's banner tab being shown.
+	 * The targets.panel member value format cc-module-config-<module-id>-<tab-name>
+	 * - extract the module id and the tab name
+	 * - update the module config to change the banner value to the tab name
+	 * Note: first event handler for shoelace component, hence a bit different (dodgy)
+	 * @param {*} event 
+	 */
+	manageBannerTabShow(event) {
+		const element = document.querySelector(`#${event.target.id}`);
+		const idString = element.panel;
+		// extract the module-id and tab-name
+		const regex = /^cc-module-config-(\d+)-(.*)$/;
+		const matches = idString.match(regex);
+		if (matches.length===3) {
+			const moduleId = parseInt(matches[1]);
+			const tabName = matches[2];
+			// set "module".banner to tabName
+			this.model.changeModuleConfig(moduleId, 'banner', tabName);
+			this.changeMade(true); 
+		}
+	}
+
+	/**
+	 * @function manageColourPickerChange
+	 * @description A colour picker with element.id of the form
+	 *    cc-module-config-<module-id>-color has had a value change
+	 * value will contain a hex value
+	 * @param {Object} event 
+	 */
+
+	manageColourPickerChange(event) {
+		const element = document.querySelector(`#${event.target.id}`);
+
+		// extract the module id
+		const idString = element.id;
+		const regex = /^cc-module-config-(\d+)-color$/;
+		const matches = idString.match(regex);
+		if (matches.length===2) {
+			const moduleId = parseInt(matches[1]);
+			// update the bannerColour value
+			this.model.changeModuleConfig(moduleId,'bannerColour',element.value);
+			this.changeMade(true);
+		}
+	}
 }

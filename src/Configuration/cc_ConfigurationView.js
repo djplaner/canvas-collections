@@ -170,7 +170,6 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-image-scale",
 		animateFunction: "spin",
-		//		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-scale"
 	},
 	{
@@ -181,18 +180,25 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image"
 	},
 	{
+		contentText: `Provide an iframe (embed HTML) to place in a card's banner section.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-iframe",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#iframe"
+	},
+	{
+		contentText: `Choose a colour for the background of the card's banner section.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-color",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#iframe"
+	},
+	{
 		contentText: `Specifies which study period's calendar will be used to translate "Monday Week 1" into a calendar date.`,
 		maxWidth: `250px`,
 		targetSelector: ".cc-about-module-studyPeriod",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#study-period"
-	},
-	{
-		contentText: `Provide an image url or an iframe to associate with the object. Typically with the card view.`,
-		maxWidth: `250px`,
-		targetSelector: "#cc-about-image-url",
-		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-url"
 	}
 ];
 
@@ -315,8 +321,29 @@ export default class cc_ConfigurationView extends cc_View {
 
 			this.addSingleModuleConfiguration(moduleHeader, moduleDetail, id);
 		}
+		this.addEventHandlers();
 		this.addTooltips();
 	}
+
+	addEventHandlers() {
+
+			// banner tabs to start with cc-banner-tab
+		const bannerTabs = document.querySelectorAll(`.cc-banner-tab`);
+		for (let i = 0; i < bannerTabs.length; i++) {
+			const tab = bannerTabs[i];
+			tab.onclick = (event) => this.controller.manageBannerTabShow(event);
+			//tab.addEventListener('sl-tab-show', event => this.controller.manageBannerTabShow(event));
+		}
+
+		// event handler for sl-color-picker
+		const colorPickers = document.querySelectorAll(`sl-color-picker`);
+		for (let i = 0; i < colorPickers.length; i++) {
+			const colorPicker = colorPickers[i];
+			colorPicker.addEventListener('sl-change', event => this.controller.manageColourPickerChange(event));
+		}
+	}
+
+
 
 	addSingleModuleConfiguration(moduleHeader, moduleDetail, id) {
 		let showConfigHtml = '';
@@ -430,6 +457,23 @@ export default class cc_ConfigurationView extends cc_View {
 			const trash = trashMetadata[i];
 			trash.onclick = (event) => this.controller.manageModuleMetadata(event);
 		}
+
+		// configure event handlers for sl-tabs
+
+		// banner tabs to start with cc-banner-tab
+/*		const bannerTabs = document.querySelectorAll(`.cc-banner-tab`);
+		for (let i = 0; i < bannerTabs.length; i++) {
+			const tab = bannerTabs[i];
+			tab.onclick = (event) => this.controller.manageBannerTabShow(event);
+			//tab.addEventListener('sl-tab-show', event => this.controller.manageBannerTabShow(event));
+		}
+
+		// event handler for sl-color-picker
+		const colorPickers = document.querySelectorAll(`sl-color-picker`);
+		for (let i = 0; i < colorPickers.length; i++) {
+			const colorPicker = colorPickers[i];
+			colorPicker.addEventListener('sl-change', event => this.controller.manageColourPickerChange(event));
+		} */
 
 		// add catch all handlers for other module config elements
 		const configDiv = document.querySelector(`#cc-module-config-${id}`);
@@ -558,7 +602,7 @@ export default class cc_ConfigurationView extends cc_View {
 		let weekOptions = '';
 		let dayOfWeekOptions = '';
 
-		let setWeek='Not chosen';
+		let setWeek = 'Not chosen';
 		if (dateInfo && dateInfo.hasOwnProperty('week')) {
 			setWeek = dateInfo.week;
 		}
@@ -606,6 +650,31 @@ export default class cc_ConfigurationView extends cc_View {
 		}
 
 		return { dayOfWeekOptions, weekOptions };
+	}
+
+	/**
+	 * @function configureBanner
+	 * @descr Based on moduleDetail configure how the banner information will be presented
+	 * - moduleDetails.banner should be one of 'image', 'iframe', 'colour'
+	 * - if not set, default to 'image'
+	 * @param {Object} moduleDetail - details of module we're configuring a form for
+	 * @returns {Object} - bannerActive - specifies which tabgroup will be active
+	 */
+
+	configureBanner(moduleDetail) {
+		let bannerActive =
+		{
+			image: 'active', iframe: '', colour: ''
+		};
+
+		if (moduleDetail.hasOwnProperty('banner') && ['image', 'iframe', 'colour'].includes(
+			moduleDetail.banner)) {
+			bannerActive.image = '';
+			bannerActive[moduleDetail.banner] = 'active';
+		} else {
+			moduleDetail.banner = 'image';
+		}
+		return bannerActive;
 	}
 
 	/**
@@ -693,7 +762,7 @@ export default class cc_ConfigurationView extends cc_View {
 		if (moduleConfig.date) {
 			// set the values for dateInfo for start date
 			for (const dateField in dateInfo) {
-				if (dateField!=='to' && moduleConfig.date.hasOwnProperty(dateField)) {
+				if (dateField !== 'to' && moduleConfig.date.hasOwnProperty(dateField)) {
 					dateInfo[dateField] = moduleConfig.date[dateField];
 				}
 			}
@@ -706,12 +775,12 @@ export default class cc_ConfigurationView extends cc_View {
 				}
 			}
 		}
-/*		let weekOptions = '';
-		let toWeekOptions = '';
-		let comingSoonWeekOptions = '';
-		let dayOfWeekOptions = '';
-		let toDayOfWeekOptions = '';
-		let comingSoonDayOfWeekOptions = ''; */
+		/*		let weekOptions = '';
+				let toWeekOptions = '';
+				let comingSoonWeekOptions = '';
+				let dayOfWeekOptions = '';
+				let toDayOfWeekOptions = '';
+				let comingSoonDayOfWeekOptions = ''; */
 
 		const dateOptions = this.calculateDayWeekOptions(dateInfo);
 		const toDateOptions = this.calculateDayWeekOptions(dateInfo.to);
@@ -719,7 +788,7 @@ export default class cc_ConfigurationView extends cc_View {
 		if (moduleConfig.hasOwnProperty('comingSoon')) {
 			comingSoon = moduleConfig.comingSoon;
 		}
-		const comingSoonDateOptions = this.calculateDayWeekOptions(moduleConfig.comingSoon)
+		const comingSoonDateOptions = this.calculateDayWeekOptions(moduleConfig.comingSoon);
 
 
 		// calculate value for dateLabel
@@ -761,6 +830,8 @@ export default class cc_ConfigurationView extends cc_View {
 				} */
 
 		const additionalMetaDataHTML = this.getAdditionalMetaDataHTML(moduleDetail);
+
+		let bannerActive = this.configureBanner(moduleDetail);
 
 		let showConfigHtml = `
 		<style>
@@ -973,28 +1044,65 @@ export default class cc_ConfigurationView extends cc_View {
 			</div>
 
 			<div style="margin-right:1em">
-				<div class="cc-module-config-collection-representation">
-					<label for="cc-collection-representation-${moduleDetail.id}-imageSize"
-					     style="float:left">
-					Image scale
-					</label>
-						<a id="cc-about-module-image-scale" target="_blank" href="">
-			   				<i class="icon-question cc-module-icon"></i></a>
-		   		       <select id="cc-module-config-${moduleDetail.id}-imageSize">
-					      ${imageSizeOptions}
-						</select>
-					<br clear="all" />
-					<label for="cc-module-config-collection-representation-${moduleDetail.id}-image"     
-					    style="float:left">
-						Image URL
-					</label>
-											<a id="cc-about-module-image-url" target="_blank" href="">
-			   				<i class="icon-question cc-module-icon"></i></a>
-					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
-					        value="">
-					        <!-- value="${moduleConfig.image}"> -->
-					<br clear="all" />
-					  
+			    <div class="cc-collection-banner border border-trbl">
+					<sl-tab-group>
+				  		<sl-tab class="cc-banner-tab" ${bannerActive.image} slot="nav" panel="cc-module-config-${moduleDetail.id}-image">Image</sl-tab>
+				  		<sl-tab class="cc-banner-tab" ${bannerActive.iframe} slot="nav" panel="cc-module-config-${moduleDetail.id}-iframe">Iframe</sl-tab>
+				  		<sl-tab class="cc-banner-tab" ${bannerActive.colour} slot="nav" panel="cc-module-config-${moduleDetail.id}-colour">Colour</sl-tab>
+
+
+ 			      		<sl-tab-panel name="cc-module-config-${moduleDetail.id}-image">
+							<div class="cc-module-config-collection-representation">
+								<label for="cc-collection-representation-${moduleDetail.id}-imageSize"
+					     			style="float:left;padding-top:0.8rem;"> Image scale </label>
+								<a id="cc-about-module-image-scale" target="_blank" href="">
+			   						<i class="icon-question cc-module-icon"></i></a>
+		   		       			<select id="cc-module-config-${moduleDetail.id}-imageSize">
+					      			${imageSizeOptions}
+								</select>
+								<br clear="all" />
+								<label for="cc-module-config-collection-representation-${moduleDetail.id}-image"     
+					    			style="float:left;padding-top:0.8rem"> Image URL
+								</label>
+								<a id="cc-about-module-image-url" target="_blank" href="">
+			   						<i class="icon-question cc-module-icon"></i></a>
+								<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
+					        		value="">
+								<br clear="all" />
+							</div>
+
+						</sl-tab-panel>
+
+ 			      		<sl-tab-panel name="cc-module-config-${moduleDetail.id}-iframe">
+							<div class="cc-module-config-collection-representation">
+								<label for="cc-collection-representation-${moduleDetail.id}-iframe"
+					     			style="float:left;padding-top:0.8rem;"> iframe </label>
+								<a id="cc-about-module-iframe" target="_blank" href="">
+			   						<i class="icon-question cc-module-icon"></i></a>
+		   		       			<select id="cc-module-config-${moduleDetail.id}-iframe">
+								</select>
+								<br clear="all" />
+							</div>
+
+						</sl-tab-panel>
+
+ 			      		<sl-tab-panel name="cc-module-config-${moduleDetail.id}-colour">
+							<div class="cc-module-config-collection-representation">
+								<label for="cc-collection-representation-${moduleDetail.id}-color"
+					     			style="float:left;padding-top:0.8rem;"> iframe </label>
+								<a id="cc-about-module-color" target="_blank" href="">
+			   						<i class="icon-question cc-module-icon"></i></a>&nbsp;
+						  		<sl-color-picker 
+								    id="cc-module-config-${moduleDetail.id}-color"
+								    label="Select a color">
+								</sl-color-picker>
+								<br clear="all" />
+							</div>
+						</sl-tab-panel>
+					<sl-tab-group>
+				</div>
+
+				<div class="cc-collection-description" style="margin-top: 1em">
 				    <label for="cc-module-config-${moduleDetail.id}-description" 
 					   style="float:left">
 					Description
