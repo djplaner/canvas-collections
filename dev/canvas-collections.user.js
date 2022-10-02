@@ -914,7 +914,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-full-claytons-navigation-option",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/navigation-options"
+		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/navigation-bar-options"
 	},
 	{
 		contentText: `<p>Make collection invisible to students. 
@@ -2175,7 +2175,7 @@ class cc_ConfigurationView extends cc_View {
 								color: var(--ic-brand-button--primary-text);
 							}
 						  </style>
-						  <label for="cc-config-full-claytons-navigation-option">Navigation Option
+						  <label for="cc-config-full-claytons-navigation-option">Navigation Bar Options
 						<a id="cc-about-full-claytons-navigation-option" target="_blank" href="">
 			   			<i class="icon-question"></i></a> </p>
 						  </label>
@@ -3268,7 +3268,7 @@ class updatePageController {
 		`;
 		// check if newContent already contains CIDI_LABS_CUSTOM_CSS
 		if (newContent.indexOf(CIDI_LABS_CUSTOM_CSS)===-1) {
-			newContent = CIDI_LABS_CUSTOM_CSS + newContent;
+			newContent = newContent + CIDI_LABS_CUSTOM_CSS;
 		}
 
 		DEBUG && console.log(`updatePageController: writeOutputPage: callUrl = ${callUrl}`);

@@ -368,7 +368,7 @@ export default class updatePageController {
 		`;
 		// check if newContent already contains CIDI_LABS_CUSTOM_CSS
 		if (newContent.indexOf(CIDI_LABS_CUSTOM_CSS)===-1) {
-			newContent = CIDI_LABS_CUSTOM_CSS + newContent;
+			newContent = newContent + CIDI_LABS_CUSTOM_CSS;
 		}
 
 		DEBUG && console.log(`updatePageController: writeOutputPage: callUrl = ${callUrl}`);
