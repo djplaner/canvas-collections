@@ -674,6 +674,7 @@ export default class cc_ConfigurationController {
 			// set "module".banner to tabName
 			this.model.changeModuleConfig(moduleId, 'banner', tabName);
 			this.changeMade(true); 
+			this.parentController.updateCurrentRepresentation();
 		}
 	}
 

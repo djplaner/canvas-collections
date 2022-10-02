@@ -520,7 +520,7 @@ export default class GriffithCardsView extends cc_View {
 			DATE_WIDGET = this.generateCardDate(module.date);
 		}
 
-		let IMAGE_IFRAME = this.generateCardImage(module);
+		let IMAGE_IFRAME = this.generateBanner(module);
 
 		const description = module.description;
 
@@ -607,6 +607,47 @@ export default class GriffithCardsView extends cc_View {
 		}
 
 		return wrapper;
+	}
+
+	/**
+	 * @function generateBanner
+	 * @description Using the value of "banner" and other module settings, generate the
+	 * HTML to fill the card banner section
+	 * @param {Object} module - specifying configuration for current module
+	 */
+	generateBanner(module) {
+		// a default check for old configs that didn't specify module.banner
+		if (!module.hasOwnProperty('banner')) {
+			module.banner = 'image';
+		}
+		// TODO need to handle any defaults that might have iframe
+		// - maybe isn't any yet
+
+		if ( module.banner==='colour') {
+			return this.generateBannerColour(module);
+		} else if (module.banner==='iframe') {
+			// TODO
+			console.log('nothing');
+		} else { // image is the default
+			return this.generateCardImage(module);
+		}
+	}
+
+	/**
+	 * @function generateBannerColour
+	 * @description Return HTML for a colour banner uuing the value of module.bannerColour
+	 * @param {Object} module - specifying configuration for current module
+	 * @returns {String} HTML for a colour banner
+	 */
+
+	generateBannerColour( module ) {
+		let bgColour = '#ffffff';
+		if (module.hasOwnProperty('bannerColour')) {
+			// default to card if no banner colour set
+			bgColour = module.bannerColour;
+		}
+
+		return `<div class="cc-banner-colour"style="background-color:${bgColour};width:100%;height:10rem;"></div>`;
 	}
 
 	/**

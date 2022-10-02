@@ -129,11 +129,18 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#label-and-number"
 	},
 	{
-		contentText: `Specify a date or date range (with a label). Date is relative to a specific study period. `,
+		contentText: `<p>Choose from the three supported "date types" and configure it. Options include:</p>
+		<ol>
+		  <li> <strong>Single date</strong> - a specific date (and time) </li>
+		  <li> <strong>Date range</strong> - a start and end date (and time) </li>
+		  <li> 🏗 <strong>Coming soon</strong> 🏗 - (soon you'll be able to) specify a single date (and time) when the module will be available.</li>
+		</ol>
+		<p><em>Coming Soon</em> will be able to be used with one of the other options</em></p>
+		`,
 		maxWidth: `250px`,
-		targetSelector: "#cc-about-module-date-start",
+		targetSelector: "#cc-about-module-dates",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#date"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#dates"
 	},
 	{
 		contentText: `Specify the 'stop' date in a date range. Date is relative to a specific study period.`,
@@ -164,6 +171,19 @@ const CONFIG_VIEW_TOOLTIPS = [
 		targetSelector: "#cc-about-additional-metadata",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#additional-metadata"
+	},
+	{
+		contentText: `<p>Choose one of three possible banner types (for Card representations) and configure it. Options are:</p> 
+		<ol>
+		  <li> <strong>Image</strong> - a banner image</li>
+		  <li> <strong>Colour</strong> - a solid colour</li>
+		  <li> <strong>Iframe</strong> - HTML embed code (e.g. YouTube video)</li>
+		  </ol>
+		`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-banner",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#dates"
 	},
 	{
 		contentText: `Specify how the image will be scaled to fit the available space`,
@@ -458,23 +478,6 @@ export default class cc_ConfigurationView extends cc_View {
 			trash.onclick = (event) => this.controller.manageModuleMetadata(event);
 		}
 
-		// configure event handlers for sl-tabs
-
-		// banner tabs to start with cc-banner-tab
-/*		const bannerTabs = document.querySelectorAll(`.cc-banner-tab`);
-		for (let i = 0; i < bannerTabs.length; i++) {
-			const tab = bannerTabs[i];
-			tab.onclick = (event) => this.controller.manageBannerTabShow(event);
-			//tab.addEventListener('sl-tab-show', event => this.controller.manageBannerTabShow(event));
-		}
-
-		// event handler for sl-color-picker
-		const colorPickers = document.querySelectorAll(`sl-color-picker`);
-		for (let i = 0; i < colorPickers.length; i++) {
-			const colorPicker = colorPickers[i];
-			colorPicker.addEventListener('sl-change', event => this.controller.manageColourPickerChange(event));
-		} */
-
 		// add catch all handlers for other module config elements
 		const configDiv = document.querySelector(`#cc-module-config-${id}`);
 		if (configDiv) {
@@ -667,12 +670,20 @@ export default class cc_ConfigurationView extends cc_View {
 			image: 'active', iframe: '', colour: ''
 		};
 
-		if (moduleDetail.hasOwnProperty('banner') && ['image', 'iframe', 'colour'].includes(
-			moduleDetail.banner)) {
-			bannerActive.image = '';
-			bannerActive[moduleDetail.banner] = 'active';
+		if (moduleDetail.hasOwnProperty('banner')) {
+		 	if (['image', 'iframe', 'colour'].includes( moduleDetail.banner)) {
+				bannerActive.image = '';
+				bannerActive[moduleDetail.banner] = 'active';
+			}
 		} else {
+			// setting a default value for banner
 			moduleDetail.banner = 'image';
+		}
+		if (!moduleDetail.hasOwnProperty('bannerColour')) {
+			moduleDetail.bannerColour = '#ffffff';
+		}
+		if (!moduleDetail.hasOwnProperty('iframe')) {
+			moduleDetail.iframe = '';
 		}
 		return bannerActive;
 	}
@@ -874,6 +885,10 @@ export default class cc_ConfigurationView extends cc_View {
 			   display: inline;
 			   margin-left: 2rem;
 		   }
+
+		   sl-tab {
+			   font-size: var(--sl-font-size-small);
+		   }
 		</style>
 
 		<div class="cc-module-config-detail">
@@ -911,6 +926,17 @@ export default class cc_ConfigurationView extends cc_View {
 					<br clear="all" />
 				</div>
 				<div class="border border-trbl" style="margin-right:1em">
+				  <div class="border border-b" style="padding:1rem">
+				    <strong>Dates</strong>
+						<a id="cc-about-module-dates" target="_blank" href="">
+	   						<i class="icon-question cc-module-icon"></i></a>
+					<div class="cc-current-studyPeriod">
+				   		<strong>Study Period</strong>
+		    	 		<a href="" class="cc-about-module-studyPeriod" target="_blank">
+   						<i class="icon-question cc-module-icon"></i></a>
+						${currentStudyPeriod}
+					</div>
+				  </div>
 				<sl-tab-group>
 				  <sl-tab slot="nav" panel="cc-module-config-${moduleDetail.id}-date-start">Start Date</sl-tab>
 				  <sl-tab slot="nav" panel="cc-module-config-${moduleDetail.id}-date-stop">Stop Date</sl-tab>
@@ -919,18 +945,12 @@ export default class cc_ConfigurationView extends cc_View {
  			      <sl-tab-panel name="cc-module-config-${moduleDetail.id}-date-start">
 		   			<div id="cc-module-config-${moduleDetail.id}-date-start">
 					    <div>
+					<div class="cc-calculated-date">${calculatedDate}</div>
 				    		<div style="padding-left:0.5rem" 
 						     class="cc-module-config-date">
-								<strong>(Start) Date</strong> 
+								<!-- <strong>(Start) Date</strong> 
 					    		<a href="" id="cc-about-module-date-start" target="_blank">
-			   					<i class="icon-question cc-module-icon"></i></a>
-								<div class="cc-current-studyPeriod">
-							   		<strong>Study Period</strong>
-					    	 		<a href="" class="cc-about-module-studyPeriod" target="_blank">
-			   						<i class="icon-question cc-module-icon"></i></a>
-									${currentStudyPeriod}</div>
-								</div>
-								<div class="cc-calculated-date">${calculatedDate}</div>
+			   					<i class="icon-question cc-module-icon"></i></a> -->
 							</div>
 							<div class="cc-module-config-collection-representation"
 					    		style="padding-top:1rem; padding-left:3rem">
@@ -1041,10 +1061,16 @@ export default class cc_ConfigurationView extends cc_View {
 					</sl-tab-panel>
 				</sl-tab-group>
 				</div>
+				</div>
 			</div>
 
 			<div style="margin-right:1em">
 			    <div class="cc-collection-banner border border-trbl">
+				    <div class="border border-b" style="padding:1em">
+					  <strong>Banner</strong>
+						<a id="cc-about-module-banner" target="_blank" href="">
+	   						<i class="icon-question cc-module-icon"></i></a>
+					</div>
 					<sl-tab-group>
 				  		<sl-tab class="cc-banner-tab" ${bannerActive.image} slot="nav" panel="cc-module-config-${moduleDetail.id}-image">Image</sl-tab>
 				  		<sl-tab class="cc-banner-tab" ${bannerActive.iframe} slot="nav" panel="cc-module-config-${moduleDetail.id}-iframe">Iframe</sl-tab>
@@ -1052,7 +1078,8 @@ export default class cc_ConfigurationView extends cc_View {
 
 
  			      		<sl-tab-panel name="cc-module-config-${moduleDetail.id}-image">
-							<div class="cc-module-config-collection-representation">
+							<div class="cc-module-config-collection-representation"
+							     style="padding-left: 0.5rem;">
 								<label for="cc-collection-representation-${moduleDetail.id}-imageSize"
 					     			style="float:left;padding-top:0.8rem;"> Image scale </label>
 								<a id="cc-about-module-image-scale" target="_blank" href="">
@@ -1094,6 +1121,7 @@ export default class cc_ConfigurationView extends cc_View {
 			   						<i class="icon-question cc-module-icon"></i></a>&nbsp;
 						  		<sl-color-picker 
 								    id="cc-module-config-${moduleDetail.id}-color"
+									value="${moduleDetail.bannerColour}"
 								    label="Select a color">
 								</sl-color-picker>
 								<br clear="all" />
