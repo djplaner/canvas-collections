@@ -1537,6 +1537,29 @@ class cc_ConfigurationView extends cc_View {
 	}
 
 	/**
+	 * @function configureBanner
+	 * @description identify which of the start, stop and coming soon dates are
+	 * active based on moduleDetail
+	 * @param {Object} moduleDetail - details of module we're configuring a form for
+	 * @returns {Object} - dateActive - specifies which tabgroup will be active
+	 */
+	configureDate(moduleDetail) {
+		let dateActive = {
+			start: 'active', stop: '', comingSoon: ''
+		};
+
+		if (!moduleDetail.hasOwnProperty('activeDate')) {
+			moduleDetail.activeDate = 'start';
+		}
+
+		if (['start', 'stop', 'comingSoon'].includes(moduleDetail.activeDate)) {
+			dateActive.start = '';
+			dateActive[moduleDetail.activeDate] = 'active';
+		}
+		return dateActive;
+	}
+
+	/**
 	 * @descr generate the div.cc-module-config-details for the module
 	 * @param {Object} moduleDetail
 	 * @returns {string} html
@@ -1659,6 +1682,9 @@ class cc_ConfigurationView extends cc_View {
 
 		// TODO need to handle both start and end
 		let calculatedDate = this.calculateDate(dateInfo);
+		if (dateInfo.hasOwnProperty('to')) {
+			calculatedDate += ` to ${this.calculateDate(dateInfo.to)}`;
+		}
 
 		// calculate the number elements for the form
 		// - if no module.num then it's auto calculate
@@ -1691,6 +1717,7 @@ class cc_ConfigurationView extends cc_View {
 		const additionalMetaDataHTML = this.getAdditionalMetaDataHTML(moduleDetail);
 
 		let bannerActive = this.configureBanner(moduleDetail);
+		let dateActive = this.configureDate(moduleDetail);
 
 		let showConfigHtml = `
 		<style>
@@ -1774,143 +1801,114 @@ class cc_ConfigurationView extends cc_View {
 					<br clear="all" />
 				</div>
 				<div class="border border-trbl" style="margin-right:1em">
-				  <div class="border border-b" style="padding:1rem">
-				    <strong>Dates</strong>
+				  	<div class="border border-b" style="padding:1rem">
+				    	<strong>Dates</strong>
 						<a id="cc-about-module-dates" target="_blank" href="">
 	   						<i class="icon-question cc-module-icon"></i></a>
-					<div class="cc-current-studyPeriod">
-				   		<strong>Study Period</strong>
-		    	 		<a href="" class="cc-about-module-studyPeriod" target="_blank">
-   						<i class="icon-question cc-module-icon"></i></a>
-						${currentStudyPeriod}
-					</div>
-				  </div>
-				<sl-tab-group>
-				  <sl-tab slot="nav" panel="cc-module-config-${moduleDetail.id}-date-start">Start Date</sl-tab>
-				  <sl-tab slot="nav" panel="cc-module-config-${moduleDetail.id}-date-stop">Stop Date</sl-tab>
-				  <sl-tab slot="nav" panel="cc-module-config-${moduleDetail.id}-coming-soon">Coming Soon</sl-tab>
+						<div class="cc-current-studyPeriod">
+				   			<strong>Study Period</strong>
+		    	 			<a href="" class="cc-about-module-studyPeriod" target="_blank">
+   							<i class="icon-question cc-module-icon"></i></a>
+							${currentStudyPeriod}
+						</div>
+				  	</div>
+					<sl-tab-group>
+				  		<sl-tab ${dateActive.start} slot="nav" panel="cc-module-config-${moduleDetail.id}-date-start">Start Date</sl-tab>
+				  		<sl-tab ${dateActive.stop} slot="nav" panel="cc-module-config-${moduleDetail.id}-date-stop">Stop Date</sl-tab>
+				  		<!-- sl-tab ${dateActive.comingSoon} slot="nav" panel="cc-module-config-${moduleDetail.id}-coming-soon">Coming Soon</sl-tab -->
 
- 			      <sl-tab-panel name="cc-module-config-${moduleDetail.id}-date-start">
-		   			<div id="cc-module-config-${moduleDetail.id}-date-start">
-					    <div>
-					<div class="cc-calculated-date">${calculatedDate}</div>
-				    		<div style="padding-left:0.5rem" 
-						     class="cc-module-config-date">
-								<!-- <strong>(Start) Date</strong> 
-					    		<a href="" id="cc-about-module-date-start" target="_blank">
-			   					<i class="icon-question cc-module-icon"></i></a> -->
-							</div>
-							<div class="cc-module-config-collection-representation"
-					    		style="padding-top:1rem; padding-left:3rem">
-				    			<label for="cc-module-config-${moduleDetail.id}-date-label">Date label</label>
-								<input type="text" id="cc-module-config-${moduleDetail.id}-date-label"
-						   			style="width:10rem" value="${dateLabel}" /><br />
-				    			<label for="cc-module-config-${moduleDetail.id}-day">Day of week</label>
-								<select id="cc-module-config-${moduleDetail.id}-day">
-		                  			${dateOptions.dayOfWeekOptions}
-								</select> <br />
-								<label for="cc-module-config-${moduleDetail.id}-week">Week</label>
-								<select id="cc-module-config-${moduleDetail.id}-week">
-		   		           			${dateOptions.weekOptions}}	
-								</select> <br />
-								<label for="cc-module-config-${moduleDetail.id}-time">Time</label>
-								<style>
-					   				input[readonly] {
-										display:none;
-					   				}
-					   			</style>
-								<aeon-datepicker local="en-au">
-									<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="${dateInfo.time}" />
-								</aeon-datepicker>
-							</div>
-							<br clear="all" />
-						</div>
-					</sl-tab-panel>
-				    <sl-tab-panel name="cc-module-config-${moduleDetail.id}-date-stop">
-		   			  <div id="cc-module-config-${moduleDetail.id}-date-stop">
-					    <div>
-				    		<div style="padding-left:0.5rem" 
-						     class="cc-module-config-date">
-								<strong>Stop Date</strong> 
-					    		<a href="" id="cc-about-module-date-stop" target="_blank">
-			   					<i class="icon-question cc-module-icon"></i></a>
-								<div class="cc-current-studyPeriod">
-							   		<strong>Study Period</strong>
-					    	 		<a href="" class="cc-about-module-studyPeriod" target="_blank">
-			   						<i class="icon-question cc-module-icon"></i></a>
-									${currentStudyPeriod}</div>
+ 			      		<sl-tab-panel name="cc-module-config-${moduleDetail.id}-date-start">
+		   					<div id="cc-module-config-${moduleDetail.id}-date-start">
+					    		<div>
+									<div class="cc-calculated-date">${calculatedDate}</div>
+									<div class="cc-module-config-collection-representation" style="padding-top:1rem; padding-left:3rem">
+				    					<label for="cc-module-config-${moduleDetail.id}-date-label">Date label</label>
+										<input type="text" id="cc-module-config-${moduleDetail.id}-date-label"
+						   					style="width:10rem" value="${dateLabel}" /><br />
+				    					<label for="cc-module-config-${moduleDetail.id}-day">Day of week</label>
+										<select id="cc-module-config-${moduleDetail.id}-day">
+		                  					${dateOptions.dayOfWeekOptions}
+										</select> <br />
+										<label for="cc-module-config-${moduleDetail.id}-week">Week</label>
+										<select id="cc-module-config-${moduleDetail.id}-week">
+		   		           					${dateOptions.weekOptions}}	
+										</select> <br />
+										<label for="cc-module-config-${moduleDetail.id}-time">Time</label>
+										<style>
+					   						input[readonly] {
+												display:none;
+					   						}
+					   					</style>
+										<aeon-datepicker local="en-au">
+										<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="${dateInfo.time}" />
+										</aeon-datepicker>
+									</div>
+									<br clear="all" />
 								</div>
-								<div class="cc-calculated-date">${calculatedDate}</div>
 							</div>
-							<div class="cc-module-config-collection-representation"
-					    		style="padding-top:1rem; padding-left:3rem">
-				    			<label for="cc-module-config-${moduleDetail.id}-day-to">Day of week</label>
-								<select id="cc-module-config-${moduleDetail.id}-day-to">
-		                  			${toDateOptions.dayOfWeekOptions}
-								</select> <br />
-								<label for="cc-module-config-${moduleDetail.id}-week-to">Week</label>
-								<select id="cc-module-config-${moduleDetail.id}-week-to">
-		   		           			${toDateOptions.weekOptions}}	
-								</select> <br />
-								<label for="cc-module-config-${moduleDetail.id}-time-to">Time</label>
-								<style>
-					   				input[readonly] {
-										display:none;
-					   				}
-					   			</style>
-								<aeon-datepicker local="en-au">
-									<input type="time" id="cc-module-config-${moduleDetail.id}-time-to" name="time" value="${dateInfo.to.time}" />
-								</aeon-datepicker>
-							</div>
-							<br clear="all" />
-						</div>
-					</sl-tab-panel>
-				    <sl-tab-panel name="cc-module-config-${moduleDetail.id}-coming-soon">
-		   			<div id="cc-module-config-${moduleDetail.id}-coming-soon">
-					    <div>
-				    		<div style="padding-left:0.5rem" 
-						     class="cc-module-config-date">
-								<strong>Coming Soon</strong> 
-					    		<a href="" id="cc-about-module-coming-soon" target="_blank">
-			   					<i class="icon-question cc-module-icon"></i></a>
-								<div class="cc-current-studyPeriod">
-							   		<strong>Study Period</strong>
-					    	 		<a href="" class="cc-about-module-studyPeriod" target="_blank">
-			   						<i class="icon-question cc-module-icon"></i></a>
+						</sl-tab-panel>
+				    	<sl-tab-panel name="cc-module-config-${moduleDetail.id}-date-stop">
+		   			  		<div id="cc-module-config-${moduleDetail.id}-date-stop">
+					    		<div>
+									<div class="cc-calculated-date">${calculatedDate}</div>
+									<div class="cc-module-config-collection-representation" style="padding-top:1rem; padding-left:3rem">
+				    					<label for="cc-module-config-${moduleDetail.id}-day-to">Day of week</label>
+										<select id="cc-module-config-${moduleDetail.id}-day-to">
+		                  					${toDateOptions.dayOfWeekOptions}
+										</select> <br />
+										<label for="cc-module-config-${moduleDetail.id}-week-to">Week</label>
+										<select id="cc-module-config-${moduleDetail.id}-week-to">
+		   		           					${toDateOptions.weekOptions}}	
+										</select> <br />
+										<label for="cc-module-config-${moduleDetail.id}-time-to">Time</label>
+										<style>
+					   						input[readonly] {
+												display:none;
+					   						}
+					  					</style>
+										<aeon-datepicker local="en-au">
+											<input type="time" id="cc-module-config-${moduleDetail.id}-time-to" name="time" value="${dateInfo.to.time}" />
+										</aeon-datepicker>
+									</div>
+									<br clear="all" />
 								</div>
-								<div class="cc-calculated-date">${comingSoonDate}</div>
 							</div>
-							<div class="cc-module-config-collection-representation"
-					    		style="padding-top:1rem; padding-left:3rem">
-				    			<label for="cc-module-config-${moduleDetail.id}-coming-soon-label">Label</label>
-								<input type="text" id="cc-module-config-${moduleDetail.id}-coming-soon-label"
-						   			style="width:10rem" value="${comingSoonLabel}" /><br />
-				    			<label for="cc-module-config-${moduleDetail.id}-coming-soon-day">Day of week</label>
-								<select id="cc-module-config-${moduleDetail.id}-coming-soon-day">
-		                  			${comingSoonDateOptions.dayOfWeekOptions}
-								</select> <br />
-								<label for="cc-module-config-${moduleDetail.id}-coming-soon-week">Week</label>
-								<select id="cc-module-config-${moduleDetail.id}-coming-soon-week">
-		   		           			${comingSoonDateOptions.weekOptions}}	
-								</select> <br />
-								<label for="cc-module-config-${moduleDetail.id}-coming-soon-time">Time</label>
-								<style>
-					   				input[readonly] {
-										display:none;
-					   				}
-					   			</style>
-								<aeon-datepicker local="en-au">
-									<input type="time" id="cc-module-config-${moduleDetail.id}-coming-soon-time" name="time" value="${comingSoonTime}" />
-								</aeon-datepicker>
+						</sl-tab-panel>
+				    	<!--
+						<sl-tab-panel name="cc-module-config-${moduleDetail.id}-coming-soon">
+		   					<div id="cc-module-config-${moduleDetail.id}-coming-soon">
+					    		<div>
+									<div class="cc-calculated-date">${comingSoonDate}</div>
+									<div class="cc-module-config-collection-representation" style="padding-top:1rem; padding-left:3rem">
+				    					<label for="cc-module-config-${moduleDetail.id}-coming-soon-label">Label</label>
+										<input type="text" id="cc-module-config-${moduleDetail.id}-coming-soon-label"
+						   					style="width:10rem" value="${comingSoonLabel}" /><br />
+				    					<label for="cc-module-config-${moduleDetail.id}-coming-soon-day">Day of week</label>
+										<select id="cc-module-config-${moduleDetail.id}-coming-soon-day">
+		                  					${comingSoonDateOptions.dayOfWeekOptions}
+										</select> <br />
+										<label for="cc-module-config-${moduleDetail.id}-coming-soon-week">Week</label>
+										<select id="cc-module-config-${moduleDetail.id}-coming-soon-week">
+		   		           					${comingSoonDateOptions.weekOptions}}	
+										</select> <br />
+										<label for="cc-module-config-${moduleDetail.id}-coming-soon-time">Time</label>
+										<style>
+					   						input[readonly] {
+												display:none;
+					   						}
+					   					</style>
+										<aeon-datepicker local="en-au">
+											<input type="time" id="cc-module-config-${moduleDetail.id}-coming-soon-time" name="time" value="${comingSoonTime}" />
+										</aeon-datepicker>
+									</div>
+									<br clear="all" />
+								</div>
 							</div>
-							<br clear="all" />
-						</div>
-					</div>
-					</sl-tab-panel>
-				</sl-tab-group>
+						</sl-tab-panel>
+						-->
+					</sl-tab-group>
 				</div>
-				</div>
-			</div>
+			</div> 
 
 			<div style="margin-right:1em">
 			    <div class="cc-collection-banner border border-trbl">
@@ -2020,6 +2018,7 @@ class cc_ConfigurationView extends cc_View {
 	getAdditionalMetaDataHTML(module) {
 
 		let additionalMetaDataHTML = `
+	<sl-details summary="Additional metadata">
 		<div class="cc-module-config-additional-metadata border border-trbl">
 			<p><strong>Additional metadata</strong>
 			    <a href="" id="cc-about-additional-metadata" target="_blank">
@@ -2072,6 +2071,7 @@ class cc_ConfigurationView extends cc_View {
 		      </tbody>
 			</table>
 		</div>
+	</sl-details>
 		`;
 
 		return additionalMetaDataHTML;
