@@ -914,7 +914,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-full-claytons-navigation-option",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/navigation-option"
+		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/navigation-options"
 	},
 	{
 		contentText: `<p>Make collection invisible to students. 
@@ -2179,7 +2179,7 @@ class cc_ConfigurationView extends cc_View {
 						<a id="cc-about-full-claytons-navigation-option" target="_blank" href="">
 			   			<i class="icon-question"></i></a> </p>
 						  </label>
-						  <sl-radio-group id="cc-config-full-claytons-navigation-option" value="2">
+						  <sl-radio-group id="cc-config-full-claytons-navigation-option" value="1">
 						    <sl-radio-button value="1">None</sl-radio-button>
 							<sl-radio-button value="2">Pages</sl-radio-button>
 							<sl-radio-button value="3">Tabs</sl-radio-button>
@@ -2904,6 +2904,8 @@ input:checked + .cc-slider:before {
  * Updating each collection's output page needs to be done completely before moving
  * onto the next one. e.g. where multiple collections have the same output page
  * 
+ * Also, support the updating of a single collection.
+ * 
  * Constructor takes a configurationController, and a final call back prepares
  * - creates a task array with details of all the collections with output pages to update
  * - also an empty completedTasks array with details of what happened
@@ -2934,11 +2936,12 @@ class updatePageController {
 	 * passed to the views
 	 */
 
-	constructor(configurationController, navOption = "2") {
+	constructor(configurationController, navOption = undefined, singleCollection=undefined) {
 		this.configurationController = configurationController;
 		this.parentController = this.configurationController.parentController;
 		this.collectionsView = this.parentController.collectionsController.view;
 		this.navOption = navOption;
+		this.singleCollection = singleCollection;
 
 		this.createTaskLists();
 
@@ -2957,13 +2960,34 @@ class updatePageController {
 		this.tasks = []; // tasks to do
 		this.completedTasks = [];
 
+
+		/* singleCollection is defined */
+		// Create a single task for singleCollection, and its outputPage
+		if (this.singleCollection) {
+			const collection = this.singleCollection;
+			const collectionConfig = this.parentController.cc_configuration.COLLECTIONS[collection];
+			const outputPageName = collectionConfig.outputPage;
+			const representationName = collectionConfig.representation; 
+		    const outputPageURL = outputPageName.toLowerCase().replace(/ /g,'-');
+
+			// set the nav option to the "None" choice
+			this.navOption = 1;
+
+			this.tasks.push( {
+				collection: collection, outputPage: outputPageName, outputPageURL: outputPageURL,
+				representation: representationName,
+				completed: false, error: false, errors: []
+			});
+
+			return;
+		}
+
 		/* Standard task list - update each collection's output page */
 		// for each collection, create task Object
 		// - collection
 		// - outputPage and outputPageURL
 		// - representation
 		// - completed/error/errors
-
 		const collections = this.configurationController.model.getCollectionsWithOutputPage();
 
 		for (let collection of collections) {
@@ -3334,7 +3358,11 @@ class updatePageController {
 			if (task.error) {
 				summary += `\n- ${task.collection} - ${task.outputPageURL} - errors - ${task.errors.join("\n     ")}`;
 			} else if (task.completed) {
-				summary += `\n- ${task.collection} - ${task.outputPageURL} - success`;
+				if (task.hasOwnProperty('collection')) {
+					summary += `\n- ${task.collection} - ${task.outputPageURL} - success`;
+				} else if (task.hasOwnProperty('collections')) {
+					summary += `\n- ${task.outputPageURL} - tab navigation update - success`;
+				}
 			}
 		}
 
@@ -4174,21 +4202,12 @@ class cc_ConfigurationController {
 		//     cc-collection-<collection-name>-output-page-update
 		const collectionName = event.target.id.match(/cc-collection-(.*)-output-page-update/)[1];
 		
-		// what's the value of element #cc-config-full-claytons-navigation-option
-		const navigationOption = document.querySelector('#cc-config-full-claytons-navigation-option');
-		let navigationOptionValue = "1";
-		if (navigationOption) {
-			navigationOptionValue = navigationOption.value;
-		}
-
-
-		// Obtain the collection name and representation for the button clicked
-
+		// for the updateController, no nav option (only update the content) for the
+		// chosen collection
 		let updateController = new updatePageController( 
-			collectionName, this.parentController, navigationOptionValue 
+			this, undefined, collectionName
 			);
 		updateController.execute();
-
 	}
 
 	/**
@@ -4212,30 +4231,6 @@ class cc_ConfigurationController {
 
 		let updateController = new updatePageController(this,navigationOptionValue);
 		updateController.execute();
-
-
-		/** old version 
-		// get all the collections with output pages
-		const collectionsWithOutputPage = this.model.getCollectionsWithOutputPage();
-		// what's the value of element #cc-config-full-claytons-navigation-option
-		const navigationOption = document.querySelector('#cc-config-full-claytons-navigation-option');
-		let navigationOptionValue = "1";
-		if (navigationOption) {
-			navigationOptionValue = navigationOption.value;
-		}
-
-		if (collectionsWithOutputPage.length <= 1) {
-			alert(`Full Claytons needs at least 2 collections with output pages -currently ${collectionsWithOutputPage.length}.`); 
-		}
-
-		for (let collectionName of collectionsWithOutputPage) {
-			console.log(`full claytons updating ${collectionName}`);
-			let updateController = new updatePageController( 
-				collectionName, this.parentController, navigationOptionValue
-				);
-			let result = updateController.execute();
-		}
-		*/
 	}
 
 	/**
@@ -4246,7 +4241,9 @@ class cc_ConfigurationController {
 	completeFullClaytons(pageController) {
 		let outcomes = pageController.generateOutcomesString();
 
-		alert(`Full Claytons update ${outcomes}`)
+		if ( ! pageController.singleCollection ) {
+			alert(`Full Claytons update ${outcomes}`)
+		}
 	}
 
 

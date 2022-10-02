@@ -66,7 +66,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-full-claytons-navigation-option",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/navigation-option"
+		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/navigation-options"
 	},
 	{
 		contentText: `<p>Make collection invisible to students. 
@@ -1331,7 +1331,7 @@ export default class cc_ConfigurationView extends cc_View {
 						<a id="cc-about-full-claytons-navigation-option" target="_blank" href="">
 			   			<i class="icon-question"></i></a> </p>
 						  </label>
-						  <sl-radio-group id="cc-config-full-claytons-navigation-option" value="2">
+						  <sl-radio-group id="cc-config-full-claytons-navigation-option" value="1">
 						    <sl-radio-button value="1">None</sl-radio-button>
 							<sl-radio-button value="2">Pages</sl-radio-button>
 							<sl-radio-button value="3">Tabs</sl-radio-button>

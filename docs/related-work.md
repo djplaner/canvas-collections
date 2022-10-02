@@ -47,7 +47,7 @@ This typically involves hand-crafting HTML and CSS - whilst working within the c
 
 - [Create full navigation using pages](http://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/) 
 - [Creating an inviting course home page](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236)
-- [Homw sweet home pages without tables](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Home-Sweet-Homepages-without-Tables/ba-p/275079)
+- [Home sweet home pages without tables](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Home-Sweet-Homepages-without-Tables/ba-p/275079)
 
 - [Creating a page of cards](https://gcccd.instructure.com/courses/10582/pages/cards?module_item_id=17470) - College specific example of using CSS to enable staff to manually create a card interface
 - [Create Interactive Cards](https://www.howtocanvas.com/theme-editor/interactive-cards) - similar approach but requires the ability to add external CSS to Canvas

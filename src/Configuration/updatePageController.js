@@ -4,6 +4,8 @@
  * Updating each collection's output page needs to be done completely before moving
  * onto the next one. e.g. where multiple collections have the same output page
  * 
+ * Also, support the updating of a single collection.
+ * 
  * Constructor takes a configurationController, and a final call back prepares
  * - creates a task array with details of all the collections with output pages to update
  * - also an empty completedTasks array with details of what happened
@@ -34,11 +36,12 @@ export default class updatePageController {
 	 * passed to the views
 	 */
 
-	constructor(configurationController, navOption = "2") {
+	constructor(configurationController, navOption = undefined, singleCollection=undefined) {
 		this.configurationController = configurationController;
 		this.parentController = this.configurationController.parentController;
 		this.collectionsView = this.parentController.collectionsController.view;
 		this.navOption = navOption;
+		this.singleCollection = singleCollection;
 
 		this.createTaskLists();
 
@@ -57,13 +60,34 @@ export default class updatePageController {
 		this.tasks = []; // tasks to do
 		this.completedTasks = [];
 
+
+		/* singleCollection is defined */
+		// Create a single task for singleCollection, and its outputPage
+		if (this.singleCollection) {
+			const collection = this.singleCollection;
+			const collectionConfig = this.parentController.cc_configuration.COLLECTIONS[collection];
+			const outputPageName = collectionConfig.outputPage;
+			const representationName = collectionConfig.representation; 
+		    const outputPageURL = outputPageName.toLowerCase().replace(/ /g,'-');
+
+			// set the nav option to the "None" choice
+			this.navOption = 1;
+
+			this.tasks.push( {
+				collection: collection, outputPage: outputPageName, outputPageURL: outputPageURL,
+				representation: representationName,
+				completed: false, error: false, errors: []
+			});
+
+			return;
+		}
+
 		/* Standard task list - update each collection's output page */
 		// for each collection, create task Object
 		// - collection
 		// - outputPage and outputPageURL
 		// - representation
 		// - completed/error/errors
-
 		const collections = this.configurationController.model.getCollectionsWithOutputPage();
 
 		for (let collection of collections) {
@@ -434,7 +458,11 @@ export default class updatePageController {
 			if (task.error) {
 				summary += `\n- ${task.collection} - ${task.outputPageURL} - errors - ${task.errors.join("\n     ")}`;
 			} else if (task.completed) {
-				summary += `\n- ${task.collection} - ${task.outputPageURL} - success`;
+				if (task.hasOwnProperty('collection')) {
+					summary += `\n- ${task.collection} - ${task.outputPageURL} - success`;
+				} else if (task.hasOwnProperty('collections')) {
+					summary += `\n- ${task.outputPageURL} - tab navigation update - success`;
+				}
 			}
 		}
 

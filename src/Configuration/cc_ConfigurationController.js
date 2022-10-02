@@ -593,21 +593,12 @@ export default class cc_ConfigurationController {
 		//     cc-collection-<collection-name>-output-page-update
 		const collectionName = event.target.id.match(/cc-collection-(.*)-output-page-update/)[1];
 		
-		// what's the value of element #cc-config-full-claytons-navigation-option
-		const navigationOption = document.querySelector('#cc-config-full-claytons-navigation-option');
-		let navigationOptionValue = "1";
-		if (navigationOption) {
-			navigationOptionValue = navigationOption.value;
-		}
-
-
-		// Obtain the collection name and representation for the button clicked
-
+		// for the updateController, no nav option (only update the content) for the
+		// chosen collection
 		let updateController = new updatePageController( 
-			collectionName, this.parentController, navigationOptionValue 
+			this, undefined, collectionName
 			);
 		updateController.execute();
-
 	}
 
 	/**
@@ -631,30 +622,6 @@ export default class cc_ConfigurationController {
 
 		let updateController = new updatePageController(this,navigationOptionValue);
 		updateController.execute();
-
-
-		/** old version 
-		// get all the collections with output pages
-		const collectionsWithOutputPage = this.model.getCollectionsWithOutputPage();
-		// what's the value of element #cc-config-full-claytons-navigation-option
-		const navigationOption = document.querySelector('#cc-config-full-claytons-navigation-option');
-		let navigationOptionValue = "1";
-		if (navigationOption) {
-			navigationOptionValue = navigationOption.value;
-		}
-
-		if (collectionsWithOutputPage.length <= 1) {
-			alert(`Full Claytons needs at least 2 collections with output pages -currently ${collectionsWithOutputPage.length}.`); 
-		}
-
-		for (let collectionName of collectionsWithOutputPage) {
-			console.log(`full claytons updating ${collectionName}`);
-			let updateController = new updatePageController( 
-				collectionName, this.parentController, navigationOptionValue
-				);
-			let result = updateController.execute();
-		}
-		*/
 	}
 
 	/**
@@ -665,7 +632,9 @@ export default class cc_ConfigurationController {
 	completeFullClaytons(pageController) {
 		let outcomes = pageController.generateOutcomesString();
 
-		alert(`Full Claytons update ${outcomes}`)
+		if ( ! pageController.singleCollection ) {
+			alert(`Full Claytons update ${outcomes}`)
+		}
 	}
 
 
