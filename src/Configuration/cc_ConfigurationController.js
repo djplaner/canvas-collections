@@ -44,6 +44,8 @@ export default class cc_ConfigurationController {
 		// set up event to call this.saveConfig() every 10 seconds
 		this.configChange = false;
 		setInterval(this.saveConfig.bind(this), TIME_BETWEEN_SAVES);
+		// make sure we do a save just before onload
+		window.addEventListener('beforeunload', (event) => this.saveConfig());
 	}
 
 	/** 
@@ -698,6 +700,35 @@ export default class cc_ConfigurationController {
 			// update the bannerColour value
 			this.model.changeModuleConfig(moduleId,'bannerColour',element.value);
 			this.changeMade(true);
+		}
+	}
+
+	/**
+	 * @function manageAccordionToggle
+	 * @description Store the details of whether a module configuration display accordion is
+	 * open or closed element.id format
+	 *    cc-module-config-<module-id>-<accordion-name>-accordion
+	 *    
+	 * @param {*} event 
+	 */
+
+	manageAccordionToggle(event) {
+		const element = document.querySelector(`#${event.target.id}`);
+
+		// extract the module id
+		const idString = element.id;
+		const eventType = event.type;
+		const regex = /^cc-module-config-(\d+)-(.*)-accordion$/;
+		const matches = idString.match(regex);
+		if (matches.length===3) {
+			const moduleId = parseInt(matches[1]);
+			const accordionName = matches[2];
+			console.log(`Accordion ${accordionName} for module ${moduleId} is ${eventType}`);
+			this.model.changeModuleDisplay(moduleId, accordionName, eventType);
+			this.changeMade(true);
+			// update the bannerColour value
+			//this.model.changeModuleConfig(moduleId,accordionName,element.open);
+			//this.changeMade(true);
 		}
 	}
 }

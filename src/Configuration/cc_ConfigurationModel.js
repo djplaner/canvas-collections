@@ -392,6 +392,50 @@ export default class cc_ConfigurationModel {
 	}
 
 	/**
+	 * @function changeModuleDisplay
+	 * @descr One of the module config accordions has been shown/hidden.
+	 * Need to modify the module configuration
+	 *     "configDisplay" : {   // specify how the module config should be displayed
+	 *          // whether the accordions are open or not
+	 * 			"accordions": {
+	 * 				"dates": "open",  
+	 *              "banner": "",
+	 *              "metadata": "" 
+	 * 			},
+	 *     }
+	 * 
+	 * @param {*} moduleId 
+	 * @param {*} accordionName 
+	 * @param {*} eventType 
+	 */
+
+	changeModuleDisplay(moduleId, accordionName, eventType) {
+		const module = this.findModuleById(moduleId);
+
+		// did we find a module and does it hae configDisplay
+		if (module ) {
+			if (!module.hasOwnProperty('configDisplay')) {
+				module.configDisplay = {
+					"accordions": {
+						"dates": "",
+						"banner": "",
+						"metadata": ""
+					}
+				};
+			}
+			const possibleAccordions = ['dates', 'banner', 'metadata'];
+			// one of the allowed accordions
+			if (possibleAccordions.includes(accordionName) ) {
+				if (eventType === 'sl-show') {
+					module.configDisplay.accordions[accordionName] = 'open';
+				} else if (eventType === 'sl-hide') {
+					module.configDisplay.accordions[accordionName] = '';
+				}
+			}
+		}
+	}
+
+	/**
 	 * @descr Change the value for a configuration variable for a specific module
 	 * @param {*} moduleId 
 	 * @param {*} fieldName 

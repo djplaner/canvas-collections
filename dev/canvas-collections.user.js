@@ -411,6 +411,50 @@ class cc_ConfigurationModel {
 	}
 
 	/**
+	 * @function changeModuleDisplay
+	 * @descr One of the module config accordions has been shown/hidden.
+	 * Need to modify the module configuration
+	 *     "configDisplay" : {   // specify how the module config should be displayed
+	 *          // whether the accordions are open or not
+	 * 			"accordions": {
+	 * 				"dates": "open",  
+	 *              "banner": "",
+	 *              "metadata": "" 
+	 * 			},
+	 *     }
+	 * 
+	 * @param {*} moduleId 
+	 * @param {*} accordionName 
+	 * @param {*} eventType 
+	 */
+
+	changeModuleDisplay(moduleId, accordionName, eventType) {
+		const module = this.findModuleById(moduleId);
+
+		// did we find a module and does it hae configDisplay
+		if (module ) {
+			if (!module.hasOwnProperty('configDisplay')) {
+				module.configDisplay = {
+					"accordions": {
+						"dates": "",
+						"banner": "",
+						"metadata": ""
+					}
+				};
+			}
+			const possibleAccordions = ['dates', 'banner', 'metadata'];
+			// one of the allowed accordions
+			if (possibleAccordions.includes(accordionName) ) {
+				if (eventType === 'sl-show') {
+					module.configDisplay.accordions[accordionName] = 'open';
+				} else if (eventType === 'sl-hide') {
+					module.configDisplay.accordions[accordionName] = '';
+				}
+			}
+		}
+	}
+
+	/**
 	 * @descr Change the value for a configuration variable for a specific module
 	 * @param {*} moduleId 
 	 * @param {*} fieldName 
@@ -1280,7 +1324,7 @@ class cc_ConfigurationView extends cc_View {
 
 	addEventHandlers() {
 
-			// banner tabs to start with cc-banner-tab
+		// banner tabs to start with cc-banner-tab
 		const bannerTabs = document.querySelectorAll(`.cc-banner-tab`);
 		for (let i = 0; i < bannerTabs.length; i++) {
 			const tab = bannerTabs[i];
@@ -1293,6 +1337,14 @@ class cc_ConfigurationView extends cc_View {
 		for (let i = 0; i < colorPickers.length; i++) {
 			const colorPicker = colorPickers[i];
 			colorPicker.addEventListener('sl-change', event => this.controller.manageColourPickerChange(event));
+		}
+
+		// event handler for configDisplay.accordions
+		const accordions = document.querySelectorAll(`sl-details`);
+		for (let i = 0; i < accordions.length; i++) {
+			const accordion = accordions[i];
+			accordion.addEventListener('sl-show', event => this.controller.manageAccordionToggle(event));
+			accordion.addEventListener('sl-hide', event => this.controller.manageAccordionToggle(event));
 		}
 	}
 
@@ -1347,6 +1399,7 @@ class cc_ConfigurationView extends cc_View {
 		const iframeArea = document.querySelector(`#cc-module-config-${id}-iframe` );
 		if (iframeArea) {
 			iframeArea.onchange = (event) => this.controller.updateModuleConfigField(event);
+			iframeArea.onkeydown = (event) => event.stopPropagation();
 			// now set the value for iframe to the module's detail
 			// Done here to make sure it's all encoded nicely
 			if (moduleDetail.hasOwnProperty('iframe')) {
@@ -1663,6 +1716,35 @@ class cc_ConfigurationView extends cc_View {
 	}
 
 	/**
+	 * @function configureConfigDisplay
+	 * @description Examine the module details and create an object based on the contents
+	 * of the configDetails attribute of moduleDetail.  Will also configure a default setting
+	 * if none exists
+	 *    "configDisplay" : {   // specify how the module config should be displayed
+	 *          // whether the accordions are open or not
+	 * 			"accordions": {
+	 * 				"dates": "open",  
+	 *              "banner": "",
+	 *              "metadata": "" 
+	 * 			},
+	 *     }
+	 */
+
+	configureConfigDisplay(moduleDetail) {
+		if (!moduleDetail.hasOwnProperty('configDisplay')) {
+			moduleDetail.configDisplay = {
+				accordions: {
+					dates: '',
+					banner: '',
+					metadata: ''
+				}
+			};
+		}
+
+		return moduleDetail.configDisplay;
+	}
+
+	/**
 	 * @descr generate the div.cc-module-config-details for the module
 	 * @param {Object} moduleDetail
 	 * @returns {string} html
@@ -1822,10 +1904,13 @@ class cc_ConfigurationView extends cc_View {
 					label = label.replaceAll(/"/g, '&quot;');
 				} */
 
-		const additionalMetaDataHTML = this.getAdditionalMetaDataHTML(moduleDetail);
 
 		let bannerActive = this.configureBanner(moduleDetail);
 		let dateActive = this.configureDate(moduleDetail);
+		let configDisplay = this.configureConfigDisplay(moduleDetail);
+
+		// this has to go last before the HTML to ensure all the setup is done
+		const additionalMetaDataHTML = this.getAdditionalMetaDataHTML(moduleDetail);
 
 		let showConfigHtml = `
 		<style>
@@ -1931,7 +2016,7 @@ class cc_ConfigurationView extends cc_View {
 			</div> 
 
 			<div style="margin-right:1em">
-						<sl-details>
+				<sl-details ${configDisplay.accordions.dates} id="cc-module-config-${moduleDetail.id}-dates-accordion">  <!-- dates accordion -->
 		   		<div slot="summary">
 			        <sl-tooltip id="cc-about-module-dates">
 					  	<div slot="content"></div>
@@ -2064,7 +2149,7 @@ class cc_ConfigurationView extends cc_View {
 					</sl-tab-group>
 				</sl-details>
 
-			    <sl-details>
+			    <sl-details ${moduleDetail.configDisplay.accordions.banner} id="cc-module-config-${moduleDetail.id}-banner-accordion">
 				  <div slot="summary">
   			        <sl-tooltip id="cc-about-module-banner">
 					  	<div slot="content"></div>
@@ -2171,7 +2256,7 @@ class cc_ConfigurationView extends cc_View {
 	getAdditionalMetaDataHTML(module) {
 
 		let additionalMetaDataHTML = `
-	<sl-details>
+	<sl-details ${module.configDisplay.accordions.metadata} id="cc-module-config-${module.id}-metadata-accordion">
 	   <div slot="summary">
 	    	<a href="" id="cc-about-additional-metadata" target="_blank"><i class="icon-question cc-module-icon"></i></a>
 	     	<strong>Additional metadata</strong>
@@ -3956,6 +4041,8 @@ class cc_ConfigurationController {
 		// set up event to call this.saveConfig() every 10 seconds
 		this.configChange = false;
 		setInterval(this.saveConfig.bind(this), TIME_BETWEEN_SAVES);
+		// make sure we do a save just before onload
+		window.addEventListener('beforeunload', (event) => this.saveConfig());
 	}
 
 	/** 
@@ -4610,6 +4697,35 @@ class cc_ConfigurationController {
 			// update the bannerColour value
 			this.model.changeModuleConfig(moduleId,'bannerColour',element.value);
 			this.changeMade(true);
+		}
+	}
+
+	/**
+	 * @function manageAccordionToggle
+	 * @description Store the details of whether a module configuration display accordion is
+	 * open or closed element.id format
+	 *    cc-module-config-<module-id>-<accordion-name>-accordion
+	 *    
+	 * @param {*} event 
+	 */
+
+	manageAccordionToggle(event) {
+		const element = document.querySelector(`#${event.target.id}`);
+
+		// extract the module id
+		const idString = element.id;
+		const eventType = event.type;
+		const regex = /^cc-module-config-(\d+)-(.*)-accordion$/;
+		const matches = idString.match(regex);
+		if (matches.length===3) {
+			const moduleId = parseInt(matches[1]);
+			const accordionName = matches[2];
+			console.log(`Accordion ${accordionName} for module ${moduleId} is ${eventType}`);
+			this.model.changeModuleDisplay(moduleId, accordionName, eventType);
+			this.changeMade(true);
+			// update the bannerColour value
+			//this.model.changeModuleConfig(moduleId,accordionName,element.open);
+			//this.changeMade(true);
 		}
 	}
 }
