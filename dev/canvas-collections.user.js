@@ -932,7 +932,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.24";
+const CC_VERSION = "0.9";
 
 const CV_DEFAULT_DATE_LABEL = "Commencing";
 
@@ -951,8 +951,8 @@ const CC_UNPUBLISHED_HTML = `
 
 const CONFIG_VIEW_TOOLTIPS = [
 	{
-		contentText: `The <em>Canvas Collections Configuration</em> page</a> is unpublished. 
-	The live Collections view will <strong>not</strong> be visible in "Student View" or for students.
+		contentText: `<p>The <em>Canvas Collections Configuration</em> page</a> is unpublished. 
+	The live Collections view will <strong>not</strong> be visible in "Student View" or for students.</p>
 		<p>Any Claytons Collections will be visible, if the relevant pages are published.</p>`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-unpublished",
@@ -1987,7 +1987,7 @@ class cc_ConfigurationView extends cc_View {
 				</div>
 
 				<div class="cc-module-config-collection-representation" style="margin-top:0.5rem">
-				        <sl-tooltip class="cc-about-module-label">
+				        <sl-tooltip id="cc-about-module-label">
 						  	<div slot="content"></div>
 						  	<a target="_blank" href="">
 						   	<i class="icon-question cc-module-icon"></i></a>
@@ -2258,7 +2258,11 @@ class cc_ConfigurationView extends cc_View {
 		let additionalMetaDataHTML = `
 	<sl-details ${module.configDisplay.accordions.metadata} id="cc-module-config-${module.id}-metadata-accordion">
 	   <div slot="summary">
-	    	<a href="" id="cc-about-additional-metadata" target="_blank"><i class="icon-question cc-module-icon"></i></a>
+	         <sl-tooltip id="cc-about-additional-metadata">
+  				<div slot="content"></div>
+				<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+			</sl-tooltip>
+						
 	     	<strong>Additional metadata</strong>
 		</div>
 		<div class="cc-module-config-additional-metadata border border-trbl">

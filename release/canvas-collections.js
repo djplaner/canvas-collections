@@ -70,16 +70,16 @@ class cc_ConfigurationModel {
 	}
 
 	/**
-	 * @descr return the current value for the strm (study period) as a calculated by
+	 * @descr return the current value for the study period as a calculated by
 	 * the calendar, if there is no current calculate value, return the default 
-	 * @returns String - the current value for the strm (study period) or the default
+	 * @returns String - the current value for the study period or the default
 	 * containing "(default)"
 	 */
-	getStrm() {
+	getStudyPeriod() {
 		if (this.controller.parentController.hasOwnProperty('calendar') &&
-			this.controller.parentController.hasOwnProperty('strm') &&
-			this.controller.parentController.strm) {
-			return this.controller.parentController.strm;
+			this.controller.parentController.hasOwnProperty('studyPeriod') &&
+			this.controller.parentController.studyPeriod) {
+			return this.controller.parentController.studyPeriod;
 		} else if ( this.controller.parentController.hasOwnProperty('calendar') ){
 			return `${this.controller.parentController.calendar.defaultPeriod} (default)`;
 		}
@@ -393,6 +393,50 @@ class cc_ConfigurationModel {
 	}
 
 	/**
+	 * @function changeModuleDisplay
+	 * @descr One of the module config accordions has been shown/hidden.
+	 * Need to modify the module configuration
+	 *     "configDisplay" : {   // specify how the module config should be displayed
+	 *          // whether the accordions are open or not
+	 * 			"accordions": {
+	 * 				"dates": "open",  
+	 *              "banner": "",
+	 *              "metadata": "" 
+	 * 			},
+	 *     }
+	 * 
+	 * @param {*} moduleId 
+	 * @param {*} accordionName 
+	 * @param {*} eventType 
+	 */
+
+	changeModuleDisplay(moduleId, accordionName, eventType) {
+		const module = this.findModuleById(moduleId);
+
+		// did we find a module and does it hae configDisplay
+		if (module ) {
+			if (!module.hasOwnProperty('configDisplay')) {
+				module.configDisplay = {
+					"accordions": {
+						"dates": "",
+						"banner": "",
+						"metadata": ""
+					}
+				};
+			}
+			const possibleAccordions = ['dates', 'banner', 'metadata'];
+			// one of the allowed accordions
+			if (possibleAccordions.includes(accordionName) ) {
+				if (eventType === 'sl-show') {
+					module.configDisplay.accordions[accordionName] = 'open';
+				} else if (eventType === 'sl-hide') {
+					module.configDisplay.accordions[accordionName] = '';
+				}
+			}
+		}
+	}
+
+	/**
 	 * @descr Change the value for a configuration variable for a specific module
 	 * @param {*} moduleId 
 	 * @param {*} fieldName 
@@ -404,20 +448,32 @@ class cc_ConfigurationModel {
 
 		if (module) {
 			// specify the fields that are for dates, to be handled differently
-			const dateFields = [ 'day', 'week', 'time', 'date-label'];
+			const dateFields = [ 
+				'day', 'week', 'time', 'date-label',
+				'day-to', 'week-to', 'time-to'
+			];
 
 			if ( dateFields.includes(fieldName) ) {
 				// does module contain a date field
 				if (!module.hasOwnProperty('date')) {
 					module.date = {
-						label: '', day: '', week: '', time: ''
+						label: '', day: '', week: '', time: '',
+						to: { day: '', week: '', time: '' }
 					};
+				}
+				if (!module.date.hasOwnProperty('to')) {
+					module.date.to = { day: '', week: '', time: '' };
 				}
 				if (fieldName==='date-label') {
 					fieldName='label';
 				}
 
-				module.date[fieldName] = value;
+				if (fieldName.includes('-to')) {
+					fieldName = fieldName.replace('-to', '');
+					module.date.to[fieldName] = value;
+				} else {
+					module.date[fieldName] = value;
+				}
 				// changed date field, finished
 				return true;
 			} 
@@ -433,11 +489,8 @@ class cc_ConfigurationModel {
 				}
 			}
 
-			// if field is image, and there is actually a value in it,
-			// perform some extra checks
-			if (fieldName === 'image' && value !== '') {
-				// use regex to check if value contains open and close iframe tags
-				const match = value.toLowerCase().match(/^.*(<iframe.*?src=".*?".*?<\/iframe>).*$/);
+			if (fieldName === 'iframe' ) {
+				let match = value.toLowerCase().match(/^.*(<iframe.*?src=".*?".*?<\/iframe>).*$/);
 				if (match) {
 					value = match[1];
 					// prepare the iframe for use, let the user know if there's
@@ -450,15 +503,20 @@ class cc_ConfigurationModel {
 2. Remove any style attributes.`);
 					}
 				} else {
-					// check that the value is a valid URL
-					if (!value.match(/^https?:\/\/.*/)) {
-						alert(`The image url field must be either a valid URL or valid iframe. It appears to be neither. 
-
-Current value is
+					// wasn't a valid iframe
+					alert(`Configured iframe value does not appear to be a standard HTML iframe.`);
+					return false;
+				}
+			}
+			// if field is image, and there is actually a value in it,
+			// perform some extra checks
+			if (fieldName === 'image' && value !== '') {
+				// check that the value is a valid URL
+				if (!value.match(/^https?:\/\/.*/)) {
+					alert(`The image url field must be either a valid URL or valid iframe. It appears to be neither.\nCurrent value is
 
 ${value}`);
 						return false;
-					}
 				}
 			}
 
@@ -580,6 +638,39 @@ ${value}`);
 
 		return collectionsWithOutputPages;
 	}
+
+	/**
+	 * @function getPagesWithMultipleCollections
+	 * @descr Identify pages used by multiple collections.
+	 * @returns {Dictionary} key is page name, value is array of collection names
+	 */
+	getPagesWithMultipleCollections() {
+		const collections = this.controller.parentController.cc_configuration.COLLECTIONS;
+		const pages = {};
+		// for each collection
+		Object.keys(collections).forEach( (collectionName) => {
+			// if there's an output page
+			if (collections[collectionName].outputPage &&
+				collections[collectionName].outputPage !== '') {
+				// if the page is not in the pages dictionary
+				if (!pages.hasOwnProperty(collections[collectionName].outputPage)) {
+					// add it with an array containing the collection name
+					pages[collections[collectionName].outputPage] = [collectionName];
+				} else {
+					// otherwise add the collection name to the array
+					pages[collections[collectionName].outputPage].push(collectionName);
+				}
+			}
+		});
+
+		for ( let pageName in pages) {
+			if (pages[pageName].length < 2) {
+				delete pages[pageName];
+			}
+		}
+
+		return pages;
+	}
 }
 
 /**
@@ -608,7 +699,6 @@ class cc_View {
 			this.controller.parentController.hasOwnProperty('calendar')
 		) {
 			// old style
-			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
 			this.calendar = this.controller.parentController.calendar;
 		} else if (
 			this.model.hasOwnProperty('controller') &&
@@ -622,18 +712,46 @@ class cc_View {
 
 	addTooltips() {
 		if (this.TOOLTIPS) {
-			html5tooltips(this.TOOLTIPS);
-			// also need to loop through the TOOLTIPS and add the links, if defined
+			/* add shoelace tooltips
+			   - In the HTML there will be tooltips in this format
+				   <sl-tooltip>
+					  <div slot="content"></div>
+					  <a id="" href=""><i></a>
+					</sl-tooltip>
+				- for each tooltip
+				  - find the tooltip (id)
+				  - set the anchor href
+				  - set the div innerHTML
+			*/
 			for (let tooltip of this.TOOLTIPS) {
-				if (tooltip.href && tooltip.targetSelector) {
-					// find the element with id tooltip.targetSelector
-					const element = document.querySelector(tooltip.targetSelector);
-					if (element) {
-						// set the href of element to tooltip.href
-						element.href = tooltip.href;
+				const slToolTips = document.querySelectorAll(`sl-tooltip${tooltip.targetSelector}`);
+				for (let slToolTip of slToolTips) {
+					if (slToolTip) {
+						const anchor = slToolTip.querySelector('a');
+						if (anchor) {
+							anchor.href = tooltip.href;
+						}
+						const div = slToolTip.querySelector('div');
+						if (div) {
+							div.innerHTML = tooltip.contentText;
+						}
 					}
 				}
 			}
+
+			/*	        Old style html5tooltips		
+						html5tooltips(this.TOOLTIPS);
+						// also need to loop through the TOOLTIPS and add the links, if defined
+						for (let tooltip of this.TOOLTIPS) {
+							if (tooltip.href && tooltip.targetSelector) {
+								// find the element with id tooltip.targetSelector
+								const element = document.querySelector(tooltip.targetSelector);
+								if (element) {
+									// set the href of element to tooltip.href
+									element.href = tooltip.href;
+								}
+							}
+						} */
 		}
 	}
 
@@ -680,24 +798,44 @@ class cc_View {
 			date:
 			endDate: { repeat all of first date, except label}
 		} */
-
 		if (!dateJson) {
 			return undefined;
 		}
 
-		const date = {
-			"from": {},
-			"to": undefined
-		};
+		const fields = ['day', 'week', 'time'];
+		let singleDate = "";
+		for (let field of fields) {
+			if (dateJson.hasOwnProperty(field)) {
+				singleDate = `${singleDate}${dateJson[field]}`;
+			}
+		}
 
-		date.from = this.convertUniDateToReal(dateJson);
-		if (dateJson.endDate) {
-			date.to = this.convertUniDateToReal(dateJson.endDate);
-			this.generateDualDate(date);
+
+		let date = {};
+
+		date = this.convertUniDateToReal(dateJson);
+		if (dateJson.hasOwnProperty('to')) {
+			// check that date.to actually has some values
+			let dualDate = "";
+			for (let field of fields) {
+				if (dateJson.to.hasOwnProperty(field)) {
+					dualDate = `${dualDate}${dateJson.to[field]}`;
+				}
+			}
+			if (dualDate !== "") {
+				if (singleDate === "") {
+					return {};
+				}
+				date.to = this.convertUniDateToReal(dateJson.to);
+			}
+			//this.generateDualDate(date);
+		}
+		if (singleDate === "") {
+			return {};
 		}
 		return date;
 
-//		return this.convertDateToHtml(date);
+		//		return this.convertDateToHtml(date);
 
 	}
 
@@ -712,47 +850,47 @@ class cc_View {
 
 		let firstDate = {};
 
-		firstDate.DATE_LABEL = "";
+		firstDate.label = "";
 		if (dateJson.hasOwnProperty('label')) {
-			firstDate.DATE_LABEL = dateJson.label;
-		} 
+			firstDate.label = dateJson.label;
+		}
 
-		firstDate.WEEK = dateJson.week || "";
-		firstDate.DAY = dateJson.day || "Monday"; // is this the right default
+		firstDate.week = dateJson.week || "";
+		firstDate.day = dateJson.day || "Monday"; // is this the right default
 		// remove all but the first three letters of the day
-		firstDate.DAY = firstDate.DAY.substring(0, 3);
+		firstDate.day = firstDate.day.substring(0, 3);
 		// Week needs more work to add the the day and string "Week"
 		// Also it should be HTML
 
-		firstDate.TIME = dateJson.time || "";
+		firstDate.time = dateJson.time || "";
 		// convert 24 hour time into 12 hour time
-		if (firstDate.TIME) {
-			firstDate.TIME = this.model.convertFrom24To12Format(firstDate.TIME);
+		if (firstDate.time) {
+			firstDate.time = this.model.convertFrom24To12Format(firstDate.time);
 		}
 
-		firstDate.MONTH = dateJson.month || "";
-		firstDate.DATE = dateJson.date || "";
+		firstDate.month = dateJson.month || "";
+		firstDate.date = dateJson.date || "";
 
 		// With week defined, we need to calculate MONTH and DATE based
 		// on university trimester
-		if (firstDate.WEEK !== "") {
+		if (firstDate.week !== "") {
 			// TODO should check for a day, if we wish to get the day
 			let actualDate = {};
-			if (firstDate.DAY === "" && this.hasOwnProperty('calendar')) {
+			if (firstDate.day === "" && this.hasOwnProperty('calendar')) {
 				// no special day specified, just get the start of the week
-				actualDate = this.calendar.getDate(firstDate.WEEK);
+				actualDate = this.calendar.getDate(firstDate.week);
 			} else if (this.hasOwnProperty('calendar')) {
 				// need go get the date for a particular day
-				actualDate = this.calendar.getDate(firstDate.WEEK, false, firstDate.DAY);
+				actualDate = this.calendar.getDate(firstDate.week, false, firstDate.day);
 			}
 			// actualDate { date/month/year }
-			firstDate.DATE = actualDate.date;
-			firstDate.MONTH = actualDate.month;
+			firstDate.date = actualDate.date;
+			firstDate.month = actualDate.month;
 		}
 
 		// no date information defined, no date widget
-		if (firstDate.WEEK === "" && firstDate.TIME === "" &&
-			firstDate.MONTH === "" && firstDate.DATE === "") {
+		if (firstDate.week === "" && firstDate.time === "" &&
+			firstDate.month === "" && firstDate.date === "") {
 			return "";
 		}
 		return firstDate;
@@ -774,24 +912,35 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.8.24";
+const CC_VERSION = "0.9";
 
 const CV_DEFAULT_DATE_LABEL = "Commencing";
 
 const CC_UNPUBLISHED_HTML = `
 <div class="cc-unpublished"> 
-  <span style="padding-top: 0.25em;padding-right:0.25em">
-  Unpublished</span>
-  <a id="cc-about-unpublished" target="_blank" href=""> 
-     <i class="icon-question"></i>
+  	<span style="padding-top: 0.25em;padding-right:0.25em">
+        <sl-tooltip id="cc-about-unpublished">
+		  	<div slot="content"></div>
+			<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+		</sl-tooltip>
+  		Unpublished
+	</span>
   </a>
  </div>
 `;
 
 const CONFIG_VIEW_TOOLTIPS = [
 	{
-		contentText: `Use Canvas Collections to improve the learner experience of 
-		your site by generatively enhancing the information architecture and visual design.`,
+		contentText: `<p>The <em>Canvas Collections Configuration</em> page</a> is unpublished. 
+	The live Collections view will <strong>not</strong> be visible in "Student View" or for students.</p>
+		<p>Any Claytons Collections will be visible, if the relevant pages are published.</p>`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-unpublished",
+		persistent: true,
+		href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
+	},
+	{
+		contentText: `Add more structure and context specific design to the Canvas module view.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-collections",
 		animateFunction: "spin",
@@ -800,33 +949,54 @@ const CONFIG_VIEW_TOOLTIPS = [
 	{
 		// to complete
 		contentText: `The list of current collections for your course and where you 
-				can modify their order, appearance etc.<p>Click to learn more</p>`,
+				can modify their order, appearance etc.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-existing-collections",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#existing-collections"
 	},
 	{
-		contentText: `Where to add a new collection to your site`,
+		contentText: `Name and choose a representation for a new collection`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-new-collection",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
 	},
 	{
-		contentText: `<p>Update all configured output pages and include a navigation menu 
-		between them. </p>
-		<p>Best suited when more than one collection has an output page.</p>`,
+		contentText: `Specify how the collection will be displayed by choosing one of the available representations. Representations can be changed at any time.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-collection-representation",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
+	},
+	{
+		contentText: `Update all configured output pages and choose an option for the navigation bar.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-full-claytons",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview"
 	},
 	{
+		contentText: `<p>There are three navigation bar options:</p>
+		<ol>
+		  <li> None - no navigation between pages/collections. </li>
+		  <li> Pages - collections on separate pages with navigation between. </li>
+		  <li> Tabs - multiple collections on a page with tab navigation. </li>
+		</ol>`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-full-claytons-navigation-option",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview/#navigation-bar-options"
+	},
+	{
+		contentText: `The first collection displayed when users visit for the first time.`,
+		targetSelector: '#cc-about-default-collection'
+	},
+	{
 		contentText: `<p>Make collection invisible to students. 
 		(Note: can't hide the default collection)</p>
 		<p><i class="icon-warning"></i> Also unpublish all the collection's modules to be ensure they are hidden.`,
-		targetSelector: '#cc-about-hide-collection',
+		targetSelector: '.cc-about-hide-collection',
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#hide-a-collection"
 	},
@@ -835,7 +1005,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		<p><strong>Note:</strong> This is how you can use Collections with students without it being
 		installed by your institution.</p>
 		`,
-		targetSelector: '#cc-about-update-output-page',
+		targetSelector: '.cc-about-update-output-page',
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#output-page"
 	},
@@ -852,7 +1022,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		potentially destructive. Only use as suggested and if you're certain.</p>
 		<p>Modify the names of Canvas modules by apply the Collection's label/number</p>
 		`,
-		targetSelector: '#cc-about-apply-module-labels',
+		targetSelector: '.cc-about-apply-module-labels',
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#apply-module-labels"
 	},
@@ -861,6 +1031,23 @@ const CONFIG_VIEW_TOOLTIPS = [
 
 
 	//******** Module configuration */
+	{
+		contentText: `Specify how this module works with and is represented by Collections.`,
+		maxWidth: `250px`,
+		targetSelector: ".cc-about-module-configuration",
+		animateFunction: "spin",
+	},
+	{
+		contentText: `Configure basic collections information about the module, including:
+		<ul>
+		  <li> Which collection does it belong to? </li>
+		  <li> What is the module's description, label and number? </li>
+	  </ul>`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-basic-configuration",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/"
+	},
 	{
 		contentText: `Which collection does this module belong to?`,
 		maxWidth: `250px`,
@@ -880,14 +1067,50 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-label",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#label-and-number"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#labels-and-numbers"
 	},
 	{
-		contentText: `Specify a date based on the week of the study period`,
+		contentText: `<p>Choose from the three supported "date types" and configure it. Options include:</p>
+		<ol>
+		  <li> <strong>Single date</strong> - a specific date (and time) </li>
+		  <li> <strong>Date range</strong> - a start and end date (and time) </li>
+		  <li> 🏗 <strong>Coming soon</strong> 🏗 - (soon you'll be able to) specify a single date (and time) when the module will be available.</li>
+		</ol>
+		<p><em>Coming Soon</em> will be able to be used with one of the other options</em></p>
+		`,
 		maxWidth: `250px`,
-		targetSelector: "#cc-about-module-date",
+		targetSelector: "#cc-about-module-dates",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#date"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#dates"
+	},
+	{
+		contentText: `Specify a single date, or becomes the start date in a date range when used 
+		with "stop" date.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-date-start",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#start-date"
+	},
+	{
+		contentText: `Representation of the date as configured by <em>Start Date</em> and possible <em>Stop Date</em>.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-date-calculated",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#start-date"
+	},
+	{
+		contentText: `Specify the 'stop' date in a date range. Date is relative to a specific study period.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-date-stop",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#stop-date"
+	},
+	{
+		contentText: `Specify a date and message describing when the module will be available.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-coming-soon",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#coming-soon"
 	},
 	{
 		contentText: `If and how a label specific number will be calculated for the module 
@@ -895,7 +1118,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-number",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#label-and-number"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#labels-and-numbers"
 	},
 	{
 		contentText: `Flexibly add, delete, and modify additional information about this module, which
@@ -906,11 +1129,23 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#additional-metadata"
 	},
 	{
+		contentText: `<p>Choose one of three possible banner types (for Card representations) and configure it. Options are:</p> 
+		<ol>
+		  <li> <strong>Image</strong> - a banner image</li>
+		  <li> <strong>Colour</strong> - a solid colour</li>
+		  <li> <strong>Iframe</strong> - HTML embed code (e.g. YouTube video)</li>
+		  </ol>
+		`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-banner",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#dates"
+	},
+	{
 		contentText: `Specify how the image will be scaled to fit the available space`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-image-scale",
 		animateFunction: "spin",
-		//		href: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#additional-an-image"
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-scale"
 	},
 	{
@@ -918,21 +1153,29 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-image-url",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-url"
 	},
 	{
-		contentText: `Specifies the specific calendar used to translate "Monday Week 1" into a date.`,
+		contentText: `Provide an iframe (embed HTML) to place in a card's banner section.`,
 		maxWidth: `250px`,
-		targetSelector: "#cc-about-module-strm",
+		targetSelector: "#cc-about-module-iframe",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#iframe"
+	},
+	{
+		contentText: `Choose a colour for the background of the card's banner section.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-color",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#iframe"
+	},
+	{
+		contentText: `The study period automatically identified from the course site. The academic
+		calendar for this study period will be used to translate "Monday Week 1" into a calendar date.`,
+		maxWidth: `250px`,
+		targetSelector: ".cc-about-module-studyPeriod",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#study-period"
-	},
-	{
-		contentText: `Provide an image url or an iframe to associate with the object. Typically with the card view.`,
-		maxWidth: `250px`,
-		targetSelector: "#cc-about-image-url",
-		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-url"
 	}
 ];
 
@@ -995,7 +1238,7 @@ class cc_ConfigurationView extends cc_View {
 		this.addTooltips();
 	}
 
-	addTooltips() {
+/*	addTooltips() {
 		const courseId = this.model.getCourseId();
 		const configPageUrl = `https://${window.location.host}/courses/${courseId}/pages/canvas-collections-configuration`;
 
@@ -1019,7 +1262,7 @@ class cc_ConfigurationView extends cc_View {
 
 		// call the parent class method
 		super.addTooltips();
-	}
+	} */
 
 	/**
 	 * @descr Add the CC configuration interface to each module
@@ -1055,8 +1298,37 @@ class cc_ConfigurationView extends cc_View {
 
 			this.addSingleModuleConfiguration(moduleHeader, moduleDetail, id);
 		}
+		this.addEventHandlers();
 		this.addTooltips();
 	}
+
+	addEventHandlers() {
+
+		// banner tabs to start with cc-banner-tab
+		const bannerTabs = document.querySelectorAll(`.cc-banner-tab`);
+		for (let i = 0; i < bannerTabs.length; i++) {
+			const tab = bannerTabs[i];
+			tab.onclick = (event) => this.controller.manageBannerTabShow(event);
+			//tab.addEventListener('sl-tab-show', event => this.controller.manageBannerTabShow(event));
+		}
+
+		// event handler for sl-color-picker
+		const colorPickers = document.querySelectorAll(`sl-color-picker`);
+		for (let i = 0; i < colorPickers.length; i++) {
+			const colorPicker = colorPickers[i];
+			colorPicker.addEventListener('sl-change', event => this.controller.manageColourPickerChange(event));
+		}
+
+		// event handler for configDisplay.accordions
+		const accordions = document.querySelectorAll(`sl-details`);
+		for (let i = 0; i < accordions.length; i++) {
+			const accordion = accordions[i];
+			accordion.addEventListener('sl-show', event => this.controller.manageAccordionToggle(event));
+			accordion.addEventListener('sl-hide', event => this.controller.manageAccordionToggle(event));
+		}
+	}
+
+
 
 	addSingleModuleConfiguration(moduleHeader, moduleDetail, id) {
 		let showConfigHtml = '';
@@ -1071,16 +1343,22 @@ class cc_ConfigurationView extends cc_View {
 		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.id);
 
 		const moduleConfigHtml = `
-		<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
-		<link href="//cdn.quilljs.com/1.0.0/quill.snow.css" rel="stylesheet" />
-		    <div class="cc-module-no-collection" id="cc-module-config-no-collection-${id}">
-			    No collection allocated
-			</div>
-      		<span>
-			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
-			  Collections Configuration</span>
-			  ${showConfigHtml}
-  		</div>`;
+<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
+	<link href="//cdn.quilljs.com/1.0.0/quill.snow.css" rel="stylesheet" />
+    <div class="cc-module-no-collection" id="cc-module-config-no-collection-${id}">
+	    No collection allocated
+	</div>
+	<span>
+		<i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
+		Collections Module Configuration
+        <sl-tooltip class="cc-about-module-configuration">
+	  		<div slot="content"></div>
+			<i class="icon-question cc-module-icon"></i>
+		</sl-tooltip>
+
+	</span> 
+  	${showConfigHtml}
+</div>`; 
 
 		// TO DO check that the id matches on of the module ids in data structure
 
@@ -1095,6 +1373,18 @@ class cc_ConfigurationView extends cc_View {
 		const imageInput = document.getElementById(`cc-module-config-${moduleDetail.id}-image`);
 		if (imageInput) {
 			imageInput.value = moduleDetail.image;
+		}
+		// TODO add in the iframe value this way as well
+		// add handler for iframe text area
+		const iframeArea = document.querySelector(`#cc-module-config-${id}-iframe` );
+		if (iframeArea) {
+			iframeArea.onchange = (event) => this.controller.updateModuleConfigField(event);
+			iframeArea.onkeydown = (event) => event.stopPropagation();
+			// now set the value for iframe to the module's detail
+			// Done here to make sure it's all encoded nicely
+			if (moduleDetail.hasOwnProperty('iframe')) {
+				iframeArea.value = moduleDetail.iframe;
+			}
 		}
 		// add the label cc-module-config-${moduleDetail.id}-label"
 		const labelInput = document.getElementById(`cc-module-config-${moduleDetail.id}-label`);
@@ -1189,6 +1479,7 @@ class cc_ConfigurationView extends cc_View {
 				quillFields[j].onkeydown = (event) => event.stopPropagation();
 			}
 		}
+
 	}
 
 	/**
@@ -1284,6 +1575,156 @@ class cc_ConfigurationView extends cc_View {
 	}
 
 	/**
+	 * Given an object with date information, generate two lists of HTML options representing
+	 * - dayOptions
+	 *   List of days of the week with any specified day selected
+	 * - dayOfWeekOptions
+	 *   List of week options for the current study period with any specified week selected
+	 * And return an object with those attributes
+	 * @param {Object} dateInfo 
+	 * @returns {Object} - two attribute object (dayOfWeekOptions, weekOptions)
+	 */
+
+	calculateDayWeekOptions(dateInfo) {
+		let weekOptions = '';
+		let dayOfWeekOptions = '';
+
+		let setWeek = 'Not chosen';
+		if (dateInfo && dateInfo.hasOwnProperty('week')) {
+			setWeek = dateInfo.week;
+		}
+		let setDayOfWeek = 'Not chosen';
+		if (dateInfo && dateInfo.hasOwnProperty('day')) {
+			setDayOfWeek = dateInfo.day;
+		}
+
+		//---------- week Options
+		// current calendar located
+		let calendar = this.controller.parentController.calendar;
+		// weeks is an object/dict of weeks
+		const periodWeeks = calendar.getWeekDetails();
+		let weeks = ['Not chosen'];
+		// get the keys for periodWeeks and add to weeks array
+		for (const week in periodWeeks) {
+			weeks.push(week);
+		}
+
+		for (let i = 0; i < weeks.length; i++) {
+			let selected = '';
+			const week = weeks[i];
+			if (week === setWeek) {
+				selected = 'selected';
+			}
+			let weekValue = week;
+			if (week === 'Not chosen') {
+				weekValue = '';
+			}
+			weekOptions += `<option value="${weekValue}" ${selected}>${week}</option>`;
+		}
+
+		const days = ['Not chosen', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+		for (let i = 0; i < days.length; i++) {
+			let selected = '';
+			const day = days[i];
+			if (day === setDayOfWeek) {
+				selected = 'selected';
+			}
+			let dayValue = day;
+			if (day === 'Not chosen') {
+				dayValue = '';
+			}
+			dayOfWeekOptions += `<option value="${dayValue}" ${selected}>${day}</option>`;
+		}
+
+		return { dayOfWeekOptions, weekOptions };
+	}
+
+	/**
+	 * @function configureBanner
+	 * @descr Based on moduleDetail configure how the banner information will be presented
+	 * - moduleDetails.banner should be one of 'image', 'iframe', 'colour'
+	 * - if not set, default to 'image'
+	 * @param {Object} moduleDetail - details of module we're configuring a form for
+	 * @returns {Object} - bannerActive - specifies which tabgroup will be active
+	 */
+
+	configureBanner(moduleDetail) {
+		let bannerActive =
+		{
+			image: 'active', iframe: '', colour: ''
+		};
+
+		if (moduleDetail.hasOwnProperty('banner')) {
+		 	if (['image', 'iframe', 'colour'].includes( moduleDetail.banner)) {
+				bannerActive.image = '';
+				bannerActive[moduleDetail.banner] = 'active';
+			}
+		} else {
+			// setting a default value for banner
+			moduleDetail.banner = 'image';
+		}
+		if (!moduleDetail.hasOwnProperty('bannerColour')) {
+			moduleDetail.bannerColour = '#ffffff';
+		}
+		if (!moduleDetail.hasOwnProperty('iframe')) {
+			moduleDetail.iframe = '';
+		}
+		return bannerActive;
+	}
+
+	/**
+	 * @function configureBanner
+	 * @description identify which of the start, stop and coming soon dates are
+	 * active based on moduleDetail
+	 * @param {Object} moduleDetail - details of module we're configuring a form for
+	 * @returns {Object} - dateActive - specifies which tabgroup will be active
+	 */
+	configureDate(moduleDetail) {
+		let dateActive = {
+			start: 'active', stop: '', comingSoon: ''
+		};
+
+		if (!moduleDetail.hasOwnProperty('activeDate')) {
+			moduleDetail.activeDate = 'start';
+		}
+
+		if (['start', 'stop', 'comingSoon'].includes(moduleDetail.activeDate)) {
+			dateActive.start = '';
+			dateActive[moduleDetail.activeDate] = 'active';
+		}
+		return dateActive;
+	}
+
+	/**
+	 * @function configureConfigDisplay
+	 * @description Examine the module details and create an object based on the contents
+	 * of the configDetails attribute of moduleDetail.  Will also configure a default setting
+	 * if none exists
+	 *    "configDisplay" : {   // specify how the module config should be displayed
+	 *          // whether the accordions are open or not
+	 * 			"accordions": {
+	 * 				"dates": "open",  
+	 *              "banner": "",
+	 *              "metadata": "" 
+	 * 			},
+	 *     }
+	 */
+
+	configureConfigDisplay(moduleDetail) {
+		if (!moduleDetail.hasOwnProperty('configDisplay')) {
+			moduleDetail.configDisplay = {
+				accordions: {
+					dates: '',
+					banner: '',
+					metadata: ''
+				}
+			};
+		}
+
+		return moduleDetail.configDisplay;
+	}
+
+	/**
 	 * @descr generate the div.cc-module-config-details for the module
 	 * @param {Object} moduleDetail
 	 * @returns {string} html
@@ -1308,6 +1749,9 @@ class cc_ConfigurationView extends cc_View {
 		console.log(moduleConfig);
 
 		const date = "";
+		let comingSoonDate = "<em>No coming soon configured</em>";
+		let comingSoonLabel = "";
+		let comingSoonTime = "";
 
 		let moduleCollection = "";
 		if (moduleConfig.hasOwnProperty('collection') && moduleConfig.collection !== "") {
@@ -1344,11 +1788,11 @@ class cc_ConfigurationView extends cc_View {
 		}
 
 		// encode an iframe in moduleConfig.image
-/*		const match = moduleConfig.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
-		let imageUrl = moduleConfig.image;
-		if (match) {
-			imageUrl = this.controller.parentController.configurationStore.encodeHTML(imageUrl,false);
-		} */
+		/*		const match = moduleConfig.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
+				let imageUrl = moduleConfig.image;
+				if (match) {
+					imageUrl = this.controller.parentController.configurationStore.encodeHTML(imageUrl,false);
+				} */
 
 		// TODO need to generate the date information
 		// - current kludge just handles the case when there is no date
@@ -1356,56 +1800,43 @@ class cc_ConfigurationView extends cc_View {
 		// - perhaps with a date view?
 		let dateInfo = {
 			label: '', week: '', date: '',
-			month: '', day: '', time: ''
+			month: '', day: '', time: '',
+			to: {
+				week: '', date: '',
+				month: '', day: '', time: '',
+			}
 		};
 		if (moduleConfig.date) {
+			// set the values for dateInfo for start date
 			for (const dateField in dateInfo) {
-				if (moduleConfig.date.hasOwnProperty(dateField)) {
+				if (dateField !== 'to' && moduleConfig.date.hasOwnProperty(dateField)) {
 					dateInfo[dateField] = moduleConfig.date[dateField];
 				}
 			}
+			// do the same for the to date - if there is one
+			if (moduleConfig.date.hasOwnProperty('to')) {
+				for (const dateField in dateInfo.to) {
+					if (moduleConfig.date.to.hasOwnProperty(dateField)) {
+						dateInfo.to[dateField] = moduleConfig.date.to[dateField];
+					}
+				}
+			}
 		}
-		let weekOptions = '';
-		let dayOfWeekOptions = '';
-		// week options needs to be integers for each of the weeks in current calendar
-		// TODO get it from the calendar
+		/*		let weekOptions = '';
+				let toWeekOptions = '';
+				let comingSoonWeekOptions = '';
+				let dayOfWeekOptions = '';
+				let toDayOfWeekOptions = '';
+				let comingSoonDayOfWeekOptions = ''; */
 
-		// current calendar located
-		let calendar = this.controller.parentController.calendar;
-		// weeks is an object/dict of weeks
-		const periodWeeks = calendar.getWeekDetails();
-		let weeks = ['Not chosen'];
-		// get the keys for periodWeeks and add to weeks array
-		for (const week in periodWeeks) {
-			weeks.push(week);
+		const dateOptions = this.calculateDayWeekOptions(dateInfo);
+		const toDateOptions = this.calculateDayWeekOptions(dateInfo.to);
+		let comingSoon = null;
+		if (moduleConfig.hasOwnProperty('comingSoon')) {
+			comingSoon = moduleConfig.comingSoon;
 		}
+		const comingSoonDateOptions = this.calculateDayWeekOptions(moduleConfig.comingSoon);
 
-		for (let i = 0; i < weeks.length; i++) {
-			let selected = '';
-			const week = weeks[i];
-			if (week === dateInfo.week) {
-				selected = 'selected';
-			}
-			let weekValue = week;
-			if (week === 'Not chosen') {
-				weekValue = '';
-			}
-			weekOptions += `<option value="${weekValue}" ${selected}>${week}</option>`;
-		}
-
-		const days = ['Not chosen', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-		for (let i = 0; i < days.length; i++) {
-			let selected = '';
-			const day = days[i];
-			if (day === dateInfo.day) {
-				selected = 'selected';
-			}
-			let dayValue = day;
-			if (day === 'Not chosen') {
-				dayValue = '';
-			}
-			dayOfWeekOptions += `<option value="${dayValue}" ${selected}>${day}</option>`;
-		}
 
 		// calculate value for dateLabel
 		let dateLabel = CV_DEFAULT_DATE_LABEL;
@@ -1416,6 +1847,12 @@ class cc_ConfigurationView extends cc_View {
 
 		// TODO need to handle both start and end
 		let calculatedDate = this.calculateDate(dateInfo);
+		if (dateInfo.hasOwnProperty('to')) {
+			const toDate = this.calculateDate(dateInfo.to);
+			if (toDate !== 'No date set' ) {
+				calculatedDate += ` to ${toDate}`;
+			}
+		}
 
 		// calculate the number elements for the form
 		// - if no module.num then it's auto calculate
@@ -1427,24 +1864,32 @@ class cc_ConfigurationView extends cc_View {
 		let autonumStyle = "";
 		let autonumChecked = "";
 		let numStyle = "";
+		let numValue = "";
 
 		if (!moduleConfig.hasOwnProperty('num')) {
 			// no num, so we're doing auto calculate
 			autonumChecked = "checked";
-			numStyle = "display:none;";
+			numStyle = "disabled";
 		} else {
 			autonumStyle = "color:grey;";
+			numValue = moduleConfig.num;
 		}
 
-		const currentStrm = this.model.getStrm();
+		const currentStudyPeriod = this.model.getStudyPeriod();
 
-/*		let label = "";
-		if (moduleConfig.hasOwnProperty('label')) {
-			label = moduleConfig.label;
-			// quote any " in the label
-			label = label.replaceAll(/"/g, '&quot;');
-		} */
+		/*		let label = "";
+				if (moduleConfig.hasOwnProperty('label')) {
+					label = moduleConfig.label;
+					// quote any " in the label
+					label = label.replaceAll(/"/g, '&quot;');
+				} */
 
+
+		let bannerActive = this.configureBanner(moduleDetail);
+		let dateActive = this.configureDate(moduleDetail);
+		let configDisplay = this.configureConfigDisplay(moduleDetail);
+
+		// this has to go last before the HTML to ensure all the setup is done
 		const additionalMetaDataHTML = this.getAdditionalMetaDataHTML(moduleDetail);
 
 		let showConfigHtml = `
@@ -1452,13 +1897,13 @@ class cc_ConfigurationView extends cc_View {
 		   .cc-module-config-collection-representation label {
 			   width: 5rem;
 			   font-size: 0.8rem;
-			   font-weight: bold;
+			   /*font-weight: bold; */
 		   }
 		   .cc-module-config-collection-representation input {
 			   font-size: 0.8rem;
 		   }
 		   .cc-module-config-detail {
-			   padding-top: 0.5rem;
+			   padding: 0.5rem;
 		   }
 		   .cc-preview-container {
 			   display:flex;
@@ -1477,125 +1922,287 @@ class cc_ConfigurationView extends cc_View {
 
 		   .cc-calculated-date {
 			   font-size: 0.8rem;
-			   display: inline;
 			   background-color: #eee;
 			   padding: 0.5em
-		   }
-		
-		   .cc-current-strm {
-			   font-size: 0.7rem;
 			   margin-left: 3rem;
 			   margin-top: 0.5rem
+		   }
+		
+		   .cc-current-studyPeriod {
+			   font-size: 0.7rem;
+			   display: inline;
+			   margin-left: 2rem;
+		   }
+
+		   sl-tab {
+			   font-size: var(--sl-font-size-small);
 		   }
 		</style>
 
 		<div class="cc-module-config-detail">
 			<div>
+<!--			  <sl-details open>
+			    <div slot="summary">
+				  <a id="cc-about-basic-configuration" target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+				  <strong>Basic configuration</strong>
+				</div> -->
 				<div class="cc-module-config-collection-representation">
+			        <sl-tooltip id="cc-about-module-collection">
+					  	<div slot="content"></div>
+						<i class="icon-question cc-module-icon"></i>
+					</sl-tooltip>
 					<label for="cc-module-config-${moduleDetail.id}-collection">Collection
-						<a id="cc-about-module-collections" target="_blank" href="">
-			   			<i class="icon-question cc-module-icon"></i></a>
 					</label>
 					<select id="cc-module-config-${moduleDetail.id}-collection">
 					  ${collectionsOptions}
 					</select>
 				</div>
-				<div class="cc-module-config-collection-representation" style="margin-top:0.5rem">
-					<div style="float:left; margin-right:0.5rem">
-				    	<label for="cc-module-config-${moduleDetail.id}-label">Label
-						<a id="cc-about-module-label" target="_blank" href="">
-			   				<i class="icon-question cc-module-icon"></i></a>
-						</label> <br />
-						<input type="text" id="cc-module-config-${moduleDetail.id}-label"
-					    	style="width:10rem" value="" />
-					</div>
-					<div>
-				    	<label for="cc-module-config-${moduleDetail.id}-num">Number</label>
-						<a id="cc-about-module-number" target="_blank" href="">
-			   				<i class="icon-question cc-module-icon"></i></a>
-						<br />
-						<span class="cc-config-autonum" style="${autonumStyle}">Auto-number:
-					   		<input type="checkbox" id="cc-module-config-${moduleDetail.id}-autonum" ${autonumChecked} 
-							    style="position:relative: top:-0.25rem; ${autonumStyle}" />
-						</span>
-						<input type="text" id="cc-module-config-${moduleDetail.id}-num" 
-					     	value="${moduleConfig.num}" style="width:3rem;${numStyle}" />
-					</div>
-					<br clear="all" />
-				</div>
-				<div class="border border-trbl" style="margin-right:1em">
-		   			<div id="cc-module-config-${moduleDetail.id}-date-start">
-				    	<div style="padding-top:0.5rem;padding-left:0.5rem" 
-						     class="cc-module-config-date">
-							<strong>Date</strong> 
-					    	<a href="" id="cc-about-module-date" target="_blank">
-			   				<i class="icon-question cc-module-icon"></i></a>
-							<div class="cc-calculated-date">${calculatedDate}</div>
-							<div class="cc-current-strm">
-							   <strong>Study Period</strong>
-					    	 	<a href="" id="cc-about-module-strm" target="_blank">
-			   					<i class="icon-question cc-module-icon"></i></a>
-								${currentStrm}</div>
-						</div>
-					</div>
-					<div class="cc-module-config-collection-representation"
-					    style="padding-top:1rem; padding-left:3rem">
-				    	<label for="cc-module-config-${moduleDetail.id}-date-label">Date label</label>
-						<input type="text" id="cc-module-config-${moduleDetail.id}-date-label"
-						   style="width:10rem" value="${dateLabel}" /><br />
-				    	<label for="cc-module-config-${moduleDetail.id}-day">Day of week</label>
-						<select id="cc-module-config-${moduleDetail.id}-day">
-		                  ${dayOfWeekOptions}
-						</select> <br />
-						<label for="cc-module-config-${moduleDetail.id}-week">Week</label>
-						<select id="cc-module-config-${moduleDetail.id}-week">
-		   		           ${weekOptions}}	
-						</select> <br />
-						<label for="cc-module-config-${moduleDetail.id}-time">Time</label>
-						<style>
-					   		input[readonly] {
-							display:none;
-					   		}
-					   	</style>
-						<aeon-datepicker local="en-au">
-						<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="${dateInfo.time}" />
-						</aeon-datepicker>
-					</div>
-					<br clear="all" />
-
-				</div>
-		    </div>
-			<div style="margin-right:1em">
-				<div class="cc-module-config-collection-representation">
-					<label for="cc-collection-representation-${moduleDetail.id}-imageSize"
-					     style="float:left">
-					Image scale
-					</label>
-						<a id="cc-about-image-scale" target="_blank" href="">
-			   				<i class="icon-question cc-module-icon"></i></a>
-		   		       <select id="cc-module-config-${moduleDetail.id}-imageSize">
-					      ${imageSizeOptions}
-						</select>
-					<br clear="all" />
-					<label for="cc-module-config-collection-representation-${moduleDetail.id}-image"     
-					    style="float:left">
-						Image URL
-					</label>
-											<a id="cc-about-image-url" target="_blank" href="">
-			   				<i class="icon-question cc-module-icon"></i></a>
-					<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
-					        value="">
-					        <!-- value="${moduleConfig.image}"> -->
-					<br clear="all" />
-					  
-				    <label for="cc-module-config-${moduleDetail.id}-description" 
-					   style="float:left">
-					Description
-					</label>
-							<a id="cc-about-module-description" target="_blank" href="">
-			   				<i class="icon-question cc-module-icon"></i></a>
+				<div class="cc-collection-description" style="margin-top: 1em">
+			        <sl-tooltip id="cc-about-module-description">
+					  	<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+				    <label for="cc-module-config-${moduleDetail.id}-description">Description</label>
 					<div id="cc-module-config-${moduleDetail.id}-description" class="cc-module-config-description" style="height:8rem"> </div>
 				</div>
+
+				<div class="cc-module-config-collection-representation" style="margin-top:0.5rem">
+				        <sl-tooltip id="cc-about-module-label">
+						  	<div slot="content"></div>
+						  	<a target="_blank" href="">
+						   	<i class="icon-question cc-module-icon"></i></a>
+						</sl-tooltip>
+				    	<label for="cc-module-config-${moduleDetail.id}-label">Label
+						</label> 
+						<input type="text" id="cc-module-config-${moduleDetail.id}-label"
+					    	style="width:10rem" value="" />
+				</div>
+				<div class="cc-module-config-collection-representation" style="margin-top:0.5rem">
+				        <sl-tooltip id="cc-about-module-number">
+					  		<div slot="content"></div>
+							<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+						</sl-tooltip>
+				    	<label for="cc-module-config-${moduleDetail.id}-num">Number</label>
+						<span class="cc-config-autonum" style="${autonumStyle}">auto:
+					   		<input type="checkbox" id="cc-module-config-${moduleDetail.id}-autonum" ${autonumChecked} 
+							    style="position:relative; top:-0.25rem; ${autonumStyle}" />
+						</span>
+						<input type="text" id="cc-module-config-${moduleDetail.id}-num" 
+					     	value="${numValue}" style="width:3rem;" ${numStyle}/>
+				</div>
+
+<!--			</sl-details> -->
+
+			</div> 
+
+			<div style="margin-right:1em">
+				<sl-details ${configDisplay.accordions.dates} id="cc-module-config-${moduleDetail.id}-dates-accordion">  <!-- dates accordion -->
+		   		<div slot="summary">
+			        <sl-tooltip id="cc-about-module-dates">
+					  	<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+		    		<strong>Dates</strong>
+					<div class="cc-current-studyPeriod">
+			        	<sl-tooltip class="cc-about-module-studyPeriod">
+					  		<div slot="content"></div>
+							<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+						</sl-tooltip>
+		   				<strong>Study Period</strong> ${currentStudyPeriod}
+					</div>
+			  	</div>
+				<sl-tab-group>
+			  		<sl-tab ${dateActive.start} slot="nav" panel="cc-module-config-${moduleDetail.id}-date-start">Start Date</sl-tab>
+				  		<sl-tab ${dateActive.stop} slot="nav" panel="cc-module-config-${moduleDetail.id}-date-stop">Stop Date</sl-tab>
+				  		<!-- sl-tab ${dateActive.comingSoon} slot="nav" panel="cc-module-config-${moduleDetail.id}-coming-soon">Coming Soon</sl-tab -->
+
+ 			      		<sl-tab-panel name="cc-module-config-${moduleDetail.id}-date-start">
+		   					<div id="cc-module-config-${moduleDetail.id}-date-start">
+			        			<sl-tooltip id="cc-about-module-date-start">
+					  				<div slot="content"></div>
+									<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+								</sl-tooltip> About start date
+					    		<div>
+									<div class="cc-calculated-date">
+			        					<sl-tooltip id="cc-about-module-date-calculated">
+					  						<div slot="content"></div>
+											<i class="icon-question cc-module-icon"></i>
+										</sl-tooltip>
+										${calculatedDate}
+									</div>
+									<div class="cc-module-config-collection-representation" style="padding-top:1rem; padding-left:3rem">
+				    					<label for="cc-module-config-${moduleDetail.id}-date-label">Date label</label>
+										<input type="text" id="cc-module-config-${moduleDetail.id}-date-label"
+						   					style="width:10rem" value="${dateLabel}" /><br />
+				    					<label for="cc-module-config-${moduleDetail.id}-day">Day of week</label>
+										<select id="cc-module-config-${moduleDetail.id}-day">
+		                  					${dateOptions.dayOfWeekOptions}
+										</select> <br />
+										<label for="cc-module-config-${moduleDetail.id}-week">Week</label>
+										<select id="cc-module-config-${moduleDetail.id}-week">
+		   		           					${dateOptions.weekOptions}}	
+										</select> <br />
+										<label for="cc-module-config-${moduleDetail.id}-time">Time</label>
+										<style>
+					   						input[readonly] {
+												display:none;
+					   						}
+					   					</style>
+										<aeon-datepicker local="en-au">
+										<input type="time" id="cc-module-config-${moduleDetail.id}-time" name="time" value="${dateInfo.time}" />
+										</aeon-datepicker>
+									</div>
+									<br clear="all" />
+								</div>
+							</div>
+						</sl-tab-panel>
+				    	<sl-tab-panel name="cc-module-config-${moduleDetail.id}-date-stop">
+		   			  		<div id="cc-module-config-${moduleDetail.id}-date-stop">
+			        			<sl-tooltip id="cc-about-module-date-stop">
+					  				<div slot="content"></div>
+									<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+								</sl-tooltip> About stop date
+					    		<div>
+									<div class="cc-calculated-date">
+			        					<sl-tooltip id="cc-about-module-date-calculated">
+					  						<div slot="content"></div>
+											<i class="icon-question cc-module-icon"></i>
+										</sl-tooltip>
+										${calculatedDate}
+									</div>
+
+									<div class="cc-module-config-collection-representation" style="padding-top:1rem; padding-left:3rem">
+				    					<label for="cc-module-config-${moduleDetail.id}-day-to">Day of week</label>
+										<select id="cc-module-config-${moduleDetail.id}-day-to">
+		                  					${toDateOptions.dayOfWeekOptions}
+										</select> <br />
+										<label for="cc-module-config-${moduleDetail.id}-week-to">Week</label>
+										<select id="cc-module-config-${moduleDetail.id}-week-to">
+		   		           					${toDateOptions.weekOptions}}	
+										</select> <br />
+										<label for="cc-module-config-${moduleDetail.id}-time-to">Time</label>
+										<style>
+					   						input[readonly] {
+												display:none;
+					   						}
+					  					</style>
+										<aeon-datepicker local="en-au">
+											<input type="time" id="cc-module-config-${moduleDetail.id}-time-to" name="time" value="${dateInfo.to.time}" />
+										</aeon-datepicker>
+									</div>
+									<br clear="all" />
+								</div>
+							</div>
+						</sl-tab-panel>
+				    	<!--
+						<sl-tab-panel name="cc-module-config-${moduleDetail.id}-coming-soon">
+		   					<div id="cc-module-config-${moduleDetail.id}-coming-soon">
+					    		<div>
+									<div class="cc-calculated-date">${comingSoonDate}</div>
+									<div class="cc-module-config-collection-representation" style="padding-top:1rem; padding-left:3rem">
+				    					<label for="cc-module-config-${moduleDetail.id}-coming-soon-label">Label</label>
+										<input type="text" id="cc-module-config-${moduleDetail.id}-coming-soon-label"
+						   					style="width:10rem" value="${comingSoonLabel}" /><br />
+				    					<label for="cc-module-config-${moduleDetail.id}-coming-soon-day">Day of week</label>
+										<select id="cc-module-config-${moduleDetail.id}-coming-soon-day">
+		                  					${comingSoonDateOptions.dayOfWeekOptions}
+										</select> <br />
+										<label for="cc-module-config-${moduleDetail.id}-coming-soon-week">Week</label>
+										<select id="cc-module-config-${moduleDetail.id}-coming-soon-week">
+		   		           					${comingSoonDateOptions.weekOptions}}	
+										</select> <br />
+										<label for="cc-module-config-${moduleDetail.id}-coming-soon-time">Time</label>
+										<style>
+					   						input[readonly] {
+												display:none;
+					   						}
+					   					</style>
+										<aeon-datepicker local="en-au">
+											<input type="time" id="cc-module-config-${moduleDetail.id}-coming-soon-time" name="time" value="${comingSoonTime}" />
+										</aeon-datepicker>
+									</div>
+									<br clear="all" />
+								</div>
+							</div>
+						</sl-tab-panel>
+						-->
+					</sl-tab-group>
+				</sl-details>
+
+			    <sl-details ${moduleDetail.configDisplay.accordions.banner} id="cc-module-config-${moduleDetail.id}-banner-accordion">
+				  <div slot="summary">
+  			        <sl-tooltip id="cc-about-module-banner">
+					  	<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+				  	<strong>Banner</strong>
+				</div>
+					<sl-tab-group>
+				  		<sl-tab class="cc-banner-tab" ${bannerActive.image} slot="nav" panel="cc-module-config-${moduleDetail.id}-image">Image</sl-tab>
+				  		<sl-tab class="cc-banner-tab" ${bannerActive.iframe} slot="nav" panel="cc-module-config-${moduleDetail.id}-iframe">Iframe</sl-tab>
+				  		<sl-tab class="cc-banner-tab" ${bannerActive.colour} slot="nav" panel="cc-module-config-${moduleDetail.id}-colour">Colour</sl-tab>
+
+
+ 			      		<sl-tab-panel name="cc-module-config-${moduleDetail.id}-image">
+							<div class="cc-module-config-collection-representation"
+							     style="padding-left: 0.5rem;">
+						        <sl-tooltip id="cc-about-module-image-scale">
+					  				<div slot="content"></div>
+									<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+								</sl-tooltip>
+								<label for="cc-collection-representation-${moduleDetail.id}-imageSize"
+					     			style="float:left;padding-top:0.8rem;"> Image scale </label>
+		   		       			<select id="cc-module-config-${moduleDetail.id}-imageSize">
+					      			${imageSizeOptions}
+								</select>
+								<br clear="all" />
+						        <sl-tooltip id="cc-about-module-image-url">
+					  				<div slot="content"></div>
+									<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+								</sl-tooltip>
+								<label for="cc-module-config-collection-representation-${moduleDetail.id}-image"     
+					    			style="float:left;padding-top:0.8rem"> Image URL
+								</label>
+								<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
+					        		value="">
+								<br clear="all" />
+							</div>
+
+						</sl-tab-panel>
+
+ 			      		<sl-tab-panel name="cc-module-config-${moduleDetail.id}-iframe">
+							<div class="cc-module-config-collection-representation">
+						        <sl-tooltip id="cc-about-module-iframe">
+					  				<div slot="content"></div>
+									<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+								</sl-tooltip>
+								<label for="cc-collection-representation-${moduleDetail.id}-iframe"
+					     			style="padding-top:0.8rem;"> iframe </label>
+		   		       			<textarea id="cc-module-config-${moduleDetail.id}-iframe"></textarea>
+								<br clear="all" />
+							</div>
+
+						</sl-tab-panel>
+
+ 			      		<sl-tab-panel name="cc-module-config-${moduleDetail.id}-colour">
+							<div class="cc-module-config-collection-representation">
+						        <sl-tooltip id="cc-about-module-color">
+					  				<div slot="content"></div>
+									<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+								</sl-tooltip>
+								<label for="cc-collection-representation-${moduleDetail.id}-color"
+					     			style="padding-top:0.8rem;"> colour </label>
+						  		<sl-color-picker 
+								    id="cc-module-config-${moduleDetail.id}-color"
+									value="${moduleDetail.bannerColour}"
+								    label="Select a color">
+								</sl-color-picker>
+								<br clear="all" />
+							</div>
+						</sl-tab-panel>
+					<sl-tab-group>
+				</sl-details>
+
 				${additionalMetaDataHTML}
 				<div class="cc-module-config-imagePreview">
 							 
@@ -1629,11 +2236,16 @@ class cc_ConfigurationView extends cc_View {
 	getAdditionalMetaDataHTML(module) {
 
 		let additionalMetaDataHTML = `
+	<sl-details ${module.configDisplay.accordions.metadata} id="cc-module-config-${module.id}-metadata-accordion">
+	   <div slot="summary">
+	         <sl-tooltip id="cc-about-additional-metadata">
+  				<div slot="content"></div>
+				<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+			</sl-tooltip>
+						
+	     	<strong>Additional metadata</strong>
+		</div>
 		<div class="cc-module-config-additional-metadata border border-trbl">
-			<p><strong>Additional metadata</strong>
-			    <a href="" id="cc-about-additional-metadata" target="_blank">
-	   			<i class="icon-question cc-module-icon"></i></a>
-			</p>
 			<table>
 			  <thead>
 				<tr>
@@ -1681,6 +2293,7 @@ class cc_ConfigurationView extends cc_View {
 		      </tbody>
 			</table>
 		</div>
+	</sl-details>
 		`;
 
 		return additionalMetaDataHTML;
@@ -1766,7 +2379,7 @@ class cc_ConfigurationView extends cc_View {
 
 			#cc-config-body p {
 				font-size: 0.9em;
-				font-weight: bold;
+				/*font-weight: bold; */
 			}
 
 			#cc-config-new-collection {
@@ -1869,55 +2482,78 @@ class cc_ConfigurationView extends cc_View {
 
 			</style>
 
-			<div id="cc-config">
-			 	<div class="cc-box-header">
-		  		  <p>Configure Canvas Collections
-						<span class="cc-version">(v${CC_VERSION})</span>
-						</p>
-				</div>
-			    <div class="cc-box-body">
-				  <div id="cc-config-body">
-				    <div id="cc-config-existing-collections">
-						<p>
-						Existing collections 
-						<a id="cc-about-existing-collections" target="_blank" href="">
-			   			<i class="icon-question"></i></a>
-						</p>
-					</div>
-					<div id="cc-config-new-collection">
-						<p>Add a new collection
-						<a id="cc-about-new-collection" target="_blank" href="">
-			   			<i class="icon-question"></i></a>
-						</p>
-						<div class="cc-config-collection border border-trbl">
-						  <div class="ic-Form-control" style="margin-bottom: 0px">
-						  	  <input type="text" id="cc-config-new-collection-name" 
-							     placeholder="Name for new collection">
-						  </div>
-
-						  <div class="cc-collection-representation">
-							  <label for="cc-config-new-collection-representation">Representation</label>
-							  <select id="cc-config-new-collection-representation">
-							    ${this.getAvailableRepresentations()}
-							  </select>
-						  </div>
-
-						  <fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
-							  <button class="btn btn-primary" id="cc-config-new-collection-button">Add</button>
-						  </fieldset>
-					  </div>
-						<p>Full "Claytons"
-						<a id="cc-about-full-claytons" target="_blank" href="">
-			   			<i class="icon-question"></i></a> </p>
-						  <fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
-							  <button class="btn btn-primary" id="cc-config-update-full-claytons">Update</button>
-						  </fieldset>
-					  
-					</div>
-				  </div>
-				</div>
+<div id="cc-config">
+ 	<div class="cc-box-header">
+	  	<p>
+	  		Configure Canvas Collections <span class="cc-version">(v${CC_VERSION})</span>
+		</p>
+	</div>
+    <div class="cc-box-body">
+	  	<div id="cc-config-body">
+	    	<div id="cc-config-existing-collections">
+	        	<sl-tooltip id="cc-about-existing-collections">
+		  			<div slot="content"></div>
+					<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+				</sl-tooltip>
+				<strong>Existing collections</strong>
 			</div>
-		</div>
+			<div id="cc-config-new-collection">
+	        	<sl-tooltip id="cc-about-new-collection">
+		  			<div slot="content"></div>
+					<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+				</sl-tooltip>
+				<strong>Add a new collection</strong>
+				<div class="cc-config-collection border border-trbl">
+			  		<div class="ic-Form-control" style="margin-bottom: 0px">
+			  	  		<input type="text" id="cc-config-new-collection-name" placeholder="Name for new collection">
+			  		</div>
+
+			  		<div class="cc-collection-representation">
+  			        	<sl-tooltip id="cc-about-collection-representation">
+		  					<div slot="content"></div>
+							<i class="icon-question cc-module-icon"></i>
+						</sl-tooltip>
+
+				  		<label for="cc-config-new-collection-representation">Representation</label>
+				  		<select id="cc-config-new-collection-representation">
+				    		${this.getAvailableRepresentations()}
+				  		</select>
+			  		</div>
+
+			  		<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+				  		<button class="btn btn-primary" id="cc-config-new-collection-button">Add</button>
+			  		</fieldset>
+		  		</div>
+		  		<div style="margin-top:0.5em">
+		    		<div>
+		        		<sl-tooltip id="cc-about-full-claytons">
+		  					<div slot="content"></div>
+							<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+						</sl-tooltip>
+						<strong>Full "Claytons"</strong>
+					</div>
+					<div class="border border-trbl" style="padding:0.5em">
+ 			        	<sl-tooltip id="cc-about-full-claytons-navigation-option">
+		  					<div slot="content"></div>
+							<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+						</sl-tooltip>
+			  			<label for="cc-config-full-claytons-navigation-option">Navigation Bar Options</label>
+			  			<sl-radio-group id="cc-config-full-claytons-navigation-option" value="1">
+			    			<sl-radio-button value="1">None</sl-radio-button>
+							<sl-radio-button value="2">Pages</sl-radio-button>
+							<sl-radio-button value="3">Tabs</sl-radio-button>
+			  			</sl-radio-group>
+						<div style="margin-top: 0.5rem">
+			  				<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+				  				<button class="btn btn-primary" id="cc-config-update-full-claytons">Update</button>
+			  				</fieldset>
+		    			</div> 
+		  			</div>
+		  		</div>
+			</div>
+	  	</div>
+	</div>
+</div>
 		`;
 
 		// remove the border at the bottom of Canvas top nav bar
@@ -2016,59 +2652,73 @@ class cc_ConfigurationView extends cc_View {
 				<!-- put the options -->
 				<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox" style="margin-bottom:0.5em">
 					<div class="ic-Checkbox-group">
-						<div class="ic-Form-control ic-Form-control--checkbox">
+						<div>
+					        <sl-tooltip id="cc-about-default-collection">
+		  						<div slot="content"></div>
+								<i class="icon-question cc-module-icon"></i>
+							</sl-tooltip>
+
 							<input type="checkbox" id="cc-config-collection-${collectionName}-default"
 							    class="cc-config-collection-default">
-							<label class="ic-Label" for="cc-config-collection-${collectionName}-default">
+							<label for="cc-config-collection-${collectionName}-default">
 								Default collection?
 							</label>
 						</div>
-						<div class="ic-Form-control ic-Form-control--checkbox">
+						<!-- <div class="ic-Form-control ic-Form-control--checkbox"> -->
+						<div>
+					        <sl-tooltip class="cc-about-hide-collection">
+		  						<div slot="content"></div>
+								<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+							</sl-tooltip>
 							<input type="checkbox" id="cc-config-collection-${collectionName}-hide"
 							    class="cc-config-collection-hide">
-							<label class="ic-Label" for="cc-config-collection-${collectionName}-hide">
+							<label for="cc-config-collection-${collectionName}-hide">
 								Hide collection?
 							</label>
-								<a id="cc-about-hide-collection" target="_blank" href="">
-			   					<i class="icon-question"></i></a>
 						</div>
 					</div>
 				</fieldset>
 				</div>
 
 				<div>
-				  Include page
-					<a id="cc-about-include-page" target="_blank" href="">
-			   			<i class="icon-question"></i></a>
-				  <div style="padding-left:0.5em">
-				 	<input id="cc-collection-${collectionName}-include-page" 
+			        <sl-tooltip id="cc-about-include-page">
+		  				<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+				  	Include page
+				  	<div style="padding-left:0.5em">
+				 		<input id="cc-collection-${collectionName}-include-page" 
 					     value="${includePage}" class="cc-existing-collection" />
-				  </div>
+				  	</div>
 				</div>
 				<!-- output page -->
 				<div style="margin-top:0.5em">
-				  Output page
-					<a id="cc-about-update-output-page" target="_blank" href="">
-			   			<i class="icon-question"></i></a>
-				  <div class="cc-collection-representation">
+			        <sl-tooltip class="cc-about-update-output-page">
+		  				<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+				  	Output page
+				  	<div class="cc-collection-representation">
 <!--					<label for="cc-collection-${collectionName}-output-page">Name</label> -->
-				 	<input id="cc-collection-${collectionName}-output-page" 
+				 		<input id="cc-collection-${collectionName}-output-page" 
 					      value="${outputPage}" class="cc-existing-collection" />
-				  <span class="cc-collection-representation cc-output-page-update ${outputPageExists}">
-					<button id="cc-collection-${collectionName}-output-page-update"
-					      class="btn cc-output-page-update-button">Update</button>
-				  </span>
-				</div>
-  			    <div style="display:flex;margin-top:0.5em;margin-bottom:0.5em">
-				  <div style="margin-right:0.5em">
-				  🧪Apply module labels ☠️
-					<a id="cc-about-apply-module-labels" target="_blank" href="">
-			   			<i class="icon-question"></i></a>
+				  		<span class="cc-collection-representation cc-output-page-update ${outputPageExists}">
+							<button id="cc-collection-${collectionName}-output-page-update"
+					      		class="btn cc-output-page-update-button">Update</button>
+				  		</span>
 					</div>
-					<button id="cc-collection-${collectionName}-apply-module-labels"
+  			    	<div style="display:flex;margin-top:1em;margin-bottom:0.5em">
+				  		<div style="margin-right:0.5em">
+					        <sl-tooltip class="cc-about-apply-module-labels">
+		  						<div slot="content"></div>
+								<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+							</sl-tooltip>
+				  			🧪Apply module labels ☠️
+						</div>
+						<button id="cc-collection-${collectionName}-apply-module-labels"
 					      class="btn cc-apply-module-labels-update-button">Apply</button>
-
-			</div>
+					</div>
+				</div>
 			`;
 
 
@@ -2319,7 +2969,7 @@ input:checked + .cc-slider:before {
 
 /* styles for the module configs */
 		    .cc-module-config {
-				padding-left: 0.5em;
+				padding: 1em;
 				font-size: smaller;
 				margin:0;
 			/*	font-weight: bold; */
@@ -2425,14 +3075,13 @@ input:checked + .cc-slider:before {
 		const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
-		    <!-- <i id="configShowSwitch" class="icon-mini-arrow-right"></i> --> <small>Canvas Collections
+	        <sl-tooltip id="cc-about-collections">
+			  	<div slot="content"></div>
+				<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+			</sl-tooltip>
+		    <!-- <i id="configShowSwitch" class="icon-mini-arrow-right"></i> --> <small>Canvas Collections</small>
 			<span style="font-size:50%">{${CC_VERSION}}</span></small>
-			<a id="cc-about-collections" target="_blank"
-			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
-			   <i class="icon-question"></i>
-		   </a>
 		  </div>
-
 
 		<label class="cc-switch">
 		    <input type="checkbox" class="cc-toggle-checkbox" id="cc-switch" ${cc_on}>
@@ -2456,13 +3105,13 @@ input:checked + .cc-slider:before {
 			let em = 15;
 			let px = em * parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-			html5tooltips({
+/*			html5tooltips({
 				contentText: `Find out more about Canvas Collections and how it can help 
 				improve the user experience of your course site`,
 				maxWidth: `${px}px`,
 				targetSelector: "#cc-about-collections",
 				animateFunction: "spin"
-			});
+			}); */
 
 			// add event handler to i#configShowSwitch
 			if (this.model.isOn()) {
@@ -2622,103 +3271,196 @@ input:checked + .cc-slider:before {
 
 /**
  * @class updatePageController
- * @classDesc Supports the updating of an output page (name for a Canvas page) for a
- *  specific collection and representation. 
+ * @classDesc Supports the updating of all necessary Collections with output pages.
+ * Updating each collection's output page needs to be done completely before moving
+ * onto the next one. e.g. where multiple collections have the same output page
  * 
- * Constructor takes the name of the collection and the parentController object
- * Provides the following methods
- * - getOutputPage 
- *   - returns true/false if successful
- *   - creates this.pageObject - the Canvas page object for the output page
- *   - when successful will call updateOutputPage
- *   - set error otherwise and spark alert
- * - updateOutputPage
- *   - calls getRepresentation to get HTML
- *     - fails if not successful
- *   - performs Canvas API to write the HTML
+ * Also, support the updating of a single collection.
  * 
- * - getRepresentation
- *   - generates HTML for the given collection/representation
+ * Constructor takes a configurationController, and a final call back prepares
+ * - creates a task array with details of all the collections with output pages to update
+ * - also an empty completedTasks array with details of what happened
+ * 
+ * Execute - starts the chain of methods - the standard
+ * - getOutputPage (will call complete if no more tasks) 
+ * - updatePageContent
+ * - writeOutputPage
+ * 
+ * If navOption===3 (tabs) there is also a need to wrap pages with multiple collections
+ * with tabbed nav bar - hence another sequence
+ * - tabNavExecute
+ *   - tasks is those pages with multiple collections
+ *   - getOutputPage
+ *   - updatePageContent
+ *   - writeOutputPage
  */
+
+
 
 
 class updatePageController {
 
 	/**
-	 * @param {String} collection  - name of Collection to update
-	 * @param {cc_Controller} parentController 
-	 * @param {boolean} navBar - true if the page should have a navigation bar
-	 *     typically meaning we're using this as part of a Full claytons
+	 * @param {Object} configurationController  - name of Collection to update
+	 * @param {Integer} navOption - which navOption, currently
+	 *    1 - none, 2 - page, 3 - tabs
+	 * passed to the views
 	 */
 
-	constructor(collection,parentController, navBar = false) {
-		this.collection = collection;
-		this.parentController = parentController;
-		this.navBar = navBar;
-
-		// TODO do sanity checks for the presence of these things
-		const collections = this.parentController.cc_configuration.COLLECTIONS;
-		if (!collections) {
-			alert(`updatePageController: no collections defined`);
-			return;
-		}
-		if (!collections.hasOwnProperty(collection)) {
-			alert(`updatePageController: collection ${collection} not defined`);
-			return;
-		}
-
-		// get the configuration config details from parent controller for the collection
-		this.collectionConfig = this.parentController.cc_configuration.COLLECTIONS[collection];
-		// extract out the outputPageName and representationName
-		if (
-			!this.collectionConfig.hasOwnProperty("outputPage") ||
-			this.collectionConfig.outputPage===""
-			) {
-			alert(`updatePageController: collection ${collection} has no outputPageName`);
-			return;
-		}
-		this.outputPageName = this.collectionConfig.outputPage;
-		this.representationName = this.collectionConfig.representation;
-
-		// actual representation object ??
-		// parentController.collectionsController.view
-		//   - representations dict keyed on collection name
-		if (!this.parentController.hasOwnProperty("collectionsController")) {
-			alert(`updatePageController: no collectionsController`);
-			return;
-		}
-		if (!this.parentController.collectionsController.hasOwnProperty("view")) {
-			alert(`updatePageController: no collectionsController.view`);
-			return;
-		}
+	constructor(configurationController, navOption = undefined, singleCollection=undefined) {
+		this.configurationController = configurationController;
+		this.parentController = this.configurationController.parentController;
 		this.collectionsView = this.parentController.collectionsController.view;
-		if (!this.collectionsView.hasOwnProperty("representations")) {
-			alert(`updatePageController: no collectionsController.view.representations`);
-			return;
-		}
-		if (!this.collectionsView.representations.hasOwnProperty(this.collection)) {
-			alert(`updatePageController: no collectionsController.view.representations.${this.collection}`);
-			return;
-		}
-		this.representationObject = this.parentController.collectionsController.view.representations[this.collection];
+		this.navOption = navOption;
+		this.singleCollection = singleCollection;
 
+		this.createTaskLists();
 
-	    // calculate the URL that canvas will use 
-		// outputPageName transformed by
-		// - all alpha characters to lower case
-		// - all spaces to dashes
-
-		this.outputPageURL = this.outputPageName.toLowerCase().replace(/ /g,'-');
-
-		this.getOutputPage();
+		this.checkTaskList();
 	}
 
+	/**
+	 * createTaskLists
+	 * - create the tasks and completed arrays
+	 * - tasks contains name of each collection with an output page
+	 *   i.e. a task to complete
+	 * - completed array is empty ready to be filled by the pipeline functions
+	 */
+
+	createTaskLists() {
+		this.tasks = []; // tasks to do
+		this.completedTasks = [];
+
+
+		/* singleCollection is defined */
+		// Create a single task for singleCollection, and its outputPage
+		if (this.singleCollection) {
+			const collection = this.singleCollection;
+			const collectionConfig = this.parentController.cc_configuration.COLLECTIONS[collection];
+			const outputPageName = collectionConfig.outputPage;
+			const representationName = collectionConfig.representation; 
+		    const outputPageURL = outputPageName.toLowerCase().replace(/ /g,'-');
+
+			// set the nav option to the "None" choice
+			this.navOption = 1;
+
+			this.tasks.push( {
+				collection: collection, outputPage: outputPageName, outputPageURL: outputPageURL,
+				representation: representationName,
+				completed: false, error: false, errors: []
+			});
+
+			return;
+		}
+
+		/* Standard task list - update each collection's output page */
+		// for each collection, create task Object
+		// - collection
+		// - outputPage and outputPageURL
+		// - representation
+		// - completed/error/errors
+		const collections = this.configurationController.model.getCollectionsWithOutputPage();
+
+		for (let collection of collections) {
+			const collectionConfig = this.parentController.cc_configuration.COLLECTIONS[collection];
+			const outputPageName = collectionConfig.outputPage;
+			const representationName = collectionConfig.representation; 
+		    const outputPageURL = outputPageName.toLowerCase().replace(/ /g,'-');
+
+			this.tasks.push( {
+				collection: collection, outputPage: outputPageName, outputPageURL: outputPageURL,
+				representation: representationName,
+				completed: false, error: false, errors: []
+			} );
+		}
+
+		if (this.navOption!=="3") {
+			return;
+		}
+
+		/* add the "tab" task list as it's navOption===3 i.e. tabs */
+		// One task for each page with multiple collections
+		// For each page, create task object
+		// - collections **this is the check in updateContent**
+		// - outputPage and outputPageURL
+		// - representation
+		// - completed/error/errors
+
+		const pagesWithMultipleCollections = this.configurationController.model.getPagesWithMultipleCollections();
+		// loop through dictionary of pages with multiple collections
+		for (let pageName in pagesWithMultipleCollections) {
+			const collections = pagesWithMultipleCollections[pageName];
+			const outputPageURL = pageName.toLowerCase().replace(/ /g,'-');
+
+			this.tasks.push( {
+				collections: collections, outputPage: pageName, outputPageURL: outputPageURL,
+				completed: false, error: false, errors: []
+			} );
+		}
+
+	}
+
+	/**
+	 * checkTaskList()
+	 * - examine the collections with output pages (this.tasks) to check that
+	 *   - if navOption=2 there are no collections with the same output page
+	 * - if any errors add string to this.errors
+	 */
+	checkTaskList() {
+		this.errors = [];
+
+		// if navOption=2 there should be no collections with the same output page
+		if (this.navOption === "2" && this.tasks.length > 1) {
+			// check for duplicates
+			const outputPages = this.tasks.map( task => task.outputPage );
+			const uniqueOutputPages = [...new Set(outputPages)];
+			if (outputPages.length !== uniqueOutputPages.length) {
+				this.errors.push(
+					`"Pages" nav option doesn't work with pages used by multiple collections\nPage(s) used multiple times include: ${uniqueOutputPages.toString()}`
+					);
+				// this is a fatal error - no point in continuing
+				this.completedTasks = this.tasks;
+				this.tasks = [];
+			}
+		}
+	}
+
+	/**
+	 * Start the update process
+	 * - but check there are no errors
+	 */
+	execute() {
+		if (this.errors.length!==0) {
+			//alert(`Full Claytons not possible. execute: can't got errors ${this.errors.toString()}`);
+			this.configurationController.completeFullClaytons(this);
+			return;
+		} 
+		this.getOutputPage();
+	} 
+
+	/**
+	 * @descr getOutputPage
+	 * - check if there's an object in this.tasks
+	 * - if not, call completeFullClaytons (the hard coded call back), otherwise
+	 * - fetch the page content from Canvas 
+	 * - if any errors
+	 *   - call th error handler
+	 * - call updateOutputContent
+	 * @returns 
+	 */
+
 	async getOutputPage() {
-		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.outputPageURL}`;
+		// check if there's an object in this.tasks
+		if (this.tasks.length===0) {
+			this.configurationController.completeFullClaytons(this);
+			return;
+		}
+		const courseId = this.configurationController.parentController.courseId;
+		const outputPageURL = this.tasks[0].outputPageURL;
 
-		DEBUG && console.log(`updatePageController: getPageContents: callUrl = ${callUrl}`);
+		let callUrl = `/api/v1/courses/${courseId}/pages/${outputPageURL}`;
 
-		const response = await fetch(callUrl, {
+		let response = await fetch( callUrl, {
 			method: 'GET', credentials: 'include',
 			headers: {
 				"Content-Type": "application/json",
@@ -2728,44 +3470,117 @@ class updatePageController {
 		});
 
 		if (!response.ok) {
-			alert('Unable to update the output page');
+			this.errorFirstTask(`Unable to get page ${outputPageURL} from Canvas`);
 			return;
-		}
+		} 
 
 		const data = await response.json();
 
-		// data should be the page object
-		// https://canvas.instructure.com/doc/api/pages.html#Page
-//		DEBUG && console.log(`updatePageController: getPageContents: json = ${JSON.stringify(data)}`);
+		if ( data.length===0 ) {
+			this.errorFirstTask(`No data provided for page ${outputPageURL}`);
+			return;
+		} 
+		this.tasks[0].pageObject = data;
 
-		if (data.length===0) {
-			throw new Error(`updatePageController: getPageContents: no config page found`);
+		if (this.tasks[0].hasOwnProperty('collection')) {
+			this.updateOutputContent();
+		} else {
+			this.updateTabContent();
 		}
-
-		this.pageObject = data;
-
-		this.updateOutputPage();
 	}
 
 	/**
-	 * Only called by getOutputPage will write content to specified output page
-	 * - gets HTML from representation
-	 * - checks pageObject.body look for any existing div#cc-output-<collection-name> 
-	 *    - replace with new HTML 
-	 *    - if none exists, add it to the bottom of the page
-	 * - Calls the writeOutputPage() function
+	 * @function updateOutputContent
+	 * @descr Task is focused on a page with multiple collections. Aiming to wrap
+	 * a new "tab" interface around the collection divs. Once complete call writeOutputPage
+	 * 
+	 * Self generate the tab interface based on the collection names
+	 * 
+	 * Two options: 
+	 * 1. tab interface already there - div#cc-nav exists
+	 *    - the collections should be there
+	 *    - extract them and their content from the existing page
+	 *    - remove them all from the page (this includes some recently added)
+	 *    - insert them into new div#cc-nav
+	 *    - delete the existing div#cc-nav
+	 * 2. tab interface not there - div#cc-nav does not exist
+	 *    - tab interface will be appended at the end of the page
+	 *    - any existing collection divs will be removed from the page
+	 *    - inserted into the new tab interface (in order of collections)
+	 */
+	updateTabContent() {
+		if ( ! this.tasks[0].hasOwnProperty('pageObject') ) {
+			this.errorFirstTask(`No pageObject for ${this.tasks[0].outputPageURL}`);
+			return;
+		}
+		const pageObject = this.tasks[0].pageObject;
+		const collectionNames = this.tasks[0].collections;
+		const escCollectionNames = collectionNames.map(
+			(collectionName) => collectionName.replace(/ /g,'-')
+		);
+		const originalContent = pageObject.body;
+
+
+		// start parsing what's in the existing content
+		const parser = new DOMParser();
+		const doc = parser.parseFromString(originalContent, "text/html");
+
+		// remove (and save) all the divs for the collections
+		let collectionDivHTML = "";
+		for (let i=0; i<escCollectionNames.length; i++) {
+			const divId = `cc-output-${escCollectionNames[i]}`;
+			const collectionDiv = doc.getElementById(divId);
+			if (collectionDiv) {
+//				collectionDivs.push(collectionDiv);
+				collectionDivHTML += collectionDiv.outerHTML;
+				collectionDiv.remove();
+			}
+		}
+
+		// get the tab interface HTML from navView
+		let tabInterfaceHtml = this.generateTabHtml(collectionNames,collectionDivHTML);
+
+		// check if there's a tab interface already there
+		const navDiv = doc.getElementById('cc-nav');
+		if (navDiv) {
+			// replace the existing navDiv with tabInterfaceHTML
+			navDiv.innerHTML = tabInterfaceHtml;
+		} else {
+			doc.body.insertAdjacentHTML('beforeend',tabInterfaceHtml);
+		}
+
+		// update the new page content and write the output page
+		this.tasks[0].newContent = doc.body.innerHTML;
+		this.writeOutputPage();
+	}
+
+	/**
+	 * Apparently we've gotten the page content (pageObject) for the first task in tasks
+	 * - use the representation to get new content for the task's collection
+	 * - either append/update the content to the div#cc-output-<collection-name> 
 	 */
 
-	updateOutputPage() {
+	updateOutputContent() {
+
+		if ( ! this.tasks[0].hasOwnProperty('pageObject') ) {
+			this.errorFirstTask(`No pageObject for ${this.tasks[0].outputPageURL}`);
+			return;
+		}
+		const pageObject = this.tasks[0].pageObject;
+
 		DEBUG && console.log(`updatePageController: updateOutputPage: pageObject = ${JSON.stringify(this.pageObject)}`);
 
-		const insertContentHtml = this.collectionsView.generateHTML(this.collection,"claytons",this.navBar);
-//		const insertContentHtml = "<p>Here we go, here we go, here we go...bugger off you</p>"
+		let collectionName = this.tasks[0].collection;
+		const escCollectionName = collectionName.replace(/ /g,'-');
+		const insertContentHtml = this.collectionsView.generateHTML(
+			collectionName,"claytons",this.navOption
+			);
 
-		const originalContent = this.pageObject.body;
+		const originalContent = pageObject.body;
 
 		// check content for an existing div#cc-output-<collection-name>
-		const divId = `cc-output-${this.collection}`;
+		const divId = `cc-output-${escCollectionName}`;
+
 		// convert content into a DOM object
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(originalContent, "text/html");
@@ -2780,9 +3595,26 @@ class updatePageController {
 			newDiv.innerHTML = insertContentHtml;
 			doc.body.appendChild(newDiv);
 		}
-		let newContent = doc.body.innerHTML;
 
-		this.writeOutputPage(newContent);
+		// remove the nav bar stuff if we're none navOption
+		if (this.navOption === '1') {
+			// remove any ul.cc-nav
+			const navUl = doc.querySelector('ul.cc-nav');
+			if (navUl) {
+				navUl.remove();
+			}
+
+			// unwrap any div#cc-nav
+			const navDiv = doc.getElementById('cc-nav');
+			if (navDiv) {
+				navDiv.outerHTML = navDiv.innerHTML;
+			}
+		}
+
+
+		this.tasks[0].newContent = doc.body.innerHTML;
+
+		this.writeOutputPage();
 	}
 
 	/**
@@ -2790,15 +3622,31 @@ class updatePageController {
 	 * @param {String} newContent
 	 */
 
-	async writeOutputPage(newContent) {
+	async writeOutputPage() {
+		if ( ! this.tasks[0].hasOwnProperty('newContent') ) {
+			this.errorFirstTask(`No newContent for ${this.tasks[0].outputPageURL}`);
+			return;
+		}
 
-		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${this.outputPageURL}`;
+		let newContent = this.tasks[0].newContent;
+		const courseId = this.configurationController.parentController.courseId;
+		const outputPageURL = this.tasks[0].outputPageURL;
+
+		let callUrl = `/api/v1/courses/${courseId}/pages/${outputPageURL}`;
+
+		const CIDI_LABS_CUSTOM_CSS = `
+		<div id="kl_custom_css">&nbsp;</div>
+		`;
+		// check if newContent already contains CIDI_LABS_CUSTOM_CSS
+		if (newContent.indexOf(CIDI_LABS_CUSTOM_CSS)===-1) {
+			newContent = newContent + CIDI_LABS_CUSTOM_CSS;
+		}
 
 		DEBUG && console.log(`updatePageController: writeOutputPage: callUrl = ${callUrl}`);
 
 		let _body = {
 			"wiki_page": {
-				"body": newContent,
+				"body": newContent
 			}
 		};
 
@@ -2806,7 +3654,7 @@ class updatePageController {
 
 		let method = "put";
 
-		const response = await fetch(callUrl, {
+		let response = await fetch(callUrl, {
 			method: method, credentials: 'include',
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
@@ -2817,15 +3665,116 @@ class updatePageController {
 		});
 
 		if (!response.ok) {
-			alert('Unable to update the output page');	
+			this.errorFirstTask(`Unable to update page ${outputPageURL} in Canvas`);
+			return;
 		} 
-		const data = await response.json();
 
-		alert(`output page ${this.outputPageName} updated`);
+		let data = await response.json();
 
+		if (data.length===0) {
+			this.errorFirstTask(`No data provided for page ${outputPageURL}`);
+			return;
+		} else {
+			if (this.tasks[0].hasOwnProperty('collection')) {
+				// we're updating a single page for a collection
+				alert(`Updated output page ${outputPageURL} for collection ${this.tasks[0].collection}`);
+			} else if (this.navOption==="3" && this.tasks[0].hasOwnProperty('collections')) {
+				// we've been adding a tab interface
+				alert(`Add tab navigation to ${outputPageURL}`);
+			}
+			// finish up a successful task by moving it to completed
+			let finishedTask = this.tasks.shift();
+			finishedTask.completed = true;
+			this.completedTasks.push(finishedTask);
+			// start the next task
+			this.getOutputPage();
+		}
 	}
 
+	/**
+	 * @function errorFirstTask
+	 * @desc Accept an error string that needs to be applied to the first task
+	 * Which is then removed from the tasks array and added to to completed
+	 * Start the next task
+	 * @param {*} error 
+	 */
+	errorFirstTask(error) {
+		let errorTask = this.tasks.shift();
+		errorTask.error = true;
+		errorTask.errors.push(error);
+		this.completedTasks.push(errorTask);
+		this.getOutputPage();
+	}
 
+	/**
+	 * @function generateOutcomesString
+	 * @desc Generate a string summarising outcomes
+	 * @returns {String}
+	 */
+
+	generateOutcomesString() {
+		// how many completedTasks?
+		let completedTasks = this.completedTasks.length;
+		// how many completed tasks with completed === true
+		let completed = this.completedTasks.filter( task => task.completed === true ).length;
+		// how many completed tasks with error === true
+		let errors = this.completedTasks.filter( task => task.error === true ).length;
+		let endSummary = '';
+		if (errors>0) {
+			endSummary = ` with ${errors} errors`;
+		}
+		let summary = `completed ${completed} of ${completedTasks} tasks${endSummary}.`;
+
+		for (let task of this.completedTasks) {
+			if (task.error) {
+				summary += `\n- ${task.collection} - ${task.outputPageURL} - errors - ${task.errors.join("\n     ")}`;
+			} else if (task.completed) {
+				if (task.hasOwnProperty('collection')) {
+					summary += `\n- ${task.collection} - ${task.outputPageURL} - success`;
+				} else if (task.hasOwnProperty('collections')) {
+					summary += `\n- ${task.outputPageURL} - tab navigation update - success`;
+				}
+			}
+		}
+
+		if (this.errors.length>0) {
+			summary += `\n\nErrors:\n${this.errors.join("\n")}`;
+		}
+
+		return summary;
+
+	}
+	
+	/**
+	 * @function generateTabHtml
+	 * @desc Generate the HTML for the tabs based on collection names 
+	 * @param {Array} collectionNames 
+	 * @returns {String} Canvas tab html
+	 */
+
+	generateTabHtml(collectionNames,collectionDivHTML) {
+		let navBarHTML = '';
+
+		for (let collectionName of collectionNames) {
+			// remove spaces from collectionName
+			let escCollectionName = collectionName.replace(/ /g,'-');
+
+        	navBarHTML = `${navBarHTML}
+<li style="display: table-cell; width: 100%; float: none;">
+    <a style="float: none;text-decoration: none; display: block; text-align: center; padding: 1.5em 1em; font-size: 1.3em;" 
+        href="#cc-output-${escCollectionName}">${collectionName}</a></li>`;
+		}
+
+		return `
+<div id="cc-nav" class="enhanceable_content tabs" style="font-size: small;">
+  <ul class="cc-nav" style="list-style-type: none; margin: 0; padding: 0; overflow: hidden; background-color: #eeeeee; display: table; table-layout: fixed; width: 100%;">
+    ${navBarHTML}
+  </ul>
+
+  ${collectionDivHTML}
+</div>`;
+
+	}
 }
 
 /**
@@ -3073,6 +4022,8 @@ class cc_ConfigurationController {
 		// set up event to call this.saveConfig() every 10 seconds
 		this.configChange = false;
 		setInterval(this.saveConfig.bind(this), TIME_BETWEEN_SAVES);
+		// make sure we do a save just before onload
+		window.addEventListener('beforeunload', (event) => this.saveConfig());
 	}
 
 	/** 
@@ -3622,13 +4573,12 @@ class cc_ConfigurationController {
 		//     cc-collection-<collection-name>-output-page-update
 		const collectionName = event.target.id.match(/cc-collection-(.*)-output-page-update/)[1];
 		
-
-		// Obtain the collection name and representation for the button clicked
-
+		// for the updateController, no nav option (only update the content) for the
+		// chosen collection
 		let updateController = new updatePageController( 
-			collectionName, this.parentController 
+			this, undefined, collectionName
 			);
-
+		updateController.execute();
 	}
 
 	/**
@@ -3643,19 +4593,28 @@ class cc_ConfigurationController {
 
 	updateFullClaytons(event) {
 
-		const collectionsWithOutputPage = this.model.getCollectionsWithOutputPage();
-
-		if (collectionsWithOutputPage.length <= 1) {
-			alert(`Full Claytons needs at least 2 collections with output pages -currently ${collectionsWithOutputPage.length}.`); 
+		// get setting for navigation option for full claytons
+		const navigationOption = document.querySelector('#cc-config-full-claytons-navigation-option');
+		let navigationOptionValue = "1";
+		if (navigationOption) {
+			navigationOptionValue = navigationOption.value;
 		}
 
-		for (let collectionName of collectionsWithOutputPage) {
-			console.log(`full claytons updating ${collectionName}`);
-			let updateController = new updatePageController( 
-				collectionName, this.parentController, true
-				);
-		}
+		let updateController = new updatePageController(this,navigationOptionValue);
+		updateController.execute();
+	}
 
+	/**
+	 * Call back used by updatPageController when work is finished (perhaps with errors)
+	 * @param {Object} pageController 
+	 */
+
+	completeFullClaytons(pageController) {
+		let outcomes = pageController.generateOutcomesString();
+
+		if ( ! pageController.singleCollection ) {
+			alert(`Full Claytons update ${outcomes}`)
+		}
 	}
 
 
@@ -3672,6 +4631,83 @@ class cc_ConfigurationController {
 		let applicator = new moduleLabelApplicator(collectionName, this.parentController);
 		applicator.execute();
 
+	}
+
+	/**
+	 * @function manageBannerTabShow
+	 * @description Callback function for a module's banner tab being shown.
+	 * The targets.panel member value format cc-module-config-<module-id>-<tab-name>
+	 * - extract the module id and the tab name
+	 * - update the module config to change the banner value to the tab name
+	 * Note: first event handler for shoelace component, hence a bit different (dodgy)
+	 * @param {*} event 
+	 */
+	manageBannerTabShow(event) {
+		const element = document.querySelector(`#${event.target.id}`);
+		const idString = element.panel;
+		// extract the module-id and tab-name
+		const regex = /^cc-module-config-(\d+)-(.*)$/;
+		const matches = idString.match(regex);
+		if (matches.length===3) {
+			const moduleId = parseInt(matches[1]);
+			const tabName = matches[2];
+			// set "module".banner to tabName
+			this.model.changeModuleConfig(moduleId, 'banner', tabName);
+			this.changeMade(true); 
+			this.parentController.updateCurrentRepresentation();
+		}
+	}
+
+	/**
+	 * @function manageColourPickerChange
+	 * @description A colour picker with element.id of the form
+	 *    cc-module-config-<module-id>-color has had a value change
+	 * value will contain a hex value
+	 * @param {Object} event 
+	 */
+
+	manageColourPickerChange(event) {
+		const element = document.querySelector(`#${event.target.id}`);
+
+		// extract the module id
+		const idString = element.id;
+		const regex = /^cc-module-config-(\d+)-color$/;
+		const matches = idString.match(regex);
+		if (matches.length===2) {
+			const moduleId = parseInt(matches[1]);
+			// update the bannerColour value
+			this.model.changeModuleConfig(moduleId,'bannerColour',element.value);
+			this.changeMade(true);
+		}
+	}
+
+	/**
+	 * @function manageAccordionToggle
+	 * @description Store the details of whether a module configuration display accordion is
+	 * open or closed element.id format
+	 *    cc-module-config-<module-id>-<accordion-name>-accordion
+	 *    
+	 * @param {*} event 
+	 */
+
+	manageAccordionToggle(event) {
+		const element = document.querySelector(`#${event.target.id}`);
+
+		// extract the module id
+		const idString = element.id;
+		const eventType = event.type;
+		const regex = /^cc-module-config-(\d+)-(.*)-accordion$/;
+		const matches = idString.match(regex);
+		if (matches.length===3) {
+			const moduleId = parseInt(matches[1]);
+			const accordionName = matches[2];
+			console.log(`Accordion ${accordionName} for module ${moduleId} is ${eventType}`);
+			this.model.changeModuleDisplay(moduleId, accordionName, eventType);
+			this.changeMade(true);
+			// update the bannerColour value
+			//this.model.changeModuleConfig(moduleId,accordionName,element.open);
+			//this.changeMade(true);
+		}
 	}
 }
 
@@ -3693,6 +4729,22 @@ class CollectionsModel {
 		// merge the Canvas module and Collections configurations
 		// replace this with live use of  parentController.mergedModuleDetails
 		//this.createModuleCollections();
+		// if this.controller has parentController property 
+		// TODO clean up this KLUDGE
+		if (
+			this.controller.hasOwnProperty('parentController') &&
+			this.controller.parentController.hasOwnProperty('calendar')
+		) {
+			this.calendar = this.controller.parentController.calendar;
+		} else if (
+			this.model.hasOwnProperty('controller') &&
+			this.model.controller.hasOwnProperty('parentController') &&
+			this.model.controller.parentController.hasOwnProperty('calendar')) {
+			this.calendar = this.model.controller.parentController.calendar;
+		} else {
+			alert("Another funny calendar miss. Fix it");
+		}
+
 
 		// if currentCollection is undefined set it to the default
 		if (this.currentCollection === undefined) {
@@ -3704,12 +4756,12 @@ class CollectionsModel {
 					Number.isInteger(URLCollectionNum) && URLCollectionNum >= 0 &&
 					URLCollectionNum < this.cc_configuration.COLLECTIONS_ORDER.length) {
 					this.currentCollection = this.cc_configuration.COLLECTIONS_ORDER[URLCollectionNum];
-				} 
+				}
 			} else if (this.controller.parentController.lastCollectionViewed &&
-					this.controller.parentController.lastCollectionViewed !== "") {
-					this.currentCollection = this.controller.parentController.lastCollectionViewed;
+				this.controller.parentController.lastCollectionViewed !== "") {
+				this.currentCollection = this.controller.parentController.lastCollectionViewed;
 			} else {
-					this.currentCollection = this.getDefaultCollection();
+				this.currentCollection = this.getDefaultCollection();
 			}
 		}
 	}
@@ -3938,7 +4990,7 @@ class CollectionsModel {
 		if (prepend !== ': ') {
 			// if we've not empty label and number
 			// modify existingName to remove prepend and any subsequent whitespace
-		//	newName = existingName.replace(prepend, '').trim();
+			//	newName = existingName.replace(prepend, '').trim();
 			newName = existingName.replace(regex, '').trim();
 		}
 
@@ -4011,6 +5063,89 @@ class CollectionsModel {
 		return time24;
 	}
 
+	/**
+	 * Take a collections date object and modify it by adding in the 
+	 * real calendar dates - using University date calendar
+	 * @param {Object} date 
+	 *   attributes include
+	 *   - label - ignore here (string)
+	 *   - week - the week of the study period (string)
+	 *   - day - full string containing day of the week
+	 *   - time - string with time
+	 *   - to
+	 *     - which also contains week, day, time
+	 *   this method will add/modify existing values for both the main level and the "to" date
+	 *   - month - three letter string month name
+	 *   - date - numeric data of the month (string)
+	 */
+
+	addCalendarDate(date) {
+
+		//		let firstDate = {};
+
+		//		firstDate.DATE_LABEL = dateJson.label || '';
+
+		//		firstDate.WEEK = dateJson.week || "";
+
+		// add the day, if it isn't there
+		if (!date.hasOwnProperty('day')) {
+			date.day = 'Monday';
+		}
+		// TODO what about "to"
+
+		//		firstDate.DAY = dateJson.day || "Monday"; // is this the right default
+		// remove all but the first three letters of the day
+		// move this into the specific view
+		//		firstDate.DAY = firstDate.DAY.substring(0, 3);
+		// Week needs more work to add the the day and string "Week"
+		// Also it should be HTML
+
+		//		firstDate.TIME = dateJson.time || "";
+		// convert 24 hour time into 12 hour time
+		// TODO move to view
+		//		if (firstDate.TIME) {
+		//		firstDate.TIME = this.model.convertFrom24To12Format(firstDate.TIME);
+		//}
+
+		// these will be calculated each time
+		//		firstDate.MONTH = dateJson.month || "";
+		//	firstDate.DATE = dateJson.date || "";
+
+		// add the specific date for from and to
+		this.updateDate(date);
+		this.updateDate(date.to);
+	}
+
+
+	/**
+	 * Given data struct, if it's not null, use calendar.getDate to update
+	 * the date and month fields 
+	 * @param {*} date 
+	 */
+
+	updateDate(date) {
+
+		// do nothing if the date is not defined or we don't have a calendar
+		if (!date || !this.hasOwnProperty('calendar')) {
+			return;
+		}
+		// also if there's no defined week property
+
+		// With week defined, we need to calculate MONTH and DATE based
+		// on university trimester
+		if (!date.hasOwnProperty('week') || date.week === "") {
+			return;
+		}
+
+		const actualDate = this.calendar.getDate(date.week, false, date.day);
+		// actualDate { date/month/year }
+		const fields = ['date', 'month', 'year'];
+		for (let i = 0; i < fields.length; i++) {
+			date[fields[i]] = actualDate[fields[i]];
+		}
+	}
+
+
 }
 
 /**
@@ -4080,12 +5215,35 @@ class NavView extends cc_View {
 	 * 
 	 * @param {String} collectionName 
 	 * @param {String} variety 
-	 * @returns String HTML containing the navBar
+	 * @returns Evaluate variety and figure out which navBar HTML string to return
 	 */
 	generateHTML(collectionName = '', variety = '') {
-		if (variety === 'claytons') {
-			return this.generateClaytonsNavBar(collectionName);
+		if (variety === '2') {
+			return this.generatePageNavBar(collectionName);
 		}
+		if (variety === '3') {
+			return this.generateTabNavBar(collectionName);
+		}
+		if (variety==='1') {
+			return '';
+		}
+		if (variety!=='' ) {
+			// oops, not the default variety and not a value we've recognised
+			alert(`NavView.generateHTML() - unknown variety: ${variety}`);
+			return '';
+		}
+
+		return this.generateLiveNavBar(collectionName);
+	}
+
+	/**
+	 * @descr generate a navBar with a list of collections to be shown
+	 * during live collections
+	 * @param {String} collectionName
+	 */
+
+	generateLiveNavBar(collectionName) {
+
 		let navBar = document.createElement('div');
 		navBar.className = 'cc-nav';
 
@@ -4247,12 +5405,12 @@ div.cc-collection-hidden > a {
 	}
 
 	/**
-	 * Return HTML for nav bar that is HTML/CSS only. to be inserted into a Canvas
-	 * page as part of the Full Claytons
+	 * Return HTML for nav bar that is HTML/CSS only designed to be used to connect
+	 * collections on different pages.
 	 * @param {String} collectionName 
 	 * @returns {String} HTML for nav bar
 	 */
-	generateClaytonsNavBar(collectionName = '') {
+	generatePageNavBar(collectionName = '') {
 		let CLAYTONS_NAVBAR_HTML = `
 		<div id="cc-nav" style="font-size:small">
 		  <ul style="list-style-type:none;margin:0;padding:0;overflow:hidden;background-color:#eeeeee;display:table;table-layout:fixed;width:100%">
@@ -4290,6 +5448,52 @@ div.cc-collection-hidden > a {
 
 		return CLAYTONS_NAVBAR_HTML.replace('{{NAVBAR_ITEMS}}', items);
 	}
+
+	/**
+	 *
+	 * @param {String} collectionName 
+	 * @returns {String} HTML for nav bar
+	 */
+	generateTabNavBar(collectionName = '') {
+		let CLAYTONS_NAVBAR_HTML = `
+		<div id="cc-nav" class="enhanceable_content tabs" style="font-size:small">
+		  <ul style="list-style-type:none;margin:0;padding:0;overflow:hidden;background-color:#eeeeee;display:table;table-layout:fixed;width:100%">
+		  {{NAVBAR_ITEMS}}
+		  </ul>
+	    </div>`;
+
+		// get list of collection details without output pages(including output page)
+		const collectionsOutput = this.model.getOutputPageCollections();
+		const activeLi = ' style="display:table-cell;float:none;width:100%;font-weight:bold;background-color:#c12525;"';
+		const activeA = ' style="display:block;float:none;text-align:center;text-decoration:none;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;color:#fff;"';
+
+		let items = '';
+
+		collectionsOutput.forEach(collection => {
+			let liStyle =' style="display:table-cell;width:100%;float:none"';
+			let aStyle = ' style="text-decoration:none;display:block;text-align:center;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;border-top:4px solid #eee;"';
+			if (collection.name === collectionName) {
+				liStyle = activeLi;
+				aStyle = activeA;
+			}
+//			let pageUrl = this.model.calculatePageUrl(collection.outputPage);
+			let pageUrl = `#cc-output-${collection.name}`;
+			items = `${items}
+		   <li${liStyle}>
+		     <a${aStyle} href="${pageUrl}">${collection.name}</a>
+		   </li>
+		`;
+
+		});
+
+		// loop through each collection
+		// get the names of collection with output pages
+		// include those collection names in the nav bar
+
+
+		return CLAYTONS_NAVBAR_HTML.replace('{{NAVBAR_ITEMS}}', items);
+	}
+
 }
 
 /**
@@ -4700,20 +5904,33 @@ class AssessmentTableView extends cc_View {
 
       let dateLabel = '';
       let dueDateString = '';
+      // get the calendar date info if necessary and any other
+      // standard updates - redefine this if required
       let calendarDate = this.generateCalendarDate(modules[i].date);
 
       if (calendarDate) {
+        // dueDateString format will be
+        // [time] [day] [date] [month] [year]
+        // with that repeated after a " - " if there's a to
+        const dateFields = ['time', 'day', 'date', 'month', 'year'];
+        dateFields.forEach( field => {
+          if (calendarDate.hasOwnProperty(field) && calendarDate[field] !== "") {
+            dueDateString = `${dueDateString} ${calendarDate[field]}`;
+          }
+        });
 
-        // just work with a single date for now (date range to come)
-        //const dueDate = modules[i].date;
-        const dueDate = calendarDate.from;
-        if (dueDate) {
-          if (dueDate.MONTH) {
-            dueDateString = `${dueDate.MONTH} ${dueDate.DATE}`;
-          }
-          if (modules[i].date.label) {
-            dateLabel = modules[i].date.label;
-          }
+        // add the to values
+        if (calendarDate.hasOwnProperty('to')) {
+          dueDateString = `${dueDateString} - `;
+          dateFields.forEach( field => {
+            if (calendarDate.to.hasOwnProperty(field) && calendarDate.to[field] !== "") {
+              dueDateString = `${dueDateString} ${calendarDate.to[field]}`;
+            }
+          });
+        }
+
+        if (calendarDate.label) {
+          dateLabel = calendarDate.label;
         }
       }
 
@@ -4863,23 +6080,6 @@ class GriffithCardsView extends cc_View {
 	constructor(model, controller) {
 		super(model, controller);
 
-		// if this.controller has parentController property 
-		// TODO clean up this KLUDGE
-		if (
-			this.controller.hasOwnProperty('parentController') &&
-			this.controller.parentController.hasOwnProperty('calendar')
-		) {
-			// old style
-			//this.calendar = new UniversityDateCalendar(this.controller.parentController.strm);
-			this.calendar = this.controller.parentController.calendar;
-		} else if (
-			this.model.hasOwnProperty('controller') &&
-			this.model.controller.hasOwnProperty('parentController') &&
-			this.model.controller.parentController.hasOwnProperty('calendar')) {
-			this.calendar = this.model.controller.parentController.calendar;
-		} else {
-			alert("Another funny calendar miss. Fix it");
-		}
 
 		this.currentCollection = this.model.getCurrentCollection();
 	}
@@ -4932,7 +6132,7 @@ class GriffithCardsView extends cc_View {
 	generateHTML(collectionName, variety = '') {
 		let cardsHtml = this.generateCards(collectionName);
 
-		if (variety==='claytons') {
+		if (variety === 'claytons') {
 			cardsHtml = this.convertToClaytons(cardsHtml);
 		}
 
@@ -5152,31 +6352,99 @@ class GriffithCardsView extends cc_View {
 			padding-bottom: 0.25rem;
 		}
 
+		.cc-card-date-dual-time {
+			display: flex;
+			font-size: 0.7rem;
+			color: black;
+			background-color: #fff382;	
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+		}
+
+
 		.cc-card-date-month {
 			color: white;
 			background-color: red;
 			padding-top: 0.25rem;
 			padding-bottom: 0.25rem;
 			border-color: black;
-			border-left-width: 1px;
-			border-right-width: 1px;
 			border-top-width: 1px;
 			font-size: 0.9rem;
 			line-height: 1rem;
+		}
+
+		.cc-card-date-dual-month {
+			text-align:center;
+			align-items: stretch;
+			display: flex;
+			color: white;
+			background-color: red;
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+			border-color: black;
+			border-top-width: 1px;
+		}
+
+		.cc-card-date-month-from {
+			width:50%;
+		}
+		.cc-card-date-month-to {
+			width:50%;
 		}
 
 		.cc-card-date-date {
 			padding-top: 0.25rem;
 			padding-bottom: 0.25rem;
 			border-left-width: 1px;
-			border-bottom-width: 1px;
-			border-right-width: 1px;
 			border-bottom-right-radius: 0.25rem;
 			border-bottom-left-radius: 0.25rem;
 			border-color: black;
 			font-size: 0.9rem;
 			font-weight: bold;
 			line-height: 1rem;
+		}
+
+		.cc-card-date-dual-date {
+			text-align:center;
+			padding-top: 0.25rem;
+			align-items: stretch;
+			display: flex;
+			border-left-width: 1px;
+			border-right-width: 1px;
+			border-bottom-right-radius: 0.25rem;
+			border-bottom-left-radius: 0.25rem;
+			border-color: black;
+		}
+
+		.cc-card-date-date-from {
+			width:50%;
+		}
+
+		.cc-card-date-date-to {
+			width:50%;
+		}
+
+		.cc-card-date-time-from {
+			width: 50%;
+		}
+		.cc-card-date-time-to {
+			width: 50%;
+		}
+
+		.cc-card-date-day {
+			font-size: 0.7rem;
+		}
+
+		.cc-card-date-day-from {
+			width: 50%;
+		}
+		.cc-card-date-day-to {
+			width: 50%;
+		}
+
+		.cc-card-date-dual-day {
+			display:flex;
+			font-size: 0.7rem;
 		}
 
 		.cc-progress {
@@ -5306,7 +6574,7 @@ class GriffithCardsView extends cc_View {
 			DATE_WIDGET = this.generateCardDate(module.date);
 		}
 
-		let IMAGE_IFRAME = this.generateCardImage(module);
+		let IMAGE_IFRAME = this.generateBanner(module);
 
 		const description = module.description;
 
@@ -5396,6 +6664,66 @@ class GriffithCardsView extends cc_View {
 	}
 
 	/**
+	 * @function generateBanner
+	 * @description Using the value of "banner" and other module settings, generate the
+	 * HTML to fill the card banner section
+	 * @param {Object} module - specifying configuration for current module
+	 */
+	generateBanner(module) {
+		// a default check for old configs that didn't specify module.banner
+		if (!module.hasOwnProperty('banner')) {
+			module.banner = 'image';
+		}
+		// TODO need to handle any defaults that might have iframe
+		// - maybe isn't any yet
+
+		if ( module.banner==='colour') {
+			return this.generateBannerColour(module);
+		} else if (module.banner==='iframe') {
+			// TODO
+			return this.generateBannerIframe(module);
+		} else { // image is the default
+			return this.generateCardImage(module);
+		}
+	}
+
+	/**
+	 * @function generateBannerIframe
+	 * @description	Return HTML for a iframe banner
+	 * If the iframe object is empty, return a basic div
+	 * @param {Object} module 
+	 */
+	generateBannerIframe(module) {
+		if (module.hasOwnProperty('iframe') && module.iframe!=='') {
+			// TODO should probably do some checks on the iframe
+			const match = module.iframe.match(/<iframe.*src="(.*)".*<\/iframe>/);
+			if (match) {
+				return module.iframe;
+			}
+			return `<div class="cc-banner-colour" style="background-color:#ffffff;width:100%;height:10rem;">
+			   <p>Iframe doesn't match expected iframe HTML format.</p></div>`;
+		}
+		return `<div class="cc-banner-colour" style="background-color:#ffffff;width:100%;height:10rem;">(<em>No iframe specified</em>)</div>`;
+	}
+
+	/**
+	 * @function generateBannerColour
+	 * @description Return HTML for a colour banner uuing the value of module.bannerColour
+	 * @param {Object} module - specifying configuration for current module
+	 * @returns {String} HTML for a colour banner
+	 */
+
+	generateBannerColour( module ) {
+		let bgColour = '#ffffff';
+		if (module.hasOwnProperty('bannerColour')) {
+			// default to card if no banner colour set
+			bgColour = module.bannerColour;
+		}
+
+		return `<div class="cc-banner-colour"style="background-color:${bgColour};width:100%;height:10rem;"></div>`;
+	}
+
+	/**
 	 * Given details of a module, generate HTML string for the module.image representation
 	 * Two possible cases
 	 * 1. module.image is the URL for an image
@@ -5455,116 +6783,91 @@ class GriffithCardsView extends cc_View {
 	 * @param {Object} module 
 	 */
 	generateCardDate(dateJson) {
-		/* date information in 
-		   All attributes are optional
-		   module.date {
-
-			label:
-			week:  
-			day:
-			month:
-			date:
-			endDate: { repeat all of first date, except label}
-		} */
-
-		const date = {
-			"from": {},
-			"to": undefined
-		};
-
-		date.from = this.convertUniDateToReal(dateJson);
-		if (dateJson.endDate) {
-			date.to = this.convertUniDateToReal(dateJson.endDate);
-			this.generateDualDate(date);
-		}
-
-		return this.convertDateToHtml(date);
-
-	}
-
-	/**
-	 * Take a Uni date in "JSON" format and convert to an object with 
-	 * actual real dates
-	 * @param {Object} dateJson 
-	 * @returns 
-	 */
-
-	convertUniDateToReal(dateJson) {
-
-		let firstDate = {};
-
-		firstDate.DATE_LABEL = dateJson.label || '';
-
-		firstDate.WEEK = dateJson.week || "";
-		firstDate.DAY = dateJson.day || "Monday"; // is this the right default
-		// remove all but the first three letters of the day
-		firstDate.DAY = firstDate.DAY.substring(0, 3);
-		// Week needs more work to add the the day and string "Week"
-		// Also it should be HTML
-
-		firstDate.TIME = dateJson.time || "";
-		// convert 24 hour time into 12 hour time
-		if (firstDate.TIME) {
-			firstDate.TIME = this.model.convertFrom24To12Format(firstDate.TIME);
-		}
-
-		firstDate.MONTH = dateJson.month || "";
-		firstDate.DATE = dateJson.date || "";
-
-		// With week defined, we need to calculate MONTH and DATE based
-		// on university trimester
-		if (firstDate.WEEK !== "") {
-			// TODO should check for a day, if we wish to get the day
-			let actualDate = {};
-			if (firstDate.DAY === "" && this.hasOwnProperty('calendar')) {
-				// no special day specified, just get the start of the week
-				actualDate = this.calendar.getDate(firstDate.WEEK);
-			} else if (this.hasOwnProperty('calendar')) {
-				// need go get the date for a particular day
-				actualDate = this.calendar.getDate(firstDate.WEEK, false, firstDate.DAY);
-			}
-			// actualDate { date/month/year }
-			firstDate.DATE = actualDate.date;
-			firstDate.MONTH = actualDate.month;
-		}
-
-		// no date information defined, no date widget
-		if (firstDate.WEEK === "" && firstDate.TIME === "" &&
-			firstDate.MONTH === "" && firstDate.DATE === "") {
-			return "";
-		}
-		return firstDate;
+		this.model.addCalendarDate(dateJson);
+		return this.convertDateToHtml(dateJson);
 	}
 
 	/**
 	 * Convert from and to dates to HTML
 	 * @param {Object} date with two attributes from and to
 	 * @returns  HTML
+	 * date object format
+	 *   - label - ignore here (string)
+	 *   - week - the week of the study period (string)
+	 *   - day - full string containing day of the week
+	 *   - time - string with time
+	 *   - to
+	 *     - which also contains week, day, time
+	 *   this method will add/modify existing values for both the main level and the "to" date
+	 *   - month - three letter string month name
+	 *   - date - numeric data of the month (string)
 	 */
 
 	convertDateToHtml(date) {
+		const fields = ['day', 'week', 'time'];
+		let singleDate = "";
+		for (let field of fields) {
+			if (date.hasOwnProperty(field)) {
+				singleDate = `${singleDate}${date[field]}`;
+			}
+		}
+
 
 		let extraDateLabelClass = '';
-		if (date.from.DATE_LABEL === '') {
+		if (date.label === '') {
 			extraDateLabelClass = ' cc-card-hide';
+		}
+
+		// create day const with the first 3 letters of date.day
+		const day = date.day || "Monday"; //date.day.substring(0, 3);
+		const month = date.month.substring(0, 3);
+		let time = '';
+		if (date.time) {
+			time = this.model.convertFrom24To12Format(date.time);
+		}
+
+		// if there's a to date, call generateDualDate
+		if (date.hasOwnProperty('to')) {
+			// only generate dual date if there are values in to
+			let dualDate = "";
+			for (let field of fields) {
+				if (date.to.hasOwnProperty(field)) {
+					dualDate = `${dualDate}${date.to[field]}`;
+				}
+			}
+			// is there no value set for to date?
+			if (dualDate !== "") {
+				if (singleDate==="") {
+					// if also no value set for from date, then no date displayed
+					return '';
+				}
+				// but if both from and to dates have some value
+				return this.generateDualDate(date);
+			}
+		}
+		if (singleDate==="") {
+			return '';
 		}
 
 		const singleDateHtml = `
 		<div class="cc-card-date">
 		  <div class="cc-card-date-label${extraDateLabelClass}">
-             ${date.from.DATE_LABEL}
+             ${date.label}
           </div>
 		  <div class="cc-card-date-week">
-          	${date.from.DAY} Week ${date.from.WEEK}
+          	Week ${date.week}
 		  </div>
 		  <div class="cc-card-date-time">
-          ${date.from.TIME}
+          ${time}
+		  </div>
+		  <div class="cc-card-date-day">
+		    ${day}
 		  </div>
 		  <div class="cc-card-date-month">
-      	     ${date.from.MONTH}
+      	     ${month}
           </div>
 		  <div class="cc-card-date-date">
-      	     ${date.from.DATE}
+      	     ${date.date}
           </div>
         </div>
 		`;
@@ -5572,11 +6875,11 @@ class GriffithCardsView extends cc_View {
 		// TODO remove the elements that aren't needed
 		// Convert singleDateHtml to dom element
 		let element = new DOMParser().parseFromString(singleDateHtml, 'text/html').body.firstChild;
-		if (date.from.TIME === "") {
+		if (time === "") {
 			// remove the div.cc-card-date-time from element
 			element.removeChild(element.querySelector('.cc-card-date-time'));
 		}
-		if (date.from.WEEK === "") {
+		if (date.week === "") {
 			// remove the div.cc-card-date-week from element
 			element.removeChild(element.querySelector('.cc-card-date-week'));
 		}
@@ -5584,30 +6887,99 @@ class GriffithCardsView extends cc_View {
 		return element.outerHTML;
 	}
 
+	/**
+	 * Given a date object that contains both a to/from date. Generate appropriate card html
+	 * @param {Object} date 
+	 * @returns String of HTML
+	 */
+
 	generateDualDate(date) {
 
+		let showDate = {
+			fromDay: "", toDay: "",
+			fromDate: "", toDate: "", fromMonth: "", toMonth: "",
+			fromTime: "", toTime: "",
+			week: ""
+		};
+
+		if (date.hasOwnProperty('week')) {
+			showDate.week = `${date.week}`;
+		}
+		if (date.hasOwnProperty('day')) {
+			showDate.fromDay = date.day.substring(0, 3);
+		}
+		if (date.hasOwnProperty('date')) {
+			showDate.fromDate = date.date;
+		}
+		if (date.hasOwnProperty('month')) {
+			showDate.fromMonth = date.month.substring(0, 3);
+		}
+		if (date.hasOwnProperty('time')) {
+			showDate.fromTime = this.model.convertFrom24To12Format(date.time);
+		}
+
+		if (date.hasOwnProperty('to')) {
+			if (date.to.hasOwnProperty('date')) {
+				showDate.toDate = date.to.date;
+			}
+			if (date.to.hasOwnProperty('week')) {
+				showDate.week = `${showDate.week} - ${date.to.week}`;
+			}
+			if (date.to.hasOwnProperty('day')) {
+				showDate.toDay = date.to.day.substring(0, 3) || "Mon";
+			}
+			if (date.to.hasOwnProperty('month')) {
+				showDate.toMonth = date.to.month.substring(0, 3);
+			}
+			if (date.to.hasOwnProperty('time')) {
+				showDate.toTime = this.model.convertFrom24To12Format(date.to.time);
+			}
+		}
+
+		// create week showing "Week X to X"
 		const dualDateHtml = `
-<div class="block rounded-t rounded-b overflow-hidden bg-white text-center w-24 absolute pin-t pin-r">
-          <div class="bg-black text-white py-1 text-xs border-l border-r border-black">
-             {DATE_LABEL}
+		<div class="cc-card-date">
+		  <div class="cc-card-date-label">
+             ${date.label}
           </div>
-          {WEEK}
-          {DAYS}
-          {TIME}
-          <div class="bg-red text-white flex items-stretch py-1 border-l border-r border-black">
-              <div class="w-1/2 flex-grow">{MONTH_START}</div>
-              <div class="flex items-stretch border-l border-black flex-grow  -mt-1 -mb-1"></div>
-              <div class="w-1/2">{MONTH_STOP}</div>
+		  <div class="cc-card-date-week">
+          	Week ${showDate.week}
+		  </div>
+		  <div class="cc-card-date-dual-time">
+		    <div class="cc-card-date-time-from">${showDate.fromTime}</div>
+            <div class="cc-card-date-time-to">${showDate.toTime}</div>
+		  </div>
+		  <div class="cc-card-date-dual-day">
+		  	<div class="cc-card-date-day-from">${showDate.fromDay}</div>
+			<div class="cc-card-date-day-to">${showDate.toDay}</div>
+		  </div> 
+		  <div class="cc-card-date-dual-month">
+		     <div class="cc-card-date-month-from">${showDate.fromMonth}</div>
+			 <div class="cc-card-date-month-to">${showDate.toMonth}</div>	
           </div>
-          <div class="border-l border-r border-b text-center flex border-black items-stretch pt-1">
-      	     <div class="w-1/2 text-2xl flex-grow font-bold">{DATE_START}</div>
-      	     <div class="flex font-bolditems-stretch border-l border-black flex-grow -mt-1"></div>
-              <div class="w-1/2 text-2xl font-bold">{DATE_STOP}</div>
+		  <div class="cc-card-date-dual-date">
+		     <div class="cc-card-date-date-from">${showDate.fromDate}</div>
+		     <div class="cc-card-date-date-to">${showDate.toDate}</div>
           </div>
-         </div> 
+        </div>
 `;
 
-		return dualDateHtml;
+		// TODO remove the elements that aren't needed
+		// Convert singleDateHtml to dom element
+		let element = new DOMParser().parseFromString(dualDateHtml, 'text/html').body.firstChild;
+		if (date.label === "") {
+			element.removeChild(element.querySelector('.cc-card-date-label'));
+		}
+		if (showDate.toTime === "" && showDate.fromTime === "") {
+			// remove the div.cc-card-date-time from element
+			element.removeChild(element.querySelector('.cc-card-date-dual-time'));
+		}
+		if (showDate.toWeek === "" && showdate.fromWeek === "") {
+			// remove the div.cc-card-date-week from element
+			element.removeChild(element.querySelector('.cc-card-date-dual-week'));
+		}
+		// return element converted to string
+		return element.outerHTML;
 
 	}
 
@@ -5720,7 +7092,7 @@ class GriffithCardsView extends cc_View {
 				imageSize = "cc-object-fit-old-kludge";
 			} else if (allowedObjectFit.includes(module.imageSize)) {
 				imageSize = `cc-object-fit-${module.imageSize}`;
-//				imageSize = `object-fit: ${module.imageSize} !important;`;
+				//				imageSize = `object-fit: ${module.imageSize} !important;`;
 			}
 		}
 		return imageSize;
@@ -5830,15 +7202,15 @@ class GriffithCardsView extends cc_View {
 		// Don't think this is needed here
 		//div = div.cloneNode(true);
 		// remove the div#cc-nav within div.cc-canvas-collections
-/*		let nav = div.querySelector('.cc-nav');
-		if (nav) {
-			nav.remove();
-		} 
-		// remove the div#cc-message within div.cc-canvas-collections
-		let message = div.querySelector('.cc-message');
-		if (message) {
-			message.remove();
-		} */
+		/*		let nav = div.querySelector('.cc-nav');
+				if (nav) {
+					nav.remove();
+				} 
+				// remove the div#cc-message within div.cc-canvas-collections
+				let message = div.querySelector('.cc-message');
+				if (message) {
+					message.remove();
+				} */
 		// find all the h3.cc-card-title
 		let h3s = div.querySelectorAll('h3.cc-card-title');
 		// loop through h3s and wrap innerHTML with <strong>
@@ -5914,23 +7286,23 @@ class GriffithCardsView extends cc_View {
 
 		// change background to #efefef for div.cc-card-content-height
 		// Canvas RCE removes border-bottom-left-radius and right
-/*		let cardContents = div.querySelectorAll('.cc-card-content-height');
-		for (let i = 0; i < cardContents.length; i++) {
-			let cardContent = cardContents[i];
-			cardContent.style.backgroundColor = '#efefef';
-		}
-		// change background to #efefef for div.cc-card-engage
-		let cardEngages = div.querySelectorAll('.cc-card-engage');
-		for (let i = 0; i < cardEngages.length; i++) {
-			let cardEngage = cardEngages[i];
-			cardEngage.style.backgroundColor = '#efefef';
-		} 
-		// change background to #efefef for div.cc-card-flex
-		let cardFlexes = div.querySelectorAll('.cc-card-flex');
-		for (let i = 0; i < cardFlexes.length; i++) {
-			let cardFlex = cardFlexes[i];
-			cardFlex.style.backgroundColor = '#efefef';
-		} */
+		/*		let cardContents = div.querySelectorAll('.cc-card-content-height');
+				for (let i = 0; i < cardContents.length; i++) {
+					let cardContent = cardContents[i];
+					cardContent.style.backgroundColor = '#efefef';
+				}
+				// change background to #efefef for div.cc-card-engage
+				let cardEngages = div.querySelectorAll('.cc-card-engage');
+				for (let i = 0; i < cardEngages.length; i++) {
+					let cardEngage = cardEngages[i];
+					cardEngage.style.backgroundColor = '#efefef';
+				} 
+				// change background to #efefef for div.cc-card-flex
+				let cardFlexes = div.querySelectorAll('.cc-card-flex');
+				for (let i = 0; i < cardFlexes.length; i++) {
+					let cardFlex = cardFlexes[i];
+					cardFlex.style.backgroundColor = '#efefef';
+				} */
 
 		// find any div.unpublished and remove it
 		let unpublisheds = div.querySelectorAll('.unpublished');
@@ -6268,18 +7640,18 @@ class CollectionsView extends cc_View {
 	 * - give option to include the includePage
 	 * @param {String} collectionName 
 	 * @param {String} variety 
-	 * @param {boolean} navBar
+	 * @param {String} navOption
 	 * @return {String} HTML string
 	 */
 
-	generateHTML(collectionName,variety="",navBar=false) {
+	generateHTML(collectionName,variety="",navOption="2") {
 		// does the collection have a representation?
 		if (!this.representations[collectionName]) {
 			return undefined;
 		}
 
 		// does the collections representation have a method generateHTML
-		if (!this.representations[collectionName].generateHTML) {
+		if (typeof this.representations[collectionName].generateHTML !== 'function') {
 			alert(`generateHTML not defined for ${collectionName} representation`);
 			return undefined;
 		}
@@ -6287,12 +7659,16 @@ class CollectionsView extends cc_View {
 		let html = this.representations[collectionName].generateHTML(collectionName,variety);
 
 		// add in the navBar insert it at the beginning of html
-		if (navBar ) {
-			//html = `<h1>NAV BAR HERE</h1>${html}`;
-			html = `${this.navView.generateHTML(collectionName,variety)}${html}`;
+		if (navOption ) {
+			// depending on the navOption, we'll append the navBar differently
+			// - none (1) there is no navBar
+			// - paged (2) prepend the navBar
+			// - tab (3) there is no navBar
+			if (navOption ==="2") {
+				html = `${this.navView.generateHTML(collectionName,navOption)}${html}`;
+			}
 		}
 		// TODO
-		// - add in the navBar?
 		// - add in the include page?
 
 		return html;
@@ -6961,6 +8337,9 @@ class cc_ConfigurationStore {
 		this.parentController.published = this.pageObject.published;
 		// TODO error checking
 
+		// this also attempts to
+		// - port any very old collections configuration
+		// - check to see if the course has been copied to another courseid
 		this.parseNewPageBody();
 
 
@@ -7018,7 +8397,9 @@ class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
-			module.image = this.decodeHTML(module.image);
+			if ( module.hasOwnProperty('iframe')) {
+				module.iframe = this.decodeHTML(module.iframe);
+			}
 			// need to check the URL for image as the RCE screws with the URL
 			if (module.image.startsWith('/')) {
 				module.image = `https://${window.location.hostname}${module.image}`;
@@ -7350,7 +8731,9 @@ class cc_ConfigurationStore {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.encodeHTML(module.description);
 			module.collection = this.encodeHTML(module.collection);
-			module.image = this.encodeHTML(module.image);
+			if (module.hasOwnProperty("iframe")) {
+				module.iframe = this.encodeHTML(module.iframe);
+			}
 			module.name = this.encodeHTML(module.name);
 		}
 		let safeContent = JSON.stringify(this.parentController.cc_configuration);
@@ -7364,7 +8747,9 @@ class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
-			module.image = this.decodeHTML(module.image);
+			if (module.hasOwnProperty("iframe")) {
+				module.iframe = this.decodeHTML(module.iframe);
+			}
 		}
 
 		// get the current time as string
@@ -7559,7 +8944,7 @@ const DEFAULT_PERIOD = '3225';
 
 const MONTHS = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
-  "Aug", "Sep", "Oct", "Nov", "Dec", 
+  "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
 /* Griffith Calendar Term dates
@@ -7583,7 +8968,7 @@ const MONTHS = [
  */
 
 const CALENDAR = {
-    '3231': {
+  '3231': {
     0: { start: "2023-02-27", stop: "2023-03-03" },
     1: { start: "2023-03-06", stop: "2023-03-12" },
     2: { start: "2023-03-13", stop: "2023-03-19" },
@@ -8140,7 +9525,7 @@ const CALENDAR = {
 
 
 class UniversityDateCalendar {
-  constructor(strm=DEFAULT_PERIOD) {
+  constructor(strm = DEFAULT_PERIOD) {
     if (UniversityDateCalendar._instance) {
       return UniversityDateCalendar._instance;
     }
@@ -8149,6 +9534,10 @@ class UniversityDateCalendar {
     if (strm && CALENDAR[strm]) {
       this.defaultPeriod = strm;
     }
+  }
+
+  setStudyPeriod(studyPeriod) {
+    this.defaultPeriod = studyPeriod;
   }
 
   /**
@@ -8160,9 +9549,9 @@ class UniversityDateCalendar {
    * if no week specified, returns the object for the STRM that specifies the
    * weeks
    */
-  getWeekDetails(week="all", period=this.defaultPeriod) {
+  getWeekDetails(week = "all", period = this.defaultPeriod) {
     // by default return the object for the current period
-    if (week==="all") {
+    if (week === "all") {
       return CALENDAR[period];
     }
 
@@ -8182,13 +9571,16 @@ class UniversityDateCalendar {
   }
 
   /**
-   * Adaptation of the Card Interface getTermDate
+   * Generate a object that specifies the full date for a given study period date.
+   * e.g. converts Tuesday Week 1 to 
+   * { date: "", month: "", week: 1: year: 2019 }
+   * Based on the specified study period and the calendar above
    * @param {Integer} week - week of university term
    * @param {Boolean} startWeek - if true, returns the start date of the week
    * @param {String} dayOfWeek - specify the day to return
    * @returns {Object} specifying the day, month, year of the week
    */
-  getDate( week, startWeek=true, dayOfWeek="Monday" ) {
+  getDate(week, startWeek = true, dayOfWeek = "Monday") {
     let date = {
       date: "", month: "", week: week, year: 0
     };
@@ -8213,7 +9605,7 @@ class UniversityDateCalendar {
       friday: 4, fri: 4, saturday: 5, sat: 5, sunday: 6, sun: 6,
     };
 
-    if (dayOfWeek!=="monday") {
+    if (dayOfWeek !== "monday") {
       date.day = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.substring(1, 3);
       if (dayOfWeek in dayToNum) {
         d.setDate(d.getDate() + dayToNum[dayOfWeek.toLowerCase()]);
@@ -8224,82 +9616,74 @@ class UniversityDateCalendar {
     date.date = d.getDate();
     date.year = d.getFullYear();
 
-  return date;
+    return date;
 
 
   }
 
   /**
    * getCurrentPeriod
-   * @returns value matching the current period for a GU blackboard site
-   * If unable figure out the title, return default period
+   * @descr Examine Canvas course object's course_code attribute in an attempt
+	 * to extract the STRM and subsequently calculate the year, period and
+	 * other data -- assumes a Griffith University course code format which is
+   * currently
+	 * 
+	 * Production sites:
+	 *    Organisational Communication (COM31_2226) 
+   *    - study period 2226
+	 * 
+	 * DEV sites:
+	 *    DEV_2515LHS_3228 
+   *    - study period 3228
+	 * 
+	 * ORG sites:
+	 *     AEL_SHOW1
+   *     - no study period
+	 * 
+	 * TODO rejig based on scapeLib/parseCourseInstanceId (ael-automation)
+	 * In particular to handle the "YP" course ids
    */
 
-  getCurrentPeriod() {
-    // GU current period should be in the courseMenu_link element
-    const titleElement = document.getElementById('courseMenu_link');
-    if (titleElement === null) {
+  getCurrentPeriod(courseCode) {
+
+    // does objectCourseCode contain a pair of brackets?
+    // if not, we've got a dev site or an org site
+    let brackets = courseCode.match(/\(([^)]+)\)/);
+    if (!brackets) {
+      // is it a DEV course
+      if (courseCode.startsWith('DEV_')) {
+        // use regex ^DEV_([^_]*)_([\d]*)$ to extract the course code and STRM
+        const regex = /^DEV_([^_]*)_([\d]*)$/;
+        const match = regex.exec(courseCode);
+        if (match) {
+          return match[2];
+        }
+        return this.defaultPeriod;
+      }
+      // no brackets, not a dev site, go with default, but create calendar
+      // before we leave
+      // TODO - this should check to see if Canvas Collections has a default
+      //  STRM defined
       return this.defaultPeriod;
     }
-    // the title attribute contains a string with the period (in the courseId)
-    const courseTitle = titleElement.getAttribute('title');
 
-    // get the course id (incl. period) will be in brackets
-    let m = courseTitle.match(/^.*\((.+)\)/);
-    let id;
-    let breakIdRe;
+    // We've got brackets in course code, suggesting that it's a production course site
+    // Is it a standard course, possible formats are
+    // coursecode_strm
+    // coursecode_strm_campus
 
-    // we found a course Id (something in brackets), try to get the STRM value
-    if (m) {
-      id = m[1];
-      // break the course Id up into its components
-      // courseCode_STRM_mode
-
-      // Look for OUA Courses e.g. COM10_2211_OT
-      breakIdRe = new RegExp(
-        '^([A-Z]+[0-9]+)_([0-9][0-9][0-9][0-9])_([A-Z][A-Z])$'
-      );
-      m = id.match(breakIdRe);
-
-      // found an actual course site (rather than org site)
-      if (m) {
-        return m[2];
-      }
-
-      // Look for GU mode-based course e.g. 1511QCM_3211_SB
-      breakIdRe = new RegExp(
-        '^([0-9]+[A-Z]+)_([0-9][0-9][0-9][0-9])_([A-Z][A-Z])$'
-      );
-      m = id.match(breakIdRe);
-
-      // found an actual course site (rather than org site)
-      if (m) {
-        // but is it a QCM course
-        if (m[1].includes('QCM')) {
-          return m[2] + 'QCM';
-        }
-        return m[2];
-      }
-
-      // Look for joined GU course e.g. 1511QCM_3211
-      breakIdRe = new RegExp('^([0-9]+[A-Z]+)_([0-9][0-9][0-9][0-9])$');
-
-      m = id.match(breakIdRe);
-
-      if (m) {
-        return m[2];
-      }
-
-      // Look for year long QCM courses e.g. 3526QCM_Y1_3211_SB
-      breakIdRe = new RegExp(
-        '^([0-9]+[A-Z]+)_(Y[0-9])_([0-9][0-9][0-9][0-9])_([A-Z][A-Z])$'
-      );
-
-      m = id.match(breakIdRe);
-      if (m) {
-        return m[3];
-      }
+    // use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
+    //const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
+    // match a course code - first group - any chars but _
+    // match four digits (strm)
+    // optionally other stuff
+    const canvasCourseCode = courseCode.match(/\(([^)]+)\)/)[1];
+    const regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
+    const match = regex.exec(canvasCourseCode);
+    if (match) {
+      return match[2];
     }
+
     return this.defaultPeriod;
   }
 }
@@ -8337,6 +9721,8 @@ class cc_Controller {
 	 */
 	constructor() {
 		DEBUG && console.log('-------------- cc_Controller.constructor()');
+		this.injectShoelace();
+
 
 		// Use document location to set various values controlling operation
 		this.setContext();
@@ -8370,6 +9756,26 @@ class cc_Controller {
 			// should create this.courseObject
 			this.requestCourseObject();
 		}
+	}
+
+	/**
+	 * Kludge attempt to inject shoelace component library
+	 */
+	injectShoelace() {
+		const checkShoelace = document.querySelector('#shoelace.js');
+		if ( checkShoelace) {
+			return;
+		}
+		const shoelaceScript = document.createElement('script');
+		shoelaceScript.type = 'module';
+		shoelaceScript.id = 'shoelace.js';
+		shoelaceScript.src = 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.83/dist/shoelace.js';
+		document.head.appendChild(shoelaceScript);
+
+		const shoelaceLink = document.createElement('link');
+		shoelaceLink.rel = 'stylesheet';
+		shoelaceLink.href = 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.83/dist/themes/light.css';
+		document.head.appendChild(shoelaceLink);
 	}
 
 	/**
@@ -8425,61 +9831,28 @@ class cc_Controller {
 	 */
 
 	generateSTRM() {
-		this.courseCode = undefined;
-		this.strm = undefined;
-
-		// try to get the course code 
-		let objectCourseCode = this.courseObject.course_code;
-		let canvasCourseCode = "";
-
-		// does objectCourseCode contain a pair of brackets?
-		// if not, we've got a dev site or an org site
-		let brackets = objectCourseCode.match(/\(([^)]+)\)/);
-		if (!brackets) {
-			// is it a DEV course
-			if (objectCourseCode.startsWith('DEV_')) {
-				// use regex ^DEV_([^_]*)_([\d]*)$ to extract the course code and STRM
-				const regex = /^DEV_([^_]*)_([\d]*)$/;
-				const match = regex.exec(objectCourseCode);
-				if (match) {
-					this.courseCode = match[1];
-					this.strm = match[2];
-				}
-				this.calendar = new UniversityDateCalendar(this.strm);
-				this.parseStrm();
-				return;
-			}
-			// no brackets, not a dev site, go with default, but create calendar
-			// before we leave
-			// TODO - this should check to see if Canvas Collections has a default
-			//  STRM defined
-			this.calendar = new UniversityDateCalendar(this.strm);
-			return;
-		} 
-		canvasCourseCode = objectCourseCode.match(/\(([^)]+)\)/)[1];
-
-
-		// We've got brackets in course code, suggesting that it's a production course site
-		// Is it a standard course, possible formats are
-		// coursecode_strm
-		// coursecode_strm_campus
-
-		// use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
-		//const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
-		// match a course code - first group - any chars but _
-		// match four digits (strm)
-		// optionally other stuff
-		const regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
-		const match = regex.exec(canvasCourseCode);
-		if (match) {
-			this.courseCode = match[1];
-			this.strm = match[2];
+		if ( ! this.hasOwnProperty('calendar')) {
+			this.calendar = new UniversityDateCalendar();
 		}
 
-		this.calendar = new UniversityDateCalendar(this.strm);
+		// TODO this is where we might check if there is an existing default
+		// study period already set and thus bypass getCurrentPeriod
+
+
+		// we pass course_code to calendar because it's the main object that is
+		// available to all users. the sis_course_id might be better but students
+		// don't see it
+		this.studyPeriod = this.calendar.getCurrentPeriod(this.courseObject.course_code);
+		this.calendar.setStudyPeriod(this.studyPeriod);
+		// aboutStudyPeriod is an object with human readable information about the
+		// study period - typically strings for
+		// - year - full year
+		// - period - descriptive name for the period
+		// - type - string specifying the type of study period
+//		this.aboutStudyPeriod = this.calendar.parseStudyPeriod(this.studyPeriod);
+
 		this.parseStrm();
 
-		console.log(`------------ ${this.strm} period ${this.period} year ${this.year}`);
 	}
 
 	/**
@@ -8576,8 +9949,9 @@ class cc_Controller {
 	 * Purpose here is to create mergedModuleDetails object which 
 	 * merges the two sets of module information into the one - keyed on module id
 	 * 
-	 * It also adds the following fiels
+	 * It also adds the following fields
 	 * - actualNum - which is auto calculated (maybe) version of num
+	 * - removes from collections configuration any modules that no longer exist in Canvas
 	 * 
 	 * - Calls this.execute() when done
 	 */
@@ -8590,6 +9964,8 @@ class cc_Controller {
 		const collectionsModules = this.cc_configuration.MODULES;
 
 		this.mergedModuleDetails = {};
+
+		this.removeDeletedModules(collectionsModules, canvasModules);
 
 		// numCalculator use to calculate nums for collections 
 		// is keyed on collectionName and then label to point to an int 
@@ -8642,6 +10018,30 @@ class cc_Controller {
 				}
 			}
 			this.mergedModuleDetails[canvasModuleId] = details;
+		}
+	}
+
+	/**
+	 * @function removeDeletedModules
+	 * @descr Remove from collections configuration any modules that no longer exist in Canvas
+	 * @param {Object} collectionsModules - modules as configured in collections (keyed on moduleId)
+	 * @param {Array} canvasModules - current course Canvas modules
+	 */
+
+	removeDeletedModules(collectionsModules, canvasModules) {
+		// generate dictionary of canvas module ids
+		let canvasModuleIds = {};
+		for (let i = 0; i < canvasModules.length; i++) {
+			canvasModuleIds[canvasModules[i].id] = true;
+		}
+
+		// remove any collections modules that no longer exist in canvas
+		for (let moduleId in collectionsModules) {
+			if (!canvasModuleIds.hasOwnProperty(moduleId)) {
+				console.log(`cc_Controller: removeDeletedModules: removing module ${moduleId} from collections configuration`);
+				alert(`cc_Controller: removeDeletedModules: removing module ${moduleId} from collections configuration`);
+				delete collectionsModules[moduleId];
+			}
 		}
 	}
 

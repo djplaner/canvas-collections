@@ -26,12 +26,19 @@ As illustrated in the following image, there are three common types of banner:
 
 ### Configuring the banner
 
-You are able to configure 0 or more of the banner options. By default, a new module will be configured to use a placeholder image. The banner option that is current visible in the module configuration area will be the option used on the matching card.
+You are able to configure 0 or more of the banner options. By default, a new module will be configured to use a placeholder image. The banner option that is current visible in the module configuration area will be the option used on the matching card - as illustrated in the following animated image.
 
 !!! note "Some representations ignore the banner options"
 
     Currently, on the _Griffith Cards_ representation actively uses the banner options.
 
+The following animated image steps through the following:
+
+1. Showing a card representation of a module (using an iframe banner) and its corresponding configuration.
+2. Illustrates how when the current banner choice is changed from image to iframe to colour how the card representation changes to match.
+
+
+![](pics/animatedBannerChanges.gif)
 
 
 ### Image
@@ -112,6 +119,10 @@ Collections will display the label - circled in red in the following image - for
 ### Date types
 
 As summarised in the following table, the date area of the Module configuration dialog allows you to specify dates for three different purposes.
+
+!!! info "'Coming Soon' is coming soon"
+
+    :construction: The 'Coming Soon' feature is still a work in progress.
 
 | Date type | Purpose |
 | --- | --- |

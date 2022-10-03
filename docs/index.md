@@ -1,10 +1,18 @@
 # Canvas Collections
 
-Transform your learners' experience of your Canvas course site by adding more context and design specific properties and functionality. Leverage this to improve your site's information architecture and visual design (see the comparison images below). 
 
-## Comparing Vanilla Canvas to Canvas + Collections
+When your students visit your Canvas course's [module view](https://community.canvaslms.com/t5/Student-Guide/How-do-I-view-Modules-as-a-student/ta-p/433), how easy is it for them to answer the following questions:
 
-Both of the following images are of the Module page of the same Canvas course site. 
+4. Which course was this again? How did it structure the modules?
+1. What is this module for? Why will I do it? What's the purpose?
+2. When should I be thinking of engaging with it?
+3. Where in the list of modules was the Assignment 2 module?
+
+Canvas Collections makes it possible to re-design the Canvas module view to make it easier for students to answer these questions. It does this by allowing you to add more context and design specific properties and functionality to the modules view. 
+
+## What does it look like?
+
+Both of the following images are of the Module page of the same Canvas course site. The Collections version has more context and design specific properties added. For example, each module has an image and a description meaning that the visual design and information architecture of the course site is more explicit. If done well, leading to a better student experience.
 
 | Vanilla Canvas | Canvas Collections (live) |
 | -------------- | ------------------ |
