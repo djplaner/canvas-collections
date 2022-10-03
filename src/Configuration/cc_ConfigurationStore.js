@@ -143,6 +143,9 @@ export default class cc_ConfigurationStore {
 		this.parentController.published = this.pageObject.published;
 		// TODO error checking
 
+		// this also attempts to
+		// - port any very old collections configuration
+		// - check to see if the course has been copied to another courseid
 		this.parseNewPageBody();
 
 

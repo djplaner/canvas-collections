@@ -260,8 +260,9 @@ export default class cc_Controller {
 	 * Purpose here is to create mergedModuleDetails object which 
 	 * merges the two sets of module information into the one - keyed on module id
 	 * 
-	 * It also adds the following fiels
+	 * It also adds the following fields
 	 * - actualNum - which is auto calculated (maybe) version of num
+	 * - removes from collections configuration any modules that no longer exist in Canvas
 	 * 
 	 * - Calls this.execute() when done
 	 */
@@ -274,6 +275,8 @@ export default class cc_Controller {
 		const collectionsModules = this.cc_configuration.MODULES;
 
 		this.mergedModuleDetails = {};
+
+		this.removeDeletedModules(collectionsModules, canvasModules);
 
 		// numCalculator use to calculate nums for collections 
 		// is keyed on collectionName and then label to point to an int 
@@ -326,6 +329,30 @@ export default class cc_Controller {
 				}
 			}
 			this.mergedModuleDetails[canvasModuleId] = details;
+		}
+	}
+
+	/**
+	 * @function removeDeletedModules
+	 * @descr Remove from collections configuration any modules that no longer exist in Canvas
+	 * @param {Object} collectionsModules - modules as configured in collections (keyed on moduleId)
+	 * @param {Array} canvasModules - current course Canvas modules
+	 */
+
+	removeDeletedModules(collectionsModules, canvasModules) {
+		// generate dictionary of canvas module ids
+		let canvasModuleIds = {};
+		for (let i = 0; i < canvasModules.length; i++) {
+			canvasModuleIds[canvasModules[i].id] = true;
+		}
+
+		// remove any collections modules that no longer exist in canvas
+		for (let moduleId in collectionsModules) {
+			if (!canvasModuleIds.hasOwnProperty(moduleId)) {
+				console.log(`cc_Controller: removeDeletedModules: removing module ${moduleId} from collections configuration`);
+				alert(`cc_Controller: removeDeletedModules: removing module ${moduleId} from collections configuration`);
+				delete collectionsModules[moduleId];
+			}
 		}
 	}
 
