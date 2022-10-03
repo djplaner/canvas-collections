@@ -463,11 +463,8 @@ class cc_ConfigurationModel {
 				}
 			}
 
-			// if field is image, and there is actually a value in it,
-			// perform some extra checks
-			if (fieldName === 'image' && value !== '') {
-				// use regex to check if value contains open and close iframe tags
-				const match = value.toLowerCase().match(/^.*(<iframe.*?src=".*?".*?<\/iframe>).*$/);
+			if (fieldName === 'iframe' ) {
+				let match = value.toLowerCase().match(/^.*(<iframe.*?src=".*?".*?<\/iframe>).*$/);
 				if (match) {
 					value = match[1];
 					// prepare the iframe for use, let the user know if there's
@@ -480,15 +477,20 @@ class cc_ConfigurationModel {
 2. Remove any style attributes.`);
 					}
 				} else {
-					// check that the value is a valid URL
-					if (!value.match(/^https?:\/\/.*/)) {
-						alert(`The image url field must be either a valid URL or valid iframe. It appears to be neither. 
-
-Current value is
+					// wasn't a valid iframe
+					alert(`Configured iframe value does not appear to be a standard HTML iframe.`);
+					return false;
+				}
+			}
+			// if field is image, and there is actually a value in it,
+			// perform some extra checks
+			if (fieldName === 'image' && value !== '') {
+				// check that the value is a valid URL
+				if (!value.match(/^https?:\/\/.*/)) {
+					alert(`The image url field must be either a valid URL or valid iframe. It appears to be neither.\nCurrent value is
 
 ${value}`);
 						return false;
-					}
 				}
 			}
 
@@ -685,18 +687,46 @@ class cc_View {
 
 	addTooltips() {
 		if (this.TOOLTIPS) {
-			html5tooltips(this.TOOLTIPS);
-			// also need to loop through the TOOLTIPS and add the links, if defined
+			/* add shoelace tooltips
+			   - In the HTML there will be tooltips in this format
+				   <sl-tooltip>
+					  <div slot="content"></div>
+					  <a id="" href=""><i></a>
+					</sl-tooltip>
+				- for each tooltip
+				  - find the tooltip (id)
+				  - set the anchor href
+				  - set the div innerHTML
+			*/
 			for (let tooltip of this.TOOLTIPS) {
-				if (tooltip.href && tooltip.targetSelector) {
-					// find the element with id tooltip.targetSelector
-					const element = document.querySelector(tooltip.targetSelector);
-					if (element) {
-						// set the href of element to tooltip.href
-						element.href = tooltip.href;
+				const slToolTips = document.querySelectorAll(`sl-tooltip${tooltip.targetSelector}`);
+				for (let slToolTip of slToolTips) {
+					if (slToolTip) {
+						const anchor = slToolTip.querySelector('a');
+						if (anchor) {
+							anchor.href = tooltip.href;
+						}
+						const div = slToolTip.querySelector('div');
+						if (div) {
+							div.innerHTML = tooltip.contentText;
+						}
 					}
 				}
 			}
+
+			/*	        Old style html5tooltips		
+						html5tooltips(this.TOOLTIPS);
+						// also need to loop through the TOOLTIPS and add the links, if defined
+						for (let tooltip of this.TOOLTIPS) {
+							if (tooltip.href && tooltip.targetSelector) {
+								// find the element with id tooltip.targetSelector
+								const element = document.querySelector(tooltip.targetSelector);
+								if (element) {
+									// set the href of element to tooltip.href
+									element.href = tooltip.href;
+								}
+							}
+						} */
 		}
 	}
 
@@ -768,14 +798,14 @@ class cc_View {
 				}
 			}
 			if (dualDate !== "") {
-				if (singleDate==="") {
+				if (singleDate === "") {
 					return {};
 				}
 				date.to = this.convertUniDateToReal(dateJson.to);
 			}
 			//this.generateDualDate(date);
 		}
-		if (singleDate==="" ) {
+		if (singleDate === "") {
 			return {};
 		}
 		return date;
@@ -864,18 +894,29 @@ const CV_DEFAULT_DATE_LABEL = "Commencing";
 
 const CC_UNPUBLISHED_HTML = `
 <div class="cc-unpublished"> 
-  <span style="padding-top: 0.25em;padding-right:0.25em">
-  Unpublished</span>
-  <a id="cc-about-unpublished" target="_blank" href=""> 
-     <i class="icon-question"></i>
+  	<span style="padding-top: 0.25em;padding-right:0.25em">
+        <sl-tooltip id="cc-about-unpublished">
+		  	<div slot="content"></div>
+			<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+		</sl-tooltip>
+  		Unpublished
+	</span>
   </a>
  </div>
 `;
 
 const CONFIG_VIEW_TOOLTIPS = [
 	{
-		contentText: `Use Canvas Collections to improve the learner experience of 
-		your site by generatively enhancing the information architecture and visual design.`,
+		contentText: `The <em>Canvas Collections Configuration</em> page</a> is unpublished. 
+	The live Collections view will <strong>not</strong> be visible in "Student View" or for students.
+		<p>Any Claytons Collections will be visible, if the relevant pages are published.</p>`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-unpublished",
+		persistent: true,
+		href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
+	},
+	{
+		contentText: `Add more structure and context specific design to the Canvas module view.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-collections",
 		animateFunction: "spin",
@@ -884,28 +925,35 @@ const CONFIG_VIEW_TOOLTIPS = [
 	{
 		// to complete
 		contentText: `The list of current collections for your course and where you 
-				can modify their order, appearance etc.<p>Click to learn more</p>`,
+				can modify their order, appearance etc.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-existing-collections",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#existing-collections"
 	},
 	{
-		contentText: `Where to add a new collection to your site`,
+		contentText: `Name and choose a representation for a new collection`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-new-collection",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
 	},
 	{
-		contentText: `<p>Update all configured output pages and choose a navigation scheme.</p>`,
+		contentText: `Specify how the collection will be displayed by choosing one of the available representations. Representations can be changed at any time.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-collection-representation",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
+	},
+	{
+		contentText: `Update all configured output pages and choose an option for the navigation bar.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-full-claytons",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview"
 	},
 	{
-		contentText: `<p>Three navigation options:</p>
+		contentText: `<p>There are three navigation bar options:</p>
 		<ol>
 		  <li> None - no navigation between pages/collections. </li>
 		  <li> Pages - collections on separate pages with navigation between. </li>
@@ -914,13 +962,17 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-full-claytons-navigation-option",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/navigation-bar-options"
+		href: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview/#navigation-bar-options"
+	},
+	{
+		contentText: `The first collection displayed when users visit for the first time.`,
+		targetSelector: '#cc-about-default-collection'
 	},
 	{
 		contentText: `<p>Make collection invisible to students. 
 		(Note: can't hide the default collection)</p>
 		<p><i class="icon-warning"></i> Also unpublish all the collection's modules to be ensure they are hidden.`,
-		targetSelector: '#cc-about-hide-collection',
+		targetSelector: '.cc-about-hide-collection',
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#hide-a-collection"
 	},
@@ -929,7 +981,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		<p><strong>Note:</strong> This is how you can use Collections with students without it being
 		installed by your institution.</p>
 		`,
-		targetSelector: '#cc-about-update-output-page',
+		targetSelector: '.cc-about-update-output-page',
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#output-page"
 	},
@@ -946,7 +998,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		potentially destructive. Only use as suggested and if you're certain.</p>
 		<p>Modify the names of Canvas modules by apply the Collection's label/number</p>
 		`,
-		targetSelector: '#cc-about-apply-module-labels',
+		targetSelector: '.cc-about-apply-module-labels',
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#apply-module-labels"
 	},
@@ -955,6 +1007,23 @@ const CONFIG_VIEW_TOOLTIPS = [
 
 
 	//******** Module configuration */
+	{
+		contentText: `Specify how this module works with and is represented by Collections.`,
+		maxWidth: `250px`,
+		targetSelector: ".cc-about-module-configuration",
+		animateFunction: "spin",
+	},
+	{
+		contentText: `Configure basic collections information about the module, including:
+		<ul>
+		  <li> Which collection does it belong to? </li>
+		  <li> What is the module's description, label and number? </li>
+	  </ul>`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-basic-configuration",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/"
+	},
 	{
 		contentText: `Which collection does this module belong to?`,
 		maxWidth: `250px`,
@@ -974,7 +1043,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-label",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#label-and-number"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#labels-and-numbers"
 	},
 	{
 		contentText: `<p>Choose from the three supported "date types" and configure it. Options include:</p>
@@ -991,11 +1060,26 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#dates"
 	},
 	{
+		contentText: `Specify a single date, or becomes the start date in a date range when used 
+		with "stop" date.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-date-start",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#start-date"
+	},
+	{
+		contentText: `Representation of the date as configured by <em>Start Date</em> and possible <em>Stop Date</em>.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-date-calculated",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#start-date"
+	},
+	{
 		contentText: `Specify the 'stop' date in a date range. Date is relative to a specific study period.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-date-stop",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#date"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#stop-date"
 	},
 	{
 		contentText: `Specify a date and message describing when the module will be available.`,
@@ -1010,7 +1094,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-number",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#label-and-number"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#labels-and-numbers"
 	},
 	{
 		contentText: `Flexibly add, delete, and modify additional information about this module, which
@@ -1045,7 +1129,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-image-url",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-url"
 	},
 	{
 		contentText: `Provide an iframe (embed HTML) to place in a card's banner section.`,
@@ -1062,7 +1146,8 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#iframe"
 	},
 	{
-		contentText: `Specifies which study period's calendar will be used to translate "Monday Week 1" into a calendar date.`,
+		contentText: `The study period automatically identified from the course site. The academic
+		calendar for this study period will be used to translate "Monday Week 1" into a calendar date.`,
 		maxWidth: `250px`,
 		targetSelector: ".cc-about-module-studyPeriod",
 		animateFunction: "spin",
@@ -1129,7 +1214,7 @@ class cc_ConfigurationView extends cc_View {
 		this.addTooltips();
 	}
 
-	addTooltips() {
+/*	addTooltips() {
 		const courseId = this.model.getCourseId();
 		const configPageUrl = `https://${window.location.host}/courses/${courseId}/pages/canvas-collections-configuration`;
 
@@ -1153,7 +1238,7 @@ class cc_ConfigurationView extends cc_View {
 
 		// call the parent class method
 		super.addTooltips();
-	}
+	} */
 
 	/**
 	 * @descr Add the CC configuration interface to each module
@@ -1226,16 +1311,22 @@ class cc_ConfigurationView extends cc_View {
 		const moduleConfig = this.model.getModuleConfiguration(moduleDetail.id);
 
 		const moduleConfigHtml = `
-		<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
-		<link href="//cdn.quilljs.com/1.0.0/quill.snow.css" rel="stylesheet" />
-		    <div class="cc-module-no-collection" id="cc-module-config-no-collection-${id}">
-			    No collection allocated
-			</div>
-      		<span>
-			  <i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
-			  Collections Configuration</span>
-			  ${showConfigHtml}
-  		</div>`;
+<div class="cc-module-config border border-trbl" id="cc-module-config-${id}">
+	<link href="//cdn.quilljs.com/1.0.0/quill.snow.css" rel="stylesheet" />
+    <div class="cc-module-no-collection" id="cc-module-config-no-collection-${id}">
+	    No collection allocated
+	</div>
+	<span>
+		<i id="cc-module-config-${id}-switch" class="icon-mini-arrow-right"></i>
+		Collections Module Configuration
+        <sl-tooltip class="cc-about-module-configuration">
+	  		<div slot="content"></div>
+			<i class="icon-question cc-module-icon"></i>
+		</sl-tooltip>
+
+	</span> 
+  	${showConfigHtml}
+</div>`; 
 
 		// TO DO check that the id matches on of the module ids in data structure
 
@@ -1250,6 +1341,17 @@ class cc_ConfigurationView extends cc_View {
 		const imageInput = document.getElementById(`cc-module-config-${moduleDetail.id}-image`);
 		if (imageInput) {
 			imageInput.value = moduleDetail.image;
+		}
+		// TODO add in the iframe value this way as well
+		// add handler for iframe text area
+		const iframeArea = document.querySelector(`#cc-module-config-${id}-iframe` );
+		if (iframeArea) {
+			iframeArea.onchange = (event) => this.controller.updateModuleConfigField(event);
+			// now set the value for iframe to the module's detail
+			// Done here to make sure it's all encoded nicely
+			if (moduleDetail.hasOwnProperty('iframe')) {
+				iframeArea.value = moduleDetail.iframe;
+			}
 		}
 		// add the label cc-module-config-${moduleDetail.id}-label"
 		const labelInput = document.getElementById(`cc-module-config-${moduleDetail.id}-label`);
@@ -1344,6 +1446,7 @@ class cc_ConfigurationView extends cc_View {
 				quillFields[j].onkeydown = (event) => event.stopPropagation();
 			}
 		}
+
 	}
 
 	/**
@@ -1683,7 +1786,10 @@ class cc_ConfigurationView extends cc_View {
 		// TODO need to handle both start and end
 		let calculatedDate = this.calculateDate(dateInfo);
 		if (dateInfo.hasOwnProperty('to')) {
-			calculatedDate += ` to ${this.calculateDate(dateInfo.to)}`;
+			const toDate = this.calculateDate(dateInfo.to);
+			if (toDate !== 'No date set' ) {
+				calculatedDate += ` to ${toDate}`;
+			}
 		}
 
 		// calculate the number elements for the form
@@ -1696,13 +1802,15 @@ class cc_ConfigurationView extends cc_View {
 		let autonumStyle = "";
 		let autonumChecked = "";
 		let numStyle = "";
+		let numValue = "";
 
 		if (!moduleConfig.hasOwnProperty('num')) {
 			// no num, so we're doing auto calculate
 			autonumChecked = "checked";
-			numStyle = "display:none;";
+			numStyle = "disabled";
 		} else {
 			autonumStyle = "color:grey;";
+			numValue = moduleConfig.num;
 		}
 
 		const currentStudyPeriod = this.model.getStudyPeriod();
@@ -1724,13 +1832,13 @@ class cc_ConfigurationView extends cc_View {
 		   .cc-module-config-collection-representation label {
 			   width: 5rem;
 			   font-size: 0.8rem;
-			   font-weight: bold;
+			   /*font-weight: bold; */
 		   }
 		   .cc-module-config-collection-representation input {
 			   font-size: 0.8rem;
 		   }
 		   .cc-module-config-detail {
-			   padding-top: 0.5rem;
+			   padding: 0.5rem;
 		   }
 		   .cc-preview-container {
 			   display:flex;
@@ -1768,59 +1876,95 @@ class cc_ConfigurationView extends cc_View {
 
 		<div class="cc-module-config-detail">
 			<div>
+<!--			  <sl-details open>
+			    <div slot="summary">
+				  <a id="cc-about-basic-configuration" target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+				  <strong>Basic configuration</strong>
+				</div> -->
 				<div class="cc-module-config-collection-representation">
+			        <sl-tooltip id="cc-about-module-collection">
+					  	<div slot="content"></div>
+						<i class="icon-question cc-module-icon"></i>
+					</sl-tooltip>
 					<label for="cc-module-config-${moduleDetail.id}-collection">Collection
-						<a id="cc-about-module-collections" target="_blank" href="">
-			   			<i class="icon-question cc-module-icon"></i></a>
 					</label>
 					<select id="cc-module-config-${moduleDetail.id}-collection">
 					  ${collectionsOptions}
 					</select>
 				</div>
+				<div class="cc-collection-description" style="margin-top: 1em">
+			        <sl-tooltip id="cc-about-module-description">
+					  	<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+				    <label for="cc-module-config-${moduleDetail.id}-description">Description</label>
+					<div id="cc-module-config-${moduleDetail.id}-description" class="cc-module-config-description" style="height:8rem"> </div>
+				</div>
+
 				<div class="cc-module-config-collection-representation" style="margin-top:0.5rem">
-					<div style="float:left; margin-right:0.5rem">
+				        <sl-tooltip class="cc-about-module-label">
+						  	<div slot="content"></div>
+						  	<a target="_blank" href="">
+						   	<i class="icon-question cc-module-icon"></i></a>
+						</sl-tooltip>
 				    	<label for="cc-module-config-${moduleDetail.id}-label">Label
-						<a id="cc-about-module-label" target="_blank" href="">
-			   				<i class="icon-question cc-module-icon"></i></a>
-						</label> <br />
+						</label> 
 						<input type="text" id="cc-module-config-${moduleDetail.id}-label"
 					    	style="width:10rem" value="" />
-					</div>
-					<div>
+				</div>
+				<div class="cc-module-config-collection-representation" style="margin-top:0.5rem">
+				        <sl-tooltip id="cc-about-module-number">
+					  		<div slot="content"></div>
+							<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+						</sl-tooltip>
 				    	<label for="cc-module-config-${moduleDetail.id}-num">Number</label>
-						<a id="cc-about-module-number" target="_blank" href="">
-			   				<i class="icon-question cc-module-icon"></i></a>
-						<br />
-						<span class="cc-config-autonum" style="${autonumStyle}">Auto-number:
+						<span class="cc-config-autonum" style="${autonumStyle}">auto:
 					   		<input type="checkbox" id="cc-module-config-${moduleDetail.id}-autonum" ${autonumChecked} 
 							    style="position:relative; top:-0.25rem; ${autonumStyle}" />
 						</span>
 						<input type="text" id="cc-module-config-${moduleDetail.id}-num" 
-					     	value="${moduleConfig.num}" style="width:3rem;${numStyle}" />
-					</div>
-					<br clear="all" />
+					     	value="${numValue}" style="width:3rem;" ${numStyle}/>
 				</div>
-				<div class="border border-trbl" style="margin-right:1em">
-				  	<div class="border border-b" style="padding:1rem">
-				    	<strong>Dates</strong>
-						<a id="cc-about-module-dates" target="_blank" href="">
-	   						<i class="icon-question cc-module-icon"></i></a>
-						<div class="cc-current-studyPeriod">
-				   			<strong>Study Period</strong>
-		    	 			<a href="" class="cc-about-module-studyPeriod" target="_blank">
-   							<i class="icon-question cc-module-icon"></i></a>
-							${currentStudyPeriod}
-						</div>
-				  	</div>
-					<sl-tab-group>
-				  		<sl-tab ${dateActive.start} slot="nav" panel="cc-module-config-${moduleDetail.id}-date-start">Start Date</sl-tab>
+
+<!--			</sl-details> -->
+
+			</div> 
+
+			<div style="margin-right:1em">
+						<sl-details>
+		   		<div slot="summary">
+			        <sl-tooltip id="cc-about-module-dates">
+					  	<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+		    		<strong>Dates</strong>
+					<div class="cc-current-studyPeriod">
+			        	<sl-tooltip class="cc-about-module-studyPeriod">
+					  		<div slot="content"></div>
+							<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+						</sl-tooltip>
+		   				<strong>Study Period</strong> ${currentStudyPeriod}
+					</div>
+			  	</div>
+				<sl-tab-group>
+			  		<sl-tab ${dateActive.start} slot="nav" panel="cc-module-config-${moduleDetail.id}-date-start">Start Date</sl-tab>
 				  		<sl-tab ${dateActive.stop} slot="nav" panel="cc-module-config-${moduleDetail.id}-date-stop">Stop Date</sl-tab>
 				  		<!-- sl-tab ${dateActive.comingSoon} slot="nav" panel="cc-module-config-${moduleDetail.id}-coming-soon">Coming Soon</sl-tab -->
 
  			      		<sl-tab-panel name="cc-module-config-${moduleDetail.id}-date-start">
 		   					<div id="cc-module-config-${moduleDetail.id}-date-start">
+			        			<sl-tooltip id="cc-about-module-date-start">
+					  				<div slot="content"></div>
+									<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+								</sl-tooltip> About start date
 					    		<div>
-									<div class="cc-calculated-date">${calculatedDate}</div>
+									<div class="cc-calculated-date">
+			        					<sl-tooltip id="cc-about-module-date-calculated">
+					  						<div slot="content"></div>
+											<i class="icon-question cc-module-icon"></i>
+										</sl-tooltip>
+										${calculatedDate}
+									</div>
 									<div class="cc-module-config-collection-representation" style="padding-top:1rem; padding-left:3rem">
 				    					<label for="cc-module-config-${moduleDetail.id}-date-label">Date label</label>
 										<input type="text" id="cc-module-config-${moduleDetail.id}-date-label"
@@ -1849,8 +1993,19 @@ class cc_ConfigurationView extends cc_View {
 						</sl-tab-panel>
 				    	<sl-tab-panel name="cc-module-config-${moduleDetail.id}-date-stop">
 		   			  		<div id="cc-module-config-${moduleDetail.id}-date-stop">
+			        			<sl-tooltip id="cc-about-module-date-stop">
+					  				<div slot="content"></div>
+									<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+								</sl-tooltip> About stop date
 					    		<div>
-									<div class="cc-calculated-date">${calculatedDate}</div>
+									<div class="cc-calculated-date">
+			        					<sl-tooltip id="cc-about-module-date-calculated">
+					  						<div slot="content"></div>
+											<i class="icon-question cc-module-icon"></i>
+										</sl-tooltip>
+										${calculatedDate}
+									</div>
+
 									<div class="cc-module-config-collection-representation" style="padding-top:1rem; padding-left:3rem">
 				    					<label for="cc-module-config-${moduleDetail.id}-day-to">Day of week</label>
 										<select id="cc-module-config-${moduleDetail.id}-day-to">
@@ -1907,16 +2062,16 @@ class cc_ConfigurationView extends cc_View {
 						</sl-tab-panel>
 						-->
 					</sl-tab-group>
-				</div>
-			</div> 
+				</sl-details>
 
-			<div style="margin-right:1em">
-			    <div class="cc-collection-banner border border-trbl">
-				    <div class="border border-b" style="padding:1em">
-					  <strong>Banner</strong>
-						<a id="cc-about-module-banner" target="_blank" href="">
-	   						<i class="icon-question cc-module-icon"></i></a>
-					</div>
+			    <sl-details>
+				  <div slot="summary">
+  			        <sl-tooltip id="cc-about-module-banner">
+					  	<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+				  	<strong>Banner</strong>
+				</div>
 					<sl-tab-group>
 				  		<sl-tab class="cc-banner-tab" ${bannerActive.image} slot="nav" panel="cc-module-config-${moduleDetail.id}-image">Image</sl-tab>
 				  		<sl-tab class="cc-banner-tab" ${bannerActive.iframe} slot="nav" panel="cc-module-config-${moduleDetail.id}-iframe">Iframe</sl-tab>
@@ -1926,19 +2081,23 @@ class cc_ConfigurationView extends cc_View {
  			      		<sl-tab-panel name="cc-module-config-${moduleDetail.id}-image">
 							<div class="cc-module-config-collection-representation"
 							     style="padding-left: 0.5rem;">
+						        <sl-tooltip id="cc-about-module-image-scale">
+					  				<div slot="content"></div>
+									<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+								</sl-tooltip>
 								<label for="cc-collection-representation-${moduleDetail.id}-imageSize"
 					     			style="float:left;padding-top:0.8rem;"> Image scale </label>
-								<a id="cc-about-module-image-scale" target="_blank" href="">
-			   						<i class="icon-question cc-module-icon"></i></a>
 		   		       			<select id="cc-module-config-${moduleDetail.id}-imageSize">
 					      			${imageSizeOptions}
 								</select>
 								<br clear="all" />
+						        <sl-tooltip id="cc-about-module-image-url">
+					  				<div slot="content"></div>
+									<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+								</sl-tooltip>
 								<label for="cc-module-config-collection-representation-${moduleDetail.id}-image"     
 					    			style="float:left;padding-top:0.8rem"> Image URL
 								</label>
-								<a id="cc-about-module-image-url" target="_blank" href="">
-			   						<i class="icon-question cc-module-icon"></i></a>
 								<input type="text" id="cc-module-config-${moduleDetail.id}-image" 
 					        		value="">
 								<br clear="all" />
@@ -1948,12 +2107,13 @@ class cc_ConfigurationView extends cc_View {
 
  			      		<sl-tab-panel name="cc-module-config-${moduleDetail.id}-iframe">
 							<div class="cc-module-config-collection-representation">
+						        <sl-tooltip id="cc-about-module-iframe">
+					  				<div slot="content"></div>
+									<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+								</sl-tooltip>
 								<label for="cc-collection-representation-${moduleDetail.id}-iframe"
-					     			style="float:left;padding-top:0.8rem;"> iframe </label>
-								<a id="cc-about-module-iframe" target="_blank" href="">
-			   						<i class="icon-question cc-module-icon"></i></a>
-		   		       			<select id="cc-module-config-${moduleDetail.id}-iframe">
-								</select>
+					     			style="padding-top:0.8rem;"> iframe </label>
+		   		       			<textarea id="cc-module-config-${moduleDetail.id}-iframe"></textarea>
 								<br clear="all" />
 							</div>
 
@@ -1961,10 +2121,12 @@ class cc_ConfigurationView extends cc_View {
 
  			      		<sl-tab-panel name="cc-module-config-${moduleDetail.id}-colour">
 							<div class="cc-module-config-collection-representation">
+						        <sl-tooltip id="cc-about-module-color">
+					  				<div slot="content"></div>
+									<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+								</sl-tooltip>
 								<label for="cc-collection-representation-${moduleDetail.id}-color"
-					     			style="float:left;padding-top:0.8rem;"> iframe </label>
-								<a id="cc-about-module-color" target="_blank" href="">
-			   						<i class="icon-question cc-module-icon"></i></a>&nbsp;
+					     			style="padding-top:0.8rem;"> colour </label>
 						  		<sl-color-picker 
 								    id="cc-module-config-${moduleDetail.id}-color"
 									value="${moduleDetail.bannerColour}"
@@ -1974,17 +2136,8 @@ class cc_ConfigurationView extends cc_View {
 							</div>
 						</sl-tab-panel>
 					<sl-tab-group>
-				</div>
+				</sl-details>
 
-				<div class="cc-collection-description" style="margin-top: 1em">
-				    <label for="cc-module-config-${moduleDetail.id}-description" 
-					   style="float:left">
-					Description
-					</label>
-							<a id="cc-about-module-description" target="_blank" href="">
-			   				<i class="icon-question cc-module-icon"></i></a>
-					<div id="cc-module-config-${moduleDetail.id}-description" class="cc-module-config-description" style="height:8rem"> </div>
-				</div>
 				${additionalMetaDataHTML}
 				<div class="cc-module-config-imagePreview">
 							 
@@ -2018,12 +2171,12 @@ class cc_ConfigurationView extends cc_View {
 	getAdditionalMetaDataHTML(module) {
 
 		let additionalMetaDataHTML = `
-	<sl-details summary="Additional metadata">
+	<sl-details>
+	   <div slot="summary">
+	    	<a href="" id="cc-about-additional-metadata" target="_blank"><i class="icon-question cc-module-icon"></i></a>
+	     	<strong>Additional metadata</strong>
+		</div>
 		<div class="cc-module-config-additional-metadata border border-trbl">
-			<p><strong>Additional metadata</strong>
-			    <a href="" id="cc-about-additional-metadata" target="_blank">
-	   			<i class="icon-question cc-module-icon"></i></a>
-			</p>
 			<table>
 			  <thead>
 				<tr>
@@ -2157,7 +2310,7 @@ class cc_ConfigurationView extends cc_View {
 
 			#cc-config-body p {
 				font-size: 0.9em;
-				font-weight: bold;
+				/*font-weight: bold; */
 			}
 
 			#cc-config-new-collection {
@@ -2260,77 +2413,78 @@ class cc_ConfigurationView extends cc_View {
 
 			</style>
 
-			<div id="cc-config">
-			 	<div class="cc-box-header">
-		  		  <p>Configure Canvas Collections
-						<span class="cc-version">(v${CC_VERSION})</span>
-						</p>
-				</div>
-			    <div class="cc-box-body">
-				  <div id="cc-config-body">
-				    <div id="cc-config-existing-collections">
-						<p>
-						Existing collections 
-						<a id="cc-about-existing-collections" target="_blank" href="">
-			   			<i class="icon-question"></i></a>
-						</p>
+<div id="cc-config">
+ 	<div class="cc-box-header">
+	  	<p>
+	  		Configure Canvas Collections <span class="cc-version">(v${CC_VERSION})</span>
+		</p>
+	</div>
+    <div class="cc-box-body">
+	  	<div id="cc-config-body">
+	    	<div id="cc-config-existing-collections">
+	        	<sl-tooltip id="cc-about-existing-collections">
+		  			<div slot="content"></div>
+					<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+				</sl-tooltip>
+				<strong>Existing collections</strong>
+			</div>
+			<div id="cc-config-new-collection">
+	        	<sl-tooltip id="cc-about-new-collection">
+		  			<div slot="content"></div>
+					<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+				</sl-tooltip>
+				<strong>Add a new collection</strong>
+				<div class="cc-config-collection border border-trbl">
+			  		<div class="ic-Form-control" style="margin-bottom: 0px">
+			  	  		<input type="text" id="cc-config-new-collection-name" placeholder="Name for new collection">
+			  		</div>
+
+			  		<div class="cc-collection-representation">
+  			        	<sl-tooltip id="cc-about-collection-representation">
+		  					<div slot="content"></div>
+							<i class="icon-question cc-module-icon"></i>
+						</sl-tooltip>
+
+				  		<label for="cc-config-new-collection-representation">Representation</label>
+				  		<select id="cc-config-new-collection-representation">
+				    		${this.getAvailableRepresentations()}
+				  		</select>
+			  		</div>
+
+			  		<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+				  		<button class="btn btn-primary" id="cc-config-new-collection-button">Add</button>
+			  		</fieldset>
+		  		</div>
+		  		<div style="margin-top:0.5em">
+		    		<div>
+		        		<sl-tooltip id="cc-about-full-claytons">
+		  					<div slot="content"></div>
+							<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+						</sl-tooltip>
+						<strong>Full "Claytons"</strong>
 					</div>
-					<div id="cc-config-new-collection">
-						<p>Add a new collection
-						<a id="cc-about-new-collection" target="_blank" href="">
-			   			<i class="icon-question"></i></a>
-						</p>
-						<div class="cc-config-collection border border-trbl">
-						  <div class="ic-Form-control" style="margin-bottom: 0px">
-						  	  <input type="text" id="cc-config-new-collection-name" 
-							     placeholder="Name for new collection">
-						  </div>
-
-						  <div class="cc-collection-representation">
-							  <label for="cc-config-new-collection-representation">Representation</label>
-							  <select id="cc-config-new-collection-representation">
-							    ${this.getAvailableRepresentations()}
-							  </select>
-						  </div>
-
-						  <fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
-							  <button class="btn btn-primary" id="cc-config-new-collection-button">Add</button>
-						  </fieldset>
-					  </div>
-						<p>Full "Claytons"
-						<a id="cc-about-full-claytons" target="_blank" href="">
-			   			<i class="icon-question"></i></a> </p>
-						<div>
-						  <style>
-						    #cc-config-full-claytons-navigation-option::part(button-group) {
-								font-size: 0.75rem;
-							}
-
-						    #cc-config-full-claytons-navigation-option::part(base):active {
-								background: var(--ic-brand-button--primary-bgd);
-								color: var(--ic-brand-button--primary-text);
-							}
-						  </style>
-						  <label for="cc-config-full-claytons-navigation-option">Navigation Bar Options
-						<a id="cc-about-full-claytons-navigation-option" target="_blank" href="">
-			   			<i class="icon-question"></i></a> </p>
-						  </label>
-						  <sl-radio-group id="cc-config-full-claytons-navigation-option" value="1">
-						    <sl-radio-button value="1">None</sl-radio-button>
+					<div class="border border-trbl" style="padding:0.5em">
+ 			        	<sl-tooltip id="cc-about-full-claytons-navigation-option">
+		  					<div slot="content"></div>
+							<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+						</sl-tooltip>
+			  			<label for="cc-config-full-claytons-navigation-option">Navigation Bar Options</label>
+			  			<sl-radio-group id="cc-config-full-claytons-navigation-option" value="1">
+			    			<sl-radio-button value="1">None</sl-radio-button>
 							<sl-radio-button value="2">Pages</sl-radio-button>
 							<sl-radio-button value="3">Tabs</sl-radio-button>
-						  </sl-radio-group>
-					  	</div>
+			  			</sl-radio-group>
 						<div style="margin-top: 0.5rem">
-						  <fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
-							  <button class="btn btn-primary" id="cc-config-update-full-claytons">Update</button>
-						  </fieldset>
-					    </div> 
-					</div>
-				  </div>
-				</div>
+			  				<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+				  				<button class="btn btn-primary" id="cc-config-update-full-claytons">Update</button>
+			  				</fieldset>
+		    			</div> 
+		  			</div>
+		  		</div>
 			</div>
-		</div>
+	  	</div>
+	</div>
+</div>
 		`;
 
 		// remove the border at the bottom of Canvas top nav bar
@@ -2429,59 +2583,73 @@ class cc_ConfigurationView extends cc_View {
 				<!-- put the options -->
 				<fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox" style="margin-bottom:0.5em">
 					<div class="ic-Checkbox-group">
-						<div class="ic-Form-control ic-Form-control--checkbox">
+						<div>
+					        <sl-tooltip id="cc-about-default-collection">
+		  						<div slot="content"></div>
+								<i class="icon-question cc-module-icon"></i>
+							</sl-tooltip>
+
 							<input type="checkbox" id="cc-config-collection-${collectionName}-default"
 							    class="cc-config-collection-default">
-							<label class="ic-Label" for="cc-config-collection-${collectionName}-default">
+							<label for="cc-config-collection-${collectionName}-default">
 								Default collection?
 							</label>
 						</div>
-						<div class="ic-Form-control ic-Form-control--checkbox">
+						<!-- <div class="ic-Form-control ic-Form-control--checkbox"> -->
+						<div>
+					        <sl-tooltip class="cc-about-hide-collection">
+		  						<div slot="content"></div>
+								<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+							</sl-tooltip>
 							<input type="checkbox" id="cc-config-collection-${collectionName}-hide"
 							    class="cc-config-collection-hide">
-							<label class="ic-Label" for="cc-config-collection-${collectionName}-hide">
+							<label for="cc-config-collection-${collectionName}-hide">
 								Hide collection?
 							</label>
-								<a id="cc-about-hide-collection" target="_blank" href="">
-			   					<i class="icon-question"></i></a>
 						</div>
 					</div>
 				</fieldset>
 				</div>
 
 				<div>
-				  Include page
-					<a id="cc-about-include-page" target="_blank" href="">
-			   			<i class="icon-question"></i></a>
-				  <div style="padding-left:0.5em">
-				 	<input id="cc-collection-${collectionName}-include-page" 
+			        <sl-tooltip id="cc-about-include-page">
+		  				<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+				  	Include page
+				  	<div style="padding-left:0.5em">
+				 		<input id="cc-collection-${collectionName}-include-page" 
 					     value="${includePage}" class="cc-existing-collection" />
-				  </div>
+				  	</div>
 				</div>
 				<!-- output page -->
 				<div style="margin-top:0.5em">
-				  Output page
-					<a id="cc-about-update-output-page" target="_blank" href="">
-			   			<i class="icon-question"></i></a>
-				  <div class="cc-collection-representation">
+			        <sl-tooltip class="cc-about-update-output-page">
+		  				<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+				  	Output page
+				  	<div class="cc-collection-representation">
 <!--					<label for="cc-collection-${collectionName}-output-page">Name</label> -->
-				 	<input id="cc-collection-${collectionName}-output-page" 
+				 		<input id="cc-collection-${collectionName}-output-page" 
 					      value="${outputPage}" class="cc-existing-collection" />
-				  <span class="cc-collection-representation cc-output-page-update ${outputPageExists}">
-					<button id="cc-collection-${collectionName}-output-page-update"
-					      class="btn cc-output-page-update-button">Update</button>
-				  </span>
-				</div>
-  			    <div style="display:flex;margin-top:0.5em;margin-bottom:0.5em">
-				  <div style="margin-right:0.5em">
-				  🧪Apply module labels ☠️
-					<a id="cc-about-apply-module-labels" target="_blank" href="">
-			   			<i class="icon-question"></i></a>
+				  		<span class="cc-collection-representation cc-output-page-update ${outputPageExists}">
+							<button id="cc-collection-${collectionName}-output-page-update"
+					      		class="btn cc-output-page-update-button">Update</button>
+				  		</span>
 					</div>
-					<button id="cc-collection-${collectionName}-apply-module-labels"
+  			    	<div style="display:flex;margin-top:1em;margin-bottom:0.5em">
+				  		<div style="margin-right:0.5em">
+					        <sl-tooltip class="cc-about-apply-module-labels">
+		  						<div slot="content"></div>
+								<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+							</sl-tooltip>
+				  			🧪Apply module labels ☠️
+						</div>
+						<button id="cc-collection-${collectionName}-apply-module-labels"
 					      class="btn cc-apply-module-labels-update-button">Apply</button>
-
-			</div>
+					</div>
+				</div>
 			`;
 
 
@@ -2732,7 +2900,7 @@ input:checked + .cc-slider:before {
 
 /* styles for the module configs */
 		    .cc-module-config {
-				padding-left: 0.5em;
+				padding: 1em;
 				font-size: smaller;
 				margin:0;
 			/*	font-weight: bold; */
@@ -2838,14 +3006,13 @@ input:checked + .cc-slider:before {
 		const CC_BUNDLE_HTML = `
 		<div class="cc-switch-container">
 		  <div class="cc-switch-title">
-		    <!-- <i id="configShowSwitch" class="icon-mini-arrow-right"></i> --> <small>Canvas Collections
+	        <sl-tooltip id="cc-about-collections">
+			  	<div slot="content"></div>
+				<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+			</sl-tooltip>
+		    <!-- <i id="configShowSwitch" class="icon-mini-arrow-right"></i> --> <small>Canvas Collections</small>
 			<span style="font-size:50%">{${CC_VERSION}}</span></small>
-			<a id="cc-about-collections" target="_blank"
-			   href="https://github.com/djplaner/canvas-collections/blob/v1/user-docs/about.md#About-canvas-collections">
-			   <i class="icon-question"></i>
-		   </a>
 		  </div>
-
 
 		<label class="cc-switch">
 		    <input type="checkbox" class="cc-toggle-checkbox" id="cc-switch" ${cc_on}>
@@ -2869,13 +3036,13 @@ input:checked + .cc-slider:before {
 			let em = 15;
 			let px = em * parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-			html5tooltips({
+/*			html5tooltips({
 				contentText: `Find out more about Canvas Collections and how it can help 
 				improve the user experience of your course site`,
 				maxWidth: `${px}px`,
 				targetSelector: "#cc-about-collections",
 				animateFunction: "spin"
-			});
+			}); */
 
 			// add event handler to i#configShowSwitch
 			if (this.model.isOn()) {
@@ -6424,10 +6591,29 @@ class GriffithCardsView extends cc_View {
 			return this.generateBannerColour(module);
 		} else if (module.banner==='iframe') {
 			// TODO
-			console.log('nothing');
+			return this.generateBannerIframe(module);
 		} else { // image is the default
 			return this.generateCardImage(module);
 		}
+	}
+
+	/**
+	 * @function generateBannerIframe
+	 * @description	Return HTML for a iframe banner
+	 * If the iframe object is empty, return a basic div
+	 * @param {Object} module 
+	 */
+	generateBannerIframe(module) {
+		if (module.hasOwnProperty('iframe') && module.iframe!=='') {
+			// TODO should probably do some checks on the iframe
+			const match = module.iframe.match(/<iframe.*src="(.*)".*<\/iframe>/);
+			if (match) {
+				return module.iframe;
+			}
+			return `<div class="cc-banner-colour" style="background-color:#ffffff;width:100%;height:10rem;">
+			   <p>Iframe doesn't match expected iframe HTML format.</p></div>`;
+		}
+		return `<div class="cc-banner-colour" style="background-color:#ffffff;width:100%;height:10rem;">(<em>No iframe specified</em>)</div>`;
 	}
 
 	/**
@@ -8128,7 +8314,9 @@ class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
-			module.image = this.decodeHTML(module.image);
+			if ( module.hasOwnProperty('iframe')) {
+				module.iframe = this.decodeHTML(module.iframe);
+			}
 			// need to check the URL for image as the RCE screws with the URL
 			if (module.image.startsWith('/')) {
 				module.image = `https://${window.location.hostname}${module.image}`;
@@ -8460,7 +8648,9 @@ class cc_ConfigurationStore {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.encodeHTML(module.description);
 			module.collection = this.encodeHTML(module.collection);
-			module.image = this.encodeHTML(module.image);
+			if (module.hasOwnProperty("iframe")) {
+				module.iframe = this.encodeHTML(module.iframe);
+			}
 			module.name = this.encodeHTML(module.name);
 		}
 		let safeContent = JSON.stringify(this.parentController.cc_configuration);
@@ -8474,7 +8664,9 @@ class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
-			module.image = this.decodeHTML(module.image);
+			if (module.hasOwnProperty("iframe")) {
+				module.iframe = this.decodeHTML(module.iframe);
+			}
 		}
 
 		// get the current time as string

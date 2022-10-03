@@ -444,11 +444,8 @@ export default class cc_ConfigurationModel {
 				}
 			}
 
-			// if field is image, and there is actually a value in it,
-			// perform some extra checks
-			if (fieldName === 'image' && value !== '') {
-				// use regex to check if value contains open and close iframe tags
-				const match = value.toLowerCase().match(/^.*(<iframe.*?src=".*?".*?<\/iframe>).*$/);
+			if (fieldName === 'iframe' ) {
+				let match = value.toLowerCase().match(/^.*(<iframe.*?src=".*?".*?<\/iframe>).*$/);
 				if (match) {
 					value = match[1];
 					// prepare the iframe for use, let the user know if there's
@@ -461,15 +458,20 @@ export default class cc_ConfigurationModel {
 2. Remove any style attributes.`);
 					}
 				} else {
-					// check that the value is a valid URL
-					if (!value.match(/^https?:\/\/.*/)) {
-						alert(`The image url field must be either a valid URL or valid iframe. It appears to be neither. 
-
-Current value is
+					// wasn't a valid iframe
+					alert(`Configured iframe value does not appear to be a standard HTML iframe.`);
+					return false;
+				}
+			}
+			// if field is image, and there is actually a value in it,
+			// perform some extra checks
+			if (fieldName === 'image' && value !== '') {
+				// check that the value is a valid URL
+				if (!value.match(/^https?:\/\/.*/)) {
+					alert(`The image url field must be either a valid URL or valid iframe. It appears to be neither.\nCurrent value is
 
 ${value}`);
 						return false;
-					}
 				}
 			}
 

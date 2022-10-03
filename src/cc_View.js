@@ -37,18 +37,46 @@ export default class cc_View {
 
 	addTooltips() {
 		if (this.TOOLTIPS) {
-			html5tooltips(this.TOOLTIPS);
-			// also need to loop through the TOOLTIPS and add the links, if defined
+			/* add shoelace tooltips
+			   - In the HTML there will be tooltips in this format
+				   <sl-tooltip>
+					  <div slot="content"></div>
+					  <a id="" href=""><i></a>
+					</sl-tooltip>
+				- for each tooltip
+				  - find the tooltip (id)
+				  - set the anchor href
+				  - set the div innerHTML
+			*/
 			for (let tooltip of this.TOOLTIPS) {
-				if (tooltip.href && tooltip.targetSelector) {
-					// find the element with id tooltip.targetSelector
-					const element = document.querySelector(tooltip.targetSelector);
-					if (element) {
-						// set the href of element to tooltip.href
-						element.href = tooltip.href;
+				const slToolTips = document.querySelectorAll(`sl-tooltip${tooltip.targetSelector}`);
+				for (let slToolTip of slToolTips) {
+					if (slToolTip) {
+						const anchor = slToolTip.querySelector('a');
+						if (anchor) {
+							anchor.href = tooltip.href;
+						}
+						const div = slToolTip.querySelector('div');
+						if (div) {
+							div.innerHTML = tooltip.contentText;
+						}
 					}
 				}
 			}
+
+			/*	        Old style html5tooltips		
+						html5tooltips(this.TOOLTIPS);
+						// also need to loop through the TOOLTIPS and add the links, if defined
+						for (let tooltip of this.TOOLTIPS) {
+							if (tooltip.href && tooltip.targetSelector) {
+								// find the element with id tooltip.targetSelector
+								const element = document.querySelector(tooltip.targetSelector);
+								if (element) {
+									// set the href of element to tooltip.href
+									element.href = tooltip.href;
+								}
+							}
+						} */
 		}
 	}
 
@@ -120,14 +148,14 @@ export default class cc_View {
 				}
 			}
 			if (dualDate !== "") {
-				if (singleDate==="") {
+				if (singleDate === "") {
 					return {};
 				}
 				date.to = this.convertUniDateToReal(dateJson.to);
 			}
 			//this.generateDualDate(date);
 		}
-		if (singleDate==="" ) {
+		if (singleDate === "") {
 			return {};
 		}
 		return date;

@@ -200,7 +200,9 @@ export default class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
-			module.image = this.decodeHTML(module.image);
+			if ( module.hasOwnProperty('iframe')) {
+				module.iframe = this.decodeHTML(module.iframe);
+			}
 			// need to check the URL for image as the RCE screws with the URL
 			if (module.image.startsWith('/')) {
 				module.image = `https://${window.location.hostname}${module.image}`;
@@ -532,7 +534,9 @@ export default class cc_ConfigurationStore {
 			const module = this.parentController.cc_configuration.MODULES[key];
 			module.description = this.encodeHTML(module.description);
 			module.collection = this.encodeHTML(module.collection);
-			module.image = this.encodeHTML(module.image);
+			if (module.hasOwnProperty("iframe")) {
+				module.iframe = this.encodeHTML(module.iframe);
+			}
 			module.name = this.encodeHTML(module.name);
 		}
 		let safeContent = JSON.stringify(this.parentController.cc_configuration);
@@ -546,7 +550,9 @@ export default class cc_ConfigurationStore {
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
-			module.image = this.decodeHTML(module.image);
+			if (module.hasOwnProperty("iframe")) {
+				module.iframe = this.decodeHTML(module.iframe);
+			}
 		}
 
 		// get the current time as string

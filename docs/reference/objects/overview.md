@@ -8,18 +8,40 @@ A key feature of Collections is the ability to specify additional metadata and f
 
 A description of the object that will be displayed in most representations to provide students with a way to answer what, why, how or some other question about the module. How (and perhaps if) the description is shown to the student will depend on the relevant collection's representation.
 
-## Image (or iframe)
+## Banner
 
-Associate an image or an iframe with the module. Typically used to provide a visual representation of the module, contributing to the overall visual design of the course, and possibly helping students build conceptual associations. 
+The card design for Collection's cards representation uses the idea of a banner as the top part of the card (i.e. the top section of the card circled in red in the following image). Typically used to provide a visual representation of the module, contributing to the overall visual design of the course, and possibly helping students build conceptual associations. 
+
+As illustrated in the following image, there are three common types of banner:
+
+1. Image - the URL of an image is provided and is displayed in the banner.
+
+    By default, the banner is set to a default image.
+2. Iframe - an iframe (aka HTML embed code) - e.g. a YouTube embed.
+
+    (The second card in the image below has a YouTube video banner which is currently not displaying)
+3. Colour - the banner background is set to a single colour.
+
+![](pics/threeBannerOptions.png)  
+
+### Configuring the banner
+
+You are able to configure 0 or more of the banner options. By default, a new module will be configured to use a placeholder image. The banner option that is current visible in the module configuration area will be the option used on the matching card.
+
+!!! note "Some representations ignore the banner options"
+
+    Currently, on the _Griffith Cards_ representation actively uses the banner options.
+
+
+
+### Image
 
 Images are specified by two pieces of metadata:
 
 1. Image url - the web location where the image can be viewed.
 2. Image scale - how the image should be scaled to fit within the available space.
 
-An iframe is specified by entering the complete iframe embed code into the Image url field. iframes are automatically scaled to fit within the available space.
-
-### Image url (or iframe)
+#### Image url
 
 Designed to contain either:
 
@@ -31,14 +53,13 @@ Designed to contain either:
 
     Copy and paste the full embed code from a video-hosting (or some other) service and it will be embedded where the image would normally appear.
 
-### Image (or iframe) scale
+#### Image scale
 
 For an iframe, _Image Scale_ is ignored. Instead, iframes are automatically set to use ```width="100%" height="100%"``` to ensure they are scaled to fit the available space.
 
 For an image, _Image scale_ modifies the scaling of the image using the standard [CSS property called object-fit](https://www.w3schools.com/cssref/css3_pr_object-fit.asp). The following table outlines the possible values for object-fit. These values appear in the Image scale drop down when configuring a module. 
 
 See the [Image Scale](../../../walk-throughs/new/configure-modules/#image-scale) section of the [Configure Modules walk-through](../../../walk-throughs/new/configure-modules) for more information, including an animation of the impact of the different values.
-
 
 
 | Value | 	Description |
@@ -49,6 +70,12 @@ See the [Image Scale](../../../walk-throughs/new/configure-modules/#image-scale)
 | fit |	The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped. |
 | none |	The image is not scaled. |
 | scale-down | 	The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped. |
+
+### Iframe
+
+
+### Colour
+
 
 ## Labels and Numbers
 

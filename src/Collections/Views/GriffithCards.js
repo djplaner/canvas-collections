@@ -627,10 +627,29 @@ export default class GriffithCardsView extends cc_View {
 			return this.generateBannerColour(module);
 		} else if (module.banner==='iframe') {
 			// TODO
-			console.log('nothing');
+			return this.generateBannerIframe(module);
 		} else { // image is the default
 			return this.generateCardImage(module);
 		}
+	}
+
+	/**
+	 * @function generateBannerIframe
+	 * @description	Return HTML for a iframe banner
+	 * If the iframe object is empty, return a basic div
+	 * @param {Object} module 
+	 */
+	generateBannerIframe(module) {
+		if (module.hasOwnProperty('iframe') && module.iframe!=='') {
+			// TODO should probably do some checks on the iframe
+			const match = module.iframe.match(/<iframe.*src="(.*)".*<\/iframe>/);
+			if (match) {
+				return module.iframe;
+			}
+			return `<div class="cc-banner-colour" style="background-color:#ffffff;width:100%;height:10rem;">
+			   <p>Iframe doesn't match expected iframe HTML format.</p></div>`;
+		}
+		return `<div class="cc-banner-colour" style="background-color:#ffffff;width:100%;height:10rem;">(<em>No iframe specified</em>)</div>`;
 	}
 
 	/**
