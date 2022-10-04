@@ -912,7 +912,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.9";
+const CC_VERSION = "0.9.1";
 
 const CV_DEFAULT_DATE_LABEL = "Commencing";
 
@@ -6720,7 +6720,7 @@ class GriffithCardsView extends cc_View {
 			bgColour = module.bannerColour;
 		}
 
-		return `<div class="cc-banner-colour"style="background-color:${bgColour};width:100%;height:10rem;"></div>`;
+		return `<div class="cc-banner-colour"style="background-color:${bgColour};width:100%;height:10rem;">&nbsp;</div>`;
 	}
 
 	/**

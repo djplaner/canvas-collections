@@ -666,7 +666,7 @@ export default class GriffithCardsView extends cc_View {
 			bgColour = module.bannerColour;
 		}
 
-		return `<div class="cc-banner-colour"style="background-color:${bgColour};width:100%;height:10rem;"></div>`;
+		return `<div class="cc-banner-colour"style="background-color:${bgColour};width:100%;height:10rem;">&nbsp;</div>`;
 	}
 
 	/**

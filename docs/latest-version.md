@@ -1,10 +1,10 @@
-# Latest Version **0.9**
+# Latest Version **0.9.1**
 
 Canvas Collections remains very much under active development. New versions with new features (and bug fixes) are released weekly. It is recommended to always have [the latest version installed](./getting-started/install/types-pre-requisites.md).
 
 ## Current Status
 
-version **0.9** of Canvas Collections
+version **0.9.1** of Canvas Collections
 
 - Should work on all Canvas instances, but intended largely for use at Griffith University
 
