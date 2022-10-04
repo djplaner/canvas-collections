@@ -80,8 +80,24 @@ See the [Image Scale](../../../walk-throughs/new/configure-modules/#image-scale)
 
 ### Iframe
 
+The iframe banner option allows you to copy and paste a [HTML iframe element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe). Meaning you're able to embed other web content such as another web page, but more commonly a video (e.g. from YouTube or Studio). Collections will perform some checks on the iframe code and will modify it to work within the context of a card.
+
+The following animated image demonstrates the process of using the iframe banner option. Before starting, a [public embed code (aka iframe) for a Canvas Studio video](https://community.canvaslms.com/t5/Studio/How-do-I-get-a-public-link-or-embed-code-for-media-in-Canvas/ta-p/1712) was created and then copied into the clipboard. The image shows the process from there, including:
+
+1. Moving to the Module's configuration area.
+2. Opening the _banner_ section and moving to the _iframe_ option.
+3. Pasting the video iframe code into the available text area and resizing the text area to better see the code.
+4. Reading the alert box Collections generates when it detects a change in the iframe code.
+5. A return to the module to view the video and press play.
+
+![](pics/iframeAnimated.gif)
 
 ### Colour
+
+The colour banner option allows you to choose a fixed colour for the banner. This has proven useful in situations where a module represents a topic/purposes for which no photo or video is available or suitable. The colour is chosen using a colour picker - as demonstrated in the following animated image.
+
+![](pics/colourPickerAnimated.gif)
+
 
 
 ## Labels and Numbers

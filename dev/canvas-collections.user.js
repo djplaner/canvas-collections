@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.9.0
+// @version      0.9.1
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -10029,7 +10029,11 @@ class cc_Controller {
 
 		this.mergedModuleDetails = {};
 
-		this.removeDeletedModules(collectionsModules, canvasModules);
+		const removed = this.removeDeletedModules(collectionsModules, canvasModules);
+		if ( removed ) {
+			// if we've removed any modules, need to save the change
+			this.saveConfig();
+		}
 
 		// numCalculator use to calculate nums for collections 
 		// is keyed on collectionName and then label to point to an int 
@@ -10090,9 +10094,12 @@ class cc_Controller {
 	 * @descr Remove from collections configuration any modules that no longer exist in Canvas
 	 * @param {Object} collectionsModules - modules as configured in collections (keyed on moduleId)
 	 * @param {Array} canvasModules - current course Canvas modules
+	 * @return {Boolean} - true if any modules were removed
 	 */
 
 	removeDeletedModules(collectionsModules, canvasModules) {
+		let removed = false;
+
 		// generate dictionary of canvas module ids
 		let canvasModuleIds = {};
 		for (let i = 0; i < canvasModules.length; i++) {
@@ -10105,8 +10112,10 @@ class cc_Controller {
 				console.log(`cc_Controller: removeDeletedModules: removing module ${moduleId} from collections configuration`);
 				alert(`cc_Controller: removeDeletedModules: removing module ${moduleId} from collections configuration`);
 				delete collectionsModules[moduleId];
+				removed = true;
 			}
 		}
+		return removed;
 	}
 
 	/**
