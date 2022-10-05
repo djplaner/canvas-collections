@@ -11,7 +11,6 @@
 // @homepage     https://github.com/djplaner/canvas-collections/tree/main#canvas-collections
 // @require      https://unpkg.com/circular-progress-bar
 // @require      https://rawcdn.githack.com/djplaner/canvas-collections/62a4248058d13d32c574f0b620760891651587a7/src/juice/juice_client.js
-// @require      https://rawcdn.githack.com/ytiurin/html5tooltipsjs/e91ac553b17a7cc08d5b6820b82a40e7f95b23a2/versions/html5tooltips.1.7.3.min.js
 // @require      https://unpkg.com/@lamplightdev/aeon
 // @require      https://cdn.quilljs.com/1.0.0/quill.min.js
 // ==/UserScript==
@@ -9827,7 +9826,7 @@ class cc_Controller {
 	 */
 	injectShoelace() {
 		const checkShoelace = document.querySelector('#shoelace.js');
-		if ( checkShoelace) {
+		if (checkShoelace) {
 			return;
 		}
 		const shoelaceScript = document.createElement('script');
@@ -9895,7 +9894,7 @@ class cc_Controller {
 	 */
 
 	generateSTRM() {
-		if ( ! this.hasOwnProperty('calendar')) {
+		if (!this.hasOwnProperty('calendar')) {
 			this.calendar = new UniversityDateCalendar();
 		}
 
@@ -9913,7 +9912,7 @@ class cc_Controller {
 		// - year - full year
 		// - period - descriptive name for the period
 		// - type - string specifying the type of study period
-//		this.aboutStudyPeriod = this.calendar.parseStudyPeriod(this.studyPeriod);
+		//		this.aboutStudyPeriod = this.calendar.parseStudyPeriod(this.studyPeriod);
 
 		this.parseStrm();
 
@@ -10016,6 +10015,7 @@ class cc_Controller {
 	 * It also adds the following fields
 	 * - actualNum - which is auto calculated (maybe) version of num
 	 * - removes from collections configuration any modules that no longer exist in Canvas
+	 * - updates the name of any modules from Canvas to Collections
 	 * 
 	 * - Calls this.execute() when done
 	 */
@@ -10029,10 +10029,13 @@ class cc_Controller {
 
 		this.mergedModuleDetails = {};
 
-		const removed = this.removeDeletedModules(collectionsModules, canvasModules);
-		if ( removed ) {
-			// if we've removed any modules, need to save the change
-			this.saveConfig();
+		if (this.editMode) {
+			// only check to remove deleted modules if edit mode
+			const removed = this.removeDeletedModules(collectionsModules, canvasModules);
+			if (removed) {
+				// if we've removed any modules, need to save the change
+				this.saveConfig();
+			}
 		}
 
 		// numCalculator use to calculate nums for collections 

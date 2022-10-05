@@ -74,7 +74,7 @@ export default class cc_Controller {
 	 */
 	injectShoelace() {
 		const checkShoelace = document.querySelector('#shoelace.js');
-		if ( checkShoelace) {
+		if (checkShoelace) {
 			return;
 		}
 		const shoelaceScript = document.createElement('script');
@@ -142,7 +142,7 @@ export default class cc_Controller {
 	 */
 
 	generateSTRM() {
-		if ( ! this.hasOwnProperty('calendar')) {
+		if (!this.hasOwnProperty('calendar')) {
 			this.calendar = new UniversityDateCalendar();
 		}
 
@@ -160,7 +160,7 @@ export default class cc_Controller {
 		// - year - full year
 		// - period - descriptive name for the period
 		// - type - string specifying the type of study period
-//		this.aboutStudyPeriod = this.calendar.parseStudyPeriod(this.studyPeriod);
+		//		this.aboutStudyPeriod = this.calendar.parseStudyPeriod(this.studyPeriod);
 
 		this.parseStrm();
 
@@ -277,10 +277,13 @@ export default class cc_Controller {
 
 		this.mergedModuleDetails = {};
 
-		const removed = this.removeDeletedModules(collectionsModules, canvasModules);
-		if ( removed ) {
-			// if we've removed any modules, need to save the change
-			this.saveConfig();
+		if (this.editMode) {
+			// only check to remove deleted modules if edit mode
+			const removed = this.removeDeletedModules(collectionsModules, canvasModules);
+			if (removed) {
+				// if we've removed any modules, need to save the change
+				this.saveConfig();
+			}
 		}
 
 		// numCalculator use to calculate nums for collections 
