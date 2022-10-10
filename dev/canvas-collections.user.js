@@ -3455,8 +3455,75 @@ class updatePageController {
 			this.configurationController.completeFullClaytons(this);
 			return;
 		} 
-		this.getOutputPage();
+		this.startUpdate();
+	}
+
+	startUpdate() {
+		if (this.tasks.length===0) {
+			this.configurationController.completeFullClaytons(this);
+			return;
+		}
+
+		this.includePageName = this.getCollectionIncludePage(this.tasks[0].collection);
+		if (this.includePageName) {
+			// get the include page content
+			// a chain that eventually starts getOutputPage
+		    const includePageName = this.includePageName.toLowerCase().replace(/ /g,'-');
+			this.getIncludePageContent(includePageName);
+		} else {
+			this.getOutputPage();
+		}
 	} 
+
+	getCollectionIncludePage(collectionName) {
+		if ( !this.parentController.cc_configuration.COLLECTIONS.hasOwnProperty(collectionName) ||
+			!this.parentController.cc_configuration.COLLECTIONS[collectionName].hasOwnProperty('includePage')) {
+			return null;
+		}
+		return this.parentController.cc_configuration.COLLECTIONS[collectionName].includePage
+	}
+
+	/**
+	 * 
+	 * @param {String} pageName 
+	 */
+
+	/**
+	 * Use the Canvas API to get the full details of the page (pageObject)
+	 * And insert the contents into div#cc-include-page
+	 */
+	async getIncludePageContent(pageName) {
+
+		let callUrl = `/api/v1/courses/${this.parentController.courseId}/pages/${pageName}`;
+
+		DEBUG && console.log(`updatePageController: getIncludePageContent: callUrl = ${callUrl}`);
+
+		const response = await fetch(callUrl, {
+			method: 'GET', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": this.parentController.csrf,
+			}
+		});
+
+		if (!response.ok) {
+			DEBUG && console.log(`updatePagController: getIncludePageContent: response not ok`);
+			// TODO if in edit mode, display some error
+			return;
+		}
+
+		const newPageObject = await response.json();
+		// save the include page content for this task for latter use in the pipeline
+		this.tasks[0].includePageContent = `
+		<div id="cc-${this.tasks[0].collection}-includePage" class="cc-includePage">
+		  ${newPageObject.body}
+		</div>`;
+
+		// now start getting the output page
+		this.getOutputPage();
+	}
+
 
 	/**
 	 * @descr getOutputPage
@@ -3471,10 +3538,6 @@ class updatePageController {
 
 	async getOutputPage() {
 		// check if there's an object in this.tasks
-		if (this.tasks.length===0) {
-			this.configurationController.completeFullClaytons(this);
-			return;
-		}
 		const courseId = this.configurationController.parentController.courseId;
 		const outputPageURL = this.tasks[0].outputPageURL;
 
@@ -3510,7 +3573,7 @@ class updatePageController {
 	}
 
 	/**
-	 * @function updateOutputContent
+	 * @function updateTabContent
 	 * @descr Task is focused on a page with multiple collections. Aiming to wrap
 	 * a new "tab" interface around the collection divs. Once complete call writeOutputPage
 	 * 
@@ -3529,6 +3592,8 @@ class updatePageController {
 	 *    - inserted into the new tab interface (in order of collections)
 	 */
 	updateTabContent() {
+		// updating a tabbed page
+
 		if ( ! this.tasks[0].hasOwnProperty('pageObject') ) {
 			this.errorFirstTask(`No pageObject for ${this.tasks[0].outputPageURL}`);
 			return;
@@ -3539,6 +3604,7 @@ class updatePageController {
 			(collectionName) => collectionName.replace(/ /g,'-')
 		);
 		const originalContent = pageObject.body;
+
 
 
 		// start parsing what's in the existing content
@@ -3575,9 +3641,8 @@ class updatePageController {
 	}
 
 	/**
-	 * Apparently we've gotten the page content (pageObject) for the first task in tasks
-	 * - use the representation to get new content for the task's collection
-	 * - either append/update the content to the div#cc-output-<collection-name> 
+	 * @function updateOutputContent
+	 * @descr Task is focused on a single collection. Aiming to update the content
 	 */
 
 	updateOutputContent() {
@@ -3616,6 +3681,12 @@ class updatePageController {
 			doc.body.appendChild(newDiv);
 		}
 
+		// remove any .cc-includePage
+		const includePages = doc.getElementsByClassName('cc-includePage');
+		for (let i=0; i<includePages.length; i++) {
+			includePages[i].remove();
+		}
+
 		// remove the nav bar stuff if we're none navOption
 		if (this.navOption === '1') {
 			// remove any ul.cc-nav
@@ -3631,8 +3702,14 @@ class updatePageController {
 			}
 		}
 
+		let newContent = doc.body.innerHTML;
 
-		this.tasks[0].newContent = doc.body.innerHTML;
+		if ( this.tasks[0].hasOwnProperty('includePageContent') && this.tasks[0].includePageContent ) {
+			// there's content from an includePage - add it
+			newContent = this.tasks[0].includePageContent + newContent;
+		}
+
+		this.tasks[0].newContent = newContent;
 
 		this.writeOutputPage();
 	}
@@ -3649,6 +3726,8 @@ class updatePageController {
 		}
 
 		let newContent = this.tasks[0].newContent;
+
+
 		const courseId = this.configurationController.parentController.courseId;
 		const outputPageURL = this.tasks[0].outputPageURL;
 
@@ -3707,7 +3786,8 @@ class updatePageController {
 			finishedTask.completed = true;
 			this.completedTasks.push(finishedTask);
 			// start the next task
-			this.getOutputPage();
+//			this.getOutputPage();
+			this.startUpdate();
 		}
 	}
 
