@@ -277,6 +277,7 @@ export default class updatePageController {
 		if (this.tasks[0].hasOwnProperty('collection')) {
 			this.updateOutputContent();
 		} else {
+			// just adding the tab interface
 			this.updateTabContent();
 		}
 	}
@@ -326,10 +327,18 @@ export default class updatePageController {
 			const divId = `cc-output-${escCollectionNames[i]}`;
 			const collectionDiv = doc.getElementById(divId);
 			if (collectionDiv) {
-//				collectionDivs.push(collectionDiv);
+				// save the div
 				collectionDivHTML += collectionDiv.outerHTML;
+
+				// remove the old collection div
 				collectionDiv.remove();
 			}
+		}
+
+		// remove all .cc-includePage divs
+		const includePageDivs = doc.getElementsByClassName('cc-includePage');
+		for (let i=0; i<includePageDivs.length; i++) {
+			includePageDivs[i].remove();
 		}
 
 		// get the tab interface HTML from navView
@@ -390,11 +399,26 @@ export default class updatePageController {
 			doc.body.appendChild(newDiv);
 		}
 
+		// at this stage, doc will contain the new div for the collection
+		// if there's an include page, insert it into that div
+		if ( this.tasks[0].hasOwnProperty('includePageContent') && this.tasks[0].includePageContent ) {
+			// there's content from an includePage - add it
+			const newDiv = doc.getElementById(divId);
+			// remove any existing cc-includePage divs in newDiv
+			const includePageDivs = newDiv.getElementsByClassName('cc-includePage');
+			for (let i=0; i<includePageDivs.length; i++) {
+				includePageDivs[i].remove();
+			}
+			// insert the new includePageContent at the beginning of the div
+			newDiv.insertAdjacentHTML('afterbegin',this.tasks[0].includePageContent);
+		}
+
 		// remove any .cc-includePage
-		const includePages = doc.getElementsByClassName('cc-includePage');
+		// don't need this as the includePage stuff should be within the collection div
+		/*const includePages = doc.getElementsByClassName('cc-includePage');
 		for (let i=0; i<includePages.length; i++) {
 			includePages[i].remove();
-		}
+		} */
 
 		// remove the nav bar stuff if we're none navOption
 		if (this.navOption === '1') {
@@ -412,11 +436,6 @@ export default class updatePageController {
 		}
 
 		let newContent = doc.body.innerHTML;
-
-		if ( this.tasks[0].hasOwnProperty('includePageContent') && this.tasks[0].includePageContent ) {
-			// there's content from an includePage - add it
-			newContent = this.tasks[0].includePageContent + newContent;
-		}
 
 		this.tasks[0].newContent = newContent;
 
