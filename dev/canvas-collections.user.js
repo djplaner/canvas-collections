@@ -1037,6 +1037,13 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#include-page"
 	},
 	{
+		contentText: `<p>By default, include page contents placed <em>before</em> the collection. When selected
+		will place the include page contents <em>after</em> the collection.</p>`,
+		targetSelector: '.cc-about-include-after',
+		animateFunction: "spin",
+//		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#hide-a-collection"
+	},
+	{
 		contentText: `<p>🚧🧪☠️ <strong>Warning:</strong> This feature is experimental, under construction, and
 		potentially destructive. Only use as suggested and if you're certain.</p>
 		<p>Modify the names of Canvas modules by apply the Collection's label/number</p>
@@ -2708,6 +2715,15 @@ class cc_ConfigurationView extends cc_View {
 				  	<div style="padding-left:0.5em">
 				 		<input id="cc-collection-${collectionName}-include-page" 
 					     value="${includePage}" class="cc-existing-collection" />
+				        <sl-tooltip class="cc-about-include-after">
+	  						<div slot="content"></div>
+								<i class="icon-question cc-module-icon"></i>
+							</sl-tooltip>
+							<input type="checkbox" id="cc-config-collection-${collectionName}-include-after"
+							    class="cc-config-collection-include-after">
+							<label for="cc-config-collection-${collectionName}-include-after">
+								After?
+							</label>
 				  	</div>
 				</div>
 				<!-- output page -->
@@ -2765,6 +2781,16 @@ class cc_ConfigurationView extends cc_View {
 					hideCheckbox.checked = true;
 				} else {
 					hideCheckbox.checked = false;
+				}
+			}
+
+			const includeAfter = this.model.getCollectionAttribute(collectionName, "includeAfter");
+			const includeAfterCheckbox = document.getElementById(`cc-config-collection-${collectionName}-include-after`);
+			if (includeAfterCheckbox) {
+				if (includeAfter) {
+					includeAfterCheckbox.checked = true;
+				} else {
+					includeAfterCheckbox.checked = false;
 				}
 			}
 
@@ -2828,6 +2854,13 @@ class cc_ConfigurationView extends cc_View {
 		hideCheckboxes.forEach(checkbox => {
 			checkbox.onchange = (event) => this.controller.changeHideCollection(event);
 		});
+
+		// add event handler for .cc-config-collection-include-after selection
+		const includeAfterCheckboxes = document.querySelectorAll('input.cc-config-collection-include-after');
+		includeAfterCheckboxes.forEach(checkbox => {
+			checkbox.onchange = (event) => this.controller.changeIncludeAfterCollection(event);
+		});
+
 		// add event handler for input.cc-existing-collection (the page inputs)
 		const existingCollections = document.querySelectorAll('input.cc-existing-collection');
 		existingCollections.forEach(collection => {
@@ -3475,12 +3508,21 @@ class updatePageController {
 		}
 	} 
 
+
+	getCollectionIncludeAfter(collectionName) {
+		if ( !this.parentController.cc_configuration.COLLECTIONS.hasOwnProperty(collectionName) ||
+			!this.parentController.cc_configuration.COLLECTIONS[collectionName].hasOwnProperty('includeAfter')) {
+			return null;
+		}
+		return this.parentController.cc_configuration.COLLECTIONS[collectionName].includeAfter;
+	}
+
 	getCollectionIncludePage(collectionName) {
 		if ( !this.parentController.cc_configuration.COLLECTIONS.hasOwnProperty(collectionName) ||
 			!this.parentController.cc_configuration.COLLECTIONS[collectionName].hasOwnProperty('includePage')) {
 			return null;
 		}
-		return this.parentController.cc_configuration.COLLECTIONS[collectionName].includePage
+		return this.parentController.cc_configuration.COLLECTIONS[collectionName].includePage;
 	}
 
 	/**
@@ -3701,7 +3743,12 @@ class updatePageController {
 				includePageDivs[i].remove();
 			}
 			// insert the new includePageContent at the beginning of the div
-			newDiv.insertAdjacentHTML('afterbegin',this.tasks[0].includePageContent);
+			const includeAfter = this.getCollectionIncludeAfter(collectionName);
+			if (!includeAfter) {
+				newDiv.insertAdjacentHTML('afterbegin',this.tasks[0].includePageContent);
+			} else {
+				newDiv.insertAdjacentHTML('beforeend',this.tasks[0].includePageContent);
+			}
 		}
 
 		// remove any .cc-includePage
@@ -4453,6 +4500,31 @@ class cc_ConfigurationController {
 		// update the display
 		//this.parentController.collectionsController.view.updateCurrentRepresentation();
 		this.parentController.collectionsController.view.display();
+	}
+
+	/**
+	 * User has clicked the "include after" checkbox
+	 * - set the value of the collections "includeAfter"
+	 * - update the display
+	 * @param {*} event 
+	 */
+
+	changeIncludeAfterCollection(event) {
+		const value = event.target.checked;
+
+		// get the name of the collection to change hide
+		const idString = event.target.id;
+		// extract the collectionName from the id format cc-config-collection-<collectionName>-default
+		const collectionName = idString.match(/cc-config-collection-(.*)-include-after/)[1];
+
+		// change the current DEFAULT_COLLECTION
+		this.model.setCollectionAttribute(collectionName, 'includeAfter', value);
+		this.changeMade(true);
+
+		// update the display
+		//this.parentController.collectionsController.view.updateCurrentRepresentation();
+		this.parentController.collectionsController.view.display();
+
 	}
 
 	/**
@@ -5265,6 +5337,17 @@ class CollectionsModel {
 		for (let i = 0; i < fields.length; i++) {
 			date[fields[i]] = actualDate[fields[i]];
 		}
+	}
+
+	getCollectionAttribute(collectionName, attribute) {
+		DEBUG && console.log(`-------------- cc_CollectionsModel.getCollectionAttribute()`);
+
+		// return null if there's no matching collection or attribute
+		if (!this.controller.parentController.cc_configuration.COLLECTIONS[collectionName] ||
+			!this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute]) {
+			return undefined;
+		}
+		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute];
 	}
 
 
@@ -7751,12 +7834,12 @@ class CollectionsView extends cc_View {
 
 		// set up div#cc-nav
 		this.navView.display();
-		// set up div#cc-include-page
-		this.addIncludePage();
+
 
 		this.updateCurrentRepresentation();
 
-
+		// async call to add include page
+		this.addIncludePage();
 		// display the current collection using its representation
 		//	this.representationView.display();
 	}
@@ -7775,7 +7858,7 @@ class CollectionsView extends cc_View {
 	 * @return {String} HTML string
 	 */
 
-	generateHTML(collectionName,variety="",navOption="2") {
+	generateHTML(collectionName, variety = "", navOption = "2") {
 		// does the collection have a representation?
 		if (!this.representations[collectionName]) {
 			return undefined;
@@ -7787,16 +7870,16 @@ class CollectionsView extends cc_View {
 			return undefined;
 		}
 
-		let html = this.representations[collectionName].generateHTML(collectionName,variety);
+		let html = this.representations[collectionName].generateHTML(collectionName, variety);
 
 		// add in the navBar insert it at the beginning of html
-		if (navOption ) {
+		if (navOption) {
 			// depending on the navOption, we'll append the navBar differently
 			// - none (1) there is no navBar
 			// - paged (2) prepend the navBar
 			// - tab (3) there is no navBar
-			if (navOption ==="2") {
-				html = `${this.navView.generateHTML(collectionName,navOption)}${html}`;
+			if (navOption === "2") {
+				html = `${this.navView.generateHTML(collectionName, navOption)}${html}`;
 			}
 		}
 		// TODO
@@ -7828,13 +7911,27 @@ class CollectionsView extends cc_View {
 		// - already for the async grabbing of page content to be inserted
 		let ccIncludePage = document.createElement('div');
 		ccIncludePage.id = 'cc-include-page';
-		
-		// add after div.cc-nav
-		let ccNav = document.querySelector('div.cc-nav');
-		if (ccNav) {
-			ccNav.insertAdjacentElement('afterend', ccIncludePage);
+
+		const currentCollection = this.model.currentCollection;
+		const includeAfter = this.model.getCollectionAttribute(currentCollection, 'includeAfter');
+
+		// add before/after the div.cc-representation
+		const ccRepresentation = document.querySelector('div.cc-representation');
+
+		if (ccRepresentation) {
+			if (includeAfter) {
+				ccRepresentation.insertAdjacentElement('afterend', ccIncludePage);
+			} else {
+				ccRepresentation.insertAdjacentElement('beforebegin', ccIncludePage);
+			}
 		}
-		
+
+		// add before/after div.cc-nav
+		/*		let ccNav = document.querySelector('div.cc-nav');
+				if (ccNav) {
+					ccNav.insertAdjacentElement('afterend', ccIncludePage);
+				} */
+
 		const includePage = this.model.getCurrentCollectionIncludePage();
 
 		if (includePage) {
@@ -7871,7 +7968,7 @@ class CollectionsView extends cc_View {
 		if (data.length === 0) {
 			DEBUG && console.log(`CollectionsView: findPage no page found for ${pageName}`);
 			// TODO if in edit mode, display some error
-		} 
+		}
 
 		// add the page content for the first found page
 		// TODO is this needed
@@ -7927,11 +8024,11 @@ class CollectionsView extends cc_View {
 	 * 
 	 */
 
-	updateCurrentRepresentation(justRepresentation=false) {
+	updateCurrentRepresentation(justRepresentation = false) {
 		const currentCollection = this.model.getCurrentCollection();
 		const representation = this.model.getCollectionRepresentation(currentCollection);
 
-		if (currentCollection==="" || !representation) {
+		if (currentCollection === "" || !representation) {
 			// nothing to do here
 			return;
 		}
@@ -7981,7 +8078,7 @@ class CollectionsView extends cc_View {
 					}
 				}
 				// TODO? colour it someway
-			} else if(module.collection !== currentCollection) {
+			} else if (module.collection !== currentCollection) {
 				// not the right collection, skip this one
 				// set the Canvas module div to display:none
 				// find div.context_module with data-module-id="${module.id}"

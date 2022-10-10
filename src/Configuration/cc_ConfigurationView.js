@@ -116,6 +116,13 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#include-page"
 	},
 	{
+		contentText: `<p>By default, include page contents placed <em>before</em> the collection. When selected
+		will place the include page contents <em>after</em> the collection.</p>`,
+		targetSelector: '.cc-about-include-after',
+		animateFunction: "spin",
+//		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#hide-a-collection"
+	},
+	{
 		contentText: `<p>🚧🧪☠️ <strong>Warning:</strong> This feature is experimental, under construction, and
 		potentially destructive. Only use as suggested and if you're certain.</p>
 		<p>Modify the names of Canvas modules by apply the Collection's label/number</p>
@@ -1787,6 +1794,15 @@ export default class cc_ConfigurationView extends cc_View {
 				  	<div style="padding-left:0.5em">
 				 		<input id="cc-collection-${collectionName}-include-page" 
 					     value="${includePage}" class="cc-existing-collection" />
+				        <sl-tooltip class="cc-about-include-after">
+	  						<div slot="content"></div>
+								<i class="icon-question cc-module-icon"></i>
+							</sl-tooltip>
+							<input type="checkbox" id="cc-config-collection-${collectionName}-include-after"
+							    class="cc-config-collection-include-after">
+							<label for="cc-config-collection-${collectionName}-include-after">
+								After?
+							</label>
 				  	</div>
 				</div>
 				<!-- output page -->
@@ -1844,6 +1860,16 @@ export default class cc_ConfigurationView extends cc_View {
 					hideCheckbox.checked = true;
 				} else {
 					hideCheckbox.checked = false;
+				}
+			}
+
+			const includeAfter = this.model.getCollectionAttribute(collectionName, "includeAfter");
+			const includeAfterCheckbox = document.getElementById(`cc-config-collection-${collectionName}-include-after`);
+			if (includeAfterCheckbox) {
+				if (includeAfter) {
+					includeAfterCheckbox.checked = true;
+				} else {
+					includeAfterCheckbox.checked = false;
 				}
 			}
 
@@ -1907,6 +1933,13 @@ export default class cc_ConfigurationView extends cc_View {
 		hideCheckboxes.forEach(checkbox => {
 			checkbox.onchange = (event) => this.controller.changeHideCollection(event);
 		});
+
+		// add event handler for .cc-config-collection-include-after selection
+		const includeAfterCheckboxes = document.querySelectorAll('input.cc-config-collection-include-after');
+		includeAfterCheckboxes.forEach(checkbox => {
+			checkbox.onchange = (event) => this.controller.changeIncludeAfterCollection(event);
+		});
+
 		// add event handler for input.cc-existing-collection (the page inputs)
 		const existingCollections = document.querySelectorAll('input.cc-existing-collection');
 		existingCollections.forEach(collection => {

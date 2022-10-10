@@ -357,6 +357,31 @@ export default class cc_ConfigurationController {
 	}
 
 	/**
+	 * User has clicked the "include after" checkbox
+	 * - set the value of the collections "includeAfter"
+	 * - update the display
+	 * @param {*} event 
+	 */
+
+	changeIncludeAfterCollection(event) {
+		const value = event.target.checked;
+
+		// get the name of the collection to change hide
+		const idString = event.target.id;
+		// extract the collectionName from the id format cc-config-collection-<collectionName>-default
+		const collectionName = idString.match(/cc-config-collection-(.*)-include-after/)[1];
+
+		// change the current DEFAULT_COLLECTION
+		this.model.setCollectionAttribute(collectionName, 'includeAfter', value);
+		this.changeMade(true);
+
+		// update the display
+		//this.parentController.collectionsController.view.updateCurrentRepresentation();
+		this.parentController.collectionsController.view.display();
+
+	}
+
+	/**
 	 * User has clicked on a "default collection" checkbox. 
 	 * - if the checkbox was already checked (i.e) it's now unchecked, then error saying
 	 *   can't uncheck the default collection

@@ -184,12 +184,21 @@ export default class updatePageController {
 		}
 	} 
 
+
+	getCollectionIncludeAfter(collectionName) {
+		if ( !this.parentController.cc_configuration.COLLECTIONS.hasOwnProperty(collectionName) ||
+			!this.parentController.cc_configuration.COLLECTIONS[collectionName].hasOwnProperty('includeAfter')) {
+			return null;
+		}
+		return this.parentController.cc_configuration.COLLECTIONS[collectionName].includeAfter;
+	}
+
 	getCollectionIncludePage(collectionName) {
 		if ( !this.parentController.cc_configuration.COLLECTIONS.hasOwnProperty(collectionName) ||
 			!this.parentController.cc_configuration.COLLECTIONS[collectionName].hasOwnProperty('includePage')) {
 			return null;
 		}
-		return this.parentController.cc_configuration.COLLECTIONS[collectionName].includePage
+		return this.parentController.cc_configuration.COLLECTIONS[collectionName].includePage;
 	}
 
 	/**
@@ -410,7 +419,12 @@ export default class updatePageController {
 				includePageDivs[i].remove();
 			}
 			// insert the new includePageContent at the beginning of the div
-			newDiv.insertAdjacentHTML('afterbegin',this.tasks[0].includePageContent);
+			const includeAfter = this.getCollectionIncludeAfter(collectionName);
+			if (!includeAfter) {
+				newDiv.insertAdjacentHTML('afterbegin',this.tasks[0].includePageContent);
+			} else {
+				newDiv.insertAdjacentHTML('beforeend',this.tasks[0].includePageContent);
+			}
 		}
 
 		// remove any .cc-includePage

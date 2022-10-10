@@ -432,5 +432,16 @@ export default class CollectionsModel {
 		}
 	}
 
+	getCollectionAttribute(collectionName, attribute) {
+		DEBUG && console.log(`-------------- cc_CollectionsModel.getCollectionAttribute()`);
+
+		// return null if there's no matching collection or attribute
+		if (!this.controller.parentController.cc_configuration.COLLECTIONS[collectionName] ||
+			!this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute]) {
+			return undefined;
+		}
+		return this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute];
+	}
+
 
 }

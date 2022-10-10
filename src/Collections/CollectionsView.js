@@ -72,12 +72,12 @@ export default class CollectionsView extends cc_View {
 
 		// set up div#cc-nav
 		this.navView.display();
-		// set up div#cc-include-page
-		this.addIncludePage();
+
 
 		this.updateCurrentRepresentation();
 
-
+		// async call to add include page
+		this.addIncludePage();
 		// display the current collection using its representation
 		//	this.representationView.display();
 	}
@@ -96,7 +96,7 @@ export default class CollectionsView extends cc_View {
 	 * @return {String} HTML string
 	 */
 
-	generateHTML(collectionName,variety="",navOption="2") {
+	generateHTML(collectionName, variety = "", navOption = "2") {
 		// does the collection have a representation?
 		if (!this.representations[collectionName]) {
 			return undefined;
@@ -108,16 +108,16 @@ export default class CollectionsView extends cc_View {
 			return undefined;
 		}
 
-		let html = this.representations[collectionName].generateHTML(collectionName,variety);
+		let html = this.representations[collectionName].generateHTML(collectionName, variety);
 
 		// add in the navBar insert it at the beginning of html
-		if (navOption ) {
+		if (navOption) {
 			// depending on the navOption, we'll append the navBar differently
 			// - none (1) there is no navBar
 			// - paged (2) prepend the navBar
 			// - tab (3) there is no navBar
-			if (navOption ==="2") {
-				html = `${this.navView.generateHTML(collectionName,navOption)}${html}`;
+			if (navOption === "2") {
+				html = `${this.navView.generateHTML(collectionName, navOption)}${html}`;
 			}
 		}
 		// TODO
@@ -149,13 +149,27 @@ export default class CollectionsView extends cc_View {
 		// - already for the async grabbing of page content to be inserted
 		let ccIncludePage = document.createElement('div');
 		ccIncludePage.id = 'cc-include-page';
-		
-		// add after div.cc-nav
-		let ccNav = document.querySelector('div.cc-nav');
-		if (ccNav) {
-			ccNav.insertAdjacentElement('afterend', ccIncludePage);
+
+		const currentCollection = this.model.currentCollection;
+		const includeAfter = this.model.getCollectionAttribute(currentCollection, 'includeAfter');
+
+		// add before/after the div.cc-representation
+		const ccRepresentation = document.querySelector('div.cc-representation');
+
+		if (ccRepresentation) {
+			if (includeAfter) {
+				ccRepresentation.insertAdjacentElement('afterend', ccIncludePage);
+			} else {
+				ccRepresentation.insertAdjacentElement('beforebegin', ccIncludePage);
+			}
 		}
-		
+
+		// add before/after div.cc-nav
+		/*		let ccNav = document.querySelector('div.cc-nav');
+				if (ccNav) {
+					ccNav.insertAdjacentElement('afterend', ccIncludePage);
+				} */
+
 		const includePage = this.model.getCurrentCollectionIncludePage();
 
 		if (includePage) {
@@ -192,7 +206,7 @@ export default class CollectionsView extends cc_View {
 		if (data.length === 0) {
 			DEBUG && console.log(`CollectionsView: findPage no page found for ${pageName}`);
 			// TODO if in edit mode, display some error
-		} 
+		}
 
 		// add the page content for the first found page
 		// TODO is this needed
@@ -248,11 +262,11 @@ export default class CollectionsView extends cc_View {
 	 * 
 	 */
 
-	updateCurrentRepresentation(justRepresentation=false) {
+	updateCurrentRepresentation(justRepresentation = false) {
 		const currentCollection = this.model.getCurrentCollection();
 		const representation = this.model.getCollectionRepresentation(currentCollection);
 
-		if (currentCollection==="" || !representation) {
+		if (currentCollection === "" || !representation) {
 			// nothing to do here
 			return;
 		}
@@ -302,7 +316,7 @@ export default class CollectionsView extends cc_View {
 					}
 				}
 				// TODO? colour it someway
-			} else if(module.collection !== currentCollection) {
+			} else if (module.collection !== currentCollection) {
 				// not the right collection, skip this one
 				// set the Canvas module div to display:none
 				// find div.context_module with data-module-id="${module.id}"

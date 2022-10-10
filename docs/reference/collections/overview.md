@@ -32,11 +32,18 @@ Configure a collection so that students will not see it.
 
 ### Output page
 
-Specify the name of an **existing** page in the Canvas course site, when the _Update_ button is hit the page will be updated with a Claytons version of the collection's current representation. 
+Specify the name of an **existing** page in the Canvas course site, when the _Update_ button is hit the page will be updated with a [Claytons version](../representations/claytons/overview.md) of the collection's current representation. 
 
 ### Include page
 
-Specify the name of an **existing** page in the Canvas course site. When the collection is viewed, the contents of the page will be included before the collection's representation - just after the navigation bar.
+Specify the name of an **existing** page in the Canvas course site. When the collection is viewed, the contents of the page will be included before or after the collection's representation.
+
+| Element | Before | After |
+| --- | --- | --- | 
+| Placement | Before | After |
+| Configuration |  ![](pics/includeBeforeConfig.png)    | ![](pics/includeAfterConfig.png)   |
+| Page | ![](pics/includePage.png) | ![](pics/includePage.png)  |
+| Collections | ![](pics/includeBeforeCollections.png)  | ![](pics/includeAfterCollections.png)    |
 
 ### Apply module labels
 
