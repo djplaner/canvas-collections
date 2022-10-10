@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.9.1
+// @version      0.9.2
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -646,7 +646,10 @@ ${value}`);
 		const cc_configuration = this.controller.parentController.cc_configuration;
 		const collections = cc_configuration.COLLECTIONS;
 		// filter collections hash to return an array of objects with an actual outputPage
-		let collectionsWithOutputPages = Object.keys(collections).filter( (collectionName) => {
+		//let collectionsWithOutputPages = Object.keys(collections).filter( (collectionName) => {
+
+		// need to step through the collections keys in COLLECTIONS_ORDER
+		let collectionsWithOutputPages = cc_configuration.COLLECTIONS_ORDER.filter( (collectionName) => {
 			if (collections[collectionName].outputPage &&
 				collections[collectionName].outputPage !== '') {
 				return collectionName;
@@ -662,10 +665,10 @@ ${value}`);
 	 * @returns {Dictionary} key is page name, value is array of collection names
 	 */
 	getPagesWithMultipleCollections() {
+		const collectionNames = this.controller.parentController.cc_configuration.COLLECTIONS_ORDER;
 		const collections = this.controller.parentController.cc_configuration.COLLECTIONS;
 		const pages = {};
-		// for each collection
-		Object.keys(collections).forEach( (collectionName) => {
+		collectionNames.forEach( (collectionName) => {
 			// if there's an output page
 			if (collections[collectionName].outputPage &&
 				collections[collectionName].outputPage !== '') {
@@ -7589,7 +7592,7 @@ class CanvasPageView extends cc_View {
 
 		// get the pageName every time display is run in the hope we 
 		// get all changes
-		this.pageName = this.model.getCurrentCollectionPageName();
+		this.pageName = this.model.getCurrentCollectionIncludePage();
 
 		// Execution method will be
 		// - findPage - tries to find the named page in the course
@@ -7866,8 +7869,8 @@ class CollectionsView extends cc_View {
 
 		// does the collections representation have a method generateHTML
 		if (typeof this.representations[collectionName].generateHTML !== 'function') {
-			alert(`generateHTML not defined for ${collectionName} representation`);
-			return undefined;
+			console.log(`generateHTML not defined for ${collectionName} representation`);
+			return '';
 		}
 
 		let html = this.representations[collectionName].generateHTML(collectionName, variety);

@@ -104,8 +104,8 @@ export default class CollectionsView extends cc_View {
 
 		// does the collections representation have a method generateHTML
 		if (typeof this.representations[collectionName].generateHTML !== 'function') {
-			alert(`generateHTML not defined for ${collectionName} representation`);
-			return undefined;
+			console.log(`generateHTML not defined for ${collectionName} representation`);
+			return '';
 		}
 
 		let html = this.representations[collectionName].generateHTML(collectionName, variety);

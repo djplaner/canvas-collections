@@ -628,7 +628,10 @@ ${value}`);
 		const cc_configuration = this.controller.parentController.cc_configuration;
 		const collections = cc_configuration.COLLECTIONS;
 		// filter collections hash to return an array of objects with an actual outputPage
-		let collectionsWithOutputPages = Object.keys(collections).filter( (collectionName) => {
+		//let collectionsWithOutputPages = Object.keys(collections).filter( (collectionName) => {
+
+		// need to step through the collections keys in COLLECTIONS_ORDER
+		let collectionsWithOutputPages = cc_configuration.COLLECTIONS_ORDER.filter( (collectionName) => {
 			if (collections[collectionName].outputPage &&
 				collections[collectionName].outputPage !== '') {
 				return collectionName;
@@ -644,10 +647,10 @@ ${value}`);
 	 * @returns {Dictionary} key is page name, value is array of collection names
 	 */
 	getPagesWithMultipleCollections() {
+		const collectionNames = this.controller.parentController.cc_configuration.COLLECTIONS_ORDER;
 		const collections = this.controller.parentController.cc_configuration.COLLECTIONS;
 		const pages = {};
-		// for each collection
-		Object.keys(collections).forEach( (collectionName) => {
+		collectionNames.forEach( (collectionName) => {
 			// if there's an output page
 			if (collections[collectionName].outputPage &&
 				collections[collectionName].outputPage !== '') {

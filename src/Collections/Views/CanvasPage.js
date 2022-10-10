@@ -30,7 +30,7 @@ export default class CanvasPageView extends cc_View {
 
 		// get the pageName every time display is run in the hope we 
 		// get all changes
-		this.pageName = this.model.getCurrentCollectionPageName();
+		this.pageName = this.model.getCurrentCollectionIncludePage();
 
 		// Execution method will be
 		// - findPage - tries to find the named page in the course
