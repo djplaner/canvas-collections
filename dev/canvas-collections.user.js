@@ -936,7 +936,7 @@ class cc_View {
 
 const CC_VERSION = "0.9.2";
 
-const CV_DEFAULT_DATE_LABEL = "Commencing";
+const CV_DEFAULT_DATE_LABEL = "Starting";
 
 const CC_UNPUBLISHED_HTML = `
 <div class="cc-unpublished"> 
@@ -6790,7 +6790,11 @@ class GriffithCardsView extends cc_View {
 
 		let IMAGE_IFRAME = this.generateBanner(module);
 
-		const description = module.description;
+		let description = module.description;
+		if (description==="") {
+			// add some content so that the RCE doesn't remove the div entirely
+			description = "<p>&nbsp;</p>";
+		}
 
 		let COMING_SOON = this.generateComingSoon(module);
 		const REVIEW_ITEM = "";

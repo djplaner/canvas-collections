@@ -522,7 +522,11 @@ export default class GriffithCardsView extends cc_View {
 
 		let IMAGE_IFRAME = this.generateBanner(module);
 
-		const description = module.description;
+		let description = module.description;
+		if (description==="") {
+			// add some content so that the RCE doesn't remove the div entirely
+			description = "<p>&nbsp;</p>";
+		}
 
 		let COMING_SOON = this.generateComingSoon(module);
 		const REVIEW_ITEM = "";
