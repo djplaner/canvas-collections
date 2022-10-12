@@ -5904,6 +5904,7 @@ td.descriptionCell {
 
   .cc-table-cell-text {
     margin: 0;
+    font-size: 0.8rem;
   }
 
   .cc-table-cell-text > p {
@@ -6102,6 +6103,10 @@ class AssessmentTableView extends cc_View {
     const modules = this.model.getModulesCollections();
     const modulesUrl = this.model.getModuleViewUrl();
     let tableRows = '';
+
+    // used to track if learning outcomes were added
+    let emptyLearningOutcomes = true;
+
     for (let i = 0; i < modules.length; i++) {
 
       // skip if row doesn't match currentCollection
@@ -6124,7 +6129,7 @@ class AssessmentTableView extends cc_View {
         // [time] [day] [date] [month] [year]
         // with that repeated after a " - " if there's a to
         const dateFields = ['time', 'day', 'date', 'month', 'year'];
-        dateFields.forEach( field => {
+        dateFields.forEach(field => {
           if (calendarDate.hasOwnProperty(field) && calendarDate[field] !== "") {
             dueDateString = `${dueDateString} ${calendarDate[field]}`;
           }
@@ -6133,7 +6138,7 @@ class AssessmentTableView extends cc_View {
         // add the to values
         if (calendarDate.hasOwnProperty('to')) {
           dueDateString = `${dueDateString} - `;
-          dateFields.forEach( field => {
+          dateFields.forEach(field => {
             if (calendarDate.to.hasOwnProperty(field) && calendarDate.to[field] !== "") {
               dueDateString = `${dueDateString} ${calendarDate.to[field]}`;
             }
@@ -6149,7 +6154,8 @@ class AssessmentTableView extends cc_View {
         //'MODULE-ID': modules[i].id,
         'MODULE-ID': `${modulesUrl}/#${modules[i].id}`,
         'DESCRIPTION': modules[i].description,
-        'TITLE': this.model.deLabelModuleName(modules[i]),
+        //'TITLE': this.model.deLabelModuleName(modules[i]),
+        'TITLE': modules[i].name,
         'TYPE': modules[i].label,
         'DUE-DATE': dueDateString,
         'DATE-LABEL': dateLabel
@@ -6168,6 +6174,10 @@ class AssessmentTableView extends cc_View {
         }
         if (metaData.hasOwnProperty('learning outcomes')) {
           mapping['LEARNING-OUTCOMES'] = metaData['learning outcomes'];
+          // check if learning outcomes has anything in it
+          if (mapping['LEARNING-OUTCOMES'] !== '') {
+            emptyLearningOutcomes = false;
+          }
         }
       }
 
@@ -6192,11 +6202,16 @@ class AssessmentTableView extends cc_View {
 
     if (!editMode || variety === 'claytons') {
       messageHtml = this.emptyRemainingFields(messageHtml);
+
+      if (emptyLearningOutcomes) {
+        messageHtml = this.removeEmptyColumns(messageHtml);
+      }
     }
 
     return messageHtml;
 
   }
+
   /**
    * Remove any remaining {{field-name}} from the message HTML
    * @param {String} message 
@@ -6208,6 +6223,43 @@ class AssessmentTableView extends cc_View {
       message = message.replaceAll(`{{${fieldName}}}`, '');
     });
     return message;
+  }
+
+  /**
+   * @function removeEmptyColumns
+   * @description remove any columns from the complete table html that have no content
+   *  Initially the focus is on the learning outcomes column (5th column)
+   * @param {*} messageHtml 
+   * @returns 
+   */
+  removeEmptyColumns(messageHtml) {
+    // use domparser on messageHtml
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(messageHtml, 'text/html');
+
+    // find the table in doc
+    const table = doc.querySelector('table');
+
+    // loop thru the rows and remove the 5th td
+    const rows = table.querySelectorAll('tr');
+    // remove the 5th column from the header row
+    const headerRow = rows[0];
+    const headerCells = headerRow.querySelectorAll('th');
+    if (headerCells.length > 4) {
+      headerCells[4].remove();
+    }
+
+    // skip the header row
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      const tds = row.querySelectorAll('td');
+      if (tds.length > 4) {
+        row.removeChild(tds[4]);
+      }
+    }
+
+    // return the HTML from doc
+    return doc.body.innerHTML;
   }
 
 }
@@ -10542,7 +10594,7 @@ class cc_Controller {
 		this.courseId = courseId;
 
 		// modulesPage true if location ends with courses/${courseId}/modules
-		let regEx = new RegExp(`courses/${courseId}/modules(#*|#[^/]+)$`);
+		let regEx = new RegExp(`courses/${courseId}/modules(/*|#*|#[^/]+)$`);
 		this.modulesPage = regEx.test(this.documentUrl);
 
 		// homeModulesPage true iff
