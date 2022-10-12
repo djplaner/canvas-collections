@@ -6309,7 +6309,7 @@ class CollectionOnlyView extends cc_View {
 	}
 
 	generateHTML(collectionName) {
-		return '';
+		return '<div class="cc-representation"></div>';
 	}
 
 }
