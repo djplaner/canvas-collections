@@ -1194,19 +1194,19 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#available-representations" class="md-nav__link">
-    Available representations
+  <a href="#different-representations" class="md-nav__link">
+    Different Representations
+  </a>
+  
+    <nav class="md-nav" aria-label="Different Representations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vanilla-canvas" class="md-nav__link">
+    Vanilla Canvas
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    Examples
-  </a>
-  
-    <nav class="md-nav" aria-label="Examples">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#collections-only" class="md-nav__link">
@@ -1376,19 +1376,19 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#available-representations" class="md-nav__link">
-    Available representations
+  <a href="#different-representations" class="md-nav__link">
+    Different Representations
+  </a>
+  
+    <nav class="md-nav" aria-label="Different Representations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vanilla-canvas" class="md-nav__link">
+    Vanilla Canvas
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    Examples
-  </a>
-  
-    <nav class="md-nav" aria-label="Examples">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#collections-only" class="md-nav__link">
@@ -1437,9 +1437,12 @@
 
 
 <h1 id="representations">Representations</h1>
-<p>Each collection can choose from a list of representations (summarised below). The representation can be changed at any time.</p>
-<h2 id="available-representations">Available representations</h2>
-<p>The following table describes the currently available representations. Example screenshots are included below.</p>
+<p>Each collection can choose from a list of representations. Currently available representations are summarised in the table and the demonstrations below.</p>
+<div class="admonition note">
+<p class="admonition-title">Separating representation from information</p>
+<p>A collection's representation can be changed at any time (and then changed back). e.g. the animated examples below used the same course site. The only difference is that the representation for each collection was changed. Each representation offers a different way of showing a collection and its objects.</p>
+<p>New representations can be added.</p>
+</div>
 <table>
 <thead>
 <tr>
@@ -1449,23 +1452,62 @@
 </thead>
 <tbody>
 <tr>
-<td>CollectionsOnly</td>
-<td>No additional representation is added for the collection. The standard Canvas Modules view is used - but only the modules belonging to the current collection are shown.</td>
+<td><a href="#collections-only">CollectionsOnly</a></td>
+<td>The bare minimum representation. Modules page modified by adding: 1) the Collections navigation bar; 2) any include pages; and, 3) showing only modules belonging to the current collection.</td>
 </tr>
 <tr>
-<td>GriffithCards</td>
-<td>Implements a card interface. Each of the current collection's modules are represented by a visual card. Provides a number of advanced features.</td>
+<td><a href="#griffithcards">GriffithCards</a></td>
+<td>Builds on <em>CollectionsOnly</em> by adding a card component for each module belonging to the current collection. The card component includes a number of additional features to transform the generic Canvas module into a design and context specific object.</td>
 </tr>
 <tr>
-<td>AssessmentTable</td>
-<td><em>Under construction</em> Generates a responsive table where each of the current collection's modules are represented by a row. Design to provide information for assessment items.</td>
+<td><a href="#assessmenttable">AssessmentTable</a></td>
+<td>Rather than a card, each module is represented by a row in a table. The table is designed to summarises assessment for a course with columns for weighting and learning outcomes.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="examples">Examples</h2>
+<h2 id="different-representations">Different Representations</h2>
+<h3 id="vanilla-canvas">Vanilla Canvas</h3>
+<p>The vanilla <a href="https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-are-Modules/ta-p/6">Canvas Modules page</a> shows a linear list of all the modules in a course (for students all the <em>published</em> modules). The following animated image shows the Modules page for a sample Canvas course containing 13 modules. This same course is used in the demonstrations below.</p>
+<p><img alt="" src="../pics/animatedVanillaCanvas.gif" /></p>
 <h3 id="collections-only">Collections Only</h3>
+<p>The following animated image shows the above course configured with Canvas Collections so that its 13 modules are organised into three collections: <em>Why?</em>, <em>What?</em>, and <em>How?</em>. </p>
+<p>In this example, each collection is using the <em>Collections Only</em> representation. This is the bare minimum Collections' representation, which modifies the Canvas modules page to include:</p>
+<ol>
+<li>
+<p>The collection's navigation bar (hence the name, <em>Collections Only</em>).</p>
+<p>This is how you navigate between collections.</p>
+</li>
+<li>
+<p>Any <a href="../../collections/overview/#include-page">Include Pages</a> configured for the collection.</p>
+<p>The <em>Why?</em> collection includes some text (<em>A little bit of an include page -- one one 111</em>) after the collection's navigation bar. This is the content of a Canvas page that has been configured as an <em>Include Page</em> for the collection.</p>
+</li>
+<li>
+<p>The modules belonging to the current collection.</p>
+<p>This is the standard Canvas Modules view, however, when viewing a collection you will only see the modules that belong to the current collection.</p>
+</li>
+</ol>
+<p>The above three elements are the bare minimum changes that Collections (when turned on) makes to the Canvas Collections page. The remaining </p>
+<p><img alt="" src="../pics/animatedCollectionsOnly.gif" /></p>
 <h3 id="griffithcards">GriffithCards</h3>
+<p>The following animated image shows the same course with the same collections as the previous example. However, this time the <em>GriffithCards</em> representation is being used. This representation generates a card for each <a href="../../objects/overview/">object (aka Module)</a> that belongs to the collection. It mirrors the widely used <a href="https://www.nngroup.com/articles/cards-component/">card UI design pattern</a>. </p>
+<p>Everything else (e.g. the navigation bar, include pages, and the modules belonging to the collection) is the same</p>
+<p>The card component can help transform the vanilla Canvas module into a <a href="../../objects/overview/">design and context specific object</a> by displaying additional attributes, including (but not limited to): a textual description; a label and sequence number; associated dates; and, a card image.</p>
+<p><img alt="" src="../pics/animatedGriffithCards.gif" /></p>
 <h3 id="assessmenttable">AssessmentTable</h3>
+<p>Rather than representing each module as a card, the <em>AssessmentTable</em> representation represents each module as the row in table. A table designed explicitly for summarising the assessment for a course with the following columns:</p>
+<ul>
+<li>Title - the title of the module (also used as by the <em>GriffithCard</em> representation for the title for the card).</li>
+<li>Description - the description of the module (as per the <em>GriffithCard</em> representation).</li>
+<li>Weighting - an <a href="../../objects/overview/#additional-metadata">additional metadata</a> named <em>weighting</em> (not used by <em>GriffithCard</em>).</li>
+<li>Due Date - the same <a href="../../objects/overview/#dates">date</a> information used by <em>GriffithCards</em> but displayed differently.</li>
+<li>Learning Outcomes - an <a href="../../objects/overview/#additional-metadata">additional metadata</a> named <em>learningOutcomes</em> (not used by <em>GriffithCard</em>).</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Learning outcomes or not?</p>
+<p>If none of the modules in the current collection have any information in <em>learningOutcomes</em> metadata then the learing outcomes table is not displayed.</p>
+</div>
+<p>The following animated image shows the same course as above, but using the <em>AssessmentTable</em> representation. The first module of the <em>Why?</em> collection has been configured with metadata for <em>weighting</em> and <em>learningOutcomes</em> and this information is displayed. None of the modules for the <em>What?</em> and <em>How?</em> collections have <em>learningOutcomes</em>, hence that column is not visible for these collections. </p>
+<p><img alt="" src="../pics/animatedAssessmentTable.gif" /></p>
 
 
 

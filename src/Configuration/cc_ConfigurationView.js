@@ -65,7 +65,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-collection-representation",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
+		href: "https://djplaner.github.io/canvas-collections/reference/representations/overview/"
 	},
 	{
 		contentText: `Update all configured output pages and choose an option for the navigation bar.`,
@@ -1616,7 +1616,7 @@ export default class cc_ConfigurationView extends cc_View {
 			  		<div class="cc-collection-representation">
   			        	<sl-tooltip id="cc-about-collection-representation">
 		  					<div slot="content"></div>
-							<i class="icon-question cc-module-icon"></i>
+							<a href="" target="_blank"><i class="icon-question cc-module-icon"></i></a>
 						</sl-tooltip>
 
 				  		<label for="cc-config-new-collection-representation">Representation</label>
