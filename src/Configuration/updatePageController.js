@@ -603,7 +603,7 @@ export default class updatePageController {
 
         	navBarHTML = `${navBarHTML}
 <li style="display: table-cell; width: 100%; float: none;">
-    <a style="float: none;text-decoration: none; display: block; text-align: center; padding: 1.5em 1em; font-size: 1.3em;" 
+    <a style="float: none;text-decoration: none; display: block; text-align: center; padding: 1.5em 1em; font-size: 1.3em;white-space:break-spaces;" 
         href="#cc-output-${escCollectionName}">${collectionName}</a></li>`;
 		}
 

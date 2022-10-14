@@ -277,7 +277,7 @@ div.cc-collection-hidden > a {
 
 		collectionsOutput.forEach(collection => {
 			let liStyle =' style="display:table-cell;width:100%;float:none"';
-			let aStyle = ' style="text-decoration:none;display:block;text-align:center;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;border-top:4px solid #eee;"';
+			let aStyle = ' style="text-decoration:none;display:block;text-align:center;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;border-top:4px solid #eee; white-space:break-spaces;"';
 			if (collection.name === collectionName) {
 				liStyle = activeLi;
 				aStyle = activeA;
@@ -315,7 +315,7 @@ div.cc-collection-hidden > a {
 		// get list of collection details without output pages(including output page)
 		const collectionsOutput = this.model.getOutputPageCollections();
 		const activeLi = ' style="display:table-cell;float:none;width:100%;font-weight:bold;background-color:#c12525;"';
-		const activeA = ' style="display:block;float:none;text-align:center;text-decoration:none;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;color:#fff;"';
+		const activeA = ' style="display:block;float:none;text-align:center;text-decoration:none;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;color:#fff; white-space:break-spaces;"';
 
 		let items = '';
 
