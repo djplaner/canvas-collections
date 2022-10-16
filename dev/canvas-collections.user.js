@@ -1085,8 +1085,9 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/"
 	},
 	{
-		contentText: `Represent the module as a "for your information" (fyi) object. Only display collection related information.
-		Display no information about the corresponding module. Always display the object, even when the module is unpublished.`,
+		contentText: `<p>Represent the module as a "for your information" (fyi) object. Only display collection related information.
+		Display no information about the corresponding module. Always display the object, even when the module is unpublished.</p>
+		<p>Optionally, provide some text to add to the representation.</p>`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-fyi",
 		animateFunction: "spin",
@@ -6531,6 +6532,10 @@ class GriffithCardsView extends cc_View {
 			border-radius: 1em;
 		}
 
+		.cc-card-banner-container {
+			position: relative;
+		}
+
 		.cc-card:hover{
 			background-color: #f5f5f5;
 			box-shadow: none;
@@ -6781,7 +6786,10 @@ class GriffithCardsView extends cc_View {
 		}
 
 		.cc-card-published {
-			background-color: red;
+			position: absolute;
+			bottom: 0;
+			background: rgb(255,0,0);
+			background: rgba(255,0,0,0.5);
 			color: white;
 			font-size: x-small;
 			font-weight: bold;
@@ -6911,6 +6919,7 @@ class GriffithCardsView extends cc_View {
 			description = "<p>&nbsp;</p>";
 		}
 
+		const FYI_TEXT = "";
 		let COMING_SOON = this.generateComingSoon(module);
 		const REVIEW_ITEM = "";
 		const DATE = "";
@@ -6934,11 +6943,14 @@ class GriffithCardsView extends cc_View {
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
+	    <div class="cc-card-banner-container">
 	      <a href="#module_${module.id}" class="cc-card-link"></a>
 		  ${IMAGE_IFRAME}
-      	${DATE_WIDGET}
-      	${COMING_SOON}
-	 	${PUBLISHED}
+      	  ${DATE_WIDGET}
+      	  ${COMING_SOON}
+	 	  ${PUBLISHED}
+		  ${FYI_TEXT}
+		</div>
 	  <div class="cc-card-content-height">
       <div class="cc-card-content">
 		<div class="cc-card-label">
@@ -7404,7 +7416,7 @@ class GriffithCardsView extends cc_View {
 	generateCardEngage(module) {
 		let engage = 'Engage';
 		// set the "text" for the engage button
-		if ('engage' in module) {
+		if (module.hasOwnProperty('engage')) {
 			engage = module.engage;
 		}
 		return engage;
@@ -7444,7 +7456,11 @@ class GriffithCardsView extends cc_View {
 	    </div>
 	    `;
 
-		if ('noEngage' in module && module.noEngage) {
+		if (
+			( 'noEngage' in module && module.noEngage)  ||
+			// don't show link for fyi object
+			( module.hasOwnProperty('fyi') && module.fyi )
+		 ) {
 			LINK_ITEM = `
             `;
 		}
@@ -7459,14 +7475,18 @@ class GriffithCardsView extends cc_View {
 	  * @returns string html empty if published warning if unpublished
 	  */
 	generateCardPublished(module) {
-		if (module.published || module.published === undefined) {
+		if (
+			module.published || module.published === undefined ||
+			// don't show unpublished for fyi cards ??
+			( module.hasOwnProperty('fyi') && module.fyi )
+			) {
 			return '';
 		}
 
 		let publishedHtml = `
-    <span class="cc-card-published">
+    <div class="cc-card-published">
 	    Unpublished
-    </span>
+    </div>
 	    `;
 
 		return publishedHtml;

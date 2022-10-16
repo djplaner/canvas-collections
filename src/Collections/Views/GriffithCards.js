@@ -148,6 +148,10 @@ export default class GriffithCardsView extends cc_View {
 			border-radius: 1em;
 		}
 
+		.cc-card-banner-container {
+			position: relative;
+		}
+
 		.cc-card:hover{
 			background-color: #f5f5f5;
 			box-shadow: none;
@@ -397,8 +401,21 @@ export default class GriffithCardsView extends cc_View {
 			float: right;
 		}
 
+		.cc-card-fyi {
+			position: absolute;
+			bottom: 0;
+			background: rgba(0,0,0,0.75);
+			color: white;
+			width: 100%;
+			padding: 0.25rem;
+			font-size: x-small;
+			text-align: center;
+		}
+
 		.cc-card-published {
-			background-color: red;
+			position: absolute;
+			bottom: 0;
+			background: rgba(255,0,0,0.75);
 			color: white;
 			font-size: x-small;
 			font-weight: bold;
@@ -528,6 +545,7 @@ export default class GriffithCardsView extends cc_View {
 			description = "<p>&nbsp;</p>";
 		}
 
+		const FYI_TEXT = "";
 		let COMING_SOON = this.generateComingSoon(module);
 		const REVIEW_ITEM = "";
 		const DATE = "";
@@ -551,11 +569,14 @@ export default class GriffithCardsView extends cc_View {
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="cc-card">
 	  <div class="cc-card-flex">
+	    <div class="cc-card-banner-container">
 	      <a href="#module_${module.id}" class="cc-card-link"></a>
 		  ${IMAGE_IFRAME}
-      	${DATE_WIDGET}
-      	${COMING_SOON}
-	 	${PUBLISHED}
+      	  ${DATE_WIDGET}
+      	  ${COMING_SOON}
+	 	  ${PUBLISHED}
+		  ${FYI_TEXT}
+		</div>
 	  <div class="cc-card-content-height">
       <div class="cc-card-content">
 		<div class="cc-card-label">
@@ -1021,7 +1042,7 @@ export default class GriffithCardsView extends cc_View {
 	generateCardEngage(module) {
 		let engage = 'Engage';
 		// set the "text" for the engage button
-		if ('engage' in module) {
+		if (module.hasOwnProperty('engage')) {
 			engage = module.engage;
 		}
 		return engage;
@@ -1061,7 +1082,11 @@ export default class GriffithCardsView extends cc_View {
 	    </div>
 	    `;
 
-		if ('noEngage' in module && module.noEngage) {
+		if (
+			( 'noEngage' in module && module.noEngage)  ||
+			// don't show link for fyi object
+			( module.hasOwnProperty('fyi') && module.fyi )
+		 ) {
 			LINK_ITEM = `
             `;
 		}
@@ -1076,14 +1101,18 @@ export default class GriffithCardsView extends cc_View {
 	  * @returns string html empty if published warning if unpublished
 	  */
 	generateCardPublished(module) {
-		if (module.published || module.published === undefined) {
+		if (
+			module.published || module.published === undefined ||
+			// don't show unpublished for fyi cards ??
+			( module.hasOwnProperty('fyi') && module.fyi )
+			) {
 			return '';
 		}
 
 		let publishedHtml = `
-    <span class="cc-card-published">
+    <div class="cc-card-published">
 	    Unpublished
-    </span>
+    </div>
 	    `;
 
 		return publishedHtml;
