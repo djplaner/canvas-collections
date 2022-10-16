@@ -507,7 +507,7 @@ export default class cc_ConfigurationController {
 		let value = event.target.value;
 
 		// autonum is checkbox, it's value is checked
-		if (fieldName==="autonum") {
+		if (fieldName==="autonum" || fieldName==="fyi") {
 			value = event.target.checked;
 		} 
 

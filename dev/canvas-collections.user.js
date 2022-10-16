@@ -1455,6 +1455,7 @@ class cc_ConfigurationView extends cc_View {
 			moduleConfigSwitch.className = moduleDetail.configClass;
 		}
 
+
 		// set display:inline-block for div#cc-module-no-collection-${id} iff
 		// module.collection is undefined or empty
 		if (!moduleConfig || !moduleConfig.collection || moduleConfig.collection.length === 0) {
@@ -2042,8 +2043,7 @@ class cc_ConfigurationView extends cc_View {
 				   		<input type="checkbox" id="cc-module-config-${moduleDetail.id}-fyi" ${fyi.fyi} 
 						    style="position:relative; top:-0.25rem; " />
 						</span>
-						<label for="cc-module-config-${moduleDetail.id}-fyi-text">FYI text</label>
-						<input type="text" id="cc-module-config-${moduleDetail.id}-fyi-text"" 
+						<input type="text" id="cc-module-config-${moduleDetail.id}-fyiText"" 
 					     	value="${fyi.fyiText}" style="width:10rem;" ${fyi.fyiStyle}/>
 					</span>
 				</div>
@@ -2925,6 +2925,7 @@ class cc_ConfigurationView extends cc_View {
 		includeAfterCheckboxes.forEach(checkbox => {
 			checkbox.onchange = (event) => this.controller.changeIncludeAfterCollection(event);
 		});
+
 
 		// add event handler for input.cc-existing-collection (the page inputs)
 		const existingCollections = document.querySelectorAll('input.cc-existing-collection');
@@ -4718,7 +4719,7 @@ class cc_ConfigurationController {
 		let value = event.target.value;
 
 		// autonum is checkbox, it's value is checked
-		if (fieldName==="autonum") {
+		if (fieldName==="autonum" || fieldName==="fyi") {
 			value = event.target.checked;
 		} 
 

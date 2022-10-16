@@ -161,8 +161,9 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/"
 	},
 	{
-		contentText: `Represent the module as a "for your information" (fyi) object. Only display collection related information.
-		Display no information about the corresponding module. Always display the object, even when the module is unpublished.`,
+		contentText: `<p>Represent the module as a "for your information" (fyi) object. Only display collection related information.
+		Display no information about the corresponding module. Always display the object, even when the module is unpublished.</p>
+		<p>Optionally, provide some text to add to the representation.</p>`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-fyi",
 		animateFunction: "spin",
@@ -530,6 +531,7 @@ export default class cc_ConfigurationView extends cc_View {
 			// and update the class appropriately
 			moduleConfigSwitch.className = moduleDetail.configClass;
 		}
+
 
 		// set display:inline-block for div#cc-module-no-collection-${id} iff
 		// module.collection is undefined or empty
@@ -1118,8 +1120,7 @@ export default class cc_ConfigurationView extends cc_View {
 				   		<input type="checkbox" id="cc-module-config-${moduleDetail.id}-fyi" ${fyi.fyi} 
 						    style="position:relative; top:-0.25rem; " />
 						</span>
-						<label for="cc-module-config-${moduleDetail.id}-fyi-text">FYI text</label>
-						<input type="text" id="cc-module-config-${moduleDetail.id}-fyi-text"" 
+						<input type="text" id="cc-module-config-${moduleDetail.id}-fyiText"" 
 					     	value="${fyi.fyiText}" style="width:10rem;" ${fyi.fyiStyle}/>
 					</span>
 				</div>
@@ -2001,6 +2002,7 @@ export default class cc_ConfigurationView extends cc_View {
 		includeAfterCheckboxes.forEach(checkbox => {
 			checkbox.onchange = (event) => this.controller.changeIncludeAfterCollection(event);
 		});
+
 
 		// add event handler for input.cc-existing-collection (the page inputs)
 		const existingCollections = document.querySelectorAll('input.cc-existing-collection');
