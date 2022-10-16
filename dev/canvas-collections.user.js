@@ -6957,9 +6957,11 @@ class GriffithCardsView extends cc_View {
 
 		let cardClass = "cc-card";
 		let cardContentClass = "cc-card-content";
+	    let CARD_LINK = `<a href="#module_${module.id}" class="cc-card-link"></a>`;
 		if (module.hasOwnProperty('fyi') && module.fyi) {
 			cardClass = 'cc-card-unclickable';
 			cardContentClass = "cc-unclickable-card-content";
+			CARD_LINK='';
 		}
 
 
@@ -6967,7 +6969,7 @@ class GriffithCardsView extends cc_View {
     <div id="cc_module_${module.id}" class="${cardClass}">
 		<div class="cc-card-flex">
 	    	<div class="cc-card-banner-container">
-	      		<a href="#module_${module.id}" class="cc-card-link"></a>
+			    ${CARD_LINK}
 		  		${IMAGE_IFRAME}
       	  		${DATE_WIDGET}
       	  		${COMING_SOON}
@@ -6978,7 +6980,7 @@ class GriffithCardsView extends cc_View {
       			<div class="${cardContentClass}">
 					<div class="cc-card-label">
 	    				<span class="cc-card-label"> ${CARD_LABEL} </span>
-	    				<h3 class="cc-card-title">${moduleName}</h3>
+	    				<h3 class="cc-card-title" data-moduleid="${module.id}">${moduleName}</h3>
 					</div>
       				<div class="cc-card-description">
 	  					${description}
@@ -7136,6 +7138,7 @@ class GriffithCardsView extends cc_View {
 		let escModuleName = module.name.replace(/(["'])/g, "\\$1");
 
 		return `<img class="cc-card-image ${imageSize}" src="${imageUrl}" 
+					data-moduleid="${module.id}"
 		 				alt="Image representing '${escModuleName}'"> `;
 	}
 	/**
@@ -7591,6 +7594,8 @@ class GriffithCardsView extends cc_View {
 		let parser = new DOMParser();
 		let doc = parser.parseFromString(html, "text/html");
 
+		const modules = this.model.getCollectionsModules();
+
 		// get the div#cc-canvas-collections
 		// TODO check - is this already there??
 		//let div = doc.getElementById('cc-canvas-collections');
@@ -7657,6 +7662,18 @@ class GriffithCardsView extends cc_View {
 		let images = div.querySelectorAll('img.cc-card-image');
 		for (let i = 0; i < images.length; i++) {
 			let image = images[i];
+			let module = undefined;
+			if (image.dataset.hasOwnProperty('moduleid')) {
+				const moduleid = image.dataset.moduleid;
+				if ( modules.hasOwnProperty(moduleid) ) {
+					module = modules[parseInt(moduleid)];
+				}
+				// if an fyi module, continue
+				if (module && module.hasOwnProperty('fyi') && module.fyi) {
+					continue;
+				}
+			}
+
 			let link = doc.createElement('a');
 			link.classList.add('cc-card-link-image');
 			link.href = currentUrl;
@@ -7665,8 +7682,22 @@ class GriffithCardsView extends cc_View {
 		}
 		// add a link around cc-card-title innerHTML
 		let titles = div.querySelectorAll('h3.cc-card-title');
+
+
 		for (let i = 0; i < titles.length; i++) {
 			let title = titles[i];
+			// get the module
+			let module = undefined;
+			if (title.dataset.hasOwnProperty('moduleid')) {
+				const moduleid = title.dataset.moduleid;
+				if ( modules.hasOwnProperty(moduleid) ) {
+					module = modules[parseInt(moduleid)];
+				}
+				// if an fyi module, continue
+				if (module && module.hasOwnProperty('fyi') && module.fyi) {
+					continue;
+				}
+			}
 			let link = doc.createElement('a');
 			// set link class to cc-card-link-title
 			link.classList.add('cc-card-link-title');
