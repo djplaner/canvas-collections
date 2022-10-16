@@ -99,6 +99,12 @@ The colour banner option allows you to choose a fixed colour for the banner. Thi
 ![](pics/colourPickerAnimated.gif)
 
 
+## FYI
+
+A way to specify that a module should become a _For Your Information_ (FYI) only object. i.e. any representation will only display Collections' information (label, number, description, banner etc). It should not display any information about the actual Canvas module, including a link to the module.
+
+FYI object's - since they don't display any information about the Canvas module - are always displayed. Regardless of whether the module is unpublished or generally not available to the student.
+
 
 ## Labels and Numbers
 

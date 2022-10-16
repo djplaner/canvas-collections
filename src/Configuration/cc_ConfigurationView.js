@@ -161,6 +161,14 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/"
 	},
 	{
+		contentText: `Represent the module as a "for your information" (fyi) object. Only display collection related information.
+		Display no information about the corresponding module. Always display the object, even when the module is unpublished.`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-fyi",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#fyi"
+	},
+	{
 		contentText: `Describe why, what or how the module relates to the students' learning`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-description",
@@ -830,6 +838,43 @@ export default class cc_ConfigurationView extends cc_View {
 	}
 
 	/**
+	 * @function configureFyi
+	 * @description Check the module details for
+	 *    fyi: boolean - whether or not the object is a fyi only object
+	 *    fyiText: string - text to display in the fyi message box
+	 * If there isn't any already, set to false and empty string
+	 * @param {Object} moduleDetail 
+	 * @returns {Object} - { fyi: boolean, fyiText: string }
+	 */
+
+	configureFyi(moduleDetail) {
+		let fyi = { fyi: false, fyiText: '' }
+
+		// loop thru attributes of fyi object
+		for (const key in fyi) {
+			if (moduleDetail.hasOwnProperty(key)) {
+				fyi[key] = moduleDetail[key];
+			} else {
+				if ( key==='fyi') {
+					moduleDetail[key] = false;
+				} else {
+					moduleDetail[key] = '';
+				}
+			}
+		}
+		// modify the boolean fyi to be checked or not for HTML
+		// add the styles for display
+		if (fyi.fyi) {
+			fyi.fyi = 'checked';
+		} else {
+			fyi.fyi = '';
+			fyi.fyiStyle = 'disabled';
+		}
+
+		return fyi;
+	}
+
+	/**
 	 * @descr generate the div.cc-module-config-details for the module
 	 * @param {Object} moduleDetail
 	 * @returns {string} html
@@ -990,6 +1035,7 @@ export default class cc_ConfigurationView extends cc_View {
 				} */
 
 
+		let fyi = this.configureFyi(moduleDetail);
 		let bannerActive = this.configureBanner(moduleDetail);
 		let dateActive = this.configureDate(moduleDetail);
 		let configDisplay = this.configureConfigDisplay(moduleDetail);
@@ -1062,6 +1108,22 @@ export default class cc_ConfigurationView extends cc_View {
 					  ${collectionsOptions}
 					</select>
 				</div>
+				<div class="cc-collection-description" style="margin-top: 0.5em">
+			        <sl-tooltip id="cc-about-module-fyi">
+					  	<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+				    <label for="cc-module-config-${moduleDetail.id}-fyi">FYI</label>
+					<span class="cc-config-autonum" >
+				   		<input type="checkbox" id="cc-module-config-${moduleDetail.id}-fyi" ${fyi.fyi} 
+						    style="position:relative; top:-0.25rem; " />
+						</span>
+						<label for="cc-module-config-${moduleDetail.id}-fyi-text">FYI text</label>
+						<input type="text" id="cc-module-config-${moduleDetail.id}-fyi-text"" 
+					     	value="${fyi.fyiText}" style="width:10rem;" ${fyi.fyiStyle}/>
+					</span>
+				</div>
+
 				<div class="cc-collection-description" style="margin-top: 1em">
 			        <sl-tooltip id="cc-about-module-description">
 					  	<div slot="content"></div>
