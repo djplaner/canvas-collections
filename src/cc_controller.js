@@ -286,9 +286,12 @@ export default class cc_Controller {
 			}
 		}
 
+
 		// numCalculator use to calculate nums for collections 
 		// is keyed on collectionName and then label to point to an int 
 		let numCalculator = {};
+
+		let updatedName = false;
 
 		// merge the two sets of module details into one - keyed on module id
 		for (let i = 0; i < canvasModules.length; i++) {
@@ -306,6 +309,9 @@ export default class cc_Controller {
 			if (ccModule) {
 				// collections module name should be updated from canvas
 				const skipFields = ['name'];
+				if ( ccModule.name!==canvasModule.name ) {
+					updatedName = true;
+				}
 				ccModule.name = canvasModule.name;
 				for (let key in ccModule) {
 					if (!skipFields.includes(key)) {
@@ -337,6 +343,9 @@ export default class cc_Controller {
 				}
 			}
 			this.mergedModuleDetails[canvasModuleId] = details;
+		}
+		if ( this.editMode && updatedName ) {
+			this.saveConfig();
 		}
 	}
 
