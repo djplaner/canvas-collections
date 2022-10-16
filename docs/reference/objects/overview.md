@@ -142,15 +142,10 @@ Collections will display the label - circled in red in the following image - for
 
 As summarised in the following table, the date area of the Module configuration dialog allows you to specify dates for three different purposes.
 
-!!! info "'Coming Soon' is coming soon"
-
-    :construction: The 'Coming Soon' feature is still a work in progress.
-
 | Date type | Purpose |
 | --- | --- |
 | Start Date | Either a one-off date or the start date of a date range |
 | Stop Date | The end date of a date range |
-| Coming Soon | :construction: A date indicating when a module will become available to students |
 
 All three date types are available from the same space via a tabbed interface. As illustrated by the following animated image, each date type provides a similar (but not the same) interface.
 
@@ -187,11 +182,8 @@ The following animated image demonstrates how the representation of a date chang
 
 ![](./pics/configureDatesAnimated.gif)
 
-### Coming Soon
+### FYI
 
-!!! Note "Coming Soon is under construction"
-
-    :construction_site: The "Coming Soon" feature is currently being developed. It will be an adaptation of the [Card Interface "Coming Soon" feature](https://djplaner.github.io/Card-Interface-Tweak/customiseACard/#making-a-coming-soon-card) for Canvas.
 
 ## Additional Metadata
 

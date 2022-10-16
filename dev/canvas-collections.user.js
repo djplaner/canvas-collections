@@ -6493,7 +6493,7 @@ class GriffithCardsView extends cc_View {
 			display: flex;
 		}
 
-		.cc-clickable-card, .cc-coming-soon-card {
+		.cc-clickable-card, .cc-unclickable-card {
 			padding: 0.75rem;
 			flex-direction: column;
 			display: flex;
@@ -6517,7 +6517,7 @@ class GriffithCardsView extends cc_View {
 			opacity: 0.8;
 		}
 
-		.cc-card {
+		.cc-card, .cc-card-unclickable {
 			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1);
 			background-color: #fff;
 			border-radius: 1em;
@@ -6579,7 +6579,7 @@ class GriffithCardsView extends cc_View {
 			border-bottom-right-radius: 0.5rem;
 		}
 
-		.cc-card-content {
+		.cc-card-content, .cc-unclickable-card-content {
 			padding: 0.5rem;
 			flex: 1 1 0%;
 			display: flex;
@@ -6614,12 +6614,18 @@ class GriffithCardsView extends cc_View {
 
 		.cc-card-label {
 			font-size: 0.9rem;
-			margin-bottom: 1rem;
+			/*margin-bottom: 1rem; */
+		}
+
+		.cc-card-footer {
+			height: 4rem;
+			position: relative;
 		}
 
 		.cc-card-engage {
-			padding: 1rem;
-			padding-top: 1.5rem;
+			/*padding: 1rem;
+			padding-top: 1.5rem; */
+			padding-right: 1rem;
 		}
 
 		.cc-card-engage-button {
@@ -6785,11 +6791,21 @@ class GriffithCardsView extends cc_View {
 			float: right;
 		}
 
+		.cc-card-fyi {
+			position: absolute;
+			bottom: 0;
+			background: rgba(0,0,0,0.75);
+			color: white;
+			width: 100%;
+			padding: 0.25rem;
+			font-size: x-small;
+			text-align: center;
+		}
+
 		.cc-card-published {
 			position: absolute;
 			bottom: 0;
-			background: rgb(255,0,0);
-			background: rgba(255,0,0,0.5);
+			background: rgba(255,0,0,0.75);
 			color: white;
 			font-size: x-small;
 			font-weight: bold;
@@ -6919,7 +6935,7 @@ class GriffithCardsView extends cc_View {
 			description = "<p>&nbsp;</p>";
 		}
 
-		const FYI_TEXT = "";
+		const FYI_TEXT = this.generateFyiText(module);
 		let COMING_SOON = this.generateComingSoon(module);
 		const REVIEW_ITEM = "";
 		const DATE = "";
@@ -6939,47 +6955,60 @@ class GriffithCardsView extends cc_View {
 			}
 		}
 
+		let cardClass = "cc-card";
+		let cardContentClass = "cc-card-content";
+		if (module.hasOwnProperty('fyi') && module.fyi) {
+			cardClass = 'cc-card-unclickable';
+			cardContentClass = "cc-unclickable-card-content";
+		}
+
 
 		const cardHtml = `
-    <div id="cc_module_${module.id}" class="cc-card">
-	  <div class="cc-card-flex">
-	    <div class="cc-card-banner-container">
-	      <a href="#module_${module.id}" class="cc-card-link"></a>
-		  ${IMAGE_IFRAME}
-      	  ${DATE_WIDGET}
-      	  ${COMING_SOON}
-	 	  ${PUBLISHED}
-		  ${FYI_TEXT}
-		</div>
-	  <div class="cc-card-content-height">
-      <div class="cc-card-content">
-		<div class="cc-card-label">
-	    	<span class="cc-card-label"> ${CARD_LABEL} </span>
-	    	<h3 class="cc-card-title">${moduleName}</h3>
-		</div>
-      	<div class="cc-card-description">
-	  		${description}
-		</div>
-		</div> <!-- cc-card-content-height -->
+    <div id="cc_module_${module.id}" class="${cardClass}">
+		<div class="cc-card-flex">
+	    	<div class="cc-card-banner-container">
+	      		<a href="#module_${module.id}" class="cc-card-link"></a>
+		  		${IMAGE_IFRAME}
+      	  		${DATE_WIDGET}
+      	  		${COMING_SOON}
+	 	  		${PUBLISHED}
+		  		${FYI_TEXT}
+			</div>
+	  		<div class="cc-card-content-height">
+      			<div class="${cardContentClass}">
+					<div class="cc-card-label">
+	    				<span class="cc-card-label"> ${CARD_LABEL} </span>
+	    				<h3 class="cc-card-title">${moduleName}</h3>
+					</div>
+      				<div class="cc-card-description">
+	  					${description}
+					</div>
+				</div> 
+			</div>
+			<div class="cc-card-footer">
+	 			${LINK_ITEM}
+	 			${REVIEW_ITEM}
+	 			${EDIT_ITEM}
+	 			${DATE} 
+	 			<div class="cc-progress"></div>
+			</div>
+      	</div>
 	  </div> 
-	 
-	 ${LINK_ITEM}
-	 ${REVIEW_ITEM}
-	 ${EDIT_ITEM}
-	 ${DATE} 
-	 <div class="cc-progress"></div>
-      </div>
     </div>
     `;
 
 		// convert cardHtml into DOM element
 		let wrapper = document.createElement('div');
 		if (published) {
-			wrapper.classList.add('cc-clickable-card');
+			if ( module.hasOwnProperty('fyi') && module.fyi ) {
+				wrapper.classList.add('cc-unclickable-card');
+			} else {
+				wrapper.classList.add('cc-clickable-card');
+			}
 			wrapper.innerHTML = cardHtml;
 		} else {
 			// unpublished card needs a different class and the card link removed
-			wrapper.classList.add('cc-coming-soon-card');
+			wrapper.classList.add('cc-unclickable-card');
 			wrapper.innerHTML = cardHtml;
 			// remove the a.cc-card-link from wrapper
 			wrapper.querySelector('.cc-card-link').remove();
@@ -7006,6 +7035,24 @@ class GriffithCardsView extends cc_View {
 		}
 
 		return wrapper;
+	}
+
+	/**
+	 * @function generateCardLinkItem
+	 * @description generate HTML to show an fyi message if fyi is true and there is a message
+	 * @param {Object} module - configuration details for module
+	 */
+	generateFyiText(module) {
+
+		if ( !module.hasOwnProperty('fyi') || !module.fyi || !module.hasOwnProperty('fyiText')) {
+			return "";
+		}
+
+		if ( module.fyi && module.fyiText!=="") {
+			return `<div class="cc-card-fyi">${module.fyiText}</div>`;
+		}
+
+		return "";
 	}
 
 	/**
