@@ -7214,7 +7214,8 @@ class GriffithCardsView extends cc_View {
 		}
 
 		// create day const with the first 3 letters of date.day
-		const day = date.day || "Monday"; //date.day.substring(0, 3);
+		// stay empty if no date specified
+		const day = date.day || ""; //date.day.substring(0, 3);
 		const month = date.month.substring(0, 3);
 		let time = '';
 		if (date.time) {
@@ -7278,6 +7279,10 @@ class GriffithCardsView extends cc_View {
 			// remove the div.cc-card-date-week from element
 			element.removeChild(element.querySelector('.cc-card-date-week'));
 		}
+		if (day==="") {
+			// remove the div.cc-card-date-day from element
+			element.removeChild(element.querySelector('.cc-card-date-day'));
+		}
 		// return element converted to string
 		return element.outerHTML;
 	}
@@ -7321,7 +7326,7 @@ class GriffithCardsView extends cc_View {
 				showDate.week = `${showDate.week} - ${date.to.week}`;
 			}
 			if (date.to.hasOwnProperty('day')) {
-				showDate.toDay = date.to.day.substring(0, 3) || "Mon";
+				showDate.toDay = date.to.day.substring(0, 3) || "";
 			}
 			if (date.to.hasOwnProperty('month')) {
 				showDate.toMonth = date.to.month.substring(0, 3);
@@ -7372,6 +7377,10 @@ class GriffithCardsView extends cc_View {
 		if (showDate.toWeek === "" && showdate.fromWeek === "") {
 			// remove the div.cc-card-date-week from element
 			element.removeChild(element.querySelector('.cc-card-date-dual-week'));
+		}
+		if (showDate.toDay === "" && showDate.fromDay === "") {
+			// remove the div.cc-card-date-dual-day from element
+			element.removeChild(element.querySelector('.cc-card-date-dual-day'));
 		}
 		// return element converted to string
 		return element.outerHTML;
