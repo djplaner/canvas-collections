@@ -629,7 +629,10 @@ ${value}`);
 		const cc_configuration = this.controller.parentController.cc_configuration;
 		const collections = cc_configuration.COLLECTIONS;
 		// filter collections hash to return an array of objects with an actual outputPage
-		let collectionsWithOutputPages = Object.keys(collections).filter( (collectionName) => {
+		//let collectionsWithOutputPages = Object.keys(collections).filter( (collectionName) => {
+
+		// need to step through the collections keys in COLLECTIONS_ORDER
+		let collectionsWithOutputPages = cc_configuration.COLLECTIONS_ORDER.filter( (collectionName) => {
 			if (collections[collectionName].outputPage &&
 				collections[collectionName].outputPage !== '') {
 				return collectionName;
@@ -645,10 +648,10 @@ ${value}`);
 	 * @returns {Dictionary} key is page name, value is array of collection names
 	 */
 	getPagesWithMultipleCollections() {
+		const collectionNames = this.controller.parentController.cc_configuration.COLLECTIONS_ORDER;
 		const collections = this.controller.parentController.cc_configuration.COLLECTIONS;
 		const pages = {};
-		// for each collection
-		Object.keys(collections).forEach( (collectionName) => {
+		collectionNames.forEach( (collectionName) => {
 			// if there's an output page
 			if (collections[collectionName].outputPage &&
 				collections[collectionName].outputPage !== '') {
@@ -912,9 +915,9 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.9.2";
+const CC_VERSION = "0.9.3";
 
-const CV_DEFAULT_DATE_LABEL = "Commencing";
+const CV_DEFAULT_DATE_LABEL = "Starting";
 
 const CC_UNPUBLISHED_HTML = `
 <div class="cc-unpublished"> 
@@ -967,7 +970,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-collection-representation",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
+		href: "https://djplaner.github.io/canvas-collections/reference/representations/overview/"
 	},
 	{
 		contentText: `Update all configured output pages and choose an option for the navigation bar.`,
@@ -1061,6 +1064,15 @@ const CONFIG_VIEW_TOOLTIPS = [
 		targetSelector: "#cc-about-module-collection",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/"
+	},
+	{
+		contentText: `<p>Represent the module as a "for your information" (fyi) object. Only display collection related information.
+		Display no information about the corresponding module. Always display the object, even when the module is unpublished.</p>
+		<p>Optionally, provide some text to add to the representation.</p>`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-fyi",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#fyi-objects"
 	},
 	{
 		contentText: `Describe why, what or how the module relates to the students' learning`,
@@ -1425,6 +1437,7 @@ class cc_ConfigurationView extends cc_View {
 			moduleConfigSwitch.className = moduleDetail.configClass;
 		}
 
+
 		// set display:inline-block for div#cc-module-no-collection-${id} iff
 		// module.collection is undefined or empty
 		if (!moduleConfig || !moduleConfig.collection || moduleConfig.collection.length === 0) {
@@ -1732,6 +1745,43 @@ class cc_ConfigurationView extends cc_View {
 	}
 
 	/**
+	 * @function configureFyi
+	 * @description Check the module details for
+	 *    fyi: boolean - whether or not the object is a fyi only object
+	 *    fyiText: string - text to display in the fyi message box
+	 * If there isn't any already, set to false and empty string
+	 * @param {Object} moduleDetail 
+	 * @returns {Object} - { fyi: boolean, fyiText: string }
+	 */
+
+	configureFyi(moduleDetail) {
+		let fyi = { fyi: false, fyiText: '' }
+
+		// loop thru attributes of fyi object
+		for (const key in fyi) {
+			if (moduleDetail.hasOwnProperty(key)) {
+				fyi[key] = moduleDetail[key];
+			} else {
+				if ( key==='fyi') {
+					moduleDetail[key] = false;
+				} else {
+					moduleDetail[key] = '';
+				}
+			}
+		}
+		// modify the boolean fyi to be checked or not for HTML
+		// add the styles for display
+		if (fyi.fyi) {
+			fyi.fyi = 'checked';
+		} else {
+			fyi.fyi = '';
+			fyi.fyiStyle = 'disabled';
+		}
+
+		return fyi;
+	}
+
+	/**
 	 * @descr generate the div.cc-module-config-details for the module
 	 * @param {Object} moduleDetail
 	 * @returns {string} html
@@ -1892,6 +1942,7 @@ class cc_ConfigurationView extends cc_View {
 				} */
 
 
+		let fyi = this.configureFyi(moduleDetail);
 		let bannerActive = this.configureBanner(moduleDetail);
 		let dateActive = this.configureDate(moduleDetail);
 		let configDisplay = this.configureConfigDisplay(moduleDetail);
@@ -1964,6 +2015,21 @@ class cc_ConfigurationView extends cc_View {
 					  ${collectionsOptions}
 					</select>
 				</div>
+				<div class="cc-collection-description" style="margin-top: 0.5em">
+			        <sl-tooltip id="cc-about-module-fyi">
+					  	<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+				    <label for="cc-module-config-${moduleDetail.id}-fyi">FYI</label>
+					<span class="cc-config-autonum" >
+				   		<input type="checkbox" id="cc-module-config-${moduleDetail.id}-fyi" ${fyi.fyi} 
+						    style="position:relative; top:-0.25rem; " />
+						</span>
+						<input type="text" id="cc-module-config-${moduleDetail.id}-fyiText"" 
+					     	value="${fyi.fyiText}" style="width:10rem;" ${fyi.fyiStyle}/>
+					</span>
+				</div>
+
 				<div class="cc-collection-description" style="margin-top: 1em">
 			        <sl-tooltip id="cc-about-module-description">
 					  	<div slot="content"></div>
@@ -2518,7 +2584,7 @@ class cc_ConfigurationView extends cc_View {
 			  		<div class="cc-collection-representation">
   			        	<sl-tooltip id="cc-about-collection-representation">
 		  					<div slot="content"></div>
-							<i class="icon-question cc-module-icon"></i>
+							<a href="" target="_blank"><i class="icon-question cc-module-icon"></i></a>
 						</sl-tooltip>
 
 				  		<label for="cc-config-new-collection-representation">Representation</label>
@@ -2841,6 +2907,7 @@ class cc_ConfigurationView extends cc_View {
 		includeAfterCheckboxes.forEach(checkbox => {
 			checkbox.onchange = (event) => this.controller.changeIncludeAfterCollection(event);
 		});
+
 
 		// add event handler for input.cc-existing-collection (the page inputs)
 		const existingCollections = document.querySelectorAll('input.cc-existing-collection');
@@ -3907,7 +3974,7 @@ class updatePageController {
 
         	navBarHTML = `${navBarHTML}
 <li style="display: table-cell; width: 100%; float: none;">
-    <a style="float: none;text-decoration: none; display: block; text-align: center; padding: 1.5em 1em; font-size: 1.3em;" 
+    <a style="float: none;text-decoration: none; display: block; text-align: center; padding: 1.5em 1em; font-size: 1.3em;white-space:break-spaces;" 
         href="#cc-output-${escCollectionName}">${collectionName}</a></li>`;
 		}
 
@@ -4631,7 +4698,7 @@ class cc_ConfigurationController {
 		let value = event.target.value;
 
 		// autonum is checkbox, it's value is checked
-		if (fieldName==="autonum") {
+		if (fieldName==="autonum" || fieldName==="fyi") {
 			value = event.target.checked;
 		} 
 
@@ -5609,7 +5676,7 @@ div.cc-collection-hidden > a {
 
 		collectionsOutput.forEach(collection => {
 			let liStyle =' style="display:table-cell;width:100%;float:none"';
-			let aStyle = ' style="text-decoration:none;display:block;text-align:center;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;border-top:4px solid #eee;"';
+			let aStyle = ' style="text-decoration:none;display:block;text-align:center;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;border-top:4px solid #eee; white-space:break-spaces;"';
 			if (collection.name === collectionName) {
 				liStyle = activeLi;
 				aStyle = activeA;
@@ -5647,7 +5714,7 @@ div.cc-collection-hidden > a {
 		// get list of collection details without output pages(including output page)
 		const collectionsOutput = this.model.getOutputPageCollections();
 		const activeLi = ' style="display:table-cell;float:none;width:100%;font-weight:bold;background-color:#c12525;"';
-		const activeA = ' style="display:block;float:none;text-align:center;text-decoration:none;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;color:#fff;"';
+		const activeA = ' style="display:block;float:none;text-align:center;text-decoration:none;padding:1em 0.8em;box-sizing:border-box;font-size:1.2em;color:#fff; white-space:break-spaces;"';
 
 		let items = '';
 
@@ -5875,6 +5942,7 @@ td.descriptionCell {
 
   .cc-table-cell-text {
     margin: 0;
+    font-size: 0.8rem;
   }
 
   .cc-table-cell-text > p {
@@ -5884,6 +5952,15 @@ td.descriptionCell {
 
   #cc-assessment-table {
     margin-top: 0.5rem !important;
+  }
+
+  .cc-assessment-table-fyi-text {
+    width:100%;
+    padding: 0.25rem;
+    font-size: x-small;
+    text-align: center;
+    color: white;
+    background: black;
   }
 	`;
 
@@ -6064,6 +6141,8 @@ class AssessmentTableView extends cc_View {
       messageHtml = TABLE_HTML_CLAYTONS;
     }
 
+    const editMode = this.model.getEditMode();
+
     // TODO update the messageHTML
     const description = this.model.getCurrentCollectionDescription();
 
@@ -6073,11 +6152,24 @@ class AssessmentTableView extends cc_View {
     const modules = this.model.getModulesCollections();
     const modulesUrl = this.model.getModuleViewUrl();
     let tableRows = '';
+
+    // used to track if learning outcomes were added
+    let emptyLearningOutcomes = true;
+
     for (let i = 0; i < modules.length; i++) {
 
       // skip if row doesn't match currentCollection
       if (modules[i].collection !== collectionName) {
         continue;
+      }
+      // exclude modules for other reasons
+      // - not in edit mode, module is unpublished and is not an FYI object
+      if (!editMode) {
+        if (! modules[i].published) {
+          if ( ! modules[i].hasOwnProperty('fyi') || ! modules[i].fyi) {
+            continue;
+          }
+        }
       }
       let rowHtml = TABLE_ROW_HTML;
       if (variety === 'claytons') {
@@ -6095,7 +6187,7 @@ class AssessmentTableView extends cc_View {
         // [time] [day] [date] [month] [year]
         // with that repeated after a " - " if there's a to
         const dateFields = ['time', 'day', 'date', 'month', 'year'];
-        dateFields.forEach( field => {
+        dateFields.forEach(field => {
           if (calendarDate.hasOwnProperty(field) && calendarDate[field] !== "") {
             dueDateString = `${dueDateString} ${calendarDate[field]}`;
           }
@@ -6104,7 +6196,7 @@ class AssessmentTableView extends cc_View {
         // add the to values
         if (calendarDate.hasOwnProperty('to')) {
           dueDateString = `${dueDateString} - `;
-          dateFields.forEach( field => {
+          dateFields.forEach(field => {
             if (calendarDate.to.hasOwnProperty(field) && calendarDate.to[field] !== "") {
               dueDateString = `${dueDateString} ${calendarDate.to[field]}`;
             }
@@ -6116,11 +6208,22 @@ class AssessmentTableView extends cc_View {
         }
       }
 
+      let description = modules[i].description;
+      // add the "FYI" text if required
+      if (modules[i].hasOwnProperty('fyi') && modules[i].fyi) {
+        if (modules[i].hasOwnProperty('fyiText') && modules[i].fyiText !== "") {
+          description = `
+          <div class="cc-assessment-table-fyi-text">${modules[i].fyiText}</div>
+          ${description} `;
+        }
+      }
+
       let mapping = {
         //'MODULE-ID': modules[i].id,
         'MODULE-ID': `${modulesUrl}/#${modules[i].id}`,
-        'DESCRIPTION': modules[i].description,
-        'TITLE': this.model.deLabelModuleName(modules[i]),
+        'DESCRIPTION': description,
+        //'TITLE': this.model.deLabelModuleName(modules[i]),
+        'TITLE': modules[i].name,
         'TYPE': modules[i].label,
         'DUE-DATE': dueDateString,
         'DATE-LABEL': dateLabel
@@ -6139,6 +6242,10 @@ class AssessmentTableView extends cc_View {
         }
         if (metaData.hasOwnProperty('learning outcomes')) {
           mapping['LEARNING-OUTCOMES'] = metaData['learning outcomes'];
+          // check if learning outcomes has anything in it
+          if (mapping['LEARNING-OUTCOMES'] !== '') {
+            emptyLearningOutcomes = false;
+          }
         }
       }
 
@@ -6154,20 +6261,25 @@ class AssessmentTableView extends cc_View {
     messageHtml = messageHtml.replace(/{{TABLE-ROWS}}/g, tableRows);
 
     // only do this if we're not in edit mode
-    let editMode = false;
+    /*editMode = false;
     //const ccController = this.controller.configurationController.parentController;
     const ccController = this.controller.parentController;
     if (ccController) {
       editMode = ccController.editMode;
-    }
+    }*/
 
     if (!editMode || variety === 'claytons') {
       messageHtml = this.emptyRemainingFields(messageHtml);
+
+      if (emptyLearningOutcomes) {
+        messageHtml = this.removeEmptyColumns(messageHtml);
+      }
     }
 
     return messageHtml;
 
   }
+
   /**
    * Remove any remaining {{field-name}} from the message HTML
    * @param {String} message 
@@ -6179,6 +6291,43 @@ class AssessmentTableView extends cc_View {
       message = message.replaceAll(`{{${fieldName}}}`, '');
     });
     return message;
+  }
+
+  /**
+   * @function removeEmptyColumns
+   * @description remove any columns from the complete table html that have no content
+   *  Initially the focus is on the learning outcomes column (5th column)
+   * @param {*} messageHtml 
+   * @returns 
+   */
+  removeEmptyColumns(messageHtml) {
+    // use domparser on messageHtml
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(messageHtml, 'text/html');
+
+    // find the table in doc
+    const table = doc.querySelector('table');
+
+    // loop thru the rows and remove the 5th td
+    const rows = table.querySelectorAll('tr');
+    // remove the 5th column from the header row
+    const headerRow = rows[0];
+    const headerCells = headerRow.querySelectorAll('th');
+    if (headerCells.length > 4) {
+      headerCells[4].remove();
+    }
+
+    // skip the header row
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      const tds = row.querySelectorAll('td');
+      if (tds.length > 4) {
+        row.removeChild(tds[4]);
+      }
+    }
+
+    // return the HTML from doc
+    return doc.body.innerHTML;
   }
 
 }
@@ -6227,7 +6376,7 @@ class CollectionOnlyView extends cc_View {
 	}
 
 	generateHTML(collectionName) {
-		return '';
+		return '<div class="cc-representation"></div>';
 	}
 
 }
@@ -6345,7 +6494,7 @@ class GriffithCardsView extends cc_View {
 			display: flex;
 		}
 
-		.cc-clickable-card, .cc-coming-soon-card {
+		.cc-clickable-card, .cc-unclickable-card {
 			padding: 0.75rem;
 			flex-direction: column;
 			display: flex;
@@ -6369,7 +6518,7 @@ class GriffithCardsView extends cc_View {
 			opacity: 0.8;
 		}
 
-		.cc-card {
+		.cc-card, .cc-card-unclickable {
 			box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1);
 			background-color: #fff;
 			border-radius: 1em;
@@ -6382,6 +6531,10 @@ class GriffithCardsView extends cc_View {
 			display: flex;
 			position:relative;
 			border-radius: 1em;
+		}
+
+		.cc-card-banner-container {
+			position: relative;
 		}
 
 		.cc-card:hover{
@@ -6427,7 +6580,7 @@ class GriffithCardsView extends cc_View {
 			border-bottom-right-radius: 0.5rem;
 		}
 
-		.cc-card-content {
+		.cc-card-content, .cc-unclickable-card-content {
 			padding: 0.5rem;
 			flex: 1 1 0%;
 			display: flex;
@@ -6462,12 +6615,18 @@ class GriffithCardsView extends cc_View {
 
 		.cc-card-label {
 			font-size: 0.9rem;
-			margin-bottom: 1rem;
+			/*margin-bottom: 1rem; */
+		}
+
+		.cc-card-footer {
+			height: 4rem;
+			position: relative;
 		}
 
 		.cc-card-engage {
-			padding: 1rem;
-			padding-top: 1.5rem;
+			/*padding: 1rem;
+			padding-top: 1.5rem; */
+			padding-right: 1rem;
 		}
 
 		.cc-card-engage-button {
@@ -6633,8 +6792,21 @@ class GriffithCardsView extends cc_View {
 			float: right;
 		}
 
+		.cc-card-fyi {
+			position: absolute;
+			bottom: 0;
+			background: rgba(0,0,0,0.75);
+			color: white;
+			width: 100%;
+			padding: 0.25rem;
+			font-size: x-small;
+			text-align: center;
+		}
+
 		.cc-card-published {
-			background-color: red;
+			position: absolute;
+			bottom: 0;
+			background: rgba(255,0,0,0.75);
 			color: white;
 			font-size: x-small;
 			font-weight: bold;
@@ -6675,10 +6847,13 @@ class GriffithCardsView extends cc_View {
 			}
 
 			const card = this.generateCard(module);
-			cardCollection.insertAdjacentElement('beforeend', card);
+			if ( card !== null ) {
+				cardCollection.insertAdjacentElement('beforeend', card);
+			}
 		}
 
-		cardCollection = this.addComingSoonCards(cardCollection);
+		// probably deprecated due to FYI approach
+		//cardCollection = this.addComingSoonCards(cardCollection);
 
 		// generate HTML version of cardCollection
 		const cardCollectionHTML = cardCollection.outerHTML;
@@ -6691,9 +6866,11 @@ class GriffithCardsView extends cc_View {
 	 * @param {DomElement} cardCollection - contains cards for all the published modules for current collection
 	 * @param {String} currentCollection - name of current visible collection
 	 * @returns 
+	 * 
+	 * @deprecated - replaced by FYI approach
 	 */
 
-	addComingSoonCards(cardCollection) {
+/*	addComingSoonCards(cardCollection) {
 		// loop through all modules in the current canvas collections configuration
 		// includes both published and unpubished modules
 
@@ -6733,7 +6910,7 @@ class GriffithCardsView extends cc_View {
 		}
 
 		return cardCollection;
-	}
+	} */
 
 	/**
 	 * Harness to generate HTML for a single card. Calls various other functions
@@ -6742,7 +6919,21 @@ class GriffithCardsView extends cc_View {
 	 * @param {boolean} published is the module published (initially used for "coming soon" cards)
 	 * @returns {DOMElement} for a single card
 	 */
-	generateCard(module, published = true) {
+	//generateCard(module, published = true) { 
+	generateCard(module) {
+
+		const published = module.published;
+
+		// need to figure out if we want to add the card or not
+		const editMode = this.model.getEditMode();
+		if ( ! editMode ) {
+			// if the module/card is unpublished and not an FYI card, then don't add it
+			if ( ! published ) {
+				if ( module.hasOwnProperty('fyi') && ! module.fyi ) {
+					return null;
+				}
+			}
+		}
 
 		const moduleName = this.model.deLabelModuleName(module);
 
@@ -6758,8 +6949,13 @@ class GriffithCardsView extends cc_View {
 
 		let IMAGE_IFRAME = this.generateBanner(module);
 
-		const description = module.description;
+		let description = module.description;
+		if (description==="") {
+			// add some content so that the RCE doesn't remove the div entirely
+			description = "<p>&nbsp;</p>";
+		}
 
+		const FYI_TEXT = this.generateFyiText(module);
 		let COMING_SOON = this.generateComingSoon(module);
 		const REVIEW_ITEM = "";
 		const DATE = "";
@@ -6779,53 +6975,58 @@ class GriffithCardsView extends cc_View {
 			}
 		}
 
+		let cardClass = "cc-card";
+		let cardContentClass = "cc-card-content";
+	    let CARD_LINK = `<a href="#module_${module.id}" class="cc-card-link"></a>`;
+		if (module.hasOwnProperty('fyi') && module.fyi) {
+			cardClass = 'cc-card-unclickable';
+			cardContentClass = "cc-unclickable-card-content";
+			CARD_LINK='';
+		}
+
 
 		const cardHtml = `
-    <div id="cc_module_${module.id}" class="cc-card">
-	  <div class="cc-card-flex">
-	      <a href="#module_${module.id}" class="cc-card-link"></a>
-		  ${IMAGE_IFRAME}
-      	${DATE_WIDGET}
-      	${COMING_SOON}
-	 	${PUBLISHED}
-	  <div class="cc-card-content-height">
-      <div class="cc-card-content">
-		<div class="cc-card-label">
-	    	<span class="cc-card-label"> ${CARD_LABEL} </span>
-	    	<h3 class="cc-card-title">${moduleName}</h3>
-		</div>
-      	<div class="cc-card-description">
-	  		${description}
-		</div>
-		</div> <!-- cc-card-content-height -->
+    <div id="cc_module_${module.id}" class="${cardClass}">
+		<div class="cc-card-flex">
+	    	<div class="cc-card-banner-container">
+			    ${CARD_LINK}
+		  		${IMAGE_IFRAME}
+      	  		${DATE_WIDGET}
+      	  		${COMING_SOON}
+	 	  		${PUBLISHED}
+		  		${FYI_TEXT}
+			</div>
+	  		<div class="cc-card-content-height">
+      			<div class="${cardContentClass}">
+					<div class="cc-card-label">
+	    				<span class="cc-card-label"> ${CARD_LABEL} </span>
+	    				<h3 class="cc-card-title" data-moduleid="${module.id}">${moduleName}</h3>
+					</div>
+      				<div class="cc-card-description">
+	  					${description}
+					</div>
+				</div> 
+			</div>
+			<div class="cc-card-footer">
+	 			${LINK_ITEM}
+	 			${REVIEW_ITEM}
+	 			${EDIT_ITEM}
+	 			${DATE} 
+	 			<div class="cc-progress"></div>
+			</div>
+      	</div>
 	  </div> 
-	 
-	 ${LINK_ITEM}
-	 ${REVIEW_ITEM}
-	 ${EDIT_ITEM}
-	 ${DATE} 
-	 <div class="cc-progress"></div>
-      </div>
     </div>
     `;
 
 		// convert cardHtml into DOM element
 		let wrapper = document.createElement('div');
-		if (published) {
-			wrapper.classList.add('cc-clickable-card');
-			wrapper.innerHTML = cardHtml;
+		if ( module.hasOwnProperty('fyi') && module.fyi ) {
+			wrapper.classList.add('cc-unclickable-card');
 		} else {
-			// unpublished card needs a different class and the card link removed
-			wrapper.classList.add('cc-coming-soon-card');
-			wrapper.innerHTML = cardHtml;
-			// remove the a.cc-card-link from wrapper
-			wrapper.querySelector('.cc-card-link').remove();
-			// remove the div.cc-card-engage-button if it exists
-			const button = wrapper.querySelector('.cc-card-engage-button');
-			if (button) {
-				button.remove();
-			}
+			wrapper.classList.add('cc-clickable-card');
 		}
+		wrapper.innerHTML = cardHtml;
 
 		const progress = this.getCardProgressElement(module);
 		if (progress) {
@@ -6843,6 +7044,24 @@ class GriffithCardsView extends cc_View {
 		}
 
 		return wrapper;
+	}
+
+	/**
+	 * @function generateCardLinkItem
+	 * @description generate HTML to show an fyi message if fyi is true and there is a message
+	 * @param {Object} module - configuration details for module
+	 */
+	generateFyiText(module) {
+
+		if ( !module.hasOwnProperty('fyi') || !module.fyi || !module.hasOwnProperty('fyiText')) {
+			return "";
+		}
+
+		if ( module.fyi && module.fyiText!=="") {
+			return `<div class="cc-card-fyi">${module.fyiText}</div>`;
+		}
+
+		return "";
 	}
 
 	/**
@@ -6926,6 +7145,7 @@ class GriffithCardsView extends cc_View {
 		let escModuleName = module.name.replace(/(["'])/g, "\\$1");
 
 		return `<img class="cc-card-image ${imageSize}" src="${imageUrl}" 
+					data-moduleid="${module.id}"
 		 				alt="Image representing '${escModuleName}'"> `;
 	}
 	/**
@@ -7001,7 +7221,8 @@ class GriffithCardsView extends cc_View {
 		}
 
 		// create day const with the first 3 letters of date.day
-		const day = date.day || "Monday"; //date.day.substring(0, 3);
+		// stay empty if no date specified
+		const day = date.day || ""; //date.day.substring(0, 3);
 		const month = date.month.substring(0, 3);
 		let time = '';
 		if (date.time) {
@@ -7065,6 +7286,10 @@ class GriffithCardsView extends cc_View {
 			// remove the div.cc-card-date-week from element
 			element.removeChild(element.querySelector('.cc-card-date-week'));
 		}
+		if (day==="") {
+			// remove the div.cc-card-date-day from element
+			element.removeChild(element.querySelector('.cc-card-date-day'));
+		}
 		// return element converted to string
 		return element.outerHTML;
 	}
@@ -7108,7 +7333,7 @@ class GriffithCardsView extends cc_View {
 				showDate.week = `${showDate.week} - ${date.to.week}`;
 			}
 			if (date.to.hasOwnProperty('day')) {
-				showDate.toDay = date.to.day.substring(0, 3) || "Mon";
+				showDate.toDay = date.to.day.substring(0, 3) || "";
 			}
 			if (date.to.hasOwnProperty('month')) {
 				showDate.toMonth = date.to.month.substring(0, 3);
@@ -7159,6 +7384,10 @@ class GriffithCardsView extends cc_View {
 		if (showDate.toWeek === "" && showdate.fromWeek === "") {
 			// remove the div.cc-card-date-week from element
 			element.removeChild(element.querySelector('.cc-card-date-dual-week'));
+		}
+		if (showDate.toDay === "" && showDate.fromDay === "") {
+			// remove the div.cc-card-date-dual-day from element
+			element.removeChild(element.querySelector('.cc-card-date-dual-day'));
 		}
 		// return element converted to string
 		return element.outerHTML;
@@ -7253,7 +7482,7 @@ class GriffithCardsView extends cc_View {
 	generateCardEngage(module) {
 		let engage = 'Engage';
 		// set the "text" for the engage button
-		if ('engage' in module) {
+		if (module.hasOwnProperty('engage')) {
 			engage = module.engage;
 		}
 		return engage;
@@ -7293,7 +7522,11 @@ class GriffithCardsView extends cc_View {
 	    </div>
 	    `;
 
-		if ('noEngage' in module && module.noEngage) {
+		if (
+			( 'noEngage' in module && module.noEngage)  ||
+			// don't show link for fyi object
+			( module.hasOwnProperty('fyi') && module.fyi )
+		 ) {
 			LINK_ITEM = `
             `;
 		}
@@ -7308,14 +7541,18 @@ class GriffithCardsView extends cc_View {
 	  * @returns string html empty if published warning if unpublished
 	  */
 	generateCardPublished(module) {
-		if (module.published || module.published === undefined) {
+		if (
+			module.published || module.published === undefined ||
+			// don't show unpublished for fyi cards ??
+			( module.hasOwnProperty('fyi') && module.fyi )
+			) {
 			return '';
 		}
 
 		let publishedHtml = `
-    <span class="cc-card-published">
+    <div class="cc-card-published">
 	    Unpublished
-    </span>
+    </div>
 	    `;
 
 		return publishedHtml;
@@ -7372,6 +7609,8 @@ class GriffithCardsView extends cc_View {
 		// convert html to DOM
 		let parser = new DOMParser();
 		let doc = parser.parseFromString(html, "text/html");
+
+		const modules = this.model.getCollectionsModules();
 
 		// get the div#cc-canvas-collections
 		// TODO check - is this already there??
@@ -7439,6 +7678,18 @@ class GriffithCardsView extends cc_View {
 		let images = div.querySelectorAll('img.cc-card-image');
 		for (let i = 0; i < images.length; i++) {
 			let image = images[i];
+			let module = undefined;
+			if (image.dataset.hasOwnProperty('moduleid')) {
+				const moduleid = image.dataset.moduleid;
+				if ( modules.hasOwnProperty(moduleid) ) {
+					module = modules[parseInt(moduleid)];
+				}
+				// if an fyi module, continue
+				if (module && module.hasOwnProperty('fyi') && module.fyi) {
+					continue;
+				}
+			}
+
 			let link = doc.createElement('a');
 			link.classList.add('cc-card-link-image');
 			link.href = currentUrl;
@@ -7447,8 +7698,22 @@ class GriffithCardsView extends cc_View {
 		}
 		// add a link around cc-card-title innerHTML
 		let titles = div.querySelectorAll('h3.cc-card-title');
+
+
 		for (let i = 0; i < titles.length; i++) {
 			let title = titles[i];
+			// get the module
+			let module = undefined;
+			if (title.dataset.hasOwnProperty('moduleid')) {
+				const moduleid = title.dataset.moduleid;
+				if ( modules.hasOwnProperty(moduleid) ) {
+					module = modules[parseInt(moduleid)];
+				}
+				// if an fyi module, continue
+				if (module && module.hasOwnProperty('fyi') && module.fyi) {
+					continue;
+				}
+			}
 			let link = doc.createElement('a');
 			// set link class to cc-card-link-title
 			link.classList.add('cc-card-link-title');
@@ -7559,7 +7824,7 @@ class CanvasPageView extends cc_View {
 
 		// get the pageName every time display is run in the hope we 
 		// get all changes
-		this.pageName = this.model.getCurrentCollectionPageName();
+		this.pageName = this.model.getCurrentCollectionIncludePage();
 
 		// Execution method will be
 		// - findPage - tries to find the named page in the course
@@ -7834,8 +8099,8 @@ class CollectionsView extends cc_View {
 
 		// does the collections representation have a method generateHTML
 		if (typeof this.representations[collectionName].generateHTML !== 'function') {
-			alert(`generateHTML not defined for ${collectionName} representation`);
-			return undefined;
+			console.log(`generateHTML not defined for ${collectionName} representation`);
+			return '';
 		}
 
 		let html = this.representations[collectionName].generateHTML(collectionName, variety);
@@ -10144,6 +10409,8 @@ class cc_Controller {
 	 * Collections configuration information has been obtained
 	 * Purpose here is to create mergedModuleDetails object which 
 	 * merges the two sets of module information into the one - keyed on module id
+	 * In structure - it's essentially collectionsModules with the addition of Canvas
+	 * module information
 	 * 
 	 * It also adds the following fields
 	 * - actualNum - which is auto calculated (maybe) version of num
@@ -10160,7 +10427,10 @@ class cc_Controller {
 		// Canvas module id
 		const collectionsModules = this.cc_configuration.MODULES;
 
-		this.mergedModuleDetails = {};
+		// Alternative approach, rather than set it to an empty object
+		// set it to collectionsModules and add in the Canvas module details
+		//this.mergedModuleDetails = {};
+		this.mergedModuleDetails = collectionsModules;
 
 		if (this.editMode) {
 			// only check to remove deleted modules if edit mode
@@ -10171,9 +10441,12 @@ class cc_Controller {
 			}
 		}
 
+
 		// numCalculator use to calculate nums for collections 
 		// is keyed on collectionName and then label to point to an int 
 		let numCalculator = {};
+
+		let updatedName = false;
 
 		// merge the two sets of module details into one - keyed on module id
 		for (let i = 0; i < canvasModules.length; i++) {
@@ -10191,6 +10464,9 @@ class cc_Controller {
 			if (ccModule) {
 				// collections module name should be updated from canvas
 				const skipFields = ['name'];
+				if ( ccModule.name!==canvasModule.name ) {
+					updatedName = true;
+				}
 				ccModule.name = canvasModule.name;
 				for (let key in ccModule) {
 					if (!skipFields.includes(key)) {
@@ -10222,6 +10498,9 @@ class cc_Controller {
 				}
 			}
 			this.mergedModuleDetails[canvasModuleId] = details;
+		}
+		if ( this.editMode && updatedName ) {
+			this.saveConfig();
 		}
 	}
 
@@ -10472,7 +10751,7 @@ class cc_Controller {
 		this.courseId = courseId;
 
 		// modulesPage true if location ends with courses/${courseId}/modules
-		let regEx = new RegExp(`courses/${courseId}/modules(#*|#[^/]+)$`);
+		let regEx = new RegExp(`courses/${courseId}/modules(/*|#*|#[^/]+)$`);
 		this.modulesPage = regEx.test(this.documentUrl);
 
 		// homeModulesPage true iff

@@ -10,7 +10,7 @@
 
 import { cc_View } from '../cc_View.js';
 
-const CC_VERSION = "0.9.2";
+const CC_VERSION = "0.9.3";
 
 const CV_DEFAULT_DATE_LABEL = "Starting";
 
@@ -167,7 +167,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-fyi",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#fyi"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#fyi-objects"
 	},
 	{
 		contentText: `Describe why, what or how the module relates to the students' learning`,

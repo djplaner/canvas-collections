@@ -1,10 +1,10 @@
-# Latest Version **0.9.2**
+# Latest Version **0.9.3**
 
 Canvas Collections remains very much under active development. New versions with new features (and bug fixes) are released weekly. It is recommended to always have [the latest version installed](./getting-started/install/types-pre-requisites.md).
 
 ## Current Status
 
-version **0.9.2** of Canvas Collections
+version **0.9.3** of Canvas Collections
 
 - Should work on all Canvas instances, but intended largely for use at Griffith University
 
@@ -13,6 +13,10 @@ version **0.9.2** of Canvas Collections
 - [Institutional mode](./getting-started/install/institutional.md) is not recently tested.
 
 	An early version was tested and worked. A detailed test should be attempted by early 2024.
+
+## Release Notes
+
+See [the 0.9.3 release notes](https://github.com/djplaner/canvas-collections/releases/tag/v0.9.3) for more information on the latest version.
 
 ## Which version are you using?
 

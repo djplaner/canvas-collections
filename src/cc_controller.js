@@ -259,6 +259,8 @@ export default class cc_Controller {
 	 * Collections configuration information has been obtained
 	 * Purpose here is to create mergedModuleDetails object which 
 	 * merges the two sets of module information into the one - keyed on module id
+	 * In structure - it's essentially collectionsModules with the addition of Canvas
+	 * module information
 	 * 
 	 * It also adds the following fields
 	 * - actualNum - which is auto calculated (maybe) version of num
@@ -275,7 +277,10 @@ export default class cc_Controller {
 		// Canvas module id
 		const collectionsModules = this.cc_configuration.MODULES;
 
-		this.mergedModuleDetails = {};
+		// Alternative approach, rather than set it to an empty object
+		// set it to collectionsModules and add in the Canvas module details
+		//this.mergedModuleDetails = {};
+		this.mergedModuleDetails = collectionsModules;
 
 		if (this.editMode) {
 			// only check to remove deleted modules if edit mode

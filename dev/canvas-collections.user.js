@@ -934,7 +934,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.9.2";
+const CC_VERSION = "0.9.3";
 
 const CV_DEFAULT_DATE_LABEL = "Starting";
 
@@ -1091,7 +1091,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-module-fyi",
 		animateFunction: "spin",
-		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#fyi"
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#fyi-objects"
 	},
 	{
 		contentText: `Describe why, what or how the module relates to the students' learning`,
@@ -5979,6 +5979,15 @@ td.descriptionCell {
   #cc-assessment-table {
     margin-top: 0.5rem !important;
   }
+
+  .cc-assessment-table-fyi-text {
+    width:100%;
+    padding: 0.25rem;
+    font-size: x-small;
+    text-align: center;
+    color: white;
+    background: black;
+  }
 	`;
 
 const TABLE_HTML = `
@@ -6158,6 +6167,8 @@ class AssessmentTableView extends cc_View {
       messageHtml = TABLE_HTML_CLAYTONS;
     }
 
+    const editMode = this.model.getEditMode();
+
     // TODO update the messageHTML
     const description = this.model.getCurrentCollectionDescription();
 
@@ -6176,6 +6187,15 @@ class AssessmentTableView extends cc_View {
       // skip if row doesn't match currentCollection
       if (modules[i].collection !== collectionName) {
         continue;
+      }
+      // exclude modules for other reasons
+      // - not in edit mode, module is unpublished and is not an FYI object
+      if (!editMode) {
+        if (! modules[i].published) {
+          if ( ! modules[i].hasOwnProperty('fyi') || ! modules[i].fyi) {
+            continue;
+          }
+        }
       }
       let rowHtml = TABLE_ROW_HTML;
       if (variety === 'claytons') {
@@ -6214,10 +6234,20 @@ class AssessmentTableView extends cc_View {
         }
       }
 
+      let description = modules[i].description;
+      // add the "FYI" text if required
+      if (modules[i].hasOwnProperty('fyi') && modules[i].fyi) {
+        if (modules[i].hasOwnProperty('fyiText') && modules[i].fyiText !== "") {
+          description = `
+          <div class="cc-assessment-table-fyi-text">${modules[i].fyiText}</div>
+          ${description} `;
+        }
+      }
+
       let mapping = {
         //'MODULE-ID': modules[i].id,
         'MODULE-ID': `${modulesUrl}/#${modules[i].id}`,
-        'DESCRIPTION': modules[i].description,
+        'DESCRIPTION': description,
         //'TITLE': this.model.deLabelModuleName(modules[i]),
         'TITLE': modules[i].name,
         'TYPE': modules[i].label,
@@ -6257,12 +6287,12 @@ class AssessmentTableView extends cc_View {
     messageHtml = messageHtml.replace(/{{TABLE-ROWS}}/g, tableRows);
 
     // only do this if we're not in edit mode
-    let editMode = false;
+    /*editMode = false;
     //const ccController = this.controller.configurationController.parentController;
     const ccController = this.controller.parentController;
     if (ccController) {
       editMode = ccController.editMode;
-    }
+    }*/
 
     if (!editMode || variety === 'claytons') {
       messageHtml = this.emptyRemainingFields(messageHtml);
@@ -6846,10 +6876,13 @@ class GriffithCardsView extends cc_View {
 			}
 
 			const card = this.generateCard(module);
-			cardCollection.insertAdjacentElement('beforeend', card);
+			if ( card !== null ) {
+				cardCollection.insertAdjacentElement('beforeend', card);
+			}
 		}
 
-		cardCollection = this.addComingSoonCards(cardCollection);
+		// probably deprecated due to FYI approach
+		//cardCollection = this.addComingSoonCards(cardCollection);
 
 		// generate HTML version of cardCollection
 		const cardCollectionHTML = cardCollection.outerHTML;
@@ -6862,9 +6895,11 @@ class GriffithCardsView extends cc_View {
 	 * @param {DomElement} cardCollection - contains cards for all the published modules for current collection
 	 * @param {String} currentCollection - name of current visible collection
 	 * @returns 
+	 * 
+	 * @deprecated - replaced by FYI approach
 	 */
 
-	addComingSoonCards(cardCollection) {
+/*	addComingSoonCards(cardCollection) {
 		// loop through all modules in the current canvas collections configuration
 		// includes both published and unpubished modules
 
@@ -6904,7 +6939,7 @@ class GriffithCardsView extends cc_View {
 		}
 
 		return cardCollection;
-	}
+	} */
 
 	/**
 	 * Harness to generate HTML for a single card. Calls various other functions
@@ -6913,7 +6948,21 @@ class GriffithCardsView extends cc_View {
 	 * @param {boolean} published is the module published (initially used for "coming soon" cards)
 	 * @returns {DOMElement} for a single card
 	 */
-	generateCard(module, published = true) {
+	//generateCard(module, published = true) { 
+	generateCard(module) {
+
+		const published = module.published;
+
+		// need to figure out if we want to add the card or not
+		const editMode = this.model.getEditMode();
+		if ( ! editMode ) {
+			// if the module/card is unpublished and not an FYI card, then don't add it
+			if ( ! published ) {
+				if ( module.hasOwnProperty('fyi') && ! module.fyi ) {
+					return null;
+				}
+			}
+		}
 
 		const moduleName = this.model.deLabelModuleName(module);
 
@@ -7001,25 +7050,12 @@ class GriffithCardsView extends cc_View {
 
 		// convert cardHtml into DOM element
 		let wrapper = document.createElement('div');
-		if (published) {
-			if ( module.hasOwnProperty('fyi') && module.fyi ) {
-				wrapper.classList.add('cc-unclickable-card');
-			} else {
-				wrapper.classList.add('cc-clickable-card');
-			}
-			wrapper.innerHTML = cardHtml;
-		} else {
-			// unpublished card needs a different class and the card link removed
+		if ( module.hasOwnProperty('fyi') && module.fyi ) {
 			wrapper.classList.add('cc-unclickable-card');
-			wrapper.innerHTML = cardHtml;
-			// remove the a.cc-card-link from wrapper
-			wrapper.querySelector('.cc-card-link').remove();
-			// remove the div.cc-card-engage-button if it exists
-			const button = wrapper.querySelector('.cc-card-engage-button');
-			if (button) {
-				button.remove();
-			}
+		} else {
+			wrapper.classList.add('cc-clickable-card');
 		}
+		wrapper.innerHTML = cardHtml;
 
 		const progress = this.getCardProgressElement(module);
 		if (progress) {
@@ -10436,6 +10472,8 @@ class cc_Controller {
 	 * Collections configuration information has been obtained
 	 * Purpose here is to create mergedModuleDetails object which 
 	 * merges the two sets of module information into the one - keyed on module id
+	 * In structure - it's essentially collectionsModules with the addition of Canvas
+	 * module information
 	 * 
 	 * It also adds the following fields
 	 * - actualNum - which is auto calculated (maybe) version of num
@@ -10452,7 +10490,10 @@ class cc_Controller {
 		// Canvas module id
 		const collectionsModules = this.cc_configuration.MODULES;
 
-		this.mergedModuleDetails = {};
+		// Alternative approach, rather than set it to an empty object
+		// set it to collectionsModules and add in the Canvas module details
+		//this.mergedModuleDetails = {};
+		this.mergedModuleDetails = collectionsModules;
 
 		if (this.editMode) {
 			// only check to remove deleted modules if edit mode

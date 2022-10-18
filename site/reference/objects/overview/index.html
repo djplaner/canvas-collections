@@ -1325,6 +1325,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fyi" class="md-nav__link">
+    FYI
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#labels-and-numbers" class="md-nav__link">
     Labels and Numbers
   </a>
@@ -1374,9 +1381,22 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fyi-objects" class="md-nav__link">
+    FYI Objects
+  </a>
+  
+    <nav class="md-nav" aria-label="FYI Objects">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
-  <a href="#coming-soon" class="md-nav__link">
-    Coming Soon
+  <a href="#example" class="md-nav__link">
+    Example
   </a>
   
 </li>
@@ -1540,6 +1560,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fyi" class="md-nav__link">
+    FYI
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#labels-and-numbers" class="md-nav__link">
     Labels and Numbers
   </a>
@@ -1589,9 +1616,22 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fyi-objects" class="md-nav__link">
+    FYI Objects
+  </a>
+  
+    <nav class="md-nav" aria-label="FYI Objects">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
-  <a href="#coming-soon" class="md-nav__link">
-    Coming Soon
+  <a href="#example" class="md-nav__link">
+    Example
   </a>
   
 </li>
@@ -1728,6 +1768,9 @@
 <h3 id="colour">Colour</h3>
 <p>The colour banner option allows you to choose a fixed colour for the banner. This has proven useful in situations where a module represents a topic/purposes for which no photo or video is available or suitable. The colour is chosen using a colour picker - as demonstrated in the following animated image.</p>
 <p><img alt="" src="../pics/colourPickerAnimated.gif" /></p>
+<h2 id="fyi">FYI</h2>
+<p>A way to specify that a module should become a <em>For Your Information</em> (FYI) only object. i.e. any representation will only display Collections' information (label, number, description, banner etc). It should not display any information about the actual Canvas module, including a link to the module.</p>
+<p>FYI object's - since they don't display any information about the Canvas module - are always displayed. Regardless of whether the module is unpublished or generally not available to the student.</p>
 <h2 id="labels-and-numbers">Labels and Numbers</h2>
 <p>Many course designs use modules to represent common objects (e.g. lectures, tutorials, workshops, assessments, themes, topics etc.). Often a course will have multiple such objects (e.g. topic 1, topic 2, topic 3). Labels and numbers provide a means to explicitly identify such objects and their sequence. This information is used in different ways by each representation.</p>
 <p>Collections provides the ability for you to explicitly specify the number for each module OR it can auto calculate the number based on the module's position in the collection.</p>
@@ -1750,10 +1793,6 @@
 <p><img alt="" src="../pics/calculatedStudyPeriod.png" />  </p>
 <h3 id="date-types">Date types</h3>
 <p>As summarised in the following table, the date area of the Module configuration dialog allows you to specify dates for three different purposes.</p>
-<div class="admonition info">
-<p class="admonition-title">'Coming Soon' is coming soon</p>
-<p><img alt="🚧" class="emojione" src="https://twemoji.maxcdn.com/v/latest/svg/1f6a7.svg" title=":construction:" /> The 'Coming Soon' feature is still a work in progress.</p>
-</div>
 <table>
 <thead>
 <tr>
@@ -1769,10 +1808,6 @@
 <tr>
 <td>Stop Date</td>
 <td>The end date of a date range</td>
-</tr>
-<tr>
-<td>Coming Soon</td>
-<td><img alt="🚧" class="emojione" src="https://twemoji.maxcdn.com/v/latest/svg/1f6a7.svg" title=":construction:" /> A date indicating when a module will become available to students</td>
 </tr>
 </tbody>
 </table>
@@ -1827,11 +1862,49 @@
 <li>A stop date is partially and then almost fully configured (the week is not specified, hence no final date).</li>
 </ol>
 <p><img alt="" src="../pics/configureDatesAnimated.gif" /></p>
-<h3 id="coming-soon">Coming Soon</h3>
+<h2 id="fyi-objects">FYI Objects</h2>
+<p>Selecting the <em>FYI</em> switch turns a module into a <em>For Your Information</em> (FYI) object, this means that any representation of the module will:</p>
+<ol>
+<li>Always appear regardless of whether the visitor has access (e.g. the module is unpublished); </li>
+<li>Never include any Canvas information about the module (e.g. a link to the module, whether the module is published or unpublished etc.)</li>
+<li>Only display information about the module configured by Collections (e.g. the banner, the dates, description, label etc.).</li>
+</ol>
+<p>There are two common uses for an FYI object:</p>
+<ol>
+<li>
+<p>"Coming soon" modules</p>
+<p>Allow students to see information about a module that they can't currently access. Helping them understand the complete structure of the course without being able to access the content.</p>
+</li>
+<li>
+<p>Simple information sharing.</p>
+<p>You have important information to share and want it integrated into the collection's representation, including use of Collection's other features (e.g. banner, dates, etc). But don't need all the additional features of a module (e.g. items) </p>
+</li>
+</ol>
 <div class="admonition note">
-<p class="admonition-title">Coming Soon is under construction</p>
-<p><img alt="🏗️" class="emojione" src="https://twemoji.maxcdn.com/v/latest/svg/1f3d7.svg" title=":construction_site:" /> The "Coming Soon" feature is currently being developed. It will be an adaptation of the <a href="https://djplaner.github.io/Card-Interface-Tweak/customiseACard/#making-a-coming-soon-card">Card Interface "Coming Soon" feature</a> for Canvas.</p>
+<p class="admonition-title">FYI objects and other representations</p>
+<p>The example below focuses on <a href="../../representations/overview/#griffithcards">the <em>GriffithCards</em> representation</a>. All other representations should provide similar support for FYI objects, customised to fit the specifics of the representation.</p>
 </div>
+<h3 id="example">Example</h3>
+<p>The following animated image demonstrates how an FYI object can be used with the following steps:</p>
+<ol>
+<li>Demonstrate that unpublished modules are not displayed for students.</li>
+<li>
+<p>Modify the unpublished module to make it an FYI object.</p>
+<p>Note how the <em>Engage</em> button disappears after this change. FYI object's can't link to the module.</p>
+</li>
+<li>
+<p>Add some an FYI message.</p>
+<p>A short textual message is added. This is overlaid on the bottom of the banner. Useful for displaying some additional information for the students.</p>
+</li>
+<li>
+<p>Demonstrate how FYI objects are displayed for students.</p>
+<p>Even though the associated Canvas module is still unpublished, the FYI object is displayed in student view. <strong>Note:</strong> The module itself remains invisible to students. All they can see is the FYI object containing information you've configured using Collections.</p>
+</li>
+<li>
+<p>Demonstrate the FYI objects don't need a message</p>
+</li>
+</ol>
+<p><img alt="" src="../pics/animatedFYIObject.gif" /></p>
 <h2 id="additional-metadata">Additional Metadata</h2>
 <p>For various reasons you may wish to provide additional metadata about a module. The <em>additional metadata</em> area enables this. You can add (and delete) any additional metadata in the form of name/value pairs.</p>
 

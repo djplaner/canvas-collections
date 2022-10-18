@@ -167,6 +167,15 @@ td.descriptionCell {
   #cc-assessment-table {
     margin-top: 0.5rem !important;
   }
+
+  .cc-assessment-table-fyi-text {
+    width:100%;
+    padding: 0.25rem;
+    font-size: x-small;
+    text-align: center;
+    color: white;
+    background: black;
+  }
 	`;
 
 const TABLE_HTML = `
@@ -346,6 +355,8 @@ export default class AssessmentTableView extends cc_View {
       messageHtml = TABLE_HTML_CLAYTONS;
     }
 
+    const editMode = this.model.getEditMode();
+
     // TODO update the messageHTML
     const description = this.model.getCurrentCollectionDescription();
 
@@ -364,6 +375,15 @@ export default class AssessmentTableView extends cc_View {
       // skip if row doesn't match currentCollection
       if (modules[i].collection !== collectionName) {
         continue;
+      }
+      // exclude modules for other reasons
+      // - not in edit mode, module is unpublished and is not an FYI object
+      if (!editMode) {
+        if (! modules[i].published) {
+          if ( ! modules[i].hasOwnProperty('fyi') || ! modules[i].fyi) {
+            continue;
+          }
+        }
       }
       let rowHtml = TABLE_ROW_HTML;
       if (variety === 'claytons') {
@@ -402,10 +422,20 @@ export default class AssessmentTableView extends cc_View {
         }
       }
 
+      let description = modules[i].description;
+      // add the "FYI" text if required
+      if (modules[i].hasOwnProperty('fyi') && modules[i].fyi) {
+        if (modules[i].hasOwnProperty('fyiText') && modules[i].fyiText !== "") {
+          description = `
+          <div class="cc-assessment-table-fyi-text">${modules[i].fyiText}</div>
+          ${description} `;
+        }
+      }
+
       let mapping = {
         //'MODULE-ID': modules[i].id,
         'MODULE-ID': `${modulesUrl}/#${modules[i].id}`,
-        'DESCRIPTION': modules[i].description,
+        'DESCRIPTION': description,
         //'TITLE': this.model.deLabelModuleName(modules[i]),
         'TITLE': modules[i].name,
         'TYPE': modules[i].label,
@@ -445,12 +475,12 @@ export default class AssessmentTableView extends cc_View {
     messageHtml = messageHtml.replace(/{{TABLE-ROWS}}/g, tableRows);
 
     // only do this if we're not in edit mode
-    let editMode = false;
+    /*editMode = false;
     //const ccController = this.controller.configurationController.parentController;
     const ccController = this.controller.parentController;
     if (ccController) {
       editMode = ccController.editMode;
-    }
+    }*/
 
     if (!editMode || variety === 'claytons') {
       messageHtml = this.emptyRemainingFields(messageHtml);

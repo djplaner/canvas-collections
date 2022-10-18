@@ -462,10 +462,13 @@ export default class GriffithCardsView extends cc_View {
 			}
 
 			const card = this.generateCard(module);
-			cardCollection.insertAdjacentElement('beforeend', card);
+			if ( card !== null ) {
+				cardCollection.insertAdjacentElement('beforeend', card);
+			}
 		}
 
-		cardCollection = this.addComingSoonCards(cardCollection);
+		// probably deprecated due to FYI approach
+		//cardCollection = this.addComingSoonCards(cardCollection);
 
 		// generate HTML version of cardCollection
 		const cardCollectionHTML = cardCollection.outerHTML;
@@ -478,9 +481,11 @@ export default class GriffithCardsView extends cc_View {
 	 * @param {DomElement} cardCollection - contains cards for all the published modules for current collection
 	 * @param {String} currentCollection - name of current visible collection
 	 * @returns 
+	 * 
+	 * @deprecated - replaced by FYI approach
 	 */
 
-	addComingSoonCards(cardCollection) {
+/*	addComingSoonCards(cardCollection) {
 		// loop through all modules in the current canvas collections configuration
 		// includes both published and unpubished modules
 
@@ -520,7 +525,7 @@ export default class GriffithCardsView extends cc_View {
 		}
 
 		return cardCollection;
-	}
+	} */
 
 	/**
 	 * Harness to generate HTML for a single card. Calls various other functions
@@ -529,7 +534,20 @@ export default class GriffithCardsView extends cc_View {
 	 * @param {boolean} published is the module published (initially used for "coming soon" cards)
 	 * @returns {DOMElement} for a single card
 	 */
-	generateCard(module, published = true) {
+	generateCard(module) {
+
+		const published = module.published;
+
+		// need to figure out if we want to add the card or not
+		const editMode = this.model.getEditMode();
+		if ( ! editMode ) {
+			// if the module/card is unpublished and not an FYI card, then don't add it
+			if ( ! published ) {
+				if ( module.hasOwnProperty('fyi') && ! module.fyi ) {
+					return null;
+				}
+			}
+		}
 
 		const moduleName = this.model.deLabelModuleName(module);
 
@@ -617,25 +635,12 @@ export default class GriffithCardsView extends cc_View {
 
 		// convert cardHtml into DOM element
 		let wrapper = document.createElement('div');
-		if (published) {
-			if ( module.hasOwnProperty('fyi') && module.fyi ) {
-				wrapper.classList.add('cc-unclickable-card');
-			} else {
-				wrapper.classList.add('cc-clickable-card');
-			}
-			wrapper.innerHTML = cardHtml;
-		} else {
-			// unpublished card needs a different class and the card link removed
+		if ( module.hasOwnProperty('fyi') && module.fyi ) {
 			wrapper.classList.add('cc-unclickable-card');
-			wrapper.innerHTML = cardHtml;
-			// remove the a.cc-card-link from wrapper
-			wrapper.querySelector('.cc-card-link').remove();
-			// remove the div.cc-card-engage-button if it exists
-			const button = wrapper.querySelector('.cc-card-engage-button');
-			if (button) {
-				button.remove();
-			}
+		} else {
+			wrapper.classList.add('cc-clickable-card');
 		}
+		wrapper.innerHTML = cardHtml;
 
 		const progress = this.getCardProgressElement(module);
 		if (progress) {

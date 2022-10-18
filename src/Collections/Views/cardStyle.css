@@ -274,3 +274,12 @@
 	text-decoration: none !important;
 	color: inherit !important;
 }
+
+  .cc-assessment-table-fyi-text {
+    width:100%;
+    padding: 0.25rem;
+    font-size: x-small;
+    text-align: center;
+    color: white;
+    background: black;
+  }

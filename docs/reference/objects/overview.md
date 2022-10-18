@@ -182,7 +182,50 @@ The following animated image demonstrates how the representation of a date chang
 
 ![](./pics/configureDatesAnimated.gif)
 
-### FYI
+## FYI Objects
+
+Selecting the _FYI_ switch turns a module into a _For Your Information_ (FYI) object, this means that any representation of the module will:
+
+1. Always appear regardless of whether the visitor has access (e.g. the module is unpublished); 
+2. Never include any Canvas information about the module (e.g. a link to the module, whether the module is published or unpublished etc.)
+3. Only display information about the module configured by Collections (e.g. the banner, the dates, description, label etc.).
+
+There are two common uses for an FYI object:
+
+1. "Coming soon" modules
+
+    Allow students to see information about a module that they can't currently access. Helping them understand the complete structure of the course without being able to access the content.
+
+2. Simple information sharing.
+
+    You have important information to share and want it integrated into the collection's representation, including use of Collection's other features (e.g. banner, dates, etc). But don't need all the additional features of a module (e.g. items) 
+
+!!! Note "FYI objects and other representations"
+
+    The example below focuses on [the _GriffithCards_ representation](../../representations/overview/#griffithcards). All other representations should provide similar support for FYI objects, customised to fit the specifics of the representation.
+
+### Example
+
+The following animated image demonstrates how an FYI object can be used with the following steps:
+
+1. Demonstrate that unpublished modules are not displayed for students.
+2. Modify the unpublished module to make it an FYI object.
+
+    Note how the _Engage_ button disappears after this change. FYI object's can't link to the module.
+
+3. Add some an FYI message.
+
+    A short textual message is added. This is overlaid on the bottom of the banner. Useful for displaying some additional information for the students.
+
+4. Demonstrate how FYI objects are displayed for students.
+
+    Even though the associated Canvas module is still unpublished, the FYI object is displayed in student view. **Note:** The module itself remains invisible to students. All they can see is the FYI object containing information you've configured using Collections.
+     
+5. Demonstrate the FYI objects don't need a message
+
+
+![](./pics/animatedFYIObject.gif)
+
 
 
 ## Additional Metadata
