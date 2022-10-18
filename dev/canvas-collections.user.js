@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.9.2
+// @version      0.9.3
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -1490,9 +1490,10 @@ class cc_ConfigurationView extends cc_View {
 		// add event handlers for additional metadata
 		// button.cc-module-config-metadata-add 
 		// and i.cc-module-config-metadata-trash calls model.manageModuleMetadata
-		const buttonAddMetadata = document.querySelector(`button.cc-module-config-metadata-add`);
-		if (buttonAddMetadata) {
-			buttonAddMetadata.onclick = (event) => this.controller.manageModuleMetadata(event);
+		const buttonAddMetadata = document.querySelectorAll(`.cc-module-config-metadata-add`);
+		for (let i = 0; i < buttonAddMetadata.length; i++) {
+			const button = buttonAddMetadata[i];
+			button.onclick = (event) => this.controller.manageModuleMetadata(event);
 		}
 		const trashMetadata = document.querySelectorAll(`i.cc-module-config-metadata-delete`);
 		for (let i = 0; i < trashMetadata.length; i++) {
@@ -5997,7 +5998,7 @@ const TABLE_HTML = `
 		</style>
 
 			<table class="cc-responsive-table" role="table">
-      			<caption>{{CAPTION}}</caption>
+      			<!-- <caption></caption> -->
       			<thead role="rowgroup">
         			<tr role="row">
           				<th role="columnheader" scope="col"><span class="cc-table-header-text">Title</span></th>
@@ -6191,8 +6192,8 @@ class AssessmentTableView extends cc_View {
       // exclude modules for other reasons
       // - not in edit mode, module is unpublished and is not an FYI object
       if (!editMode) {
-        if (! modules[i].published) {
-          if ( ! modules[i].hasOwnProperty('fyi') || ! modules[i].fyi) {
+        if (!modules[i].published) {
+          if (!modules[i].hasOwnProperty('fyi') || !modules[i].fyi) {
             continue;
           }
         }
@@ -6229,8 +6230,11 @@ class AssessmentTableView extends cc_View {
           });
         }
 
-        if (calendarDate.label) {
+        if (calendarDate.label ) {
           dateLabel = calendarDate.label;
+        } else if ( modules[i].hasOwnProperty('date') && modules[i].date.hasOwnProperty('label') && 
+              modules[i].date.label !== "") {
+                dateLabel = modules[i].date.label;
         }
       }
 
@@ -6948,7 +6952,6 @@ class GriffithCardsView extends cc_View {
 	 * @param {boolean} published is the module published (initially used for "coming soon" cards)
 	 * @returns {DOMElement} for a single card
 	 */
-	//generateCard(module, published = true) { 
 	generateCard(module) {
 
 		const published = module.published;

@@ -566,9 +566,10 @@ export default class cc_ConfigurationView extends cc_View {
 		// add event handlers for additional metadata
 		// button.cc-module-config-metadata-add 
 		// and i.cc-module-config-metadata-trash calls model.manageModuleMetadata
-		const buttonAddMetadata = document.querySelector(`button.cc-module-config-metadata-add`);
-		if (buttonAddMetadata) {
-			buttonAddMetadata.onclick = (event) => this.controller.manageModuleMetadata(event);
+		const buttonAddMetadata = document.querySelectorAll(`.cc-module-config-metadata-add`);
+		for (let i = 0; i < buttonAddMetadata.length; i++) {
+			const button = buttonAddMetadata[i];
+			button.onclick = (event) => this.controller.manageModuleMetadata(event);
 		}
 		const trashMetadata = document.querySelectorAll(`i.cc-module-config-metadata-delete`);
 		for (let i = 0; i < trashMetadata.length; i++) {

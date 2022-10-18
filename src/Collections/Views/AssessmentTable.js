@@ -185,7 +185,7 @@ const TABLE_HTML = `
 		</style>
 
 			<table class="cc-responsive-table" role="table">
-      			<caption>{{CAPTION}}</caption>
+      			<!-- <caption></caption> -->
       			<thead role="rowgroup">
         			<tr role="row">
           				<th role="columnheader" scope="col"><span class="cc-table-header-text">Title</span></th>
@@ -379,8 +379,8 @@ export default class AssessmentTableView extends cc_View {
       // exclude modules for other reasons
       // - not in edit mode, module is unpublished and is not an FYI object
       if (!editMode) {
-        if (! modules[i].published) {
-          if ( ! modules[i].hasOwnProperty('fyi') || ! modules[i].fyi) {
+        if (!modules[i].published) {
+          if (!modules[i].hasOwnProperty('fyi') || !modules[i].fyi) {
             continue;
           }
         }
@@ -417,8 +417,11 @@ export default class AssessmentTableView extends cc_View {
           });
         }
 
-        if (calendarDate.label) {
+        if (calendarDate.label ) {
           dateLabel = calendarDate.label;
+        } else if ( modules[i].hasOwnProperty('date') && modules[i].date.hasOwnProperty('label') && 
+              modules[i].date.label !== "") {
+                dateLabel = modules[i].date.label;
         }
       }
 
