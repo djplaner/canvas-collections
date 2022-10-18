@@ -141,10 +141,21 @@
 	margin-bottom: 1rem;
 }
 
+.cc-card-fyi {
+	position: absolute;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.75);
+	color: white;
+	width: 100%;
+	padding: 0.25rem;
+	font-size: x-small;
+	text-align: center;
+}
+
 .cc-card-engage {
-	padding: 1rem;
+	/*	padding: 1rem;
 	padding-top: 1.5rem;
-	background-color: inherit !important;
+	background-color: inherit !important; */
 }
 
 .cc-card-engage-button {
