@@ -462,7 +462,7 @@ export default class GriffithCardsView extends cc_View {
 			}
 
 			const card = this.generateCard(module);
-			if ( card !== null ) {
+			if (card !== null) {
 				cardCollection.insertAdjacentElement('beforeend', card);
 			}
 		}
@@ -485,47 +485,47 @@ export default class GriffithCardsView extends cc_View {
 	 * @deprecated - replaced by FYI approach
 	 */
 
-/*	addComingSoonCards(cardCollection) {
-		// loop through all modules in the current canvas collections configuration
-		// includes both published and unpubished modules
-
-		const collectionsModules = this.model.getCollectionsModules(this.currentCollection);
-
-		// no modules for the current collection
-		if (!collectionsModules) {
+	/*	addComingSoonCards(cardCollection) {
+			// loop through all modules in the current canvas collections configuration
+			// includes both published and unpubished modules
+	
+			const collectionsModules = this.model.getCollectionsModules(this.currentCollection);
+	
+			// no modules for the current collection
+			if (!collectionsModules) {
+				return cardCollection;
+			}
+	
+			// if the total num modules equals the canvas collections list of modules, then 
+			// all modules were being displayed in Canvas. i.e. no need to add additional
+			// coming soon cards
+			// TODO only want to get the modules for the current collection
+			const allModules = this.model.getModulesCollections();
+			// filter allModules to only include items for this.currentCollection
+			const currentCollectionModules = allModules.filter(
+				module => module.collection === this.model.getCurrentCollection());
+			if (currentCollectionModules.length === collectionsModules.length) {
+				return cardCollection;
+			}
+	
+			// filter collectionsModules for those that have a comingSoon attribute
+			const comingSoonModules = collectionsModules.filter(module => module.comingSoon);
+	
+			//		DEBUG && console.log(`################## addComingSoonCards`) && console.log(comingSoonModules);
+	
+			// loop through each coming soon module and add a card for it
+			for (let module of comingSoonModules) {
+				const card = this.generateCard(module, false);
+				// TODO actually want to place this in order
+				const order = module.comingSoon.order - 1;
+				// get a list of all div.cc-clickable-card elements in cardCollection
+				const cards = cardCollection.querySelectorAll('.cc-clickable-card');
+				// insert card before cards[order]
+				cardCollection.insertBefore(card, cards[order]);
+			}
+	
 			return cardCollection;
-		}
-
-		// if the total num modules equals the canvas collections list of modules, then 
-		// all modules were being displayed in Canvas. i.e. no need to add additional
-		// coming soon cards
-		// TODO only want to get the modules for the current collection
-		const allModules = this.model.getModulesCollections();
-		// filter allModules to only include items for this.currentCollection
-		const currentCollectionModules = allModules.filter(
-			module => module.collection === this.model.getCurrentCollection());
-		if (currentCollectionModules.length === collectionsModules.length) {
-			return cardCollection;
-		}
-
-		// filter collectionsModules for those that have a comingSoon attribute
-		const comingSoonModules = collectionsModules.filter(module => module.comingSoon);
-
-		//		DEBUG && console.log(`################## addComingSoonCards`) && console.log(comingSoonModules);
-
-		// loop through each coming soon module and add a card for it
-		for (let module of comingSoonModules) {
-			const card = this.generateCard(module, false);
-			// TODO actually want to place this in order
-			const order = module.comingSoon.order - 1;
-			// get a list of all div.cc-clickable-card elements in cardCollection
-			const cards = cardCollection.querySelectorAll('.cc-clickable-card');
-			// insert card before cards[order]
-			cardCollection.insertBefore(card, cards[order]);
-		}
-
-		return cardCollection;
-	} */
+		} */
 
 	/**
 	 * Harness to generate HTML for a single card. Calls various other functions
@@ -540,10 +540,10 @@ export default class GriffithCardsView extends cc_View {
 
 		// need to figure out if we want to add the card or not
 		const editMode = this.model.getEditMode();
-		if ( ! editMode ) {
+		if (!editMode) {
 			// if the module/card is unpublished and not an FYI card, then don't add it
-			if ( ! published ) {
-				if ( module.hasOwnProperty('fyi') && ! module.fyi ) {
+			if (!published) {
+				if (module.hasOwnProperty('fyi') && !module.fyi) {
 					return null;
 				}
 			}
@@ -564,13 +564,13 @@ export default class GriffithCardsView extends cc_View {
 		let IMAGE_IFRAME = this.generateBanner(module);
 
 		let description = module.description;
-		if (description==="") {
+		if (description === "" || description === "undefined") {
 			// add some content so that the RCE doesn't remove the div entirely
 			description = "<p>&nbsp;</p>";
 		}
 
 		const FYI_TEXT = this.generateFyiText(module);
-		let COMING_SOON = this.generateComingSoon(module);
+		//let COMING_SOON = this.generateComingSoon(module);
 		const REVIEW_ITEM = "";
 		const DATE = "";
 		//		const completion = this.generateCardCompletion( module );
@@ -591,11 +591,11 @@ export default class GriffithCardsView extends cc_View {
 
 		let cardClass = "cc-card";
 		let cardContentClass = "cc-card-content";
-	    let CARD_LINK = `<a href="#module_${module.id}" class="cc-card-link"></a>`;
+		let CARD_LINK = `<a href="#module_${module.id}" class="cc-card-link"></a>`;
 		if (module.hasOwnProperty('fyi') && module.fyi) {
 			cardClass = 'cc-card-unclickable';
 			cardContentClass = "cc-unclickable-card-content";
-			CARD_LINK='';
+			CARD_LINK = '';
 		}
 
 
@@ -606,7 +606,6 @@ export default class GriffithCardsView extends cc_View {
 			    ${CARD_LINK}
 		  		${IMAGE_IFRAME}
       	  		${DATE_WIDGET}
-      	  		${COMING_SOON}
 	 	  		${PUBLISHED}
 		  		${FYI_TEXT}
 			</div>
@@ -635,7 +634,7 @@ export default class GriffithCardsView extends cc_View {
 
 		// convert cardHtml into DOM element
 		let wrapper = document.createElement('div');
-		if ( module.hasOwnProperty('fyi') && module.fyi ) {
+		if (module.hasOwnProperty('fyi') && module.fyi) {
 			wrapper.classList.add('cc-unclickable-card');
 		} else {
 			wrapper.classList.add('cc-clickable-card');
@@ -667,11 +666,11 @@ export default class GriffithCardsView extends cc_View {
 	 */
 	generateFyiText(module) {
 
-		if ( !module.hasOwnProperty('fyi') || !module.fyi || !module.hasOwnProperty('fyiText')) {
+		if (!module.hasOwnProperty('fyi') || !module.fyi || !module.hasOwnProperty('fyiText')) {
 			return "";
 		}
 
-		if ( module.fyi && module.fyiText!=="") {
+		if (module.fyi && module.fyiText !== "") {
 			return `<div class="cc-card-fyi">${module.fyiText}</div>`;
 		}
 
@@ -692,9 +691,9 @@ export default class GriffithCardsView extends cc_View {
 		// TODO need to handle any defaults that might have iframe
 		// - maybe isn't any yet
 
-		if ( module.banner==='colour') {
+		if (module.banner === 'colour') {
 			return this.generateBannerColour(module);
-		} else if (module.banner==='iframe') {
+		} else if (module.banner === 'iframe') {
 			// TODO
 			return this.generateBannerIframe(module);
 		} else { // image is the default
@@ -709,7 +708,7 @@ export default class GriffithCardsView extends cc_View {
 	 * @param {Object} module 
 	 */
 	generateBannerIframe(module) {
-		if (module.hasOwnProperty('iframe') && module.iframe!=='') {
+		if (module.hasOwnProperty('iframe') && module.iframe !== '') {
 			// TODO should probably do some checks on the iframe
 			const match = module.iframe.match(/<iframe.*src="(.*)".*<\/iframe>/);
 			if (match) {
@@ -728,7 +727,7 @@ export default class GriffithCardsView extends cc_View {
 	 * @returns {String} HTML for a colour banner
 	 */
 
-	generateBannerColour( module ) {
+	generateBannerColour(module) {
 		let bgColour = '#ffffff';
 		if (module.hasOwnProperty('bannerColour')) {
 			// default to card if no banner colour set
@@ -747,6 +746,16 @@ export default class GriffithCardsView extends cc_View {
 
 
 	generateCardImage(module) {
+		let escModuleName = '';
+		if (module.hasOwnProperty('name')) {
+			escModuleName = module.name.replace(/(["'])/g, "\\$1");
+		}
+
+		// return placeholder if no image
+		if (!module.hasOwnProperty('image')) {
+			return `<img class="cc-card-image" src="https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png"
+					data-moduleid="${module.id}" alt="Image representing '${escModuleName}'"> `;
+		}
 
 		// is module.image an iframe?
 		const match = module.image.match(/<iframe.*src="(.*)".*<\/iframe>/);
@@ -756,7 +765,6 @@ export default class GriffithCardsView extends cc_View {
 		const imageUrl = this.generateCardImageUrl(module);
 		const imageSize = this.generateCardImageSize(module);
 		// escModuleName is a version of moduleName with all HTML and special characters escaped
-		let escModuleName = module.name.replace(/(["'])/g, "\\$1");
 
 		return `<img class="cc-card-image ${imageSize}" src="${imageUrl}" 
 					data-moduleid="${module.id}"
@@ -766,9 +774,10 @@ export default class GriffithCardsView extends cc_View {
 	 * generate a coming soon html element for the current module
 	 * @param {Object} module 
 	 * @returns html string for coming soon block
+	 * @deprecated FYI Object
 	 */
 
-	generateComingSoon(module) {
+	/*generateComingSoon(module) {
 		// empty string if there is no coming soon attribute for module
 		if (!module.comingSoon) {
 			return "";
@@ -788,7 +797,7 @@ export default class GriffithCardsView extends cc_View {
 		  <span>${message}</span>
 		</div>
 		`;
-	}
+	}*/
 
 	/**
 	 * Generate the HTML for the date widget, features include
@@ -854,7 +863,7 @@ export default class GriffithCardsView extends cc_View {
 			}
 			// is there no value set for to date?
 			if (dualDate !== "") {
-				if (singleDate==="") {
+				if (singleDate === "") {
 					// if also no value set for from date, then no date displayed
 					return '';
 				}
@@ -862,7 +871,7 @@ export default class GriffithCardsView extends cc_View {
 				return this.generateDualDate(date);
 			}
 		}
-		if (singleDate==="") {
+		if (singleDate === "") {
 			return '';
 		}
 
@@ -900,7 +909,7 @@ export default class GriffithCardsView extends cc_View {
 			// remove the div.cc-card-date-week from element
 			element.removeChild(element.querySelector('.cc-card-date-week'));
 		}
-		if (day==="") {
+		if (day === "") {
 			// remove the div.cc-card-date-day from element
 			element.removeChild(element.querySelector('.cc-card-date-day'));
 		}
@@ -1137,10 +1146,10 @@ export default class GriffithCardsView extends cc_View {
 	    `;
 
 		if (
-			( 'noEngage' in module && module.noEngage)  ||
+			('noEngage' in module && module.noEngage) ||
 			// don't show link for fyi object
-			( module.hasOwnProperty('fyi') && module.fyi )
-		 ) {
+			(module.hasOwnProperty('fyi') && module.fyi)
+		) {
 			LINK_ITEM = `
             `;
 		}
@@ -1158,8 +1167,8 @@ export default class GriffithCardsView extends cc_View {
 		if (
 			module.published || module.published === undefined ||
 			// don't show unpublished for fyi cards ??
-			( module.hasOwnProperty('fyi') && module.fyi )
-			) {
+			(module.hasOwnProperty('fyi') && module.fyi)
+		) {
 			return '';
 		}
 
@@ -1295,7 +1304,7 @@ export default class GriffithCardsView extends cc_View {
 			let module = undefined;
 			if (image.dataset.hasOwnProperty('moduleid')) {
 				const moduleid = image.dataset.moduleid;
-				if ( modules.hasOwnProperty(moduleid) ) {
+				if (modules.hasOwnProperty(moduleid)) {
 					module = modules[parseInt(moduleid)];
 				}
 				// if an fyi module, continue
@@ -1320,7 +1329,7 @@ export default class GriffithCardsView extends cc_View {
 			let module = undefined;
 			if (title.dataset.hasOwnProperty('moduleid')) {
 				const moduleid = title.dataset.moduleid;
-				if ( modules.hasOwnProperty(moduleid) ) {
+				if (modules.hasOwnProperty(moduleid)) {
 					module = modules[parseInt(moduleid)];
 				}
 				// if an fyi module, continue

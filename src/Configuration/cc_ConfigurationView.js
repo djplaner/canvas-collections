@@ -10,7 +10,7 @@
 
 import { cc_View } from '../cc_View.js';
 
-const CC_VERSION = "0.9.3";
+const CC_VERSION = "0.9.4";
 
 const CV_DEFAULT_DATE_LABEL = "Starting";
 
@@ -550,6 +550,10 @@ export default class cc_ConfigurationView extends cc_View {
 			// if that succeeded
 			if (editor.container) {
 				// set the contents
+				// dirty hack done quickly
+				if (moduleConfig.description==="undefined" ) {
+					moduleConfig.description = '';
+				}
 				const delta = editor.clipboard.convert(moduleConfig.description);
 				editor.setContents(delta);
 				// keep track of the current editor

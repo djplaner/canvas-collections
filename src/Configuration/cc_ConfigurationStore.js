@@ -207,7 +207,7 @@ export default class cc_ConfigurationStore {
 				module.iframe = this.decodeHTML(module.iframe);
 			}
 			// need to check the URL for image as the RCE screws with the URL
-			if (module.image.startsWith('/')) {
+			if (module.hasOwnProperty('image') && module.image.startsWith('/')) {
 				module.image = `https://${window.location.hostname}${module.image}`;
 			}
 		}

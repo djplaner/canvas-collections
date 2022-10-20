@@ -301,17 +301,22 @@ export default class cc_Controller {
 		// merge the two sets of module details into one - keyed on module id
 		for (let i = 0; i < canvasModules.length; i++) {
 			// create object for merged details for current module
-			let details = {};
 			const canvasModule = canvasModules[i];
 			const canvasModuleId = canvasModule.id;
+			let ccModule = collectionsModules[canvasModuleId];
 
-			// copy all the canvas module keys into merged
+			// make details equal to what's in collections
+			let details = ccModule;
+
+			// Update it with the live Canvas details
 			for (let key in canvasModule) {
-				details[key] = canvasModules[i][key];
+				if ( details[key]!==canvasModule[key] ) {
+					updatedName = true;
+					details[key] = canvasModule[key];
+				}
 			}
 			// do the same for CC module details, but skip some fields
-			let ccModule = collectionsModules[canvasModuleId];
-			if (ccModule) {
+/*			if (ccModule) {
 				// collections module name should be updated from canvas
 				const skipFields = ['name'];
 				if ( ccModule.name!==canvasModule.name ) {
@@ -323,7 +328,7 @@ export default class cc_Controller {
 						details[key] = ccModule[key];
 					}
 				}
-			}
+			} */
 
 			// add calculated fields
 			// - if there's num in details, then actualNum is the num
