@@ -22,6 +22,9 @@ export default class cc_CollectionsController {
 		this.model = new CollectionsModel(this);
 		this.view = new CollectionsView(this.model, this);
 
+	}
+
+	execute() {
 		this.view.display();
 	}
 

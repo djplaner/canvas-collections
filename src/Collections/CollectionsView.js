@@ -308,7 +308,7 @@ export default class CollectionsView extends cc_View {
 		for (let module of modulesCollections) {
 			// if no collection for this module and in staff view, leave it here
 			// and maybe change the appearence here or later
-			if (!module.collection || module.collection === "") {
+			if (!module.hasOwnProperty(collection) || module.collection === "" || module.collection ==="undefined") {
 				if (!editMode) {
 					const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
 					if (contextModule) {

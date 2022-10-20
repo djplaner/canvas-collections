@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.9.5
+// @version      0.9.6
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -3436,6 +3436,7 @@ class updatePageController {
 		this.configurationController = configurationController;
 		this.parentController = this.configurationController.parentController;
 		this.collectionsView = this.parentController.collectionsController.view;
+
 		this.navOption = navOption;
 		this.singleCollection = singleCollection;
 
@@ -4253,7 +4254,9 @@ class cc_ConfigurationController {
 		this.parentController = controller;
 		this.model = new cc_ConfigurationModel(this);
 		this.view = new cc_ConfigurationView(this.model, this);
+	}
 
+	execute() {
 		// set lastSaveTime to current time
 		//this.lastSaveTime = new Date().getTime();
 
@@ -8351,7 +8354,7 @@ class CollectionsView extends cc_View {
 		for (let module of modulesCollections) {
 			// if no collection for this module and in staff view, leave it here
 			// and maybe change the appearence here or later
-			if (!module.collection || module.collection === "") {
+			if (!module.hasOwnProperty(collection) || module.collection === "" || module.collection ==="undefined") {
 				if (!editMode) {
 					const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
 					if (contextModule) {
@@ -8428,6 +8431,9 @@ class cc_CollectionsController {
 		this.model = new CollectionsModel(this);
 		this.view = new CollectionsView(this.model, this);
 
+	}
+
+	execute() {
 		this.view.display();
 	}
 
@@ -10634,6 +10640,10 @@ class cc_Controller {
 	 */
 
 	execute() {
+		// create these here, once all the async data population is done
+		this.configurationController = new cc_ConfigurationController(this);
+		this.collectionsController = new cc_CollectionsController(this);
+
 		// do some final checks to make sure we don't run when not required
 		if (!this.modulesPage && !this.homeModulesPage) {
 			DEBUG && console.log('-------------- cc_Controller.execute() ERROR SHOULDN"T BE RUNNING');
@@ -10757,7 +10767,7 @@ class cc_Controller {
 	 */
 	showConfiguration() {
 		DEBUG && console.log('-------------- cc_Controller.showConfiguration()');
-		this.configurationController = new cc_ConfigurationController(this);
+		this.configurationController.execute();
 	}
 
 	/**
@@ -10765,7 +10775,7 @@ class cc_Controller {
 	 */
 	showCollections() {
 		DEBUG && console.log('-------------- cc_Controller.showCollectionsStudentMode()');
-		this.collectionsController = new cc_CollectionsController(this);
+		this.collectionsController.execute();
 	}
 
 	/**

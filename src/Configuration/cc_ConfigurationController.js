@@ -35,7 +35,9 @@ export default class cc_ConfigurationController {
 		this.parentController = controller;
 		this.model = new cc_ConfigurationModel(this);
 		this.view = new cc_ConfigurationView(this.model, this);
+	}
 
+	execute() {
 		// set lastSaveTime to current time
 		//this.lastSaveTime = new Date().getTime();
 

@@ -40,6 +40,7 @@ export default class updatePageController {
 		this.configurationController = configurationController;
 		this.parentController = this.configurationController.parentController;
 		this.collectionsView = this.parentController.collectionsController.view;
+
 		this.navOption = navOption;
 		this.singleCollection = singleCollection;
 

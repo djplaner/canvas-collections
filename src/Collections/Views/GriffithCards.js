@@ -477,57 +477,6 @@ export default class GriffithCardsView extends cc_View {
 	}
 
 	/**
-	 * Add any "coming soon" cards for currentCollection to cardCollection 
-	 * @param {DomElement} cardCollection - contains cards for all the published modules for current collection
-	 * @param {String} currentCollection - name of current visible collection
-	 * @returns 
-	 * 
-	 * @deprecated - replaced by FYI approach
-	 */
-
-	/*	addComingSoonCards(cardCollection) {
-			// loop through all modules in the current canvas collections configuration
-			// includes both published and unpubished modules
-	
-			const collectionsModules = this.model.getCollectionsModules(this.currentCollection);
-	
-			// no modules for the current collection
-			if (!collectionsModules) {
-				return cardCollection;
-			}
-	
-			// if the total num modules equals the canvas collections list of modules, then 
-			// all modules were being displayed in Canvas. i.e. no need to add additional
-			// coming soon cards
-			// TODO only want to get the modules for the current collection
-			const allModules = this.model.getModulesCollections();
-			// filter allModules to only include items for this.currentCollection
-			const currentCollectionModules = allModules.filter(
-				module => module.collection === this.model.getCurrentCollection());
-			if (currentCollectionModules.length === collectionsModules.length) {
-				return cardCollection;
-			}
-	
-			// filter collectionsModules for those that have a comingSoon attribute
-			const comingSoonModules = collectionsModules.filter(module => module.comingSoon);
-	
-			//		DEBUG && console.log(`################## addComingSoonCards`) && console.log(comingSoonModules);
-	
-			// loop through each coming soon module and add a card for it
-			for (let module of comingSoonModules) {
-				const card = this.generateCard(module, false);
-				// TODO actually want to place this in order
-				const order = module.comingSoon.order - 1;
-				// get a list of all div.cc-clickable-card elements in cardCollection
-				const cards = cardCollection.querySelectorAll('.cc-clickable-card');
-				// insert card before cards[order]
-				cardCollection.insertBefore(card, cards[order]);
-			}
-	
-			return cardCollection;
-		} */
-
-	/**
 	 * Harness to generate HTML for a single card. Calls various other functions
 	 * to get various component
 	 * @param {Object} module 

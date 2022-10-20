@@ -405,6 +405,10 @@ export default class cc_Controller {
 	 */
 
 	execute() {
+		// create these here, once all the async data population is done
+		this.configurationController = new cc_ConfigurationController(this);
+		this.collectionsController = new cc_CollectionsController(this);
+
 		// do some final checks to make sure we don't run when not required
 		if (!this.modulesPage && !this.homeModulesPage) {
 			DEBUG && console.log('-------------- cc_Controller.execute() ERROR SHOULDN"T BE RUNNING');
@@ -528,7 +532,7 @@ export default class cc_Controller {
 	 */
 	showConfiguration() {
 		DEBUG && console.log('-------------- cc_Controller.showConfiguration()');
-		this.configurationController = new cc_ConfigurationController(this);
+		this.configurationController.execute();
 	}
 
 	/**
@@ -536,7 +540,7 @@ export default class cc_Controller {
 	 */
 	showCollections() {
 		DEBUG && console.log('-------------- cc_Controller.showCollectionsStudentMode()');
-		this.collectionsController = new cc_CollectionsController(this);
+		this.collectionsController.execute();
 	}
 
 	/**
