@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.9.5
+// @version      0.9.6
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -931,7 +931,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.9.4";
+const CC_VERSION = "0.9.6";
 
 const CV_DEFAULT_DATE_LABEL = "Starting";
 
@@ -10516,11 +10516,19 @@ class cc_Controller {
 			// make details equal to what's in collections
 			let details = ccModule;
 			if ( ! details ) {
-				details = {};
+				details = {
+					"description" : "",
+					"collection" : ""
+				};
 			}
 
 			// Update it with the live Canvas details
+			// - but skip some
+			const skipFields = ['unlock_at','items','completed_at','items_count'];
 			for (let key in canvasModule) {
+				if ( skipFields.includes(key)) {
+					continue;
+				}
 				if ( ! details.hasOwnProperty(key) || details[key]!==canvasModule[key] ) {
 					updatedName = true;
 					details[key] = canvasModule[key];
