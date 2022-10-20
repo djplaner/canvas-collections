@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         canvas-collections
 // @namespace    https://djon.es/
-// @version      0.9.3
+// @version      0.9.4
 // @description  Modify Canvas LMS modules to support collections of modules and their representation
 // @author       David Jones
 // @match        https://*/courses/*
@@ -10536,10 +10536,13 @@ class cc_Controller {
 
 			// make details equal to what's in collections
 			let details = ccModule;
+			if ( ! details ) {
+				details = {};
+			}
 
 			// Update it with the live Canvas details
 			for (let key in canvasModule) {
-				if ( details[key]!==canvasModule[key] ) {
+				if ( ! details.hasOwnProperty(key) || details[key]!==canvasModule[key] ) {
 					updatedName = true;
 					details[key] = canvasModule[key];
 				}

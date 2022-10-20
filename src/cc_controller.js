@@ -307,10 +307,13 @@ export default class cc_Controller {
 
 			// make details equal to what's in collections
 			let details = ccModule;
+			if ( ! details ) {
+				details = {};
+			}
 
 			// Update it with the live Canvas details
 			for (let key in canvasModule) {
-				if ( details[key]!==canvasModule[key] ) {
+				if ( ! details.hasOwnProperty(key) || details[key]!==canvasModule[key] ) {
 					updatedName = true;
 					details[key] = canvasModule[key];
 				}
