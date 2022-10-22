@@ -710,24 +710,27 @@ export default class UniversityDateCalendar {
   /**
    * getCurrentPeriod
    * @descr Examine Canvas course object's course_code attribute in an attempt
-	 * to extract the STRM and subsequently calculate the year, period and
-	 * other data -- assumes a Griffith University course code format which is
+   * to extract the STRM and subsequently calculate the year, period and
+   * other data -- assumes a Griffith University course code format which is
    * currently
-	 * 
-	 * Production sites:
-	 *    Organisational Communication (COM31_2226) 
+   * 
+   * Production sites:
+   *    Organisational Communication (COM31_2226) 
    *    - study period 2226
-	 * 
-	 * DEV sites:
-	 *    DEV_2515LHS_3228 
+   * 
+   * Production sites - joined courses
+   *    Introduction to Sculpture (1252QCA_3228/7252QCA_3228) 
+   * 
+   * DEV sites:
+   *    DEV_2515LHS_3228 
    *    - study period 3228
-	 * 
-	 * ORG sites:
-	 *     AEL_SHOW1
+   * 
+   * ORG sites:
+   *     AEL_SHOW1
    *     - no study period
-	 * 
-	 * TODO rejig based on scapeLib/parseCourseInstanceId (ael-automation)
-	 * In particular to handle the "YP" course ids
+   * 
+   * TODO rejig based on scapeLib/parseCourseInstanceId (ael-automation)
+   * In particular to handle the "YP" course ids
    */
 
   getCurrentPeriod(courseCode) {
@@ -764,10 +767,18 @@ export default class UniversityDateCalendar {
     // match four digits (strm)
     // optionally other stuff
     const canvasCourseCode = courseCode.match(/\(([^)]+)\)/)[1];
-    const regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
-    const match = regex.exec(canvasCourseCode);
+    let regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
+    let match = regex.exec(canvasCourseCode);
     if (match) {
       return match[2];
+    } else {
+      // a chance we might have a joined course
+      // - Get the very first course code and extract the STRM from there
+      regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*\//;
+      match = regex.exec(canvasCourseCode);
+      if (match) {
+        return match[2];
+      }
     }
 
     return this.defaultPeriod;

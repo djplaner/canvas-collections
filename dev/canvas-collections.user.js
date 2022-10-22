@@ -6076,7 +6076,7 @@ const TABLE_ROW_HTML = `
           <td role="cell">
             <span class="cc-responsive-table__heading" aria-hidden="true">Due Date</span>
             <div class="cc-table-cell-text">
-            <p>{{DATE-LABEL}}<br />{{DUE-DATE}}</p>
+            <p>{{DATE-LABEL}}{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell">
@@ -6107,7 +6107,7 @@ const TABLE_ROW_HTML_CLAYTONS = `
           </td>
           <td role="cell" style="vertical-align:top;padding:0.5rem">
             <div class="cc-table-cell-text">
-            <p>{{DATE-LABEL}}<br />{{DUE-DATE}}</p>
+            <p>{{DATE-LABEL}}{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell" style="vertical-align:top;padding:0.5rem">
@@ -6257,7 +6257,8 @@ class AssessmentTableView extends cc_View {
 
       let mapping = {
         //'MODULE-ID': modules[i].id,
-        'MODULE-ID': `${modulesUrl}/#${modules[i].id}`,
+        //'MODULE-ID': `${modulesUrl}/#${modules[i].id}`,
+        'MODULE-ID': `${modulesUrl}#module_${modules[i].id}`,
         'DESCRIPTION': description,
         //'TITLE': this.model.deLabelModuleName(modules[i]),
         'TITLE': modules[i].name,
@@ -6900,57 +6901,6 @@ class GriffithCardsView extends cc_View {
 
 		return cardCollectionHTML;
 	}
-
-	/**
-	 * Add any "coming soon" cards for currentCollection to cardCollection 
-	 * @param {DomElement} cardCollection - contains cards for all the published modules for current collection
-	 * @param {String} currentCollection - name of current visible collection
-	 * @returns 
-	 * 
-	 * @deprecated - replaced by FYI approach
-	 */
-
-	/*	addComingSoonCards(cardCollection) {
-			// loop through all modules in the current canvas collections configuration
-			// includes both published and unpubished modules
-	
-			const collectionsModules = this.model.getCollectionsModules(this.currentCollection);
-	
-			// no modules for the current collection
-			if (!collectionsModules) {
-				return cardCollection;
-			}
-	
-			// if the total num modules equals the canvas collections list of modules, then 
-			// all modules were being displayed in Canvas. i.e. no need to add additional
-			// coming soon cards
-			// TODO only want to get the modules for the current collection
-			const allModules = this.model.getModulesCollections();
-			// filter allModules to only include items for this.currentCollection
-			const currentCollectionModules = allModules.filter(
-				module => module.collection === this.model.getCurrentCollection());
-			if (currentCollectionModules.length === collectionsModules.length) {
-				return cardCollection;
-			}
-	
-			// filter collectionsModules for those that have a comingSoon attribute
-			const comingSoonModules = collectionsModules.filter(module => module.comingSoon);
-	
-			//		DEBUG && console.log(`################## addComingSoonCards`) && console.log(comingSoonModules);
-	
-			// loop through each coming soon module and add a card for it
-			for (let module of comingSoonModules) {
-				const card = this.generateCard(module, false);
-				// TODO actually want to place this in order
-				const order = module.comingSoon.order - 1;
-				// get a list of all div.cc-clickable-card elements in cardCollection
-				const cards = cardCollection.querySelectorAll('.cc-clickable-card');
-				// insert card before cards[order]
-				cardCollection.insertBefore(card, cards[order]);
-			}
-	
-			return cardCollection;
-		} */
 
 	/**
 	 * Harness to generate HTML for a single card. Calls various other functions
@@ -8354,7 +8304,7 @@ class CollectionsView extends cc_View {
 		for (let module of modulesCollections) {
 			// if no collection for this module and in staff view, leave it here
 			// and maybe change the appearence here or later
-			if (!module.hasOwnProperty(collection) || module.collection === "" || module.collection ==="undefined") {
+			if (!module.hasOwnProperty('collection') || module.collection === "" || module.collection ==="undefined") {
 				if (!editMode) {
 					const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
 					if (contextModule) {
@@ -10168,24 +10118,27 @@ class UniversityDateCalendar {
   /**
    * getCurrentPeriod
    * @descr Examine Canvas course object's course_code attribute in an attempt
-	 * to extract the STRM and subsequently calculate the year, period and
-	 * other data -- assumes a Griffith University course code format which is
+   * to extract the STRM and subsequently calculate the year, period and
+   * other data -- assumes a Griffith University course code format which is
    * currently
-	 * 
-	 * Production sites:
-	 *    Organisational Communication (COM31_2226) 
+   * 
+   * Production sites:
+   *    Organisational Communication (COM31_2226) 
    *    - study period 2226
-	 * 
-	 * DEV sites:
-	 *    DEV_2515LHS_3228 
+   * 
+   * Production sites - joined courses
+   *    Introduction to Sculpture (1252QCA_3228/7252QCA_3228) 
+   * 
+   * DEV sites:
+   *    DEV_2515LHS_3228 
    *    - study period 3228
-	 * 
-	 * ORG sites:
-	 *     AEL_SHOW1
+   * 
+   * ORG sites:
+   *     AEL_SHOW1
    *     - no study period
-	 * 
-	 * TODO rejig based on scapeLib/parseCourseInstanceId (ael-automation)
-	 * In particular to handle the "YP" course ids
+   * 
+   * TODO rejig based on scapeLib/parseCourseInstanceId (ael-automation)
+   * In particular to handle the "YP" course ids
    */
 
   getCurrentPeriod(courseCode) {
@@ -10222,10 +10175,18 @@ class UniversityDateCalendar {
     // match four digits (strm)
     // optionally other stuff
     const canvasCourseCode = courseCode.match(/\(([^)]+)\)/)[1];
-    const regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
-    const match = regex.exec(canvasCourseCode);
+    let regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
+    let match = regex.exec(canvasCourseCode);
     if (match) {
       return match[2];
+    } else {
+      // a chance we might have a joined course
+      // - Get the very first course code and extract the STRM from there
+      regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*\//;
+      match = regex.exec(canvasCourseCode);
+      if (match) {
+        return match[2];
+      }
     }
 
     return this.defaultPeriod;
@@ -10699,7 +10660,7 @@ class cc_Controller {
 	/**
 	 * find all the div.editable_context_module, if display:none then show it
 	 */
-	thisShowModules() {
+	showModules() {
 		// get all div.editable_context_module
 		const modules = document.getElementsByClassName('editable_context_module');
 		for (let i = 0; i < modules.length; i++) {
@@ -10726,7 +10687,7 @@ class cc_Controller {
 			moduleConfig.remove();
 		});
 		// show all the modules
-		this.thisShowModules();
+		this.showModules();
 
 		// remove div#cc-config-wrapper
 		let cc_config_wrapper = document.getElementById('cc-config-wrapper');

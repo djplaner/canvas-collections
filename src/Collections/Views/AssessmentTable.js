@@ -256,7 +256,7 @@ const TABLE_ROW_HTML = `
           <td role="cell">
             <span class="cc-responsive-table__heading" aria-hidden="true">Due Date</span>
             <div class="cc-table-cell-text">
-            <p>{{DATE-LABEL}}<br />{{DUE-DATE}}</p>
+            <p>{{DATE-LABEL}}{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell">
@@ -287,7 +287,7 @@ const TABLE_ROW_HTML_CLAYTONS = `
           </td>
           <td role="cell" style="vertical-align:top;padding:0.5rem">
             <div class="cc-table-cell-text">
-            <p>{{DATE-LABEL}}<br />{{DUE-DATE}}</p>
+            <p>{{DATE-LABEL}}{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell" style="vertical-align:top;padding:0.5rem">
@@ -437,7 +437,8 @@ export default class AssessmentTableView extends cc_View {
 
       let mapping = {
         //'MODULE-ID': modules[i].id,
-        'MODULE-ID': `${modulesUrl}/#${modules[i].id}`,
+        //'MODULE-ID': `${modulesUrl}/#${modules[i].id}`,
+        'MODULE-ID': `${modulesUrl}#module_${modules[i].id}`,
         'DESCRIPTION': description,
         //'TITLE': this.model.deLabelModuleName(modules[i]),
         'TITLE': modules[i].name,

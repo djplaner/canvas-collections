@@ -464,7 +464,7 @@ export default class cc_Controller {
 	/**
 	 * find all the div.editable_context_module, if display:none then show it
 	 */
-	thisShowModules() {
+	showModules() {
 		// get all div.editable_context_module
 		const modules = document.getElementsByClassName('editable_context_module');
 		for (let i = 0; i < modules.length; i++) {
@@ -491,7 +491,7 @@ export default class cc_Controller {
 			moduleConfig.remove();
 		});
 		// show all the modules
-		this.thisShowModules();
+		this.showModules();
 
 		// remove div#cc-config-wrapper
 		let cc_config_wrapper = document.getElementById('cc-config-wrapper');
