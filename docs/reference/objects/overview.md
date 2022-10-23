@@ -112,6 +112,20 @@ Many course designs use modules to represent common objects (e.g. lectures, tuto
 
 Collections provides the ability for you to explicitly specify the number for each module OR it can auto calculate the number based on the module's position in the collection.
 
+## Engage Button
+
+Card representations can include an _Engage_ button as an explicit affordance for the visitor to click on the card. When configuring the _Engage_ button you can choose to:
+
+1. Turn the button on or off.
+
+    Even if the _Engage_ button is turned off, the visitor can still click on a normal card to access the module. (unless it is an FYI object for which the _Engage_ button is always off).
+
+2. Change the button text.
+
+The following animated image demonstrates the process of configuring the _Engage_ button, including: turning off the _Engage_ button; turning it back on again; changing the label; and, finally returning back to the default.
+
+![](pics/animatedEngage.gif)
+
 ## Dates
 
 Collections allows you to specify the date, time, or date/time range. In a University context, such dates are typically given with reference to a given study period (aka semester, trimester, study session etc.). For example, Monday Week 1 of Trimester 1 will be a different date for Monday Week 1 of Trimester 2.
