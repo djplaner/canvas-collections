@@ -53,6 +53,14 @@ export default class CollectionsModel {
 		}
 	}
 
+	getCourseId() {
+		return this.controller.parentController.courseId;
+	}
+
+	getModulesUrl() {
+		return `/courses/${this.getCourseId()}/modules`;
+	}
+
 	getEditMode() {
 		return this.controller.parentController.editMode;
 	}

@@ -5077,6 +5077,14 @@ class CollectionsModel {
 		}
 	}
 
+	getCourseId() {
+		return this.controller.parentController.courseId;
+	}
+
+	getModulesUrl() {
+		return `/courses/${this.getCourseId()}/modules`;
+	}
+
 	getEditMode() {
 		return this.controller.parentController.editMode;
 	}
@@ -7008,7 +7016,8 @@ class GriffithCardsView extends cc_View {
 
 		let cardClass = "cc-card";
 		let cardContentClass = "cc-card-content";
-		let CARD_LINK = `<a href="#module_${module.id}" class="cc-card-link"></a>`;
+		const modulesUrl = this.model.getModulesUrl();
+		let CARD_LINK = `<a href="${modulesUrl}#module_${module.id}" class="cc-card-link"></a>`;
 		if (module.hasOwnProperty('fyi') && module.fyi) {
 			cardClass = 'cc-card-unclickable';
 			cardContentClass = "cc-unclickable-card-content";
@@ -7554,11 +7563,12 @@ class GriffithCardsView extends cc_View {
 			return '';
 		}
 		const engage = this.generateCardEngage(module);
+		const modulesUrl = this.model.getModulesUrl();
 		let LINK_ITEM = `
 <!--	    <p>&nbsp;<br /> &nbsp;</p> -->
 		<div class="cc-card-engage">
 			 <div class="cc-card-engage-button">
-	       		<a href="#module_${module.id}" class="gu-engage">
+	       		<a href="${modulesUrl}#module_${module.id}" class="gu-engage">
 			   ${engage}
 			 </a>
 	         </div>
@@ -7695,34 +7705,39 @@ class GriffithCardsView extends cc_View {
 
 		//---------------
 		// update all the a.cc-card-link and a.gu-engage and add a href
-		let currentUrl = window.location.href;
+//		let currentUrl = window.location.href;
 		// the current url should be the modules page, remove the # and anything after it
-		currentUrl = currentUrl.split('#')[0];
+/*		currentUrl = currentUrl.split('#')[0];
 		// if no "modules" at end of url, add it
 		if (currentUrl.indexOf('modules') === -1) {
 			currentUrl += '/modules';
-		}
+		} */
+
+		const modulesUrl = this.model.getModulesUrl();
+		let cardLinks = [];
 		let links = div.querySelectorAll('a.cc-card-link');
 		for (let i = 0; i < links.length; i++) {
 			let link = links[i];
-			link.href = currentUrl + link.getAttribute('href');
+			//link.href = modulesUrl + link.getAttribute('href');
+			link.href = link.getAttribute('href');
+			cardLinks[i] = link;
 		}
 
-		// declare array cardLinks
-		let cardLinks = [];
-		links = div.querySelectorAll('a.gu-engage');
+/*		links = div.querySelectorAll('a.gu-engage');
 		for (let i = 0; i < links.length; i++) {
 			let link = links[i];
 			link.href = currentUrl + link.getAttribute('href');
 			// save the link for later use
 			cardLinks[i] = link.href;
-		}
+		} */
 		// add a link around the img.cc-card-image
-		let images = div.querySelectorAll('img.cc-card-image');
-		for (let i = 0; i < images.length; i++) {
-			let image = images[i];
-			let module = undefined;
-			if (image.dataset.hasOwnProperty('moduleid')) {
+		//let images = div.querySelectorAll('img.cc-card-image');
+		let cardBanners = div.querySelectorAll('div.cc-card-banner-container');
+		for (let i = 0; i < cardBanners.length; i++) {
+			let banner = cardBanners[i];
+			let module = 0;
+			const image = banner.querySelector('img.cc-card-image');
+			if (image && image.dataset.hasOwnProperty('moduleid')) {
 				const moduleid = image.dataset.moduleid;
 				if (modules.hasOwnProperty(moduleid)) {
 					module = modules[parseInt(moduleid)];
@@ -7735,7 +7750,7 @@ class GriffithCardsView extends cc_View {
 
 			let link = doc.createElement('a');
 			link.classList.add('cc-card-link-image');
-			link.href = currentUrl;
+			link.href = `${modulesUrl}#modules_${module.id}`;
 			link.innerHTML = image.outerHTML;
 			image.parentNode.replaceChild(link, image);
 		}
@@ -7761,7 +7776,8 @@ class GriffithCardsView extends cc_View {
 			// set link class to cc-card-link-title
 			link.classList.add('cc-card-link-title');
 			//link.href = currentUrl;
-			link.href = cardLinks[i];
+			//link.href = cardLinks[i];
+			link.href = `${modulesUrl}#modules_${moduleid}`;
 			link.innerHTML = title.innerHTML;
 			title.innerHTML = link.outerHTML;
 		}

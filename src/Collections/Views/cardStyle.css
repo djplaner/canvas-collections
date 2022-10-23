@@ -38,8 +38,9 @@
 	}
 }
 
-.cc-clickable-card:hover {
-	cursor: pointer;
+/*.cc-clickable-card:hover { */
+.cc-card-banner-container:hover, .cc-card-label:hover {
+	/*cursor: pointer; */
 	opacity: 0.8;
 }
 
@@ -110,9 +111,9 @@
 	background: inherit !important;
 }
 
-.cc-card-content:hover {
-	cursor: pointer;
-}
+.cc-card-description:hover {
+	cursor: auto !important;
+} 
 
 .cc-card-description {
 	font-size: 0.75rem;
