@@ -1058,7 +1058,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		will place the include page contents <em>after</em> the collection.</p>`,
 		targetSelector: '.cc-about-include-after',
 		animateFunction: "spin",
-//		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#hide-a-collection"
+		//		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#hide-a-collection"
 	},
 	{
 		contentText: `<p>🚧🧪☠️ <strong>Warning:</strong> This feature is experimental, under construction, and
@@ -1299,31 +1299,31 @@ class cc_ConfigurationView extends cc_View {
 		this.addTooltips();
 	}
 
-/*	addTooltips() {
-		const courseId = this.model.getCourseId();
-		const configPageUrl = `https://${window.location.host}/courses/${courseId}/pages/canvas-collections-configuration`;
-
-		// Add any local customisation to the tooltips
-		let unpublished =
-		{
-			contentText: `The <a href="${configPageUrl}" target="_blank">
-			<em>Canvas Collections Configuration</em> page</a> is unpublished. Meaning
-		the live Collections view will be visible in "Student View" or for students.
-		<p>Any Claytons Collections pages will be visible, if they are published.</p>
-		`,
-			maxWidth: `250px`,
-			targetSelector: "#cc-about-unpublished",
-			animateFunction: "spin",
-			persistent: true,
-			href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
-		};
-
-		// append unpublished onto this.TOOLTIPS
-		this.TOOLTIPS.push(unpublished);
-
-		// call the parent class method
-		super.addTooltips();
-	} */
+	/*	addTooltips() {
+			const courseId = this.model.getCourseId();
+			const configPageUrl = `https://${window.location.host}/courses/${courseId}/pages/canvas-collections-configuration`;
+	
+			// Add any local customisation to the tooltips
+			let unpublished =
+			{
+				contentText: `The <a href="${configPageUrl}" target="_blank">
+				<em>Canvas Collections Configuration</em> page</a> is unpublished. Meaning
+			the live Collections view will be visible in "Student View" or for students.
+			<p>Any Claytons Collections pages will be visible, if they are published.</p>
+			`,
+				maxWidth: `250px`,
+				targetSelector: "#cc-about-unpublished",
+				animateFunction: "spin",
+				persistent: true,
+				href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
+			};
+	
+			// append unpublished onto this.TOOLTIPS
+			this.TOOLTIPS.push(unpublished);
+	
+			// call the parent class method
+			super.addTooltips();
+		} */
 
 	/**
 	 * @descr Add the CC configuration interface to each module
@@ -1363,7 +1363,13 @@ class cc_ConfigurationView extends cc_View {
 		this.addTooltips();
 	}
 
-	addEventHandlers() {
+	/**
+	 * @function addEventHandlers
+	 * @descr Add event handlers for all the module configuration interface
+	 * Currently called when all are added or when one is updated. Each time
+	 * it will add all the event handlers.  TODO Will this cause problems
+	 */
+	addEventHandlers(moduleId = null) {
 
 		// banner tabs to start with cc-banner-tab
 		const bannerTabs = document.querySelectorAll(`.cc-banner-tab`);
@@ -1387,6 +1393,21 @@ class cc_ConfigurationView extends cc_View {
 			accordion.addEventListener('sl-show', event => this.controller.manageAccordionToggle(event));
 			accordion.addEventListener('sl-hide', event => this.controller.manageAccordionToggle(event));
 		}
+
+		// add event handlers for additional metadata
+		// button.cc-module-config-metadata-add 
+		// and i.cc-module-config-metadata-trash calls model.manageModuleMetadata
+		const buttonAddMetadata = document.querySelectorAll(`.cc-module-config-metadata-add`);
+		for (let i = 0; i < buttonAddMetadata.length; i++) {
+			const button = buttonAddMetadata[i];
+			button.onclick = (event) => this.controller.manageModuleMetadata(event);
+		}
+		const trashMetadata = document.querySelectorAll(`i.cc-module-config-metadata-delete`);
+		for (let i = 0; i < trashMetadata.length; i++) {
+			const trash = trashMetadata[i];
+			trash.onclick = (event) => this.controller.manageModuleMetadata(event);
+		}
+
 	}
 
 
@@ -1419,15 +1440,13 @@ class cc_ConfigurationView extends cc_View {
 
 	</span> 
   	${showConfigHtml}
-</div>`; 
-
-		// TO DO check that the id matches on of the module ids in data structure
+</div>`;
 
 		// insert moduleConfigHtml afterend of moduleHeader
 		moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
 
 		//----------------------------
-		// Now able to use JS to make various mods to the form
+		// Perform various one-off updates using JS for the module config that was just added
 
 		// Add the image url input#cc-module-config-${moduleDetail.id}-image - need to set the value
 		// to the image url
@@ -1435,9 +1454,10 @@ class cc_ConfigurationView extends cc_View {
 		if (imageInput) {
 			imageInput.value = moduleDetail.image;
 		}
+
 		// TODO add in the iframe value this way as well
 		// add handler for iframe text area
-		const iframeArea = document.querySelector(`#cc-module-config-${id}-iframe` );
+		const iframeArea = document.querySelector(`#cc-module-config-${id}-iframe`);
 		if (iframeArea) {
 			iframeArea.onchange = (event) => this.controller.updateModuleConfigField(event);
 			iframeArea.onkeydown = (event) => event.stopPropagation();
@@ -1453,7 +1473,6 @@ class cc_ConfigurationView extends cc_View {
 			labelInput.value = moduleDetail.label;
 		}
 		// add the meta data stuff
-
 		for (let key in moduleDetail.metadata) {
 			// cc-module-config-${moduleDetail.id}-metadata-${key}-name is set to key
 			// cc-module-config-${moduleDetail.id}-metadata-${key}-value is set to moduleDetail.metadata[key]
@@ -1467,10 +1486,6 @@ class cc_ConfigurationView extends cc_View {
 			}
 		}
 
-
-		// try to start tinymce editor on the textarea
-		//tinymce.init( {selector: 'textarea'});
-
 		// add a click handler for i#cc-module-config-${id}-switch
 		const moduleConfigSwitch = document.getElementById(`cc-module-config-${id}-switch`);
 		if (moduleConfigSwitch) {
@@ -1478,7 +1493,6 @@ class cc_ConfigurationView extends cc_View {
 			// and update the class appropriately
 			moduleConfigSwitch.className = moduleDetail.configClass;
 		}
-
 
 		// set display:inline-block for div#cc-module-no-collection-${id} iff
 		// module.collection is undefined or empty
@@ -1497,35 +1511,22 @@ class cc_ConfigurationView extends cc_View {
 			// if that succeeded
 			if (editor.container) {
 				// set the contents
-				// dirty hack done quickly
-				if (moduleConfig.description==="undefined" ) {
-					moduleConfig.description = '';
-				}
 				const delta = editor.clipboard.convert(moduleConfig.description);
 				editor.setContents(delta);
-				// keep track of the current editor
-				this.currentQuill = editor;
-				this.quillChanged = false;
-				// set the event handler
-				const editorSelectionHandler = this.quillSelectionChange.bind(this);
-				editor.on('selection-change', editorSelectionHandler);
+
+				// set up the event handlers
+				// When a new quill editor is selected set the value of this.currentQuill
+				editor.on('selection-change', (range, range2) => {
+					if (range && range2 === null) {
+						// user has clicked into a new quill editor
+						console.log(`quil focus for ${id} ${range} ${range2}`);
+						this.currentQuill = editor;
+					}
+				});
+				// Handle the changes the user makes in the editor
 				const editorChangeHandler = this.quillChange.bind(this);
 				editor.on('text-change', editorChangeHandler);
 			}
-		}
-
-		// add event handlers for additional metadata
-		// button.cc-module-config-metadata-add 
-		// and i.cc-module-config-metadata-trash calls model.manageModuleMetadata
-		const buttonAddMetadata = document.querySelectorAll(`.cc-module-config-metadata-add`);
-		for (let i = 0; i < buttonAddMetadata.length; i++) {
-			const button = buttonAddMetadata[i];
-			button.onclick = (event) => this.controller.manageModuleMetadata(event);
-		}
-		const trashMetadata = document.querySelectorAll(`i.cc-module-config-metadata-delete`);
-		for (let i = 0; i < trashMetadata.length; i++) {
-			const trash = trashMetadata[i];
-			trash.onclick = (event) => this.controller.manageModuleMetadata(event);
 		}
 
 		// add catch all handlers for other module config elements
@@ -1550,14 +1551,13 @@ class cc_ConfigurationView extends cc_View {
 	}
 
 	/**
-	 * Event handler called when Quill text is changed
-	 * Just sets the quillChanged flag to true
+	 * User made change in the current quill editor. Update the module description
+	 * to match the changes and also update the related representation
 	 * @param {*} delta 
 	 * @param {*} oldDelta 
 	 * @param {*} source 
 	 */
 	quillChange(delta, oldDelta, source) {
-		this.quillChanged = true;
 		const parentId = this.currentQuill.root.parentNode.id;
 		// extract the id from parentId with format cc-module-config-<id>-description
 		//const id = parentId.substring(parentId.indexOf('-') + 1, parentId.lastIndexOf('-'));
@@ -1567,50 +1567,13 @@ class cc_ConfigurationView extends cc_View {
 				value: this.currentQuill.root.innerHTML
 			}
 		};
-		this.quillChanged = false;
 		// update the current collection representation
 		// - first the model
 		this.controller.updateModuleConfigField(event, false);
 		this.controller.changeMade(true);
 		// - then the view
 		this.controller.parentController.updateCurrentRepresentation(true);
-
-		/*		this.controller.updateModuleConfigField(event);
-				this.currentQuill.focus(); */
 	}
-
-	/**
-	 * Event handler for loss of focus on the quill edito
-	 * TODO change this to an "update" description??
-	 * @param {*} range 
-	 * @param {*} oldRange 
-	 * @param {*} source 
-	 */
-	quillSelectionChange(range, oldRange, source) {
-		if (!range) {
-			// assume user has changed focus
-			if (this.currentQuill && this.quillChanged) {
-				/*				if (this.currentQuill.hasFocus() ) {
-									return;
-								} */
-				const parentId = this.currentQuill.root.parentNode.id;
-				// extract the id from parentId with format cc-module-config-<id>-description
-				//const id = parentId.substring(parentId.indexOf('-') + 1, parentId.lastIndexOf('-'));
-				const event = {
-					target: {
-						id: parentId,
-						value: this.currentQuill.root.innerHTML
-					}
-				};
-				this.quillChanged = false;
-				this.controller.updateModuleConfigField(event);
-			}
-
-		} else {
-			console.log("user entered the editor");
-		}
-	}
-
 
 	/**
 	 * @descr Replace/update the div.cc-module-config for the given module
@@ -1638,6 +1601,7 @@ class cc_ConfigurationView extends cc_View {
 			}
 			singleModuleDetails.configClass = 'icon-mini-arrow-down';
 			this.addSingleModuleConfiguration(moduleHeader, singleModuleDetails, moduleId);
+			this.addEventHandlers(moduleId);
 		}
 	}
 
@@ -1722,7 +1686,7 @@ class cc_ConfigurationView extends cc_View {
 		};
 
 		if (moduleDetail.hasOwnProperty('banner')) {
-		 	if (['image', 'iframe', 'colour'].includes( moduleDetail.banner)) {
+			if (['image', 'iframe', 'colour'].includes(moduleDetail.banner)) {
 				bannerActive.image = '';
 				bannerActive[moduleDetail.banner] = 'active';
 			}
@@ -1809,7 +1773,7 @@ class cc_ConfigurationView extends cc_View {
 			if (moduleDetail.hasOwnProperty(key)) {
 				fyi[key] = moduleDetail[key];
 			} else {
-				if ( key==='fyi') {
+				if (key === 'fyi') {
 					moduleDetail[key] = false;
 				} else {
 					moduleDetail[key] = '';
@@ -1848,7 +1812,7 @@ class cc_ConfigurationView extends cc_View {
 			if (moduleDetail.hasOwnProperty(key)) {
 				engage[key] = moduleDetail[key];
 			} else {
-				if ( key==='engage') {
+				if (key === 'engage') {
 					moduleDetail[key] = false;
 				} else {
 					moduleDetail[key] = 'Enage';
@@ -1992,7 +1956,7 @@ class cc_ConfigurationView extends cc_View {
 		let calculatedDate = this.calculateDate(dateInfo);
 		if (dateInfo.hasOwnProperty('to')) {
 			const toDate = this.calculateDate(dateInfo.to);
-			if (toDate !== 'No date set' ) {
+			if (toDate !== 'No date set') {
 				calculatedDate += ` to ${toDate}`;
 			}
 		}
@@ -3307,13 +3271,13 @@ input:checked + .cc-slider:before {
 			let em = 15;
 			let px = em * parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-/*			html5tooltips({
-				contentText: `Find out more about Canvas Collections and how it can help 
-				improve the user experience of your course site`,
-				maxWidth: `${px}px`,
-				targetSelector: "#cc-about-collections",
-				animateFunction: "spin"
-			}); */
+			/*			html5tooltips({
+							contentText: `Find out more about Canvas Collections and how it can help 
+							improve the user experience of your course site`,
+							maxWidth: `${px}px`,
+							targetSelector: "#cc-about-collections",
+							animateFunction: "spin"
+						}); */
 
 			// add event handler to i#configShowSwitch
 			if (this.model.isOn()) {
