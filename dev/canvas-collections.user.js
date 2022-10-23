@@ -948,7 +948,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.9.7";
+const CC_VERSION = "0.9.8";
 
 const CV_DEFAULT_DATE_LABEL = "Starting";
 
