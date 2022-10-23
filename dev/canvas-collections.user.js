@@ -465,6 +465,9 @@ class cc_ConfigurationModel {
 
 		if (module) {
 			// specify the fields that are for dates, to be handled differently
+
+
+			/** Handle date fields */
 			const dateFields = [ 
 				'day', 'week', 'time', 'date-label',
 				'day-to', 'week-to', 'time-to'
@@ -504,6 +507,17 @@ class cc_ConfigurationModel {
 				} else {
 					module.num = '';
 				}
+			}
+
+			/** Handle engage checkbox */
+			if (fieldName ==='engage') {
+				if ( value ) {
+					// it was on, changing to off
+					module.engage = true;
+				} else {
+					module.engage = false;
+				}
+				return true;
 			}
 
 			if (fieldName === 'iframe' ) {
@@ -1106,6 +1120,15 @@ const CONFIG_VIEW_TOOLTIPS = [
 		targetSelector: "#cc-about-module-label",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#labels-and-numbers"
+	},
+	{
+		contentText: `<p>For cards representations, specify</p> <ol> 
+		  <li> if there will be an "engage" button; and, </li>
+		  <li> what the button text will be. </li> </ol>`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-engage",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button"
 	},
 	{
 		contentText: `<p>Choose from the three supported "date types" and configure it. Options include:</p>
@@ -1779,7 +1802,7 @@ class cc_ConfigurationView extends cc_View {
 	 */
 
 	configureFyi(moduleDetail) {
-		let fyi = { fyi: false, fyiText: '' }
+		let fyi = { fyi: false, fyiText: '' };
 
 		// loop thru attributes of fyi object
 		for (const key in fyi) {
@@ -1803,6 +1826,45 @@ class cc_ConfigurationView extends cc_View {
 		}
 
 		return fyi;
+	}
+
+	/**
+	 * @function configureEngage
+	 * @description Check the module details for
+	 *    engage: boolean - should there be an engage button
+	 *    engageText: string - text to display on the engage button
+	 * If there isn't one initialise it to true and "Engage"
+	 * Return the engage object so it can be used in displays
+	 * @param {Object} moduleDetail 
+	 * @return {Object} - { engage: boolean, engageText: string 
+	 *           Also includes other style related options
+	 * }
+	 */
+
+	configureEngage(moduleDetail) {
+		let engage = { engage: true, engageText: 'Engage' };
+
+		for (const key in engage) {
+			if (moduleDetail.hasOwnProperty(key)) {
+				engage[key] = moduleDetail[key];
+			} else {
+				if ( key==='engage') {
+					moduleDetail[key] = false;
+				} else {
+					moduleDetail[key] = 'Enage';
+				}
+			}
+		}
+		// modify the boolean fyi to be checked or not for HTML
+		// add the styles for display
+		if (engage.engage) {
+			engage.engage = 'checked';
+		} else {
+			engage.engage = '';
+			engage.engageStyle = 'disabled';
+		}
+
+		return engage;
 	}
 
 	/**
@@ -1967,6 +2029,7 @@ class cc_ConfigurationView extends cc_View {
 
 
 		let fyi = this.configureFyi(moduleDetail);
+		let engage = this.configureEngage(moduleDetail);
 		let bannerActive = this.configureBanner(moduleDetail);
 		let dateActive = this.configureDate(moduleDetail);
 		let configDisplay = this.configureConfigDisplay(moduleDetail);
@@ -2087,6 +2150,21 @@ class cc_ConfigurationView extends cc_View {
 						<input type="text" id="cc-module-config-${moduleDetail.id}-num" 
 					     	value="${numValue}" style="width:3rem;" ${numStyle}/>
 				</div>
+				<div class="cc-collection-description" style="margin-top: 0.5em">
+			        <sl-tooltip id="cc-about-module-engage">
+					  	<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+				    <label for="cc-module-config-${moduleDetail.id}-engage">Engage</label>
+					<span class="cc-config-autonum" >
+				   		<input type="checkbox" id="cc-module-config-${moduleDetail.id}-engage" ${engage.engage} 
+						    style="position:relative; top:-0.25rem; " />
+						</span>
+						<input type="text" id="cc-module-config-${moduleDetail.id}-engageText"" 
+					     	value="${engage.engageText}" style="width:10rem;" ${engage.engageStyle}/>
+					</span>
+				</div>
+
 
 <!--			</sl-details> -->
 
@@ -4728,7 +4806,7 @@ class cc_ConfigurationController {
 		let value = event.target.value;
 
 		// autonum is checkbox, it's value is checked
-		if (fieldName==="autonum" || fieldName==="fyi") {
+		if (fieldName==="autonum" || fieldName==="fyi" || fieldName==="engage") {
 			value = event.target.checked;
 		} 
 
@@ -4881,7 +4959,7 @@ class cc_ConfigurationController {
 		let outcomes = pageController.generateOutcomesString();
 
 		if ( ! pageController.singleCollection ) {
-			alert(`Full Claytons update ${outcomes}`)
+			alert(`Full Claytons update ${outcomes}`);
 		}
 	}
 
@@ -7034,11 +7112,6 @@ class GriffithCardsView extends cc_View {
 		return wrapper;
 	}
 
-	/**
-	 * @function generateCardLinkItem
-	 * @description generate HTML to show an fyi message if fyi is true and there is a message
-	 * @param {Object} module - configuration details for module
-	 */
 	generateFyiText(module) {
 
 		if (!module.hasOwnProperty('fyi') || !module.fyi || !module.hasOwnProperty('fyiText')) {
@@ -7478,10 +7551,10 @@ class GriffithCardsView extends cc_View {
 	}
 
 	generateCardEngage(module) {
-		let engage = 'Engage';
+		let engage = '';
 		// set the "text" for the engage button
-		if (module.hasOwnProperty('engage')) {
-			engage = module.engage;
+		if (module.hasOwnProperty('engageText')) {
+			engage = module.engageText;
 		}
 		return engage;
 	}
@@ -7507,7 +7580,15 @@ class GriffithCardsView extends cc_View {
 		return imageSize;
 	}
 
+	/**
+	 * @function generateCardLinkItem
+	 * @description generate HTML to show an fyi message if fyi is true and there is a message
+	 * @param {Object} module - configuration details for module
+	 */
 	generateCardLinkItem(module) {
+		if (!module.hasOwnProperty('engage') || module.engage === false) {
+			return '';
+		}
 		const engage = this.generateCardEngage(module);
 		let LINK_ITEM = `
 <!--	    <p>&nbsp;<br /> &nbsp;</p> -->
@@ -7521,7 +7602,7 @@ class GriffithCardsView extends cc_View {
 	    `;
 
 		if (
-			('noEngage' in module && module.noEngage) ||
+		//	Deprecated? ('noEngage' in module && module.noEngage) ||
 			// don't show link for fyi object
 			(module.hasOwnProperty('fyi') && module.fyi)
 		) {
@@ -8884,6 +8965,10 @@ class cc_ConfigurationStore {
 		if (importConverted) {
 			this.configConverted = importConverted;
 		}
+		const updatesConverted = this.checkConvertUpdates();
+		if ( updatesConverted ) {
+			this.configConverted = updatesConverted;
+		}
 
 		// also need to decode the collection names in
 		// - keys for this.cc_configuration.COLLECTIONS
@@ -8904,8 +8989,35 @@ class cc_ConfigurationStore {
 		// decode the value in the string this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
 		this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION = this.decodeHTML(
 			this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
+	}
 
+	/**
+	 * @function checkConvertUpdates
+	 * @description Make necessary changes to the modules configuration due to evolutions in 
+	 * the JSON format. (e.g. when engage button behaviour was changed, modify old JSON files
+	 * to work with the new code)
+	 * @return {boolean} true if the configuration was changed
+	 */
+	checkConvertUpdates() {
+		let changed = false;
 
+		// Make changes to individual module configurations
+		let collectionsModules = this.parentController.cc_configuration.MODULES;
+
+		for (let key in collectionsModules) {
+			let module = collectionsModules[key];
+
+			// if no engage button behaviour set up
+			if ( ! module.hasOwnProperty('engage')) {
+				module.engage = true;
+				module.engageText = 'Engage';
+				changed = true;
+			}
+
+			// TODO remove extraneous properties
+		}
+
+		return changed;
 	}
 
 	/**

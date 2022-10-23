@@ -608,11 +608,6 @@ export default class GriffithCardsView extends cc_View {
 		return wrapper;
 	}
 
-	/**
-	 * @function generateCardLinkItem
-	 * @description generate HTML to show an fyi message if fyi is true and there is a message
-	 * @param {Object} module - configuration details for module
-	 */
 	generateFyiText(module) {
 
 		if (!module.hasOwnProperty('fyi') || !module.fyi || !module.hasOwnProperty('fyiText')) {
@@ -1052,10 +1047,10 @@ export default class GriffithCardsView extends cc_View {
 	}
 
 	generateCardEngage(module) {
-		let engage = 'Engage';
+		let engage = '';
 		// set the "text" for the engage button
-		if (module.hasOwnProperty('engage')) {
-			engage = module.engage;
+		if (module.hasOwnProperty('engageText')) {
+			engage = module.engageText;
 		}
 		return engage;
 	}
@@ -1081,7 +1076,15 @@ export default class GriffithCardsView extends cc_View {
 		return imageSize;
 	}
 
+	/**
+	 * @function generateCardLinkItem
+	 * @description generate HTML to show an fyi message if fyi is true and there is a message
+	 * @param {Object} module - configuration details for module
+	 */
 	generateCardLinkItem(module) {
+		if (!module.hasOwnProperty('engage') || module.engage === false) {
+			return '';
+		}
 		const engage = this.generateCardEngage(module);
 		let LINK_ITEM = `
 <!--	    <p>&nbsp;<br /> &nbsp;</p> -->
@@ -1095,7 +1098,7 @@ export default class GriffithCardsView extends cc_View {
 	    `;
 
 		if (
-			('noEngage' in module && module.noEngage) ||
+		//	Deprecated? ('noEngage' in module && module.noEngage) ||
 			// don't show link for fyi object
 			(module.hasOwnProperty('fyi') && module.fyi)
 		) {

@@ -447,6 +447,9 @@ export default class cc_ConfigurationModel {
 
 		if (module) {
 			// specify the fields that are for dates, to be handled differently
+
+
+			/** Handle date fields */
 			const dateFields = [ 
 				'day', 'week', 'time', 'date-label',
 				'day-to', 'week-to', 'time-to'
@@ -486,6 +489,17 @@ export default class cc_ConfigurationModel {
 				} else {
 					module.num = '';
 				}
+			}
+
+			/** Handle engage checkbox */
+			if (fieldName ==='engage') {
+				if ( value ) {
+					// it was on, changing to off
+					module.engage = true;
+				} else {
+					module.engage = false;
+				}
+				return true;
 			}
 
 			if (fieldName === 'iframe' ) {

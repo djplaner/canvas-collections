@@ -184,6 +184,15 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#labels-and-numbers"
 	},
 	{
+		contentText: `<p>For cards representations, specify</p> <ol> 
+		  <li> if there will be an "engage" button; and, </li>
+		  <li> what the button text will be. </li> </ol>`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-engage",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button"
+	},
+	{
 		contentText: `<p>Choose from the three supported "date types" and configure it. Options include:</p>
 		<ol>
 		  <li> <strong>Single date</strong> - a specific date (and time) </li>
@@ -855,7 +864,7 @@ export default class cc_ConfigurationView extends cc_View {
 	 */
 
 	configureFyi(moduleDetail) {
-		let fyi = { fyi: false, fyiText: '' }
+		let fyi = { fyi: false, fyiText: '' };
 
 		// loop thru attributes of fyi object
 		for (const key in fyi) {
@@ -879,6 +888,45 @@ export default class cc_ConfigurationView extends cc_View {
 		}
 
 		return fyi;
+	}
+
+	/**
+	 * @function configureEngage
+	 * @description Check the module details for
+	 *    engage: boolean - should there be an engage button
+	 *    engageText: string - text to display on the engage button
+	 * If there isn't one initialise it to true and "Engage"
+	 * Return the engage object so it can be used in displays
+	 * @param {Object} moduleDetail 
+	 * @return {Object} - { engage: boolean, engageText: string 
+	 *           Also includes other style related options
+	 * }
+	 */
+
+	configureEngage(moduleDetail) {
+		let engage = { engage: true, engageText: 'Engage' };
+
+		for (const key in engage) {
+			if (moduleDetail.hasOwnProperty(key)) {
+				engage[key] = moduleDetail[key];
+			} else {
+				if ( key==='engage') {
+					moduleDetail[key] = false;
+				} else {
+					moduleDetail[key] = 'Enage';
+				}
+			}
+		}
+		// modify the boolean fyi to be checked or not for HTML
+		// add the styles for display
+		if (engage.engage) {
+			engage.engage = 'checked';
+		} else {
+			engage.engage = '';
+			engage.engageStyle = 'disabled';
+		}
+
+		return engage;
 	}
 
 	/**
@@ -1043,6 +1091,7 @@ export default class cc_ConfigurationView extends cc_View {
 
 
 		let fyi = this.configureFyi(moduleDetail);
+		let engage = this.configureEngage(moduleDetail);
 		let bannerActive = this.configureBanner(moduleDetail);
 		let dateActive = this.configureDate(moduleDetail);
 		let configDisplay = this.configureConfigDisplay(moduleDetail);
@@ -1163,6 +1212,21 @@ export default class cc_ConfigurationView extends cc_View {
 						<input type="text" id="cc-module-config-${moduleDetail.id}-num" 
 					     	value="${numValue}" style="width:3rem;" ${numStyle}/>
 				</div>
+				<div class="cc-collection-description" style="margin-top: 0.5em">
+			        <sl-tooltip id="cc-about-module-engage">
+					  	<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+				    <label for="cc-module-config-${moduleDetail.id}-engage">Engage</label>
+					<span class="cc-config-autonum" >
+				   		<input type="checkbox" id="cc-module-config-${moduleDetail.id}-engage" ${engage.engage} 
+						    style="position:relative; top:-0.25rem; " />
+						</span>
+						<input type="text" id="cc-module-config-${moduleDetail.id}-engageText"" 
+					     	value="${engage.engageText}" style="width:10rem;" ${engage.engageStyle}/>
+					</span>
+				</div>
+
 
 <!--			</sl-details> -->
 

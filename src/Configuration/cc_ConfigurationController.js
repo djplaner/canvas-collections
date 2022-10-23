@@ -509,7 +509,7 @@ export default class cc_ConfigurationController {
 		let value = event.target.value;
 
 		// autonum is checkbox, it's value is checked
-		if (fieldName==="autonum" || fieldName==="fyi") {
+		if (fieldName==="autonum" || fieldName==="fyi" || fieldName==="engage") {
 			value = event.target.checked;
 		} 
 
@@ -662,7 +662,7 @@ export default class cc_ConfigurationController {
 		let outcomes = pageController.generateOutcomesString();
 
 		if ( ! pageController.singleCollection ) {
-			alert(`Full Claytons update ${outcomes}`)
+			alert(`Full Claytons update ${outcomes}`);
 		}
 	}
 

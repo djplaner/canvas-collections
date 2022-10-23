@@ -218,6 +218,10 @@ export default class cc_ConfigurationStore {
 		if (importConverted) {
 			this.configConverted = importConverted;
 		}
+		const updatesConverted = this.checkConvertUpdates();
+		if ( updatesConverted ) {
+			this.configConverted = updatesConverted;
+		}
 
 		// also need to decode the collection names in
 		// - keys for this.cc_configuration.COLLECTIONS
@@ -238,8 +242,35 @@ export default class cc_ConfigurationStore {
 		// decode the value in the string this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
 		this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION = this.decodeHTML(
 			this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
+	}
 
+	/**
+	 * @function checkConvertUpdates
+	 * @description Make necessary changes to the modules configuration due to evolutions in 
+	 * the JSON format. (e.g. when engage button behaviour was changed, modify old JSON files
+	 * to work with the new code)
+	 * @return {boolean} true if the configuration was changed
+	 */
+	checkConvertUpdates() {
+		let changed = false;
 
+		// Make changes to individual module configurations
+		let collectionsModules = this.parentController.cc_configuration.MODULES;
+
+		for (let key in collectionsModules) {
+			let module = collectionsModules[key];
+
+			// if no engage button behaviour set up
+			if ( ! module.hasOwnProperty('engage')) {
+				module.engage = true;
+				module.engageText = 'Engage';
+				changed = true;
+			}
+
+			// TODO remove extraneous properties
+		}
+
+		return changed;
 	}
 
 	/**
