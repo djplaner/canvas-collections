@@ -448,6 +448,9 @@ class cc_ConfigurationModel {
 
 		if (module) {
 			// specify the fields that are for dates, to be handled differently
+
+
+			/** Handle date fields */
 			const dateFields = [ 
 				'day', 'week', 'time', 'date-label',
 				'day-to', 'week-to', 'time-to'
@@ -487,6 +490,17 @@ class cc_ConfigurationModel {
 				} else {
 					module.num = '';
 				}
+			}
+
+			/** Handle engage checkbox */
+			if (fieldName ==='engage') {
+				if ( value ) {
+					// it was on, changing to off
+					module.engage = true;
+				} else {
+					module.engage = false;
+				}
+				return true;
 			}
 
 			if (fieldName === 'iframe' ) {
@@ -915,7 +929,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.9.6";
+const CC_VERSION = "0.9.7";
 
 const CV_DEFAULT_DATE_LABEL = "Starting";
 
@@ -1025,7 +1039,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		will place the include page contents <em>after</em> the collection.</p>`,
 		targetSelector: '.cc-about-include-after',
 		animateFunction: "spin",
-//		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#hide-a-collection"
+		//		href: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#hide-a-collection"
 	},
 	{
 		contentText: `<p>🚧🧪☠️ <strong>Warning:</strong> This feature is experimental, under construction, and
@@ -1087,6 +1101,15 @@ const CONFIG_VIEW_TOOLTIPS = [
 		targetSelector: "#cc-about-module-label",
 		animateFunction: "spin",
 		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#labels-and-numbers"
+	},
+	{
+		contentText: `<p>For cards representations, specify</p> <ol> 
+		  <li> if there will be an "engage" button; and, </li>
+		  <li> what the button text will be. </li> </ol>`,
+		maxWidth: `250px`,
+		targetSelector: "#cc-about-module-engage",
+		animateFunction: "spin",
+		href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button"
 	},
 	{
 		contentText: `<p>Choose from the three supported "date types" and configure it. Options include:</p>
@@ -1257,31 +1280,31 @@ class cc_ConfigurationView extends cc_View {
 		this.addTooltips();
 	}
 
-/*	addTooltips() {
-		const courseId = this.model.getCourseId();
-		const configPageUrl = `https://${window.location.host}/courses/${courseId}/pages/canvas-collections-configuration`;
-
-		// Add any local customisation to the tooltips
-		let unpublished =
-		{
-			contentText: `The <a href="${configPageUrl}" target="_blank">
-			<em>Canvas Collections Configuration</em> page</a> is unpublished. Meaning
-		the live Collections view will be visible in "Student View" or for students.
-		<p>Any Claytons Collections pages will be visible, if they are published.</p>
-		`,
-			maxWidth: `250px`,
-			targetSelector: "#cc-about-unpublished",
-			animateFunction: "spin",
-			persistent: true,
-			href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
-		};
-
-		// append unpublished onto this.TOOLTIPS
-		this.TOOLTIPS.push(unpublished);
-
-		// call the parent class method
-		super.addTooltips();
-	} */
+	/*	addTooltips() {
+			const courseId = this.model.getCourseId();
+			const configPageUrl = `https://${window.location.host}/courses/${courseId}/pages/canvas-collections-configuration`;
+	
+			// Add any local customisation to the tooltips
+			let unpublished =
+			{
+				contentText: `The <a href="${configPageUrl}" target="_blank">
+				<em>Canvas Collections Configuration</em> page</a> is unpublished. Meaning
+			the live Collections view will be visible in "Student View" or for students.
+			<p>Any Claytons Collections pages will be visible, if they are published.</p>
+			`,
+				maxWidth: `250px`,
+				targetSelector: "#cc-about-unpublished",
+				animateFunction: "spin",
+				persistent: true,
+				href: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
+			};
+	
+			// append unpublished onto this.TOOLTIPS
+			this.TOOLTIPS.push(unpublished);
+	
+			// call the parent class method
+			super.addTooltips();
+		} */
 
 	/**
 	 * @descr Add the CC configuration interface to each module
@@ -1321,7 +1344,13 @@ class cc_ConfigurationView extends cc_View {
 		this.addTooltips();
 	}
 
-	addEventHandlers() {
+	/**
+	 * @function addEventHandlers
+	 * @descr Add event handlers for all the module configuration interface
+	 * Currently called when all are added or when one is updated. Each time
+	 * it will add all the event handlers.  TODO Will this cause problems
+	 */
+	addEventHandlers(moduleId = null) {
 
 		// banner tabs to start with cc-banner-tab
 		const bannerTabs = document.querySelectorAll(`.cc-banner-tab`);
@@ -1345,6 +1374,21 @@ class cc_ConfigurationView extends cc_View {
 			accordion.addEventListener('sl-show', event => this.controller.manageAccordionToggle(event));
 			accordion.addEventListener('sl-hide', event => this.controller.manageAccordionToggle(event));
 		}
+
+		// add event handlers for additional metadata
+		// button.cc-module-config-metadata-add 
+		// and i.cc-module-config-metadata-trash calls model.manageModuleMetadata
+		const buttonAddMetadata = document.querySelectorAll(`.cc-module-config-metadata-add`);
+		for (let i = 0; i < buttonAddMetadata.length; i++) {
+			const button = buttonAddMetadata[i];
+			button.onclick = (event) => this.controller.manageModuleMetadata(event);
+		}
+		const trashMetadata = document.querySelectorAll(`i.cc-module-config-metadata-delete`);
+		for (let i = 0; i < trashMetadata.length; i++) {
+			const trash = trashMetadata[i];
+			trash.onclick = (event) => this.controller.manageModuleMetadata(event);
+		}
+
 	}
 
 
@@ -1377,15 +1421,13 @@ class cc_ConfigurationView extends cc_View {
 
 	</span> 
   	${showConfigHtml}
-</div>`; 
-
-		// TO DO check that the id matches on of the module ids in data structure
+</div>`;
 
 		// insert moduleConfigHtml afterend of moduleHeader
 		moduleHeader.insertAdjacentHTML('afterend', moduleConfigHtml);
 
 		//----------------------------
-		// Now able to use JS to make various mods to the form
+		// Perform various one-off updates using JS for the module config that was just added
 
 		// Add the image url input#cc-module-config-${moduleDetail.id}-image - need to set the value
 		// to the image url
@@ -1393,9 +1435,10 @@ class cc_ConfigurationView extends cc_View {
 		if (imageInput) {
 			imageInput.value = moduleDetail.image;
 		}
+
 		// TODO add in the iframe value this way as well
 		// add handler for iframe text area
-		const iframeArea = document.querySelector(`#cc-module-config-${id}-iframe` );
+		const iframeArea = document.querySelector(`#cc-module-config-${id}-iframe`);
 		if (iframeArea) {
 			iframeArea.onchange = (event) => this.controller.updateModuleConfigField(event);
 			iframeArea.onkeydown = (event) => event.stopPropagation();
@@ -1411,7 +1454,6 @@ class cc_ConfigurationView extends cc_View {
 			labelInput.value = moduleDetail.label;
 		}
 		// add the meta data stuff
-
 		for (let key in moduleDetail.metadata) {
 			// cc-module-config-${moduleDetail.id}-metadata-${key}-name is set to key
 			// cc-module-config-${moduleDetail.id}-metadata-${key}-value is set to moduleDetail.metadata[key]
@@ -1425,10 +1467,6 @@ class cc_ConfigurationView extends cc_View {
 			}
 		}
 
-
-		// try to start tinymce editor on the textarea
-		//tinymce.init( {selector: 'textarea'});
-
 		// add a click handler for i#cc-module-config-${id}-switch
 		const moduleConfigSwitch = document.getElementById(`cc-module-config-${id}-switch`);
 		if (moduleConfigSwitch) {
@@ -1436,7 +1474,6 @@ class cc_ConfigurationView extends cc_View {
 			// and update the class appropriately
 			moduleConfigSwitch.className = moduleDetail.configClass;
 		}
-
 
 		// set display:inline-block for div#cc-module-no-collection-${id} iff
 		// module.collection is undefined or empty
@@ -1455,35 +1492,22 @@ class cc_ConfigurationView extends cc_View {
 			// if that succeeded
 			if (editor.container) {
 				// set the contents
-				// dirty hack done quickly
-				if (moduleConfig.description==="undefined" ) {
-					moduleConfig.description = '';
-				}
 				const delta = editor.clipboard.convert(moduleConfig.description);
 				editor.setContents(delta);
-				// keep track of the current editor
-				this.currentQuill = editor;
-				this.quillChanged = false;
-				// set the event handler
-				const editorSelectionHandler = this.quillSelectionChange.bind(this);
-				editor.on('selection-change', editorSelectionHandler);
+
+				// set up the event handlers
+				// When a new quill editor is selected set the value of this.currentQuill
+				editor.on('selection-change', (range, range2) => {
+					if (range && range2 === null) {
+						// user has clicked into a new quill editor
+						console.log(`quil focus for ${id} ${range} ${range2}`);
+						this.currentQuill = editor;
+					}
+				});
+				// Handle the changes the user makes in the editor
 				const editorChangeHandler = this.quillChange.bind(this);
 				editor.on('text-change', editorChangeHandler);
 			}
-		}
-
-		// add event handlers for additional metadata
-		// button.cc-module-config-metadata-add 
-		// and i.cc-module-config-metadata-trash calls model.manageModuleMetadata
-		const buttonAddMetadata = document.querySelectorAll(`.cc-module-config-metadata-add`);
-		for (let i = 0; i < buttonAddMetadata.length; i++) {
-			const button = buttonAddMetadata[i];
-			button.onclick = (event) => this.controller.manageModuleMetadata(event);
-		}
-		const trashMetadata = document.querySelectorAll(`i.cc-module-config-metadata-delete`);
-		for (let i = 0; i < trashMetadata.length; i++) {
-			const trash = trashMetadata[i];
-			trash.onclick = (event) => this.controller.manageModuleMetadata(event);
 		}
 
 		// add catch all handlers for other module config elements
@@ -1508,14 +1532,13 @@ class cc_ConfigurationView extends cc_View {
 	}
 
 	/**
-	 * Event handler called when Quill text is changed
-	 * Just sets the quillChanged flag to true
+	 * User made change in the current quill editor. Update the module description
+	 * to match the changes and also update the related representation
 	 * @param {*} delta 
 	 * @param {*} oldDelta 
 	 * @param {*} source 
 	 */
 	quillChange(delta, oldDelta, source) {
-		this.quillChanged = true;
 		const parentId = this.currentQuill.root.parentNode.id;
 		// extract the id from parentId with format cc-module-config-<id>-description
 		//const id = parentId.substring(parentId.indexOf('-') + 1, parentId.lastIndexOf('-'));
@@ -1525,50 +1548,13 @@ class cc_ConfigurationView extends cc_View {
 				value: this.currentQuill.root.innerHTML
 			}
 		};
-		this.quillChanged = false;
 		// update the current collection representation
 		// - first the model
 		this.controller.updateModuleConfigField(event, false);
 		this.controller.changeMade(true);
 		// - then the view
 		this.controller.parentController.updateCurrentRepresentation(true);
-
-		/*		this.controller.updateModuleConfigField(event);
-				this.currentQuill.focus(); */
 	}
-
-	/**
-	 * Event handler for loss of focus on the quill edito
-	 * TODO change this to an "update" description??
-	 * @param {*} range 
-	 * @param {*} oldRange 
-	 * @param {*} source 
-	 */
-	quillSelectionChange(range, oldRange, source) {
-		if (!range) {
-			// assume user has changed focus
-			if (this.currentQuill && this.quillChanged) {
-				/*				if (this.currentQuill.hasFocus() ) {
-									return;
-								} */
-				const parentId = this.currentQuill.root.parentNode.id;
-				// extract the id from parentId with format cc-module-config-<id>-description
-				//const id = parentId.substring(parentId.indexOf('-') + 1, parentId.lastIndexOf('-'));
-				const event = {
-					target: {
-						id: parentId,
-						value: this.currentQuill.root.innerHTML
-					}
-				};
-				this.quillChanged = false;
-				this.controller.updateModuleConfigField(event);
-			}
-
-		} else {
-			console.log("user entered the editor");
-		}
-	}
-
 
 	/**
 	 * @descr Replace/update the div.cc-module-config for the given module
@@ -1596,6 +1582,7 @@ class cc_ConfigurationView extends cc_View {
 			}
 			singleModuleDetails.configClass = 'icon-mini-arrow-down';
 			this.addSingleModuleConfiguration(moduleHeader, singleModuleDetails, moduleId);
+			this.addEventHandlers(moduleId);
 		}
 	}
 
@@ -1680,7 +1667,7 @@ class cc_ConfigurationView extends cc_View {
 		};
 
 		if (moduleDetail.hasOwnProperty('banner')) {
-		 	if (['image', 'iframe', 'colour'].includes( moduleDetail.banner)) {
+			if (['image', 'iframe', 'colour'].includes(moduleDetail.banner)) {
 				bannerActive.image = '';
 				bannerActive[moduleDetail.banner] = 'active';
 			}
@@ -1760,14 +1747,14 @@ class cc_ConfigurationView extends cc_View {
 	 */
 
 	configureFyi(moduleDetail) {
-		let fyi = { fyi: false, fyiText: '' }
+		let fyi = { fyi: false, fyiText: '' };
 
 		// loop thru attributes of fyi object
 		for (const key in fyi) {
 			if (moduleDetail.hasOwnProperty(key)) {
 				fyi[key] = moduleDetail[key];
 			} else {
-				if ( key==='fyi') {
+				if (key === 'fyi') {
 					moduleDetail[key] = false;
 				} else {
 					moduleDetail[key] = '';
@@ -1784,6 +1771,45 @@ class cc_ConfigurationView extends cc_View {
 		}
 
 		return fyi;
+	}
+
+	/**
+	 * @function configureEngage
+	 * @description Check the module details for
+	 *    engage: boolean - should there be an engage button
+	 *    engageText: string - text to display on the engage button
+	 * If there isn't one initialise it to true and "Engage"
+	 * Return the engage object so it can be used in displays
+	 * @param {Object} moduleDetail 
+	 * @return {Object} - { engage: boolean, engageText: string 
+	 *           Also includes other style related options
+	 * }
+	 */
+
+	configureEngage(moduleDetail) {
+		let engage = { engage: true, engageText: 'Engage' };
+
+		for (const key in engage) {
+			if (moduleDetail.hasOwnProperty(key)) {
+				engage[key] = moduleDetail[key];
+			} else {
+				if (key === 'engage') {
+					moduleDetail[key] = false;
+				} else {
+					moduleDetail[key] = 'Enage';
+				}
+			}
+		}
+		// modify the boolean fyi to be checked or not for HTML
+		// add the styles for display
+		if (engage.engage) {
+			engage.engage = 'checked';
+		} else {
+			engage.engage = '';
+			engage.engageStyle = 'disabled';
+		}
+
+		return engage;
 	}
 
 	/**
@@ -1911,7 +1937,7 @@ class cc_ConfigurationView extends cc_View {
 		let calculatedDate = this.calculateDate(dateInfo);
 		if (dateInfo.hasOwnProperty('to')) {
 			const toDate = this.calculateDate(dateInfo.to);
-			if (toDate !== 'No date set' ) {
+			if (toDate !== 'No date set') {
 				calculatedDate += ` to ${toDate}`;
 			}
 		}
@@ -1948,6 +1974,7 @@ class cc_ConfigurationView extends cc_View {
 
 
 		let fyi = this.configureFyi(moduleDetail);
+		let engage = this.configureEngage(moduleDetail);
 		let bannerActive = this.configureBanner(moduleDetail);
 		let dateActive = this.configureDate(moduleDetail);
 		let configDisplay = this.configureConfigDisplay(moduleDetail);
@@ -2068,6 +2095,21 @@ class cc_ConfigurationView extends cc_View {
 						<input type="text" id="cc-module-config-${moduleDetail.id}-num" 
 					     	value="${numValue}" style="width:3rem;" ${numStyle}/>
 				</div>
+				<div class="cc-collection-description" style="margin-top: 0.5em">
+			        <sl-tooltip id="cc-about-module-engage">
+					  	<div slot="content"></div>
+						<a target="_blank" href=""><i class="icon-question cc-module-icon"></i></a>
+					</sl-tooltip>
+				    <label for="cc-module-config-${moduleDetail.id}-engage">Engage</label>
+					<span class="cc-config-autonum" >
+				   		<input type="checkbox" id="cc-module-config-${moduleDetail.id}-engage" ${engage.engage} 
+						    style="position:relative; top:-0.25rem; " />
+						</span>
+						<input type="text" id="cc-module-config-${moduleDetail.id}-engageText"" 
+					     	value="${engage.engageText}" style="width:10rem;" ${engage.engageStyle}/>
+					</span>
+				</div>
+
 
 <!--			</sl-details> -->
 
@@ -3210,13 +3252,13 @@ input:checked + .cc-slider:before {
 			let em = 15;
 			let px = em * parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-/*			html5tooltips({
-				contentText: `Find out more about Canvas Collections and how it can help 
-				improve the user experience of your course site`,
-				maxWidth: `${px}px`,
-				targetSelector: "#cc-about-collections",
-				animateFunction: "spin"
-			}); */
+			/*			html5tooltips({
+							contentText: `Find out more about Canvas Collections and how it can help 
+							improve the user experience of your course site`,
+							maxWidth: `${px}px`,
+							targetSelector: "#cc-about-collections",
+							animateFunction: "spin"
+						}); */
 
 			// add event handler to i#configShowSwitch
 			if (this.model.isOn()) {
@@ -3416,6 +3458,7 @@ class updatePageController {
 		this.configurationController = configurationController;
 		this.parentController = this.configurationController.parentController;
 		this.collectionsView = this.parentController.collectionsController.view;
+
 		this.navOption = navOption;
 		this.singleCollection = singleCollection;
 
@@ -4231,7 +4274,9 @@ class cc_ConfigurationController {
 		this.parentController = controller;
 		this.model = new cc_ConfigurationModel(this);
 		this.view = new cc_ConfigurationView(this.model, this);
+	}
 
+	execute() {
 		// set lastSaveTime to current time
 		//this.lastSaveTime = new Date().getTime();
 
@@ -4703,7 +4748,7 @@ class cc_ConfigurationController {
 		let value = event.target.value;
 
 		// autonum is checkbox, it's value is checked
-		if (fieldName==="autonum" || fieldName==="fyi") {
+		if (fieldName==="autonum" || fieldName==="fyi" || fieldName==="engage") {
 			value = event.target.checked;
 		} 
 
@@ -4856,7 +4901,7 @@ class cc_ConfigurationController {
 		let outcomes = pageController.generateOutcomesString();
 
 		if ( ! pageController.singleCollection ) {
-			alert(`Full Claytons update ${outcomes}`)
+			alert(`Full Claytons update ${outcomes}`);
 		}
 	}
 
@@ -6047,7 +6092,7 @@ const TABLE_ROW_HTML = `
           <td role="cell">
             <span class="cc-responsive-table__heading" aria-hidden="true">Due Date</span>
             <div class="cc-table-cell-text">
-            <p>{{DATE-LABEL}}<br />{{DUE-DATE}}</p>
+            <p>{{DATE-LABEL}}{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell">
@@ -6078,7 +6123,7 @@ const TABLE_ROW_HTML_CLAYTONS = `
           </td>
           <td role="cell" style="vertical-align:top;padding:0.5rem">
             <div class="cc-table-cell-text">
-            <p>{{DATE-LABEL}}<br />{{DUE-DATE}}</p>
+            <p>{{DATE-LABEL}}{{DUE-DATE}}</p>
             </div>
           </td>
           <td role="cell" style="vertical-align:top;padding:0.5rem">
@@ -6228,7 +6273,8 @@ class AssessmentTableView extends cc_View {
 
       let mapping = {
         //'MODULE-ID': modules[i].id,
-        'MODULE-ID': `${modulesUrl}/#${modules[i].id}`,
+        //'MODULE-ID': `${modulesUrl}/#${modules[i].id}`,
+        'MODULE-ID': `${modulesUrl}#module_${modules[i].id}`,
         'DESCRIPTION': description,
         //'TITLE': this.model.deLabelModuleName(modules[i]),
         'TITLE': modules[i].name,
@@ -6870,57 +6916,6 @@ class GriffithCardsView extends cc_View {
 	}
 
 	/**
-	 * Add any "coming soon" cards for currentCollection to cardCollection 
-	 * @param {DomElement} cardCollection - contains cards for all the published modules for current collection
-	 * @param {String} currentCollection - name of current visible collection
-	 * @returns 
-	 * 
-	 * @deprecated - replaced by FYI approach
-	 */
-
-	/*	addComingSoonCards(cardCollection) {
-			// loop through all modules in the current canvas collections configuration
-			// includes both published and unpubished modules
-	
-			const collectionsModules = this.model.getCollectionsModules(this.currentCollection);
-	
-			// no modules for the current collection
-			if (!collectionsModules) {
-				return cardCollection;
-			}
-	
-			// if the total num modules equals the canvas collections list of modules, then 
-			// all modules were being displayed in Canvas. i.e. no need to add additional
-			// coming soon cards
-			// TODO only want to get the modules for the current collection
-			const allModules = this.model.getModulesCollections();
-			// filter allModules to only include items for this.currentCollection
-			const currentCollectionModules = allModules.filter(
-				module => module.collection === this.model.getCurrentCollection());
-			if (currentCollectionModules.length === collectionsModules.length) {
-				return cardCollection;
-			}
-	
-			// filter collectionsModules for those that have a comingSoon attribute
-			const comingSoonModules = collectionsModules.filter(module => module.comingSoon);
-	
-			//		DEBUG && console.log(`################## addComingSoonCards`) && console.log(comingSoonModules);
-	
-			// loop through each coming soon module and add a card for it
-			for (let module of comingSoonModules) {
-				const card = this.generateCard(module, false);
-				// TODO actually want to place this in order
-				const order = module.comingSoon.order - 1;
-				// get a list of all div.cc-clickable-card elements in cardCollection
-				const cards = cardCollection.querySelectorAll('.cc-clickable-card');
-				// insert card before cards[order]
-				cardCollection.insertBefore(card, cards[order]);
-			}
-	
-			return cardCollection;
-		} */
-
-	/**
 	 * Harness to generate HTML for a single card. Calls various other functions
 	 * to get various component
 	 * @param {Object} module 
@@ -7052,11 +7047,6 @@ class GriffithCardsView extends cc_View {
 		return wrapper;
 	}
 
-	/**
-	 * @function generateCardLinkItem
-	 * @description generate HTML to show an fyi message if fyi is true and there is a message
-	 * @param {Object} module - configuration details for module
-	 */
 	generateFyiText(module) {
 
 		if (!module.hasOwnProperty('fyi') || !module.fyi || !module.hasOwnProperty('fyiText')) {
@@ -7496,10 +7486,10 @@ class GriffithCardsView extends cc_View {
 	}
 
 	generateCardEngage(module) {
-		let engage = 'Engage';
+		let engage = '';
 		// set the "text" for the engage button
-		if (module.hasOwnProperty('engage')) {
-			engage = module.engage;
+		if (module.hasOwnProperty('engageText')) {
+			engage = module.engageText;
 		}
 		return engage;
 	}
@@ -7525,7 +7515,15 @@ class GriffithCardsView extends cc_View {
 		return imageSize;
 	}
 
+	/**
+	 * @function generateCardLinkItem
+	 * @description generate HTML to show an fyi message if fyi is true and there is a message
+	 * @param {Object} module - configuration details for module
+	 */
 	generateCardLinkItem(module) {
+		if (!module.hasOwnProperty('engage') || module.engage === false) {
+			return '';
+		}
 		const engage = this.generateCardEngage(module);
 		let LINK_ITEM = `
 <!--	    <p>&nbsp;<br /> &nbsp;</p> -->
@@ -7539,7 +7537,7 @@ class GriffithCardsView extends cc_View {
 	    `;
 
 		if (
-			('noEngage' in module && module.noEngage) ||
+		//	Deprecated? ('noEngage' in module && module.noEngage) ||
 			// don't show link for fyi object
 			(module.hasOwnProperty('fyi') && module.fyi)
 		) {
@@ -8319,7 +8317,7 @@ class CollectionsView extends cc_View {
 		for (let module of modulesCollections) {
 			// if no collection for this module and in staff view, leave it here
 			// and maybe change the appearence here or later
-			if (!module.collection || module.collection === "") {
+			if (!module.hasOwnProperty('collection') || module.collection === "" || module.collection ==="undefined") {
 				if (!editMode) {
 					const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
 					if (contextModule) {
@@ -8395,6 +8393,9 @@ class cc_CollectionsController {
 		this.model = new CollectionsModel(this);
 		this.view = new CollectionsView(this.model, this);
 
+	}
+
+	execute() {
 		this.view.display();
 	}
 
@@ -8740,6 +8741,12 @@ class cc_ConfigurationStore {
 
 		this.parentController = controller;
 
+		this.IGNORE_CANVAS_FIELDS = [
+				'items','items_url','items_count','unlock_at','require_sequential_progress', 
+				'publish_final_grade', 'prerequisite_module_ids'
+			];
+
+
 		// will eventually contain the page object returned by Canvas API
 		this.pageObject = null;
 		// whether or not cc is on, will be set based on configuration
@@ -8889,6 +8896,10 @@ class cc_ConfigurationStore {
 		if (importConverted) {
 			this.configConverted = importConverted;
 		}
+		const updatesConverted = this.checkConvertUpdates();
+		if ( updatesConverted ) {
+			this.configConverted = updatesConverted;
+		}
 
 		// also need to decode the collection names in
 		// - keys for this.cc_configuration.COLLECTIONS
@@ -8909,8 +8920,48 @@ class cc_ConfigurationStore {
 		// decode the value in the string this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
 		this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION = this.decodeHTML(
 			this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
+	}
 
+	/**
+	 * @function checkConvertUpdates
+	 * @description Make necessary changes to the modules configuration due to evolutions in 
+	 * the JSON format. (e.g. when engage button behaviour was changed, modify old JSON files
+	 * to work with the new code)
+	 * @return {boolean} true if the configuration was changed
+	 */
+	checkConvertUpdates() {
+		let changed = false;
 
+		// Make changes to individual module configurations
+		let collectionsModules = this.parentController.cc_configuration.MODULES;
+
+		for (let key in collectionsModules) {
+			let module = collectionsModules[key];
+
+			// if no engage button behaviour set up
+			if ( ! module.hasOwnProperty('engage')) {
+				module.engage = true;
+				module.engageText = 'Engage';
+				changed = true;
+			}
+
+			// TODO remove extraneous properties
+			// - an early mistake led to some Canvas module specific information
+			//   being embedded in JSON, remove them
+			const removeFields = [
+				'items','items_url','items_count','unlock_at','require_sequential_progress', 
+				'publish_final_grade', 'prerequisite_module_ids'
+			];
+			// remove the fields from the module
+			removeFields.forEach((field) => {
+				if (module.hasOwnProperty(field)) {
+					delete module[field];
+					changed = true;
+				}
+			});
+		}
+
+		return changed;
 	}
 
 	/**
@@ -10101,24 +10152,27 @@ class UniversityDateCalendar {
   /**
    * getCurrentPeriod
    * @descr Examine Canvas course object's course_code attribute in an attempt
-	 * to extract the STRM and subsequently calculate the year, period and
-	 * other data -- assumes a Griffith University course code format which is
+   * to extract the STRM and subsequently calculate the year, period and
+   * other data -- assumes a Griffith University course code format which is
    * currently
-	 * 
-	 * Production sites:
-	 *    Organisational Communication (COM31_2226) 
+   * 
+   * Production sites:
+   *    Organisational Communication (COM31_2226) 
    *    - study period 2226
-	 * 
-	 * DEV sites:
-	 *    DEV_2515LHS_3228 
+   * 
+   * Production sites - joined courses
+   *    Introduction to Sculpture (1252QCA_3228/7252QCA_3228) 
+   * 
+   * DEV sites:
+   *    DEV_2515LHS_3228 
    *    - study period 3228
-	 * 
-	 * ORG sites:
-	 *     AEL_SHOW1
+   * 
+   * ORG sites:
+   *     AEL_SHOW1
    *     - no study period
-	 * 
-	 * TODO rejig based on scapeLib/parseCourseInstanceId (ael-automation)
-	 * In particular to handle the "YP" course ids
+   * 
+   * TODO rejig based on scapeLib/parseCourseInstanceId (ael-automation)
+   * In particular to handle the "YP" course ids
    */
 
   getCurrentPeriod(courseCode) {
@@ -10155,10 +10209,18 @@ class UniversityDateCalendar {
     // match four digits (strm)
     // optionally other stuff
     const canvasCourseCode = courseCode.match(/\(([^)]+)\)/)[1];
-    const regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
-    const match = regex.exec(canvasCourseCode);
+    let regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
+    let match = regex.exec(canvasCourseCode);
     if (match) {
       return match[2];
+    } else {
+      // a chance we might have a joined course
+      // - Get the very first course code and extract the STRM from there
+      regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*\//;
+      match = regex.exec(canvasCourseCode);
+      if (match) {
+        return match[2];
+      }
     }
 
     return this.defaultPeriod;
@@ -10473,39 +10535,60 @@ class cc_Controller {
 
 			// make details equal to what's in collections
 			let details = ccModule;
-			if ( ! details ) {
+			if (!details) {
 				details = {
-					"description" : "",
-					"collection" : ""
+					"description": "", "collection": "",
+					"label": "", "autonum": false, "num": "",
+					"date": {
+						"label": "Starting",
+						"day": "",
+						"week": "",
+						"time": "",
+						"to": {
+							"day": "",
+							"week": "",
+							"time": "",
+						}
+					},
+					"banner": "image", "image": "", "imageSize": "", "iframe": "", "bannerColour": "#ffffff",
+					"engage": true, "engageText": "Engage",
+					"fyi": false, "fyiText": "",
+					"configDisplay": {
+						"accordions": {
+							"dates": "",
+							"banner": "open",
+							"metadata": ""
+						}
+					}
 				};
 			}
 
 			// Update it with the live Canvas details
 			// - but skip some
-			const skipFields = ['unlock_at','items','completed_at','items_count'];
+			const skipFields = ['unlock_at', 'items', 'completed_at', 'items_count'];
 			for (let key in canvasModule) {
-				if ( skipFields.includes(key)) {
+				if (skipFields.includes(key)) {
 					continue;
 				}
-				if ( ! details.hasOwnProperty(key) || details[key]!==canvasModule[key] ) {
+				if (!details.hasOwnProperty(key) || details[key] !== canvasModule[key]) {
 					updatedName = true;
 					details[key] = canvasModule[key];
 				}
 			}
 			// do the same for CC module details, but skip some fields
-/*			if (ccModule) {
-				// collections module name should be updated from canvas
-				const skipFields = ['name'];
-				if ( ccModule.name!==canvasModule.name ) {
-					updatedName = true;
-				}
-				ccModule.name = canvasModule.name;
-				for (let key in ccModule) {
-					if (!skipFields.includes(key)) {
-						details[key] = ccModule[key];
-					}
-				}
-			} */
+			/*			if (ccModule) {
+							// collections module name should be updated from canvas
+							const skipFields = ['name'];
+							if ( ccModule.name!==canvasModule.name ) {
+								updatedName = true;
+							}
+							ccModule.name = canvasModule.name;
+							for (let key in ccModule) {
+								if (!skipFields.includes(key)) {
+									details[key] = ccModule[key];
+								}
+							}
+						} */
 
 			// add calculated fields
 			// - if there's num in details, then actualNum is the num
@@ -10531,7 +10614,7 @@ class cc_Controller {
 			}
 			this.mergedModuleDetails[canvasModuleId] = details;
 		}
-		if ( this.editMode && updatedName ) {
+		if (this.editMode && updatedName) {
 			this.saveConfig();
 		}
 	}
@@ -10571,6 +10654,10 @@ class cc_Controller {
 	 */
 
 	execute() {
+		// create these here, once all the async data population is done
+		this.configurationController = new cc_ConfigurationController(this);
+		this.collectionsController = new cc_CollectionsController(this);
+
 		// do some final checks to make sure we don't run when not required
 		if (!this.modulesPage && !this.homeModulesPage) {
 			DEBUG && console.log('-------------- cc_Controller.execute() ERROR SHOULDN"T BE RUNNING');
@@ -10626,7 +10713,7 @@ class cc_Controller {
 	/**
 	 * find all the div.editable_context_module, if display:none then show it
 	 */
-	thisShowModules() {
+	showModules() {
 		// get all div.editable_context_module
 		const modules = document.getElementsByClassName('editable_context_module');
 		for (let i = 0; i < modules.length; i++) {
@@ -10653,7 +10740,7 @@ class cc_Controller {
 			moduleConfig.remove();
 		});
 		// show all the modules
-		this.thisShowModules();
+		this.showModules();
 
 		// remove div#cc-config-wrapper
 		let cc_config_wrapper = document.getElementById('cc-config-wrapper');
@@ -10694,7 +10781,7 @@ class cc_Controller {
 	 */
 	showConfiguration() {
 		DEBUG && console.log('-------------- cc_Controller.showConfiguration()');
-		this.configurationController = new cc_ConfigurationController(this);
+		this.configurationController.execute();
 	}
 
 	/**
@@ -10702,7 +10789,7 @@ class cc_Controller {
 	 */
 	showCollections() {
 		DEBUG && console.log('-------------- cc_Controller.showCollectionsStudentMode()');
-		this.collectionsController = new cc_CollectionsController(this);
+		this.collectionsController.execute();
 	}
 
 	/**

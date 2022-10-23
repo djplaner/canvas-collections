@@ -10,7 +10,7 @@
 
 import { cc_View } from '../cc_View.js';
 
-const CC_VERSION = "0.9.6";
+const CC_VERSION = "0.9.7";
 
 const CV_DEFAULT_DATE_LABEL = "Starting";
 
