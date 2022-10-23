@@ -69,6 +69,12 @@ export default class cc_ConfigurationStore {
 
 		this.parentController = controller;
 
+		this.IGNORE_CANVAS_FIELDS = [
+				'items','items_url','items_count','unlock_at','require_sequential_progress', 
+				'publish_final_grade', 'prerequisite_module_ids'
+			];
+
+
 		// will eventually contain the page object returned by Canvas API
 		this.pageObject = null;
 		// whether or not cc is on, will be set based on configuration
@@ -268,6 +274,19 @@ export default class cc_ConfigurationStore {
 			}
 
 			// TODO remove extraneous properties
+			// - an early mistake led to some Canvas module specific information
+			//   being embedded in JSON, remove them
+			const removeFields = [
+				'items','items_url','items_count','unlock_at','require_sequential_progress', 
+				'publish_final_grade', 'prerequisite_module_ids'
+			];
+			// remove the fields from the module
+			removeFields.forEach((field) => {
+				if (module.hasOwnProperty(field)) {
+					delete module[field];
+					changed = true;
+				}
+			});
 		}
 
 		return changed;

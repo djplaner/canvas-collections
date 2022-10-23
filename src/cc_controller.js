@@ -307,39 +307,60 @@ export default class cc_Controller {
 
 			// make details equal to what's in collections
 			let details = ccModule;
-			if ( ! details ) {
+			if (!details) {
 				details = {
-					"description" : "",
-					"collection" : ""
+					"description": "", "collection": "",
+					"label": "", "autonum": false, "num": "",
+					"date": {
+						"label": "Starting",
+						"day": "",
+						"week": "",
+						"time": "",
+						"to": {
+							"day": "",
+							"week": "",
+							"time": "",
+						}
+					},
+					"banner": "image", "image": "", "imageSize": "", "iframe": "", "bannerColour": "#ffffff",
+					"engage": true, "engageText": "Engage",
+					"fyi": false, "fyiText": "",
+					"configDisplay": {
+						"accordions": {
+							"dates": "",
+							"banner": "open",
+							"metadata": ""
+						}
+					}
 				};
 			}
 
 			// Update it with the live Canvas details
 			// - but skip some
-			const skipFields = ['unlock_at','items','completed_at','items_count'];
+			const skipFields = ['unlock_at', 'items', 'completed_at', 'items_count'];
 			for (let key in canvasModule) {
-				if ( skipFields.includes(key)) {
+				if (skipFields.includes(key)) {
 					continue;
 				}
-				if ( ! details.hasOwnProperty(key) || details[key]!==canvasModule[key] ) {
+				if (!details.hasOwnProperty(key) || details[key] !== canvasModule[key]) {
 					updatedName = true;
 					details[key] = canvasModule[key];
 				}
 			}
 			// do the same for CC module details, but skip some fields
-/*			if (ccModule) {
-				// collections module name should be updated from canvas
-				const skipFields = ['name'];
-				if ( ccModule.name!==canvasModule.name ) {
-					updatedName = true;
-				}
-				ccModule.name = canvasModule.name;
-				for (let key in ccModule) {
-					if (!skipFields.includes(key)) {
-						details[key] = ccModule[key];
-					}
-				}
-			} */
+			/*			if (ccModule) {
+							// collections module name should be updated from canvas
+							const skipFields = ['name'];
+							if ( ccModule.name!==canvasModule.name ) {
+								updatedName = true;
+							}
+							ccModule.name = canvasModule.name;
+							for (let key in ccModule) {
+								if (!skipFields.includes(key)) {
+									details[key] = ccModule[key];
+								}
+							}
+						} */
 
 			// add calculated fields
 			// - if there's num in details, then actualNum is the num
@@ -365,7 +386,7 @@ export default class cc_Controller {
 			}
 			this.mergedModuleDetails[canvasModuleId] = details;
 		}
-		if ( this.editMode && updatedName ) {
+		if (this.editMode && updatedName) {
 			this.saveConfig();
 		}
 	}

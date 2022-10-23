@@ -8816,6 +8816,12 @@ class cc_ConfigurationStore {
 
 		this.parentController = controller;
 
+		this.IGNORE_CANVAS_FIELDS = [
+				'items','items_url','items_count','unlock_at','require_sequential_progress', 
+				'publish_final_grade', 'prerequisite_module_ids'
+			];
+
+
 		// will eventually contain the page object returned by Canvas API
 		this.pageObject = null;
 		// whether or not cc is on, will be set based on configuration
@@ -9015,6 +9021,19 @@ class cc_ConfigurationStore {
 			}
 
 			// TODO remove extraneous properties
+			// - an early mistake led to some Canvas module specific information
+			//   being embedded in JSON, remove them
+			const removeFields = [
+				'items','items_url','items_count','unlock_at','require_sequential_progress', 
+				'publish_final_grade', 'prerequisite_module_ids'
+			];
+			// remove the fields from the module
+			removeFields.forEach((field) => {
+				if (module.hasOwnProperty(field)) {
+					delete module[field];
+					changed = true;
+				}
+			});
 		}
 
 		return changed;
@@ -10615,39 +10634,60 @@ class cc_Controller {
 
 			// make details equal to what's in collections
 			let details = ccModule;
-			if ( ! details ) {
+			if (!details) {
 				details = {
-					"description" : "",
-					"collection" : ""
+					"description": "", "collection": "",
+					"label": "", "autonum": false, "num": "",
+					"date": {
+						"label": "Starting",
+						"day": "",
+						"week": "",
+						"time": "",
+						"to": {
+							"day": "",
+							"week": "",
+							"time": "",
+						}
+					},
+					"banner": "image", "image": "", "imageSize": "", "iframe": "", "bannerColour": "#ffffff",
+					"engage": true, "engageText": "Engage",
+					"fyi": false, "fyiText": "",
+					"configDisplay": {
+						"accordions": {
+							"dates": "",
+							"banner": "open",
+							"metadata": ""
+						}
+					}
 				};
 			}
 
 			// Update it with the live Canvas details
 			// - but skip some
-			const skipFields = ['unlock_at','items','completed_at','items_count'];
+			const skipFields = ['unlock_at', 'items', 'completed_at', 'items_count'];
 			for (let key in canvasModule) {
-				if ( skipFields.includes(key)) {
+				if (skipFields.includes(key)) {
 					continue;
 				}
-				if ( ! details.hasOwnProperty(key) || details[key]!==canvasModule[key] ) {
+				if (!details.hasOwnProperty(key) || details[key] !== canvasModule[key]) {
 					updatedName = true;
 					details[key] = canvasModule[key];
 				}
 			}
 			// do the same for CC module details, but skip some fields
-/*			if (ccModule) {
-				// collections module name should be updated from canvas
-				const skipFields = ['name'];
-				if ( ccModule.name!==canvasModule.name ) {
-					updatedName = true;
-				}
-				ccModule.name = canvasModule.name;
-				for (let key in ccModule) {
-					if (!skipFields.includes(key)) {
-						details[key] = ccModule[key];
-					}
-				}
-			} */
+			/*			if (ccModule) {
+							// collections module name should be updated from canvas
+							const skipFields = ['name'];
+							if ( ccModule.name!==canvasModule.name ) {
+								updatedName = true;
+							}
+							ccModule.name = canvasModule.name;
+							for (let key in ccModule) {
+								if (!skipFields.includes(key)) {
+									details[key] = ccModule[key];
+								}
+							}
+						} */
 
 			// add calculated fields
 			// - if there's num in details, then actualNum is the num
@@ -10673,7 +10713,7 @@ class cc_Controller {
 			}
 			this.mergedModuleDetails[canvasModuleId] = details;
 		}
-		if ( this.editMode && updatedName ) {
+		if (this.editMode && updatedName) {
 			this.saveConfig();
 		}
 	}
