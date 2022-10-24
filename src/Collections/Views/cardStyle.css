@@ -174,7 +174,7 @@
 
 .cc-card-engage-button:hover {
 	background-color: rgba(30, 58, 138, 1);
-	color: white;
+	color: white ! important;
 	text-decoration: none !important;
 	border: transparent;
 	border-radius: 0.25rem;

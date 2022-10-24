@@ -6722,6 +6722,7 @@ class GriffithCardsView extends cc_View {
 		}
 
 		.cc-card-engage-button {
+			position: relative;
 			float: right;
 			padding-top: 0.5rem;
 			padding-bottom: 0.5rem;
@@ -6916,16 +6917,13 @@ class GriffithCardsView extends cc_View {
 
 		.gu-engage {
 			text-decoration: none;
-		}
-
-/*		a.cc-card-link {
 			position: absolute;
         	width: 100%;
         	height: 100%;
         	top: 0;
         	left: 0;
         	z-index: 1;
-		} */
+		} 
 		</style>`;
 
 		cardCollection.innerHTML = cardStyles;
@@ -7594,9 +7592,8 @@ class GriffithCardsView extends cc_View {
 <!--	    <p>&nbsp;<br /> &nbsp;</p> -->
 		<div class="cc-card-engage">
 			 <div class="cc-card-engage-button">
-	       		<a href="${modulesUrl}#module_${module.id}" class="gu-engage">
+	       		<a href="${modulesUrl}#module_${module.id}" class="gu-engage"> </a>
 			   ${engage}
-			 </a>
 	         </div>
 	    </div>
 	    `;
