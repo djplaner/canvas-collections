@@ -193,6 +193,7 @@ export default class GriffithCardsView extends cc_View {
 			overflow: auto;
 			border-bottom-left-radius: 0.5rem;
 			border-bottom-right-radius: 0.5rem;
+			position: relative;
 		}
 
 		.cc-card-content, .cc-unclickable-card-content {
@@ -554,6 +555,13 @@ export default class GriffithCardsView extends cc_View {
 		// link class can't be set if there's an iframe
 		let cardLinkStyle = ` position: absolute; width: 100%; height: 100%;
         	top: 0; left: 0; z-index: 1; `;
+		// if there's no link in the module.description then make the CONTENT_CARD_LINK
+		// the same as CARD_LINK
+		let CONTENT_CARD_LINK = `<a href="${modulesUrl}#module_${module.id}" 
+		                  class="cc-card-link" style="${cardLinkStyle}"></a>`;
+
+		// if the banner is an iframe, then the header link doesn't expand
+		// but it's still needed
 		if (banner==="iframe") {
 			cardLinkStyle = "";
 		}
@@ -563,8 +571,8 @@ export default class GriffithCardsView extends cc_View {
 			cardClass = 'cc-card-unclickable';
 			cardContentClass = "cc-unclickable-card-content";
 			CARD_LINK = '';
+			CONTENT_CARD_LINK='';
 		}
-
 
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="${cardClass}">
@@ -577,6 +585,7 @@ export default class GriffithCardsView extends cc_View {
 		  		${FYI_TEXT}
 			</div>
 	  		<div class="cc-card-content-height">
+			    ${CONTENT_CARD_LINK}
       			<div class="${cardContentClass}">
 					<div class="cc-card-label">
 	    				<span class="cc-card-label"> ${CARD_LABEL} </span>
