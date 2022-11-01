@@ -929,7 +929,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.9.7";
+const CC_VERSION = "0.9.9";
 
 const CV_DEFAULT_DATE_LABEL = "Starting";
 
@@ -5054,6 +5054,14 @@ class CollectionsModel {
 		}
 	}
 
+	getCourseId() {
+		return this.controller.parentController.courseId;
+	}
+
+	getModulesUrl() {
+		return `/courses/${this.getCourseId()}/modules`;
+	}
+
 	getEditMode() {
 		return this.controller.parentController.editMode;
 	}
@@ -6632,6 +6640,7 @@ class GriffithCardsView extends cc_View {
 			overflow: auto;
 			border-bottom-left-radius: 0.5rem;
 			border-bottom-right-radius: 0.5rem;
+			position: relative;
 		}
 
 		.cc-card-content, .cc-unclickable-card-content {
@@ -6684,6 +6693,7 @@ class GriffithCardsView extends cc_View {
 		}
 
 		.cc-card-engage-button {
+			position: relative;
 			float: right;
 			padding-top: 0.5rem;
 			padding-bottom: 0.5rem;
@@ -6878,7 +6888,13 @@ class GriffithCardsView extends cc_View {
 
 		.gu-engage {
 			text-decoration: none;
-		}
+			position: absolute;
+        	width: 100%;
+        	height: 100%;
+        	top: 0;
+        	left: 0;
+        	z-index: 1;
+		} 
 		</style>`;
 
 		cardCollection.innerHTML = cardStyles;
@@ -6925,6 +6941,7 @@ class GriffithCardsView extends cc_View {
 	generateCard(module) {
 
 		const published = module.published;
+		const banner = module.banner;
 
 		// need to figure out if we want to add the card or not
 		const editMode = this.model.getEditMode();
@@ -6979,18 +6996,33 @@ class GriffithCardsView extends cc_View {
 
 		let cardClass = "cc-card";
 		let cardContentClass = "cc-card-content";
-		let CARD_LINK = `<a href="#module_${module.id}" class="cc-card-link"></a>`;
+		const modulesUrl = this.model.getModulesUrl();
+		// link class can't be set if there's an iframe
+		let cardLinkStyle = ` position: absolute; width: 100%; height: 100%;
+        	top: 0; left: 0; z-index: 1; `;
+		// if there's no link in the module.description then make the CONTENT_CARD_LINK
+		// the same as CARD_LINK
+		let CONTENT_CARD_LINK = `<a href="${modulesUrl}#module_${module.id}" 
+		                  class="cc-card-link" style="${cardLinkStyle}"></a>`;
+
+		// if the banner is an iframe, then the header link doesn't expand
+		// but it's still needed
+		if (banner==="iframe") {
+			cardLinkStyle = "";
+		}
+		let CARD_LINK = `<a href="${modulesUrl}#module_${module.id}" 
+		                  class="cc-card-link" style="${cardLinkStyle}"></a>`;
 		if (module.hasOwnProperty('fyi') && module.fyi) {
 			cardClass = 'cc-card-unclickable';
 			cardContentClass = "cc-unclickable-card-content";
 			CARD_LINK = '';
+			CONTENT_CARD_LINK='';
 		}
-
 
 		const cardHtml = `
     <div id="cc_module_${module.id}" class="${cardClass}">
 		<div class="cc-card-flex">
-	    	<div class="cc-card-banner-container">
+	    	<div class="cc-card-banner-container" data-moduleid="${module.id}">
 			    ${CARD_LINK}
 		  		${IMAGE_IFRAME}
       	  		${DATE_WIDGET}
@@ -6998,6 +7030,7 @@ class GriffithCardsView extends cc_View {
 		  		${FYI_TEXT}
 			</div>
 	  		<div class="cc-card-content-height">
+			    ${CONTENT_CARD_LINK}
       			<div class="${cardContentClass}">
 					<div class="cc-card-label">
 	    				<span class="cc-card-label"> ${CARD_LABEL} </span>
@@ -7525,19 +7558,19 @@ class GriffithCardsView extends cc_View {
 			return '';
 		}
 		const engage = this.generateCardEngage(module);
+		const modulesUrl = this.model.getModulesUrl();
 		let LINK_ITEM = `
 <!--	    <p>&nbsp;<br /> &nbsp;</p> -->
 		<div class="cc-card-engage">
 			 <div class="cc-card-engage-button">
-	       		<a href="#module_${module.id}" class="gu-engage">
+	       		<a href="${modulesUrl}#module_${module.id}" class="gu-engage"> </a>
 			   ${engage}
-			 </a>
 	         </div>
 	    </div>
 	    `;
 
 		if (
-		//	Deprecated? ('noEngage' in module && module.noEngage) ||
+			//	Deprecated? ('noEngage' in module && module.noEngage) ||
 			// don't show link for fyi object
 			(module.hasOwnProperty('fyi') && module.fyi)
 		) {
@@ -7666,50 +7699,57 @@ class GriffithCardsView extends cc_View {
 
 		//---------------
 		// update all the a.cc-card-link and a.gu-engage and add a href
-		let currentUrl = window.location.href;
+		//		let currentUrl = window.location.href;
 		// the current url should be the modules page, remove the # and anything after it
-		currentUrl = currentUrl.split('#')[0];
-		// if no "modules" at end of url, add it
-		if (currentUrl.indexOf('modules') === -1) {
-			currentUrl += '/modules';
-		}
+		/*		currentUrl = currentUrl.split('#')[0];
+				// if no "modules" at end of url, add it
+				if (currentUrl.indexOf('modules') === -1) {
+					currentUrl += '/modules';
+				} */
+
+		const modulesUrl = this.model.getModulesUrl();
+		let cardLinks = [];
 		let links = div.querySelectorAll('a.cc-card-link');
 		for (let i = 0; i < links.length; i++) {
 			let link = links[i];
-			link.href = currentUrl + link.getAttribute('href');
+			//link.href = modulesUrl + link.getAttribute('href');
+			link.href = link.getAttribute('href');
+			cardLinks[i] = link;
 		}
 
-		// declare array cardLinks
-		let cardLinks = [];
-		links = div.querySelectorAll('a.gu-engage');
-		for (let i = 0; i < links.length; i++) {
-			let link = links[i];
-			link.href = currentUrl + link.getAttribute('href');
-			// save the link for later use
-			cardLinks[i] = link.href;
-		}
+		/*		links = div.querySelectorAll('a.gu-engage');
+				for (let i = 0; i < links.length; i++) {
+					let link = links[i];
+					link.href = currentUrl + link.getAttribute('href');
+					// save the link for later use
+					cardLinks[i] = link.href;
+				} */
 		// add a link around the img.cc-card-image
-		let images = div.querySelectorAll('img.cc-card-image');
-		for (let i = 0; i < images.length; i++) {
-			let image = images[i];
-			let module = undefined;
-			if (image.dataset.hasOwnProperty('moduleid')) {
-				const moduleid = image.dataset.moduleid;
-				if (modules.hasOwnProperty(moduleid)) {
-					module = modules[parseInt(moduleid)];
-				}
-				// if an fyi module, continue
-				if (module && module.hasOwnProperty('fyi') && module.fyi) {
-					continue;
-				}
+		//let images = div.querySelectorAll('img.cc-card-image');
+		// add a link around the div.cc-card-banner-container
+		let cardBanners = div.querySelectorAll('div.cc-card-banner-container');
+		// to make the link work for all contents of banner need to use this approach
+		// https://www.w3docs.com/snippets/css/how-to-make-a-div-a-clickable-link.html
+		// i.e. add that styling to the existing a.cc-card-link
+/*		for (let i = 0; i < cardBanners.length; i++) {
+			let banner = cardBanners[i];
+			const moduleId = banner.dataset.moduleid;
+			const module = modules[parseInt(moduleId)];
+			// don't add the link if it's an FYI module
+			if (module && module.hasOwnProperty('fyi') && module.fyi) {
+				continue;
 			}
+
+			// can't wrap a div in an anchor, canvas RCE breaks it
+			// try wrapping the internals of the div
 
 			let link = doc.createElement('a');
 			link.classList.add('cc-card-link-image');
-			link.href = currentUrl;
-			link.innerHTML = image.outerHTML;
-			image.parentNode.replaceChild(link, image);
-		}
+			link.href = `${modulesUrl}#modules_${moduleId}`;
+			link.innerHTML = banner.innerHTML;
+			banner.innerHTML = link.outerHTML;
+			//banner.parentNode.replaceChild(link, banner);
+		} */
 		// add a link around cc-card-title innerHTML
 		let titles = div.querySelectorAll('h3.cc-card-title');
 
@@ -7717,24 +7757,25 @@ class GriffithCardsView extends cc_View {
 		for (let i = 0; i < titles.length; i++) {
 			let title = titles[i];
 			// get the module
-			let module = undefined;
 			if (title.dataset.hasOwnProperty('moduleid')) {
 				const moduleid = title.dataset.moduleid;
-				if (modules.hasOwnProperty(moduleid)) {
-					module = modules[parseInt(moduleid)];
+				const module = modules[parseInt(moduleid)];
+				if (!modules.hasOwnProperty(moduleid)) {
+					continue;
 				}
 				// if an fyi module, continue
 				if (module && module.hasOwnProperty('fyi') && module.fyi) {
 					continue;
 				}
+				let link = doc.createElement('a');
+				// set link class to cc-card-link-title
+				link.classList.add('cc-card-link-title');
+				//link.href = currentUrl;
+				//link.href = cardLinks[i];
+				link.href = `${modulesUrl}#modules_${moduleid}`;
+				link.innerHTML = title.innerHTML;
+				title.innerHTML = link.outerHTML;
 			}
-			let link = doc.createElement('a');
-			// set link class to cc-card-link-title
-			link.classList.add('cc-card-link-title');
-			//link.href = currentUrl;
-			link.href = cardLinks[i];
-			link.innerHTML = title.innerHTML;
-			title.innerHTML = link.outerHTML;
 		}
 
 		// change border style for all div.cc-card

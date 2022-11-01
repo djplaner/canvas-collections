@@ -240,6 +240,7 @@ export default class GriffithCardsView extends cc_View {
 		}
 
 		.cc-card-engage {
+			margin-top: 0.75rem;
 			/*padding: 1rem;
 			padding-top: 1.5rem; */
 			padding-right: 1rem;
