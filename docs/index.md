@@ -1,10 +1,10 @@
 # Canvas Collections 
 
-## Why?
+## Why and what?
 
-The usability and visual design of a course site impacts the experiences and outcomes of students. Existing Canvas functionality places limits on both. Canvas Collections can help.
+The usability and visual design of a course web site impacts the experiences and outcomes of students. Existing functionality of [the Canvas LMS](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-is-Canvas/ta-p/45) places limits on both. Canvas Collections helps by extending [the Canvas Modules page](https://www.instructure.com/en-au/canvas/resources/all/how-to-use-modules-to-build-courses-in-canvas), the main Canvas tool for organising learning activities. 
 
-For example, the following images are of the Module page of the same Canvas course site. Which strikes you as having better usabilty and visual design?
+The following images are of the Module page of the same Canvas course site. One vanilla Canvas, the other with Canvas Collections applied. Which strikes you as having better usabilty and visual design?
 
 | Vanilla Canvas | Canvas Collections (live) |
 | -------------- | ------------------ |
@@ -12,13 +12,13 @@ For example, the following images are of the Module page of the same Canvas cour
 | ![Vanilla Canvas Course Site](assets/vanillaModules.gif) | ![Same site with Canvas Collections](assets/withCanvasCollections.gif) |
 
 
-### Why is it important?
+## Why is it important?
 
 The ability for students to find what they need on a course site is important. [Crews et al (2017)](https://er.educause.edu/articles/2017/6/student-feedback-on-quality-matters-standards-for-online-course-design) report
 
 > research has singled out findability as not only the most significant predictor of both self-efficacy and motivation among students in online courses, but the _only_ significant variable that predicts these two key factors.
 
-### What are the limitations?
+## What are the limitations?
 
 [Canvas Modules](https://www.instructure.com/en-au/canvas/resources/all/how-to-use-modules-to-build-courses-in-canvas) are the primary tool Canvas provides to help
 
@@ -28,26 +28,26 @@ The Canvas Community has long recognised that there are limitations of the Modul
 
 The following links provide a taste of what the Canvas Community has said.
 
-#### One long scrolling list
+### One long scrolling list
 
 - [Too many Modules](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Too-many-Modules-Options-for-resorting-structuring-content/td-p/55983).
 - [It may be overwhelming to see everything in your course on a single page - and presents a very linear view of a course](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/).
 - [The Modules view can get very long for students to scroll through](https://it.umn.edu/services-technologies/how-tos/canvas-decide-how-organize-your-course).
 - [We are beginning to feel boxed in by the linear design of Course Modules](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idi-p/357681/page/2).
 
-#### No context, narrative, visual design etc.
+### No context, narrative, visual design etc.
 
 - [Modules don't provide a narrative to accompany the content](https://support.stedwards.edu/s/article/canvas-options-for-organizing-your-course).
 - [The Modules view lacks visual appeal compared with the formatting options available in a Page](https://it.umn.edu/services-technologies/how-tos/canvas-decide-how-organize-your-course).
 - [There is no way to express the time or theme oriented design of a course](http://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/)
 
-### What are the current solutions?
+## What are the current solutions?
 
 These issues are so prevalent that the widespread common advice within the Canvas Communit is to manually address these issues by [creating full navigation using pages](http://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/), and [creating inviting course home pages](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236).
 
 Similarly, the Canvas Community has provided various tools to help, both commercial and open source.
 
-### How can Canvas Collections help?
+## How can Canvas Collections help?
 
 Canvas Collections [provides features that can help](./features.md), including
 
@@ -63,9 +63,9 @@ The rest of the site expands on this in some detail. Use the following table as 
 
 | Section | Purpose |
 | --- | --- |
-| [Features & Use](features.md) | More detail of the features and use of Collections. |
-| [Getting Started](getting-started/index.md) | Step-by-step guide to installing and early use of Canvas Collections |
-| [Walk throughs](walk-throughs/index.md) | Detailed walk throughs of common tasks using  Collections |
-| [Reference](reference/index.md) | Reference documentation for Collections |
-| [Related Work](related-work.md) | Work by others that has inspired and informed Collections |
+| [Features & Use](./features.md) | More detail of the features and use of Collections. |
+| [Getting Started](./getting-started/overview.md) | Step-by-step guide to installing and early use of Canvas Collections |
+| [Walk throughs](./walk-throughs/available.md) | Detailed walk throughs of common tasks using  Collections |
+| [Reference](./reference/overview.md) | Reference documentation for Collections |
+| [Related Work](./related-work.md) | Work by others that has inspired and informed Collections |
 

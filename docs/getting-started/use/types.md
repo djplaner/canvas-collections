@@ -2,7 +2,7 @@
 
 Canvas Collections modifies how you can visualise and navigate the Canvas Modules page. As summarised int he following table, there are two ways you can use Canvas Collections.
 
-| Attributes | [Live](./live.md) | [Claytons](./clatyons.md) |
+| Attributes | [Live](#live-collections) | [Claytons](#claytons-collections) |
 | --- | --- | --- |
 | **Description** | The Collections Javascript code is live and actively modifying what you see when viewing the Canvas Modules page. | You use a static Canvas page to navigate to specific modules. The page was created using live Canvas Collections |
 | **Requirements** | You are able to run the Collections Javascript code because it [has been installed](../install/types-pre-requisites.md) in your Canvas instance or as a userscript. | The modified Canvas page has been published. (Collections Javascript is not required to view). |

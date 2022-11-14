@@ -1,6 +1,6 @@
 # On, off, and unpublished
 
-Whether Canvas Collections is _on_, _off_, and/or _unpublished_ influence who is able to configure and interact with Collections will change. This is also dependent on whether its [_live_](../getting-started/use/live.md) or [_Claytons_](../getting-started/use/clatyons.md) collections.
+Whether Canvas Collections is _on_, _off_, and/or _unpublished_ influence who is able to configure and interact with Collections will change. This is also dependent on whether its [_live_](../getting-started/use/types.md#live-collections) or [_Claytons_](../getting-started/use/types.md#claytons-collections) collections.
 
 ## Claytons Collections
 

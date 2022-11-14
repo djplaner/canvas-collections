@@ -1,6 +1,6 @@
 # Setting up Claytons Collections
 
-[Claytons Collections](../../getting-started/use/claytons.md) is a way of using Canvas Collections to create and maintain a Canvas Page (e.g. advice such as [creating an inviting home page](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236)). It is a way to use [Collections' features](../../features.md) without students and others having access to Collections.
+[Claytons Collections](../../getting-started/use/types.md#claytons-collections) is a way of using Canvas Collections to create and maintain a Canvas Page (e.g. advice such as [creating an inviting home page](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236)). It is a way to use [Collections' features](../../features.md) without students and others having access to Collections.
 
 Setting up Claytons Collections involves the following steps:
 

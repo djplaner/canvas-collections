@@ -29,4 +29,4 @@ The primary steps are:
 
 The [example of configuring modules](../../walk-throughs/new/configure-modules.md) for a new course provides a more detailed description of these steps. The following animated image provides a simple demonstration.
 
-![](../pics/configuringModulesAnimated.gif)
+![](./pics/configuringModulesAnimated.gif)
