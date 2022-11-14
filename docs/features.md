@@ -1,36 +1,50 @@
-# Features
+# Features & Use
 
+## Three Features
 
+Canvas Collections currently modifies the Canvas Modules page through three main features:
 
-## Collections - grouping modules by design
+1. [Collections](./features/collections.md)
 
-Standard Canvas provides a single list of Modules. You can change the order of the modules, but that's it. This causes problems if you have more than a few modules. The ability to create groups of modules is a [long requested feature](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383) which is [not being provided by the vendor](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383/highlight/true#M50428). 
+    Group related modules into collections of modules.
 
-Canvas Collections allows you to group modules into different **collections** (e.g. Content, Assessment). It displays a navigation bar that allows students to navigate between different collections, seeing and interacting only with the modules belonging to the visible collection.
+2. [Representations](./features/representations.md)
 
-### For example
+    Transform the standard linear and text-based visual representation of a collection of modules into one of a set of available representations. 
 
-*Dig into the example with a focus on the collections it uses*
+3.  [Objects](./features/objects.md)
 
+    Specify additional properties (e.g. a date, label, picture, description) for any Canvas module. The idea is that these properties help transform a vanilla Canvas Module into a context specific object.
 
-## Representations - enhancing the visual design of modules
+## Two types of use
 
-THe visual design of Canvas' modules view is linear and while visually clean it is somewhat uninteresting. A [common solution](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/) to this within the Canvas community is to manually create a Canvas page to provide a more effective and purposefully design (e.g. ["Creating an inviting course home page"](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236); and, ["Home Sweet Homepages without Tables"](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Home-Sweet-Homepages-without-Tables/ba-p/275079))
+Canvas Collections supports two types of use.
 
-Canvas Collections provides different **representations** of the Module view. Each **collection** can be configured to use a different **representation**. The chosen **representation** can be changed at any time.
+### "Live" Collections
 
-### For example
+Meaning that the Collections Javascript code is live and actively modifying what you see when viewing the Canvas Modules page. Requires that the Collections Javascript code is [installed via one of two different means](./getting-started/install/types-pre-requisites.md).
 
-*Dig into the example with a focus on the repreentations it uses*
+The following animated example demonstrates how the live version of Collections modifies the Modules page of a Canvas course site. The user is able to navigate between different collections and use the representation to access specific modules.
 
-## Objects/activities - adding metadata and affordances to Modules
+![](./features/pics/representationAllCards.gif)
 
-[Canvas Modules](https://www.instructure.com/canvas/resources/all/how-to-use-modules-to-build-courses-in-canvas) are a vanilla tool intended to help structure course content by representing the objects/activities at the centre of your learning design (e.g. day, week, unit, topic, assignment, lecture etc.). 
+### "Claytons" Collections
 
-Objects/activities that will typically has a range of additional information about them that needs representing. For example, a lecture or week might be occurring on a particular date/time. Most objects/activities will have a purpose/rationale that would be beneficial for students to know.
+Meaning that the Collections Javascript is **not** live. Instead, Canvas Collections has been used to modify one or more Canvas pages to emulate the Collections interface. i.e. Canvas Collections helps implement common advice in the Canvas community to a) [create full navigation using Pages](http://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/), or b) [create an inviting course home page].
 
-Transform your modules from Canvas' generic feature into context and design specific objects
+The following example demonstrates how "live" Collections is used to create a "Claytons" version, the process includes these steps:
 
-### For example
+1. First the name of an _output page_ is identified.
 
-*Dig into the example with a focus on the metadata and affordances it uses*
+    This is a normal Canvas page - in this case the home page of the course site - that will be modified to include the Collections representation.
+
+2. Use _Full Claytons_ to place a full emulation of Collections to the _output page_.
+
+    Each Collection is specified as having the same _output page_ using the page's name. Once this is done, _Full Claytons_ (with the _Tabs_ navigation option) is used to update the _output page_.
+
+3. The newly updated home page is visited and the interface used.
+
+    Clicking the _Engage_ button of any of the cards will take the user directly to the associated Canvas module.
+
+![](./features/pics/claytons.gif)
+

@@ -1,47 +1,71 @@
-# Canvas Collections
+# Canvas Collections 
 
+## Why?
 
-When your students visit your Canvas course's [module view](https://community.canvaslms.com/t5/Student-Guide/How-do-I-view-Modules-as-a-student/ta-p/433), how easy is it for them to answer the following questions:
+The usability and visual design of a course site impacts the experiences and outcomes of students. Existing Canvas functionality places limits on both. Canvas Collections can help.
 
-4. Which course was this again? How did it structure the modules?
-1. What is this module for? Why will I do it? What's the purpose?
-2. When should I be thinking of engaging with it?
-3. Where in the list of modules was the Assignment 2 module?
-
-Canvas Collections makes it possible to re-design the Canvas module view to make it easier for students to answer these questions. It does this by allowing you to add more context and design specific properties and functionality to the modules view. 
-
-## What does it look like?
-
-Both of the following images are of the Module page of the same Canvas course site. The Collections version has more context and design specific properties added. For example, each module has an image and a description meaning that the visual design and information architecture of the course site is more explicit. If done well, leading to a better student experience.
+For example, the following images are of the Module page of the same Canvas course site. Which strikes you as having better usabilty and visual design?
 
 | Vanilla Canvas | Canvas Collections (live) |
 | -------------- | ------------------ |
 | [View full-size image](assets/vanillaModules.gif) | [View full-size image](assets/withCanvasCollections.gif) |
 | ![Vanilla Canvas Course Site](assets/vanillaModules.gif) | ![Same site with Canvas Collections](assets/withCanvasCollections.gif) |
 
-The comparison demonstrates the three core features of Collections.
 
-### Collections
+### Why is it important?
 
-The vanilla Canvas view is a list of 11 modules. The Collections view has those same 11 modules divided into three collections titled: Why? What? and How?. The purpose of this site is to introduce Canvas Collections. The collection titles are chosen to fit that purpose meaningfully. Each collection (and its modules) can be viewed separately. 
+The ability for students to find what they need on a course site is important. [Crews et al (2017)](https://er.educause.edu/articles/2017/6/student-feedback-on-quality-matters-standards-for-online-course-design) report
 
-### Representations 
+> research has singled out findability as not only the most significant predictor of both self-efficacy and motivation among students in online courses, but the _only_ significant variable that predicts these two key factors.
 
-Each collection is using a _card_ representation (one of available representations). A [card user interface](https://www.nngroup.com/articles/cards-component/) is a common contemporary interface with known benefits, including its visual capability and responsiveness. 
+### What are the limitations?
 
-### Objects 
+[Canvas Modules](https://www.instructure.com/en-au/canvas/resources/all/how-to-use-modules-to-build-courses-in-canvas) are the primary tool Canvas provides to help
 
-Each module has had an image and a description added. Both add more context and sign-posting to aid the student in understanding the purpose of the module.
+> ...instructors structure course content by day, week, unit, topic or outcome. Modules help simplify student navigation through a course
+
+The Canvas Community has long recognised that there are limitations of the Modules page. 
+
+The following links provide a taste of what the Canvas Community has said.
+
+#### One long scrolling list
+
+- [Too many Modules](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Too-many-Modules-Options-for-resorting-structuring-content/td-p/55983).
+- [It may be overwhelming to see everything in your course on a single page - and presents a very linear view of a course](https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/).
+- [The Modules view can get very long for students to scroll through](https://it.umn.edu/services-technologies/how-tos/canvas-decide-how-organize-your-course).
+- [We are beginning to feel boxed in by the linear design of Course Modules](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idi-p/357681/page/2).
+
+#### No context, narrative, visual design etc.
+
+- [Modules don't provide a narrative to accompany the content](https://support.stedwards.edu/s/article/canvas-options-for-organizing-your-course).
+- [The Modules view lacks visual appeal compared with the formatting options available in a Page](https://it.umn.edu/services-technologies/how-tos/canvas-decide-how-organize-your-course).
+- [There is no way to express the time or theme oriented design of a course](http://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/)
+
+### What are the current solutions?
+
+These issues are so prevalent that the widespread common advice within the Canvas Communit is to manually address these issues by [creating full navigation using pages](http://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/), and [creating inviting course home pages](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236).
+
+Similarly, the Canvas Community has provided various tools to help, both commercial and open source.
+
+### How can Canvas Collections help?
+
+Canvas Collections [provides features that can help](./features.md), including
+
+1. Collections - avoid the long scroll by specifying collections of modules and showing one collection at a time.
+2. Representations - add visual appeal and move away from linear design by selecting from or creating new ways of visually representing modules.
+3. Objects - add narrative and other context and design specific details to modules by adding additional properties. 
+
+Canvas Collections can also be used to create inviting Canvas pages that provide full navigation.
 
 ## Site map
 
-Use the following table as a map for what the rest of this site has to offer.
+The rest of the site expands on this in some detail. Use the following table as a map for what the rest of this site has to offer.
 
 | Section | Purpose |
 | --- | --- |
-| [Features](features.md) | Description and examples of what Collections provides. |
+| [Features & Use](features.md) | More detail of the features and use of Collections. |
 | [Getting Started](getting-started/index.md) | Step-by-step guide to installing and early use of Canvas Collections |
-| [Walk throughs](walk-throughs/index.md) | Detailed walk throughs of performing common tasks using  Collections |
+| [Walk throughs](walk-throughs/index.md) | Detailed walk throughs of common tasks using  Collections |
 | [Reference](reference/index.md) | Reference documentation for Collections |
 | [Related Work](related-work.md) | Work by others that has inspired and informed Collections |
 

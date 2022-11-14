@@ -1006,7 +1006,7 @@ const CONFIG_VIEW_TOOLTIPS = [
 		href: "https://djplaner.github.io/canvas-collections/reference/representations/overview/"
 	},
 	{
-		contentText: `Update all configured output pages and choose an option for the navigation bar.`,
+		contentText: `Update all configured output pages using the chosen option for navigation.`,
 		maxWidth: `250px`,
 		targetSelector: "#cc-about-full-claytons",
 		animateFunction: "spin",
@@ -9259,9 +9259,9 @@ class cc_ConfigurationStore {
 
 					// tell the controller we successfully completed
 					this.parentController.completedSaveConfig();
-				} else {
+				} /*else {
 					alert(`Problem saving config ${response.status} - `);
-				}
+				} */
 			})
 			.catch((error) => {
 				console.log(`cc_ConfigurationStore: requestConfig: error = `);

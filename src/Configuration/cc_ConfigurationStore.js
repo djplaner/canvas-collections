@@ -506,9 +506,9 @@ export default class cc_ConfigurationStore {
 
 					// tell the controller we successfully completed
 					this.parentController.completedSaveConfig();
-				} else {
+				} /*else {
 					alert(`Problem saving config ${response.status} - `);
-				}
+				} */
 			})
 			.catch((error) => {
 				console.log(`cc_ConfigurationStore: requestConfig: error = `);

@@ -11,7 +11,9 @@ The Card representation relies on various HTML/CSS features. This works well wit
 
 There is a way to fix this, if you have access to the Design Plus tool.
 
-> ⚠️ **Note:** The solution used here will not work on the Canvas Mobile app. Hence the view will default to the standard Claytons version.
+!!! note "Not on the Canvas Mobile app"
+
+    The solution used here will not work on the Canvas Mobile app. Hence the view will default to the standard Claytons version.
 
 
 | Live | Claytons |

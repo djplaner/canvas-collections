@@ -2,11 +2,14 @@
 
 There are three steps to getting started with Canvas Collections
 
-1. _Install_ the Canvas Collections code.
+1. [_Install_ the Canvas Collections code](./install/types-pre-requisites.md).
 
-    Most will use [the Individual install](install/individual.md), read more about the [Types of and Pre-requisites](install/types.md) for installing Collections.
+    Unless you have admin/theme access to your Canvas install you will use [the Individual install](install/individual.md). 
 
-2. _Configure_ a Canvas course site with Collections.
-3. _Use_ Collections to navigate the modules view of a Canvas course site.
+2. [_Configure_ a Canvas course site with Collections](./configure/configuration.md).
 
-Use the menu to the left or the _Next_ button below to work through the three steps.
+    Also see [the walk throughs](../walk-throughs/available.md) for a more detailed example of designing and configuring Canvas Collections for a course site.
+
+3. [_Use_ Collections to navigate the modules view of a Canvas course site](./use/types.md).
+
+    How you use Canvas Collections will depend on the type of install you have.

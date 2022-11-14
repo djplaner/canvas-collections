@@ -48,7 +48,11 @@ extra:
 
 nav:
   - Home: index.md
-  - Features: features.md
+  - Features & Use: 
+    - Overview: features.md
+    - Collections: features/collections.md
+    - Representations: features/representations.md
+    - Objects: features/objects.md
   - Getting Started: #getting-started.md
     - Overview: getting-started/overview.md
     - 1. Install: 
@@ -62,8 +66,6 @@ nav:
       - Modules: getting-started/configure/modules.md
     - 3. Use: 
       - Types of Use: getting-started/use/types.md
-      - "'Claytons'": getting-started/use/claytons.md
-      - Live: getting-started/use/live.md
   - 'Walk throughs': 
     - Available walk throughs: walk-throughs/available.md
     - New course:
@@ -79,9 +81,9 @@ nav:
     - ⚗️ Advanced:
       - Multi-collection, one page Claytons: walk-throughs/advanced/multi-collection-one-page.md
       - Fix Claytons Card CSS: walk-throughs/advanced/fix-claytons-card-css.md
-    - Navigating the site: 
-      - Student - live: walk-throughs/navigating/student-live.md
-      - Student - Claytons: walk-throughs/navigating/student-claytons.md
+#    - Navigating the site: 
+#      - Student - live: walk-throughs/navigating/student-live.md
+#      - Student - Claytons: walk-throughs/navigating/student-claytons.md
   - Reference: 
       - Overview: reference/overview.md
       - On, off, & unpublished: reference/on-off-unpublished.md
