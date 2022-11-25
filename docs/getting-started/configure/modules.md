@@ -12,9 +12,9 @@ Below is a summary and simple demonstration of these properties. For more insigh
 | Properties | Description |
 | --- | --- |
 | Collection | Which of the collections the module belongs to. |
-| Description | A short collection of HTML that can be used to describe the why, how, what or other relevant information students need to know about the module. |
-| Image URL and scale | Each module can be represented by an image (provided as a URL). The image is then scaled to fit within the available space. |
-| Label and number | The label is typically used to explicitly identify the module as a particular type of object. The number specifies the sequence of related objects. e.g. Lecture 1, Lecture 2 |
+| [Description](../../reference/objects/overview.md#description) | A short collection of HTML that can be used to describe the why, how, what or other relevant information students need to know about the module. |
+| [Banner](../../reference/objects/overview.md#banner) | When using a cards representation, each module can be represented by a banner, which can be either an [image](../../reference/objects/overview.md#image), a [background colour](../../reference/objects/overview.md#colour), or an [iframe](../../reference/objects/overview.md#iframe).  |
+| [Label and number](../../reference/objects/overview.md#labels-and-numbers) | The label is typically used to explicitly identify the module as a particular type of object. The number specifies the sequence of related objects. e.g. Lecture 1, Lecture 2 |
 | Date (or date range) and date label | Hint to students when the object will become important. |  
 | Additional metadata | Open ended list of name/value pairs used to provide any additional metadata. |
 

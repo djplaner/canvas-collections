@@ -1,17 +1,12 @@
 # Representations
 
-Each collection can choose from a list of representations. Currently available representations are summarised in the table and the demonstrations below.
+_Representations_ control how an individual collection is displayed.  Currently available representations are summarised in the table and the demonstrations below. Representations for a given collection can be changed at any time. New representations can be added.
 
-!!! note "Separating representation from information"
-
-    A collection's representation can be changed at any time (and then changed back). e.g. the animated examples below used the same course site. The only difference is that the representation for each collection was changed. Each representation offers a different way of showing a collection and its objects.
-
-	New representations can be added.
-
+## Current representations
 
 | Name | Description |
 | --- | --- |
-| [CollectionsOnly](#collections-only) | The bare minimum representation. Modules page modified by adding: 1) the Collections navigation bar; 2) any include pages; and, 3) showing only modules belonging to the current collection. |
+| [CollectionsOnly](#collections-only) | The bare minimum representation. The [vanilla Canvas Modules page](#vanilla-canvas) is modified by adding: 1) the Collections navigation bar; 2) any [include pages](../collections/overview.md#include-page); and, 3) showing only modules belonging to the current collection. |
 | [GriffithCards](#griffithcards) | Builds on _CollectionsOnly_ by adding a card component for each module belonging to the current collection. The card component includes a number of additional features to transform the generic Canvas module into a design and context specific object. |
 | [AssessmentTable](#assessmenttable) | Rather than a card, each module is represented by a row in a table. The table is designed to summarises assessment for a course with columns for weighting and learning outcomes. |
 
