@@ -52,14 +52,38 @@ Which translates very nicely into three collections:
 
 ## What type of objects/activities does each module represent?
 
-As a fairly simple course focused more on self-paced information access and not connected to a formal course the modules aren't representative of something formal like a week, lecture, tutorial, theme.
+Canvas modules are likely not essential objects for your students to use, beyond as a means to represent and access the learning content and activities in your course. Are you really going to be telling your students to go to the second Canvas Module for an activity, or are you likely to say go to the second topic, theme, week or some other type of design and context specific object.
 
-However, the intent was to make sure that "students" of the course could clearly navigate to where they needed to go and have a bit of fun along the way.
+The type of object or activity that each Canvas module is used to represent will have different attributes. Making those attributes explicit to students via Canvas Collections is one way to improve the usability of your course site and their engagement with the design.
+
+### The example course
+
+The example course is not a typical formal university course. It doesn't have weeks, lectures, topics. Rather it aims to support self-paced information access. 
+As stated above the design has arrived at three broad driving questions as a way to organise the modules: Why?, What?, and How?. Which has led to the following design decision about the types of objects represented by each module
+
+| Collection  |	Type of object |
+| --- | --- |
+| Why?| 	Reason | 
+| What?| 	Answer | 
+| How?| 	Process | 
 
 ## What are the relevant metadata for each module?
 
 The following table summarises the metadata currently supported by Canvas Collections and a description of current common uses. The image after that table provides a visual representation of how the metadata is used in the Cards representation.
 
+### How to use this in design?
+
+This metadata can be used to specify additional attributes for a module. These additional attributes can help make more explicit what the purpose of the module is, or what type of object it is meant to be. For example, an Canvas module that is representing information about an assignment would normally have an explicit due date.
+
+#### The example course
+
+| Metadata |	Design intent |
+| --- | --- |
+| Label & Number |	As identified above, each collection's module represents a different type of object. The label metadata element will be used to explicitly label each module with the type of object. The auto number feature will be used to automatically generate a sequence of numbers. This enables the use of language such as "Have a look at Answer #2 in the What? collection for an idea of what the student experience is like"
+| Description |	While the module titles will be used to sign post what a visitor will get out of a module. The module descriptions will be used to supplement this.
+| Banner Image |	Learning how to use collections is not the most exciting topic in the world. To lighten the mood a bit each module will be represented by a (slightly) relevant meme.
+
+### Available metadata
 
 The _Configure Modules_ page provides examples of [specifying additional metadata](./configure-modules.md#specifying-additional-metadata) for a module.
 
