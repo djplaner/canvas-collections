@@ -1,30 +1,47 @@
-# canvas-collections
+# Svelte + Vite
 
-Transform your learners' experience of your course site by improving your site's information architecture and visual design by using the three three key features Collections adds to Canvas:
+This template should help get you started developing with Svelte in Vite.
 
-1. Collections - group Canvas modules according to your design.
-2. Representations - transform the visual design of the Canvas module interface.
-3. Objects - add metadata and affordances to generic Canvas modules to transform that into objects that fit your design and context.
+## Recommended IDE Setup
 
-The [Features page](https://djplaner.github.io/canvas-collections/features/) provides more detail and examples of each of these feature. 
+[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
 
-It can be used by an individual teacher or by a whole institution.
+## Need an official Svelte framework?
 
-See [the Canvas Collections documentation site](https://djplaner.github.io/canvas-collections/) for more information.
+Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
 
-### Current Status
+## Technical considerations
 
-Active work on an early version 1 release is underway. It should be released by the end of September 2022.
+**Why use this over SvelteKit?**
 
-## Comparing Vanilla Canvas to Canvas Collections
+- It brings its own routing solution which might not be preferable for some users.
+- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
 
-Both of the following images are of the Module's view of the same Canvas course site with 11 mondules.
+This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
 
-The left hand image shows the default Canvas interface. A long scroll down the 11 modules.
+Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
 
-The right hand image adds Canvas Collections with three collections titled: Why? What? and How?. Each collection can be navigated to separately. Each collection is using a _card_ representation. Hence collections adds a card for each module. Each module has had an image and a description added to help explain the purpose of the module.
+**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
 
-| Vanilla Canvas | Canvas Collections |
-| -------------- | ------------------ |
-| [View full-size image](docs/assets/vanillaModules.gif) | [View full-size image](docs/assets/withCanvasCollections.gif) |
-| ![Vanilla Canvas Course Site](docs/assets/vanillaModules.gif) | ![Same site with Canvas Collections](docs/assets/withCanvasCollections.gif) |
+Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
+
+**Why include `.vscode/extensions.json`?**
+
+Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+
+**Why enable `checkJs` in the JS template?**
+
+It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
+
+**Why is HMR not preserving my local component state?**
+
+HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
+
+If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
+
+```js
+// store.js
+// An extremely simple external store
+import { writable } from 'svelte/store'
+export default writable(0)
+```
