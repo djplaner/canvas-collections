@@ -1,8 +1,19 @@
-import App from './App.svelte'
+import CanvasCollections from './CanvasCollections.svelte'
+import {checkContext} from './lib/CanvasSetup'
 
+
+const context = checkContext()
 // insert the app as the first content of div.right-of-crumbs
 
 const rightOfCrumbs = document.querySelector(".right-of-crumbs")
+
+// TODO
+// - should more checks be done here?
+// - e.g. URL etc
+if (!rightOfCrumbs) {
+    throw new Error("div.right-of-crumbs not found")
+}
+
 const div = document.createElement("div")
 // add canvas-collections to div's class
 div.className = "canvas-collections"
@@ -11,11 +22,12 @@ rightOfCrumbs.appendChild(div)
 
 //rightOfCrumbs.insertBefore(div, rightOfCrumbs.firstChild)
 
-const app = new App({
-    //target: document.body,
+const app = new CanvasCollections({
     target: div,
     props: {
-        name: "World"
+        courseId: context.courseId,
+        editMode: context.editMode,
+        csrfToken: context.csrfToken
     }
 })
 
