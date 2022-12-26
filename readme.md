@@ -1,47 +1,90 @@
-# Svelte + Vite
+# Tampermonkey Svelte Template
+## What is this template?
+This template allows easy creation of UserScripts for [Tampermonkey](https://www.tampermonkey.net/) using [Svelte](https://svelte.dev/).
 
-This template should help get you started developing with Svelte in Vite.
+## Getting Started
+Replace `your-project-name` with whatever you would like the name of your project to be.
 
-## Recommended IDE Setup
-
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
-
-## Need an official Svelte framework?
-
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
-
-## Technical considerations
-
-**Why use this over SvelteKit?**
-
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
-
-This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
-
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
-
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
-
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
-
-**Why include `.vscode/extensions.json`?**
-
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
-
-**Why enable `checkJs` in the JS template?**
-
-It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```js
-// store.js
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+```bash
+npm degit lpshanley/tampermonkey-svelte your-project-name
+cd your-project-name
+npm i
+npm run dev
 ```
+
+If you do not have Tampermonkey installed yet [click here](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) to install from the chrome web store.
+
+*Note:* Allowing an extension access to files can have security risks. Please read and be informed about these risks prior to moving forward.
+
+After you install tampermonkey enable the `"Allow access to file URL's"` setting in the chrome extension settings for tampermonkey.
+
+Copy **only** the header details from `dist/bundle.js`. It should look like this
+```
+// ==UserScript==
+// @name        tampermonkey-svelte-dev
+// @description Tampermonkey template that uses svelte to build UserScripts
+// @namespace   https://github.com
+// @version     1.0.0
+// @homepage    https://github.com/lpshanley/tampermonkey-svelte#readme
+// @author      Lucas Shanley
+// @resource    css file:///D:/tampermonkey-svelte/dist/bundle.css
+// @match       https://*.github.com/*
+// @connect     github.com
+// @run-at      document-idle
+// @require     file:///D:/tampermonkey-svelte/dist/bundle.js
+// @grant       GM_addStyle
+// @grant       GM_getResourceText
+// @grant       GM_xmlhttpRequest
+// ==/UserScript==
+```
+
+Add this as a new script into tampermonkey. Remember to **only** copy the header details. Once this is done you should be able to reload your webpage and being creating your script. When running `npm run dev` your source will be watched and changes will rebuild automatically, you will need to refresh the browser to pickup the new changes.
+
+***IMPORTANT NOTE*** changes outside of `/src` are not watched. If you make
+changes to files like `meta.js`, `package.json`, etc you will need to stop 
+the dev server and restart it. Changes to the header will need to be copied 
+and pasted into tampermonkey any time a change occurs. Failing to do this
+may cause expected functionality to not behave as expected.
+
+## Files to update
+
+### package.json
+```jsonc
+{
+    "name": "your-project-name",
+    "description": "Your project description...",
+    "author": "Your Name",
+    "homepage": "https://yourhomepage.com"
+    ...
+}
+```
+
+### meta.js
+```javascript
+...
+const distURLBase = `https://yourdisturl.com/dist`;
+...
+let meta = {
+    ...
+    // Namespace of the script (ex: https://example.com)
+    "namespace": "https://example.com",
+    ...
+    // URL's you would like you scripts to run on
+    "match": [],
+    ...
+    // Domains you need to make requests from
+    "connect": [],
+    ...
+}
+```
+By default some of the metadata for your project is shared with `package.json`. This behavior is fine to alter to your needs by changing the values in `meta.js`.
+
+See [Tampermonkey Documentation](https://www.tampermonkey.net/documentation.php) for more details.
+
+## Ready to share?
+You can run `npm run build` and this will change the header details in the dist script so that they are ready to deploy for people to use. This removes the references to local scripts and creates references to web urls.
+
+## Additional References
+- [Svelte](https://svelte.dev/)
+- [Tampermonkey](https://www.tampermonkey.net/documentation.php)
+- [Rollup](https://rollupjs.org/guide/en/)
