@@ -27,7 +27,8 @@ const app = new CanvasCollections({
     props: {
         courseId: context.courseId,
         editMode: context.editMode,
-        csrfToken: context.csrfToken
+        csrfToken: context.csrfToken,
+        modulesPage: context.modulesPage
     }
 })
 
