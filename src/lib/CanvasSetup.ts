@@ -11,7 +11,7 @@ const DEBUG = true;
  * page, identify the courseId and if we're in edit mode
  */
 
-export function checkContext() {
+export function checkContext() : object {
   const location = window.location.href;
 
   let context = {
@@ -93,7 +93,7 @@ export function checkContext() {
 	 * Function which returns csrf_token from cookie see: 
 	 * https://community.canvaslms.com/thread/22500-mobile-javascript-development
 	 */
-function	setCsrfToken() {
+function	setCsrfToken() : string {
 		let csrfRegex = new RegExp('^_csrf_token=(.*)$');
 		let cookies = document.cookie.split(';');
 		for (let i = 0; i < cookies.length; i++) {
@@ -148,3 +148,92 @@ export async function requestCourseObject(courseId: number, csrfToken: string) {
 			this.requestModuleInformation(); */
   }
 }
+
+
+/**
+ * Fetch function for retrieving information from a single endpoint request
+ * @param {String} reqUrl Endpoint URL to query the Canvas API
+ * @returns Response Object
+ */
+export const wf_fetchData = async (reqUrl) => {
+	const url = reqUrl;
+	try {
+		const res = await fetch(url);
+		if (res.status === 404) // Endpoint not found
+			return null;
+		if (res.status === 401) // User not authorized
+			return null;
+		const json = await res.json();
+		return json;
+	} catch (e) {
+		console.error(`Could not fetch requested information: ${e}`);
+	}
+};
+
+export const wf_deleteData = async (reqUrl, csrf) => {
+	const url = reqUrl;
+	try {
+		const res = await fetch(url, {
+			method: 'DELETE', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": csrf
+			}
+		});
+		if (res.status === 404) // Endpoint not found
+			return null;
+		if (res.status === 401) // User not authorized
+			return null;
+		const json = await res.json();
+		return json;
+	} catch (e) {
+		console.error(`Could not delete requested information: ${e}`);
+	}
+}
+
+
+
+export const wf_postData = async (reqUrl, data, csrf) => {
+	const url = reqUrl;
+	try {
+		const res = await fetch(reqUrl, {
+			method: 'POST', credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				"X-CSRF-Token": csrf
+			},
+			body: JSON.stringify(data),
+		});
+		if (res.status === 404) // Endpoint not found
+			return null;
+		if (res.status === 401) // User not authorized
+			return null;
+		const json = await res.json();
+		return json;
+	} catch (e) {
+		console.error(`Could not post requested information: ${e}`);
+	}
+}
+
+/**
+ * Fetch function for retrieving information from multiple endpoint requests
+ * @param {Array} reqData Array of endpoint URL's to query the Canvas API
+ * @returns Array of Response Objects
+ */
+export const wf_fetchDataMulti = async (reqData) => {
+	return Promise.all(reqData.map(async (data) => {
+		try {
+			const res = await fetch(data);
+			if (res.status === 404) // Endpoint not found
+				return null;
+			if (res.status === 401) // User not authorized
+				return null;
+			const json = await res.json();
+			return json;
+		} catch (e) {
+			console.error(`Could not fetch requested information: ${e}`);
+		}
+	}));
+};

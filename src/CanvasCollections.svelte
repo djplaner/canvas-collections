@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { requestCourseObject } from './lib/CanvasSetup';
+//	import { requestCourseObject } from './lib/CanvasSetup';
+	import { CanvasDetails } from './lib/CanvasDetails';
+	import { CollectionsDetails } from './lib/CollectionsDetails';
 
 	const CC_VERSION = '0.9.10'
 	let COLLECTIONS_ON = false
@@ -11,12 +13,30 @@
 	export let csrfToken: string
 	
 	let dataLoaded = false
+	let canvasDetails = null
+
+	function gotCanvasDetails() {
+		alert("getCanvasDetails")
+		console.log("XXXXXXXXXXXXXXX")
+		console.log(canvasDetails)
+		dataLoaded = true 
+	}
 
 	onMount(async () => {
-		const result = await requestCourseObject( courseId, csrfToken)
-		console.log("XXXXXXXXXXXXXXX")
-		console.log(result)
-		dataLoaded = true
+		// grab all the canvas course module related information
+		// canvasDetails
+		// - courseObject 
+		// - modules
+		canvasDetails = new CanvasDetails( 
+			gotCanvasDetails,
+			{ courseId: courseId, csrfToken: csrfToken })
+
+		collectionsDetails = new CollectionsDetails(
+			gotCollectionsDetails,
+			{ courseId: courseId, csrfToken: csrfToken }
+		)
+
+
 	})
 </script>
 
@@ -126,21 +146,21 @@ input:checked + .cc-slider:before {
     padding-left: 0.5em;
     padding-right: 0.5em;
     height: 2em;
-}
+} 
 
 .cc-switch-title {
 	margin: 0.5rem
 }
 
 /* styles for the module configs */
-		    .cc-module-config {
+/*		    .cc-module-config {
 				padding: 1em;
 				font-size: smaller;
 				margin:0;
 			/*	font-weight: bold; */
-			}
+/*			}
 
-/*		   .cc-module-no-collection {
+		   .cc-module-no-collection {
 				float:right;
 				background: red;
 				color:white;
