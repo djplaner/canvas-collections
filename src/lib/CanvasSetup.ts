@@ -19,6 +19,7 @@ export function checkContext() : object {
     courseId: null,
     modulesPage: false,
     csrfToken: null,
+    currentCollection: 0
   };
 
   // replace # at end of string
@@ -31,12 +32,13 @@ export function checkContext() : object {
   if (hash) {
     let checkNum = hash.match(/cc-collection-(\d+)/);
     if (checkNum) {
-      this.URLCollectionNum = parseInt(checkNum[1]) - 1;
+      // will set this to a number now, for later translation to collectionName
+      context.currentCollection = parseInt(checkNum[1]) ;
     }
   }
   url.hash = "";
-  const documentUrl = url.href; //window.location.href;
-  //this.documentUrl = this.documentUrl.replace(/#$/, '');
+  const documentUrl = url.href;
+  //documentUrl = documentUrl.replace(/#$/, '');
 
   // courseId
   // Following adapted from https://github.com/msdlt/canvas-where-am-I

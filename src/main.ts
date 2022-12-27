@@ -24,12 +24,12 @@ rightOfCrumbs.appendChild(div)
 
 const app = new CanvasCollections({
     target: div,
-    props: {
+    props: context /*{
         courseId: context.courseId,
         editMode: context.editMode,
         csrfToken: context.csrfToken,
         modulesPage: context.modulesPage
-    }
+    } */
 })
 
 export default app

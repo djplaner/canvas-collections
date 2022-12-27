@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { collectionsStore } from "./stores";
+  import { collectionsStore, modulesStore, configStore } from "./stores";
   import CanvasCollectionsRepresentation from "./components/CanvasCollectionsRepresentation.svelte";
   import { onMount, onDestroy } from "svelte";
   import {
@@ -16,6 +16,16 @@
   export let editMode: boolean;
   export let csrfToken: string;
   export let modulesPage: boolean;
+  export let currentCollection: number;
+
+  $configStore = {
+	courseId: courseId,
+	editMode: editMode,
+	csrfToken: csrfToken,
+	modulesPage: modulesPage,
+	currentCollection: null,
+	needToSaveCollections: false
+  }
 
   // whether or data canvas and collections data loaded
   let canvasDataLoaded = false;
@@ -26,7 +36,6 @@
 
   let ccOn = false;
   // indicate whether changes made to collections data
-  let needToSaveCollections = false;
   let saveButtonClass = "cc-save-button";
 
   /**
@@ -36,6 +45,12 @@
     console.log("XXXXXXXXXXXXXXX getCanvasDetails");
     console.log(canvasDetails);
     canvasDataLoaded = true;
+	// canvasDetails.courseModules is an array of Canvas module objects
+	// set $modulesStore to a dict of Canvas module objects keyed on the module id
+	$modulesStore = canvasDetails.courseModules.reduce((acc, module) => {
+	  acc[module.id] = module;
+	  return acc;
+	}, {});
     checkAllDataLoaded();
   }
 
@@ -45,7 +60,18 @@
   function gotCollectionsDetails() {
     console.log("YYYYYYYY gotCollectionsDetails");
     console.log(collectionsDetails);
+	//----- Range of updates to local data based on the now retrieved collections JSON
     ccOn = collectionsDetails.ccOn;
+	// if currentCollection is a number, then the URL include #cc-collection-<num>
+	// Need to set current collection to the name matching that collection
+	if (
+		typeof currentCollection === "number" && 
+		currentCollection < collectionsDetails.collections.COLLECTIONS_ORDER.length && 
+		currentCollection >= 0 ) {
+	  $configStore['currentCollection'] = collectionsDetails.collections.COLLECTIONS_ORDER[currentCollection];
+	}
+
+	//----- Indicate we've loaded the data and check if ready for next step
     collectionsDataLoaded = true;
     checkAllDataLoaded();
   }
@@ -65,7 +91,7 @@
    */
 
   function collectionsModified() {
-    needToSaveCollections = true;
+    $configStore['needToSaveCollections'] = true;
     saveButtonClass = "cc-active-save-button";
   }
 

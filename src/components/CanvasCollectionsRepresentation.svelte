@@ -1,19 +1,19 @@
 <script lang="ts">
+	/**
+	 * Wrapper component for the representation which collections will add
+	*/
 
 	import { collectionsStore } from "../stores";
+	import CollectionsNavigation from "./CollectionsNavigation.svelte";
+	import CollectionRepresentation from "./CollectionRepresentation.svelte";
 
-	let collectionNames = [];
-	if ( $collectionsStore.hasOwnProperty('COLLECTIONS_ORDER') ) {
-		collectionNames = $collectionsStore.COLLECTIONS_ORDER;
-	}
 </script>
 
-<h1>Canvas Collections</h1>
-<p>From a component</p>
-
-{#each collectionNames as collectionName}
-	<p>{collectionName}</p>
-{/each} 
+<CollectionsNavigation />
+<div class="collection-message">
+   <em>Message for current collection</em>
+</div>
+<CollectionRepresentation />
 
 
 <style>

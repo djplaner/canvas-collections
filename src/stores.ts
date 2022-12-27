@@ -8,3 +8,11 @@ import { writable } from "svelte/store";
 // - MODULES - dict of dicts, keyed on module id
 // - STATUS - string "on" or "off"
 export const collectionsStore = writable({});
+
+// To be a dict of dicts, containing Canvas module information
+export const modulesStore = writable({});
+
+// Object providing basic info about context
+// - courseId
+// - editMode
+export const configStore = writable({});

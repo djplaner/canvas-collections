@@ -158,7 +158,7 @@ export class CanvasDetails {
 
   requestModuleInformation() {
     wf_fetchData(
-      `${this.baseApiUrl}courses/${this.config.courseId}/modules?include=items&per_page=500`
+      `${this.baseApiUrl}/courses/${this.config.courseId}/modules?include=items&per_page=500`
     ).then((data) => {
       this.courseModules = data;
 	  this.finishedCallBack();
