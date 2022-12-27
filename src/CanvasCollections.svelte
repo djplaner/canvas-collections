@@ -1,6 +1,11 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  //	import { requestCourseObject } from './lib/CanvasSetup';
+  import { collectionsStore } from "./stores";
+  import CanvasCollectionsRepresentation from "./components/CanvasCollectionsRepresentation.svelte";
+  import { onMount, onDestroy } from "svelte";
+  import {
+    addCollectionsRepresentation,
+    removeCollectionsRepresentation,
+  } from "./lib/CanvasSetup";
   import { CanvasDetails } from "./lib/CanvasDetails";
   import { CollectionsDetails } from "./lib/CollectionsDetails";
 
@@ -47,6 +52,7 @@
 
   function checkAllDataLoaded() {
     if (canvasDataLoaded && collectionsDataLoaded) {
+      $collectionsStore = collectionsDetails.collections;
       if (ccOn) {
         addCollectionsDisplay();
       }
@@ -91,36 +97,17 @@
    * - hiding modules not part of the current visible collection
    */
   function addCollectionsDisplay() {
-    alert("addCollectionsDisplay");
+    // add the representation div
+    const div = addCollectionsRepresentation();
 
-    // check that there isn't already a div#canvas-collections-representation
-    // if there is, do nothing
-    const representation = document.querySelector(
-      "div#canvas-collections-representation"
-    );
-    if (representation) {
-      throw new Error(
-        "addCollectionsDisplay: div#canvas-collections-representation already exists"
-      );
-    }
-
-    // get the div#context-modules
-    const contextModules = document.querySelector("div#context_modules");
-    if (!contextModules) {
-      throw new Error("addCollectionsDisplay: div#context-modules not found");
-    }
-    // add a div#canvas-collections-representation as first child of div#context-modules
-    const canvasCollectionsRepresentation = document.createElement("div");
-    canvasCollectionsRepresentation.id = "canvas-collections-representation";
-    canvasCollectionsRepresentation.innerHTML = "<h1>Canvas Collections</h1>";
-    contextModules.prepend(canvasCollectionsRepresentation);
+    const representation = new CanvasCollectionsRepresentation({ target: div });
   }
 
   /**
    *  Modify the Canvas modules page by reversing what addCollectionsDisplay does
    */
   function removeCollectionsDisplay() {
-    alert("removeCollectionsDisplay");
+    removeCollectionsRepresentation();
   }
 
   onMount(async () => {

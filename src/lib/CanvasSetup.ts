@@ -237,3 +237,47 @@ export const wf_fetchDataMulti = async (reqData) => {
 		}
 	}));
 };
+
+/**
+ * add the div#canvas-collections-representation to the DOM ready for
+ * the Svelte component to be added
+ * Return the div if added, null if not
+ */
+
+export function addCollectionsRepresentation() {
+
+   // check that there isn't already a div#canvas-collections-representation
+    // if there is, do nothing
+    const representation = document.querySelector(
+      "div#canvas-collections-representation"
+    );
+    if (representation) {
+      return null;
+    }
+
+    // get the div#context-modules
+    const contextModules = document.querySelector("div#context_modules");
+    if (!contextModules) {
+      return null;
+    }
+    // add a div#canvas-collections-representation as first child of div#context-modules
+    let canvasCollectionsRepresentation = document.createElement("div");
+    canvasCollectionsRepresentation.id = "canvas-collections-representation";
+    contextModules.prepend(canvasCollectionsRepresentation);
+
+    return canvasCollectionsRepresentation;
+}
+
+/**
+ * @function removeCollectionsRepresentation
+ * @description Remove the div#canvas-collections-representation from the DOM
+ */
+
+export function removeCollectionsRepresentation() {
+  const representation = document.querySelector(
+    "div#canvas-collections-representation"
+  );
+  if (representation) {
+    representation.remove();
+  }
+}
