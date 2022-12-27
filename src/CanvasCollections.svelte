@@ -2,10 +2,9 @@
   import { onMount } from "svelte";
   //	import { requestCourseObject } from './lib/CanvasSetup';
   import { CanvasDetails } from "./lib/CanvasDetails";
-  //	import { CollectionsDetails } from './lib/CollectionsDetails';
+  import { CollectionsDetails } from "./lib/CollectionsDetails";
 
   const CC_VERSION = "0.9.10";
-  let COLLECTIONS_ON = false;
   let COURSE_OBJECT = null;
 
   export let courseId: number;
@@ -13,15 +12,45 @@
   export let csrfToken: string;
   export let modulesPage: boolean;
 
-  let dataLoaded = false;
+  // whether or data canvas and collections data loaded
+  let canvasDataLoaded = false;
+  let collectionsDataLoaded = false;
+  // the actual data objects for canvas and collections data
   let canvasDetails = null;
   let collectionsDetails = null;
 
+  let ccOn = false;
+  // indicate whether changes made to collections data
+  let needToSaveCollections = false;
+  let saveButtonClass = "cc-save-button";
+
   function gotCanvasDetails() {
-    alert("getCanvasDetails");
-    console.log("XXXXXXXXXXXXXXX");
+    console.log("XXXXXXXXXXXXXXX getCanvasDetails");
     console.log(canvasDetails);
-    dataLoaded = true;
+    canvasDataLoaded = true;
+  }
+
+  function collectionsModified() {
+    needToSaveCollections = true;
+    // add cc-active-save-button class to button#cc-save-button
+	saveButtonClass="cc-active-save-button";
+  }
+
+  function gotCollectionsDetails() {
+    console.log("YYYYYYYY gotCollectionsDetails");
+    console.log(collectionsDetails);
+    collectionsDataLoaded = true;
+    // this is
+    ccOn = collectionsDetails.ccOn;
+  }
+
+  function toggleCollectionsSwitch() {
+    collectionsDetails.ccOn = !ccOn;
+    console.log(
+      `toggleCollectionsSwitch from ${ccOn} to ${collectionsDetails.ccOn}`
+    );
+    ccOn = collectionsDetails.ccOn;
+    collectionsModified();
   }
 
   onMount(async () => {
@@ -52,25 +81,26 @@
         href="https://djplaner.github.io/canvas-collections/"
         ><i class="icon-question cc-module-icon" /></a
       >
-      {#if dataLoaded}
+      {#if canvasDataLoaded && collectionsDataLoaded}
         <i id="configShowSwitch" class="icon-mini-arrow-right" />
       {/if}
       <small>Canvas Collections</small>
       <span style="font-size:50%">{CC_VERSION}</span>
     </div>
 
-    {#if dataLoaded}
+    {#if canvasDataLoaded && collectionsDataLoaded}
       <label class="cc-switch">
         <input
           type="checkbox"
           class="cc-toggle-checkbox"
           id="cc-switch"
-          {COLLECTIONS_ON}
+          bind:checked={ccOn}
+          on:click={toggleCollectionsSwitch}
         />
         <span class="cc-slider cc-round" />
       </label>
       <div class="cc-save">
-        <button class="cc-save-button" id="cc-save-button">Save</button>
+        <button class="{saveButtonClass}" id="cc-save-button">Save</button>
       </div>
     {/if}
   </div>
@@ -206,23 +236,24 @@
     margin-top: 0.5rem;
   }
 
-  /*			.cc-active-save-button {
-				background-color: #c94444;
-				color: var(--ic-brand-button--primary-text);
-				border: 1px solid;
-				border-color: var(--ic-brand-primary--primary-bgd-darkened-15);
-				border-radius: 2px;
-				display: inline-block;
-				position: relative;
-				padding-left: 0.25rem;
-				padding-right: 0.25rem;
-				text-align: center;
-				vertical-align: middle;
-				cursor: pointer;
-				font-size: 65%;
-				transition: background-color 0.2s ease-in-out;
-			}
+  .cc-active-save-button {
+    background-color: #c94444;
+    color: var(--ic-brand-button--primary-text);
+    border: 1px solid;
+    border-color: var(--ic-brand-primary--primary-bgd-darkened-15);
+    border-radius: 2px;
+    display: inline-block;
+    position: relative;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    font-size: 65%;
+    transition: background-color 0.2s ease-in-out;
+  }
 
+  /*
 			.cc-active-save-button:hover {
 				background: var(--ic-brand-primary);
 			} */
