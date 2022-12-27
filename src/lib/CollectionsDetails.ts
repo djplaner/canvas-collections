@@ -78,9 +78,14 @@ export class CollectionsDetails {
    * contained in this.collectionsPageResponse.body and store it in this.collections
    */
   parseCollectionsPage() {
+    // does this.collectionsPageResponse have a body?
+    if (!this.collectionsPageResponse.hasOwnProperty("body")) {
+      throw new Error("No body in collectionsPageResponse");
+    }
 
-		const parsed = new DOMParser().parseFromString(this.collectionsPageResponse.body, 
-      'text/html');
+    const body = this['collectionsPageResponse']['body'];
+
+		const parsed = new DOMParser().parseFromString(body, 'text/html');
 
 		// Collections configuration is in div.cc_json
 		let config = parsed.querySelector('div.cc_json');
@@ -98,6 +103,7 @@ export class CollectionsDetails {
 
     this.finishedCallBack();
 
+    /*
 		// add a COLLECTIONS_ORDER array to the config if it's not there
 		if (!this.parentController.cc_configuration.COLLECTIONS_ORDER) {
 			this.parentController.cc_configuration.COLLECTIONS_ORDER = Object.keys(this.parentController.cc_configuration.COLLECTIONS);
@@ -148,7 +154,7 @@ export class CollectionsDetails {
 		// decode the value in the string this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
 		this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION = this.decodeHTML(
 			this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
-
+    */
 
   }
 }

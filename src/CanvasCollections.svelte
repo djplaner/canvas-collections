@@ -24,25 +24,49 @@
   let needToSaveCollections = false;
   let saveButtonClass = "cc-save-button";
 
+  /**
+   * Callback function for when canvasDetails is loaded
+   */
   function gotCanvasDetails() {
     console.log("XXXXXXXXXXXXXXX getCanvasDetails");
     console.log(canvasDetails);
     canvasDataLoaded = true;
+    checkAllDataLoaded();
   }
 
-  function collectionsModified() {
-    needToSaveCollections = true;
-    // add cc-active-save-button class to button#cc-save-button
-	saveButtonClass="cc-active-save-button";
-  }
-
+  /**
+   * Callback function for when collectionsDetails is loaded
+   */
   function gotCollectionsDetails() {
     console.log("YYYYYYYY gotCollectionsDetails");
     console.log(collectionsDetails);
-    collectionsDataLoaded = true;
-    // this is
     ccOn = collectionsDetails.ccOn;
+    collectionsDataLoaded = true;
+    checkAllDataLoaded();
   }
+
+  function checkAllDataLoaded() {
+    if (canvasDataLoaded && collectionsDataLoaded) {
+      if (ccOn) {
+        addCollectionsDisplay();
+      }
+    }
+  }
+
+  /**
+   * Called whenever collectionsDetails is modified indicating
+   * a need to eventually do a save
+   */
+
+  function collectionsModified() {
+    needToSaveCollections = true;
+    saveButtonClass = "cc-active-save-button";
+  }
+
+  /**
+   * Called when the collections on/off switch is clicked
+   * Turn collections on or off and indicate a need to save
+   */
 
   function toggleCollectionsSwitch() {
     collectionsDetails.ccOn = !ccOn;
@@ -51,6 +75,52 @@
     );
     ccOn = collectionsDetails.ccOn;
     collectionsModified();
+    // modify the display accordingly
+    if (ccOn) {
+      addCollectionsDisplay();
+    } else {
+      removeCollectionsDisplay();
+    }
+  }
+
+  /**
+   * Modify the canvas modules page by
+   * - Adding <CanvasCollectionsRepresentation> at top of div#context_modules
+   * - Add a <CollectionsModuleConfiguration> for each canvas module belonging to
+   *   the currently visible collection
+   * - hiding modules not part of the current visible collection
+   */
+  function addCollectionsDisplay() {
+    alert("addCollectionsDisplay");
+
+    // check that there isn't already a div#canvas-collections-representation
+    // if there is, do nothing
+    const representation = document.querySelector(
+      "div#canvas-collections-representation"
+    );
+    if (representation) {
+      throw new Error(
+        "addCollectionsDisplay: div#canvas-collections-representation already exists"
+      );
+    }
+
+    // get the div#context-modules
+    const contextModules = document.querySelector("div#context_modules");
+    if (!contextModules) {
+      throw new Error("addCollectionsDisplay: div#context-modules not found");
+    }
+    // add a div#canvas-collections-representation as first child of div#context-modules
+    const canvasCollectionsRepresentation = document.createElement("div");
+    canvasCollectionsRepresentation.id = "canvas-collections-representation";
+    canvasCollectionsRepresentation.innerHTML = "<h1>Canvas Collections</h1>";
+    contextModules.prepend(canvasCollectionsRepresentation);
+  }
+
+  /**
+   *  Modify the Canvas modules page by reversing what addCollectionsDisplay does
+   */
+  function removeCollectionsDisplay() {
+    alert("removeCollectionsDisplay");
   }
 
   onMount(async () => {
@@ -100,7 +170,7 @@
         <span class="cc-slider cc-round" />
       </label>
       <div class="cc-save">
-        <button class="{saveButtonClass}" id="cc-save-button">Save</button>
+        <button class={saveButtonClass} id="cc-save-button">Save</button>
       </div>
     {/if}
   </div>
