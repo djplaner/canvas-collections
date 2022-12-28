@@ -10,9 +10,6 @@
 </script>
 
 <CollectionsNavigation />
-<div class="collection-message">
-   <em>Message for current collection</em>
-</div>
 <CollectionRepresentation collection={$configStore['currentCollection']}/>
 
 

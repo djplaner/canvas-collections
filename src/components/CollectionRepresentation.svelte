@@ -17,7 +17,8 @@
   import CollectionOnly from "./Representations/CollectionOnly.svelte";
 
   const translation = {
-    CollectionOnly: CollectionOnly, Cards: Cards, AssessmentTable: AssessmentTable
+    CollectionOnly: CollectionOnly, Cards: Cards, AssessmentTable: AssessmentTable,
+	GriffithCards: Cards
   };
 
   export let collection: string;
@@ -31,7 +32,7 @@
 
   let collectionProps = { collection: collection };
 
-  // set default collectionRepresentation
+/*  // set default collectionRepresentation
   let collectionRepresentation = translation["Cards"];
 
   // modify the representation to the one specified in the collection
@@ -54,12 +55,16 @@
     throw new Error(
       `CollectionRepresentation: collections missing collection/representation for ${collection}`
     );
-  }
+  } */
 </script>
 
 <h1>The representation for collection {collection}</h1>
 
-<svelte:component this={collectionRepresentation} {...collectionProps}/>
+<p>collections representation {$collectionsStore["COLLECTIONS"][collection]["representation"]}</p>
+
+<svelte:component 
+	this={translation[$collectionsStore["COLLECTIONS"][collection]["representation"]]} 
+	{...collectionProps}/>
 
 <style>
 </style>

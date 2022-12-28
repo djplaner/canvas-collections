@@ -16,6 +16,10 @@
 
 	export let collection: string;
 
+	// kludge to test reactive nature
+	// set collection to currentCollection
+	collection = $configStore['currentCollection'];
+
 	// error checking?
 	// allModules is a dict of module ids and module objects
 	const allModules = $collectionsStore['MODULES'];
@@ -36,13 +40,6 @@
 		);
 	});
 
-
-	console.log('eeeeeeeeeeeeeeeeeeeeeeeeeee')
-	console.log(modules)
-	console.log('---- MODULES STORE')
-	console.log($modulesStore)
-	console.log('---- COLLECTIONS STORE')
-	console.log($collectionsStore)
 
 	/**
 	 * @function checkModuleMetaData
@@ -75,9 +72,16 @@
 	 * string to insert into the table
 	 */
 	function generateModuleDate( module: string) {
-		// TODO need generateCalendarDate
+		// TODO need generateCalendarDate properly
+
+		if ( ! $collectionsStore['MODULES'][module].hasOwnProperty('date') ) {
+			return '🚧 no date';
+		}
+		const date = $collectionsStore['MODULES'][module].date;
+		return `🚧 ${date.label} ${date.day} Week ${date.week}`;
 	}
   /** TODO
+   * Finish generate module date
    * 1. calculate the module URL for module-ID
    * 2. If not in edit mode, need to exclude modules that are not published
   */
