@@ -3,7 +3,7 @@
 	 * Wrapper component for the representation which collections will add
 	*/
 
-	import { collectionsStore } from "../stores";
+	import { configStore } from "../stores";
 	import CollectionsNavigation from "./CollectionsNavigation.svelte";
 	import CollectionRepresentation from "./CollectionRepresentation.svelte";
 
@@ -13,7 +13,7 @@
 <div class="collection-message">
    <em>Message for current collection</em>
 </div>
-<CollectionRepresentation />
+<CollectionRepresentation collection={$configStore['currentCollection']}/>
 
 
 <style>
