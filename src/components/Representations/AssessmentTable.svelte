@@ -13,16 +13,26 @@
 	*/
 
  import { collectionsStore, modulesStore, configStore } from "../../stores";
+ import { getCollectionModuleIds, generateModuleDate, checkModuleMetaData } from "./representationSupport.ts";
 
 	export let collection: string;
 
 	// kludge to test reactive nature
 	// set collection to currentCollection
-	collection = $configStore['currentCollection'];
+	// TODO - this isn't right, the prop isn't being dynamically updated
+	//collection = $configStore['currentCollection'];
 
+	let moduleIds;
+  $: moduleIds = getCollectionModuleIds(collection, $collectionsStore['MODULES']);
+	console.log("moduleIds")
+	console.log(moduleIds)
+	console.log("modulesStore")
+	console.log($modulesStore)
+	console.log("collectionsStore")
+	console.log($collectionsStore)
 	// error checking?
 	// allModules is a dict of module ids and module objects
-	const allModules = $collectionsStore['MODULES'];
+/*	const allModules = $collectionsStore['MODULES'];
 	// create modules array containing ordered sequence of module ids for
 	// modules where the collection attribute matches the collection name
 	// but also need to handle if it's not there
@@ -30,56 +40,17 @@
 	console.log("configStore")
 	console.log($configStore)
 	const modules = Object.keys(allModules).filter((module) => {
-		return (
+		return ( */
 			/*(
 				! allModules[module].published &&
 				$configStore['editMode']
 			) && */
 			// the module belongs to the collection
-			allModules[module].collection === collection
+/*			allModules[module].collection === collection
 		);
-	});
+	}); */
 
 
-	/**
-	 * @function checkModuleMetaData
-	 * @param module : string
-	 * @param metaDataValue : string
-	 * @returns string - the value to display in the table for the metaDataValue
-	 * Will return
-	 * - the value of the metadataValue if it exists
-	 * - the string {metaDataValue} if it does not exist and we're in editMode
-	 * - an empty string if it does not exist and we're not in editMode
-	 */
-
-	function checkModuleMetaData(module: string, metaDataValue: string) {
-		if ($collectionsStore['MODULES'][module].hasOwnProperty('metadata') &&
-		    $collectionsStore['MODULES'][module]['metadata'].hasOwnProperty(metaDataValue) 		
-		) {
-			return $collectionsStore['MODULES'][module]['metadata'][metaDataValue];
-		}
-		if ( $configStore['editMode']) {
-			return `{${metaDataValue}}`;
-		}
-		return '';
-	}
-
-	/**
-	 * @function generateModuleDate
-	 * @param module
-	 * @return string - the date to display in the table
-	 * Handle the conversion of a module's collection date (if any) into a 
-	 * string to insert into the table
-	 */
-	function generateModuleDate( module: string) {
-		// TODO need generateCalendarDate properly
-
-		if ( ! $collectionsStore['MODULES'][module].hasOwnProperty('date') ) {
-			return '🚧 no date';
-		}
-		const date = $collectionsStore['MODULES'][module].date;
-		return `🚧 ${date.label} ${date.day} Week ${date.week}`;
-	}
   /** TODO
    * Finish generate module date
    * 1. calculate the module URL for module-ID
@@ -88,7 +59,7 @@
 </script>
 
 
-<h3>This is the Assessment table representation</h3>
+<h3>This is the Assessment table representation - collection {collection}</h3>
 
 <div id="cc-assessment-table" class="cc-assessment-container cc-representation">
 
@@ -105,38 +76,38 @@
 		</thead>
 		<tbody>
 
-		{#each modules as module}
+		{#each moduleIds as moduleId}
 
-		  {#if !( !$collectionsStore['MODULES'][module].published && !$configStore['editMode'])}
+		  {#if !( !$collectionsStore['MODULES'][moduleId].published && !$configStore['editMode'])}
  	        <tr role="row">
               <td role="cell">
                 <span class="cc-responsive-table__heading" aria-hidden="true">Title</span>
                 <div class="cc-table-cell-text"><p><a href="MODULE-ID">
-                  {$modulesStore[module].name}
+                  {$modulesStore[moduleId].name}
                 </a></p> </div>
 			  </td>
 			  <td role="cell" class="descriptionCell">
 				<span class="cc-responsive-table__heading" aria-hidden="true">Description</span>
 				<div class="cc-table-cell-text">
-					<p>{$collectionsStore['MODULES'][module].description}</p>
+					<p>{$collectionsStore['MODULES'][moduleId].description}</p>
 				</div>
 			  </td>
 			  <td role="cell">
 				<span class="cc-responsive-table__heading" aria-hidden="true">Weighting</span>
 				<div class="cc-table-cell-text">
-					<p>{checkModuleMetaData(module,'weighting')}</p>
+					<p>{checkModuleMetaData($collectionsStore['MODULES'][moduleId],'weighting',$configStore['editMode'])}</p>
 				</div>
 			  </td>
 			  <td role="cell">
 				<span class="cc-responsive-table__heading" aria-hidden="true">Due Date</span>
 				<div class="cc-table-cell-text">
-					<p>{generateModuleDate(module)}</p>
+					<p>{generateModuleDate($collectionsStore['MODULES'][moduleId])}</p>
 				</div>
 			  </td>
 			  <td role="cell">
 				<span class="cc-responsive-table__heading" aria-hidden="true">Learning Outcomes</span>
 				<div class="cc-table-cell-text">
-					<p>{checkModuleMetaData(module,'learning outcomes')}</p>
+					<p>{checkModuleMetaData($collectionsStore['MODULES'][moduleId],'learning outcomes',$configStore['editMode'])}</p>
 				</div>
 			  </td>
 		  </tr>

@@ -5,44 +5,65 @@
    */
   import { collectionsStore, configStore } from "../stores";
 
+  export let collection ;
+
+
   let collectionNames = [];
   if ($collectionsStore.hasOwnProperty("COLLECTIONS_ORDER")) {
     collectionNames = $collectionsStore.COLLECTIONS_ORDER;
   }
   let collections = {};
   if ($collectionsStore.hasOwnProperty("COLLECTIONS")) {
-    collections = $collectionsStore['COLLECTIONS'];
+    collections = $collectionsStore["COLLECTIONS"];
   }
+  console.log('-------- collectionName')
+  console.log(collectionNames)
+
+  // create activeCollection dict keyed on collection name 
+  // with value "cc-active" if the collection is the current collection,
+  // "" otherwise
+  let activeCollection = {};
+  collectionNames.forEach((collectionName) => {
+    activeCollection[collectionName] = collectionName === collection ? "cc-active" : "";
+  });
 
   /**
    * @function navigateCollections
    * @param collectionName
    * @description navigate to a new collection
    */
-  function navigateCollections(collectionName : string) {
-	console.log("navigateCollections");
-	console.log(collectionName);
-	$configStore['currentCollection'] = collectionName;
+  function navigateCollections(collectionName: string) {
+    console.log("navigateCollections");
+    console.log(collectionName);
+    activeCollection[$configStore["currentCollection"]] = "";
+    $configStore["currentCollection"] = collectionName;
+    activeCollection[collectionName] = "cc-active";
+    collection = collectionName;
   }
-
 </script>
 
 <div class="cc-nav">
   <ul>
     {#each collectionNames as collectionName, i}
-      {#if ! ( collections[collectionName].hide && ! $configStore['editMode'] )}
-      <!-- <li class="cc-nav {isCurrentCollection(collectionName)}"> -->
-      <li class="cc-nav {$configStore['currentCollection'] === collectionName ? "cc-active": ""}">
-        <a href="#cc-collection-{i}"
-		    on:click|stopPropagation={navigateCollections(collectionName)}
-		>{collectionName}</a>
-      {#if collections[collectionName].hide}
-        <div class="cc-collection-hidden">
-          Hidden
-        </div>
+      {#if !(collections[collectionName].hide && !$configStore["editMode"])}
+        <!-- <li class="cc-nav {isCurrentCollection(collectionName)}"> -->
+          <!-- class="cc-nav {$configStore['currentCollection'] === collectionName -->
+        <!-- <li
+          class="cc-nav {collection === collectionName
+            ? 'cc-active'
+            : ''}"
+        > -->
+           <li class="cc-nav {activeCollection[collectionName]}">
+          <a
+            href="#cc-collection-{i}"
+            on:click|stopPropagation={navigateCollections(collectionName)}
+            >{collectionName}</a
+          >
+          {#if collections[collectionName].hide}
+            <div class="cc-collection-hidden">Hidden</div>
+          {/if}
+        </li>
       {/if}
-      </li>
-	  {/if}
     {/each}
   </ul>
 </div>
@@ -120,5 +141,4 @@
     background: #cacaca;
     text-align: center;
   }
-
 </style>

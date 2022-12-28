@@ -7,18 +7,21 @@
    *    Representations folder that is imported here
    * 3. Use <svelte:component> to instantiate the representation
    *    https://svelte.dev/tutorial/svelte-component
+   * 4. bind the collection prop so that when navigation changes the collection its reactive
    *
    * TODO
    * - Should these components provide the method for modifying how canvas display modules?
    */
-  import { collectionsStore, configStore } from "../stores";
+  import { collectionsStore } from "../stores";
   import Cards from "./Representations/Cards.svelte";
   import AssessmentTable from "./Representations/AssessmentTable.svelte";
   import CollectionOnly from "./Representations/CollectionOnly.svelte";
 
   const translation = {
-    CollectionOnly: CollectionOnly, Cards: Cards, AssessmentTable: AssessmentTable,
-	GriffithCards: Cards
+    CollectionOnly: CollectionOnly,
+    Cards: Cards,
+    AssessmentTable: AssessmentTable,
+    GriffithCards: Cards,
   };
 
   export let collection: string;
@@ -29,42 +32,14 @@
       "CollectionRepresentation component requires a collection prop"
     );
   }
-
-  let collectionProps = { collection: collection };
-
-/*  // set default collectionRepresentation
-  let collectionRepresentation = translation["Cards"];
-
-  // modify the representation to the one specified in the collection
-  let collections = null;
-  if ($collectionsStore.hasOwnProperty("COLLECTIONS")) {
-    collections = $collectionsStore["COLLECTIONS"];
-  }
-  // TODO need to handle the errors here?
-  // see more https://kit.svelte.dev/docs/errors
-  if (
-    collections &&
-    collections.hasOwnProperty(collection) &&
-    collections[collection].hasOwnProperty("representation")
-  ) {
-    if (translation.hasOwnProperty(collections[collection]["representation"])) {
-      collectionRepresentation =
-        translation[collections[collection]["representation"]];
-    }
-  } else {
-    throw new Error(
-      `CollectionRepresentation: collections missing collection/representation for ${collection}`
-    );
-  } */
 </script>
 
-<h1>The representation for collection {collection}</h1>
-
-<p>collections representation {$collectionsStore["COLLECTIONS"][collection]["representation"]}</p>
-
-<svelte:component 
-	this={translation[$collectionsStore["COLLECTIONS"][collection]["representation"]]} 
-	{...collectionProps}/>
+<svelte:component
+  this={translation[
+    $collectionsStore["COLLECTIONS"][collection]["representation"]
+  ]}
+  bind:collection={collection}
+/>
 
 <style>
 </style>
