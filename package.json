@@ -4,6 +4,9 @@
   "description": "Modify Canvas LMS' modules view to support collections of modules and alternate representations",
   "author": "David Jones",
   "homepage": "https://github.com/djplaner/canvas-collections#readme",
+  "directories": {
+    "doc": "docs"
+  },
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
