@@ -210,8 +210,6 @@ export class CollectionsDetails {
     let txt = document.createElement("textarea");
     txt.innerHTML = html;
     let value = txt.value;
-    // replace any &quot; with "
-    //		value = value.replaceAll(/&quot;/g, '"');
 
 	// do some sanitisation of the HTML https://github.com/apostrophecms/sanitize-html
 	value = sanitizeHtml(value);

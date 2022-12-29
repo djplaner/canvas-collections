@@ -88,7 +88,7 @@
                 >Description</span
               >
               <div class="cc-table-cell-text">
-                <p>{$collectionsStore["MODULES"][moduleId].description}</p>
+                <p>{@html $collectionsStore["MODULES"][moduleId].description}</p>
               </div>
             </td>
             <td role="cell">
