@@ -8,63 +8,62 @@
 
   import {
     getCollectionModuleIds,
+	modifyCanvasModulesList,
     generateModuleDate,
     checkModuleMetaData,
   } from "./representationSupport";
 
   export let collection: string;
 
-  console.log('---------- modulesStore')
-  console.log($modulesStore)
+  console.log("---------- modulesStore");
+  console.log($modulesStore);
 
-  // kludge to test reactive nature
-  // set collection to currentCollection
-  // TODO - this isn't right, the prop isn't being dynamically updated
-  //collection = $configStore["currentCollection"];
-
-  let moduleIds ;
-  $: moduleIds = getCollectionModuleIds(
+  // calculate the moduleIds belonging to collection
+  let moduleIds;
+  $: { moduleIds = getCollectionModuleIds(
     collection,
     $collectionsStore["MODULES"]
   );
+  modifyCanvasModulesList(moduleIds, $collectionsStore["MODULES"])
+  }
 </script>
 
 <h3>This is the cards representation - collection {collection}</h3>
 
 <div class="cc-card-interface cc-representation">
-{#each moduleIds as moduleId}
-  {#if !(!$collectionsStore['MODULES'][moduleId].published && !$configStore["editMode"])}
+  {#each moduleIds as moduleId}
+    {#if !(!$collectionsStore["MODULES"][moduleId].published && !$configStore["editMode"])}
       <!--<div id="cc_module_$**module.id**" class="$**cardClass**">-->
-	<div class="cc-clickable-card">
-      <div id="cc_module_{moduleId}" class="cc-card">
-        <div class="cc-card-flex">
-          <div class="cc-card-banner-container" data-moduleid="{moduleId}">
-            $**CARD_LINK** $**IMAGE_IFRAME** $**DATE_WIDGET** $**PUBLISHED**
-            $**FYI_TEXT**
-          </div>
-          <div class="cc-card-content-height">
-            $**CONTENT_CARD_LINK**
-            <div class="$**cardContentClass**">
-              <div class="cc-card-label">
-                <span class="cc-card-label"> $**CARD_LABEL** </span>
-                <h3 class="cc-card-title" data-moduleid="$**module.id**">
-                  {$modulesStore[moduleId].name}
-                </h3>
-              </div>
-              <div class="cc-card-description">
-				{$collectionsStore['MODULES'][moduleId].description}
-			  </div>
+      <div class="cc-clickable-card">
+        <div id="cc_module_{moduleId}" class="cc-card">
+          <div class="cc-card-flex">
+            <div class="cc-card-banner-container" data-moduleid={moduleId}>
+              $**CARD_LINK** $**IMAGE_IFRAME** $**DATE_WIDGET** $**PUBLISHED**
+              $**FYI_TEXT**
             </div>
-          </div>
-          <div class="cc-card-footer">
-            $**LINK_ITEM** $**REVIEW_ITEM** $**EDIT_ITEM** $**DATE**
-            <div class="cc-progress" />
+            <div class="cc-card-content-height">
+              $**CONTENT_CARD_LINK**
+              <div class="$**cardContentClass**">
+                <div class="cc-card-label">
+                  <span class="cc-card-label"> $**CARD_LABEL** </span>
+                  <h3 class="cc-card-title" data-moduleid="$**module.id**">
+                    {$modulesStore[moduleId].name}
+                  </h3>
+                </div>
+                <div class="cc-card-description">
+                  {$collectionsStore["MODULES"][moduleId].description}
+                </div>
+              </div>
+            </div>
+            <div class="cc-card-footer">
+              $**LINK_ITEM** $**REVIEW_ITEM** $**EDIT_ITEM** $**DATE**
+              <div class="cc-progress" />
+            </div>
           </div>
         </div>
       </div>
-	</div>
-  {/if}
-{/each}
+    {/if}
+  {/each}
 </div>
 
 <style>
