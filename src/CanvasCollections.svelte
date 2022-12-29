@@ -19,13 +19,14 @@
   export let currentCollection: number;
 
   $configStore = {
-	courseId: courseId,
-	editMode: editMode,
-	csrfToken: csrfToken,
-	modulesPage: modulesPage,
-	currentCollection: null,
-	needToSaveCollections: false
-  }
+    courseId: courseId,
+    editMode: editMode,
+    csrfToken: csrfToken,
+    modulesPage: modulesPage,
+    currentCollection: null,
+    needToSaveCollections: false,
+    collectionsConfigPublished: false,
+  };
 
   // whether or data canvas and collections data loaded
   let canvasDataLoaded = false;
@@ -45,12 +46,12 @@
     console.log("XXXXXXXXXXXXXXX getCanvasDetails");
     console.log(canvasDetails);
     canvasDataLoaded = true;
-	// canvasDetails.courseModules is an array of Canvas module objects
-	// set $modulesStore to a dict of Canvas module objects keyed on the module id
-	$modulesStore = canvasDetails.courseModules.reduce((acc, module) => {
-	  acc[module.id] = module;
-	  return acc;
-	}, {});
+    // canvasDetails.courseModules is an array of Canvas module objects
+    // set $modulesStore to a dict of Canvas module objects keyed on the module id
+    $modulesStore = canvasDetails.courseModules.reduce((acc, module) => {
+      acc[module.id] = module;
+      return acc;
+    }, {});
     checkAllDataLoaded();
   }
 
@@ -60,18 +61,21 @@
   function gotCollectionsDetails() {
     console.log("YYYYYYYY gotCollectionsDetails");
     console.log(collectionsDetails);
-	//----- Range of updates to local data based on the now retrieved collections JSON
+    //----- Range of updates to local data based on the now retrieved collections JSON
     ccOn = collectionsDetails.ccOn;
-	// if currentCollection is a number, then the URL include #cc-collection-<num>
-	// Need to set current collection to the name matching that collection
-	if (
-		typeof currentCollection === "number" && 
-		currentCollection < collectionsDetails.collections.COLLECTIONS_ORDER.length && 
-		currentCollection >= 0 ) {
-	  $configStore['currentCollection'] = collectionsDetails.collections.COLLECTIONS_ORDER[currentCollection];
-	}
+    // if currentCollection is a number, then the URL include #cc-collection-<num>
+    // Need to set current collection to the name matching that collection
+    if (
+      typeof currentCollection === "number" &&
+      currentCollection <
+        collectionsDetails.collections.COLLECTIONS_ORDER.length &&
+      currentCollection >= 0
+    ) {
+      $configStore["currentCollection"] =
+        collectionsDetails.collections.COLLECTIONS_ORDER[currentCollection];
+    }
 
-	//----- Indicate we've loaded the data and check if ready for next step
+    //----- Indicate we've loaded the data and check if ready for next step
     collectionsDataLoaded = true;
     checkAllDataLoaded();
   }
@@ -91,7 +95,7 @@
    */
 
   function collectionsModified() {
-    $configStore['needToSaveCollections'] = true;
+    $configStore["needToSaveCollections"] = true;
     saveButtonClass = "cc-active-save-button";
   }
 
@@ -156,6 +160,8 @@
 </script>
 
 {#if editMode && modulesPage}
+
+
   <div class="cc-switch-container">
     <div class="cc-switch-title">
       <a
@@ -186,6 +192,20 @@
         <button class={saveButtonClass} id="cc-save-button">Save</button>
       </div>
     {/if}
+  {#if ! $configStore["collectionsConfigPublished"]}
+    <div class="cc-unpublished">
+      <span style="padding-top: 0.25em;padding-right:0.25em">
+        <a
+          id="cc-about-unpublished"
+          target="_blank"
+          rel="noreferrer"
+          href="https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
+          ><i class="icon-question cc-module-icon" /></a
+        >
+        unpublished
+      </span>
+    </div>
+  {/if}
   </div>
 {/if}
 
@@ -264,14 +284,15 @@
   }
 
   .cc-unpublished {
-    display: flex;
     font-size: 0.75em;
     background-color: #ffe08a;
-    align-items: center;
     border-radius: 0.5em;
     padding-left: 0.5em;
     padding-right: 0.5em;
     height: 2em;
+	margin-left: 0.5rem;
+	margin-right: 0.5rem;
+	margin-top: 0.7rem;
   }
 
   .cc-switch-title {

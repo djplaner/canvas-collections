@@ -17,6 +17,8 @@ if (!rightOfCrumbs) {
 const div = document.createElement("div")
 // add canvas-collections to div's class
 div.className = "canvas-collections"
+// set style to display:flex
+div.style.display = "flex"
 // insert div as last child of rightOfCrumbs
 rightOfCrumbs.appendChild(div)
 
