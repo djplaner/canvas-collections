@@ -87,12 +87,12 @@ export class CollectionsDetails {
     if (!this.collectionsPageResponse.hasOwnProperty("body")) {
       console.log(this.collectionsPageResponse);
       if (this.collectionsPageResponse.hasOwnProperty("status")) {
-        if (this.collectionsPageResponse['status'] === "unauthorized") {
+        if (this.collectionsPageResponse["status"] === "unauthorized") {
           console.log("CollectionsDetails: parseCollectionsPage: unauthorized");
           this.ccOn = false;
           this.ccPublished = false;
           this.finishedCallBack();
-		  return null
+          return null;
         }
       } else {
         throw new Error("No body in collectionsPageResponse");
@@ -112,6 +112,9 @@ export class CollectionsDetails {
     }
 
     this.collections = JSON.parse(config.innerHTML);
+
+    // decode various fields in the collections
+    this.decodeCollections();
 
     // double check and possibly convert an old configuration
     //this.configConverted = this.checkConvertOldConfiguration();
@@ -174,5 +177,55 @@ export class CollectionsDetails {
 		this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION = this.decodeHTML(
 			this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
     */
+  }
+
+  /**
+   * @function decodeCollections
+   * @description collectons config has been loaded, some fields will contain
+   * encoded HTML and other stuff that needs decoding
+   */
+  decodeCollections() {
+    if (this.collections.hasOwnProperty("MODULES")) {
+      const modules = this.collections["MODULES"];
+
+      for (let key in modules) {
+        const module = modules[key];
+        module.description = this.decodeHTML(module.description);
+        module.collection = this.decodeHTML(module.collection);
+        module.name = this.decodeHTML(module.name);
+        if (module.hasOwnProperty("iframe")) {
+          module.iframe = this.decodeHTML(module.iframe);
+        }
+        // need to check the URL for image as the RCE screws with the URL
+        // TODO is this needed?
+        /*if (module.hasOwnProperty('image') && module.image.startsWith('/')) {
+				module.image = `https://${window.location.hostname}${module.image}`;
+			}*/
+      }
+    }
+  }
+
+  decodeHTML(html: string) {
+    let txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    let value = txt.value;
+    // replace any &quot; with "
+    //		value = value.replaceAll(/&quot;/g, '"');
+    return value;
+  }
+
+  encodeHTML(html: string, json = true) {
+    let txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    let value = txt.innerHTML;
+    /*		if (json) {
+			// for Canvas JSON, escape the quotes
+			return value.replaceAll(/"/g, '\"');
+
+		} else {
+			// for not JSON (i.e. HTML) encode the quotes
+			return value.replaceAll(/"/g, '&quot;');
+		} */
+    return value;
   }
 }
