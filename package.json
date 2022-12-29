@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "sanitize-html": "^2.8.1",
-    "svelte-material-ui": "^7.0.0-beta.0"
+    "svelte-material-ui": "^7.0.0-beta.0",
+    "svelte-quill": "^1.2.0"
   }
 }

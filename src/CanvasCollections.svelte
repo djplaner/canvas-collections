@@ -1,7 +1,7 @@
 <script lang="ts">
   import { collectionsStore, modulesStore, configStore } from "./stores";
   import CanvasCollectionsRepresentation from "./components/CanvasCollectionsRepresentation.svelte";
-  import { onMount, onDestroy } from "svelte";
+  import { onMount } from "svelte";
   import {
     addCollectionsRepresentation,
     removeCollectionsRepresentation,

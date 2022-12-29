@@ -1,11 +1,44 @@
 <script lang="ts">
   import { collectionsStore } from "../stores";
+  import { quill } from "svelte-quill";
+   import { onMount } from "svelte";
+
+  const options = {
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ["bold", "italic", "underline", "strike"],
+        ["link", "code-block"],
+      ],
+    },
+    placeholder: "Type something...",
+    theme: "snow",
+  };
 
   export let module: Number;
+  let quillInstance;
 
   console.log("-------- collectionsStore");
   console.log($collectionsStore);
+    /* 
+    <textarea
+      id="cc-module-config-{module}-XXdescription"
+      name="cc-module-config-{module}-description"
+      bind:value={$collectionsStore["MODULES"][module].description}
+    />  */
+
+    onMount( () => {
+      const editorDiv = document.getElementById(`cc-module-config-${module}-description`)
+      console.log(editorDiv)
+      quillInstance = quill(editorDiv, options)
+      console.log(quillInstance)
+      quillInstance.setText($collectionsStore["MODULES"][module].description)
+    })
 </script>
+
+<svelte:head>
+	<link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+</svelte:head>
 
 <div class="cc-module-config border border-trbl" id="cc-module-config-{module}">
   <div
@@ -47,13 +80,17 @@
     </div>
   </div>
   <div class="cc-collection-description">
-	<a id="cc-about-module-description" href="https://djplaner.github.io/canvas-collections/reference/objects/overview/#description"
-		target="_blank" rel="noreferrer">
-		<i class="icon-question cc-module-icon" />
-		</a>
-		<label for="cc-module-config-{module}-description">Description</label>
-		<textarea id="cc-module-config-{module}-description" name="cc-module-config-{module}-description"
-		    bind:value={$collectionsStore["MODULES"][module].description} />
+    <a
+      id="cc-about-module-description"
+      href="https://djplaner.github.io/canvas-collections/reference/objects/overview/#description"
+      target="_blank"
+      rel="noreferrer"
+    >
+      <i class="icon-question cc-module-icon" />
+    </a>
+    <label for="cc-module-config-{module}-XXdescription">Description</label>
+
+    <div id="cc-module-config-{module}-description" />
   </div>
 </div>
 
