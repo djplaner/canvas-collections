@@ -2,18 +2,18 @@
  * @class CollectionsDetails
  * @description Given a course Id retrieve and possibly update the content of
  * the Canvas Collections Configuration page
- * 
+ *
  * Process here is
  * - requestConfigPageContents
  *   Ask to get the contents of the page
  * - if successful
- *   - TODO check to see if it's moved from other course (and other checks) 
+ *   - TODO check to see if it's moved from other course (and other checks)
  *      - only if in edit mode
  *   - parse the JSON into a data structure
  *   - TODO retrieve last collection viewed
  * - if not successful (i.e. page doesn't exist)
  *   (only if edit mode)
- *   - initialise config page 
+ *   - initialise config page
  *   - save the config page
  */
 
@@ -38,28 +38,28 @@ export class CollectionsDetails {
   private baseApiUrl: string;
   private finishedCallBack: Function;
 
-  constructor(finishedCallBack : Function , config : object) {
+  constructor(finishedCallBack: Function, config: object) {
     this.finishedCallBack = finishedCallBack;
     this.config = config;
 
     this.collectionsPageResponse = null;
     this.collections = null;
     this.ccOn = false;
-	this.ccPublished = true;
+    this.ccPublished = true;
 
     this.currentHostName = document.location.hostname;
     this.baseApiUrl = `https://${this.currentHostName}/api/v1`;
     // convert courseId to integer - probably unnecessary at this stage
     this.config.courseId = parseInt(this.config.courseId);
 
-    console.log( `YYYYY collectionsDetails: constructor: ${this.config.courseId} `);
+    console.log(
+      `YYYYY collectionsDetails: constructor: ${this.config.courseId} `
+    );
 
     this.requestCollectionsPage();
-
   }
 
-
-   /**
+  /**
    * @function requestConfigPageContents
    * @description Request the contents of the Collections Configuration page
    *
@@ -81,28 +81,44 @@ export class CollectionsDetails {
    */
   parseCollectionsPage() {
     // does this.collectionsPageResponse have a body?
+    // e.g.
+    // - status: "unauthorized" suggesting student view and can't access it
+    // - ?? if there isn't one
     if (!this.collectionsPageResponse.hasOwnProperty("body")) {
-      throw new Error("No body in collectionsPageResponse");
+      console.log(this.collectionsPageResponse);
+      if (this.collectionsPageResponse.hasOwnProperty("status")) {
+        if (this.collectionsPageResponse['status'] === "unauthorized") {
+          console.log("CollectionsDetails: parseCollectionsPage: unauthorized");
+          this.ccOn = false;
+          this.ccPublished = false;
+          this.finishedCallBack();
+		  return null
+        }
+      } else {
+        throw new Error("No body in collectionsPageResponse");
+      }
     }
 
-    const body = this['collectionsPageResponse']['body'];
+    const body = this["collectionsPageResponse"]["body"];
 
-		const parsed = new DOMParser().parseFromString(body, 'text/html');
+    const parsed = new DOMParser().parseFromString(body, "text/html");
 
-		// Collections configuration is in div.cc_json
-		let config = parsed.querySelector('div.cc_json');
-		if (!config) {
-			throw new Error(`CollectionsDetails: parseCollectionsPage: no div.cc_json found in page`);
-		}
+    // Collections configuration is in div.cc_json
+    let config = parsed.querySelector("div.cc_json");
+    if (!config) {
+      throw new Error(
+        `CollectionsDetails: parseCollectionsPage: no div.cc_json found in page`
+      );
+    }
 
     this.collections = JSON.parse(config.innerHTML);
 
-		// double check and possibly convert an old configuration
-		//this.configConverted = this.checkConvertOldConfiguration();
+    // double check and possibly convert an old configuration
+    //this.configConverted = this.checkConvertOldConfiguration();
 
-		// initialise the controller etc
-		this.ccOn = this.collections.STATUS === "on";
-		this.ccPublished = this.collectionsPageResponse.published;
+    // initialise the controller etc
+    this.ccOn = this.collections.STATUS === "on";
+    this.ccPublished = this.collectionsPageResponse.published;
 
     this.finishedCallBack();
 
@@ -158,6 +174,5 @@ export class CollectionsDetails {
 		this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION = this.decodeHTML(
 			this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
     */
-
   }
 }

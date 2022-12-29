@@ -63,22 +63,26 @@
     console.log(collectionsDetails);
     //----- Range of updates to local data based on the now retrieved collections JSON
     ccOn = collectionsDetails.ccOn;
-	ccPublished = collectionsDetails.ccPublished;
-    // if currentCollection is a number, then the URL include #cc-collection-<num>
-    // Need to set current collection to the name matching that collection
-    if (
-      typeof currentCollection === "number" &&
-      currentCollection <
-        collectionsDetails.collections.COLLECTIONS_ORDER.length &&
-      currentCollection >= 0
-    ) {
-      $configStore["currentCollection"] =
-        collectionsDetails.collections.COLLECTIONS_ORDER[currentCollection];
-    }
+    ccPublished = collectionsDetails.ccPublished;
 
-    //----- Indicate we've loaded the data and check if ready for next step
-    collectionsDataLoaded = true;
-    checkAllDataLoaded();
+    // if a student is viewing and no collections, then limit what is done
+    if (!(!ccOn && !$configStore["editMode"])) {
+      // if currentCollection is a number, then the URL include #cc-collection-<num>
+      // Need to set current collection to the name matching that collection
+      if (
+        typeof currentCollection === "number" &&
+        currentCollection <
+          collectionsDetails.collections.COLLECTIONS_ORDER.length &&
+        currentCollection >= 0
+      ) {
+        $configStore["currentCollection"] =
+          collectionsDetails.collections.COLLECTIONS_ORDER[currentCollection];
+      }
+
+      //----- Indicate we've loaded the data and check if ready for next step
+      collectionsDataLoaded = true;
+      checkAllDataLoaded();
+    }
   }
 
   function checkAllDataLoaded() {
@@ -161,8 +165,6 @@
 </script>
 
 {#if editMode && modulesPage}
-
-
   <div class="cc-switch-container">
     <div class="cc-switch-title">
       <a
@@ -193,20 +195,20 @@
         <button class={saveButtonClass} id="cc-save-button">Save</button>
       </div>
     {/if}
-  {#if ! ccPublished}
-    <div class="cc-unpublished">
-      <span style="padding-top: 0.25em;padding-right:0.25em">
-        <a
-          id="cc-about-unpublished"
-          target="_blank"
-          rel="noreferrer"
-          href="https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
-          ><i class="icon-question cc-module-icon" /></a
-        >
-        unpublished
-      </span>
-    </div>
-  {/if}
+    {#if !ccPublished}
+      <div class="cc-unpublished">
+        <span style="padding-top: 0.25em;padding-right:0.25em">
+          <a
+            id="cc-about-unpublished"
+            target="_blank"
+            rel="noreferrer"
+            href="https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
+            ><i class="icon-question cc-module-icon" /></a
+          >
+          unpublished
+        </span>
+      </div>
+    {/if}
   </div>
 {/if}
 
@@ -291,9 +293,9 @@
     padding-left: 0.5em;
     padding-right: 0.5em;
     height: 2em;
-	margin-left: 0.5rem;
-	margin-right: 0.5rem;
-	margin-top: 0.7rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    margin-top: 0.7rem;
   }
 
   .cc-switch-title {
@@ -339,6 +341,7 @@
 
   .cc-save {
     margin-top: 0.5rem;
+	margin-right: 0.5rem;
   }
 
   .cc-active-save-button {
