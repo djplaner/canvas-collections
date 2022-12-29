@@ -26,6 +26,7 @@ export class CollectionsDetails {
   // settings arising from collections
   // - is collections turned on for this course?
   public ccOn: boolean;
+  public ccPublished: boolean;
 
   //-------- private data members
   // Canvas API response to requesting Canvas Collections Configuration page
@@ -44,6 +45,7 @@ export class CollectionsDetails {
     this.collectionsPageResponse = null;
     this.collections = null;
     this.ccOn = false;
+	this.ccPublished = true;
 
     this.currentHostName = document.location.hostname;
     this.baseApiUrl = `https://${this.currentHostName}/api/v1`;
@@ -100,6 +102,7 @@ export class CollectionsDetails {
 
 		// initialise the controller etc
 		this.ccOn = this.collections.STATUS === "on";
+		this.ccPublished = this.collectionsPageResponse.published;
 
     this.finishedCallBack();
 

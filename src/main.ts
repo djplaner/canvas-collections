@@ -1,10 +1,17 @@
+/**
+ * Entry point for CanvasCollections
+ * - Check the URL and page contents extract some context
+ * - insert div.canvas-collections as the first child of div.right-of-crumbs
+ * - add the CanvasCollections app to that div
+ */
 import CanvasCollections from './CanvasCollections.svelte'
 import {checkContext} from './lib/CanvasSetup'
 
 
+// extract some useful context from the URL and the DOM
 const context = checkContext()
-// insert the app as the first content of div.right-of-crumbs
 
+// insert the app as the first content of div.right-of-crumbs
 const rightOfCrumbs = document.querySelector(".right-of-crumbs")
 
 // TODO
@@ -15,23 +22,13 @@ if (!rightOfCrumbs) {
 }
 
 const div = document.createElement("div")
-// add canvas-collections to div's class
 div.className = "canvas-collections"
-// set style to display:flex
 div.style.display = "flex"
-// insert div as last child of rightOfCrumbs
 rightOfCrumbs.appendChild(div)
-
-//rightOfCrumbs.insertBefore(div, rightOfCrumbs.firstChild)
 
 const app = new CanvasCollections({
     target: div,
-    props: context /*{
-        courseId: context.courseId,
-        editMode: context.editMode,
-        csrfToken: context.csrfToken,
-        modulesPage: context.modulesPage
-    } */
+    props: context 
 })
 
 export default app

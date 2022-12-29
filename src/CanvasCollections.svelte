@@ -25,7 +25,6 @@
     modulesPage: modulesPage,
     currentCollection: null,
     needToSaveCollections: false,
-    collectionsConfigPublished: false,
   };
 
   // whether or data canvas and collections data loaded
@@ -36,6 +35,7 @@
   let collectionsDetails = null;
 
   let ccOn = false;
+  let ccPublished = true;
   // indicate whether changes made to collections data
   let saveButtonClass = "cc-save-button";
 
@@ -63,6 +63,7 @@
     console.log(collectionsDetails);
     //----- Range of updates to local data based on the now retrieved collections JSON
     ccOn = collectionsDetails.ccOn;
+	ccPublished = collectionsDetails.ccPublished;
     // if currentCollection is a number, then the URL include #cc-collection-<num>
     // Need to set current collection to the name matching that collection
     if (
@@ -192,7 +193,7 @@
         <button class={saveButtonClass} id="cc-save-button">Save</button>
       </div>
     {/if}
-  {#if ! $configStore["collectionsConfigPublished"]}
+  {#if ! ccPublished}
     <div class="cc-unpublished">
       <span style="padding-top: 0.25em;padding-right:0.25em">
         <a
