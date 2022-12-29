@@ -51,7 +51,7 @@
                   </h3>
                 </div>
                 <div class="cc-card-description">
-                  {$collectionsStore["MODULES"][moduleId].description}
+                  {@html $collectionsStore["MODULES"][moduleId].description}
                 </div>
               </div>
             </div>

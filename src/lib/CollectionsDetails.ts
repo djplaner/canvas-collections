@@ -18,6 +18,7 @@
  */
 
 import { wf_fetchData } from "./CanvasSetup";
+import sanitizeHtml from "sanitize-html";
 
 export class CollectionsDetails {
   // parsed collections JSON
@@ -211,6 +212,9 @@ export class CollectionsDetails {
     let value = txt.value;
     // replace any &quot; with "
     //		value = value.replaceAll(/&quot;/g, '"');
+
+	// do some sanitisation of the HTML https://github.com/apostrophecms/sanitize-html
+	value = sanitizeHtml(value);
     return value;
   }
 
