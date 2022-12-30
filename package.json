@@ -36,8 +36,9 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
+    "@tinymce/tinymce-svelte": "^1.0.0",
+    "cl-editor": "^2.3.0",
     "sanitize-html": "^2.8.1",
-    "svelte-material-ui": "^7.0.0-beta.0",
-    "svelte-quill": "^1.2.0"
+    "svelte-material-ui": "^7.0.0-beta.0"
   }
 }

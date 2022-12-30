@@ -1,43 +1,36 @@
 <script lang="ts">
   import { collectionsStore } from "../stores";
-  import { quill } from "svelte-quill";
-   import { onMount } from "svelte";
+  import { onMount } from "svelte";
 
-  const options = {
-    modules: {
-      toolbar: [
-        [{ header: [1, 2, 3, false] }],
-        ["bold", "italic", "underline", "strike"],
-        ["link", "code-block"],
-      ],
-    },
-    placeholder: "Type something...",
-    theme: "snow",
-  };
+  import Editor from "cl-editor/src/Editor.svelte";
 
   export let module: Number;
-  let quillInstance;
+
+  let editor;
+  let html = $collectionsStore["MODULES"][module].description;
 
   console.log("-------- collectionsStore");
   console.log($collectionsStore);
-    /* 
+
+  onMount(() => {
+    const editorId=`cc-module-config-${module}-description`
+    let editorElem = document.getElementById(editorId);
+    if (editorElem) {
+      editorElem.onkeydown = (e) => e.stopPropagation();
+    } else {
+    }
+  });
+
+  /* 
     <textarea
       id="cc-module-config-{module}-XXdescription"
       name="cc-module-config-{module}-description"
       bind:value={$collectionsStore["MODULES"][module].description}
     />  */
-
-    onMount( () => {
-      const editorDiv = document.getElementById(`cc-module-config-${module}-description`)
-      console.log(editorDiv)
-      quillInstance = quill(editorDiv, options)
-      console.log(quillInstance)
-      quillInstance.setText($collectionsStore["MODULES"][module].description)
-    })
 </script>
 
 <svelte:head>
-	<link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <link href="//cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet" />
 </svelte:head>
 
 <div class="cc-module-config border border-trbl" id="cc-module-config-{module}">
@@ -90,7 +83,12 @@
     </a>
     <label for="cc-module-config-{module}-XXdescription">Description</label>
 
-    <div id="cc-module-config-{module}-description" />
+    <Editor
+      {html}
+      contentId="cc-module-config-{module}-description"
+      on:change={(evt) =>
+        ($collectionsStore["MODULES"][module].description = evt.detail)}
+    />
   </div>
 </div>
 
