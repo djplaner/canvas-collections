@@ -135,43 +135,6 @@
     showConfig = !showConfig;
     console.log(`toggleConfigShow new ${showConfig}`);
     console.log(e);
-
-    if (showConfig) {
-      // add a <CollectionsConfiguration> component after div.right-of-crumbs
-      const toggleAndCrumbs = document.getElementsByClassName(
-        "ic-app-nav-toggle-and-crumbs"
-      )[0];
-      if (toggleAndCrumbs) {
-        // change toggleAndCrumbs border-bottom style to none
-        toggleAndCrumbs['style'].borderBottom = "none";
-        // create div#cc-config-wrapper and insert after div.right-of-crumbs
-        const div = document.createElement("div");
-        div.id = "cc-config-wrapper";
-        // insert div after toggleAndCrumbs
-        toggleAndCrumbs.parentNode.insertBefore(div, toggleAndCrumbs.nextSibling);
-        // insert <CollectionsConfiguration> into div#cc-config-wrapper
-        const config = new CollectionsConfiguration({
-          target: div,
-          /*props: {
-            collectionsDetails: collectionsDetails,
-            collectionsModified: collectionsModified,
-          },*/
-        });
-      }
-    } else {
-      // remove div#cc-config-wrapper
-      const div = document.querySelector("div#cc-config-wrapper");
-      if (div) {
-        div.parentNode.removeChild(div);
-        const toggleAndCrumbs = document.getElementsByClassName(
-        "ic-app-nav-toggle-and-crumbs"
-        )[0];
-        if (toggleAndCrumbs) {
-          // change toggleAndCrumbs border-bottom style to none
-          toggleAndCrumbs['style'].borderBottom = "1px solid rgb(199,205,209)";
-        }
-      }
-    }
   }
 
   /**
@@ -266,10 +229,24 @@
         </span>
       </div>
     {/if}
+    {#if showConfig}
+      <div id="cc-config" class="border border-trbl">
+        <CollectionsConfiguration />
+      </div>
+      {/if}
   </div>
 {/if}
 
 <style>
+  #cc-config {
+    position: absolute;
+    top: 2.5em;
+    left: -15em;
+    z-index: 99;
+    background-color: #f5f5f5;
+    width: auto;
+    /*padding: 1rem; */
+  }
   /* The switch - the box around the slider */
   .cc-switch {
     position: relative;

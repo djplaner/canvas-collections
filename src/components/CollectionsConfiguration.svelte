@@ -6,28 +6,48 @@
    * - change details of collections
    * - use Claytons facility
    */
+
+  import ExistingCollections from "./Configuration/ExistingCollections.svelte";
 </script>
 
-<div class="cc-config-wrapper">
-  <div id="cc-config">
-    <h1>Configure Collections</h1>
+<div class="cc-box-header">
+  <p>Configure Canvas Collections</p>
+</div>
+<div class="cc-box-body">
+  <div id="cc-config-body">
+    <ExistingCollections />
   </div>
 </div>
 
 <style>
-  .cc-config-wrapper {
-    display: block;
-    /*border-bottom: 1px solid #c7cdd1; */
+  .cc-box-header {
+    padding-left: 0.5em;
   }
 
-  #cc-config {
-    float: right;
-    display: block;
-    max-width: 50%;
-    margin-top: -1em;
-    margin-right: 10em;
-    margin-bottom: 1em;
-    padding-bottom: 0.5em;
-    background-color: #f5f5f5;
+  .cc-box-header p {
+    font-size: 1.1em;
+    font-weight: bold;
+  }
+
+  .cc-box-body {
+    width: 35em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: 1em;
+  }
+
+  #cc-config-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 1em;
+    grid-auto-flow: row;
+    grid-template-areas: ". .";
+    height: 100%;
+  }
+
+  #cc-config-body p {
+    font-size: 0.9em;
+    /*font-weight: bold; */
   }
 </style>
