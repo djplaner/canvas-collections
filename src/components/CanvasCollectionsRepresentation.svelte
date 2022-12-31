@@ -8,13 +8,21 @@
    * Both are passed the current collection as a prop.
    */
 
-  import { configStore } from "../stores";
+  import { configStore, collectionsStore } from "../stores";
   import CollectionsNavigation from "./CollectionsNavigation.svelte";
   import CollectionRepresentation from "./CollectionRepresentation.svelte";
+
+  import { debug } from "../lib/debug";
+
+  debug(
+    `______________ CanvasCollectionsRepresentation.svelte _currentCollection ${$configStore["currentCollections"]}______________`
+  );
 </script>
 
-<CollectionsNavigation bind:collection={$configStore["currentCollection"]} />
-<CollectionRepresentation collection={$configStore["currentCollection"]} />
+{#if $collectionsStore["COLLECTIONS_ORDER"].length > 0}
+  <CollectionsNavigation bind:collection={$configStore["currentCollection"]} />
+  <CollectionRepresentation collection={$configStore["currentCollection"]} />
+{/if}
 
 <style>
 </style>

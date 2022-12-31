@@ -6,8 +6,12 @@
 	import { collectionsStore } from "../../stores";
 	import CollectionConfiguration from "./CollectionConfiguration.svelte";
 
-   console.log('------------------------- ExistingCollections')
-   console.log($collectionsStore)
+  import { debug } from "../../lib/debug";
+  debug("______________ ExistingCollections.svelte _______________")
+	
+
+   debug('------------------------- ExistingCollections')
+   debug($collectionsStore)
 
    let collectionNames
    $: collectionNames = $collectionsStore['COLLECTIONS_ORDER'];
@@ -20,6 +24,9 @@
 	</a>
 	<strong>Existing Collections</strong>
 
+	{#if collectionNames.length === 0}
+		<p>No collections have been defined</p>
+	{/if}
 	{#each collectionNames as collectionName,i}
 		<CollectionConfiguration collectionName={collectionName} order={i} numCollections={collectionNames.length} />
 	{/each}
@@ -29,5 +36,8 @@
 
 
 <style>
+	p {
+		font-size: 0.8em;
+	}
 
 </style>

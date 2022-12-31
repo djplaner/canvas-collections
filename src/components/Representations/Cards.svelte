@@ -12,11 +12,12 @@
     generateModuleDate,
     checkModuleMetaData,
   } from "./representationSupport";
+  import { debug } from "../../lib/debug";
 
   export let collection: string;
 
-  console.log("---------- modulesStore");
-  console.log($modulesStore);
+  debug("_______________ Cards.svelte __collection " + collection + " _____________");
+  debug($modulesStore);
 
   // calculate the moduleIds belonging to collection
   let moduleIds;

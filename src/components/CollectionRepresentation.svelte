@@ -12,10 +12,17 @@
    * TODO
    * - Should these components provide the method for modifying how canvas display modules?
    */
-  import { collectionsStore } from "../stores";
+  import { collectionsStore,configStore } from "../stores";
   import Cards from "./Representations/Cards.svelte";
   import AssessmentTable from "./Representations/AssessmentTable.svelte";
   import CollectionOnly from "./Representations/CollectionOnly.svelte";
+
+  import { debug } from "../lib/debug";
+
+  export let collection: string;
+
+  debug(`_______________ CollectionRepresentation.svelte __collection ${collection} _____________`);
+  debug($configStore)
 
   const translation = {
     CollectionOnly: CollectionOnly,
@@ -24,7 +31,11 @@
     GriffithCards: Cards,
   };
 
-  export let collection: string;
+  let representationComponent: any;
+  $: representationComponent = translation[
+    $collectionsStore["COLLECTIONS"][$configStore['currentCollection']]["representation"]
+  ];
+
 
   if (!collection) {
     // TODO better error handling
@@ -35,9 +46,7 @@
 </script>
 
 <svelte:component
-  this={translation[
-    $collectionsStore["COLLECTIONS"][collection]["representation"]
-  ]}
+  this={representationComponent}
   bind:collection={collection}
 />
 

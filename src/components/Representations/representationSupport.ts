@@ -1,5 +1,7 @@
 import ModuleConfiguration from "../ModuleConfiguration.svelte";
 
+import { debug } from "../../lib/debug";
+
 /**
  * @function getCollectionModuleIds
  * @param collection - Collection name
@@ -75,7 +77,7 @@ export function generateModuleDate(module) {
  * 3. If editMode add ModuleConfiguration components to the module
  */
 export function modifyCanvasModulesList(moduleIds, modules, editMode) {
-  console.log(`hideOtherModules ${editMode}`);
+  debug(`_________________________________ modifyCanvasModulesList moduleIds ${moduleIds} editMode ${editMode} _________________`)
 
   // get all the moduleIds from modules not in moduleIds
   const otherModuleIds = Object.keys(modules).filter((moduleId) => {
@@ -92,6 +94,7 @@ export function modifyCanvasModulesList(moduleIds, modules, editMode) {
 
   // ensure all the moduleIds are displayed
   moduleIds.forEach((moduleId) => {
+    debug(` ---------- working on module ${moduleId} ------------`)
     const module = document.getElementById(`context_module_${moduleId}`);
     if (module) {
       module.style.display = "block";
@@ -117,4 +120,5 @@ export function modifyCanvasModulesList(moduleIds, modules, editMode) {
       }
     }
   });
+  debug(`____END _______________________ modifyCanvasModulesList moduleIds ${moduleIds} editMode ${editMode} _________________`)
 }

@@ -4,13 +4,17 @@
 
   import Editor from "cl-editor/src/Editor.svelte";
 
+  import { debug } from "../lib/debug";
+
   export let module: Number;
+
+  debug(`______________ ModuleConfiguration.svelte - module ${module} _______________`)
 
   let editor;
   let html = $collectionsStore["MODULES"][module].description;
 
-  console.log("-------- collectionsStore");
-  console.log($collectionsStore);
+  debug("-------- collectionsStore");
+  debug($collectionsStore);
 
   onMount(() => {
     const editorId=`cc-module-config-${module}-description`
@@ -32,6 +36,10 @@
 <svelte:head>
   <link href="//cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet" />
 </svelte:head>
+
+
+
+{debug(`---XXXXXX ModuleConfiguration - module ${module}`)}
 
 <div class="cc-module-config border border-trbl" id="cc-module-config-{module}">
   <div
@@ -91,6 +99,7 @@
     />
   </div>
 </div>
+{debug(`---END ModuleConfiguration - module ${module}`)}
 
 <style>
   .cc-module-config {

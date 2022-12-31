@@ -8,6 +8,9 @@
    */
 
   import ExistingCollections from "./Configuration/ExistingCollections.svelte";
+
+  import { debug } from "../lib/debug";
+  debug("______________ CollectionsConfiguration.svelte _______________")
 </script>
 
 <div class="cc-box-header">

@@ -10,6 +10,9 @@
   import { CanvasDetails } from "./lib/CanvasDetails";
   import { CollectionsDetails } from "./lib/CollectionsDetails";
 
+  import { debug } from "./lib/debug";
+  debug("______________ CanvasCollections.svelte _______________")
+
   const CC_VERSION = "0.9.10";
 
   export let courseId: number;

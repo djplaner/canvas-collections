@@ -3,17 +3,18 @@
    * Implement configuration interface for an individual collection
    */
 
-  import { collectionsStore } from "../../stores";
+  import { collectionsStore, configStore } from "../../stores";
   import { getCollectionModuleIds } from "../Representations/representationSupport";
 
   export let collectionName: string;
   export let order: Number;
   export let numCollections: Number;
 
-  console.log(
-    `------------------------- CollectionConfiguration: ${collectionName}`
+  import { debug } from "../../lib/debug";
+
+  debug(
+    `__________________ CollectionConfiguration.svelte __collection ${collectionName} order ${order} numCollections ${numCollections}_______________`
   );
-  console.log(` order = ${order} numCollections = ${numCollections}`);
 
   const modules = getCollectionModuleIds(
     collectionName,
@@ -71,7 +72,8 @@
     $collectionsStore["COLLECTIONS_ORDER"].splice(index, 1);
     // insert collectionName at index + 1
     $collectionsStore["COLLECTIONS_ORDER"].splice(index + 1, 0, collectionName);
-    $collectionsStore["COLLECTIONS_ORDER"] = $collectionsStore["COLLECTIONS_ORDER"];
+    $collectionsStore["COLLECTIONS_ORDER"] =
+      $collectionsStore["COLLECTIONS_ORDER"];
   }
 
   /**
@@ -94,33 +96,47 @@
       return;
     }
 
-	console.log("Deleting collection: " + collectionName)
-	console.log("before")
-	console.log($collectionsStore)
+    debug("Deleting collection: " + collectionName);
+    debug("before");
+    debug($collectionsStore);
 
-	// remove the collection from $collectionsStore["COLLECTIONS"]
-	delete $collectionsStore["COLLECTIONS"][collectionName];
+    // remove the collection from $collectionsStore["COLLECTIONS"]
+    delete $collectionsStore["COLLECTIONS"][collectionName];
 
-	// remove the collection from $collectionsStore["COLLECTIONS_ORDER"]
-	let index = $collectionsStore["COLLECTIONS_ORDER"].indexOf(collectionName);
-	$collectionsStore["COLLECTIONS_ORDER"].splice(index, 1);
+    // remove the collection from $collectionsStore["COLLECTIONS_ORDER"]
+    let index = $collectionsStore["COLLECTIONS_ORDER"].indexOf(collectionName);
+    $collectionsStore["COLLECTIONS_ORDER"].splice(index, 1);
 
-	// if currently the DEFAULT_ACTIVE_COLLECTION Change the DEFAULT_ACTIVE_COLLECTION to the first collection left
-	if ($collectionsStore["DEFAULT_ACTIVE_COLLECTION"] === collectionName) {
-		$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = $collectionsStore["COLLECTIONS_ORDER"][0];
+	// kludge required to work around svelte limitation
+	//$collectionsStore["COLLECTIONS_ORDER"] = $collectionsStore["COLLECTIONS_ORDER"];
+
+    // if currently the DEFAULT_ACTIVE_COLLECTION Change the DEFAULT_ACTIVE_COLLECTION to the first collection left
+    if ($collectionsStore["DEFAULT_ACTIVE_COLLECTION"] === collectionName) {
+      $collectionsStore["DEFAULT_ACTIVE_COLLECTION"] =
+        $collectionsStore["COLLECTIONS_ORDER"][0];
+    }
+
+	if ($configStore["currentCollection"]===collectionName) {
+		$configStore["currentCollection"] = $collectionsStore["DEFAULT_ACTIVE_COLLECTION"]
 	}
-	// set the collection attribute for all modules in the collection to "none"
-	 for ( const moduleId in $collectionsStore["MODULES"]) {
-		console.log(`--------- ${moduleId}`)
-		if ($collectionsStore['MODULES'][moduleId].collection === collectionName) {
-			$collectionsStore['MODULES'][moduleId].collection = null;
-		}
-	}
-	console.log("after")
-	console.log($collectionsStore)
+    // set the collection attribute for all modules in the collection to "none"
+    for (const moduleId in $collectionsStore["MODULES"]) {
+      console.log(`--------- ${moduleId}`);
+      if (
+        $collectionsStore["MODULES"][moduleId].collection === collectionName
+      ) {
+        $collectionsStore["MODULES"][moduleId].collection = null;
+      }
+    }
+	$collectionsStore = $collectionsStore
+    debug("after");
+    debug($collectionsStore);
+	debug("config")
+	debug($configStore)
   }
 </script>
 
+{debug(`____XXXX______ CollectionConfiguration.svelte __collection ${collectionName} order ${order} numCollections ${numCollections}_______________`)}
 <div
   class="cc-existing-collection border border-trbl"
   id="cc-collection-{collectionName}"
