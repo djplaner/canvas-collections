@@ -9,15 +9,8 @@
 
 
   let collectionNames = [];
-  if ($collectionsStore.hasOwnProperty("COLLECTIONS_ORDER")) {
-    collectionNames = $collectionsStore.COLLECTIONS_ORDER;
-  }
-  let collections = {};
-  if ($collectionsStore.hasOwnProperty("COLLECTIONS")) {
-    collections = $collectionsStore["COLLECTIONS"];
-  }
-  console.log('-------- collectionName')
-  console.log(collectionNames)
+
+  $: collectionNames = $collectionsStore['COLLECTIONS_ORDER'];
 
   // create activeCollection dict keyed on collection name 
   // with value "cc-active" if the collection is the current collection,
@@ -33,8 +26,6 @@
    * @description navigate to a new collection
    */
   function navigateCollections(collectionName: string) {
-    console.log("navigateCollections");
-    console.log(collectionName);
     activeCollection[$configStore["currentCollection"]] = "";
     $configStore["currentCollection"] = collectionName;
     activeCollection[collectionName] = "cc-active";
@@ -45,7 +36,7 @@
 <div class="cc-nav">
   <ul>
     {#each collectionNames as collectionName, i}
-      {#if !(collections[collectionName].hide && !$configStore["editMode"])}
+      {#if !($collectionsStore["COLLECTIONS"][collectionName].hide && !$configStore["editMode"])}
         <!-- <li class="cc-nav {isCurrentCollection(collectionName)}"> -->
           <!-- class="cc-nav {$configStore['currentCollection'] === collectionName -->
         <!-- <li
@@ -59,7 +50,7 @@
             on:click|stopPropagation={navigateCollections(collectionName)}
             >{collectionName}</a
           >
-          {#if collections[collectionName].hide}
+          {#if $collectionsStore["COLLECTIONS"][collectionName].hide}
             <div class="cc-collection-hidden">Hidden</div>
           {/if}
         </li>
