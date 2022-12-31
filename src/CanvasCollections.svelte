@@ -1,6 +1,7 @@
 <script lang="ts">
   import { collectionsStore, modulesStore, configStore } from "./stores";
   import CanvasCollectionsRepresentation from "./components/CanvasCollectionsRepresentation.svelte";
+  import CollectionsConfiguration from "./components/CollectionsConfiguration.svelte";
   import { onMount } from "svelte";
   import {
     addCollectionsRepresentation,
@@ -10,13 +11,13 @@
   import { CollectionsDetails } from "./lib/CollectionsDetails";
 
   const CC_VERSION = "0.9.10";
-  let COURSE_OBJECT = null;
 
   export let courseId: number;
   export let editMode: boolean;
   export let csrfToken: string;
   export let modulesPage: boolean;
   export let currentCollection: number;
+  export let showConfig: boolean;
 
   $configStore = {
     courseId: courseId,
@@ -125,6 +126,55 @@
   }
 
   /**
+   * @function toggleConfigShow
+   * @param e - the event object
+   * @description Called when the config show/hide button is clicked
+   * 1. Show/hide the CanvasCollectionsConfiguration component depending on state
+   */
+  function toggleConfigShow(e) {
+    showConfig = !showConfig;
+    console.log(`toggleConfigShow new ${showConfig}`);
+    console.log(e);
+
+    if (showConfig) {
+      // add a <CollectionsConfiguration> component after div.right-of-crumbs
+      const toggleAndCrumbs = document.getElementsByClassName(
+        "ic-app-nav-toggle-and-crumbs"
+      )[0];
+      if (toggleAndCrumbs) {
+        // change toggleAndCrumbs border-bottom style to none
+        toggleAndCrumbs['style'].borderBottom = "none";
+        // create div#cc-config-wrapper and insert after div.right-of-crumbs
+        const div = document.createElement("div");
+        div.id = "cc-config-wrapper";
+        // insert div after toggleAndCrumbs
+        toggleAndCrumbs.parentNode.insertBefore(div, toggleAndCrumbs.nextSibling);
+        // insert <CollectionsConfiguration> into div#cc-config-wrapper
+        const config = new CollectionsConfiguration({
+          target: div,
+          /*props: {
+            collectionsDetails: collectionsDetails,
+            collectionsModified: collectionsModified,
+          },*/
+        });
+      }
+    } else {
+      // remove div#cc-config-wrapper
+      const div = document.querySelector("div#cc-config-wrapper");
+      if (div) {
+        div.parentNode.removeChild(div);
+        const toggleAndCrumbs = document.getElementsByClassName(
+        "ic-app-nav-toggle-and-crumbs"
+        )[0];
+        if (toggleAndCrumbs) {
+          // change toggleAndCrumbs border-bottom style to none
+          toggleAndCrumbs['style'].borderBottom = "1px solid rgb(199,205,209)";
+        }
+      }
+    }
+  }
+
+  /**
    * Modify the canvas modules page by
    * - Adding <CanvasCollectionsRepresentation> at top of div#context_modules
    * - Add a <CollectionsModuleConfiguration> for each canvas module belonging to
@@ -174,7 +224,14 @@
         ><i class="icon-question cc-module-icon" /></a
       >
       {#if canvasDataLoaded && collectionsDataLoaded}
-        <i id="configShowSwitch" class="icon-mini-arrow-right" />
+        <i
+          id="configShowSwitch"
+          class="{showConfig
+            ? 'icon-mini-arrow-down'
+            : 'icon-mini-arrow-right'} cc-module-icon"
+          on:click={toggleConfigShow}
+          on:keydown={toggleConfigShow}
+        />
       {/if}
       <small>Canvas Collections</small>
       <span style="font-size:50%">{CC_VERSION}</span>
@@ -341,7 +398,7 @@
 
   .cc-save {
     margin-top: 0.5rem;
-	margin-right: 0.5rem;
+    margin-right: 0.5rem;
   }
 
   .cc-active-save-button {

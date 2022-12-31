@@ -19,7 +19,8 @@ export function checkContext() : object {
     courseId: null,
     modulesPage: false,
     csrfToken: null,
-    currentCollection: 0
+    currentCollection: 0,
+    showConfig: false
   };
 
   // replace # at end of string
