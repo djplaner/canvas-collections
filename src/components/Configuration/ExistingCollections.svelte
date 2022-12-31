@@ -20,8 +20,8 @@
 	</a>
 	<strong>Existing Collections</strong>
 
-	{#each collectionNames as collectionName}
-		<CollectionConfiguration collectionName={collectionName} />
+	{#each collectionNames as collectionName,i}
+		<CollectionConfiguration collectionName={collectionName} order={i} numCollections={collectionNames.length} />
 	{/each}
 </div>
 
