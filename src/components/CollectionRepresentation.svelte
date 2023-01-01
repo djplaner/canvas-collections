@@ -37,12 +37,15 @@
 
   let representationComponent: any;
   $: {
-    representationComponent =
-      translation[
-        $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
-          "representation"
-        ]
-      ];
+    const localRep = $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
+      "representation"
+    ];
+    if (!translation.hasOwnProperty(localRep)) {
+      alert(
+        `CollectionRepresentation component requires a valid representation prop. ${localRep} is not valid`
+      );
+    }
+    representationComponent = translation[localRep]
 
     debug(`calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`)
 

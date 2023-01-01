@@ -2,6 +2,7 @@
  * Define suite of methods to interact with Canvas during app set up
  */
 
+import { debug } from "./debug";
 const DEBUG = true;
 
 /**
@@ -248,6 +249,7 @@ export const wf_fetchDataMulti = async (reqData) => {
  */
 
 export function addCollectionsRepresentation() {
+  debug("::::::::::::: addCollectionsRepresentation ::::::::::::::")
 
    // check that there isn't already a div#canvas-collections-representation
     // if there is, do nothing
@@ -277,6 +279,7 @@ export function addCollectionsRepresentation() {
  */
 
 export function removeCollectionsRepresentation() {
+  debug(":::::::::::::: removeCollectionsRepresentation ::::::::::::::")
   const representation = document.querySelector(
     "div#canvas-collections-representation"
   );

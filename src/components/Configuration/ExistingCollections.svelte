@@ -12,9 +12,9 @@
 
    debug('------------------------- ExistingCollections')
    debug($collectionsStore)
+   debug('EEEEEEEEEEEE COLLECTIONS_ORDER')
+   debug($collectionsStore['COLLECTIONS_ORDER'])
 
-   let collectionNames
-   $: collectionNames = $collectionsStore['COLLECTIONS_ORDER'];
 
 </script>
 
@@ -24,10 +24,10 @@
 	</a>
 	<strong>Existing Collections</strong>
 
-	{#if collectionNames.length === 0}
+	{#if $collectionsStore['COLLECTIONS_ORDER'].length === 0}
 		<p>No collections have been defined</p>
 	{/if}
-	{#each collectionNames as collectionName,i}
+	{#each $collectionsStore['COLLECTIONS_ORDER'] as collectionName,i}
 		<CollectionConfiguration collectionName={collectionName} order={i} numCollections={collectionNames.length} />
 	{/each}
 </div>

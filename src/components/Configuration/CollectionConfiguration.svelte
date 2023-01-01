@@ -16,6 +16,19 @@
     `__________________ CollectionConfiguration.svelte __collection ${collectionName} order ${order} numCollections ${numCollections}_______________`
   );
 
+/*  let removed = false;
+  // experiment to see if we can detect when this component for this collection
+  // is being called, after the collection has already been deleted
+  $: {
+    if (!$collectionsStore["COLLECTIONS"].hasOwnProperty(collectionName)) {
+      alert(
+        `Collection ${collectionName} has been deleted but trying to do stuff`
+      );
+      removed = true;
+    }
+  } */
+
+  console.log("hello");
   const modules = getCollectionModuleIds(
     collectionName,
     $collectionsStore["MODULES"]
@@ -100,15 +113,10 @@
     debug("before");
     debug($collectionsStore);
 
-    // remove the collection from $collectionsStore["COLLECTIONS"]
-    delete $collectionsStore["COLLECTIONS"][collectionName];
-
     // remove the collection from $collectionsStore["COLLECTIONS_ORDER"]
     let index = $collectionsStore["COLLECTIONS_ORDER"].indexOf(collectionName);
     $collectionsStore["COLLECTIONS_ORDER"].splice(index, 1);
-
-	// kludge required to work around svelte limitation
-	//$collectionsStore["COLLECTIONS_ORDER"] = $collectionsStore["COLLECTIONS_ORDER"];
+    $collectionsStore["COLLECTIONS_ORDER"]= $collectionsStore["COLLECTIONS_ORDER"];
 
     // if currently the DEFAULT_ACTIVE_COLLECTION Change the DEFAULT_ACTIVE_COLLECTION to the first collection left
     if ($collectionsStore["DEFAULT_ACTIVE_COLLECTION"] === collectionName) {
@@ -116,9 +124,11 @@
         $collectionsStore["COLLECTIONS_ORDER"][0];
     }
 
-	if ($configStore["currentCollection"]===collectionName) {
-		$configStore["currentCollection"] = $collectionsStore["DEFAULT_ACTIVE_COLLECTION"]
-	}
+    // change the currentCollection
+    if ($configStore["currentCollection"] === collectionName) {
+      $configStore["currentCollection"] =
+        $collectionsStore["DEFAULT_ACTIVE_COLLECTION"];
+    }
     // set the collection attribute for all modules in the collection to "none"
     for (const moduleId in $collectionsStore["MODULES"]) {
       console.log(`--------- ${moduleId}`);
@@ -128,111 +138,115 @@
         $collectionsStore["MODULES"][moduleId].collection = null;
       }
     }
-	$collectionsStore = $collectionsStore
+    // remove the collection from $collectionsStore["COLLECTIONS"]
+    delete $collectionsStore["COLLECTIONS"][collectionName];
+    //$collectionsStore = $collectionsStore;
     debug("after");
     debug($collectionsStore);
-	debug("config")
-	debug($configStore)
+    debug("config");
+    debug($configStore);
   }
 </script>
 
-<div
-  class="cc-existing-collection border border-trbl"
-  id="cc-collection-{collectionName}"
->
-  <p>
-    {collectionName} - ({moduleCount}
-    {moduleName})
-    <span class="cc-collection-move">
-      {#if order > 0}
+<!-- {#if !removed} -->
+  <div
+    class="cc-existing-collection border border-trbl"
+    id="cc-collection-{collectionName}"
+  >
+    <p>
+      {collectionName} - ({moduleCount}
+      {moduleName})
+      <span class="cc-collection-move">
+        {#if order > 0}
+          <i
+            on:click={moveCollectionUp}
+            on:keydown={moveCollectionUp}
+            class="icon-arrow-up cc-move-collection"
+            id="cc-collection-${collectionName}-up"
+          />
+        {/if}
+        {#if order < numCollections - 1}
+          <i
+            on:click={moveCollectionDown}
+            on:keydown={moveCollectionDown}
+            class="icon-arrow-down cc-move-collection"
+            id="cc-collection-${collectionName}-down"
+          />
+        {/if}
         <i
-          on:click={moveCollectionUp}
-          on:keydown={moveCollectionUp}
-          class="icon-arrow-up cc-move-collection"
-          id="cc-collection-${collectionName}-up"
+          on:click={deleteCollection}
+          on:keydown={deleteCollection}
+          class="icon-trash cc-delete-collection"
+          id="cc-collection-${collectionName}-delete"
         />
-      {/if}
-      {#if order < numCollections - 1}
-        <i
-          on:click={moveCollectionDown}
-          on:keydown={moveCollectionDown}
-          class="icon-arrow-down cc-move-collection"
-          id="cc-collection-${collectionName}-down"
-        />
-      {/if}
-      <i
-        on:click={deleteCollection}
-        on:keydown={deleteCollection}
-        class="icon-trash cc-delete-collection"
-        id="cc-collection-${collectionName}-delete"
-      />
-    </span>
-  </p>
+      </span>
+    </p>
 
-  <!-- modify the collection's name 
+    <!-- modify the collection's name 
 	  TODO - on change function to do the required modifications
 -->
-  <div class="cc-collection-representation">
-    <label for="cc-collection-{collectionName}-collectionName">Name</label>
-    <input
-      type="text"
-      id="cc-collection-{collectionName}-collectionName"
-      value={collectionName}
-    />
-  </div>
+    <div class="cc-collection-representation">
+      <label for="cc-collection-{collectionName}-collectionName">Name</label>
+      <input
+        type="text"
+        id="cc-collection-{collectionName}-collectionName"
+        value={collectionName}
+      />
+    </div>
 
-  <!-- Modify the collection's representation
+    <!-- Modify the collection's representation
 	TODO - implement a select box and be reactive -->
-  <div class="cc-collection-representation">
-    <label for="cc-collection-{collectionName}-representation"
-      >Representation</label
-    >
-    <span id="cc-collection-{collectionName}-representation">
-      {$collectionsStore["COLLECTIONS"][collectionName]["representation"]}
-    </span>
-  </div>
+    <div class="cc-collection-representation">
+      <label for="cc-collection-{collectionName}-representation"
+        >Representation</label
+      >
+      <span id="cc-collection-{collectionName}-representation">
+        <!-- {$collectionsStore["COLLECTIONS"][collectionName]["representation"]} -->
+      </span>
+    </div>
 
-  <!-- default and hide collection - finished -->
-  <div class="cc-collection-representation">
-    <fieldset
-      class="ic-Fieldset ic-Fieldset--radio-checkbox"
-      style="margin-bottom:0.5em"
-    >
-      <div class="ic-Checkbox-group">
-        <div>
-          <a
-            href="https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <i
-              class="icon-question cc-module-icon"
-              id="cc-about-default-collection"
+    <!-- default and hide collection - finished -->
+    <div class="cc-collection-representation">
+      <fieldset
+        class="ic-Fieldset ic-Fieldset--radio-checkbox"
+        style="margin-bottom:0.5em"
+      >
+        <div class="ic-Checkbox-group">
+          <div>
+            <a
+              href="https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <i
+                class="icon-question cc-module-icon"
+                id="cc-about-default-collection"
+              />
+            </a>
+
+            <input
+              type="checkbox"
+              id="cc-config-collection-${collectionName}-default"
+              class="cc-config-collection-default"
+              checked={$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] ===
+                collectionName}
+              on:click={changeDefaultCollection}
             />
-          </a>
-
-          <input
-            type="checkbox"
-            id="cc-config-collection-${collectionName}-default"
-            class="cc-config-collection-default"
-            checked={$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] ===
-              collectionName}
-            on:click={changeDefaultCollection}
-          />
-          <label for="cc-config-collection-${collectionName}-default">
-            Default collection?
-          </label>
-        </div>
-        <!-- <div class="ic-Form-control ic-Form-control--checkbox"> -->
-        <div>
-          <a
-            target="_blank"
-            href="https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-operations"
-            rel="noreferrer"
-          >
-            <i class="icon-question cc-module-icon" /></a
-          >
-          <input
+            <label for="cc-config-collection-${collectionName}-default">
+              Default collection?
+            </label>
+          </div>
+          <!-- <div class="ic-Form-control ic-Form-control--checkbox"> -->
+          <div>
+            <a
+              target="_blank"
+              href="https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-operations"
+              rel="noreferrer"
+            >
+              <i class="icon-question cc-module-icon" /></a
+            >
+            {console.log(`config.svelte - hide collection - ${collectionName}`)}
+            <!--          <input
             type="checkbox"
             id="cc-config-collection-${collectionName}-hide"
             class="cc-config-collection-hide"
@@ -241,103 +255,103 @@
             ]}
             disabled={$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] ===
               collectionName}
-          />
-          <label for="cc-config-collection-${collectionName}-hide">
-            Hide collection?
-          </label>
+          /> -->
+            <label for="cc-config-collection-${collectionName}-hide">
+              Hide collection?
+            </label>
+          </div>
         </div>
-      </div>
-    </fieldset>
-  </div>
+      </fieldset>
+    </div>
 
-  <!-- include page -->
+    <!-- include page -->
 
-  <div>
-    <a
-      id="cc-about-include-page"
-      rel="noreferrer"
-      target="_blank"
-      href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#include-page"
-      ><i class="icon-question cc-module-icon" /></a
-    >
-    Include page
-    <div style="padding-left:0.5em">
-      <input
-        id="cc-collection-${collectionName}-include-page"
-        value={$collectionsStore["COLLECTIONS"][collectionName].includePage}
-        class="cc-existing-collection"
-      />
+    <div>
       <a
-        id="cc-about-include-after"
-        href="https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties"
+        id="cc-about-include-page"
+        rel="noreferrer"
         target="_blank"
+        href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#include-page"
+        ><i class="icon-question cc-module-icon" /></a
+      >
+      Include page
+      <div style="padding-left:0.5em">
+        <input
+          id="cc-collection-${collectionName}-include-page"
+          value={$collectionsStore["COLLECTIONS"][collectionName].includePage}
+          class="cc-existing-collection"
+        />
+        <a
+          id="cc-about-include-after"
+          href="https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <i class="icon-question cc-module-icon" />
+        </a>
+        <input
+          type="checkbox"
+          id="cc-config-collection-${collectionName}-include-after"
+          class="cc-config-collection-include-after"
+          bind:checked={$collectionsStore["COLLECTIONS"][collectionName]
+            .includeAfter}
+        />
+        <label for="cc-config-collection-${collectionName}-include-after">
+          After?
+        </label>
+      </div>
+    </div>
+    <!-- output page -->
+    <div style="margin-top:0.5em">
+      <a
+        id="cc-about-update-output-page"
+        target="_blank"
+        href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#output-page"
         rel="noreferrer"
       >
-        <i class="icon-question cc-module-icon" />
-      </a>
-      <input
-        type="checkbox"
-        id="cc-config-collection-${collectionName}-include-after"
-        class="cc-config-collection-include-after"
-        bind:checked={$collectionsStore["COLLECTIONS"][collectionName]
-          .includeAfter}
-      />
-      <label for="cc-config-collection-${collectionName}-include-after">
-        After?
-      </label>
-    </div>
-  </div>
-  <!-- output page -->
-  <div style="margin-top:0.5em">
-    <a
-      id="cc-about-update-output-page"
-      target="_blank"
-      href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#output-page"
-      rel="noreferrer"
-    >
-      <i class="icon-question cc-module-icon" /></a
-    >
-    Output page
-    <div class="cc-collection-representation">
-      <!--					<label for="cc-collection-${collectionName}-output-page">Name</label> -->
-      <input
-        id="cc-collection-${collectionName}-output-page"
-        value={$collectionsStore["COLLECTIONS"][collectionName].outputPage}
-        class="cc-existing-collection"
-      />
-      <span
-        class="cc-collection-representation cc-output-page-update **outputPageExists**"
+        <i class="icon-question cc-module-icon" /></a
       >
-        <!-- TODO onclick for output page button -->
-        <button
-          id="cc-collection-${collectionName}-output-page-update"
-          class="btn cc-existing-collection">Update</button
+      Output page
+      <div class="cc-collection-representation">
+        <!--					<label for="cc-collection-${collectionName}-output-page">Name</label> -->
+        <input
+          id="cc-collection-${collectionName}-output-page"
+          value={$collectionsStore["COLLECTIONS"][collectionName].outputPage}
+          class="cc-existing-collection"
+        />
+        <span
+          class="cc-collection-representation cc-output-page-update **outputPageExists**"
         >
-      </span>
-    </div>
-    <div style="display:flex;margin-top:1em;margin-bottom:0.5em">
-      <div style="margin-right:0.5em">
-        <sl-tooltip class="cc-about-apply-module-labels">
-          <div slot="content" />
-          <a
-            id="cc-about-apply-module-labels"
-            target="_blank"
-            href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#apply-module-labels"
-            rel="noreferrer"
+          <!-- TODO onclick for output page button -->
+          <button
+            id="cc-collection-${collectionName}-output-page-update"
+            class="btn cc-existing-collection">Update</button
           >
-            <i class="icon-question cc-module-icon" /></a
-          >
-          🧪Apply module labels ☠️
-        </sl-tooltip>
+        </span>
       </div>
-      <!-- TODO onclick for apply module labels -->
-      <button
-        id="cc-collection-${collectionName}-apply-module-labels"
-        class="btn cc-existing-collection">Apply</button
-      >
+      <div style="display:flex;margin-top:1em;margin-bottom:0.5em">
+        <div style="margin-right:0.5em">
+          <sl-tooltip class="cc-about-apply-module-labels">
+            <div slot="content" />
+            <a
+              id="cc-about-apply-module-labels"
+              target="_blank"
+              href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#apply-module-labels"
+              rel="noreferrer"
+            >
+              <i class="icon-question cc-module-icon" /></a
+            >
+            🧪Apply module labels ☠️
+          </sl-tooltip>
+        </div>
+        <!-- TODO onclick for apply module labels -->
+        <button
+          id="cc-collection-${collectionName}-apply-module-labels"
+          class="btn cc-existing-collection">Apply</button
+        >
+      </div>
     </div>
   </div>
-</div>
 
 <style>
   .cc-existing-collection {
