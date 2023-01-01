@@ -12,17 +12,21 @@
    * TODO
    * - Should these components provide the method for modifying how canvas display modules?
    */
-  import { collectionsStore,configStore } from "../stores";
+  import { collectionsStore, configStore } from "../stores";
   import Cards from "./Representations/Cards.svelte";
   import AssessmentTable from "./Representations/AssessmentTable.svelte";
   import CollectionOnly from "./Representations/CollectionOnly.svelte";
+
+  import { modifyCanvasModulesList } from "./Representations/representationSupport";
 
   import { debug } from "../lib/debug";
 
   export let collection: string;
 
-  debug(`_______________ CollectionRepresentation.svelte __collection ${collection} _____________`);
-  debug($configStore)
+  debug(
+    `_______________ CollectionRepresentation.svelte __collection ${collection} _____________`
+  );
+  debug($configStore);
 
   const translation = {
     CollectionOnly: CollectionOnly,
@@ -32,10 +36,23 @@
   };
 
   let representationComponent: any;
-  $: representationComponent = translation[
-    $collectionsStore["COLLECTIONS"][$configStore['currentCollection']]["representation"]
-  ];
+  $: {
+    representationComponent =
+      translation[
+        $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
+          "representation"
+        ]
+      ];
 
+    debug(`calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`)
+
+    modifyCanvasModulesList(
+      $configStore["currentCollection"],
+      $collectionsStore["MODULES"],
+      $configStore["editMode"]
+    );
+    debug(`after calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`)
+  }
 
   if (!collection) {
     // TODO better error handling
@@ -45,10 +62,7 @@
   }
 </script>
 
-<svelte:component
-  this={representationComponent}
-  bind:collection={collection}
-/>
+<svelte:component this={representationComponent} bind:collection />
 
 <style>
 </style>

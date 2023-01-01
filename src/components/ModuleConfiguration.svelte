@@ -1,4 +1,9 @@
 <script lang="ts">
+  /**
+   * Define the component for configuring and individual module
+   * @property {Number} module - the module being configured
+   * @property {Boolean} allocated - whether the module has been allocated to a collection
+  */
   import { collectionsStore } from "../stores";
   import { onMount } from "svelte";
 
@@ -7,8 +12,9 @@
   import { debug } from "../lib/debug";
 
   export let module: Number;
+  export let allocated: boolean
 
-  debug(`______________ ModuleConfiguration.svelte - module ${module} _______________`)
+  debug(`______________ ModuleConfiguration.svelte - module ${module} allocated ${allocated} _______________`)
 
   let editor;
   let html = $collectionsStore["MODULES"][module].description;
@@ -39,15 +45,16 @@
 
 
 
-{debug(`---XXXXXX ModuleConfiguration - module ${module}`)}
 
 <div class="cc-module-config border border-trbl" id="cc-module-config-{module}">
+  {#if ! allocated}
   <div
     class="cc-module-no-collection"
     id="cc-module-config-no-collection-{module}"
   >
     No collection allocated
   </div>
+  {/if}
   <span>
     <i id="cc-module-config-{module}-switch" class="icon-mini-arrow-right" />
     Configure Collections for
@@ -99,7 +106,6 @@
     />
   </div>
 </div>
-{debug(`---END ModuleConfiguration - module ${module}`)}
 
 <style>
   .cc-module-config {
@@ -115,7 +121,6 @@
     border-radius: 0.25rem;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    display: none;
   }
 
   .cc-module-config-collection-representation label {

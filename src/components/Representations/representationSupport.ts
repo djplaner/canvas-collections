@@ -69,56 +69,85 @@ export function generateModuleDate(module) {
 
 /**
  * @function modifyCanvasModulesList
- * @param moduleIds  - list of module ids that should NOT be hidden
+ * @param collection  - string for current collection
  * @param modules - list of all modules
  * @description Modify Canvas's display of modules in three possible ways
- * 1. Hide all modules not in moduleIds
- * 2. Ensure all modules in moduleIds are showing
+ * 1. Hide all modules with collection defined and not in collection
+ * 2. Ensure all modules in collection are showing
  * 3. If editMode add ModuleConfiguration components to the module
  */
-export function modifyCanvasModulesList(moduleIds, modules, editMode) {
-  debug(`_________________________________ modifyCanvasModulesList moduleIds ${moduleIds} editMode ${editMode} _________________`)
+export function modifyCanvasModulesList(collection, modules, editMode) {
+  debug(
+    `_________________________________ modifyCanvasModulesList moduleIds ${collection} editMode ${editMode} _________________`
+  );
 
+  const moduleIds = getCollectionModuleIds(collection, modules);
   // get all the moduleIds from modules not in moduleIds
   const otherModuleIds = Object.keys(modules).filter((moduleId) => {
     return !moduleIds.includes(parseInt(moduleId, 10));
   });
 
-  // hide all the other modules
+  debug(` --- moduleIds ${moduleIds} --- otherModuleIds ${otherModuleIds} ---`)
+
+  // for other modules
+  // - if collection is not null hide the module
+  // - if null, create an unallocated ModuleConfiguration
   otherModuleIds.forEach((moduleId) => {
     const module = document.getElementById(`context_module_${moduleId}`);
-    if (module) {
-      module.style.display = "none";
+    if (module ) {
+      if (modules[moduleId].collection) {
+        module.style.display = "none";
+      } else {
+        if (editMode) {
+          addModuleConfiguration(moduleId, false);
+        }
+      }
     }
   });
 
   // ensure all the moduleIds are displayed
   moduleIds.forEach((moduleId) => {
-    debug(` ---------- working on module ${moduleId} ------------`)
-    const module = document.getElementById(`context_module_${moduleId}`);
-    if (module) {
-      module.style.display = "block";
-    }
-    // in editMode add div#cc-module-config-<moduleId> after div#<moduleId>
+    debug(` ---------- working on module ${moduleId} ------------`);
+    // make sure that these are displayed
+
     if (editMode) {
-      const insertDiv = document.getElementById(moduleId);
-
-      if (insertDiv && !document.getElementById(`cc-module-config-${moduleId}`)) {
-        const moduleConfig = document.createElement("div");
-        moduleConfig.id = `cc-module-config-${moduleId}`;
-        //moduleConfig.className = "cc-module-config";
-        // insert the moduleConfig after insertDiv
-        insertDiv.parentNode.insertBefore(moduleConfig, insertDiv.nextSibling);
-
-        // create new ModuleConfiguration component within moduleConfig
-        const moduleConfigComponent = new ModuleConfiguration({
-          target: moduleConfig,
-          props: {
-            module: moduleId,
-          },
-        });
-      }
+      addModuleConfiguration(moduleId);
     }
   });
-  debug(`____END _______________________ modifyCanvasModulesList moduleIds ${moduleIds} editMode ${editMode} _________________`)
+}
+
+/**
+ * @function addModuleConfiguration
+ * @param moduleId
+ * @param editMode
+ * @description add an appropriate ModuleConfiguration component to each
+ * Canvas module. 
+ */
+function addModuleConfiguration(moduleId, allocated = true) {
+  debug(`XXXXX addModuleConfiguration ${moduleId} allocated ${allocated}`)
+  const module = document.getElementById(`context_module_${moduleId}`);
+  if (module) {
+    module.style.display = "block";
+  }
+  // in editMode add div#cc-module-config-<moduleId> after div#<moduleId>
+  const insertDiv = document.getElementById(moduleId);
+
+  if (insertDiv && !document.getElementById(`cc-module-config-${moduleId}`)) {
+    const moduleConfig = document.createElement("div");
+    moduleConfig.id = `cc-module-config-${moduleId}`;
+    //moduleConfig.className = "cc-module-config";
+    // insert the moduleConfig after insertDiv
+    insertDiv.parentNode.insertBefore(moduleConfig, insertDiv.nextSibling);
+
+    // create new ModuleConfiguration component within moduleConfig
+    const moduleConfigComponent = new ModuleConfiguration({
+      target: moduleConfig,
+      props: {
+        module: moduleId,
+        allocated: allocated
+      },
+    });
+    debug('XXXXX moduleConfigComponent')
+    debug(moduleConfigComponent)
+  }
 }

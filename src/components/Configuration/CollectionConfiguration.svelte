@@ -136,7 +136,6 @@
   }
 </script>
 
-{debug(`____XXXX______ CollectionConfiguration.svelte __collection ${collectionName} order ${order} numCollections ${numCollections}_______________`)}
 <div
   class="cc-existing-collection border border-trbl"
   id="cc-collection-{collectionName}"
