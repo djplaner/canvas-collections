@@ -262,4 +262,20 @@ export class CollectionsDetails {
 		} */
     return value;
   }
+
+  /**
+   * @function saveCollections(editMode,needToSave)
+   * @param editMode - boolean, true if in edit mode
+   * @param needToSave - boolean, true if need to save
+   * @description if editMode && needToSave save the colelctions config page
+   */
+
+  saveCollections(editMode:boolean,needToSave:boolean) {
+
+    if (editMode && needToSave) {
+      alert('QQQQQQQQQQQQQQQQQQQQ saving collections')
+      // TODO add in and call saveConfigPage
+    }
+
+  }
 }

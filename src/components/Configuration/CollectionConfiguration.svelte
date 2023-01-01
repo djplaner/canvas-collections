@@ -28,7 +28,6 @@
     }
   } */
 
-  console.log("hello");
   const modules = getCollectionModuleIds(
     collectionName,
     $collectionsStore["MODULES"]
@@ -36,7 +35,7 @@
   let moduleCount = modules.length;
   let moduleName = moduleCount === 1 ? "module" : "modules";
 
-  console.log($collectionsStore["COLLECTIONS"]);
+  debug($collectionsStore["COLLECTIONS"]);
 
   //  let defaultCollection = false
   //  $: defaultCollection = $collectionsStore["DEFAULT_COLLECTION"] === collectionName
@@ -54,6 +53,7 @@
       );
       return false;
     }
+    $configStore["needToSaveCollections"]=true;
     $collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = collectionName;
   }
 
@@ -71,6 +71,7 @@
     $collectionsStore["COLLECTIONS_ORDER"].splice(index - 1, 0, collectionName);
     $collectionsStore["COLLECTIONS_ORDER"] =
       $collectionsStore["COLLECTIONS_ORDER"];
+    $collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = collectionName;
   }
 
   /**
@@ -87,6 +88,7 @@
     $collectionsStore["COLLECTIONS_ORDER"].splice(index + 1, 0, collectionName);
     $collectionsStore["COLLECTIONS_ORDER"] =
       $collectionsStore["COLLECTIONS_ORDER"];
+    $collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = collectionName;
   }
 
   /**
@@ -131,7 +133,6 @@
     }
     // set the collection attribute for all modules in the collection to "none"
     for (const moduleId in $collectionsStore["MODULES"]) {
-      console.log(`--------- ${moduleId}`);
       if (
         $collectionsStore["MODULES"][moduleId].collection === collectionName
       ) {
@@ -141,6 +142,7 @@
     // remove the collection from $collectionsStore["COLLECTIONS"]
     delete $collectionsStore["COLLECTIONS"][collectionName];
     //$collectionsStore = $collectionsStore;
+    $collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = collectionName;
     debug("after");
     debug($collectionsStore);
     debug("config");
@@ -245,7 +247,6 @@
             >
               <i class="icon-question cc-module-icon" /></a
             >
-            {console.log(`config.svelte - hide collection - ${collectionName}`)}
             <!--          <input
             type="checkbox"
             id="cc-config-collection-${collectionName}-hide"
@@ -278,7 +279,9 @@
       <div style="padding-left:0.5em">
         <input
           id="cc-collection-${collectionName}-include-page"
-          value={$collectionsStore["COLLECTIONS"][collectionName].includePage}
+          bind:value={$collectionsStore["COLLECTIONS"][collectionName].includePage}
+          on:click={() => $configStore["needToSaveCollections"] = true}
+          on:keydown={ () => $configStore["needToSaveCollections"] = true}
           class="cc-existing-collection"
         />
         <a
@@ -293,6 +296,8 @@
           type="checkbox"
           id="cc-config-collection-${collectionName}-include-after"
           class="cc-config-collection-include-after"
+          on:click={() => $configStore["needToSaveCollections"] = true}
+          on:keydown={ () => $configStore["needToSaveCollections"] = true}
           bind:checked={$collectionsStore["COLLECTIONS"][collectionName]
             .includeAfter}
         />
@@ -316,7 +321,9 @@
         <!--					<label for="cc-collection-${collectionName}-output-page">Name</label> -->
         <input
           id="cc-collection-${collectionName}-output-page"
-          value={$collectionsStore["COLLECTIONS"][collectionName].outputPage}
+          bind:value={$collectionsStore["COLLECTIONS"][collectionName].outputPage}
+          on:click={() => $configStore["needToSaveCollections"] = true}
+          on:keydown={ () => $configStore["needToSaveCollections"] = true}
           class="cc-existing-collection"
         />
         <span

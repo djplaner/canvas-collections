@@ -28,7 +28,7 @@
 		<p>No collections have been defined</p>
 	{/if}
 	{#each $collectionsStore['COLLECTIONS_ORDER'] as collectionName,i}
-		<CollectionConfiguration collectionName={collectionName} order={i} numCollections={collectionNames.length} />
+		<CollectionConfiguration collectionName={collectionName} order={i} numCollections={$collectionsStore['COLLECTIONS_ORDER'].length} />
 	{/each}
 </div>
 

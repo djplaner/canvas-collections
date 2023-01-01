@@ -2,7 +2,7 @@
   import { collectionsStore, modulesStore, configStore } from "./stores";
   import CanvasCollectionsRepresentation from "./components/CanvasCollectionsRepresentation.svelte";
   import CollectionsConfiguration from "./components/CollectionsConfiguration.svelte";
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import {
     addCollectionsRepresentation,
     removeCollectionsRepresentation,
@@ -11,7 +11,7 @@
   import { CollectionsDetails } from "./lib/CollectionsDetails";
 
   import { debug } from "./lib/debug";
-  debug("______________ CanvasCollections.svelte _______________")
+  debug("______________ CanvasCollections.svelte _______________");
 
   const CC_VERSION = "0.9.10";
 
@@ -40,8 +40,6 @@
 
   let ccOn = false;
   let ccPublished = true;
-  // indicate whether changes made to collections data
-  let saveButtonClass = "cc-save-button";
 
   /**
    * Callback function for when canvasDetails is loaded
@@ -99,16 +97,6 @@
   }
 
   /**
-   * Called whenever collectionsDetails is modified indicating
-   * a need to eventually do a save
-   */
-
-  function collectionsModified() {
-    $configStore["needToSaveCollections"] = true;
-    saveButtonClass = "cc-active-save-button";
-  }
-
-  /**
    * Called when the collections on/off switch is clicked
    * Turn collections on or off and indicate a need to save
    */
@@ -119,7 +107,7 @@
       `toggleCollectionsSwitch from ${ccOn} to ${collectionsDetails.ccOn}`
     );
     ccOn = collectionsDetails.ccOn;
-    collectionsModified();
+    $configStore["needToSaveCollections"] = true;
     // modify the display accordingly
     if (ccOn) {
       addCollectionsDisplay();
@@ -178,8 +166,29 @@
       });
     }
   });
+
+  /**
+   * @function beforeUnload
+   * @param event
+   * @description If when leaving the page there are unsaved changes, then
+   * save them and give the user a bit of a warning
+   * TODO the warning is somewhat misleading (due to browser limits on what JS
+   * can do) Is there a better way to do this?
+   * Maybe just do the return false and not the warning?
+   */
+  function beforeUnload(event) {
+    if ($configStore["needToSaveCollections"] && $configStore["editMode"]) {
+      event.preventDefault();
+      collectionsDetails.saveCollections(
+        $configStore["editMode"],
+        $configStore["needToSaveCollections"]
+      );
+      return (event.returnValue = "Are you sure you want to close?");
+    }
+  }
 </script>
 
+<svelte:window on:beforeunload={beforeUnload} /> 
 {#if editMode && modulesPage}
   <div class="cc-switch-container">
     <div class="cc-switch-title">
@@ -215,7 +224,13 @@
         <span class="cc-slider cc-round" />
       </label>
       <div class="cc-save">
-        <button class={saveButtonClass} id="cc-save-button">Save</button>
+        <button
+          class={$configStore["needToSaveCollections"]
+            ? "cc-active-save-button"
+            : "cc-save-button"}
+          id="cc-save-button">Save</button
+        >
+        <!--  saveButtonClass = "cc-active-save-button"; -->
       </div>
     {/if}
     {#if !ccPublished}
@@ -236,7 +251,7 @@
       <div id="cc-config" class="border border-trbl">
         <CollectionsConfiguration />
       </div>
-      {/if}
+    {/if}
   </div>
 {/if}
 

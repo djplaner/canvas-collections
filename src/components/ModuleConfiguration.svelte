@@ -4,7 +4,7 @@
    * @property {Number} module - the module being configured
    * @property {Boolean} allocated - whether the module has been allocated to a collection
    */
-  import { collectionsStore } from "../stores";
+  import { collectionsStore, configStore } from "../stores";
   import { onMount } from "svelte";
 
   import Editor from "cl-editor/src/Editor.svelte";
@@ -18,7 +18,6 @@
   );
 
   $: allocated = $collectionsStore["MODULES"][module].collection !== null;
-  let editor;
   let html = $collectionsStore["MODULES"][module].description;
 
   debug("-------- collectionsStore");
@@ -29,25 +28,15 @@
     let editorElem = document.getElementById(editorId);
     if (editorElem) {
       editorElem.onkeydown = (e) => e.stopPropagation();
-    } else {
     }
   });
 
   function toggleModuleConfigShow() {
     $collectionsStore["MODULES"][module].configVisible =
       !$collectionsStore["MODULES"][module].configVisible;
+    $configStore["needToSaveCollections"] = true;
   }
-  /* 
-    <textarea
-      id="cc-module-config-{module}-XXdescription"
-      name="cc-module-config-{module}-description"
-      bind:value={$collectionsStore["MODULES"][module].description}
-    />  */
 </script>
-
-<svelte:head>
-  <link href="//cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet" />
-</svelte:head>
 
 <div class="cc-module-config border border-trbl" id="cc-module-config-{module}">
   {#if !allocated}
@@ -108,13 +97,15 @@
       >
         <i class="icon-question cc-module-icon" />
       </a>
-      <label for="cc-module-config-{module}-XXdescription">Description</label>
+      <label for="cc-module-config-{module}-description">Description</label>
 
       <Editor
         {html}
         contentId="cc-module-config-{module}-description"
-        on:change={(evt) =>
-          ($collectionsStore["MODULES"][module].description = evt.detail)}
+        on:change={(evt) => {
+          $collectionsStore["MODULES"][module].description = evt.detail;
+          $configStore["needToSaveCollections"] = true;
+        }}
       />
     </div>
   {/if}
