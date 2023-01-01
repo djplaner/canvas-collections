@@ -17,8 +17,11 @@
  *   - save the config page
  */
 
-import { wf_fetchData } from "./CanvasSetup";
+import { wf_fetchData, wf_postData } from "./CanvasSetup";
 import sanitizeHtml from "sanitize-html";
+import { debug } from "./debug";
+import { configStore } from "../stores";
+import { get } from "svelte/store";
 
 export class CollectionsDetails {
   // parsed collections JSON
@@ -51,10 +54,10 @@ export class CollectionsDetails {
     this.currentHostName = document.location.hostname;
     this.baseApiUrl = `https://${this.currentHostName}/api/v1`;
     // convert courseId to integer - probably unnecessary at this stage
-    this.config.courseId = parseInt(this.config.courseId);
+    this["config"]["courseId"] = parseInt(this.config.courseId);
 
-    console.log(
-      `YYYYY collectionsDetails: constructor: ${this.config.courseId} `
+    debug(
+      `YYYYY collectionsDetails: constructor: ${this["config"]["courseId"]} `
     );
 
     this.requestCollectionsPage();
@@ -243,8 +246,8 @@ export class CollectionsDetails {
     txt.innerHTML = html;
     let value = txt.value;
 
-	// do some sanitisation of the HTML https://github.com/apostrophecms/sanitize-html
-	value = sanitizeHtml(value);
+    // do some sanitisation of the HTML https://github.com/apostrophecms/sanitize-html
+    value = sanitizeHtml(value);
     return value;
   }
 
@@ -270,12 +273,185 @@ export class CollectionsDetails {
    * @description if editMode && needToSave save the colelctions config page
    */
 
-  saveCollections(editMode:boolean,needToSave:boolean) {
-
+  saveCollections(editMode: boolean, needToSave: boolean) {
     if (editMode && needToSave) {
-      alert('QQQQQQQQQQQQQQQQQQQQ saving collections')
       // TODO add in and call saveConfigPage
+
+      let callUrl = `/api/v1/courses/${this["config"]["courseId"]}/pages/canvas-collections-configuration`;
+
+      debug(`saveCollections callUrl = ${callUrl}`);
+
+      debug('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
+      debug(this.collections)
+      debug('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
+
+      const content = this.generateConfigPageContent();
+
+      let _body = {
+        wiki_page: {
+          body: content,
+        },
+      };
+
+      let method = "put";
+      // if we're creating, change the URL and add the title
+
+      const bodyString = JSON.stringify(_body);
+
+      wf_postData(
+        callUrl,
+        bodyString,
+        this["config"]["csrfToken"],
+        method
+      ).then((data) => {
+        // successful
+        debug(`saveCollections response = `);
+        debug(data);
+        let localConfig = get(configStore);
+        localConfig["needToSaveCollections"] = false;
+        configStore.set(localConfig);
+      });
+    }
+  }
+
+  /**
+   * Generate and return the HTML to be added into the Canvas Collections Configuration page
+   * including
+   * - div.cc-config-explanation
+   *   User facing detail about the purpose of the file, a warning, and the time it was
+   *   last updated
+   * - div.cc_json
+   *   Invisible, encoded JSON representation of collections configuration data
+   * - div.cc-card-images id="cc-course-<courseId>"
+   *   Invisible, collection of img elements for any module collections images that
+   *   are in the course files area. Placed here to help with course copy (i.e. Canvas
+   *   will update these URLs which Collections will then handle)
+   */
+
+  generateConfigPageContent() {
+    // construct the new content for the page
+    // - boiler plate description HTML to start
+    let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
+
+    /*		if (
+			this.parentController.hasOwnProperty('cc_configuration') &&
+			this.parentController.cc_configuration.hasOwnProperty('MODULES')) { */
+
+    // files URL might be
+    // - direct or
+    //    https://lms.griffith.edu.au/files/
+    // - via the course
+    //    https://lms.../courses/12345/files/
+    // - or without the hostname starting with /
+
+    const filesUrl = `${window.location.hostname}/files/`;
+    const courseFilesUrl = `${window.location.hostname}/courses/${this["config"]["courseId"]}/files/`;
+    // loop thru each module in cc_configuration
+    // - if it has an image, add an img element to the div.cc-card-images
+    //   with the image URL
+    let images = "";
+    for (let moduleId in this["collections"]["MODULES"]) {
+      const module = this["collections"]["MODULES"][moduleId];
+
+      if (!module.image) {
+        continue;
+      }
+      // add the hostname to module.image if it doesn't have it
+      if (module.image.startsWith("/")) {
+        module.image = `https://${window.location.hostname}${module.image}`;
+      }
+
+      // if module has an image and it contains courseFilesUrl
+      if (
+        module.image.includes(courseFilesUrl) ||
+        module.image.includes(filesUrl)
+      ) {
+        images += `
+					<img src="${module.image}" id="cc-moduleImage-${moduleId}" class="cc-moduleImage" />
+					`;
+      }
     }
 
+    content = content.replace("{{COURSE_IMAGES}}", images);
+    //		}
+
+    // - div.json containing
+    //   - JSON stringify of this.parentController.cc_configuration
+    //   - however, each module needs to have it's description encoded as HTML
+    for (let key in this["collections"]["MODULES"]) {
+      const module = this["collections"]["MODULES"][key];
+      module.description = this.encodeHTML(module.description);
+      module.collection = this.encodeHTML(module.collection);
+      if (module.hasOwnProperty("iframe")) {
+        module.iframe = this.encodeHTML(module.iframe);
+      }
+      module.name = this.encodeHTML(module.name);
+    }
+    let safeContent = JSON.stringify(this.collections);
+    if (safeContent) {
+      content = content.replace("{{CONFIG}}", safeContent);
+    }
+
+    // need to de-encode the description for the page so that
+    // it continues to work normally for live operation
+    for (let key in this["collections"]["MODULES"]) {
+      const module = this["collections"]["MODULES"][key];
+      module.description = this.decodeHTML(module.description);
+      module.collection = this.decodeHTML(module.collection);
+      module.name = this.decodeHTML(module.name);
+      if (module.hasOwnProperty("iframe")) {
+        module.iframe = this.decodeHTML(module.iframe);
+      }
+    }
+
+    // get the current time as string
+    let time = new Date().toLocaleString();
+
+    content = content.replace("{{VISIBLE_TEXT}}", `<p>saved at ${time}</p>`);
+
+    content = content.replace("{{COURSE_ID}}", this["config"]["courseId"]);
+
+    //<div class="cc-card-images" id="cc-course{{COURSE_ID}}" style="display:none"></div>
+
+    debug("----------------- saveConfigPageContent() -----------------");
+    debug(content);
+
+    return content;
   }
 }
+
+/**
+ * Templates used in the above
+ * - CONFIGURATION_PAGE_HTML_TEMPLATE - used to save collections configuration page
+ */
+const CONFIGURATION_PAGE_HTML_TEMPLATE = `
+<div class="cc-config-explanation">
+<div style="float:left;padding:0.5em">
+  <img src="https://repository-images.githubusercontent.com/444951314/42343d35-e259-45ae-b74e-b9957222211f"
+      alt="canvas-collections logo" width="123" height="92" />
+</div>
+<div style="padding:0.5em">
+  <h3>Canvas Collections Configuration page</h3>
+  <p>This page is used to configure <a href="https://djplaner.github.io/canvas-collections/">Canvas Collections</a>.  
+  Avoid direct modification to this page, instead use the Canvas Collections configuration interface.  </p>
+  {{VISIBLE_TEXT}}
+ </div>
+ </div>
+ <p style="clear:both"></p>
+<div class="cc_json" style="display:none">
+ {{CONFIG}}
+ </div>
+<div class="cc-card-images" id="cc-course-{{COURSE_ID}}" style="display:none">
+ {{COURSE_IMAGES}}
+</div>
+`;
+
+/*const DEFAULT_CONFIGURATION_TEMPLATE = {
+	"STATUS": "off",
+	"DEFAULT_ACTIVE_COLLECTION": "",
+	"COLLECTIONS": {
+	},
+	"COLLECTIONS_ORDER": [],
+	"MODULES": {
+	}
+}; */

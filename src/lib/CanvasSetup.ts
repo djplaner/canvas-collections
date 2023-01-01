@@ -197,18 +197,27 @@ export const wf_deleteData = async (reqUrl, csrf) => {
 }
 
 
+/**
+ * @function wf_postData
+ * @param reqUrl 
+ * @param data 
+ * @param csrf 
+ * @param post - POST or PUT
+ * @returns json response (if successful), null otherwise
+ * 
+ */
 
-export const wf_postData = async (reqUrl, data, csrf) => {
+export const wf_postData = async (reqUrl:string, data:string, csrf:string, post="POST") => {
 	const url = reqUrl;
 	try {
 		const res = await fetch(reqUrl, {
-			method: 'POST', credentials: 'include',
+			method: post, credentials: 'include',
 			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json",
+				"Content-Type": "application/json; charset=UTF-8",
+				"Accept": "application/json; charset=UTF-8",
 				"X-CSRF-Token": csrf
 			},
-			body: JSON.stringify(data),
+			body: data,
 		});
 		if (res.status === 404) // Endpoint not found
 			return null;

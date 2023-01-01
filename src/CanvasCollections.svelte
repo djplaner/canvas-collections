@@ -102,11 +102,8 @@
    */
 
   function toggleCollectionsSwitch() {
-    collectionsDetails.ccOn = !ccOn;
-    console.log(
-      `toggleCollectionsSwitch from ${ccOn} to ${collectionsDetails.ccOn}`
-    );
-    ccOn = collectionsDetails.ccOn;
+    ccOn = !ccOn;
+    $collectionsStore["STATUS"] = (ccOn ? "on" : "off");
     $configStore["needToSaveCollections"] = true;
     // modify the display accordingly
     if (ccOn) {
@@ -228,7 +225,9 @@
           class={$configStore["needToSaveCollections"]
             ? "cc-active-save-button"
             : "cc-save-button"}
-          id="cc-save-button">Save</button
+          id="cc-save-button"
+          on:click={collectionsDetails.saveCollections( $configStore["editMode"], $configStore["needToSaveCollections"])}
+          >Save</button
         >
         <!--  saveButtonClass = "cc-active-save-button"; -->
       </div>
