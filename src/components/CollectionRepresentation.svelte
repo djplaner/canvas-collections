@@ -12,10 +12,11 @@
    * TODO
    * - Should these components provide the method for modifying how canvas display modules?
    */
-  import { collectionsStore, configStore } from "../stores";
-  import Cards from "./Representations/Cards.svelte";
+  import { collectionsStore, configStore, representationsStore } from "../stores";
+/*  import GriffithCards from "./Representations/GriffithCards.svelte";
   import AssessmentTable from "./Representations/AssessmentTable.svelte";
   import CollectionOnly from "./Representations/CollectionOnly.svelte";
+  */
 
   import { modifyCanvasModulesList } from "./Representations/representationSupport";
 
@@ -26,26 +27,18 @@
   debug(
     `_______________ CollectionRepresentation.svelte __collection ${collection} _____________`
   );
-  debug($configStore);
-
-  const translation = {
-    CollectionOnly: CollectionOnly,
-    Cards: Cards,
-    AssessmentTable: AssessmentTable,
-    GriffithCards: Cards,
-  };
 
   let representationComponent: any;
   $: {
     const localRep = $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
       "representation"
     ];
-    if (!translation.hasOwnProperty(localRep)) {
+    if (!$representationsStore.hasOwnProperty(localRep)) {
       alert(
         `CollectionRepresentation component requires a valid representation prop. ${localRep} is not valid`
       );
     }
-    representationComponent = translation[localRep]
+    representationComponent = $representationsStore[localRep]
 
     debug(`calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`)
 
