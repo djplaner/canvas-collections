@@ -14,6 +14,7 @@
   debug("______________ CanvasCollections.svelte _______________");
 
   const CC_VERSION = "0.9.10";
+  const TIME_BETWEEN_SAVES = 10000;
 
   export let courseId: number;
   export let editMode: boolean;
@@ -37,6 +38,7 @@
   // the actual data objects for canvas and collections data
   let canvasDetails = null;
   let collectionsDetails = null;
+  let saveInterval = null; 
 
   let ccOn = false;
   let ccPublished = true;
@@ -87,11 +89,26 @@
     }
   }
 
+  /**
+   * @function checkAllDataLoaded
+   * @description Called by both gotCanvasDetails and gotCollectionsDetails will
+   * check if both have finished. If so it will
+   * 1. Add the collections display (if collections is turned on)
+   * 2. use setInterval to check if collections needs to be saved (if ccOn and editMode)
+   */
   function checkAllDataLoaded() {
     if (canvasDataLoaded && collectionsDataLoaded) {
       $collectionsStore = collectionsDetails.collections;
       if (ccOn) {
         addCollectionsDisplay();
+        if ($configStore["editMode"]) {
+          saveInterval = setInterval(() => {
+            collectionsDetails.saveCollections(
+              $configStore["editMode"],
+              $configStore["needToSaveCollections"]
+            );
+          }, TIME_BETWEEN_SAVES);
+        }
       }
     }
   }
@@ -163,6 +180,18 @@
       });
     }
   });
+
+  /**
+   * @function onDestroy
+   * @description If there is a saveInterval, then clear it
+   * TODO not really sure this is needed, as I don't explicitly destroy the 
+   * component and it may not be a problem when navigating away
+  */
+  onDestroy( () => {
+    if (saveInterval) {
+      clearInterval(saveInterval);
+    }
+  })
 
   /**
    * @function beforeUnload
