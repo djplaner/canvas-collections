@@ -116,6 +116,8 @@ export class CollectionsDetails {
 
     // decode various fields in the collections
     this.decodeCollections();
+    // misc. updates to handle old style collections configuration
+    this.updateCollections();
 
     // double check and possibly convert an old configuration
     //this.configConverted = this.checkConvertOldConfiguration();
@@ -206,6 +208,36 @@ export class CollectionsDetails {
     }
   }
 
+  /**
+   * @function updateCollections
+   * @description collectons config has been loaded, but the config file may be
+   * old school. Do misc updates, including
+   * - any module's collection attribute ==='' is set to null
+   * - each module has an attribute 'configVisible' set to false
+   */
+
+  updateCollections() {
+    // Focus on updates to modules
+    if (this.collections.hasOwnProperty("MODULES")) {
+      const modules = this.collections["MODULES"];
+
+      for (let key in modules) {
+        const module = modules[key];
+        if (module.collection === "") {
+          module.collection = null;
+        }
+        if (!module.hasOwnProperty("configVisible")) {
+          module.configVisible = false;
+        }
+      }
+    }
+  }
+
+  /**
+   * @function decodeHTML
+   * @param html - HTML
+   * @returns {string} - removed any HTML encodings and sanitised
+   */
   decodeHTML(html: string) {
     let txt = document.createElement("textarea");
     txt.innerHTML = html;

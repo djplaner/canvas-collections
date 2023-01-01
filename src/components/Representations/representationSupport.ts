@@ -89,17 +89,23 @@ export function modifyCanvasModulesList(collection, modules, editMode) {
 
   debug(` --- moduleIds ${moduleIds} --- otherModuleIds ${otherModuleIds} ---`)
 
+
   // for other modules
   // - if collection is not null hide the module
   // - if null, create an unallocated ModuleConfiguration
   otherModuleIds.forEach((moduleId) => {
     const module = document.getElementById(`context_module_${moduleId}`);
     if (module ) {
-      if (modules[moduleId].collection) {
+      if (modules[moduleId].collection!==null ) {
+        // hide any Canvas module elements that have a collection defined but
+        // are not the current collection
         module.style.display = "none";
       } else {
         if (editMode) {
-          addModuleConfiguration(moduleId, false);
+          // in edit mode ensure that unallocated modules are visible and 
+          // have a ModuleConfiguration component
+          module.style.display = "block";
+          addModuleConfiguration(moduleId);
         }
       }
     }
@@ -113,18 +119,22 @@ export function modifyCanvasModulesList(collection, modules, editMode) {
     if (editMode) {
       addModuleConfiguration(moduleId);
     }
+    // make each current collection moduleId is visible
+    const module = document.getElementById(`context_module_${moduleId}`);
+    if (module) {
+      module.style.display = "block";
+    }
   });
 }
 
 /**
  * @function addModuleConfiguration
  * @param moduleId
- * @param editMode
- * @description add an appropriate ModuleConfiguration component to each
- * Canvas module. 
+ * @description add an appropriate ModuleConfiguration component to the
+ * matching Canvas module element
  */
-function addModuleConfiguration(moduleId, allocated = true) {
-  debug(`XXXXX addModuleConfiguration ${moduleId} allocated ${allocated}`)
+function addModuleConfiguration(moduleId) {
+  debug(`XXXXX addModuleConfiguration ${moduleId} `)
   const module = document.getElementById(`context_module_${moduleId}`);
   if (module) {
     module.style.display = "block";
@@ -144,7 +154,6 @@ function addModuleConfiguration(moduleId, allocated = true) {
       target: moduleConfig,
       props: {
         module: moduleId,
-        allocated: allocated
       },
     });
     debug('XXXXX moduleConfigComponent')

@@ -3,7 +3,7 @@
    * Define the component for configuring and individual module
    * @property {Number} module - the module being configured
    * @property {Boolean} allocated - whether the module has been allocated to a collection
-  */
+   */
   import { collectionsStore } from "../stores";
   import { onMount } from "svelte";
 
@@ -12,10 +12,12 @@
   import { debug } from "../lib/debug";
 
   export let module: Number;
-  export let allocated: boolean
 
-  debug(`______________ ModuleConfiguration.svelte - module ${module} allocated ${allocated} _______________`)
+  debug(
+    `______________ ModuleConfiguration.svelte - module ${module} allocated ${allocated} _______________`
+  );
 
+  $: allocated = $collectionsStore["MODULES"][module].collection !== null;
   let editor;
   let html = $collectionsStore["MODULES"][module].description;
 
@@ -23,7 +25,7 @@
   debug($collectionsStore);
 
   onMount(() => {
-    const editorId=`cc-module-config-${module}-description`
+    const editorId = `cc-module-config-${module}-description`;
     let editorElem = document.getElementById(editorId);
     if (editorElem) {
       editorElem.onkeydown = (e) => e.stopPropagation();
@@ -31,6 +33,10 @@
     }
   });
 
+  function toggleModuleConfigShow() {
+    $collectionsStore["MODULES"][module].configVisible =
+      !$collectionsStore["MODULES"][module].configVisible;
+  }
   /* 
     <textarea
       id="cc-module-config-{module}-XXdescription"
@@ -43,20 +49,25 @@
   <link href="//cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet" />
 </svelte:head>
 
-
-
-
 <div class="cc-module-config border border-trbl" id="cc-module-config-{module}">
-  {#if ! allocated}
-  <div
-    class="cc-module-no-collection"
-    id="cc-module-config-no-collection-{module}"
-  >
-    No collection allocated
-  </div>
+  {#if !allocated}
+    <div
+      class="cc-module-no-collection"
+      id="cc-module-config-no-collection-{module}"
+    >
+      No collection allocated
+    </div>
   {/if}
   <span>
-    <i id="cc-module-config-{module}-switch" class="icon-mini-arrow-right" />
+    <i
+      id="cc-module-config-{module}-switch"
+      class="{$collectionsStore['MODULES'][module].configVisible
+        ? 'icon-mini-arrow-down'
+        : 'icon-mini-arrow-right'} cc-module-icon"
+      on:click={toggleModuleConfigShow}
+      on:keydown={toggleModuleConfigShow}
+    />
+
     Configure Collections for
     <em>{$collectionsStore["MODULES"][module].name}</em>
     <a
@@ -68,43 +79,45 @@
     </a>
   </span>
 
-  <div class="cc-module-config-detail">
+  {#if $collectionsStore["MODULES"][module].configVisible}
+    <div class="cc-module-config-detail">
+      <div class="cc-collection-description">
+        <a
+          id="cc-about-basic-module-collection"
+          href="https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#allocate-the-modules"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <i class="icon-question cc-module-icon" />
+        </a>
+        <label for="cc-module-config-{module}-collection">Collection</label>
+        <input
+          type="text"
+          id="cc-module-config-{module}-collection"
+          name="cc-module-config-{module}-collection"
+          value={$collectionsStore["MODULES"][module].collection}
+        />
+      </div>
+    </div>
     <div class="cc-collection-description">
       <a
-        id="cc-about-basic-module-collection"
-        href="https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#allocate-the-modules"
+        id="cc-about-module-description"
+        href="https://djplaner.github.io/canvas-collections/reference/objects/overview/#description"
         target="_blank"
         rel="noreferrer"
       >
         <i class="icon-question cc-module-icon" />
       </a>
-      <label for="cc-module-config-{module}-collection">Collection</label>
-      <input
-        type="text"
-        id="cc-module-config-{module}-collection"
-        name="cc-module-config-{module}-collection"
-        value={$collectionsStore["MODULES"][module].collection}
+      <label for="cc-module-config-{module}-XXdescription">Description</label>
+
+      <Editor
+        {html}
+        contentId="cc-module-config-{module}-description"
+        on:change={(evt) =>
+          ($collectionsStore["MODULES"][module].description = evt.detail)}
       />
     </div>
-  </div>
-  <div class="cc-collection-description">
-    <a
-      id="cc-about-module-description"
-      href="https://djplaner.github.io/canvas-collections/reference/objects/overview/#description"
-      target="_blank"
-      rel="noreferrer"
-    >
-      <i class="icon-question cc-module-icon" />
-    </a>
-    <label for="cc-module-config-{module}-XXdescription">Description</label>
-
-    <Editor
-      {html}
-      contentId="cc-module-config-{module}-description"
-      on:change={(evt) =>
-        ($collectionsStore["MODULES"][module].description = evt.detail)}
-    />
-  </div>
+  {/if}
 </div>
 
 <style>

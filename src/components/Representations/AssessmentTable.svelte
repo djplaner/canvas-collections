@@ -33,7 +33,7 @@
       collection,
       $collectionsStore["MODULES"]
     );
-    //modifyCanvasModulesList(moduleIds, $collectionsStore["MODULES"],$configStore['editMode']);
+    //modifyCanvasModulesList(collection, $collectionsStore["MODULES"],$configStore['editMode']);
   }
 
   /** TODO
