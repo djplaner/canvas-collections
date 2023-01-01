@@ -103,7 +103,7 @@
 
   function toggleCollectionsSwitch() {
     ccOn = !ccOn;
-    $collectionsStore["STATUS"] = (ccOn ? "on" : "off");
+    $collectionsStore["STATUS"] = ccOn ? "on" : "off";
     $configStore["needToSaveCollections"] = true;
     // modify the display accordingly
     if (ccOn) {
@@ -168,24 +168,18 @@
    * @function beforeUnload
    * @param event
    * @description If when leaving the page there are unsaved changes, then
-   * save them and give the user a bit of a warning
-   * TODO the warning is somewhat misleading (due to browser limits on what JS
-   * can do) Is there a better way to do this?
-   * Maybe just do the return false and not the warning?
+   * save them
    */
   function beforeUnload(event) {
-    if ($configStore["needToSaveCollections"] && $configStore["editMode"]) {
-      event.preventDefault();
-      collectionsDetails.saveCollections(
-        $configStore["editMode"],
-        $configStore["needToSaveCollections"]
-      );
-      return (event.returnValue = "Are you sure you want to close?");
-    }
+    event.preventDefault();
+    collectionsDetails.saveCollections(
+      $configStore["editMode"],
+      $configStore["needToSaveCollections"]
+    );
   }
 </script>
 
-<svelte:window on:beforeunload={beforeUnload} /> 
+<svelte:window on:beforeunload={beforeUnload} />
 {#if editMode && modulesPage}
   <div class="cc-switch-container">
     <div class="cc-switch-title">
@@ -226,8 +220,10 @@
             ? "cc-active-save-button"
             : "cc-save-button"}
           id="cc-save-button"
-          on:click={collectionsDetails.saveCollections( $configStore["editMode"], $configStore["needToSaveCollections"])}
-          >Save</button
+          on:click={collectionsDetails.saveCollections(
+            $configStore["editMode"],
+            $configStore["needToSaveCollections"]
+          )}>Save</button
         >
         <!--  saveButtonClass = "cc-active-save-button"; -->
       </div>
