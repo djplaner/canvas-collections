@@ -86,12 +86,14 @@
               <svelte:component
                 this={BANNER_TRANSLATION[$collectionsStore["MODULES"][moduleId].banner]}
                 moduleId={moduleId} />
-<!--              $**IMAGE_IFRAME** $**DATE_WIDGET** $**PUBLISHED** 
-              $**FYI_TEXT** -->
+<!--               $**DATE_WIDGET** -->
               {#if $collectionsStore["MODULES"][moduleId].fyi}
                 <div class="cc-card-fyi">
                   <span class="cc-fyi-text">{$collectionsStore["MODULES"][moduleId].fyiText}</span>
                 </div>
+              {/if}
+              {#if ! $collectionsStore["MODULES"][moduleId].published}
+              <div class="cc-card-published">Unpublished</div>
               {/if}
             </div>
             <div class="cc-card-content-height">
