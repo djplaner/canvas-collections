@@ -3,7 +3,11 @@
    * Implement configuration interface for an individual collection
    */
 
-  import { collectionsStore, configStore, representationsStore } from "../../stores";
+  import {
+    collectionsStore,
+    configStore,
+    representationsStore,
+  } from "../../stores";
   import { getCollectionModuleIds } from "../Representations/representationSupport";
 
   export let collectionName: string;
@@ -35,9 +39,11 @@
   let moduleCount = modules.length;
   let moduleName = moduleCount === 1 ? "module" : "modules";
 
-  debug($representationsStore)
+  debug($representationsStore);
 
-  let availableRepresentations = Object.getOwnPropertyNames($representationsStore);
+  let availableRepresentations = Object.getOwnPropertyNames(
+    $representationsStore
+  );
 
   debug($collectionsStore["COLLECTIONS"]);
 
@@ -163,15 +169,12 @@
    * 3. Remove the collection from $collectionsStore["COLLECTIONS_ORDER"]
    * 4. If currently the DEFAULT_ACTIVE_COLLECTION Change the DEFAULT_ACTIVE_COLLECTION to the first collection left
    * 5. Set the collection attribute for all modules in the collection to "none"
-   * 
-  */
+   *
+   */
 
- function changeCollectionName(event) {
-  debug("changeCollectionName");
-  debug(event);
-
-  const newCollectionName = event.target.value;
-      // confirm that they actually want to delete the collection
+  function changeCollectionName(event) {
+    const newCollectionName = event.target.value;
+    // confirm that they actually want to delete the collection
     if (
       !confirm(
         `Are you sure you want to change the collection's name \nfrom "${collectionName}" to "${newCollectionName}"`
@@ -180,9 +183,6 @@
       return;
     }
 
-
-    debug("----------------- BEFORE changeCollectionName")
-    debug($collectionsStore);
     // modify collectionName in array $collectionsStore["COLLECTIONS_ORDER"] to newCollectionName
     let index = $collectionsStore["COLLECTIONS_ORDER"].indexOf(collectionName);
     $collectionsStore["COLLECTIONS_ORDER"][index] = newCollectionName;
@@ -206,11 +206,11 @@
       }
     }
     // rename the collectionName key in $collectionsStore["COLLECTIONS"] to newCollectionName
-    $collectionsStore["COLLECTIONS"][newCollectionName] = $collectionsStore["COLLECTIONS"][collectionName];
+    $collectionsStore["COLLECTIONS"][newCollectionName] =
+      $collectionsStore["COLLECTIONS"][collectionName];
     delete $collectionsStore["COLLECTIONS"][collectionName];
-
-
- }
+    $configStore["needToSaveCollections"]=true;
+  }
 </script>
 
 <!-- {#if !removed} -->
@@ -280,6 +280,7 @@
         bind:value={$collectionsStore["COLLECTIONS"][collectionName][
           "representation"
         ]}
+        on:change={() => ($configStore["needToSaveCollections"] = true)}
       >
         >
         {#each availableRepresentations as representation}
