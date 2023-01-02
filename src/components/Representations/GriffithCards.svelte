@@ -5,10 +5,13 @@
    */
 
   import { collectionsStore, modulesStore, configStore } from "../../stores";
+  import BannerIframe from "./GriffithCards/BannerIframe.svelte";
+  import BannerColour from "./GriffithCards/BannerColour.svelte";
+  import BannerImage from "./GriffithCards/BannerImage.svelte";
 
   import {
     getCollectionModuleIds,
-	modifyCanvasModulesList,
+    modifyCanvasModulesList,
     generateModuleDate,
     checkModuleMetaData,
   } from "./representationSupport";
@@ -16,16 +19,46 @@
 
   export let collection: string;
 
-  debug("_______________ Cards.svelte __collection " + collection + " _____________");
+  const BANNER_TRANSLATION = {
+    image: BannerImage,
+    colour: BannerColour,
+    iframe: BannerIframe,
+  };
+
+  debug(
+    "_______________ Cards.svelte __collection " + collection + " _____________"
+  );
   debug($modulesStore);
 
   // calculate the moduleIds belonging to collection
   let moduleIds;
-  $: { moduleIds = getCollectionModuleIds(
-    collection,
-    $collectionsStore["MODULES"]
-  );
-  //modifyCanvasModulesList(moduleIds, $collectionsStore["MODULES"],$configStore['editMode'])
+  $: {
+    moduleIds = getCollectionModuleIds(
+      collection,
+      $collectionsStore["MODULES"]
+    );
+    //modifyCanvasModulesList(moduleIds, $collectionsStore["MODULES"],$configStore['editMode'])
+  }
+
+  /**
+   * @function cardClick
+   * @param event
+   * @description Handle click within a div.cc-clickable-card by
+   * - find the parent div.cc-clickable-card
+   *   If there isn't one, do nothing
+   * - finding the a.cc-card-link within the div
+   * - clicking it
+   */
+  function cardClick(event) {
+    // can we find the parent div.cc-clickable-card
+    let card = event.target.closest("div.cc-clickable-card");
+    if (card) {
+      // find the a.cc-card-link within card and click it
+      let link = card.querySelector("a.cc-card-link");
+      if (link) {
+        link.click();
+      }
+    }
   }
 </script>
 
@@ -34,13 +67,32 @@
 <div class="cc-card-interface cc-representation">
   {#each moduleIds as moduleId}
     {#if !(!$collectionsStore["MODULES"][moduleId].published && !$configStore["editMode"])}
-      <!--<div id="cc_module_$**module.id**" class="$**cardClass**">-->
-      <div class="cc-clickable-card">
+      <div
+        id="cc_module_{moduleId}"
+        class="{$collectionsStore["MODULES"][moduleId].fyi ? "cc-unclickable-card" : "cc-clickable-card"}"
+        on:click|once={cardClick}
+        on:keydown|once={cardClick}
+      >
         <div id="cc_module_{moduleId}" class="cc-card">
           <div class="cc-card-flex">
             <div class="cc-card-banner-container" data-moduleid={moduleId}>
-              $**CARD_LINK** $**IMAGE_IFRAME** $**DATE_WIDGET** $**PUBLISHED**
+              <a
+                class="cc-card-link"
+                href="/courses/{$configStore[
+                  'courseId'
+                ]}/modules#module_{moduleId}"
+                style="">&nbsp;</a
+              >
+              <svelte:component
+                this={BANNER_TRANSLATION[$collectionsStore["MODULES"][moduleId].banner]}
+                moduleId={moduleId} />
+              $**IMAGE_IFRAME** $**DATE_WIDGET** $**PUBLISHED** 
               $**FYI_TEXT**
+              {#if $collectionsStore["MODULES"][moduleId].fyi}
+                <div class="cc-card-fyi">
+                  <span class="cc-fyi-text">{$collectionsStore["MODULES"][moduleId].fyiText}</span>
+                </div>
+              {/if}
             </div>
             <div class="cc-card-content-height">
               $**CONTENT_CARD_LINK**

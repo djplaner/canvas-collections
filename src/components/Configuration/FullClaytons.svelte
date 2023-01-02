@@ -3,6 +3,7 @@
 	import { debug } from "../../lib/debug";
 
 	function fullClaytons(navigationOption) {
+		// TODO
 			debug(`fullClaytons ${navigationOption}`);
 	}
 </script>

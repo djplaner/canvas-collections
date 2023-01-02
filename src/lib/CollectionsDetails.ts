@@ -131,15 +131,16 @@ export class CollectionsDetails {
 
     this.finishedCallBack();
 
-    /*
-		// add a COLLECTIONS_ORDER array to the config if it's not there
-		if (!this.parentController.cc_configuration.COLLECTIONS_ORDER) {
-			this.parentController.cc_configuration.COLLECTIONS_ORDER = Object.keys(this.parentController.cc_configuration.COLLECTIONS);
-		}
-		// Need to decode some html entities
-		// this.cc_configuration.MODULES hash description and collection
-		for (let key in this.parentController.cc_configuration.MODULES) {
-			const module = this.parentController.cc_configuration.MODULES[key];
+    // add a COLLECTIONS_ORDER array to the config if it's not there
+    if (!this.collections.hasOwnProperty("COLLECTIONS_ORDER")) {
+      this.collections["COLLECTIONS_ORDER"] = Object.keys(
+        this.collections["COLLECTIONS"]
+      );
+    }
+    // Need to decode some html entities
+    // this.cc_configuration.MODULES hash description and collection
+    /*		for (let key in this.collections['MODULES']) {
+			const module = this.collections['MODULES'][key];
 			module.description = this.decodeHTML(module.description);
 			module.collection = this.decodeHTML(module.collection);
 			module.name = this.decodeHTML(module.name);
@@ -150,7 +151,7 @@ export class CollectionsDetails {
 			if (module.hasOwnProperty('image') && module.image.startsWith('/')) {
 				module.image = `https://${window.location.hostname}${module.image}`;
 			}
-		}
+		} 
 		// double check that we're not an import from another course
 		let courseImages = parsed.querySelector('div.cc-card-images');
 		const importConverted = this.checkConvertImport(courseImages);
@@ -199,8 +200,8 @@ export class CollectionsDetails {
         module.description = this.decodeHTML(module.description);
         module.collection = this.decodeHTML(module.collection);
         module.name = this.decodeHTML(module.name);
-        if (module.hasOwnProperty("iframe")) {
-          module.iframe = this.decodeHTML(module.iframe);
+        if (module.hasOwnProperty("iframe") && module.iframe !== "") {
+          module.iframe = this.decodeHTML(module.iframe, true);
         }
         // need to check the URL for image as the RCE screws with the URL
         // TODO is this needed?
@@ -241,13 +242,24 @@ export class CollectionsDetails {
    * @param html - HTML
    * @returns {string} - removed any HTML encodings and sanitised
    */
-  decodeHTML(html: string) {
+  decodeHTML(html: string, iframeAllowed = false) {
     let txt = document.createElement("textarea");
     txt.innerHTML = html;
     let value = txt.value;
 
     // do some sanitisation of the HTML https://github.com/apostrophecms/sanitize-html
-    value = sanitizeHtml(value);
+    let allowedTags = sanitizeHtml.defaults.allowedTags;
+    let allowedAttributes = {};
+    if (iframeAllowed) {
+      allowedTags = allowedTags.concat("iframe");
+      allowedAttributes = {
+        iframe: ["src", "width", "height", "frameborder", "allowfullscreen"],
+      };
+    }
+    value = sanitizeHtml(value, {
+      allowedTags: allowedTags,
+      allowedAttributes: allowedAttributes,
+    });
     return value;
   }
 
@@ -281,9 +293,9 @@ export class CollectionsDetails {
 
       debug(`saveCollections callUrl = ${callUrl}`);
 
-      debug('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
-      debug(this.collections)
-      debug('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
+      debug("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+      debug(this.collections);
+      debug("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
 
       const content = this.generateConfigPageContent();
 
