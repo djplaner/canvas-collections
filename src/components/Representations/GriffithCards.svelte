@@ -86,8 +86,8 @@
               <svelte:component
                 this={BANNER_TRANSLATION[$collectionsStore["MODULES"][moduleId].banner]}
                 moduleId={moduleId} />
-              $**IMAGE_IFRAME** $**DATE_WIDGET** $**PUBLISHED** 
-              $**FYI_TEXT**
+<!--              $**IMAGE_IFRAME** $**DATE_WIDGET** $**PUBLISHED** 
+              $**FYI_TEXT** -->
               {#if $collectionsStore["MODULES"][moduleId].fyi}
                 <div class="cc-card-fyi">
                   <span class="cc-fyi-text">{$collectionsStore["MODULES"][moduleId].fyiText}</span>
@@ -473,5 +473,9 @@
     top: 0;
     left: 0;
     z-index: 1;
+  }
+
+  .cc-card-link {
+    position: absolute;
   }
 </style>
