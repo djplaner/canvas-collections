@@ -60,7 +60,7 @@
   >
     <i class="icon-question cc-module-icon" />
   </a>
-  <strong>Add a new XXCollection</strong>
+  <strong>Add a new Collection</strong>
 
   <div class="cc-config-collection border border-trbl">
     <div class="ic-Form-control" style="margin-bottom: 0px">

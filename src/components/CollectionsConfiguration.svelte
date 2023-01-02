@@ -9,6 +9,7 @@
 
   import ExistingCollections from "./Configuration/ExistingCollections.svelte";
   import NewCollection from "./Configuration/NewCollection.svelte";
+  import FullClaytons from "./Configuration/FullClaytons.svelte";
 
   import { debug } from "../lib/debug";
   debug("______________ CollectionsConfiguration.svelte _______________")
@@ -21,6 +22,7 @@
   <div id="cc-config-body">
     <ExistingCollections />
     <NewCollection />
+    <FullClaytons />
   </div>
 </div>
 
