@@ -30,7 +30,7 @@
     <label for="cc-config-full-claytons-navigation-option"
       >Navigation Bar Options</label
     >
-    <div id="cc-config-full-claytons-navigation-option">
+    <div class="cc-config-full-claytons-navigation-option">
       <button class="btn" on:click={() => fullClaytons("none")}>None</button>
       <button class="btn" on:click={() => fullClaytons("pages")}>Pages</button>
       <button class="btn" on:click={() => fullClaytons("tabs")}>Tabs</button>
@@ -39,4 +39,11 @@
 </div>
 
 <style>
+	.cc-config-full-claytons-navigation-option {
+		text-align: center;
+	}
+	.cc-config-full-claytons-navigation-option button {
+		font-size: 0.8em;
+		padding: 0.5em;
+	}
 </style>
