@@ -10,8 +10,8 @@
   import BannerImage from "./GriffithCards/BannerImage.svelte";
 
   import {
-    getCollectionModuleIds,
-    modifyCanvasModulesList,
+    getCollectionCanvasModules,
+//    modifyCanvasModulesList,
     generateModuleDate,
     checkModuleMetaData,
   } from "./representationSupport";
@@ -31,9 +31,9 @@
   debug($modulesStore);
 
   // calculate the moduleIds belonging to collection
-  let moduleIds;
+  let modules;
   $: {
-    moduleIds = getCollectionModuleIds(
+    modules = getCollectionCanvasModules(
       collection,
       $collectionsStore["MODULES"]
     );
@@ -102,41 +102,41 @@
 <h3>This is the cards representation - collection {collection}</h3>
 
 <div class="cc-card-interface cc-representation">
-  {#each moduleIds as moduleId}
-    {#if !(!$collectionsStore["MODULES"][moduleId].published && !$configStore["editMode"])}
+  {#each modules as theModule}
+    {#if !(!$collectionsStore["MODULES"][theModule.id].published && !$configStore["editMode"])}
       <div
-        id="cc_module_{moduleId}"
-        class={$collectionsStore["MODULES"][moduleId].fyi
+        id="cc_module_{theModule.id}"
+        class={$collectionsStore["MODULES"][theModule.id].fyi
           ? "cc-unclickable-card"
           : "cc-clickable-card"}
         on:click|once={cardClick}
         on:keydown|once={cardClick}
       >
-        <div id="cc_module_{moduleId}" class="cc-card">
+        <div id="cc_module_{theModule.id}" class="cc-card">
           <div class="cc-card-flex">
-            <div class="cc-card-banner-container" data-moduleid={moduleId}>
+            <div class="cc-card-banner-container" data-moduleid={theModule.id}>
               <a
                 class="cc-card-link"
                 href="/courses/{$configStore[
                   'courseId'
-                ]}/modules#module_{moduleId}"
+                ]}/modules#module_{theModule.id}"
                 style="">&nbsp;</a
               >
               <svelte:component
                 this={BANNER_TRANSLATION[
-                  $collectionsStore["MODULES"][moduleId].banner
-                ]}
-                {moduleId}
+                  $collectionsStore["MODULES"][theModule.id].banner
+                ]} 
+                moduleId={theModule.id}
               />
               <!--               $**DATE_WIDGET** -->
-              {#if $collectionsStore["MODULES"][moduleId].fyi}
+              {#if $collectionsStore["MODULES"][theModule.id].fyi}
                 <div class="cc-card-fyi">
                   <span class="cc-fyi-text"
-                    >{$collectionsStore["MODULES"][moduleId].fyiText}</span
+                    >{$collectionsStore["MODULES"][theModule.id].fyiText}</span
                   >
                 </div>
               {/if}
-              {#if !$collectionsStore["MODULES"][moduleId].published}
+              {#if !$collectionsStore["MODULES"][theModule.id].published}
                 <div class="cc-card-published">Unpublished</div>
               {/if}
             </div>
@@ -145,15 +145,15 @@
               <div class="$**cardContentClass**">
                 <div class="cc-card-label">
                   <span class="cc-card-label">
-                    {$collectionsStore["MODULES"][moduleId].label}
-                    {$collectionsStore["MODULES"][moduleId].actualNum}
+                    {$collectionsStore["MODULES"][theModule.id].label}
+                    {$collectionsStore["MODULES"][theModule.id].actualNum}
                   </span>
                   <h3 class="cc-card-title" data-moduleid="$**module.id**">
-                    {deLabelModuleName(moduleId)}
+                    {deLabelModuleName(theModule.id)}
                   </h3>
                 </div>
                 <div class="cc-card-description">
-                  {@html $collectionsStore["MODULES"][moduleId].description}
+                  {@html $collectionsStore["MODULES"][theModule.id].description}
                 </div>
               </div>
             </div>

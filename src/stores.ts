@@ -13,8 +13,8 @@ import AssessmentTable from "./components/Representations/AssessmentTable.svelte
 // - STATUS - string "on" or "off"
 export const collectionsStore = writable({});
 
-// To be a dict of dicts, containing Canvas module information
-export const modulesStore = writable({});
+// Array of Canvas module information in order of display
+export const modulesStore = writable([]);
 
 // Object providing basic info about context
 // - courseId

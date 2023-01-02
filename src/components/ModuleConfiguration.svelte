@@ -13,11 +13,12 @@
 
   export let module: Number;
 
+
   debug(
     `______________ ModuleConfiguration.svelte - module ${module} allocated ${allocated} _______________`
   );
-
   $: allocated = $collectionsStore["MODULES"][module].collection !== null;
+
   let html = $collectionsStore["MODULES"][module].description;
 
   debug("-------- collectionsStore");
@@ -28,7 +29,9 @@
     let editorElem = document.getElementById(editorId);
     if (editorElem) {
       editorElem.onkeydown = (e) => e.stopPropagation();
-    }
+    } /*else {
+      alert(`No element with id ${editorId}`)
+    }*/
   });
 
   function toggleModuleConfigShow() {
@@ -36,7 +39,11 @@
       !$collectionsStore["MODULES"][module].configVisible;
     $configStore["needToSaveCollections"] = true;
   }
+// cc-module-config-33347-description
+// 33336
+// 33337
 </script>
+ 
 
 <div class="cc-module-config border border-trbl" id="cc-module-config-{module}">
   {#if !allocated}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { debug } from "svelte/internal";
   /**
    * AssessmentTable
    * - Accessible table for assessment information
@@ -14,11 +15,11 @@
 
   import { collectionsStore, modulesStore, configStore } from "../../stores";
   import {
-    getCollectionModuleIds,
-    modifyCanvasModulesList,
+    getCollectionCanvasModules,
+//    modifyCanvasModulesList,
     generateModuleDate,
     checkModuleMetaData,
-  } from "./representationSupport.ts";
+  } from "./representationSupport";
 
   export let collection: string;
 
@@ -27,14 +28,18 @@
   // TODO - this isn't right, the prop isn't being dynamically updated
   //collection = $configStore['currentCollection'];
 
-  let moduleIds;
+  let modules;
   $: {
-    moduleIds = getCollectionModuleIds(
+    modules = getCollectionCanvasModules(
       collection,
       $collectionsStore["MODULES"]
     );
-    //modifyCanvasModulesList(collection, $collectionsStore["MODULES"],$configStore['editMode']);
+    console.log("assessment table");
+    console.log(modules)
+    console.log('--- moduleStore')
+    console.log($modulesStore)
   }
+
 
   /** TODO
    * Finish generate module date
@@ -68,8 +73,8 @@
       </tr>
     </thead>
     <tbody>
-      {#each moduleIds as moduleId}
-        {#if !(!$collectionsStore["MODULES"][moduleId].published && !$configStore["editMode"])}
+      {#each modules as module}
+        {#if !(!$collectionsStore["MODULES"][module.id].published && !$configStore["editMode"])}
           <tr role="row">
             <td role="cell">
               <span class="cc-responsive-table__heading" aria-hidden="true"
@@ -78,7 +83,8 @@
               <div class="cc-table-cell-text">
                 <p>
                   <a href="MODULE-ID">
-                    {$modulesStore[moduleId].name}
+                    <!-- {$modulesStore[module.id].name} -->
+                    {$collectionsStore["MODULES"][module.id].name}
                   </a>
                 </p>
               </div>
@@ -88,7 +94,7 @@
                 >Description</span
               >
               <div class="cc-table-cell-text">
-                <p>{@html $collectionsStore["MODULES"][moduleId].description}</p>
+                <p>{@html $collectionsStore["MODULES"][module.id].description}</p>
               </div>
             </td>
             <td role="cell">
@@ -98,7 +104,7 @@
               <div class="cc-table-cell-text">
                 <p>
                   {checkModuleMetaData(
-                    $collectionsStore["MODULES"][moduleId],
+                    $collectionsStore["MODULES"][module.id],
                     "weighting",
                     $configStore["editMode"]
                   )}
@@ -111,7 +117,7 @@
               >
               <div class="cc-table-cell-text">
                 <p>
-                  {generateModuleDate($collectionsStore["MODULES"][moduleId])}
+                  {generateModuleDate($collectionsStore["MODULES"][module.id])}
                 </p>
               </div>
             </td>
@@ -122,7 +128,7 @@
               <div class="cc-table-cell-text">
                 <p>
                   {checkModuleMetaData(
-                    $collectionsStore["MODULES"][moduleId],
+                    $collectionsStore["MODULES"][module.id],
                     "learning outcomes",
                     $configStore["editMode"]
                   )}

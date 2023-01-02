@@ -2,13 +2,12 @@
   import { collectionsStore } from "../../../stores";
   export let moduleId: Number;
 
+
+//  console.log(`iframe moduleId ${moduleId} type ${typeof(moduleId)}`)
   // check that the format of the iframe is correct
   const match = $collectionsStore["MODULES"][moduleId].iframe.match(
     /^<iframe.*src="(.*)".*><\/iframe>$/
   );
-  console.log('--------------------------------------------')
-  console.log(`iframe: ${$collectionsStore["MODULES"][moduleId].iframe}`)
-  console.log($collectionsStore)
 </script>
 
 {#if match}

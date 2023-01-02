@@ -8,7 +8,7 @@
     configStore,
     representationsStore,
   } from "../../stores";
-  import { getCollectionModuleIds } from "../Representations/representationSupport";
+  import { getCollectionCanvasModules } from "../Representations/representationSupport";
 
   export let collectionName: string;
   export let order: Number;
@@ -32,7 +32,7 @@
     }
   } */
 
-  const modules = getCollectionModuleIds(
+  const modules = getCollectionCanvasModules(
     collectionName,
     $collectionsStore["MODULES"]
   );

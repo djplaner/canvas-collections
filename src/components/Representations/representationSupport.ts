@@ -3,27 +3,38 @@ import ModuleConfiguration from "../ModuleConfiguration.svelte";
 import { debug } from "../../lib/debug";
 
 /**
- * @function getCollectionModuleIds
+ * @function getCollectionCanvasModules
  * @param collection - Collection name
- * @param modules - Array of modules
- * @returns {Number[]} - Array of module ids
- * @description - Returns an array of module ids for a given collection
+ * @param modules - Array of all the modules
+ * @returns {module[]} - Array of modules
+ * @description - Returns an array of module belonging to a given collection
  */
-export function getCollectionModuleIds(collection, modules) {
-  const moduleIds = Object.keys(modules).filter((module) => {
+export function getCollectionCanvasModules(collection, allModules) {
+
+  let modules = [];
+
+  for (const module in allModules ) {
+    if (allModules[module].collection === collection) {
+      modules.push(allModules[module]);
+    }
+  }
+  return modules
+
+/*  const moduleIds = Object.keys(modules).filter((module) => {
     return (
       /*(
 				! allModules[module].published &&
 				$configStore['editMode']
-			) && */
+			) && 
       // the module belongs to the collection
       modules[module].collection === collection
     );
-  });
+  }); */
   // convert all the moduleIds to numbers
-  return moduleIds.map((moduleId) => {
+/*  return moduleIds.map((moduleId) => {
     return parseInt(moduleId, 10);
-  });
+  }); */
+
 }
 
 /**
@@ -70,20 +81,26 @@ export function generateModuleDate(module) {
 /**
  * @function modifyCanvasModulesList
  * @param collection  - string for current collection
- * @param modules - list of all modules
+ * @param modules - array of Canvas module objects
  * @description Modify Canvas's display of modules in three possible ways
  * 1. Hide all modules with collection defined and not in collection
  * 2. Ensure all modules in collection are showing
  * 3. If editMode add ModuleConfiguration components to the module
  */
-export function modifyCanvasModulesList(collection, modules, editMode) {
+export function modifyCanvasModulesList(collection, allModules, editMode) {
   debug(
     `_________________________________ modifyCanvasModulesList moduleIds ${collection} editMode ${editMode} _________________`
   );
 
-  const moduleIds = getCollectionModuleIds(collection, modules);
+  const modules = getCollectionCanvasModules(collection, allModules);
+  // create array moduleIds that contains the module.ids from modules
+  const moduleIds = modules.map((module) => {
+    return parseInt(module.id,10);
+  });
   // get all the moduleIds from modules not in moduleIds
-  const otherModuleIds = Object.keys(modules).filter((moduleId) => {
+  // - allModules is a list of modules ?? dict??
+  // - 
+  const otherModuleIds = Object.keys(allModules).filter((moduleId) => {
     return !moduleIds.includes(parseInt(moduleId, 10));
   });
 
@@ -96,7 +113,7 @@ export function modifyCanvasModulesList(collection, modules, editMode) {
   otherModuleIds.forEach((moduleId) => {
     const module = document.getElementById(`context_module_${moduleId}`);
     if (module ) {
-      if (modules[moduleId].collection!==null ) {
+      if (allModules[moduleId].collection!==null ) {
         // hide any Canvas module elements that have a collection defined but
         // are not the current collection
         module.style.display = "none";
@@ -133,14 +150,16 @@ export function modifyCanvasModulesList(collection, modules, editMode) {
  * @description add an appropriate ModuleConfiguration component to the
  * matching Canvas module element
  */
-function addModuleConfiguration(moduleId) {
+function addModuleConfiguration(moduleId:Number) {
   debug(`XXXXX addModuleConfiguration ${moduleId} `)
+  // get type of moduleId
+  debug(`type of moduleId ${typeof(moduleId)}`)
   const module = document.getElementById(`context_module_${moduleId}`);
   if (module) {
     module.style.display = "block";
   }
   // in editMode add div#cc-module-config-<moduleId> after div#<moduleId>
-  const insertDiv = document.getElementById(moduleId);
+  const insertDiv = document.getElementById(`${moduleId}`);
 
   if (insertDiv && !document.getElementById(`cc-module-config-${moduleId}`)) {
     const moduleConfig = document.createElement("div");
