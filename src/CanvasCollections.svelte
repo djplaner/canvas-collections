@@ -39,7 +39,7 @@
   // the actual data objects for canvas and collections data
   let canvasDetails = null;
   let collectionsDetails = null;
-  let saveInterval = null; 
+  let saveInterval = null;
 
   let ccOn = false;
   let ccPublished = true;
@@ -100,6 +100,7 @@
   function checkAllDataLoaded() {
     if (canvasDataLoaded && collectionsDataLoaded) {
       $collectionsStore = collectionsDetails.collections;
+      calculateActualNum();
       if (ccOn) {
         addCollectionsDisplay();
         if ($configStore["editMode"] && AUTO_SAVE) {
@@ -112,6 +113,52 @@
         }
       }
     }
+  }
+
+  /**
+   * @function calculateActualNum
+   * @description Once we have collections and canvas details calculate the
+   * attribute 'actualNum' for each module.
+   */
+  function calculateActualNum() {
+    let numCalculator = {};
+
+    debug("@@@@@@@@@@@@@@@@@ before");
+    debug($collectionsStore["MODULES"]);
+
+    debug(canvasDetails);
+    // loop through each module in the array canvasDetails['courseModules']
+    // and set the attribute 'actualNum' to the number of modules in the
+    // collection that precede it
+    for (let moduleId in canvasDetails.courseModules ){
+      //const moduleId = module.id;
+
+      // get the collections data about this module
+      const collectionsModule = $collectionsStore["MODULES"][moduleId];
+
+      if (collectionsModule) {
+        // does it have a hard coded num
+        if (collectionsModule.hasOwnProperty("num")) {
+          collectionsModule.actualNum = collectionsModule.num;
+        } else {
+          // if not, then calculate auto num based on the label and the
+          // order so far
+          const collectionName = collectionsModule.collection;
+          const label = collectionsModule.label;
+          if (
+            numCalculator.hasOwnProperty(collectionName) &&
+            numCalculator[collectionName].hasOwnProperty(label)
+          ) {
+            collectionsModule.actualNum = ++numCalculator[collectionName][label];
+          } else {
+            numCalculator[collectionName][label] = 1;
+            collectionsModule.actualNum = 1;
+          }
+        }
+      }
+    }
+    debug("@@@@@@@@@@@@@@@@@ after");
+    debug($collectionsStore["MODULES"]);
   }
 
   /**
@@ -185,14 +232,14 @@
   /**
    * @function onDestroy
    * @description If there is a saveInterval, then clear it
-   * TODO not really sure this is needed, as I don't explicitly destroy the 
+   * TODO not really sure this is needed, as I don't explicitly destroy the
    * component and it may not be a problem when navigating away
-  */
-  onDestroy( () => {
+   */
+  onDestroy(() => {
     if (saveInterval) {
       clearInterval(saveInterval);
     }
-  })
+  });
 
   /**
    * @function beforeUnload

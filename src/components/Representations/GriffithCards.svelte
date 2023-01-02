@@ -60,6 +60,43 @@
       }
     }
   }
+
+  /**
+   * @function deLabelModuleName
+   * @param moduleId
+   * @return string Module name without label and number
+   * @description Remove the label and number from the name
+   */
+  function deLabelModuleName(moduleId) {
+    const module = $collectionsStore["MODULES"][moduleId];
+    const existingName = module.name;
+
+    let prepend = "";
+    if (module.label) {
+      prepend = module.label;
+    }
+
+    let regex = new RegExp(`^${prepend}\\s*[:-]\\s*`);
+
+    if (module.actualNum) {
+      regex = new RegExp(`^${prepend}\\s*${module.actualNum}\\s*[:-]\\s*`);
+      prepend += ` ${module.actualNum}`;
+      // remove first char from CARD_LABEL if it is a space
+      if (prepend.charAt(0) === " ") {
+        prepend = prepend.substring(1);
+      }
+    }
+    prepend = `${prepend}: `;
+    let newName = existingName;
+    if (prepend !== ": ") {
+      // if we've not empty label and number
+      // modify existingName to remove prepend and any subsequent whitespace
+      //	newName = existingName.replace(prepend, '').trim();
+      newName = existingName.replace(regex, "").trim();
+    }
+
+    return newName;
+  }
 </script>
 
 <h3>This is the cards representation - collection {collection}</h3>
@@ -69,7 +106,9 @@
     {#if !(!$collectionsStore["MODULES"][moduleId].published && !$configStore["editMode"])}
       <div
         id="cc_module_{moduleId}"
-        class="{$collectionsStore["MODULES"][moduleId].fyi ? "cc-unclickable-card" : "cc-clickable-card"}"
+        class={$collectionsStore["MODULES"][moduleId].fyi
+          ? "cc-unclickable-card"
+          : "cc-clickable-card"}
         on:click|once={cardClick}
         on:keydown|once={cardClick}
       >
@@ -84,25 +123,33 @@
                 style="">&nbsp;</a
               >
               <svelte:component
-                this={BANNER_TRANSLATION[$collectionsStore["MODULES"][moduleId].banner]}
-                moduleId={moduleId} />
-<!--               $**DATE_WIDGET** -->
+                this={BANNER_TRANSLATION[
+                  $collectionsStore["MODULES"][moduleId].banner
+                ]}
+                {moduleId}
+              />
+              <!--               $**DATE_WIDGET** -->
               {#if $collectionsStore["MODULES"][moduleId].fyi}
                 <div class="cc-card-fyi">
-                  <span class="cc-fyi-text">{$collectionsStore["MODULES"][moduleId].fyiText}</span>
+                  <span class="cc-fyi-text"
+                    >{$collectionsStore["MODULES"][moduleId].fyiText}</span
+                  >
                 </div>
               {/if}
-              {#if ! $collectionsStore["MODULES"][moduleId].published}
-              <div class="cc-card-published">Unpublished</div>
+              {#if !$collectionsStore["MODULES"][moduleId].published}
+                <div class="cc-card-published">Unpublished</div>
               {/if}
             </div>
             <div class="cc-card-content-height">
               $**CONTENT_CARD_LINK**
               <div class="$**cardContentClass**">
                 <div class="cc-card-label">
-                  <span class="cc-card-label"> $**CARD_LABEL** </span>
+                  <span class="cc-card-label">
+                    {$collectionsStore["MODULES"][moduleId].label}
+                    {$collectionsStore["MODULES"][moduleId].actualNum}
+                  </span>
                   <h3 class="cc-card-title" data-moduleid="$**module.id**">
-                    {$modulesStore[moduleId].name}
+                    {deLabelModuleName(moduleId)}
                   </h3>
                 </div>
                 <div class="cc-card-description">
