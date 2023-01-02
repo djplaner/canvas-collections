@@ -296,3 +296,26 @@ export function removeCollectionsRepresentation() {
     representation.remove();
   }
 }
+
+/**
+ * @function removeModuleConfiguration 
+ * @param {Object} modules - hash of module objects keyed on moduleId
+ * @description loop through all the modules and remove div#cc-module-config-<moduleId>
+ */
+
+export function removeModuleConfiguration(modules: any) {
+  // loop thru the keys of the modules hash
+  Object.keys(modules).forEach((moduleId) => {
+    const moduleConfig = document.querySelector(
+      `div#cc-module-config-${moduleId}`
+    );
+    if (moduleConfig) {
+      moduleConfig.remove();
+    }
+    // make sure all the modules are visible
+    const module = document.getElementById(`context_module_${moduleId}`);
+    if (module) {
+      module.style.display = "block";
+    }
+  });
+}

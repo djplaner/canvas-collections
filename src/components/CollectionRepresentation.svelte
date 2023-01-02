@@ -12,8 +12,12 @@
    * TODO
    * - Should these components provide the method for modifying how canvas display modules?
    */
-  import { collectionsStore, configStore, representationsStore } from "../stores";
-/*  import GriffithCards from "./Representations/GriffithCards.svelte";
+  import {
+    collectionsStore,
+    configStore,
+    representationsStore,
+  } from "../stores";
+  /*  import GriffithCards from "./Representations/GriffithCards.svelte";
   import AssessmentTable from "./Representations/AssessmentTable.svelte";
   import CollectionOnly from "./Representations/CollectionOnly.svelte";
   */
@@ -27,27 +31,34 @@
   debug(
     `_______________ CollectionRepresentation.svelte __collection ${collection} _____________`
   );
+  debug($configStore);
 
   let representationComponent: any;
   $: {
-    const localRep = $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
-      "representation"
-    ];
+    const localRep =
+      $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
+        "representation"
+      ];
     if (!$representationsStore.hasOwnProperty(localRep)) {
       alert(
         `CollectionRepresentation component requires a valid representation prop. ${localRep} is not valid`
       );
     }
-    representationComponent = $representationsStore[localRep]
+    representationComponent = $representationsStore[localRep];
 
-    debug(`calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`)
-
-    modifyCanvasModulesList(
-      $configStore["currentCollection"],
-      $collectionsStore["MODULES"],
-      $configStore["editMode"]
-    );
-    debug(`after calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`)
+    if ($configStore["ccOn"]) {
+      debug(
+        `calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`
+      );
+      modifyCanvasModulesList(
+        $configStore["currentCollection"],
+        $collectionsStore["MODULES"],
+        $configStore["editMode"]
+      );
+      debug(
+        `after calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`
+      );
+    }
   }
 
   if (!collection) {

@@ -6,6 +6,7 @@
   import {
     addCollectionsRepresentation,
     removeCollectionsRepresentation,
+    removeModuleConfiguration
   } from "./lib/CanvasSetup";
   import { CanvasDetails } from "./lib/CanvasDetails";
   import { CollectionsDetails } from "./lib/CollectionsDetails";
@@ -31,6 +32,7 @@
     modulesPage: modulesPage,
     currentCollection: null,
     needToSaveCollections: false,
+    ccOn: false
   };
 
   // whether or data canvas and collections data loaded
@@ -41,7 +43,6 @@
   let collectionsDetails = null;
   let saveInterval = null;
 
-  let ccOn = false;
   let ccPublished = true;
 
   /**
@@ -67,11 +68,12 @@
     console.log("YYYYYYYY gotCollectionsDetails");
     console.log(collectionsDetails);
     //----- Range of updates to local data based on the now retrieved collections JSON
-    ccOn = collectionsDetails.ccOn;
+    //ccOn = collectionsDetails.ccOn;
+    $configStore["ccOn"] = collectionsDetails.ccOn;
     ccPublished = collectionsDetails.ccPublished;
 
     // if a student is viewing and no collections, then limit what is done
-    if (!(!ccOn && !$configStore["editMode"])) {
+    if (!(!$configStore["ccOn"] && !$configStore["editMode"])) {
       // if currentCollection is a number, then the URL include #cc-collection-<num>
       // Need to set current collection to the name matching that collection
       if (
@@ -101,7 +103,7 @@
     if (canvasDataLoaded && collectionsDataLoaded) {
       $collectionsStore = collectionsDetails.collections;
       calculateActualNum();
-      if (ccOn) {
+      if ($configStore["ccOn"]) {
         addCollectionsDisplay();
         if ($configStore["editMode"] && AUTO_SAVE) {
           saveInterval = setInterval(() => {
@@ -167,11 +169,11 @@
    */
 
   function toggleCollectionsSwitch() {
-    ccOn = !ccOn;
-    $collectionsStore["STATUS"] = ccOn ? "on" : "off";
+    $configStore["ccOn"] = !$configStore["ccOn"];
+    $collectionsStore["STATUS"] = $configStore["ccOn"] ? "on" : "off";
     $configStore["needToSaveCollections"] = true;
     // modify the display accordingly
-    if (ccOn) {
+    if ($configStore["ccOn"]) {
       addCollectionsDisplay();
     } else {
       removeCollectionsDisplay();
@@ -209,6 +211,7 @@
    */
   function removeCollectionsDisplay() {
     removeCollectionsRepresentation();
+    removeModuleConfiguration($collectionsStore["MODULES"])
   }
 
   onMount(async () => {
@@ -286,7 +289,7 @@
           type="checkbox"
           class="cc-toggle-checkbox"
           id="cc-switch"
-          bind:checked={ccOn}
+          bind:checked={$configStore["ccOn"]}
           on:click={toggleCollectionsSwitch}
         />
         <span class="cc-slider cc-round" />
