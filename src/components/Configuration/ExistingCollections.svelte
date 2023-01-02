@@ -5,7 +5,6 @@
    */
   import { collectionsStore } from "../../stores";
   import CollectionConfiguration from "./CollectionConfiguration.svelte";
-  import NewCollection from "./NewCollection.svelte";
 
   import { debug } from "../../lib/debug";
   debug("______________ ExistingCollections.svelte _______________");
@@ -36,18 +35,6 @@
       numCollections={$collectionsStore["COLLECTIONS_ORDER"].length}
     />
   {/each}
-</div>
-<div id="cc-config-new-collection">
-  <a
-    href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
-    target="_blank"
-    rel="noreferrer"
-  >
-    <i class="icon-question cc-module-icon" />
-  </a>
-  <strong>Add a new Collection</strong>
-
-  <NewCollection />
 </div>
 
 <style>

@@ -8,6 +8,7 @@
    */
 
   import ExistingCollections from "./Configuration/ExistingCollections.svelte";
+  import NewCollection from "./Configuration/NewCollection.svelte";
 
   import { debug } from "../lib/debug";
   debug("______________ CollectionsConfiguration.svelte _______________")
@@ -19,6 +20,7 @@
 <div class="cc-box-body">
   <div id="cc-config-body">
     <ExistingCollections />
+    <NewCollection />
   </div>
 </div>
 
