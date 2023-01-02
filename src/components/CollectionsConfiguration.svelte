@@ -12,7 +12,7 @@
   import FullClaytons from "./Configuration/FullClaytons.svelte";
 
   import { debug } from "../lib/debug";
-  debug("______________ CollectionsConfiguration.svelte _______________")
+  debug("______________ CollectionsConfiguration.svelte _______________");
 </script>
 
 <div class="cc-box-header">
@@ -20,9 +20,13 @@
 </div>
 <div class="cc-box-body">
   <div id="cc-config-body">
-    <ExistingCollections />
-    <NewCollection />
-    <FullClaytons />
+    <div id="cc-config-existing-collections">
+      <ExistingCollections />
+    </div>
+    <div id="cc-config-new-collection">
+      <NewCollection />
+      <FullClaytons />
+    </div>
   </div>
 </div>
 

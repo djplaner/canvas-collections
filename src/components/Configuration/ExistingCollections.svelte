@@ -15,7 +15,7 @@
   debug($collectionsStore["COLLECTIONS_ORDER"]);
 </script>
 
-<div id="cc-config-existing-collections">
+<!-- div id="cc-config-existing-collections"> -->
   <a
     href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#existing-collections"
     target="_blank"
@@ -35,7 +35,6 @@
       numCollections={$collectionsStore["COLLECTIONS_ORDER"].length}
     />
   {/each}
-</div>
 
 <style>
   p {

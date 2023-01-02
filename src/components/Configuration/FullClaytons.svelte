@@ -1,4 +1,10 @@
 <script lang="ts">
+
+	import { debug } from "../../lib/debug";
+
+	function fullClaytons(navigationOption) {
+			debug(`fullClaytons ${navigationOption}`);
+	}
 </script>
 
 <div style="margin-top:0.5em">
@@ -25,9 +31,9 @@
       >Navigation Bar Options</label
     >
     <div id="cc-config-full-claytons-navigation-option">
-      <button class="btn btn-primary">None</button>
-      <button class="btn btn-primary">Pages</button>
-      <button class="btn btn-primary">Tabs</button>
+      <button class="btn" on:click={() => fullClaytons("none")}>None</button>
+      <button class="btn" on:click={() => fullClaytons("pages")}>Pages</button>
+      <button class="btn" on:click={() => fullClaytons("tabs")}>Tabs</button>
     </div>
   </div>
 </div>

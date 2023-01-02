@@ -52,7 +52,6 @@
   }
 </script>
 
-<div id="cc-config-new-collection">
   <a
     href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
     target="_blank"
@@ -101,7 +100,6 @@
       >
     </fieldset>
   </div>
-</div>
 
 <style>
   .cc-collection-representation {
