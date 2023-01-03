@@ -319,6 +319,9 @@ export default class CollectionsModel {
 	 * Where convertedPageName is the lower-cased page name with spaces replaced by dashes
 	 * TODO
 	 * - This is an actual kludge.  Should be putting the actual URL in there somehow
+	 * Canvas code details on what it does 
+	 * https://github.com/instructure/canvas-lms/blob/6616736910820da0eba60fc8bd721382d8378a17/gems/canvas_stringex/README.rdoc
+	 * Which is basically slugify?
 	 * @param {String} pageName 
 	 */
 	calculatePageUrl(pageName) {
@@ -329,7 +332,18 @@ export default class CollectionsModel {
 		pageUrl = pageUrl.replace(/\/courses\/\d+\/.*/, `/courses/${courseId}/pages/`);
 
 		// convert the pageName to a URL friendly name
-		let convertedPageName = pageName.toLowerCase().replace(/ /g, '-');
+		//let convertedPageName = pageName.toLowerCase().replace(/ /g, '-');
+		String.prototype.slugify = function (separator = "-") {
+			return this
+				.toString()
+				.normalize('NFD')                   // split an accented letter in the base letter and the acent
+				.replace(/[\u0300-\u036f]/g, '')   // remove all previously split accents
+				.toLowerCase()
+				.trim()
+				.replace(/[^a-z0-9 ]/g, '')   // remove all chars not letters, numbers and spaces (to be replaced)
+				.replace(/\s+/g, separator);
+		};
+		let convertedPageName = pageName.slugify();
 		pageUrl += convertedPageName;
 		return pageUrl;
 	}

@@ -182,8 +182,29 @@ export default class CollectionsView extends cc_View {
 	 */
 	async findPage(pageName) {
 
-		let callUrl = `/api/v1/courses/${this.controller.parentController.courseId}/pages?` + new URLSearchParams(
-			{ 'search_term': pageName });
+		// KLUDGE/experiment
+		// rather than actually find a page modifying this to slugify the pageName
+		// and call it via URL
+
+		String.prototype.slugify = function (separator = "-") {
+			return this
+				.toString()
+				.normalize('NFD')                   // split an accented letter in the base letter and the acent
+				.replace(/[\u0300-\u036f]/g, '')   // remove all previously split accents
+				.toLowerCase()
+				.trim()
+ 		        .replace('@','at')
+				.replace(/[^a-z0-9 ]/g, '')   // remove all chars not letters, numbers and spaces (to be replaced)
+				.replace(/\s+/g, separator);
+		};
+		const slugifiedPageName = pageName.slugify();
+
+
+		//		let callUrl = `/api/v1/courses/${this.controller.parentController.courseId}/pages?` + new URLSearchParams(
+		//			{ 'search_term': pageName });
+
+		let callUrl = `/api/v1/courses/${this.controller.parentController.courseId}/pages/${slugifiedPageName}`;
+
 
 		DEBUG && console.log(`CollectionsView: findPage: callUrl = ${callUrl}`);
 
@@ -210,7 +231,9 @@ export default class CollectionsView extends cc_View {
 
 		// add the page content for the first found page
 		// TODO is this needed
-		this.addPageContent(data[0]);
+		//this.addPageContent(data[0]);
+		// if calling slugify there won't be more than 1
+		this.addPageContent(data);
 
 		if (data.length > 1) {
 			DEBUG && console.log(`CollectionsView: findPage multiple pages found for ${pageName}`);
@@ -308,7 +331,7 @@ export default class CollectionsView extends cc_View {
 		for (let module of modulesCollections) {
 			// if no collection for this module and in staff view, leave it here
 			// and maybe change the appearence here or later
-			if (!module.hasOwnProperty('collection') || module.collection === "" || module.collection ==="undefined") {
+			if (!module.hasOwnProperty('collection') || module.collection === "" || module.collection === "undefined") {
 				if (!editMode) {
 					const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
 					if (contextModule) {

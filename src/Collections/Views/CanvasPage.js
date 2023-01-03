@@ -3,7 +3,6 @@
  * - Representation for Canvas Collections that is given the name of a Canvas page
  * - It will hide all modules, get the content of the Canvas page, and display that
  * 
- * Currently hard coded to show a padlet embed, not yet getting page name data
  */
 
 import { cc_View } from '../../cc_View.js';
