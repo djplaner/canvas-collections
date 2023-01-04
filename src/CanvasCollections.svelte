@@ -125,15 +125,12 @@
   function calculateActualNum() {
     let numCalculator = {};
 
-    debug("@@@@@@@@@@@@@@@@@ before");
-    debug($collectionsStore["MODULES"]);
-
-    debug(canvasDetails);
     // loop through each module in the array canvasDetails['courseModules']
     // and set the attribute 'actualNum' to the number of modules in the
     // collection that precede it
-    for (let moduleId in canvasDetails.courseModules ){
-      //const moduleId = module.id;
+    //for (let moduleKey in canvasDetails.courseModules ){
+    canvasDetails.courseModules.forEach((module : {}) => {
+      const moduleId = module['id'];
 
       // get the collections data about this module
       const collectionsModule = $collectionsStore["MODULES"][moduleId];
@@ -147,20 +144,17 @@
           // order so far
           const collectionName = collectionsModule.collection;
           const label = collectionsModule.label;
-          if (
-            numCalculator.hasOwnProperty(collectionName) &&
-            numCalculator[collectionName].hasOwnProperty(label)
-          ) {
-            collectionsModule.actualNum = ++numCalculator[collectionName][label];
-          } else {
-            numCalculator[collectionName][label] = 1;
-            collectionsModule.actualNum = 1;
+          if ( ! numCalculator.hasOwnProperty(collectionName)  ) {
+            numCalculator[collectionName] = {};
+          }
+          if ( ! numCalculator[collectionName].hasOwnProperty(label)) {
+            numCalculator[collectionName][label] = 0;
+          }
+          numCalculator[collectionName][label] = ++numCalculator[collectionName][label];
+          collectionsModule.actualNum = numCalculator[collectionName][label];
           }
         }
-      }
-    }
-    debug("@@@@@@@@@@@@@@@@@ after");
-    debug($collectionsStore["MODULES"]);
+    });
   }
 
   /**

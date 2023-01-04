@@ -29,9 +29,7 @@
     let editorElem = document.getElementById(editorId);
     if (editorElem) {
       editorElem.onkeydown = (e) => e.stopPropagation();
-    } /*else {
-      alert(`No element with id ${editorId}`)
-    }*/
+    } 
   });
 
   function toggleModuleConfigShow() {

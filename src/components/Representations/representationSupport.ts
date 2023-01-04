@@ -122,7 +122,7 @@ export function modifyCanvasModulesList(collection, allModules, editMode) {
           // in edit mode ensure that unallocated modules are visible and 
           // have a ModuleConfiguration component
           module.style.display = "block";
-          addModuleConfiguration(moduleId);
+          addModuleConfiguration(parseInt(moduleId, 10));
         }
       }
     }
