@@ -179,3 +179,19 @@ function addModuleConfiguration(moduleId:Number) {
     debug(moduleConfigComponent)
   }
 }
+
+/**
+ * @function getModuleUrl
+ * @param {Number} moduleId 
+ * @returns {String} - the url for a Canvas module's item 
+ */
+export function getModuleUrl(moduleId:Number) {
+  let docUrl = new URL(document.URL)
+  // remove anchor and params from docUrl
+  docUrl.search = ''
+  // set the hash to link to the module
+  docUrl.hash = `module_${moduleId}`
+
+  return docUrl.toString()
+
+}

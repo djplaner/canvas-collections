@@ -5,6 +5,7 @@
    */
 
   import { collectionsStore, modulesStore, configStore } from "../../stores";
+  import { getModuleUrl } from "./representationSupport";
   import BannerIframe from "./GriffithCards/BannerIframe.svelte";
   import BannerColour from "./GriffithCards/BannerColour.svelte";
   import BannerImage from "./GriffithCards/BannerImage.svelte";
@@ -115,12 +116,8 @@
         <div id="cc_module_{theModule.id}" class="cc-card">
           <div class="cc-card-flex">
             <div class="cc-card-banner-container" data-moduleid={theModule.id}>
-              <a
-                class="cc-card-link"
-                href="/courses/{$configStore[
-                  'courseId'
-                ]}/modules#module_{theModule.id}"
-                style="">&nbsp;</a
+              <a class="cc-card-link" href={getModuleUrl(theModule.id)} style=""
+                >&nbsp;</a
               >
               <svelte:component
                 this={BANNER_TRANSLATION[
@@ -168,12 +165,7 @@
               {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
                 <div class="cc-card-engage">
                   <div class="cc-card-engage-button">
-                    <a
-                      href="/courses/{$configStore[
-                        'courseId'
-                      ]}/modules#module_{theModule.id}"
-                      class="gu-engage"
-                    />
+                    <a href={getModuleUrl(theModule.id)} class="gu-engage" />
                     {$collectionsStore["MODULES"][theModule.id].engageText}
                   </div>
                 </div>
