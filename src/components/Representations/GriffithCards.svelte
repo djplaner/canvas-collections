@@ -11,7 +11,7 @@
 
   import {
     getCollectionCanvasModules,
-//    modifyCanvasModulesList,
+    //    modifyCanvasModulesList,
     generateModuleDate,
     checkModuleMetaData,
   } from "./representationSupport";
@@ -125,7 +125,7 @@
               <svelte:component
                 this={BANNER_TRANSLATION[
                   $collectionsStore["MODULES"][theModule.id].banner
-                ]} 
+                ]}
                 moduleId={theModule.id}
               />
               <!--               $**DATE_WIDGET** -->
@@ -141,14 +141,17 @@
               {/if}
             </div>
             <div class="cc-card-content-height">
-              $**CONTENT_CARD_LINK**
-              <div class="$**cardContentClass**">
+              <div
+                class={$collectionsStore["MODULES"][theModule.id].fyi
+                  ? "cc-unclickable-card"
+                  : "cc-clickable-card"}
+              >
                 <div class="cc-card-label">
                   <span class="cc-card-label">
                     {$collectionsStore["MODULES"][theModule.id].label}
                     {$collectionsStore["MODULES"][theModule.id].actualNum}
                   </span>
-                  <h3 class="cc-card-title" data-moduleid="$**module.id**">
+                  <h3 class="cc-card-title" data-moduleid={theModule.id}>
                     {deLabelModuleName(theModule.id)}
                   </h3>
                 </div>
@@ -158,7 +161,12 @@
               </div>
             </div>
             <div class="cc-card-footer">
-              $**LINK_ITEM** $**REVIEW_ITEM** $**EDIT_ITEM** $**DATE**
+              {#if $collectionsStore["MODULES"][theModule.id].engage && 
+                    ! $collectionsStore["MODULES"][theModule.id].fyi}
+                engage is {$collectionsStore["MODULES"][theModule.id].engage}<br />
+                engageText {$collectionsStore["MODULES"][theModule.id].engageText}<br />
+              {/if}
+              $**REVIEW_ITEM** $**EDIT_ITEM** $**DATE**
               <div class="cc-progress" />
             </div>
           </div>

@@ -13,11 +13,11 @@
 
   export let module: Number;
 
+  $: allocated = $collectionsStore["MODULES"][module].collection !== null;
 
   debug(
     `______________ ModuleConfiguration.svelte - module ${module} allocated ${allocated} _______________`
   );
-  $: allocated = $collectionsStore["MODULES"][module].collection !== null;
 
   let html = $collectionsStore["MODULES"][module].description;
 
@@ -29,7 +29,7 @@
     let editorElem = document.getElementById(editorId);
     if (editorElem) {
       editorElem.onkeydown = (e) => e.stopPropagation();
-    } 
+    }
   });
 
   function toggleModuleConfigShow() {
@@ -37,11 +37,10 @@
       !$collectionsStore["MODULES"][module].configVisible;
     $configStore["needToSaveCollections"] = true;
   }
-// cc-module-config-33347-description
-// 33336
-// 33337
+  // cc-module-config-33347-description
+  // 33336
+  // 33337
 </script>
- 
 
 <div class="cc-module-config border border-trbl" id="cc-module-config-{module}">
   {#if !allocated}
@@ -112,6 +111,47 @@
           $configStore["needToSaveCollections"] = true;
         }}
       />
+    </div>
+    <div class="cc-collection-description" style="margin-top: 0.5rem">
+      <a
+        target="_blank"
+        rel="noreferrer"
+        href="https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button"
+        class="cc-module-link"
+      >
+        <i class="icon-question cc-module-icon" /></a
+      >
+      <label for="cc-module-config-{module}-engage">Engage</label>
+      <span class="cc-config-autonum">
+        <input
+          type="checkbox"
+          id="cc-module-config-{module}-engage"
+          bind:checked={$collectionsStore["MODULES"][module].engage}
+          style="position:relative; top:-0.25rem; "
+          on:click={() => ($configStore["needToSaveCollections"] = true)}
+          on:keydown={() => ($configStore["needToSaveCollections"] = true)}
+        />
+      </span>
+      {#if !$collectionsStore["MODULES"][module].engage}
+        <input
+          type="text"
+          id="cc-module-config-{module}-engageText"
+          bind:value={$collectionsStore["MODULES"][module].engageText}
+          style="width:10rem;"
+          disabled
+        />
+      {/if}
+      {#if $collectionsStore["MODULES"][module].engage}
+        <input
+          type="text"
+          class="cc-module-config-engageText"
+          id="cc-module-config-{module}-engageText"
+          bind:value={$collectionsStore["MODULES"][module].engageText}
+          style="width:10rem;"
+          on:click={() => ($configStore["needToSaveCollections"] = true)}
+          on:keydown|stopPropagation={() => ($configStore["needToSaveCollections"] = true)}
+        />
+      {/if} 
     </div>
   {/if}
 </div>
