@@ -67,6 +67,7 @@
       href="https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/"
       target="_blank"
       rel="noreferrer"
+      class="cc-module-link"
     >
       <i class="icon-question cc-module-icon" />
     </a>
@@ -80,6 +81,7 @@
           href="https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#allocate-the-modules"
           target="_blank"
           rel="noreferrer"
+          class="cc-module-link"
         >
           <i class="icon-question cc-module-icon" />
         </a>
@@ -92,12 +94,52 @@
         />
       </div>
     </div>
+    <div class="cc-collection-description" style="margin-top: 0.5em">
+      <a
+        target="_blank"
+        rel="noreferrer"
+        href="https://djplaner.github.io/canvas-collections/reference/objects/overview/#fyi-objects"
+        class="cc-module-link"
+      >
+        <i class="icon-question cc-module-icon" /></a
+      >
+      <label for="cc-module-config-{module}-fyi">FYI</label>
+      <span class="cc-config-autonum">
+        <input
+          type="checkbox"
+          id="cc-module-config-{module}-fyi"
+          bind:checked={$collectionsStore["MODULES"][module].fyi}
+          style="position:relative; top:-0.25rem; "
+        />
+      </span>
+      {#if $collectionsStore["MODULES"][module].fyi}
+        <input
+          type="text"
+          id="cc-module-config-{module}-fyiText"
+          bind:value={$collectionsStore["MODULES"][module].fyiText}
+          style="width:10rem;"
+          on:click={() => ($configStore["needToSaveCollections"] = true)}
+          on:keydown|stopPropagation={() =>
+            ($configStore["needToSaveCollections"] = true)}
+        />
+      {:else}
+        <input
+          type="text"
+          id="cc-module-config-{module}-fyiText"
+          bind:value={$collectionsStore["MODULES"][module].fyiText}
+          style="width:10rem; "
+          disabled
+        />
+      {/if}
+    </div>
+
     <div class="cc-collection-description">
       <a
         id="cc-about-module-description"
         href="https://djplaner.github.io/canvas-collections/reference/objects/overview/#description"
         target="_blank"
         rel="noreferrer"
+        class="cc-module-link"
       >
         <i class="icon-question cc-module-icon" />
       </a>
@@ -140,8 +182,7 @@
           style="width:10rem;"
           disabled
         />
-      {/if}
-      {#if $collectionsStore["MODULES"][module].engage}
+      {:else}
         <input
           type="text"
           class="cc-module-config-engageText"
@@ -149,9 +190,10 @@
           bind:value={$collectionsStore["MODULES"][module].engageText}
           style="width:10rem;"
           on:click={() => ($configStore["needToSaveCollections"] = true)}
-          on:keydown|stopPropagation={() => ($configStore["needToSaveCollections"] = true)}
+          on:keydown|stopPropagation={() =>
+            ($configStore["needToSaveCollections"] = true)}
         />
-      {/if} 
+      {/if}
     </div>
   {/if}
 </div>

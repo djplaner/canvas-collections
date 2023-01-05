@@ -131,9 +131,13 @@
               <!--               $**DATE_WIDGET** -->
               {#if $collectionsStore["MODULES"][theModule.id].fyi}
                 <div class="cc-card-fyi">
-                  <span class="cc-fyi-text"
-                    >{$collectionsStore["MODULES"][theModule.id].fyiText}</span
-                  >
+                  <span class="cc-fyi-text">
+                    {#if $collectionsStore["MODULES"][theModule.id].fyiText}
+                      {$collectionsStore["MODULES"][theModule.id].fyiText}
+                    {:else}
+                      &nbsp;
+                    {/if}
+                    </span>
                 </div>
               {/if}
               {#if !$collectionsStore["MODULES"][theModule.id].published}
