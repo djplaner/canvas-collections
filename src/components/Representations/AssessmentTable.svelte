@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { debug } from "svelte/internal";
   /**
    * AssessmentTable
    * - Accessible table for assessment information
@@ -16,6 +15,7 @@
   import { collectionsStore, modulesStore, configStore } from "../../stores";
   import {
     getCollectionCanvasModules,
+    getModuleUrl,
 //    modifyCanvasModulesList,
     generateModuleDate,
     checkModuleMetaData,
@@ -82,7 +82,7 @@
               >
               <div class="cc-table-cell-text">
                 <p>
-                  <a href="MODULE-ID">
+                  <a href={getModuleUrl(module.id)}>
                     <!-- {$modulesStore[module.id].name} -->
                     {$collectionsStore["MODULES"][module.id].name}
                   </a>
