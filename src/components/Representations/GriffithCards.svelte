@@ -137,7 +137,7 @@
                     {:else}
                       &nbsp;
                     {/if}
-                    </span>
+                  </span>
                 </div>
               {/if}
               {#if !$collectionsStore["MODULES"][theModule.id].published}
@@ -165,10 +165,18 @@
               </div>
             </div>
             <div class="cc-card-footer">
-              {#if $collectionsStore["MODULES"][theModule.id].engage && 
-                    ! $collectionsStore["MODULES"][theModule.id].fyi}
-                engage is {$collectionsStore["MODULES"][theModule.id].engage}<br />
-                engageText {$collectionsStore["MODULES"][theModule.id].engageText}<br />
+              {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
+                <div class="cc-card-engage">
+                  <div class="cc-card-engage-button">
+                    <a
+                      href="/courses/{$configStore[
+                        'courseId'
+                      ]}/modules#module_{theModule.id}"
+                      class="gu-engage"
+                    />
+                    {$collectionsStore["MODULES"][theModule.id].engageText}
+                  </div>
+                </div>
               {/if}
               $**REVIEW_ITEM** $**EDIT_ITEM** $**DATE**
               <div class="cc-progress" />
