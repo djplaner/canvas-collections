@@ -319,3 +319,37 @@ export function removeModuleConfiguration(modules: any) {
     }
   });
 }
+
+/**
+ * @function getPageName
+ * @param {String} pageName - name of the page
+ * @param {String} courseId - id of the course
+ * @param {Function} callBack - function to call when the page name is found (or not)
+ * @description Given the visible name of a page (e.g. "Canvas Collections Configuration") 
+ * - Slugify the name (e.g. "canvas-collections-configuration")
+ * - use the Canvas API to get the page Object
+ * - return the pageName and the results (positive or not) to the callBack function
+ * - The pageObject will be null if page not found
+ */
+
+export function getPageName(pageName: string, courseId: string, callBack: Function)  {
+
+  debug(`-------------------- getPageName -- ${pageName} ---------------------`)
+  String.prototype.slugify = function (separator = "-") {
+			return this
+				.toString()
+				.normalize('NFD')                   // split an accented letter in the base letter and the acent
+				.replace(/[\u0300-\u036f]/g, '')   // remove all previously split accents
+				.toLowerCase()
+				.trim()
+ 		        .replace('@','at')
+				.replace(/[^a-z0-9 ]/g, '')   // remove all chars not letters, numbers and spaces (to be replaced)
+				.replace(/\s+/g, separator);
+		};
+		const slugifiedPageName = pageName.slugify();
+    const apiUrl = `https://${document.location.hostname}/api/v1/courses/${courseId}/pages/${slugifiedPageName}`;
+
+    debug(`apiUrl: ${apiUrl}`)
+
+    wf_fetchData( apiUrl).then((data) => { callBack(pageName,data); });
+}

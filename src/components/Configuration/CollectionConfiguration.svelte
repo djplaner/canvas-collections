@@ -9,6 +9,7 @@
     representationsStore,
   } from "../../stores";
   import { getCollectionCanvasModules } from "../Representations/representationSupport";
+  import { getPageName } from "../../lib/CanvasSetup";
 
   export let collectionName: string;
   export let order: Number;
@@ -211,6 +212,32 @@
     delete $collectionsStore["COLLECTIONS"][collectionName];
     $configStore["needToSaveCollections"]=true;
   }
+
+  /**
+   * @function doesIncludePageExists
+   * @param pageObject - canvas page object returned from the API
+   * @description Checks if the pageObject is a page that exists in the course
+   * If not turn give an alert
+   */
+  function doesIncludePageExist(pageName, pageObject) {
+    debug(`---------- doesIncludePageExist --${pageName}--------`)
+    debug(pageObject)
+
+    if (!pageObject) {
+      alert(`Unable to find a page matching the include page name
+      ${pageName}
+      `)
+    }
+  }
+
+  function doesOutputPageExist(pageName, pageObject) {
+    if (!pageObject) {
+      alert(`Unable to find a page matching the output page name
+      ${pageName}
+      `)
+    }
+  }
+
 </script>
 
 <!-- {#if !removed} -->
@@ -359,6 +386,7 @@
       ><i class="icon-question cc-module-icon" /></a
     >
     Include page
+        <!-- on:stopTyping={onStopTyping} -->
     <div style="padding-left:0.5em">
       <input
         id="cc-collection-${collectionName}-include-page"
@@ -366,6 +394,8 @@
           .includePage}
         on:click={() => ($configStore["needToSaveCollections"] = true)}
         on:keydown={() => ($configStore["needToSaveCollections"] = true)}
+        on:focusout={() => (getPageName($collectionsStore["COLLECTIONS"][collectionName]
+          .includePage,$configStore["courseId"],doesIncludePageExist))}
         class="cc-existing-collection"
       />
       <a
@@ -408,6 +438,8 @@
         bind:value={$collectionsStore["COLLECTIONS"][collectionName].outputPage}
         on:click={() => ($configStore["needToSaveCollections"] = true)}
         on:keydown={() => ($configStore["needToSaveCollections"] = true)}
+        on:focusout={() => (getPageName($collectionsStore["COLLECTIONS"][collectionName]
+          .outputPage,$configStore["courseId"],doesOutputPageExist))}
         class="cc-existing-collection"
       />
       <span

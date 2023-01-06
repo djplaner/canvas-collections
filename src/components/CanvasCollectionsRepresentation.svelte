@@ -17,11 +17,23 @@
   debug(
     `______________ CanvasCollectionsRepresentation.svelte _currentCollection ${$configStore["currentCollections"]}______________`
   );
+  debug("---- collectionsStore")
+  debug($collectionsStore)
+
+  function includePageLocation() {
+    return "after"
+  }
 </script>
 
 {#if $collectionsStore["COLLECTIONS_ORDER"].length > 0}
   <CollectionsNavigation bind:collection={$configStore["currentCollection"]} />
+  {#if includePageLocation()==="before"}
+    <h3>Include page goes before</h3>
+  {/if}
   <CollectionRepresentation collection={$configStore["currentCollection"]} />
+  {#if includePageLocation()==="after"}
+    <h3>Include page goes after</h3>
+  {/if}
 {/if}
 
 <style>

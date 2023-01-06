@@ -20,6 +20,8 @@
 
   export let collection: string;
 
+  const line = "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
+
   const BANNER_TRANSLATION = {
     image: BannerImage,
     colour: BannerColour,
