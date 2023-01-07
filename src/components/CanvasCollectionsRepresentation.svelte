@@ -11,6 +11,7 @@
   import { configStore, collectionsStore } from "../stores";
   import CollectionsNavigation from "./CollectionsNavigation.svelte";
   import CollectionRepresentation from "./CollectionRepresentation.svelte";
+  import IncludePage from "./IncludePage.svelte";
 
   import { debug } from "../lib/debug";
 
@@ -20,19 +21,22 @@
   debug("---- collectionsStore")
   debug($collectionsStore)
 
-  function includePageLocation() {
-    return "after"
-  }
 </script>
 
 {#if $collectionsStore["COLLECTIONS_ORDER"].length > 0}
   <CollectionsNavigation bind:collection={$configStore["currentCollection"]} />
-  {#if includePageLocation()==="before"}
-    <h3>Include page goes before</h3>
+  {#if ( 
+    $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includePage!=="" &&
+    $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter===false
+  )}
+     <IncludePage pageName={$collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includePage} />
   {/if}
   <CollectionRepresentation collection={$configStore["currentCollection"]} />
-  {#if includePageLocation()==="after"}
-    <h3>Include page goes after</h3>
+  {#if ( 
+    $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includePage!=="" &&
+    $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter===true
+  )}
+     <IncludePage pageName={$collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includePage} />
   {/if}
 {/if}
 
