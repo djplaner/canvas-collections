@@ -727,6 +727,17 @@ export default class UniversityDateCalendar {
   }
 
   /**
+   * @function getFirstDayOfWeek
+   * @param {Integer} week - week of university term
+   * @param {String} period - study period
+   * @returns {String} the first day of the week according to the calendar
+   * @description University specific way of identifying the first day of the week
+   */
+  getFirstDayOfWeek(week=1, period=this.defaultPeriod) {
+    return "Monday"
+  }
+
+  /**
    * getCurrentPeriod
    * @descr Examine Canvas course object's course_code attribute in an attempt
    * to extract the STRM and subsequently calculate the year, period and

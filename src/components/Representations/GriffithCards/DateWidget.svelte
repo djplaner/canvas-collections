@@ -1,101 +1,201 @@
 <script lang="ts">
   /**
-   * Implement component for cards date component
+   * Implement component for cards date component by
+   * - modifying the date to add a specific calendar date
+   *   using UniversityDateCalendar
+   * - display either a single or dual date
+   * 
+   * Passed a date object in the following format can specify a
+   * single date or a data period (from/to)
+   * {
+   *    // "from" date (if dual)
+   *   "label": "", "day": "Monday", "week": "3", "time": "",
+   *   "to": {
+   *    	"day": "", "week": "", "time": ""
+   *	},
+   *	"date": 20,
+   *	"month": "Mar",
+   *	"year": 2023
+   * }
    */
 
   import UniversityDateCalendar from "../../../lib/university-date-calendar";
+  import { modifyCanvasModulesList } from "../representationSupport";
 
   export let date: Object;
   export let calendar: UniversityDateCalendar;
-
-  console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
-  console.log(date);
-  console.log(calendar);
-
-  let extraDateLabelClass = "";
 
   if (date) {
     if (date["week"] || (date["month"] && date["date"])) {
       date = addCalendarDate(date);
     }
   }
-  console.log("------ after")
-  console.log(date);
 
-  function addCalendarDate(date): Object {
-    // if no date, then assume the start of the calendar week (Monday)
-    if (!date.hasOwnProperty("day") || date["day"] === "") {
-      date["day"] = "Monday";
+  /**
+   * @function addCalendarDate
+   * @param {Object} date - JSON date rep from collections
+   * @returns {Object} date - date + Calendar matching course site
+   * @description Original date from collections can include use of
+   * University generic dates (e.g. Monday, Week 5). Translate those
+   * generic dates into a specific date based on semester/period appropriate
+   * for the current course site and the university calendar
+   */
+  function addCalendarDate(date: Object): Object {
+    date = modifyDate(date);
+    if (date.hasOwnProperty("to") && isNotEmptyDate(date["to"])) {
+      date["to"] = modifyDate(date["to"]);
     }
-    if (date.hasOwnProperty("week") && date["week"]!=="") {
-		// we've got a week, so we can add the calendar date
-		const actualDate = calendar.getDate(date["week"], false, date["day"]);
-		const fields = ['date', 'month', 'year']
-		for (let i=0; i<fields.length; i++) {
-			if ( actualDate.hasOwnProperty(fields[i]) ) {
-				date[fields[i]] = actualDate[fields[i]];
-			}
-		}
-    }
-
-
-	// todo update the date for the "to" portion
-
     return date;
   }
 
-  /** todo
-	 *   and dual date is a whole other thing
+  function isNotEmptyDate(date: object): boolean {
+    return (
+      (date.hasOwnProperty("week") && date["week"] !== "") ||
+      (date.hasOwnProperty("month") && date["month"] !== "") ||
+      (date.hasOwnProperty("date") && date["date"] !== "") ||
+      (date.hasOwnProperty("day") && date["day"] !== "") ||
+      (date.hasOwnProperty("time") && date["time"] !== "")
+    );
+  }
 
-			let element = new DOMParser().parseFromString(singleDateHtml, 'text/html').body.firstChild;
-		if (time === "") {
-			// remove the div.cc-card-date-time from element
-			element.removeChild(element.querySelector('.cc-card-date-time'));
-		}
-		if (date.week === "") {
-			// remove the div.cc-card-date-week from element
-			element.removeChild(element.querySelector('.cc-card-date-week'));
-		}
-		if (day === "") {
-			// remove the div.cc-card-date-day from element
-			element.removeChild(element.querySelector('.cc-card-date-day'));
-		}
-	*/
+  /**
+   * @function modifyDate
+   * @param date
+   * @returns {Object} date - date + Calendar matching course site
+   * @description Do the actual work for addCalendarDate
+   */
+  function modifyDate(date: Object): Object {
+    // can only add calendar date if a university week is specified
+    if (date.hasOwnProperty("week") && date["week"] !== "") {
+      // if no day, add the first day of the wek
+      if (!date.hasOwnProperty("day") || date["day"] === "") {
+        date["day"] = calendar.getFirstDayOfWeek();
+      }
+      // we've got a week, so we can add the calendar date
+      const actualDate = calendar.getDate(date["week"], false, date["day"]);
+      const fields = ["date", "month", "year"];
+      for (let i = 0; i < fields.length; i++) {
+        if (actualDate.hasOwnProperty(fields[i])) {
+          date[fields[i]] = actualDate[fields[i]];
+        }
+      }
+    }
+    return date;
+  }
 </script>
 
 {#if date}
-  <div class="cc-card-date">
-    {#if date["label"]}
-      <div class="cc-card-date-label${extraDateLabelClass}">
-        {date["label"]}
-      </div>
-    {/if}
-    {#if date["week"]}
-      <div class="cc-card-date-week">
-        Week {date["week"]}
-      </div>
-    {/if}
-    {#if date["time"]}
-      <div class="cc-card-date-time">
-        {date["time"]}
-      </div>
-    {/if}
-    {#if date["day"]}
-      <div class="cc-card-date-day">
-        {date["day"]}
-      </div>
-    {/if}
-    {#if date["month"]}
-      <div class="cc-card-date-month">
-        {date["month"]}
-      </div>
-    {/if}
-    {#if date["date"]}
-      <div class="cc-card-date-date">
-        {date["date"]}
-      </div>
-    {/if}
-  </div>
+  {#if date["to"] && isNotEmptyDate(date["to"])}
+    <div class="cc-card-date">
+      {#if date["label"]}
+        <div class="cc-card-date-label">
+          {date["label"]}
+        </div>
+      {/if}
+      {#if date["week"] || date["to"]["week"]}
+        <div class="cc-card-date-week">
+          {#if date["week"] && date["to"]["week"] && date["week"] !== date["to"]["week"]}
+            Weeks
+          {:else}
+            Week
+          {/if}
+          {date["week"]}
+          {#if date["week"] && date["to"]["week"] && date["week"] !== date["to"]["week"]}
+            - {date["to"]["week"]}
+          {/if}
+        </div>
+      {/if}
+      {#if date["time"] || date["to"]["time"]}
+        <div class="cc-card-date-dual-time">
+          <div class="cc-card-date-time-from">
+            {#if date["time"]}
+              {date["time"]}
+            {/if}
+          </div>
+          <div class="cc-card-date-time-to">
+            {#if date["to"]["time"]}
+              {date["to"]["time"]}
+            {/if}
+          </div>
+        </div>
+      {/if}
+      {#if date["day"] || date["to"]["day"]}
+        <div class="cc-card-date-dual-day">
+          <div class="cc-card-date-day-from">
+            {#if date["day"]}
+              {date["day"].substring(0, 3)}
+            {/if}
+          </div>
+          <div class="cc-card-date-day-to">
+            {#if date["to"]["day"]}
+              {date["to"]["day"].substring(0, 3)}
+            {/if}
+          </div>
+        </div>
+      {/if}
+      {#if date["month"] || date["to"]["month"]}
+        <div class="cc-card-date-dual-month">
+          <div class="cc-card-date-month-from">
+            {#if date["month"]}
+              {date["month"]}
+            {/if}
+          </div>
+          <div class="cc-card-date-month-to">
+            {#if date["to"]["month"]}
+              {date["to"]["month"]}
+            {/if}
+          </div>
+        </div>
+      {/if}
+      {#if date["date"] || date["to"]["date"]}
+        <div class="cc-card-date-dual-date">
+          <div class="cc-card-date-date-from">
+            {#if date["date"]}
+              {date["date"]}
+            {/if}
+          </div>
+          <div class="cc-card-date-date-to">
+            {#if date["to"]["date"]}
+              {date["to"]["date"]}
+            {/if}
+          </div>
+        </div>
+      {/if}
+    </div>
+  {:else}
+    <div class="cc-card-date">
+      {#if date["label"]}
+        <div class="cc-card-date-label">
+          {date["label"]}
+        </div>
+      {/if}
+      {#if date["week"]}
+        <div class="cc-card-date-week">
+          Week {date["week"]}
+        </div>
+      {/if}
+      {#if date["time"]}
+        <div class="cc-card-date-time">
+          {date["time"]}
+        </div>
+      {/if}
+      {#if date["day"]}
+        <div class="cc-card-date-day">
+          {date["day"]}
+        </div>
+      {/if}
+      {#if date["month"]}
+        <div class="cc-card-date-month">
+          {date["month"]}
+        </div>
+      {/if}
+      {#if date["date"]}
+        <div class="cc-card-date-date">
+          {date["date"]}
+        </div>
+      {/if}
+    </div>
+  {/if}
 {/if}
 
 <style>
