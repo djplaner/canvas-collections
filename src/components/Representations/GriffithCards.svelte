@@ -9,6 +9,7 @@
   import BannerIframe from "./GriffithCards/BannerIframe.svelte";
   import BannerColour from "./GriffithCards/BannerColour.svelte";
   import BannerImage from "./GriffithCards/BannerImage.svelte";
+  import DateWidget from "./GriffithCards/DateWidget.svelte";
 
   import {
     getCollectionCanvasModules,
@@ -19,8 +20,11 @@
   import { debug } from "../../lib/debug";
 
   export let collection: string;
+  export let calendar: any;
 
-  const line = "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
+  const line = "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
+  debug(line);
+  debug(calendar);
 
   const BANNER_TRANSLATION = {
     image: BannerImage,
@@ -100,6 +104,15 @@
 
     return newName;
   }
+
+/*  function generateCardDate(moduleId) {
+    const module = $collectionsStore["MODULES"][moduleId];
+    debug(`XXXXXXXXXXXXX ${line}`);
+    debug(module);
+    debug(module.date);
+
+    return "<strong>DATE</strong>";
+  } */
 </script>
 
 <h3>This is the cards representation - collection {collection}</h3>
@@ -126,6 +139,10 @@
                   $collectionsStore["MODULES"][theModule.id].banner
                 ]}
                 moduleId={theModule.id}
+              />
+              <DateWidget
+                date={$collectionsStore["MODULES"][theModule.id].date}
+                calendar={calendar}
               />
               <!--               $**DATE_WIDGET** -->
               {#if $collectionsStore["MODULES"][theModule.id].fyi}
@@ -167,12 +184,11 @@
               {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
                 <div class="cc-card-engage">
                   <div class="cc-card-engage-button">
-                    <a href={getModuleUrl(theModule.id)} class="gu-engage" />
-                    {$collectionsStore["MODULES"][theModule.id].engageText}
+                    <a href={getModuleUrl(theModule.id)} class="gu-engage">&nbsp;</a>
+                      {$collectionsStore["MODULES"][theModule.id].engageText}
                   </div>
                 </div>
               {/if}
-              $**REVIEW_ITEM** $**EDIT_ITEM** $**DATE**
               <div class="cc-progress" />
             </div>
           </div>

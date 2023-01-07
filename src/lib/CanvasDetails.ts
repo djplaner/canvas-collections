@@ -18,7 +18,7 @@ export class CanvasDetails {
   private baseApiUrl: string;
 //  private courseId: number;
   private finishedCallBack: Function;
-  private calendar: UniversityDateCalendar;
+//  private calendar: UniversityDateCalendar;
 
   private strm: string;
   private year: string;
@@ -39,9 +39,9 @@ export class CanvasDetails {
     this.currentHostName = document.location.hostname;
     this.baseApiUrl = `https://${this.currentHostName}/api/v1`;
     // convert courseId to integer
-    this.config.courseId = parseInt(this.config.courseId);
+    this['config']['courseId'] = parseInt(this['config']['courseId']);
 
-    console.log(`XXXXX canvasDetails: constructor: ${this.config.courseId}`);
+    console.log(`XXXXX canvasDetails: constructor: ${this['config']['courseId']}`);
 
     this.requestCourseObject();
   }
@@ -56,7 +56,7 @@ export class CanvasDetails {
       `${this.baseApiUrl}/courses/${this.config.courseId}`
     ).then((data) => {
       this.courseObject = data;
-      this.generateSTRM();
+      //this.generateSTRM();
       this.requestModuleInformation();
     });
   }
@@ -82,7 +82,7 @@ export class CanvasDetails {
   generateSTRM() {
     if (!this.hasOwnProperty("calendar")) {
       this.calendar = new UniversityDateCalendar();
-    }
+    } 
 
     // TODO this is where we might check if there is an existing default
     // study period already set and thus bypass getCurrentPeriod

@@ -21,6 +21,9 @@
   import AssessmentTable from "./Representations/AssessmentTable.svelte";
   import CollectionOnly from "./Representations/CollectionOnly.svelte";
   */
+  import UniversityDateCalendar from "../lib/university-date-calendar";
+
+  let calendar = new UniversityDateCalendar();
 
   import { modifyCanvasModulesList } from "./Representations/representationSupport";
 
@@ -69,7 +72,7 @@
   }
 </script>
 
-<svelte:component this={representationComponent} bind:collection />
+<svelte:component this={representationComponent} bind:collection={collection} calendar={calendar} />
 
 <style>
 </style>
