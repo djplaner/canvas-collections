@@ -11,6 +11,9 @@
   import { CanvasDetails } from "./lib/CanvasDetails";
   import { CollectionsDetails } from "./lib/CollectionsDetails";
 
+//  import "@shoelace-style/shoelace/dist/shoelace.js";
+//  import "@shoelace-style/shoelace/dist/themes/light.css";
+
   import { debug } from "./lib/debug";
   debug("______________ CanvasCollections.svelte _______________");
 
@@ -253,16 +256,24 @@
   }
 </script>
 
+
 <svelte:window on:beforeunload={beforeUnload} />
+
+<svelte:head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/themes/light.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/shoelace.js"></script>
+</svelte:head>
 {#if editMode && modulesPage}
   <div class="cc-switch-container">
     <div class="cc-switch-title">
+      <sl-tooltip content="This is a tooltip">
       <a
         target="_blank"
         rel="noreferrer"
         href="https://djplaner.github.io/canvas-collections/"
         ><i class="icon-question cc-module-icon" /></a
       >
+      </sl-tooltip>
       {#if canvasDataLoaded && collectionsDataLoaded}
         <i
           id="configShowSwitch"
