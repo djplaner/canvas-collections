@@ -161,11 +161,12 @@
               {/if}
             </div>
             <div class="cc-card-content-height">
+              <!-- this needs to be $cardContentClass -->
               <div
                 class={$collectionsStore["MODULES"][theModule.id].fyi
-                  ? "cc-unclickable-card"
-                  : "cc-clickable-card"}
-              >
+                  ? "cc-card-content"
+                  : "cc-unclickable-card-content"}
+              > 
                 <div class="cc-card-label">
                   <span class="cc-card-label">
                     {$collectionsStore["MODULES"][theModule.id].label}

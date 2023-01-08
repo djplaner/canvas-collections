@@ -218,6 +218,7 @@ export class CollectionsDetails {
    * old school. Do misc updates, including
    * - any module's collection attribute ==='' is set to null
    * - each module has an attribute 'configVisible' set to false
+   * - each module has an attribute 'actualNum' set to ""
    */
 
   updateCollections() {
@@ -232,6 +233,9 @@ export class CollectionsDetails {
         }
         if (!module.hasOwnProperty("configVisible")) {
           module.configVisible = false;
+        }
+        if (!module.hasOwnProperty("actualNum")) {
+          module.actualNum = "";
         }
       }
     }

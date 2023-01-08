@@ -66,25 +66,19 @@
   };
 </script>
 
-<div style="margin-right:1em">
-  <sl-tooltip>
-    <div slot="content">{HELP.aboutModuleDates.tooltip}</div>
-    <a target="_blank" rel="noreferrer" href={HELP.aboutModuleDates.href}
-      ><i class="icon-question cc-module-icon" /></a
-    >
-  </sl-tooltip>
-  <strong>Dates</strong>
+<div class="cc-module-config-detail">
   <div class="cc-current-studyPeriod">
     <sl-tooltip class="cc-about-module-studyPeriod">
-      <div slot="content">{HELP.aboutStudyPeriod.tooltip}</div>
+      <div slot="content">{@html HELP.aboutStudyPeriod.tooltip}</div>
       <a target="_blank" rel="noreferrer" href={HELP.aboutStudyPeriod.href}
         ><i class="icon-question cc-module-icon" /></a
       >
     </sl-tooltip>
-    <strong>Study Period</strong>
+    <strong>Current Study Period</strong>
     {currentStudyPeriod}
   </div>
 </div>
+
 <sl-split-panel>
   <div slot="start" id="cc-module-config-{moduleId}-date-start">
     <sl-tooltip id="cc-about-module-date-start">
@@ -102,10 +96,7 @@
         </sl-tooltip>
         {calculatedDate}
       </div>
-      <div
-        class="cc-module-config-collection-representation"
-        style="padding-top:1rem; padding-left:3rem"
-      >
+      <div class="cc-module-config-collection-representation">
         <label for="cc-module-config-{moduleId}-date-label">Date label</label>
         {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("label")}
           <input
@@ -190,10 +181,7 @@
         {calculatedDate}
       </div>
 
-      <div
-        class="cc-module-config-collection-representation"
-        style="padding-top:1rem; padding-left:3rem"
-      >
+      <div class="cc-module-config-collection-representation">
         <label for="cc-module-config-{moduleId}-day-to">Day of week</label>
         <select id="cc-module-config-{moduleId}-day-to">
           <option value="">Not chosen</option>
