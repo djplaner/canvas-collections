@@ -256,6 +256,13 @@
     );
      console.log("fred")
   }
+
+  const HELP = {
+    "cc-switch-title" : {
+      tooltip: `Customise the Modules page by grouping modules into collections and customising their representation.`,
+      url: "https://djplaner.github.io/canvas-collections/"
+    }
+  }
 </script>
 
 
@@ -269,11 +276,12 @@
 {#if editMode && modulesPage}
   <div class="cc-switch-container">
     <div class="cc-switch-title">
-      <sl-tooltip content="This is a tooltip">
+      <sl-tooltip>
+        <div slot="content">{HELP["cc-switch-title"]["tooltip"]}</div>
       <a
         target="_blank"
         rel="noreferrer"
-        href="https://djplaner.github.io/canvas-collections/"
+        href={HELP["cc-switch-title"]["url"]}
         ><i class="icon-question cc-module-icon" /></a
       >
       </sl-tooltip>

@@ -21870,21 +21870,23 @@ var app = (function () {
     const { console: console_1 } = globals;
     const file = "src\\CanvasCollections.svelte";
 
-    // (241:0) {#if editMode && modulesPage}
+    // (247:0) {#if editMode && modulesPage}
     function create_if_block(ctx) {
+    	let div2;
     	let div1;
-    	let div0;
     	let sl_tooltip;
+    	let div0;
+    	let t1;
     	let a;
     	let i;
-    	let t0;
-    	let t1;
-    	let small;
+    	let t2;
     	let t3;
-    	let span;
+    	let small;
     	let t5;
-    	let t6;
+    	let span;
     	let t7;
+    	let t8;
+    	let t9;
     	let current;
     	let if_block0 = /*canvasDataLoaded*/ ctx[4] && /*collectionsDataLoaded*/ ctx[5] && create_if_block_4(ctx);
     	let if_block1 = /*canvasDataLoaded*/ ctx[4] && /*collectionsDataLoaded*/ ctx[5] && create_if_block_3(ctx);
@@ -21893,59 +21895,65 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div2 = element("div");
     			div1 = element("div");
-    			div0 = element("div");
     			sl_tooltip = element("sl-tooltip");
+    			div0 = element("div");
+    			div0.textContent = `${/*HELP*/ ctx[12]["cc-switch-title"]["tooltip"]}`;
+    			t1 = space();
     			a = element("a");
     			i = element("i");
-    			t0 = space();
+    			t2 = space();
     			if (if_block0) if_block0.c();
-    			t1 = space();
+    			t3 = space();
     			small = element("small");
     			small.textContent = "Canvas Collections";
-    			t3 = space();
+    			t5 = space();
     			span = element("span");
     			span.textContent = `${CC_VERSION}`;
-    			t5 = space();
-    			if (if_block1) if_block1.c();
-    			t6 = space();
-    			if (if_block2) if_block2.c();
     			t7 = space();
+    			if (if_block1) if_block1.c();
+    			t8 = space();
+    			if (if_block2) if_block2.c();
+    			t9 = space();
     			if (if_block3) if_block3.c();
+    			attr_dev(div0, "slot", "content");
+    			add_location(div0, file, 250, 8, 10124);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 248, 9, 10038);
+    			add_location(i, file, 255, 9, 10305);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
-    			attr_dev(a, "href", "https://djplaner.github.io/canvas-collections/");
-    			add_location(a, file, 244, 6, 9911);
-    			set_custom_element_data(sl_tooltip, "content", "This is a tooltip");
-    			add_location(sl_tooltip, file, 243, 6, 9863);
-    			add_location(small, file, 261, 6, 10450);
+    			attr_dev(a, "href", /*HELP*/ ctx[12]["cc-switch-title"]["url"]);
+    			add_location(a, file, 251, 6, 10194);
+    			add_location(sl_tooltip, file, 249, 6, 10102);
+    			add_location(small, file, 268, 6, 10717);
     			set_style(span, "font-size", "50%");
-    			add_location(span, file, 262, 6, 10491);
-    			attr_dev(div0, "class", "cc-switch-title svelte-1xfyu4f");
-    			add_location(div0, file, 242, 4, 9826);
-    			attr_dev(div1, "class", "cc-switch-container svelte-1xfyu4f");
-    			add_location(div1, file, 241, 2, 9787);
+    			add_location(span, file, 269, 6, 10758);
+    			attr_dev(div1, "class", "cc-switch-title svelte-1xfyu4f");
+    			add_location(div1, file, 248, 4, 10065);
+    			attr_dev(div2, "class", "cc-switch-container svelte-1xfyu4f");
+    			add_location(div2, file, 247, 2, 10026);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div1, anchor);
-    			append_dev(div1, div0);
-    			append_dev(div0, sl_tooltip);
+    			insert_dev(target, div2, anchor);
+    			append_dev(div2, div1);
+    			append_dev(div1, sl_tooltip);
+    			append_dev(sl_tooltip, div0);
+    			append_dev(sl_tooltip, t1);
     			append_dev(sl_tooltip, a);
     			append_dev(a, i);
-    			append_dev(div0, t0);
-    			if (if_block0) if_block0.m(div0, null);
-    			append_dev(div0, t1);
-    			append_dev(div0, small);
-    			append_dev(div0, t3);
-    			append_dev(div0, span);
+    			append_dev(div1, t2);
+    			if (if_block0) if_block0.m(div1, null);
+    			append_dev(div1, t3);
+    			append_dev(div1, small);
     			append_dev(div1, t5);
-    			if (if_block1) if_block1.m(div1, null);
-    			append_dev(div1, t6);
-    			if (if_block2) if_block2.m(div1, null);
-    			append_dev(div1, t7);
-    			if (if_block3) if_block3.m(div1, null);
+    			append_dev(div1, span);
+    			append_dev(div2, t7);
+    			if (if_block1) if_block1.m(div2, null);
+    			append_dev(div2, t8);
+    			if (if_block2) if_block2.m(div2, null);
+    			append_dev(div2, t9);
+    			if (if_block3) if_block3.m(div2, null);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
@@ -21955,7 +21963,7 @@ var app = (function () {
     				} else {
     					if_block0 = create_if_block_4(ctx);
     					if_block0.c();
-    					if_block0.m(div0, t1);
+    					if_block0.m(div1, t3);
     				}
     			} else if (if_block0) {
     				if_block0.d(1);
@@ -21968,7 +21976,7 @@ var app = (function () {
     				} else {
     					if_block1 = create_if_block_3(ctx);
     					if_block1.c();
-    					if_block1.m(div1, t6);
+    					if_block1.m(div2, t8);
     				}
     			} else if (if_block1) {
     				if_block1.d(1);
@@ -21979,7 +21987,7 @@ var app = (function () {
     				if (if_block2) ; else {
     					if_block2 = create_if_block_2(ctx);
     					if_block2.c();
-    					if_block2.m(div1, t7);
+    					if_block2.m(div2, t9);
     				}
     			} else if (if_block2) {
     				if_block2.d(1);
@@ -21995,7 +22003,7 @@ var app = (function () {
     					if_block3 = create_if_block_1(ctx);
     					if_block3.c();
     					transition_in(if_block3, 1);
-    					if_block3.m(div1, null);
+    					if_block3.m(div2, null);
     				}
     			} else if (if_block3) {
     				group_outros();
@@ -22017,7 +22025,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div1);
+    			if (detaching) detach_dev(div2);
     			if (if_block0) if_block0.d();
     			if (if_block1) if_block1.d();
     			if (if_block2) if_block2.d();
@@ -22029,14 +22037,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(241:0) {#if editMode && modulesPage}",
+    		source: "(247:0) {#if editMode && modulesPage}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (252:6) {#if canvasDataLoaded && collectionsDataLoaded}
+    // (259:6) {#if canvasDataLoaded && collectionsDataLoaded}
     function create_if_block_4(ctx) {
     	let i;
     	let i_class_value;
@@ -22052,7 +22060,7 @@ var app = (function () {
     			? 'icon-mini-arrow-down'
     			: 'icon-mini-arrow-right') + " cc-module-icon"));
 
-    			add_location(i, file, 252, 8, 10178);
+    			add_location(i, file, 259, 8, 10445);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -22084,14 +22092,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(252:6) {#if canvasDataLoaded && collectionsDataLoaded}",
+    		source: "(259:6) {#if canvasDataLoaded && collectionsDataLoaded}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (266:4) {#if canvasDataLoaded && collectionsDataLoaded}
+    // (273:4) {#if canvasDataLoaded && collectionsDataLoaded}
     function create_if_block_3(ctx) {
     	let label;
     	let sl_switch;
@@ -22114,19 +22122,19 @@ var app = (function () {
     			set_custom_element_data(sl_switch, "checked", /*checked*/ ctx[3]);
     			set_custom_element_data(sl_switch, "id", "cc-switch");
     			set_custom_element_data(sl_switch, "class", "svelte-1xfyu4f");
-    			add_location(sl_switch, file, 267, 6, 10662);
+    			add_location(sl_switch, file, 274, 6, 10929);
     			attr_dev(label, "class", "cc-switch svelte-1xfyu4f");
     			attr_dev(label, "for", "cc-switch");
-    			add_location(label, file, 266, 6, 10613);
+    			add_location(label, file, 273, 6, 10880);
 
     			attr_dev(button, "class", button_class_value = "" + (null_to_empty(/*$configStore*/ ctx[8]["needToSaveCollections"]
     			? "cc-active-save-button"
     			: "cc-save-button") + " svelte-1xfyu4f"));
 
     			attr_dev(button, "id", "cc-save-button");
-    			add_location(button, file, 274, 8, 10831);
+    			add_location(button, file, 281, 8, 11098);
     			attr_dev(div, "class", "cc-save svelte-1xfyu4f");
-    			add_location(div, file, 273, 6, 10800);
+    			add_location(div, file, 280, 6, 11067);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, label, anchor);
@@ -22180,14 +22188,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(266:4) {#if canvasDataLoaded && collectionsDataLoaded}",
+    		source: "(273:4) {#if canvasDataLoaded && collectionsDataLoaded}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (288:4) {#if !ccPublished}
+    // (295:4) {#if !ccPublished}
     function create_if_block_2(ctx) {
     	let div;
     	let span;
@@ -22203,17 +22211,17 @@ var app = (function () {
     			i = element("i");
     			t = text("\r\n          unpublished");
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 295, 13, 11617);
+    			add_location(i, file, 302, 13, 11884);
     			attr_dev(a, "id", "cc-about-unpublished");
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "href", "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/");
-    			add_location(a, file, 290, 10, 11406);
+    			add_location(a, file, 297, 10, 11673);
     			set_style(span, "padding-top", "0.25em");
     			set_style(span, "padding-right", "0.25em");
-    			add_location(span, file, 289, 8, 11339);
+    			add_location(span, file, 296, 8, 11606);
     			attr_dev(div, "class", "cc-unpublished svelte-1xfyu4f");
-    			add_location(div, file, 288, 6, 11301);
+    			add_location(div, file, 295, 6, 11568);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -22231,14 +22239,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(288:4) {#if !ccPublished}",
+    		source: "(295:4) {#if !ccPublished}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (302:4) {#if showConfig}
+    // (309:4) {#if showConfig}
     function create_if_block_1(ctx) {
     	let div;
     	let collectionsconfiguration;
@@ -22251,7 +22259,7 @@ var app = (function () {
     			create_component(collectionsconfiguration.$$.fragment);
     			attr_dev(div, "id", "cc-config");
     			attr_dev(div, "class", "border border-trbl svelte-1xfyu4f");
-    			add_location(div, file, 302, 6, 11770);
+    			add_location(div, file, 309, 6, 12037);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -22277,7 +22285,7 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(302:4) {#if showConfig}",
+    		source: "(309:4) {#if showConfig}",
     		ctx
     	});
 
@@ -22304,10 +22312,10 @@ var app = (function () {
     			if_block_anchor = empty();
     			attr_dev(link, "rel", "stylesheet");
     			attr_dev(link, "href", "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/themes/light.css");
-    			add_location(link, file, 236, 2, 9484);
+    			add_location(link, file, 242, 2, 9723);
     			attr_dev(script, "type", "module");
     			if (!src_url_equal(script.src, script_src_value = "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/shoelace.js")) attr_dev(script, "src", script_src_value);
-    			add_location(script, file, 237, 4, 9612);
+    			add_location(script, file, 243, 4, 9851);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -22391,9 +22399,9 @@ var app = (function () {
     	validate_store(configStore, 'configStore');
     	component_subscribe($$self, configStore, $$value => $$invalidate(8, $configStore = $$value));
     	validate_store(collectionsStore, 'collectionsStore');
-    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(17, $collectionsStore = $$value));
+    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(18, $collectionsStore = $$value));
     	validate_store(modulesStore, 'modulesStore');
-    	component_subscribe($$self, modulesStore, $$value => $$invalidate(18, $modulesStore = $$value));
+    	component_subscribe($$self, modulesStore, $$value => $$invalidate(19, $modulesStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('CanvasCollections', slots, []);
 
@@ -22673,6 +22681,13 @@ var app = (function () {
     		console.log("fred");
     	}
 
+    	const HELP = {
+    		"cc-switch-title": {
+    			tooltip: `Customise the Modules page by grouping modules into collections and customising their representation.`,
+    			url: "https://djplaner.github.io/canvas-collections/"
+    		}
+    	};
+
     	$$self.$$.on_mount.push(function () {
     		if (courseId === undefined && !('courseId' in $$props || $$self.$$.bound[$$self.$$.props['courseId']])) {
     			console_1.warn("<CanvasCollections> was created without expected prop 'courseId'");
@@ -22713,11 +22728,11 @@ var app = (function () {
     	});
 
     	$$self.$$set = $$props => {
-    		if ('courseId' in $$props) $$invalidate(12, courseId = $$props.courseId);
+    		if ('courseId' in $$props) $$invalidate(13, courseId = $$props.courseId);
     		if ('editMode' in $$props) $$invalidate(1, editMode = $$props.editMode);
-    		if ('csrfToken' in $$props) $$invalidate(13, csrfToken = $$props.csrfToken);
+    		if ('csrfToken' in $$props) $$invalidate(14, csrfToken = $$props.csrfToken);
     		if ('modulesPage' in $$props) $$invalidate(2, modulesPage = $$props.modulesPage);
-    		if ('currentCollection' in $$props) $$invalidate(14, currentCollection = $$props.currentCollection);
+    		if ('currentCollection' in $$props) $$invalidate(15, currentCollection = $$props.currentCollection);
     		if ('showConfig' in $$props) $$invalidate(0, showConfig = $$props.showConfig);
     	};
 
@@ -22761,6 +22776,7 @@ var app = (function () {
     		addCollectionsDisplay,
     		removeCollectionsDisplay,
     		beforeUnload,
+    		HELP,
     		$configStore,
     		$collectionsStore,
     		$modulesStore
@@ -22768,11 +22784,11 @@ var app = (function () {
 
     	$$self.$inject_state = $$props => {
     		if ('__awaiter' in $$props) __awaiter = $$props.__awaiter;
-    		if ('courseId' in $$props) $$invalidate(12, courseId = $$props.courseId);
+    		if ('courseId' in $$props) $$invalidate(13, courseId = $$props.courseId);
     		if ('editMode' in $$props) $$invalidate(1, editMode = $$props.editMode);
-    		if ('csrfToken' in $$props) $$invalidate(13, csrfToken = $$props.csrfToken);
+    		if ('csrfToken' in $$props) $$invalidate(14, csrfToken = $$props.csrfToken);
     		if ('modulesPage' in $$props) $$invalidate(2, modulesPage = $$props.modulesPage);
-    		if ('currentCollection' in $$props) $$invalidate(14, currentCollection = $$props.currentCollection);
+    		if ('currentCollection' in $$props) $$invalidate(15, currentCollection = $$props.currentCollection);
     		if ('showConfig' in $$props) $$invalidate(0, showConfig = $$props.showConfig);
     		if ('checked' in $$props) $$invalidate(3, checked = $$props.checked);
     		if ('canvasDataLoaded' in $$props) $$invalidate(4, canvasDataLoaded = $$props.canvasDataLoaded);
@@ -22800,6 +22816,7 @@ var app = (function () {
     		toggleCollectionsSwitch,
     		toggleConfigShow,
     		beforeUnload,
+    		HELP,
     		courseId,
     		csrfToken,
     		currentCollection
@@ -22811,11 +22828,11 @@ var app = (function () {
     		super(options);
 
     		init(this, options, instance, create_fragment, safe_not_equal, {
-    			courseId: 12,
+    			courseId: 13,
     			editMode: 1,
-    			csrfToken: 13,
+    			csrfToken: 14,
     			modulesPage: 2,
-    			currentCollection: 14,
+    			currentCollection: 15,
     			showConfig: 0
     		});
 
