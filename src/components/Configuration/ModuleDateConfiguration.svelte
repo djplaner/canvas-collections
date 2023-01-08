@@ -124,18 +124,13 @@
       {/if}
       <br />
       <label for="cc-module-config-{moduleId}-day">Day of week</label>
-      <select id="cc-module-config-{moduleId}-day">
+      <select
+        id="cc-module-config-{moduleId}-day"
+        bind:value={$collectionsStore["MODULES"][moduleId]["date"]["day"]}
+      >
         <option value="">Not chosen</option>
         {#each daysOfWeek as day}
-          {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("day")}
-            <option
-              value={day}
-              selected={day === $collectionsStore["MODULES"][moduleId].date.day}
-              >{day}</option
-            >
-          {:else}
-            <option value={day}>{day}</option>
-          {/if}
+          <option value={day}>{day}</option>
         {/each}
       </select> <br />
       <label for="cc-module-config-{moduleId}-week">Week</label>
@@ -178,7 +173,7 @@
       >
     </sl-tooltip>
     About stop date
-	<div style="padding-left: 0.5em">
+    <div style="padding-left: 0.5em">
       <div class="cc-module-config-collection-representation">
         <label for="cc-module-config-{moduleId}-day-to">Day of week</label>
         <select id="cc-module-config-{moduleId}-day-to">
