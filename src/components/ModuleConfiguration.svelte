@@ -5,11 +5,14 @@
    * @property {Boolean} allocated - whether the module has been allocated to a collection
    */
   import { collectionsStore, configStore } from "../stores";
-  import { onMount } from "svelte";
+  import ModuleDateConfiguration from "./Configuration/ModuleDateConfiguration.svelte";
+  import ModuleGeneralConfiguration from "./Configuration/ModuleGeneralConfiguration.svelte";
+  import ModuleBannerConfiguration from "./Configuration/ModuleBannerConfiguration.svelte";
+  import ModuleMetaDataConfiguration from "./Configuration/ModuleMetaDataConfiguration.svelte";
 
-  import Editor from "cl-editor/src/Editor.svelte";
 
   import { debug } from "../lib/debug";
+  import { removeModuleConfiguration } from "../lib/CanvasSetup";
 
   export let module: Number;
 
@@ -19,18 +22,9 @@
     `______________ ModuleConfiguration.svelte - module ${module} allocated ${allocated} _______________`
   );
 
-  let html = $collectionsStore["MODULES"][module].description;
 
   debug("-------- collectionsStore");
   debug($collectionsStore);
-
-  onMount(() => {
-    const editorId = `cc-module-config-${module}-description`;
-    let editorElem = document.getElementById(editorId);
-    if (editorElem) {
-      editorElem.onkeydown = (e) => e.stopPropagation();
-    }
-  });
 
   function toggleModuleConfigShow() {
     $collectionsStore["MODULES"][module].configVisible =
@@ -40,6 +34,37 @@
   // cc-module-config-33347-description
   // 33336
   // 33337
+
+  const HELP = {
+    moduleConfiguration: {
+      tooltip:
+        "Click the arrow to open the Collections interface to configure data about this module",
+      url: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/",
+    },
+    generalTab: {
+      tooltip:
+        "Configure common collections settings: collections, description, label, engage button etc.",
+    },
+    moduleDates: {
+      tooltip: `<p>Choose from the three supported "date types" and configure it. Options include:</p> <ol> <li> <strong>Single date</strong> - a specific date (and time) </li>
+		  <li> <strong>Date range</strong> - a start and end date (and time) </li>
+		  <li> 🏗 <strong>Coming soon</strong> 🏗 - (soon you'll be able to) specify a single date (and time) when the module will be available.</li>
+		</ol>
+		<p><em>Coming Soon</em> will be able to be used with one of the other options</em></p>
+		`,
+      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#dates",
+    },
+    moduleBanner: {
+      tooltip: `<p>Choose one of three possible banner types (for Card representations) and configure it. Options are:</p> <ol> <li> <strong>Image</strong> - a banner image</li> <li> <strong>Colour</strong> - a solid colour</li> <li> <strong>Iframe</strong> - HTML embed code (e.g. YouTube video)</li> </ol>
+		`,
+      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#dates",
+    },
+    moduleMetaData: {
+      tooltip: `Flexibly add, delete, and modify additional information about this module, which
+		may be used by collections and representations - or for your own purposes.`,
+      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#additional-metadata",
+    },
+  };
 </script>
 
 <div class="cc-module-config border border-trbl" id="cc-module-config-{module}">
@@ -63,140 +88,81 @@
 
     Configure Collections for
     <em>{$collectionsStore["MODULES"][module].name}</em>
-    <a
-      href="https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/"
-      target="_blank"
-      rel="noreferrer"
-      class="cc-module-link"
-    >
-      <i class="icon-question cc-module-icon" />
-    </a>
-  </span>
-
-  {#if $collectionsStore["MODULES"][module].configVisible}
-    <div class="cc-module-config-detail">
-      <div class="cc-collection-description">
-        <a
-          id="cc-about-basic-module-collection"
-          href="https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/#allocate-the-modules"
-          target="_blank"
-          rel="noreferrer"
-          class="cc-module-link"
-        >
-          <i class="icon-question cc-module-icon" />
-        </a>
-        <label for="cc-module-config-{module}-collection">Collection</label>
-        <input
-          type="text"
-          id="cc-module-config-{module}-collection"
-          name="cc-module-config-{module}-collection"
-          value={$collectionsStore["MODULES"][module].collection}
-        />
+    <sl-tooltip>
+      <div slot="content">
+        {HELP.moduleConfiguration.tooltip}
       </div>
-    </div>
-    <div class="cc-collection-description" style="margin-top: 0.5em">
       <a
-        target="_blank"
-        rel="noreferrer"
-        href="https://djplaner.github.io/canvas-collections/reference/objects/overview/#fyi-objects"
-        class="cc-module-link"
-      >
-        <i class="icon-question cc-module-icon" /></a
-      >
-      <label for="cc-module-config-{module}-fyi">FYI</label>
-      <span class="cc-config-autonum">
-        <input
-          type="checkbox"
-          id="cc-module-config-{module}-fyi"
-          bind:checked={$collectionsStore["MODULES"][module].fyi}
-          style="position:relative; top:-0.25rem; "
-        />
-      </span>
-      {#if $collectionsStore["MODULES"][module].fyi}
-        <input
-          type="text"
-          id="cc-module-config-{module}-fyiText"
-          bind:value={$collectionsStore["MODULES"][module].fyiText}
-          style="width:10rem;"
-          on:click={() => ($configStore["needToSaveCollections"] = true)}
-          on:keydown|stopPropagation={() =>
-            ($configStore["needToSaveCollections"] = true)}
-        />
-      {:else}
-        <input
-          type="text"
-          id="cc-module-config-{module}-fyiText"
-          bind:value={$collectionsStore["MODULES"][module].fyiText}
-          style="width:10rem; "
-          disabled
-        />
-      {/if}
-    </div>
-
-    <div class="cc-collection-description">
-      <a
-        id="cc-about-module-description"
-        href="https://djplaner.github.io/canvas-collections/reference/objects/overview/#description"
+        href={HELP.moduleConfiguration.url}
         target="_blank"
         rel="noreferrer"
         class="cc-module-link"
       >
         <i class="icon-question cc-module-icon" />
       </a>
-      <label for="cc-module-config-{module}-description">Description</label>
-
-      <Editor
-        {html}
-        contentId="cc-module-config-{module}-description"
-        on:change={(evt) => {
-          $collectionsStore["MODULES"][module].description = evt.detail;
-          $configStore["needToSaveCollections"] = true;
-        }}
-      />
-    </div>
-    <div class="cc-collection-description" style="margin-top: 0.5rem">
-      <a
-        target="_blank"
-        rel="noreferrer"
-        href="https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button"
-        class="cc-module-link"
-      >
-        <i class="icon-question cc-module-icon" /></a
-      >
-      <label for="cc-module-config-{module}-engage">Engage</label>
-      <span class="cc-config-autonum">
-        <input
-          type="checkbox"
-          id="cc-module-config-{module}-engage"
-          bind:checked={$collectionsStore["MODULES"][module].engage}
-          style="position:relative; top:-0.25rem; "
-          on:click={() => ($configStore["needToSaveCollections"] = true)}
-          on:keydown={() => ($configStore["needToSaveCollections"] = true)}
-        />
-      </span>
-      {#if !$collectionsStore["MODULES"][module].engage}
-        <input
-          type="text"
-          id="cc-module-config-{module}-engageText"
-          bind:value={$collectionsStore["MODULES"][module].engageText}
-          style="width:10rem;"
-          disabled
-        />
-      {:else}
-        <input
-          type="text"
-          class="cc-module-config-engageText"
-          id="cc-module-config-{module}-engageText"
-          bind:value={$collectionsStore["MODULES"][module].engageText}
-          style="width:10rem;"
-          on:click={() => ($configStore["needToSaveCollections"] = true)}
-          on:keydown|stopPropagation={() =>
-            ($configStore["needToSaveCollections"] = true)}
-        />
-      {/if}
-    </div>
-  {/if}
+    </sl-tooltip>
+  </span>
 </div>
+
+{#if $collectionsStore["MODULES"][module].configVisible}
+  <div class="cc-module-config-tabs border border-trbl">
+    <sl-tab-group placement="start">
+      <sl-tab slot="nav" panel="general" style="text-align:right">
+        General &nbsp;
+        <sl-tooltip hoist>
+          <div slot="content">{@html HELP.generalTab.tooltip}</div>
+          <a
+            href={HELP.generalTab.url}
+            target="_blank"
+            rel="noreferrer"
+            class="cc-module-link"
+          >
+            <i class="icon-question cc-module-icon" />
+          </a>
+        </sl-tooltip>
+      </sl-tab>
+      <sl-tab slot="nav" panel="dates" style="text-align:right">
+        Dates &nbsp;
+        <sl-tooltip>
+          <div slot="content">{@html HELP.moduleDates.tooltip}</div>
+          <a
+            href={HELP.moduleDates.url}
+            target="_blank"
+            rel="noreferrer"
+            class="cc-module-link"
+          >
+            <i class="icon-question cc-module-icon" />
+          </a>
+        </sl-tooltip>
+      </sl-tab>
+      <sl-tab slot="nav" panel="banner" style="text-align:right">
+        Banner &nbsp;
+        <sl-tooltip>
+          <div slot="content">{@html HELP.moduleBanner.tooltip}</div>
+          <a href={HELP.moduleBanner.url} target="_blank" rel="noreferrer"
+            ><i class="icon-question cc-module-icon" /></a
+          >
+        </sl-tooltip>
+      </sl-tab>
+      <sl-tab slot="nav" panel="metadata" style="text-align:right"
+        >Metadata</sl-tab
+      >
+
+      <sl-tab-panel name="general">
+        <ModuleGeneralConfiguration moduleId={module} />
+      </sl-tab-panel>
+      <sl-tab-panel name="dates">
+        <ModuleDateConfiguration moduleId={module} />
+      </sl-tab-panel>
+      <sl-tab-panel name="banner">
+        <ModuleBannerConfiguration moduleId={module} />
+      </sl-tab-panel>
+      <sl-tab-panel name="metadata">
+        <ModuleMetaDataConfiguration moduleId={module} />
+      </sl-tab-panel>
+    </sl-tab-group>
+  </div>
+{/if}
 
 <style>
   .cc-module-config {
@@ -256,5 +222,10 @@
 
   sl-tab {
     font-size: var(--sl-font-size-small);
+  }
+
+  .cc-module-config-tabs {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
   }
 </style>

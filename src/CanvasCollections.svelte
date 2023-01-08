@@ -258,10 +258,14 @@
   }
 
   const HELP = {
-    "cc-switch-title" : {
-      tooltip: `Customise the Modules page by grouping modules into collections and customising their representation.`,
+    switchTitle : {
+      tooltip: `Collections helps you group modules into collections and customising their representation.`,
       url: "https://djplaner.github.io/canvas-collections/"
-    }
+    },
+    unpublished : {
+      tooltip: `<p>The <em>Canvas Collections Configuration</em> page</a> is unpublished.  The live Collections view will <strong>not</strong> be visible in "Student View" or for students.</p> <p>Any Claytons Collections will be visible, if the relevant pages are published.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
+    },
   }
 </script>
 
@@ -277,11 +281,11 @@
   <div class="cc-switch-container">
     <div class="cc-switch-title">
       <sl-tooltip>
-        <div slot="content">{HELP["cc-switch-title"]["tooltip"]}</div>
+        <div slot="content">{HELP.switchTitle.tooltip}</div>
       <a
         target="_blank"
         rel="noreferrer"
-        href={HELP["cc-switch-title"]["url"]}
+        href={HELP.switchTitle.url}
         ><i class="icon-question cc-module-icon" /></a
       >
       </sl-tooltip>
@@ -322,18 +326,23 @@
       </div>
     {/if}
     {#if !ccPublished}
-      <div class="cc-unpublished">
-        <span style="padding-top: 0.25em;padding-right:0.25em">
+      <div class="cc-unpublished"> 
+        <!--<span style="padding-top: 0.25em;padding-right:0.25em"> -->
+          <sl-badge variant="warning" pill>
+      <sl-tooltip>
+        <div slot="content">{@html HELP.unpublished.tooltip}</div>
           <a
             id="cc-about-unpublished"
             target="_blank"
             rel="noreferrer"
             href="https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
             ><i class="icon-question cc-module-icon" /></a
-          >
+          >&nbsp;
           unpublished
-        </span>
-      </div>
+          </sl-badge>
+          </div>
+        <!--</span>
+      </div>-->
     {/if}
     {#if showConfig}
       <div id="cc-config" class="border border-trbl">
@@ -372,7 +381,8 @@
   }
 
   .cc-unpublished {
-    font-size: 0.75em;
+    margin-top: 0.4em
+  /*  font-size: 0.75em;
     background-color: #ffe08a;
     border-radius: 0.5em;
     padding-left: 0.5em;
@@ -380,7 +390,7 @@
     height: 2em;
     margin-left: 0.5rem;
     margin-right: 0.5rem;
-    margin-top: 0.7rem;
+    margin-top: 0.7rem; */
   }
 
   .cc-switch-title {
