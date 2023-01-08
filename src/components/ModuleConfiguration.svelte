@@ -188,9 +188,6 @@
   .cc-module-config-collection-representation input {
     font-size: 0.8rem;
   }
-  .cc-module-config-detail {
-    padding: 0.5rem;
-  }
   .cc-preview-container {
     display: flex;
     flex-wrap: wrap;

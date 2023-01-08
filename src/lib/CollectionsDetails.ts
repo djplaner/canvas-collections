@@ -219,6 +219,7 @@ export class CollectionsDetails {
    * - any module's collection attribute ==='' is set to null
    * - each module has an attribute 'configVisible' set to false
    * - each module has an attribute 'actualNum' set to ""
+   * - each module has a proper date structure
    */
 
   updateCollections() {
@@ -237,6 +238,48 @@ export class CollectionsDetails {
         if (!module.hasOwnProperty("actualNum")) {
           module.actualNum = "";
         }
+        this.handleModuleDate(module)
+
+
+      }
+    }
+  }
+
+  /**
+   * @function handleModuleDate
+   * @param module - module object
+   * @description module has a date attribute, which may be a string or an object
+   * Each module should have a date structure that matches the following
+   * {
+   *   "label": "", "day": "Monday", "week": "3", "time": "",
+   *   "to": {
+   *    	"day": "", "week": "", "time": ""
+   *	},
+   *	"date": 20,
+   *	"month": "Mar",
+   *	"year": 2023
+   * }
+   * Make sure it does
+   */
+
+  handleModuleDate(module) {
+    if (!module.hasOwnProperty("date")) {
+      module.date = {
+        label: "", day: "", week: "", time: "",
+        to: { day: "", week: "", time: "" },
+        date: "", month: "", year: ""
+      };
+    } else {
+      // check each of the components
+      const components = ["label", "day", "week", "time", "date", "month", "year"];
+      for (let i = 0; i < components.length; i++) {
+        const component = components[i];
+        if (!module.date.hasOwnProperty(component)) {
+          module.date[component] = "";
+        }
+      }
+      if (!module.date.hasOwnProperty("to")) {
+        module.date.to = { day: "", week: "", time: "" };
       }
     }
   }
