@@ -11,9 +11,6 @@
   import { CanvasDetails } from "./lib/CanvasDetails";
   import { CollectionsDetails } from "./lib/CollectionsDetails";
 
-//  import "@shoelace-style/shoelace/dist/shoelace.js";
-//  import "@shoelace-style/shoelace/dist/themes/light.css";
-
   import { debug } from "./lib/debug";
   debug("______________ CanvasCollections.svelte _______________");
 
@@ -27,6 +24,8 @@
   export let modulesPage: boolean;
   export let currentCollection: number;
   export let showConfig: boolean;
+
+  let checked = false;
 
   $configStore = {
     courseId: courseId,
@@ -106,6 +105,7 @@
     if (canvasDataLoaded && collectionsDataLoaded) {
       $collectionsStore = collectionsDetails.collections;
       calculateActualNum();
+      checked=$configStore["ccOn"];
       if ($configStore["ccOn"]) {
         addCollectionsDisplay();
         if ($configStore["editMode"] && AUTO_SAVE) {
@@ -167,6 +167,7 @@
 
   function toggleCollectionsSwitch() {
     $configStore["ccOn"] = !$configStore["ccOn"];
+    checked=$configStore["ccOn"];
     $collectionsStore["STATUS"] = $configStore["ccOn"] ? "on" : "off";
     $configStore["needToSaveCollections"] = true;
     // modify the display accordingly
@@ -253,6 +254,7 @@
       $configStore["editMode"],
       $configStore["needToSaveCollections"]
     );
+     console.log("fred")
   }
 </script>
 
@@ -261,8 +263,9 @@
 
 <svelte:head>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/themes/light.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/shoelace.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/shoelace.js"></script>
 </svelte:head>
+
 {#if editMode && modulesPage}
   <div class="cc-switch-container">
     <div class="cc-switch-title">
@@ -289,15 +292,12 @@
     </div>
 
     {#if canvasDataLoaded && collectionsDataLoaded}
-      <label class="cc-switch">
-        <input
-          type="checkbox"
-          class="cc-toggle-checkbox"
-          id="cc-switch"
-          bind:checked={$configStore["ccOn"]}
-          on:click={toggleCollectionsSwitch}
+      <label class="cc-switch" for="cc-switch">
+      <sl-switch
+        {checked}
+        id="cc-switch"
+        on:sl-change={toggleCollectionsSwitch} 
         />
-        <span class="cc-slider cc-round" />
       </label>
       <div class="cc-save">
         <button
@@ -353,61 +353,6 @@
     height: 1.2rem;
     margin-top: 0.75rem;
     margin-right: 0.5rem;
-  }
-
-  /* Hide default HTML checkbox */
-  .cc-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  /* The slider */
-  .cc-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    -webkit-transition: 0.4s;
-    transition: 0.4s;
-  }
-
-  .cc-slider:before {
-    position: absolute;
-    content: "";
-    height: 0.9rem;
-    width: 0.9rem;
-    left: 2px;
-    bottom: 2px;
-    background-color: white;
-    -webkit-transition: 0.4s;
-    transition: 0.4s;
-  }
-
-  input:checked + .cc-slider {
-    background-color: #328c04;
-  }
-
-  input:focus + .cc-slider {
-    box-shadow: 0 0 1px #2196f3;
-  }
-
-  input:checked + .cc-slider:before {
-    -webkit-transform: translateX(1rem);
-    -ms-transform: translateX(1rem);
-    transform: translateX(1rem);
-  }
-
-  /* Rounded sliders */
-  .cc-slider.cc-round {
-    border-radius: 1.1rem;
-  }
-
-  .cc-slider.cc-round:before {
-    border-radius: 50%;
   }
 
   .cc-switch-container {
@@ -518,4 +463,9 @@
   .cc-save-button:hover {
     background: #cccccc;
   }
+
+  #cc-switch::part(control) {
+    --sl-color-primary-600: #328c04;
+  }
+
 </style>

@@ -22,7 +22,8 @@ export default {
 
 		svelte({
 			preprocess: sveltePreprocess({
-				sourceMap: !production
+				sourceMap: !production,
+				preserve: ['module']
 			}),
 			compilerOptions: {
 				dev: !production
@@ -56,7 +57,10 @@ export default {
 			browser: true,
 			dedupe: ['svelte']
 		}),
-		commonjs(),
+		commonjs({
+			include: 'node_modules/**',
+			esmExternals: true
+		}),
 
 		typescript({
 			sourceMap: !production,
