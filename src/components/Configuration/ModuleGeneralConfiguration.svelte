@@ -17,13 +17,7 @@
 
   export let moduleId: Number;
 
-
   let html = $collectionsStore["MODULES"][moduleId].description;
-
-  debug("__ ModuleGeneralConfiguration.svelte __");
-  debug(`moduleId ${moduleId} is of type ${typeof moduleId}`)
-  debug($collectionsStore["MODULES"][moduleId]);
-
 
   onMount(() => {
     const editorId = `cc-module-config-${moduleId}-description-editor`;
@@ -56,12 +50,12 @@
     },
     configLabel: {
       tooltip: `Describe the type of object the module represents (e.g. lecture, theme etc.)`,
-      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button"
+      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button",
     },
     configAutoNum: {
-      tooltip:  `If and how a label specific number will be calculated for the module 
+      tooltip: `If and how a label specific number will be calculated for the module 
 		(e.g. <em>Lecture 1</em> or <em>Workshop 5</em>)<p>Auto number or specify a value.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#labels-and-numbers"
+      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#labels-and-numbers",
     },
   };
 </script>
@@ -170,27 +164,27 @@
         style="position:relative; top:-0.25rem; "
       />
     </span>
-	{#if $collectionsStore["MODULES"][moduleId].autonum}
-    <input
-      type="text"
-      id="cc-module-config-{moduleId}-num"
-      bind:value={$collectionsStore["MODULES"][moduleId].actualNum}
-      on:click={() => ($configStore["needToSaveCollections"] = true)}
-      on:keydown|stopPropagation={() =>
-        ($configStore["needToSaveCollections"] = true)}
-      style="width:3rem;"
-	  disabled
-    />
-	{:else}
-	    <input
-      type="text"
-      id="cc-module-config-{moduleId}-num"
-      bind:value={$collectionsStore["MODULES"][moduleId].actualNum}
-      on:click={() => ($configStore["needToSaveCollections"] = true)}
-      on:keydown|stopPropagation={() =>
-        ($configStore["needToSaveCollections"] = true)}
-      style="width:3rem;"
-    />
+    {#if $collectionsStore["MODULES"][moduleId].autonum}
+      <input
+        type="text"
+        id="cc-module-config-{moduleId}-num"
+        bind:value={$collectionsStore["MODULES"][moduleId].actualNum}
+        on:click={() => ($configStore["needToSaveCollections"] = true)}
+        on:keydown|stopPropagation={() =>
+          ($configStore["needToSaveCollections"] = true)}
+        style="width:3rem;"
+        disabled
+      />
+    {:else}
+      <input
+        type="text"
+        id="cc-module-config-{moduleId}-num"
+        bind:value={$collectionsStore["MODULES"][moduleId].actualNum}
+        on:click={() => ($configStore["needToSaveCollections"] = true)}
+        on:keydown|stopPropagation={() =>
+          ($configStore["needToSaveCollections"] = true)}
+        style="width:3rem;"
+      />
     {/if}
   </div>
 </div>
