@@ -203,6 +203,10 @@ export class CollectionsDetails {
         if (module.hasOwnProperty("iframe") && module.iframe !== "") {
           module.iframe = this.decodeHTML(module.iframe, true);
         }
+        // decode each of the metadata fields
+        for (let key in module.metadata) {
+          module.metadata[key] = this.decodeHTML(module.metadata[key]);
+        }
         // need to check the URL for image as the RCE screws with the URL
         // TODO is this needed?
         /*if (module.hasOwnProperty('image') && module.image.startsWith('/')) {
@@ -241,9 +245,7 @@ export class CollectionsDetails {
         if (!module.hasOwnProperty("metadata")) {
           module.metadata = {};
         }
-        this.handleModuleDate(module)
-
-
+        this.handleModuleDate(module);
       }
     }
   }
@@ -268,13 +270,26 @@ export class CollectionsDetails {
   handleModuleDate(module) {
     if (!module.hasOwnProperty("date")) {
       module.date = {
-        label: "", day: "", week: "", time: "",
+        label: "",
+        day: "",
+        week: "",
+        time: "",
         to: { day: "", week: "", time: "" },
-        date: "", month: "", year: ""
+        date: "",
+        month: "",
+        year: "",
       };
     } else {
       // check each of the components
-      const components = ["label", "day", "week", "time", "date", "month", "year"];
+      const components = [
+        "label",
+        "day",
+        "week",
+        "time",
+        "date",
+        "month",
+        "year",
+      ];
       for (let i = 0; i < components.length; i++) {
         const component = components[i];
         if (!module.date.hasOwnProperty(component)) {
@@ -448,6 +463,10 @@ export class CollectionsDetails {
         module.iframe = this.encodeHTML(module.iframe);
       }
       module.name = this.encodeHTML(module.name);
+      // need to encode each of the metadata values
+      for (let metaKey in module.metadata) {
+        module.metadata[metaKey] = this.encodeHTML(module.metadata[metaKey]);
+      }
     }
     let safeContent = JSON.stringify(this.collections);
     if (safeContent) {
@@ -463,6 +482,9 @@ export class CollectionsDetails {
       module.name = this.decodeHTML(module.name);
       if (module.hasOwnProperty("iframe")) {
         module.iframe = this.decodeHTML(module.iframe);
+      }
+      for (let metaKey in module.metadata) {
+        module.metadata[metaKey] = this.decodeHTML(module.metadata[metaKey]);
       }
     }
 
