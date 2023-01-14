@@ -189,6 +189,42 @@ for the module
     $configStore["needToSaveCollections"] = true;
   }
 
+  /**
+   * @function changeMetaDataValue
+   * @param {String} name - the name of the metadata entry
+   * @description User has modified the value for a metadata entry
+   * - sanitise the value
+   * - report any sanitisation change to the user
+   * - modify the value
+   * - set the needToSaveCollections flag
+   */
+
+  function changeMetaDataValue(name: string) {
+    const value = document.getElementById(
+      `cc-module-config-${moduleId}-metadata-${name}-value`
+    ) as HTMLInputElement;
+
+    const sanitisedValue = sanitize(value.value);
+
+    // if the sanitised value is different to the original, warn the user
+    if (sanitisedValue !== value.value) {
+      if (
+        !confirm(
+          `The new metadata item value 
+    ${value.value}
+has been sanitised to
+    ${sanitisedValue}
+Do you want to use the sanitised value?`
+        )
+      ) {
+        return;
+      }
+    }
+
+	$collectionsStore["MODULES"][moduleId].metadata[name] = sanitisedValue;
+	$configStore["needToSaveCollections"] = true;
+  }
+
   //------------- HELP tooltips and urls
   const HELP = {
     name: {
@@ -260,15 +296,15 @@ for the module
               on:keydown|stopPropagation
               on:focusout={changeMetaDataName(key)}
               value={key}
-              pattern={String.raw`[^"]`}
+              pattern={String.raw`[^<>"]`}
             />
           </td>
           <td>
             <input
               type="text"
               id="cc-module-config-{moduleId}-metadata-{key}-value"
-              bind:value={$collectionsStore["MODULES"][moduleId].metadata[key]}
-              on:click={() => ($configStore["needToSaveCollections"] = true)}
+              value={$collectionsStore["MODULES"][moduleId].metadata[key]}
+              on:focusout={changeMetaDataValue(key)}
               on:keydown|stopPropagation
             />
           </td>
