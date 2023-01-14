@@ -100,8 +100,9 @@
   </div>
 </div>
 
-<sl-split-panel disabled>
-  <div slot="start" id="cc-module-config-{moduleId}-date-start">
+<div class="cc-date-row">
+  <div class="cc-date-col" id="cc-module-config-{moduleId}-date-start">
+    <div class="cc-date-heading">
     Start date
     <sl-tooltip id="cc-about-module-date-start">
       <div slot="content">{@html HELP.dateStart.tooltip}</div>
@@ -109,6 +110,7 @@
         ><i class="icon-question cc-module-icon" /></a
       >
     </sl-tooltip>
+    </div>
     <div class="cc-module-form">
       <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-date-label">Date label</label>
@@ -191,15 +193,15 @@
       </span>
     </div>
   </div>
-  <div slot="end" id="cc-module-config-{moduleId}-date-stop">
-    <div style="padding-left: 0.5em">
+  <div class="cc-date-col" id="cc-module-config-{moduleId}-date-stop">
+    <div class="cc-date-heading">
+    Stop date
     <sl-tooltip id="cc-about-module-date-stop">
       <div slot="content">{@html HELP.stopDate.tooltip}</div>
       <a target="_blank" rel="noreferrer" href={HELP.stopDate.href}
         ><i class="icon-question cc-module-icon" /></a
       >
     </sl-tooltip>
-    About stop date
     </div>
     <div class="cc-module-form" style="height: 2.375rem">
     </div>
@@ -268,7 +270,7 @@
       </span>
     </div>
   </div>
-</sl-split-panel>
+</div>
 
 <style>
   .cc-module-config-detail {
@@ -296,5 +298,28 @@
 
   .cc-module-input {
     grid-column: 2/ 3;
+  }
+
+  .cc-module-input select, .cc-module-input input {
+    width:90%
+  }
+
+  .cc-date-row {
+    border-top: 1px solid #ccc;
+  }
+  .cc-date-row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  .cc-date-col {
+    float: left;
+    width: 50%;
+  }
+
+  .cc-date-heading {
+    padding: 0.5rem;
+    text-align: center;
   }
 </style>
