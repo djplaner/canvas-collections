@@ -12,22 +12,21 @@
   import { collectionsStore } from "../../stores";
 
   import { debug } from "../../lib/debug";
+  import UniversityDateCalendar from "../../lib/university-date-calendar";
 
   export let moduleId: Number;
 
+  let calendar = new UniversityDateCalendar();
   // tmp kludge
-  let currentStudyPeriod = "3225 kludge";
-  let calculatedDate = "something kludge";
+  let currentStudyPeriod = calendar.getStudyPeriod();
+  let calculatedDate = calculateDate($collectionsStore["MODULES"][moduleId].date);
+
+  debug("DATE calculation FROM")
+  debug($collectionsStore["MODULES"][moduleId].date)
+  debug(`to calculated date ${calculatedDate}`)
+
   // TODO move these into UniversityDateCalendar?
-  const daysOfWeek = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
+  const daysOfWeek = calendar.getDaysOfWeek();
   const weeksOfTerm = [
     0,
     1,
@@ -50,6 +49,48 @@
 
   debug("______________ ModuleDateConfiguration.svelte _______________");
   debug($collectionsStore["MODULES"][moduleId]);
+
+  /**
+   * @function calculateDate
+   * @param {Object} dateInfo - module date json
+   * @return {String} - human readable date
+   * @description Conert json date into a human readable date using the
+   * calendar to calculate
+   * Return "No set date" if no date is set
+   */
+  function calculateDate(dateInfo) {
+    // valid date combinations will be
+    // 1. week
+    // 2. week and day
+    // 3. week and day and time
+    // - must have a week
+
+    if (dateInfo.week === "") {
+      return "No date set";
+    }
+
+    let calcDate = {};
+
+    if (dateInfo.day === "") {
+      // no day
+      calcDate = calendar.getDate(dateInfo.week);
+    } else {
+      calcDate = calendar.getDate(dateInfo.week, false, dateInfo.day);
+    }
+    let dateString = `${calcDate["date"]} ${calcDate["month"]} ${calcDate["year"]}`;
+
+    if (calcDate.hasOwnProperty("day")) {
+      dateString = `${calcDate["day"]} ${dateString}`;
+    }
+    if (dateInfo.time !== "") {
+      // no time
+      dateString = `${dateInfo.time} ${dateString}`;
+    }
+    if (dateInfo.hasOwnProperty("label") && dateInfo.label !== "") {
+      dateString = `${dateInfo.label} ${dateString}`;
+    }
+    return dateString;
+  }
 
   /**
    * Define the tooltip and help site links for this module

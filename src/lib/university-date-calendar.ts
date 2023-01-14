@@ -28,6 +28,16 @@
 // default period is the current main trimester
 const DEFAULT_PERIOD = "3231";
 
+const DAYS_OF_WEEK =  [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+ 
 const MONTHS = [
   "Jan",
   "Feb",
@@ -634,6 +644,10 @@ export default class UniversityDateCalendar {
     this.defaultPeriod = studyPeriod;
   }
 
+  public getStudyPeriod() {
+    return this.defaultPeriod;
+  }
+
   /**
    * @function getWeekDetails
    * @param {String} period
@@ -662,6 +676,10 @@ export default class UniversityDateCalendar {
     }
 
     return CALENDAR[period][week];
+  }
+
+  public getDaysOfWeek() {
+    return DAYS_OF_WEEK;
   }
 
   /**
