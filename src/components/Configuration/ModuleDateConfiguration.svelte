@@ -9,7 +9,7 @@
    * - show the current settings from from and to
    */
 
-  import { collectionsStore } from "../../stores";
+  import { collectionsStore, configStore } from "../../stores";
 
   import { debug } from "../../lib/debug";
   import UniversityDateCalendar from "../../lib/university-date-calendar";
@@ -18,12 +18,14 @@
 
   let calendar = new UniversityDateCalendar();
   // tmp kludge
-  let currentStudyPeriod = calendar.getStudyPeriod();
-  let calculatedDate = calculateDate($collectionsStore["MODULES"][moduleId].date);
+  let currentStudyPeriod = `${calendar.getHumanReadableStudyPeriod()} (${calendar.getStudyPeriod()})`;
+  let calculatedDate = calculateDate(
+    $collectionsStore["MODULES"][moduleId].date
+  );
 
-  debug("DATE calculation FROM")
-  debug($collectionsStore["MODULES"][moduleId].date)
-  debug(`to calculated date ${calculatedDate}`)
+  debug("DATE calculation FROM");
+  debug($collectionsStore["MODULES"][moduleId].date);
+  debug(`to calculated date ${calculatedDate}`);
 
   // TODO move these into UniversityDateCalendar?
   const daysOfWeek = calendar.getDaysOfWeek();
@@ -58,7 +60,7 @@
    * calendar to calculate
    * Return "No set date" if no date is set
    */
-  function calculateDate(dateInfo) {
+  function calculateDate(dateInfo: Object): String {
     // valid date combinations will be
     // 1. week
     // 2. week and day
@@ -69,8 +71,17 @@
       return "No date set";
     }
 
-    let calcDate = {};
+    let dateString = dateJsonToString(dateInfo);
 
+    if (dateInfo.hasOwnProperty("to")) {
+      // date range
+      dateString = `${dateString} to ${dateJsonToString(dateInfo.to)}`;
+    }
+    return dateString;
+  }
+
+  function dateJsonToString(dateInfo: Object): String {
+    let calcDate = {};
     if (dateInfo.day === "") {
       // no day
       calcDate = calendar.getDate(dateInfo.week);
@@ -93,12 +104,24 @@
   }
 
   /**
+   * @function updateDate
+   * @description Called whenever any change has been made to the date
+   * - update the calculateDate
+   * - set needToSave to true
+   */
+
+  function updateDate() {
+    calculatedDate = calculateDate($collectionsStore["MODULES"][moduleId].date);
+    $configStore["needToSave"] = true;
+  }
+
+  /**
    * Define the tooltip and help site links for this module
    */
   const HELP = {
     studyPeriod: {
-      tooltip: `The study period automatically identified from the course site. The academic
-		calendar for this study period will be used to translate "Monday Week 1" into a calendar date.`,
+      tooltip: `The term is automatically identified from the course site. The academic
+		calendar for this term will be used to translate the generic date <em>Monday Week 1</em> into a calendar date.`,
       href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#study-period",
     },
     dateStart: {
@@ -117,29 +140,33 @@
   };
 </script>
 
-<div class="cc-module-config-detail">
-  <div class="cc-calculated-date">
-    <sl-tooltip>
-      <div slot="content">{@html HELP.calculatedDate.tooltip}</div>
-      <a href={HELP.calculatedDate.href} target="_blank" rel="noreferrer">
-        <i class="icon-question cc-module-icon" />
-      </a>
-    </sl-tooltip>
-    <strong>Current Date:</strong>
-    {calculatedDate}
-  </div>
-
   <div class="cc-current-studyPeriod">
+    <p>
+
+    <strong>Current Term:</strong>
     <sl-tooltip class="cc-about-module-studyPeriod">
       <div slot="content">{@html HELP.studyPeriod.tooltip}</div>
       <a target="_blank" rel="noreferrer" href={HELP.studyPeriod.href}
         ><i class="icon-question cc-module-icon" /></a
       >
     </sl-tooltip>
-    <strong>Current Study Period:</strong>
     {currentStudyPeriod}
+    </p>
   </div>
-</div>
+
+
+  <div class="cc-calculated-date">
+    <p>
+    <strong>Current Date:</strong>
+    <sl-tooltip>
+      <div slot="content">{@html HELP.calculatedDate.tooltip}</div>
+      <a href={HELP.calculatedDate.href} target="_blank" rel="noreferrer">
+        <i class="icon-question cc-module-icon" />
+      </a>
+    </sl-tooltip>
+    {calculatedDate}</p>
+  </div>
+
 
 <div class="cc-date-row">
   <div class="cc-date-col" id="cc-module-config-{moduleId}-date-start">
@@ -182,6 +209,7 @@
         <select
           id="cc-module-config-{moduleId}-day"
           bind:value={$collectionsStore["MODULES"][moduleId]["date"]["day"]}
+          on:change={updateDate}
         >
           <option value="">Not chosen</option>
           {#each daysOfWeek as day}
@@ -195,20 +223,14 @@
         <label for="cc-module-config-{moduleId}-week">Week</label>
       </span>
       <span class="cc-module-input">
-        <select id="cc-module-config-{moduleId}-week">
+        <select
+          id="cc-module-config-{moduleId}-week"
+          bind:value={$collectionsStore["MODULES"][moduleId]["date"]["week"]}
+          on:change={updateDate}
+        >
           <option value="">Not chosen</option>
           {#each weeksOfTerm as week}
-            {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("week")}
-              <option
-                value={week}
-                selected={week ===
-                  $collectionsStore["MODULES"][moduleId].date.week}
-                >{week}</option
-              >
-            {:else}
-              <option value={week}>{week}</option>
-            {/if}
-            >
+            <option value={week.toString()}>{week}</option>
           {/each}
         </select>
       </span>
@@ -228,7 +250,8 @@
             type="time"
             id="cc-module-config-{moduleId}-time"
             name="time"
-            value=""
+            bind:value={$collectionsStore["MODULES"][moduleId]["date"]["time"]}
+            on:change={updateDate}
           />
         </aeon-datepicker>
       </span>
@@ -250,19 +273,16 @@
         <label for="cc-module-config-{moduleId}-day-to">Day of week</label>
       </span>
       <span class="cc-module-input">
-        <select id="cc-module-config-{moduleId}-day-to">
+        <select
+          id="cc-module-config-{moduleId}-day-to"
+          bind:value={$collectionsStore["MODULES"][moduleId]["date"]["to"][
+            "day"
+          ]}
+          on:change={updateDate}
+        >
           <option value="">Not chosen</option>
           {#each daysOfWeek as day}
-            {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("to") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("day")}
-              <option
-                value={day}
-                selected={day ===
-                  $collectionsStore["MODULES"][moduleId].date.to.day}
-                >{day}</option
-              >
-            {:else}
-              <option value={day}>{day}</option>
-            {/if}
+            <option value={day}>{day}</option>
           {/each}
         </select>
       </span>
@@ -272,19 +292,16 @@
         <label for="cc-module-config-{moduleId}-week-to">Week</label>
       </span>
       <span class="cc-module-input">
-        <select id="cc-module-config-{moduleId}-week-to">
+        <select
+          id="cc-module-config-{moduleId}-week-to"
+          bind:value={$collectionsStore["MODULES"][moduleId]["date"]["to"][
+            "week"
+          ]}
+          on:change={updateDate}
+        >
           <option value="">Not chosen</option>
           {#each weeksOfTerm as week}
-            {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("to") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("week")}
-              <option
-                value={week}
-                selected={week ===
-                  $collectionsStore["MODULES"][moduleId].date.week}
-                >{week}</option
-              >
-            {:else}
-              <option value={week}>{week}</option>
-            {/if}
+            <option value={week.toString()}>{week}</option>
           {/each}
         </select>
       </span>
@@ -304,7 +321,10 @@
             type="time"
             id="cc-module-config-{moduleId}-time-to"
             name="time"
-            value=""
+            bind:value={$collectionsStore["MODULES"][moduleId]["date"]["to"][
+              "time"
+            ]}
+            on:change={updateDate}
           />
         </aeon-datepicker>
       </span>
@@ -313,15 +333,9 @@
 </div>
 
 <style>
-  .cc-module-config-detail {
-    padding: 0.5rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-    gap: 0px 1em;
-    grid-auto-flow: row;
-    grid-template-areas: ". .";
-    height: 100%;
+  .cc-calculated-date,
+  .cc-current-studyPeriod {
+    font-size: 0.9em;
   }
 
   .cc-module-form {

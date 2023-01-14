@@ -28,16 +28,16 @@
 // default period is the current main trimester
 const DEFAULT_PERIOD = "3231";
 
-const DAYS_OF_WEEK =  [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
- 
+const DAYS_OF_WEEK = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
 const MONTHS = [
   "Jan",
   "Feb",
@@ -649,6 +649,57 @@ export default class UniversityDateCalendar {
   }
 
   /**
+   * @function getHumanReadableStudyPeriod
+   * @returns {String} the human readable version of the current study period
+   * @description Current implemented for Griffith course id's version of term code
+   * https://intranet.secure.griffith.edu.au/computing/using-learning-at-griffith/staff/administration/course-ID
+   * Four digits
+   * - first digit is the type of course
+   * - middle two digits are the year (20 + XX)
+   * - final digit is the term
+   */
+  public getHumanReadableStudyPeriod() {
+    const typeOfCourse = {
+      3: "GU",
+      2: "OUA",
+      6: "Accelerated Online",
+      1: "GELI",
+    };
+    const termMap = {
+      // OUA courses
+      2: {
+        1: "Study Period 1",
+        2: "Session 1",
+        3: "Study Period 2",
+        4: "Session 2",
+        5: "Study Period 3",
+        6: "Session 3",
+        7: "Study Period 4",
+      },
+      3: {
+        1: "Trimester 1",
+        5: "Trimester 2",
+        8: "Trimester 3",
+      },
+      6: {
+        1: "Teaching Period 1",
+        2: "Teaching Period 2",
+        3: "Teaching Period 3",
+        4: "Teaching Period 4",
+        5: "Teaching Period 5",
+        6: "Teaching Period 6",
+      },
+    };
+
+    // extract the first, middle two and last digital from defaultPeriod
+    const courseType = this.defaultPeriod[0];
+    const year = this.defaultPeriod.slice(1, 3);
+    const term = this.defaultPeriod[3];
+
+    return `${termMap[courseType][term]} 20${year}`;
+  }
+
+  /**
    * @function getWeekDetails
    * @param {String} period
    * @param {String} week
@@ -666,7 +717,8 @@ export default class UniversityDateCalendar {
     // if week is a string starting with "Week" remove
     // the Week and convert number of integer
     if (typeof week === "string" && week.startsWith("Week")) {
-      week = parseInt(week.substring(4));
+      //week = parseInt(week.substring(4));
+      week = week.substring(4);
     }
     // only proceed if the period and week are in the CALENDAR
     if (!(period in CALENDAR)) {
@@ -694,6 +746,7 @@ export default class UniversityDateCalendar {
    */
   public getDate(week, startWeek = true, dayOfWeek = "Monday") {
     let date = {
+      day: "",
       date: "",
       month: "",
       week: week,
@@ -738,7 +791,7 @@ export default class UniversityDateCalendar {
     }
 
     date.month = MONTHS[d.getMonth()];
-    date.date = d.getDate();
+    date.date = d.getDate().toString();
     date.year = d.getFullYear();
 
     return date;
@@ -751,8 +804,8 @@ export default class UniversityDateCalendar {
    * @returns {String} the first day of the week according to the calendar
    * @description University specific way of identifying the first day of the week
    */
-  getFirstDayOfWeek(week=1, period=this.defaultPeriod) {
-    return "Monday"
+  getFirstDayOfWeek(week = 1, period = this.defaultPeriod) {
+    return "Monday";
   }
 
   /**
