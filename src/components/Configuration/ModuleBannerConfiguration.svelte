@@ -93,53 +93,54 @@
   >
 
   <sl-tab-panel name="cc-module-config-${moduleId}-image">
-    <div
-      class="cc-module-config-collection-representation"
-      style="padding-left: 0.5rem;"
-    >
-      <sl-tooltip>
-        <div slot="content">{@html HELP.moduleImageScale.tooltip}</div>
-        <a target="_blank" href={HELP.moduleImageScale.href} rel="noreferrer"
-          ><i class="icon-question cc-module-icon" /></a
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label for="cc-collection-representation-${moduleId}-imageSize">
+          Image scale
+        </label>
+        <sl-tooltip>
+          <div slot="content">{@html HELP.moduleImageScale.tooltip}</div>
+          <a target="_blank" href={HELP.moduleImageScale.href} rel="noreferrer"
+            ><i class="icon-question cc-module-icon" /></a
+          >
+        </sl-tooltip>
+      </span>
+      <span class="cc-module-input">
+        <select
+          id="cc-module-config-${moduleId}-imageSize"
+          bind:value={$collectionsStore["MODULES"][moduleId].imageSize}
         >
-      </sl-tooltip>
-      <label
-        for="cc-collection-representation-${moduleId}-imageSize"
-        style="float:left;padding-top:0.8rem;"
-      >
-        Image scale
-      </label>
-      <select
-        id="cc-module-config-${moduleId}-imageSize"
-        bind:value={$collectionsStore["MODULES"][moduleId].imageSize}
-      >
-        {#each imageScaleOptions as imageScaleOption}
-          <option value={imageScaleOption}>{imageScaleOption}</option>
-        {/each}
-      </select>
+          {#each imageScaleOptions as imageScaleOption}
+            <option value={imageScaleOption}>{imageScaleOption}</option>
+          {/each}
+        </select>
+      </span>
     </div>
-    <div class="cc-module-config-collection-representation">
-      <sl-tooltip id="cc-about-module-image-url">
-        <div slot="content">{@html HELP.moduleImageUrl.tooltip}</div>
-        <a target="_blank" href={HELP.moduleImageUrl.href} rel="noreferrer"
-          ><i class="icon-question cc-module-icon" /></a
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label
+          for="cc-module-config-collection-representation-${moduleId}-image"
         >
-      </sl-tooltip>
-      <label
-        for="cc-module-config-collection-representation-${moduleId}-image"
-        style="float:left;padding-top:0.8rem"
-      >
-        Image URL
-      </label>
-      <input
-        class="cc-module-config-input"
-        on:click={() => ($configStore["needToSaveCollections"] = true)}
-        on:keydown|stopPropagation={() =>
-          ($configStore["needToSaveCollections"] = true)}
-        type="text"
-        id="cc-module-config-${moduleId}-image"
-        bind:value={$collectionsStore["MODULES"][moduleId].image}
-      />
+          Image URL
+        </label>
+        <sl-tooltip id="cc-about-module-image-url">
+          <div slot="content">{@html HELP.moduleImageUrl.tooltip}</div>
+          <a target="_blank" href={HELP.moduleImageUrl.href} rel="noreferrer"
+            ><i class="icon-question cc-module-icon" /></a
+          >
+        </sl-tooltip>
+      </span>
+      <span class="cc-module-input">
+        <input
+          class="cc-module-config-input"
+          on:click={() => ($configStore["needToSaveCollections"] = true)}
+          on:keydown|stopPropagation={() =>
+            ($configStore["needToSaveCollections"] = true)}
+          type="text"
+          id="cc-module-config-${moduleId}-image"
+          bind:value={$collectionsStore["MODULES"][moduleId].image}
+        />
+      </span>
     </div>
   </sl-tab-panel>
 
@@ -190,5 +191,21 @@
 <style>
   .cc-module-config-input {
     width: 30em;
+  }
+
+  .cc-module-form {
+    display: grid;
+    grid-template-columns: 8em 1fr;
+    grid-gap: 1em;
+  }
+
+  .cc-module-label {
+    grid-column: 1/ 2;
+    text-align: right;
+	margin-top: 0.4em;
+  }
+
+  .cc-module-input {
+    grid-column: 2/ 3;
   }
 </style>

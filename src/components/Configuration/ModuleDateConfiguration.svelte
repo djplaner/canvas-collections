@@ -63,11 +63,15 @@
     dateStart: {
       tooltip: `Specify a single date, or becomes the start date in a date range when used 
 		with "stop" date.`,
-      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#start-date",
+      href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#start-date",
+    },
+    stopDate: {
+      tooltip: `<p>Specify the 'stop' date for a date range. Date is relative to the specific study period.</p>`,
+      href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#stop-date",
     },
     calculatedDate: {
       tooltip: `Representation of the date as configured by <em>Start Date</em> and possible <em>Stop Date</em>.`,
-      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#start-date",
+      href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#start-date",
     },
   };
 </script>
@@ -96,7 +100,7 @@
   </div>
 </div>
 
-<sl-split-panel>
+<sl-split-panel disabled>
   <div slot="start" id="cc-module-config-{moduleId}-date-start">
     Start date
     <sl-tooltip id="cc-about-module-date-start">
@@ -105,77 +109,105 @@
         ><i class="icon-question cc-module-icon" /></a
       >
     </sl-tooltip>
-    <div class="cc-module-config-collection-representation">
-      <label for="cc-module-config-{moduleId}-date-label">Date label</label>
-      {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("label")}
-        <input
-          type="text"
-          id="cc-module-config-{moduleId}-date-label"
-          style="width:10rem"
-          bind:value={$collectionsStore["MODULES"][moduleId]["date"]["label"]}
-        />
-      {:else}
-        <input
-          type="text"
-          id="cc-module-config-{moduleId}-date-label"
-          style="width:10rem"
-          value=""
-        />
-      {/if}
-      <br />
-      <label for="cc-module-config-{moduleId}-day">Day of week</label>
-      <select
-        id="cc-module-config-{moduleId}-day"
-        bind:value={$collectionsStore["MODULES"][moduleId]["date"]["day"]}
-      >
-        <option value="">Not chosen</option>
-        {#each daysOfWeek as day}
-          <option value={day}>{day}</option>
-        {/each}
-      </select> <br />
-      <label for="cc-module-config-{moduleId}-week">Week</label>
-      <select id="cc-module-config-{moduleId}-week">
-        <option value="">Not chosen</option>
-        {#each weeksOfTerm as week}
-          {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("week")}
-            <option
-              value={week}
-              selected={week ===
-                $collectionsStore["MODULES"][moduleId].date.week}>{week}</option
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label for="cc-module-config-{moduleId}-date-label">Date label</label>
+      </span>
+      <span class="cc-module-input">
+        {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("label")}
+          <input
+            type="text"
+            id="cc-module-config-{moduleId}-date-label"
+            style="width:10rem"
+            bind:value={$collectionsStore["MODULES"][moduleId]["date"]["label"]}
+          />
+        {:else}
+          <input
+            type="text"
+            id="cc-module-config-{moduleId}-date-label"
+            style="width:10rem"
+            value=""
+          />
+        {/if}
+      </span>
+    </div>
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label for="cc-module-config-{moduleId}-day">Day of week</label>
+      </span>
+      <span class="cc-module-input">
+        <select
+          id="cc-module-config-{moduleId}-day"
+          bind:value={$collectionsStore["MODULES"][moduleId]["date"]["day"]}
+        >
+          <option value="">Not chosen</option>
+          {#each daysOfWeek as day}
+            <option value={day}>{day}</option>
+          {/each}
+        </select>
+      </span>
+    </div>
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label for="cc-module-config-{moduleId}-week">Week</label>
+      </span>
+      <span class="cc-module-input">
+        <select id="cc-module-config-{moduleId}-week">
+          <option value="">Not chosen</option>
+          {#each weeksOfTerm as week}
+            {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("week")}
+              <option
+                value={week}
+                selected={week ===
+                  $collectionsStore["MODULES"][moduleId].date.week}
+                >{week}</option
+              >
+            {:else}
+              <option value={week}>{week}</option>
+            {/if}
             >
-          {:else}
-            <option value={week}>{week}</option>
-          {/if}
-          >
-        {/each}
-      </select> <br />
-      <label for="cc-module-config-{moduleId}-time">Time</label>
-      <style>
-        input[readonly] {
-          display: none;
-        }
-      </style>
-      <aeon-datepicker local="en-au">
-        <input
-          type="time"
-          id="cc-module-config-{moduleId}-time"
-          name="time"
-          value=""
-        />
-      </aeon-datepicker>
+          {/each}
+        </select>
+      </span>
+    </div>
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label for="cc-module-config-{moduleId}-time">Time</label>
+      </span>
+      <span class="cc-module-input">
+        <style>
+          input[readonly] {
+            display: none;
+          }
+        </style>
+        <aeon-datepicker local="en-au">
+          <input
+            type="time"
+            id="cc-module-config-{moduleId}-time"
+            name="time"
+            value=""
+          />
+        </aeon-datepicker>
+      </span>
     </div>
   </div>
   <div slot="end" id="cc-module-config-{moduleId}-date-stop">
+    <div style="padding-left: 0.5em">
     <sl-tooltip id="cc-about-module-date-stop">
-      <div slot="content" />
-      <a target="_blank" rel="noreferrer" href=""
+      <div slot="content">{@html HELP.stopDate.tooltip}</div>
+      <a target="_blank" rel="noreferrer" href={HELP.stopDate.href}
         ><i class="icon-question cc-module-icon" /></a
       >
     </sl-tooltip>
     About stop date
-    <div style="padding-left: 0.5em">
-      <div class="cc-module-config-collection-representation">
+    </div>
+    <div class="cc-module-form" style="height: 2.375rem">
+    </div>
+    <div class="cc-module-form">
+      <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-day-to">Day of week</label>
+      </span>
+      <span class="cc-module-input">
         <select id="cc-module-config-{moduleId}-day-to">
           <option value="">Not chosen</option>
           {#each daysOfWeek as day}
@@ -190,8 +222,14 @@
               <option value={day}>{day}</option>
             {/if}
           {/each}
-        </select> <br />
+        </select>
+      </span>
+    </div>
+    <div class="cc-module-form">
+      <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-week-to">Week</label>
+      </span>
+      <span class="cc-module-input">
         <select id="cc-module-config-{moduleId}-week-to">
           <option value="">Not chosen</option>
           {#each weeksOfTerm as week}
@@ -206,8 +244,14 @@
               <option value={week}>{week}</option>
             {/if}
           {/each}
-        </select> <br />
+        </select>
+      </span>
+    </div>
+    <div class="cc-module-form">
+      <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-time-to">Time</label>
+      </span>
+      <span class="cc-module-input">
         <style>
           input[readonly] {
             display: none;
@@ -221,17 +265,12 @@
             value=""
           />
         </aeon-datepicker>
-      </div>
-      <br clear="all" />
+      </span>
     </div>
   </div>
 </sl-split-panel>
 
 <style>
-  .cc-module-config-description {
-    padding: 0.5rem;
-  }
-
   .cc-module-config-detail {
     padding: 0.5rem;
     display: grid;
@@ -241,5 +280,21 @@
     grid-auto-flow: row;
     grid-template-areas: ". .";
     height: 100%;
+  }
+
+  .cc-module-form {
+    display: grid;
+    grid-template-columns: 8em 1fr;
+    grid-gap: 1em;
+  }
+
+  .cc-module-label {
+    grid-column: 1/ 2;
+    text-align: right;
+    margin-top: 0.4em;
+  }
+
+  .cc-module-input {
+    grid-column: 2/ 3;
   }
 </style>
