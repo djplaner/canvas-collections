@@ -10,7 +10,6 @@
   import ModuleBannerConfiguration from "./Configuration/ModuleBannerConfiguration.svelte";
   import ModuleMetaDataConfiguration from "./Configuration/ModuleMetaDataConfiguration.svelte";
 
-
   import { debug } from "../lib/debug";
   import { removeModuleConfiguration } from "../lib/CanvasSetup";
 
@@ -21,7 +20,6 @@
   debug(
     `______________ ModuleConfiguration.svelte - module ${module} allocated ${allocated} _______________`
   );
-
 
   debug("-------- collectionsStore");
   debug($collectionsStore);
@@ -144,9 +142,18 @@
           >
         </sl-tooltip>
       </sl-tab>
-      <sl-tab slot="nav" panel="metadata" style="text-align:right"
-        >Metadata</sl-tab
-      >
+      <sl-tab slot="nav" panel="metadata" style="text-align:right">
+        Metadata
+        <sl-tooltip>
+          <div slot="content">{@html HELP.moduleMetaData.tooltip}</div>
+          <a
+            href={HELP.moduleMetaData.url}
+            target="_blank"
+            rel="noreferrer">
+            <i class="icon-question cc-module-icon" />
+          </a>
+        </sl-tooltip>
+        </sl-tab>
 
       <sl-tab-panel name="general">
         <ModuleGeneralConfiguration moduleId={module} />
@@ -180,41 +187,9 @@
     padding-right: 0.5rem;
   }
 
-  .cc-module-config-collection-representation label {
-    width: 5rem;
-    font-size: 0.8rem;
-    /*font-weight: bold; */
-  }
-  .cc-module-config-collection-representation input {
-    font-size: 0.8rem;
-  }
-  .cc-preview-container {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-  }
-
   .cc-module-icon {
     position: relative;
     top: -0.2rem;
-  }
-
-  .cc-preview-container .cc-card {
-    min-width: 50%;
-  }
-
-  .cc-calculated-date {
-    font-size: 0.8rem;
-    background-color: #eee;
-    padding: 0.5rem;
-    margin-left: 3rem;
-    margin-top: 0.5rem;
-  }
-
-  .cc-current-studyPeriod {
-    font-size: 0.7rem;
-    display: inline;
-    margin-left: 2rem;
   }
 
   sl-tab {
@@ -224,5 +199,10 @@
   .cc-module-config-tabs {
     padding-top: 0.5em;
     padding-bottom: 0.5em;
+  }
+
+  sl-tooltip {
+    text-align: left;
+    white-space: normal;
   }
 </style>

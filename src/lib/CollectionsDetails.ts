@@ -238,6 +238,9 @@ export class CollectionsDetails {
         if (!module.hasOwnProperty("actualNum")) {
           module.actualNum = "";
         }
+        if (!module.hasOwnProperty("metadata")) {
+          module.metadata = {};
+        }
         this.handleModuleDate(module)
 
 

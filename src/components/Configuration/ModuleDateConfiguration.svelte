@@ -66,7 +66,7 @@
       href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#start-date",
     },
     stopDate: {
-      tooltip: `<p>Specify the 'stop' date for a date range. Date is relative to the specific study period.</p>`,
+      tooltip: `Specify the 'stop' date for a date range. Date is relative to the specific study period.`,
       href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#stop-date",
     },
     calculatedDate: {
@@ -103,13 +103,13 @@
 <div class="cc-date-row">
   <div class="cc-date-col" id="cc-module-config-{moduleId}-date-start">
     <div class="cc-date-heading">
-    Start date
-    <sl-tooltip id="cc-about-module-date-start">
-      <div slot="content">{@html HELP.dateStart.tooltip}</div>
-      <a target="_blank" rel="noreferrer" href={HELP.dateStart.href}
-        ><i class="icon-question cc-module-icon" /></a
-      >
-    </sl-tooltip>
+      Start date
+      <sl-tooltip id="cc-about-module-date-start">
+        <div slot="content">{@html HELP.dateStart.tooltip}</div>
+        <a target="_blank" rel="noreferrer" href={HELP.dateStart.href}
+          ><i class="icon-question cc-module-icon" /></a
+        >
+      </sl-tooltip>
     </div>
     <div class="cc-module-form">
       <span class="cc-module-label">
@@ -195,16 +195,15 @@
   </div>
   <div class="cc-date-col" id="cc-module-config-{moduleId}-date-stop">
     <div class="cc-date-heading">
-    Stop date
-    <sl-tooltip id="cc-about-module-date-stop">
-      <div slot="content">{@html HELP.stopDate.tooltip}</div>
-      <a target="_blank" rel="noreferrer" href={HELP.stopDate.href}
-        ><i class="icon-question cc-module-icon" /></a
-      >
-    </sl-tooltip>
+      Stop date
+      <sl-tooltip id="cc-about-module-date-stop">
+        <div slot="content">{@html HELP.stopDate.tooltip}</div>
+        <a target="_blank" rel="noreferrer" href={HELP.stopDate.href}
+          ><i class="icon-question cc-module-icon" /></a
+        >
+      </sl-tooltip>
     </div>
-    <div class="cc-module-form" style="height: 2.375rem">
-    </div>
+    <div class="cc-module-form" style="height: 2.375rem" />
     <div class="cc-module-form">
       <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-day-to">Day of week</label>
@@ -300,8 +299,9 @@
     grid-column: 2/ 3;
   }
 
-  .cc-module-input select, .cc-module-input input {
-    width:90%
+  .cc-module-input select,
+  .cc-module-input input {
+    width: 90%;
   }
 
   .cc-date-row {
@@ -321,5 +321,10 @@
   .cc-date-heading {
     padding: 0.5rem;
     text-align: center;
+  }
+
+  sl-tooltip {
+    text-align: left;
+    white-space: normal;
   }
 </style>

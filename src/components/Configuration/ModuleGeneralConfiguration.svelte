@@ -10,7 +10,6 @@
    */
 
   import { collectionsStore, configStore } from "../../stores";
-  import { debug } from "../../lib/debug";
 
   import { onMount } from "svelte";
   import Editor from "cl-editor/src/Editor.svelte";
@@ -43,9 +42,7 @@
       url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#description",
     },
     configEngage: {
-      tooltip: `<p>For cards representations, specify</p> <ol> 
-		  <li> if there will be an "engage" button; and, </li>
-		  <li> what the button text will be. </li> </ol>`,
+      tooltip: `For cards representations, specify <ol> <li> if there will be an "engage" button; and, </li> <li> what the button text will be. </li> </ol>`,
       url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button",
     },
     configLabel: {
@@ -60,184 +57,227 @@
   };
 </script>
 
-<div class="cc-module-config-detail">
-  <div class="cc-collection-description">
-    <sl-tooltip>
-      <div slot="content">{@html HELP.configCollection.tooltip}</div>
-      <a
-        id="cc-about-basic-module-collection"
-        href={HELP.configCollection.url}
-        target="_blank"
-        rel="noreferrer"
-        class="cc-module-link"
-      >
-        <i class="icon-question cc-module-icon" />
-      </a>
-    </sl-tooltip>
-    <label for="cc-module-config-{moduleId}-collection">Collection</label>
-    <input
-      type="text"
-      id="cc-module-config-{moduleId}-collection"
-      name="cc-module-config-{moduleId}-collection"
-      value={$collectionsStore["MODULES"][moduleId].collection}
-    />
+<div class="cc-module-row">
+  <div class="cc-module-col">
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label for="cc-module-config-{moduleId}-collection">Collection</label>
+        <sl-tooltip>
+          <div slot="content">{@html HELP.configCollection.tooltip}</div>
+          <a
+            id="cc-about-basic-module-collection"
+            href={HELP.configCollection.url}
+            target="_blank"
+            rel="noreferrer"
+            class="cc-module-link"
+          >
+            <i class="icon-question cc-module-icon" />
+          </a>
+        </sl-tooltip>
+      </span>
+      <span class="cc-module-input">
+        <select
+          id="cc-module-config-{moduleId}-collection"
+          bind:value={$collectionsStore["MODULES"][moduleId].collection}
+        >
+          {#if $collectionsStore["MODULES"][moduleId].collection === ""}
+            <option value="" selected>Unallocated</option>
+          {:else}
+            <option value="">Unallocated</option>
+          {/if}
+          {#each $collectionsStore["COLLECTIONS_ORDER"] as collectionName}
+            {#if $collectionsStore["MODULES"][moduleId].collection === collectionName}
+              <option value={collectionName} selected>{collectionName}</option>
+            {:else}
+              <option value={collectionName}>{collectionName}</option>
+            {/if}
+          {/each}
+        </select>
+
+        <!--  value={$collectionsStore["MODULES"][moduleId].collection} -->
+      </span>
+    </div>
   </div>
-  <div class="cc-collection-description">
-    <sl-tooltip>
-      <div slot="content">{@html HELP.configFYI.tooltip}</div>
-      <a
-        target="_blank"
-        rel="noreferrer"
-        href={HELP.configFYI.url}
-        class="cc-module-link"
-      >
-        <i class="icon-question cc-module-icon" /></a
-      >
-    </sl-tooltip>
-    <label for="cc-module-config-{moduleId}-fyi">FYI</label>
-    <span class="cc-config-autonum">
-      <input
-        type="checkbox"
-        id="cc-module-config-{moduleId}-fyi"
-        bind:checked={$collectionsStore["MODULES"][moduleId].fyi}
-        style="position:relative; top:-0.25rem; "
-      />
-    </span>
-    {#if $collectionsStore["MODULES"][moduleId].fyi}
-      <input
-        type="text"
-        id="cc-module-config-{moduleId}-fyiText"
-        bind:value={$collectionsStore["MODULES"][moduleId].fyiText}
-        style="width:10rem;"
-        on:click={() => ($configStore["needToSaveCollections"] = true)}
-        on:keydown|stopPropagation={() =>
-          ($configStore["needToSaveCollections"] = true)}
-      />
-    {:else}
-      <input
-        type="text"
-        id="cc-module-config-{moduleId}-fyiText"
-        bind:value={$collectionsStore["MODULES"][moduleId].fyiText}
-        style="width:10rem; "
-        disabled
-      />
-    {/if}
+  <div class="cc-module-col">
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label for="cc-module-config-{moduleId}-fyi">FYI</label>
+        <sl-tooltip>
+          <div slot="content">{@html HELP.configFYI.tooltip}</div>
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href={HELP.configFYI.url}
+            class="cc-module-link"
+          >
+            <i class="icon-question cc-module-icon" /></a
+          >
+        </sl-tooltip>
+        <span class="cc-config-autonum">
+          <input
+            type="checkbox"
+            id="cc-module-config-{moduleId}-fyi"
+            bind:checked={$collectionsStore["MODULES"][moduleId].fyi}
+            style="position:relative; top:-0.25rem; "
+          />
+        </span>
+      </span>
+      <span class="cc-module-input">
+        {#if $collectionsStore["MODULES"][moduleId].fyi}
+          <input
+            type="text"
+            id="cc-module-config-{moduleId}-fyiText"
+            bind:value={$collectionsStore["MODULES"][moduleId].fyiText}
+            style="width:10rem;"
+            on:click={() => ($configStore["needToSaveCollections"] = true)}
+            on:keydown|stopPropagation={() =>
+              ($configStore["needToSaveCollections"] = true)}
+          />
+        {:else}
+          <input
+            type="text"
+            id="cc-module-config-{moduleId}-fyiText"
+            bind:value={$collectionsStore["MODULES"][moduleId].fyiText}
+            style="width:10rem; "
+            disabled
+          />
+        {/if}
+      </span>
+    </div>
   </div>
 </div>
 
-<div class="cc-module-config-detail">
-  <div
-    class="cc-module-config-collection-representation"
-    style="margin-top:0.5rem"
-  >
-    <sl-tooltip id="cc-about-module-label">
-      <div slot="content">{@html HELP.configLabel.tooltip}</div>
-      <a target="_blank" href={HELP.configLabel.url} rel="noreferrer">
-        <i class="icon-question cc-module-icon" /></a
-      >
-    </sl-tooltip>
-    <label for="cc-module-config-{moduleId}-label">Label </label>
-    <input
-      type="text"
-      id="cc-module-config-{moduleId}-label"
-      style="width:10rem"
-      bind:value={$collectionsStore["MODULES"][moduleId].label}
-      on:click={() => ($configStore["needToSaveCollections"] = true)}
-      on:keydown|stopPropagation={() =>
-        ($configStore["needToSaveCollections"] = true)}
-    />
+<div class="cc-module-row">
+  <div class="cc-module-col">
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label for="cc-module-config-{moduleId}-label">Label </label>
+        <sl-tooltip id="cc-about-module-label">
+          <div slot="content">{@html HELP.configLabel.tooltip}</div>
+          <a target="_blank" href={HELP.configLabel.url} rel="noreferrer">
+            <i class="icon-question cc-module-icon" /></a
+          >
+        </sl-tooltip>
+      </span>
+      <span class="cc-module-form-input">
+        <input
+          type="text"
+          id="cc-module-config-{moduleId}-label"
+          style="width:10rem"
+          bind:value={$collectionsStore["MODULES"][moduleId].label}
+          on:click={() => ($configStore["needToSaveCollections"] = true)}
+          on:keydown|stopPropagation={() =>
+            ($configStore["needToSaveCollections"] = true)}
+        />
+      </span>
+    </div>
   </div>
-  <div class="cc-module-config-collection-representation">
-    <sl-tooltip>
-      <div slot="content">{@html HELP.configAutoNum.tooltip}</div>
-      <a target="_blank" href={HELP.configAutoNum.url} rel="noreferrer">
-        <i class="icon-question cc-module-icon" /></a
-      >
-    </sl-tooltip>
-    <label for="cc-module-config-{moduleId}-num">Number</label>
-    <span class="cc-config-autonum" style="autonumStyle"
-      >auto:
-      <input
-        type="checkbox"
-        bind:checked={$collectionsStore["MODULES"][moduleId].autonum}
-        id="cc-module-config-{moduleId}-autonum"
-        style="position:relative; top:-0.25rem; "
-      />
-    </span>
-    {#if $collectionsStore["MODULES"][moduleId].autonum}
-      <input
-        type="text"
-        id="cc-module-config-{moduleId}-num"
-        bind:value={$collectionsStore["MODULES"][moduleId].actualNum}
-        on:click={() => ($configStore["needToSaveCollections"] = true)}
-        on:keydown|stopPropagation={() =>
-          ($configStore["needToSaveCollections"] = true)}
-        style="width:3rem;"
-        disabled
-      />
-    {:else}
-      <input
-        type="text"
-        id="cc-module-config-{moduleId}-num"
-        bind:value={$collectionsStore["MODULES"][moduleId].actualNum}
-        on:click={() => ($configStore["needToSaveCollections"] = true)}
-        on:keydown|stopPropagation={() =>
-          ($configStore["needToSaveCollections"] = true)}
-        style="width:3rem;"
-      />
-    {/if}
+  <!-- col -->
+  <div class="cc-module-col">
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label for="cc-module-config-{moduleId}-num">Number</label>
+        <sl-tooltip>
+          <div slot="content">{@html HELP.configAutoNum.tooltip}</div>
+          <a target="_blank" href={HELP.configAutoNum.url} rel="noreferrer">
+            <i class="icon-question cc-module-icon" /></a
+          >
+        </sl-tooltip>
+        <span class="cc-config-autonum"
+          >auto:
+          <input
+            type="checkbox"
+            bind:checked={$collectionsStore["MODULES"][moduleId].autonum}
+            id="cc-module-config-{moduleId}-autonum"
+            style="position:relative; top:-0.25rem; "
+          />
+        </span>
+      </span>
+      <span class="cc-module-form-input">
+        {#if $collectionsStore["MODULES"][moduleId].autonum}
+          <input
+            type="text"
+            id="cc-module-config-{moduleId}-num"
+            bind:value={$collectionsStore["MODULES"][moduleId].actualNum}
+            on:click={() => ($configStore["needToSaveCollections"] = true)}
+            on:keydown|stopPropagation={() =>
+              ($configStore["needToSaveCollections"] = true)}
+            style="width:3rem;"
+            disabled
+          />
+        {:else}
+          <input
+            type="text"
+            id="cc-module-config-{moduleId}-num"
+            bind:value={$collectionsStore["MODULES"][moduleId].actualNum}
+            on:click={() => ($configStore["needToSaveCollections"] = true)}
+            on:keydown|stopPropagation={() =>
+              ($configStore["needToSaveCollections"] = true)}
+            style="width:3rem;"
+          />
+        {/if}
+      </span>
+    </div>
   </div>
 </div>
 
-<div class="cc-module-config-detail">
-  <div class="cc-collection-description">
-    <sl-tooltip>
-      <div slot="content">{@html HELP.configEngage.tooltip}</div>
+<div class="cc-module-row">
+  <div class="cc-module-col">
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label for="cc-module-config-{moduleId}-engage">Engage</label>
+        <sl-tooltip>
+          <div slot="content">{@html HELP.configEngage.tooltip}</div>
 
-      <a
-        target="_blank"
-        rel="noreferrer"
-        href={HELP.configEngage.url}
-        class="cc-module-link"
-      >
-        <i class="icon-question cc-module-icon" /></a
-      >
-    </sl-tooltip>
-    <label for="cc-module-config-{moduleId}-engage">Engage</label>
-    <span class="cc-config-autonum">
-      <input
-        type="checkbox"
-        id="cc-module-config-{moduleId}-engage"
-        bind:checked={$collectionsStore["MODULES"][moduleId].engage}
-        style="position:relative; top:-0.25rem; "
-        on:click={() => ($configStore["needToSaveCollections"] = true)}
-        on:keydown={() => ($configStore["needToSaveCollections"] = true)}
-      />
-    </span>
-    {#if !$collectionsStore["MODULES"][moduleId].engage}
-      <input
-        type="text"
-        id="cc-module-config-{moduleId}-engageText"
-        bind:value={$collectionsStore["MODULES"][moduleId].engageText}
-        style="width:10rem;"
-        disabled
-      />
-    {:else}
-      <input
-        type="text"
-        class="cc-module-config-engageText"
-        id="cc-module-config-{moduleId}-engageText"
-        bind:value={$collectionsStore["MODULES"][moduleId].engageText}
-        style="width:10rem;"
-        on:click={() => ($configStore["needToSaveCollections"] = true)}
-        on:keydown|stopPropagation={() =>
-          ($configStore["needToSaveCollections"] = true)}
-      />
-    {/if}
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href={HELP.configEngage.url}
+            class="cc-module-link"
+          >
+            <i class="icon-question cc-module-icon" /></a
+          >
+        </sl-tooltip>
+        <span class="cc-config-autonum">
+          <input
+            type="checkbox"
+            id="cc-module-config-{moduleId}-engage"
+            bind:checked={$collectionsStore["MODULES"][moduleId].engage}
+            style="position:relative; top:-0.25rem; "
+            on:click={() => ($configStore["needToSaveCollections"] = true)}
+            on:keydown={() => ($configStore["needToSaveCollections"] = true)}
+          />
+        </span>
+      </span>
+      <span class="cc-module-input">
+        {#if !$collectionsStore["MODULES"][moduleId].engage}
+          <input
+            type="text"
+            id="cc-module-config-{moduleId}-engageText"
+            bind:value={$collectionsStore["MODULES"][moduleId].engageText}
+            style="width:10rem;"
+            disabled
+          />
+        {:else}
+          <input
+            type="text"
+            class="cc-module-config-engageText"
+            id="cc-module-config-{moduleId}-engageText"
+            bind:value={$collectionsStore["MODULES"][moduleId].engageText}
+            style="width:10rem;"
+            on:click={() => ($configStore["needToSaveCollections"] = true)}
+            on:keydown|stopPropagation={() =>
+              ($configStore["needToSaveCollections"] = true)}
+          />
+        {/if}
+      </span>
+    </div>
   </div>
+  <div class="cc-module-col" />
 </div>
 
 <div class="cc-module-config-description">
+  <label for="cc-module-config-{moduleId}-description">Description</label>
   <sl-tooltip>
     <div slot="content">{@html HELP.configDescription.tooltip}</div>
     <a
@@ -250,7 +290,7 @@
       <i class="icon-question cc-module-icon" />
     </a>
   </sl-tooltip>
-  <label for="cc-module-config-{moduleId}-description">Description</label>
+</div>
 
   <Editor
     {html}
@@ -260,7 +300,6 @@
       $configStore["needToSaveCollections"] = true;
     }}
   />
-</div>
 
 <style>
   .cc-module-config-description {
@@ -276,5 +315,48 @@
     grid-auto-flow: row;
     grid-template-areas: ". .";
     height: 100%;
+  }
+
+  .cc-module-form {
+    display: grid;
+    grid-template-columns: 8em 1fr;
+    grid-gap: 1em;
+  }
+
+  .cc-module-label {
+    grid-column: 1/ 2;
+    text-align: right;
+    margin-top: 0.4em;
+  }
+
+  .cc-module-input {
+    grid-column: 2/ 3;
+  }
+
+  .cc-module-input select,
+  .cc-module-input input {
+    width: 90%;
+  }
+
+  .cc-module-row {
+  }
+  .cc-module-row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  .cc-module-col {
+    float: left;
+    width: 50%;
+  }
+
+  .cc-config-autonum {
+    font-size: 0.7em;
+  }
+
+  sl-tooltip {
+    text-align: left;
+    white-space: normal;
   }
 </style>

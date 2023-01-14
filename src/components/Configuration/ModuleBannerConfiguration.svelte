@@ -202,10 +202,15 @@
   .cc-module-label {
     grid-column: 1/ 2;
     text-align: right;
-	margin-top: 0.4em;
+    margin-top: 0.4em;
   }
 
   .cc-module-input {
     grid-column: 2/ 3;
+  }
+
+  sl-tooltip {
+    text-align: left;
+    white-space: normal;
   }
 </style>
