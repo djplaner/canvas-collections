@@ -5,6 +5,264 @@
  */
 /* jshint esversion: 6 */
 
+
+export default class UniversityDateCalendar {
+  //private static instance: UniversityDateCalendar;
+  private defaultPeriod: string;
+
+  public constructor(strm = DEFAULT_PERIOD) {
+    //public static getInstance(strm = DEFAULT_PERIOD): UniversityDateCalendar {
+    if (strm && CALENDAR[strm]) {
+      this.defaultPeriod = strm;
+    }
+  }
+
+  public setStudyPeriod(studyPeriod) {
+    this.defaultPeriod = studyPeriod;
+  }
+
+  public getStudyPeriod() {
+    return this.defaultPeriod;
+  }
+
+  /**
+   * @function getHumanReadableStudyPeriod
+   * @returns {String} the human readable version of the current study period
+   * @description Current implemented for Griffith course id's version of term code
+   * https://intranet.secure.griffith.edu.au/computing/using-learning-at-griffith/staff/administration/course-ID
+   * Four digits
+   * - first digit is the type of course
+   * - middle two digits are the year (20 + XX)
+   * - final digit is the term
+   */
+  public getHumanReadableStudyPeriod() {
+    const typeOfCourse = {
+      3: "GU",
+      2: "OUA",
+      6: "Accelerated Online",
+      1: "GELI",
+    };
+    const termMap = {
+      // OUA courses
+      2: {
+        1: "Study Period 1",
+        2: "Session 1",
+        3: "Study Period 2",
+        4: "Session 2",
+        5: "Study Period 3",
+        6: "Session 3",
+        7: "Study Period 4",
+      },
+      3: {
+        1: "Trimester 1",
+        5: "Trimester 2",
+        8: "Trimester 3",
+      },
+      6: {
+        1: "Teaching Period 1",
+        2: "Teaching Period 2",
+        3: "Teaching Period 3",
+        4: "Teaching Period 4",
+        5: "Teaching Period 5",
+        6: "Teaching Period 6",
+      },
+    };
+
+    // extract the first, middle two and last digital from defaultPeriod
+    const courseType = this.defaultPeriod[0];
+    const year = this.defaultPeriod.slice(1, 3);
+    const term = this.defaultPeriod[3];
+
+    return `${termMap[courseType][term]} 20${year}`;
+  }
+
+  /**
+   * @function getWeekDetails
+   * @param {String} period
+   * @param {String} week
+   * @returns {Object} the correct start/stop dates for the givern period/week
+   * null if doesn't exist
+   * if no week specified, returns the object for the STRM that specifies the
+   * weeks
+   */
+  public getWeekDetails(week = "all", period = this.defaultPeriod) {
+    // by default return the object for the current period
+    if (week === "all") {
+      return CALENDAR[period];
+    }
+
+    // if week is a string starting with "Week" remove
+    // the Week and convert number of integer
+    if (typeof week === "string" && week.startsWith("Week")) {
+      //week = parseInt(week.substring(4));
+      week = week.substring(4);
+    }
+    // only proceed if the period and week are in the CALENDAR
+    if (!(period in CALENDAR)) {
+      return null;
+    } else if (!(week in CALENDAR[period])) {
+      return null;
+    }
+
+    return CALENDAR[period][week];
+  }
+
+  public getDaysOfWeek() {
+    return DAYS_OF_WEEK;
+  }
+
+  /**
+   * Generate a object that specifies the full date for a given study period date.
+   * e.g. converts Tuesday Week 1 to
+   * { date: "", month: "", week: 1: year: 2019 }
+   * Based on the specified study period and the calendar above
+   * @param {Integer} week - week of university term
+   * @param {Boolean} startWeek - if true, returns the start date of the week
+   * @param {String} dayOfWeek - specify the day to return
+   * @returns {Object} specifying the day, month, year of the week
+   */
+  public getDate(week, startWeek = true, dayOfWeek = "Monday") {
+    let date = {
+      day: "",
+      date: "",
+      month: "",
+      week: week,
+      year: 0,
+    };
+
+    // lowercase dayOfWeek
+    dayOfWeek = dayOfWeek.toLowerCase();
+
+    // get the details for the given week
+    let weekDetails = this.getWeekDetails(week);
+
+    // if no details for the week, return empty date
+    if (weekDetails === null) {
+      return date;
+    }
+    // weekDetails/date format
+    // 0: { start: "2022-03-07", stop: "2022-03-13" },
+
+    let d = new Date(weekDetails.start);
+
+    const dayToNum = {
+      tuesday: 1,
+      tue: 1,
+      wednesday: 2,
+      wed: 2,
+      thursday: 3,
+      thu: 3,
+      friday: 4,
+      fri: 4,
+      saturday: 5,
+      sat: 5,
+      sunday: 6,
+      sun: 6,
+    };
+
+    if (dayOfWeek !== "monday") {
+      date.day = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.substring(1, 3);
+      if (dayOfWeek in dayToNum) {
+        d.setDate(d.getDate() + dayToNum[dayOfWeek.toLowerCase()]);
+      }
+    }
+
+    date.month = MONTHS[d.getMonth()];
+    date.date = d.getDate().toString();
+    date.year = d.getFullYear();
+
+    return date;
+  }
+
+  /**
+   * @function getFirstDayOfWeek
+   * @param {Integer} week - week of university term
+   * @param {String} period - study period
+   * @returns {String} the first day of the week according to the calendar
+   * @description University specific way of identifying the first day of the week
+   */
+  getFirstDayOfWeek(week = 1, period = this.defaultPeriod) {
+    return "Monday";
+  }
+
+  /**
+   * getCurrentPeriod
+   * @descr Examine Canvas course object's course_code attribute in an attempt
+   * to extract the STRM and subsequently calculate the year, period and
+   * other data -- assumes a Griffith University course code format which is
+   * currently
+   *
+   * Production sites:
+   *    Organisational Communication (COM31_2226)
+   *    - study period 2226
+   *
+   * Production sites - joined courses
+   *    Introduction to Sculpture (1252QCA_3228/7252QCA_3228)
+   *
+   * DEV sites:
+   *    DEV_2515LHS_3228
+   *    - study period 3228
+   *
+   * ORG sites:
+   *     AEL_SHOW1
+   *     - no study period
+   *
+   * TODO rejig based on scapeLib/parseCourseInstanceId (ael-automation)
+   * In particular to handle the "YP" course ids
+   */
+
+  public getCurrentPeriod(courseCode) {
+    // does objectCourseCode contain a pair of brackets?
+    // if not, we've got a dev site or an org site
+    let brackets = courseCode.match(/\(([^)]+)\)/);
+    if (!brackets) {
+      // is it a DEV course
+      if (courseCode.startsWith("DEV_")) {
+        // use regex ^DEV_([^_]*)_([\d]*)$ to extract the course code and STRM
+        const regex = /^DEV_([^_]*)_([\d]*)$/;
+        const match = regex.exec(courseCode);
+        if (match) {
+          return match[2];
+        }
+        return this.defaultPeriod;
+      }
+      // no brackets, not a dev site, go with default, but create calendar
+      // before we leave
+      // TODO - this should check to see if Canvas Collections has a default
+      //  STRM defined
+      return this.defaultPeriod;
+    }
+
+    // We've got brackets in course code, suggesting that it's a production course site
+    // Is it a standard course, possible formats are
+    // coursecode_strm
+    // coursecode_strm_campus
+
+    // use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
+    //const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
+    // match a course code - first group - any chars but _
+    // match four digits (strm)
+    // optionally other stuff
+    const canvasCourseCode = courseCode.match(/\(([^)]+)\)/)[1];
+    let regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
+    let match = regex.exec(canvasCourseCode);
+    if (match) {
+      return match[2];
+    } else {
+      // a chance we might have a joined course
+      // - Get the very first course code and extract the STRM from there
+      regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*\//;
+      match = regex.exec(canvasCourseCode);
+      if (match) {
+        return match[2];
+      }
+    }
+
+    return this.defaultPeriod;
+  }
+}
+
+
 // Calendar for Griffith University
 // Period is represented by a four digit number - an STRM
 // XYYP
@@ -628,259 +886,3 @@ const CALENDAR = {
     exam: { start: "2019-05-30", stop: "2019-06-08" },
   },
 };
-
-export default class UniversityDateCalendar {
-  //private static instance: UniversityDateCalendar;
-  private defaultPeriod: string;
-
-  public constructor(strm = DEFAULT_PERIOD) {
-    //public static getInstance(strm = DEFAULT_PERIOD): UniversityDateCalendar {
-    if (strm && CALENDAR[strm]) {
-      this.defaultPeriod = strm;
-    }
-  }
-
-  public setStudyPeriod(studyPeriod) {
-    this.defaultPeriod = studyPeriod;
-  }
-
-  public getStudyPeriod() {
-    return this.defaultPeriod;
-  }
-
-  /**
-   * @function getHumanReadableStudyPeriod
-   * @returns {String} the human readable version of the current study period
-   * @description Current implemented for Griffith course id's version of term code
-   * https://intranet.secure.griffith.edu.au/computing/using-learning-at-griffith/staff/administration/course-ID
-   * Four digits
-   * - first digit is the type of course
-   * - middle two digits are the year (20 + XX)
-   * - final digit is the term
-   */
-  public getHumanReadableStudyPeriod() {
-    const typeOfCourse = {
-      3: "GU",
-      2: "OUA",
-      6: "Accelerated Online",
-      1: "GELI",
-    };
-    const termMap = {
-      // OUA courses
-      2: {
-        1: "Study Period 1",
-        2: "Session 1",
-        3: "Study Period 2",
-        4: "Session 2",
-        5: "Study Period 3",
-        6: "Session 3",
-        7: "Study Period 4",
-      },
-      3: {
-        1: "Trimester 1",
-        5: "Trimester 2",
-        8: "Trimester 3",
-      },
-      6: {
-        1: "Teaching Period 1",
-        2: "Teaching Period 2",
-        3: "Teaching Period 3",
-        4: "Teaching Period 4",
-        5: "Teaching Period 5",
-        6: "Teaching Period 6",
-      },
-    };
-
-    // extract the first, middle two and last digital from defaultPeriod
-    const courseType = this.defaultPeriod[0];
-    const year = this.defaultPeriod.slice(1, 3);
-    const term = this.defaultPeriod[3];
-
-    return `${termMap[courseType][term]} 20${year}`;
-  }
-
-  /**
-   * @function getWeekDetails
-   * @param {String} period
-   * @param {String} week
-   * @returns {Object} the correct start/stop dates for the givern period/week
-   * null if doesn't exist
-   * if no week specified, returns the object for the STRM that specifies the
-   * weeks
-   */
-  public getWeekDetails(week = "all", period = this.defaultPeriod) {
-    // by default return the object for the current period
-    if (week === "all") {
-      return CALENDAR[period];
-    }
-
-    // if week is a string starting with "Week" remove
-    // the Week and convert number of integer
-    if (typeof week === "string" && week.startsWith("Week")) {
-      //week = parseInt(week.substring(4));
-      week = week.substring(4);
-    }
-    // only proceed if the period and week are in the CALENDAR
-    if (!(period in CALENDAR)) {
-      return null;
-    } else if (!(week in CALENDAR[period])) {
-      return null;
-    }
-
-    return CALENDAR[period][week];
-  }
-
-  public getDaysOfWeek() {
-    return DAYS_OF_WEEK;
-  }
-
-  /**
-   * Generate a object that specifies the full date for a given study period date.
-   * e.g. converts Tuesday Week 1 to
-   * { date: "", month: "", week: 1: year: 2019 }
-   * Based on the specified study period and the calendar above
-   * @param {Integer} week - week of university term
-   * @param {Boolean} startWeek - if true, returns the start date of the week
-   * @param {String} dayOfWeek - specify the day to return
-   * @returns {Object} specifying the day, month, year of the week
-   */
-  public getDate(week, startWeek = true, dayOfWeek = "Monday") {
-    let date = {
-      day: "",
-      date: "",
-      month: "",
-      week: week,
-      year: 0,
-    };
-
-    // lowercase dayOfWeek
-    dayOfWeek = dayOfWeek.toLowerCase();
-
-    // get the details for the given week
-    let weekDetails = this.getWeekDetails(week);
-
-    // if no details for the week, return empty date
-    if (weekDetails === null) {
-      return date;
-    }
-    // weekDetails/date format
-    // 0: { start: "2022-03-07", stop: "2022-03-13" },
-
-    let d = new Date(weekDetails.start);
-
-    const dayToNum = {
-      tuesday: 1,
-      tue: 1,
-      wednesday: 2,
-      wed: 2,
-      thursday: 3,
-      thu: 3,
-      friday: 4,
-      fri: 4,
-      saturday: 5,
-      sat: 5,
-      sunday: 6,
-      sun: 6,
-    };
-
-    if (dayOfWeek !== "monday") {
-      date.day = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.substring(1, 3);
-      if (dayOfWeek in dayToNum) {
-        d.setDate(d.getDate() + dayToNum[dayOfWeek.toLowerCase()]);
-      }
-    }
-
-    date.month = MONTHS[d.getMonth()];
-    date.date = d.getDate().toString();
-    date.year = d.getFullYear();
-
-    return date;
-  }
-
-  /**
-   * @function getFirstDayOfWeek
-   * @param {Integer} week - week of university term
-   * @param {String} period - study period
-   * @returns {String} the first day of the week according to the calendar
-   * @description University specific way of identifying the first day of the week
-   */
-  getFirstDayOfWeek(week = 1, period = this.defaultPeriod) {
-    return "Monday";
-  }
-
-  /**
-   * getCurrentPeriod
-   * @descr Examine Canvas course object's course_code attribute in an attempt
-   * to extract the STRM and subsequently calculate the year, period and
-   * other data -- assumes a Griffith University course code format which is
-   * currently
-   *
-   * Production sites:
-   *    Organisational Communication (COM31_2226)
-   *    - study period 2226
-   *
-   * Production sites - joined courses
-   *    Introduction to Sculpture (1252QCA_3228/7252QCA_3228)
-   *
-   * DEV sites:
-   *    DEV_2515LHS_3228
-   *    - study period 3228
-   *
-   * ORG sites:
-   *     AEL_SHOW1
-   *     - no study period
-   *
-   * TODO rejig based on scapeLib/parseCourseInstanceId (ael-automation)
-   * In particular to handle the "YP" course ids
-   */
-
-  public getCurrentPeriod(courseCode) {
-    // does objectCourseCode contain a pair of brackets?
-    // if not, we've got a dev site or an org site
-    let brackets = courseCode.match(/\(([^)]+)\)/);
-    if (!brackets) {
-      // is it a DEV course
-      if (courseCode.startsWith("DEV_")) {
-        // use regex ^DEV_([^_]*)_([\d]*)$ to extract the course code and STRM
-        const regex = /^DEV_([^_]*)_([\d]*)$/;
-        const match = regex.exec(courseCode);
-        if (match) {
-          return match[2];
-        }
-        return this.defaultPeriod;
-      }
-      // no brackets, not a dev site, go with default, but create calendar
-      // before we leave
-      // TODO - this should check to see if Canvas Collections has a default
-      //  STRM defined
-      return this.defaultPeriod;
-    }
-
-    // We've got brackets in course code, suggesting that it's a production course site
-    // Is it a standard course, possible formats are
-    // coursecode_strm
-    // coursecode_strm_campus
-
-    // use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
-    //const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
-    // match a course code - first group - any chars but _
-    // match four digits (strm)
-    // optionally other stuff
-    const canvasCourseCode = courseCode.match(/\(([^)]+)\)/)[1];
-    let regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
-    let match = regex.exec(canvasCourseCode);
-    if (match) {
-      return match[2];
-    } else {
-      // a chance we might have a joined course
-      // - Get the very first course code and extract the STRM from there
-      regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*\//;
-      match = regex.exec(canvasCourseCode);
-      if (match) {
-        return match[2];
-      }
-    }
-
-    return this.defaultPeriod;
-  }
-}

@@ -22,10 +22,7 @@
   let calculatedDate = calculateDate(
     $collectionsStore["MODULES"][moduleId].date
   );
-
-  debug("DATE calculation FROM");
-  debug($collectionsStore["MODULES"][moduleId].date);
-  debug(`to calculated date ${calculatedDate}`);
+  let originalDate = $collectionsStore["MODULES"][moduleId].date;
 
   // TODO move these into UniversityDateCalendar?
   const daysOfWeek = calendar.getDaysOfWeek();
@@ -48,9 +45,6 @@
     15,
     "exam",
   ];
-
-  debug("______________ ModuleDateConfiguration.svelte _______________");
-  debug($collectionsStore["MODULES"][moduleId]);
 
   /**
    * @function calculateDate
@@ -111,8 +105,64 @@
    */
 
   function updateDate() {
+    // also need to recalculate the date and month
+    modifyDate();
     calculatedDate = calculateDate($collectionsStore["MODULES"][moduleId].date);
     $configStore["needToSaveCollections"] = true;
+  }
+
+  /**
+   * @function modifyDate
+   * @description Something has changed about the module's date. Need to recalculate the
+   * and update the calendar date for one of the from or to dates
+   * - call getDate on from
+   * - call getDate on to - if it exists
+   * - compare the resulting JSON and make any chances necessary
+   */
+
+  function modifyDate() {
+    // calculate new date for from
+    let newFrom = {};
+
+    if ($collectionsStore["MODULES"][moduleId]["date"].day === "") {
+      // no day
+      newFrom = calendar.getDate(
+        $collectionsStore["MODULES"][moduleId]["date"].week
+      );
+    } else {
+      newFrom = calendar.getDate(
+        $collectionsStore["MODULES"][moduleId]["date"].week,
+        false,
+        $collectionsStore["MODULES"][moduleId]["date"].day
+      );
+    }
+    // calculate new date for to
+    let newTo = {};
+    if ($collectionsStore["MODULES"][moduleId]["date"].hasOwnProperty("to")) {
+      if ($collectionsStore["MODULES"][moduleId]["date"].to.day === "") {
+        newTo = calendar.getDate(
+          $collectionsStore["MODULES"][moduleId]["date"].to.week
+        );
+      } else {
+        newTo = calendar.getDate(
+          $collectionsStore["MODULES"][moduleId]["date"].to.week,
+          false,
+          $collectionsStore["MODULES"][moduleId]["date"].to.day
+        );
+      }
+    }
+
+    // date and month specific the calendar date, this is what we need to check and update
+    const fieldsToCheck = ["date", "month"];
+    fieldsToCheck.forEach((field) => {
+      if (newFrom[field] !== originalDate[field]) {
+        $collectionsStore["MODULES"][moduleId]["date"][field] = newFrom[field];
+      }
+      if (newTo[field] !== originalDate["to"][field]) {
+        $collectionsStore["MODULES"][moduleId]["date"]["to"][field] =
+          newTo[field];
+      }
+    });
   }
 
   /**
@@ -140,9 +190,8 @@
   };
 </script>
 
-  <div class="cc-current-studyPeriod">
-    <p>
-
+<div class="cc-current-studyPeriod">
+  <p>
     <strong>Current Term:</strong>
     <sl-tooltip class="cc-about-module-studyPeriod">
       <div slot="content">{@html HELP.studyPeriod.tooltip}</div>
@@ -151,12 +200,11 @@
       >
     </sl-tooltip>
     {currentStudyPeriod}
-    </p>
-  </div>
+  </p>
+</div>
 
-
-  <div class="cc-calculated-date">
-    <p>
+<div class="cc-calculated-date">
+  <p>
     <strong>Current Date:</strong>
     <sl-tooltip>
       <div slot="content">{@html HELP.calculatedDate.tooltip}</div>
@@ -164,9 +212,9 @@
         <i class="icon-question cc-module-icon" />
       </a>
     </sl-tooltip>
-    {calculatedDate}</p>
-  </div>
-
+    {calculatedDate}
+  </p>
+</div>
 
 <div class="cc-date-row">
   <div class="cc-date-col" id="cc-module-config-{moduleId}-date-start">

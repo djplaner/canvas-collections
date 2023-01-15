@@ -168,7 +168,7 @@ Do you wish to proceed?`
     },
     moduleColour: {
       tooltip:
-        "Choose a colour for the background of the card's banner section.",
+        "<p>Choose a background colour for the card's banner section by clicking on the circle.",
       href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#iframe",
     },
   };
@@ -284,18 +284,18 @@ Do you wish to proceed?`
 
   <sl-tab-panel name="cc-module-config-{moduleId}-colour">
     <div class="cc-module-config-collection-representation">
+      <label
+        for="cc-collection-representation-{moduleId}-color"
+        style="padding-top:0.8rem;"
+      >
+        Colour:
+      </label>
       <sl-tooltip id="cc-about-module-color">
         <div slot="content">{@html HELP.moduleColour.tooltip}</div>
         <a target="_blank" href={HELP.moduleColour.href} rel="noreferrer"
           ><i class="icon-question cc-module-icon" /></a
         >
       </sl-tooltip>
-      <label
-        for="cc-collection-representation-{moduleId}-color"
-        style="padding-top:0.8rem;"
-      >
-        colour
-      </label>
       <sl-color-picker
         id="cc-module-config-{moduleId}-color"
         on:sl-change={updateBannerColour}
