@@ -158,7 +158,12 @@ Do you wish to proceed?`
     },
     moduleIframe: {
       tooltip:
-        "Provide an iframe (embed HTML) to place in a card's banner section.",
+        `<p>Provide an iframe (embed HTML) to place in a card's banner section.</p> <p>Notes:</p>
+        <ol>
+            <li> <em>height</em> and <em>width</em> will be removed to fit the available space</li>
+            <li> any change will only take effect after you click outside the iframe box</li>
+            </ol>
+        `,
       href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#iframe",
     },
     moduleColour: {
