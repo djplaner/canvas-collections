@@ -6,29 +6,24 @@
    * Figure out the correct CSS class based on image size
    * attribute for module
    */
-  function calculateImageSize() {
-		let imageSize = "";
-		const allowedObjectFit = ['contain', 'cover', 'scale-down', 'fill'];
-		//if ("imageSize" in module && module.imageSize !== "") {
-		if ($collectionsStore["MODULES"][moduleId].hasOwnProperty("imageSize") &&
-			$collectionsStore["MODULES"][moduleId].imageSize !== "") {
-			if ($collectionsStore["MODULES"][moduleId].imageSize === "bg-contain") {
-				// some sort of dodgy kludge to handle legacy methods
-				//imageSize = "background-size: contain !important; background-repeat: no-repeat; background-position: center;";
-				imageSize = "cc-object-fit-old-kludge";
-			} else if (allowedObjectFit.includes($collectionsStore["MODULES"][moduleId].imageSize)) {
-				imageSize = `cc-object-fit-${$collectionsStore["MODULES"][moduleId].imageSize}`;
-				//				imageSize = `object-fit: ${module.imageSize} !important;`;
-			}
-		}
-		return imageSize;
+  function calculateImageSize(size: string): string {
+    let imageSize = "";
+    const allowedObjectFit = ["contain", "cover", "scale-down", "fill"];
+    if (size === "bg-contain") {
+      imageSize = "cc-object-fit-old-kludge";
+    } else if (allowedObjectFit.includes(size)) {
+      imageSize = `cc-object-fit-${size}`;
+    }
+    return imageSize;
   }
 </script>
 
 {#if $collectionsStore["MODULES"][moduleId].image}
   <img
-    class="cc-card-image {calculateImageSize()}"
-    src="{$collectionsStore['MODULES'][moduleId].image}"
+    class="cc-card-image {calculateImageSize(
+      $collectionsStore['MODULES'][moduleId].imageSize
+    )}"
+    src={$collectionsStore["MODULES"][moduleId].image}
     data-moduleid="${moduleId}"
     alt="Image representing '{$collectionsStore['MODULES'][
       moduleId
@@ -51,35 +46,34 @@
     width: 100%;
     height: 10rem;
   }
-  		.cc-card-image {
-			height: 10rem;
-			width: 100%;
-		}
+  .cc-card-image {
+    height: 10rem;
+    width: 100%;
+  }
 
-		.cc-object-fit-old-kludge {
-			background-size: contain !important; 
-			background-repeat: no-repeat; 
-			background-position: center;
-		}
+  .cc-object-fit-old-kludge {
+    background-size: contain !important;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
 
-		.cc-object-fit-cover {
-			object-fit: cover;
-		}
+  .cc-object-fit-cover {
+    object-fit: cover;
+  }
 
-		.cc-object-fit-contain {
-			object-fit: contain;
-		}
+  .cc-object-fit-contain {
+    object-fit: contain;
+  }
 
-		.cc-object-fit-fill {
-			object-fit: fill;
-		}
+  .cc-object-fit-fill {
+    object-fit: fill;
+  }
 
-		.cc-object-fit-scale-down {
-			object-fit: scale-down;
-		}
+  .cc-object-fit-scale-down {
+    object-fit: scale-down;
+  }
 
-		.cc-object-fit-none {
-			object-fit: none;
-		}
-
+  .cc-object-fit-none {
+    object-fit: none;
+  }
 </style>
