@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { collectionsStore } from "../../../stores";
+  import { collectionsStore,configStore } from "../../../stores";
   export let moduleId: Number;
 
 
@@ -17,7 +17,9 @@
     class="cc-banner-colour"
     style="background-color:#ffffff;width:100%;height:10rem;"
   >
-    (<em>No iframe specified</em>)
+    {#if $configStore["editMode"] }
+    <p>(<em>No iframe specified</em>)</p>
+    {/if}
   </div>
 {/if}
 

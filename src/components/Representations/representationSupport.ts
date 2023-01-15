@@ -136,7 +136,8 @@ export function modifyCanvasModulesList(collection, allModules, editMode) {
     // make each current collection moduleId is visible
     const module = document.getElementById(`context_module_${moduleId}`);
     if (module) {
-      if (allModules[moduleId].fyi) {
+      if (allModules[moduleId].fyi && !editMode) {
+        // fyi modules should not have their content shown to students
         module.style.display = "none";
       } else {
         module.style.display = "block";

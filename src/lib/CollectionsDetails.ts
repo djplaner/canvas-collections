@@ -137,21 +137,8 @@ export class CollectionsDetails {
         this.collections["COLLECTIONS"]
       );
     }
-    // Need to decode some html entities
-    // this.cc_configuration.MODULES hash description and collection
+
     /*		for (let key in this.collections['MODULES']) {
-			const module = this.collections['MODULES'][key];
-			module.description = this.decodeHTML(module.description);
-			module.collection = this.decodeHTML(module.collection);
-			module.name = this.decodeHTML(module.name);
-			if ( module.hasOwnProperty('iframe')) {
-				module.iframe = this.decodeHTML(module.iframe);
-			}
-			// need to check the URL for image as the RCE screws with the URL
-			if (module.hasOwnProperty('image') && module.image.startsWith('/')) {
-				module.image = `https://${window.location.hostname}${module.image}`;
-			}
-		} 
 		// double check that we're not an import from another course
 		let courseImages = parsed.querySelector('div.cc-card-images');
 		const importConverted = this.checkConvertImport(courseImages);
@@ -202,6 +189,9 @@ export class CollectionsDetails {
         module.name = this.decodeHTML(module.name);
         if (module.hasOwnProperty("iframe") && module.iframe !== "") {
           module.iframe = this.decodeHTML(module.iframe, true);
+        }
+        if (module.hasOwnProperty("image") && module.image.startsWith("/")) {
+          module.image = `https://${window.location.hostname}${module.image}`;
         }
         // decode each of the metadata fields
         for (let key in module.metadata) {
