@@ -10,17 +10,16 @@ import { debug } from "../../lib/debug";
  * @description - Returns an array of module belonging to a given collection
  */
 export function getCollectionCanvasModules(collection, allModules) {
-
   let modules = [];
 
-  for (const module in allModules ) {
+  for (const module in allModules) {
     if (allModules[module].collection === collection) {
       modules.push(allModules[module]);
     }
   }
-  return modules
+  return modules;
 
-/*  const moduleIds = Object.keys(modules).filter((module) => {
+  /*  const moduleIds = Object.keys(modules).filter((module) => {
     return (
       /*(
 				! allModules[module].published &&
@@ -31,10 +30,9 @@ export function getCollectionCanvasModules(collection, allModules) {
     );
   }); */
   // convert all the moduleIds to numbers
-/*  return moduleIds.map((moduleId) => {
+  /*  return moduleIds.map((moduleId) => {
     return parseInt(moduleId, 10);
   }); */
-
 }
 
 /**
@@ -95,31 +93,30 @@ export function modifyCanvasModulesList(collection, allModules, editMode) {
   const modules = getCollectionCanvasModules(collection, allModules);
   // create array moduleIds that contains the module.ids from modules
   const moduleIds = modules.map((module) => {
-    return parseInt(module.id,10);
+    return parseInt(module.id, 10);
   });
   // get all the moduleIds from modules not in moduleIds
   // - allModules is a list of modules ?? dict??
-  // - 
+  // -
   const otherModuleIds = Object.keys(allModules).filter((moduleId) => {
     return !moduleIds.includes(parseInt(moduleId, 10));
   });
 
-  debug(` --- moduleIds ${moduleIds} --- otherModuleIds ${otherModuleIds} ---`)
-
+  debug(` --- moduleIds ${moduleIds} --- otherModuleIds ${otherModuleIds} ---`);
 
   // for other modules
   // - if collection is not null hide the module
   // - if null, create an unallocated ModuleConfiguration
   otherModuleIds.forEach((moduleId) => {
     const module = document.getElementById(`context_module_${moduleId}`);
-    if (module ) {
-      if (allModules[moduleId].collection!==null ) {
+    if (module) {
+      if (allModules[moduleId].collection !== null) {
         // hide any Canvas module elements that have a collection defined but
         // are not the current collection
         module.style.display = "none";
       } else {
         if (editMode) {
-          // in edit mode ensure that unallocated modules are visible and 
+          // in edit mode ensure that unallocated modules are visible and
           // have a ModuleConfiguration component
           module.style.display = "block";
           addModuleConfiguration(parseInt(moduleId, 10));
@@ -139,7 +136,11 @@ export function modifyCanvasModulesList(collection, allModules, editMode) {
     // make each current collection moduleId is visible
     const module = document.getElementById(`context_module_${moduleId}`);
     if (module) {
-      module.style.display = "block";
+      if (allModules[moduleId].fyi) {
+        module.style.display = "none";
+      } else {
+        module.style.display = "block";
+      }
     }
   });
 }
@@ -150,10 +151,10 @@ export function modifyCanvasModulesList(collection, allModules, editMode) {
  * @description add an appropriate ModuleConfiguration component to the
  * matching Canvas module element
  */
-function addModuleConfiguration(moduleId:Number) {
-  debug(`XXXXX addModuleConfiguration ${moduleId} `)
+function addModuleConfiguration(moduleId: Number) {
+  debug(`XXXXX addModuleConfiguration ${moduleId} `);
   // get type of moduleId
-  debug(`type of moduleId ${typeof(moduleId)}`)
+  debug(`type of moduleId ${typeof moduleId}`);
   const module = document.getElementById(`context_module_${moduleId}`);
   if (module) {
     module.style.display = "block";
@@ -175,23 +176,22 @@ function addModuleConfiguration(moduleId:Number) {
         module: moduleId,
       },
     });
-    debug('XXXXX moduleConfigComponent')
-    debug(moduleConfigComponent)
+    debug("XXXXX moduleConfigComponent");
+    debug(moduleConfigComponent);
   }
 }
 
 /**
  * @function getModuleUrl
- * @param {Number} moduleId 
- * @returns {String} - the url for a Canvas module's item 
+ * @param {Number} moduleId
+ * @returns {String} - the url for a Canvas module's item
  */
-export function getModuleUrl(moduleId:Number) {
-  let docUrl = new URL(document.URL)
+export function getModuleUrl(moduleId: Number) {
+  let docUrl = new URL(document.URL);
   // remove anchor and params from docUrl
-  docUrl.search = ''
+  docUrl.search = "";
   // set the hash to link to the module
-  docUrl.hash = `module_${moduleId}`
+  docUrl.hash = `module_${moduleId}`;
 
-  return docUrl.toString()
-
+  return docUrl.toString();
 }

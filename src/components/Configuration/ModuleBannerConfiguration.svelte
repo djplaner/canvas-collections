@@ -7,13 +7,6 @@
    * Support types: image, iframe and colour
    *
    * TODO
-   * - make reactive
-   * - Ensure iframe is being cleansed and in the right format
-   * - formatting and outline
-   * - consider implementing a test that the image actually exists
-   * - on changing imageScale will need to explicitly update the style on the image
-   *   since it isn't based on the value - unless we change this class name to match
-   *   the names of the imageScale value
    */
   import { collectionsStore, configStore } from "../../stores";
 
@@ -32,6 +25,22 @@
     "scale-down",
     "auto",
   ];
+
+  /**
+   * @function updateBannerColour
+   * @description Called when user changes shoelace colour picker
+   * - get the value from the colour picker
+   * - set the bannerColour attribute for the current module
+   * - set the needToSave flag
+  */
+
+  function updateBannerColour() {
+    const colourPicker = document.getElementById(
+      `cc-module-config-${moduleId}-color`
+    ) as HTMLInputElement;
+    $collectionsStore["MODULES"][moduleId].bannerColour = colourPicker.value;
+    $configStore["needToSaveCollections"] = true;
+  }
 
   /**
    * Define the tooltip and help site links for this module
@@ -79,16 +88,19 @@
   <sl-tab
     class="cc-banner-tab"
     slot="nav"
+    active={$collectionsStore["MODULES"][moduleId].banner==="image"}
     panel="cc-module-config-${moduleId}-image">Image</sl-tab
   >
   <sl-tab
     class="cc-banner-tab"
     slot="nav"
+    active={$collectionsStore["MODULES"][moduleId].banner==="iframe"}
     panel="cc-module-config-${moduleId}-iframe">Iframe</sl-tab
   >
   <sl-tab
     class="cc-banner-tab"
     slot="nav"
+    active={$collectionsStore["MODULES"][moduleId].banner==="colour"}
     panel="cc-module-config-${moduleId}-colour">Colour</sl-tab
   >
 
@@ -180,7 +192,8 @@
         colour
       </label>
       <sl-color-picker
-        id="cc-module-config-${moduleId}-color"
+        id="cc-module-config-{moduleId}-color"
+        on:sl-change={updateBannerColour}
         value={$collectionsStore["MODULES"][moduleId].bannerColour}
         label="Select a color"
       />

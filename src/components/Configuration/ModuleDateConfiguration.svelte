@@ -112,7 +112,7 @@
 
   function updateDate() {
     calculatedDate = calculateDate($collectionsStore["MODULES"][moduleId].date);
-    $configStore["needToSave"] = true;
+    $configStore["needToSaveCollections"] = true;
   }
 
   /**
