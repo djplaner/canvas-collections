@@ -182,6 +182,11 @@ for the module
       `cc-module-config-${moduleId}-metadata-${originalName}-name`
     ) as HTMLInputElement;
 
+    // if no change in name, nothing to do
+    if ( originalName === name.value) {
+      return;
+    }
+
     let metadata = $collectionsStore["MODULES"][moduleId].metadata;
     metadata[name.value] = metadata[originalName];
     delete metadata[originalName];
@@ -294,7 +299,7 @@ Do you want to use the sanitised value?`
               type="text"
               id="cc-module-config-{moduleId}-metadata-{key}-name"
               on:keydown|stopPropagation
-              on:focusout={changeMetaDataName(key)}
+              on:focusout={() => changeMetaDataName(key)}
               value={key}
               pattern={String.raw`[^<>"]`}
             />
@@ -304,14 +309,14 @@ Do you want to use the sanitised value?`
               type="text"
               id="cc-module-config-{moduleId}-metadata-{key}-value"
               value={$collectionsStore["MODULES"][moduleId].metadata[key]}
-              on:focusout={changeMetaDataValue(key)}
+              on:focusout={() => changeMetaDataValue(key)}
               on:keydown|stopPropagation
             />
           </td>
           <td>
             <i
-              on:click={deleteMetaData(key)}
-              on:keydown={deleteMetaData(key)}
+              on:click={() => deleteMetaData(key)}
+              on:keydown={() => deleteMetaData(key)}
               class="icon-trash cc-delete-metadata"
               id="cc-module-config-{moduleId}-metadata-{key}-delete"
             />
