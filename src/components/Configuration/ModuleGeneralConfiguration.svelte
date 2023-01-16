@@ -9,14 +9,20 @@
    * - show the current settings from from and to
    */
 
-  import { collectionsStore, configStore } from "../../stores";
+  import { modulesStore, collectionsStore, configStore } from "../../stores";
+  import { calculateActualNum } from "../../lib/CollectionsDetails";
 
   import { onMount } from "svelte";
   import Editor from "cl-editor/src/Editor.svelte";
+  import { debug } from "svelte/internal";
 
   export let moduleId: Number;
 
   let html = $collectionsStore["MODULES"][moduleId].description;
+
+  console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+  console.log($modulesStore)
+
 
   onMount(() => {
     const editorId = `cc-module-config-${moduleId}-description-editor`;
@@ -25,6 +31,22 @@
       editorElem.onkeydown = (e) => e.stopPropagation();
     }
   });
+
+  /**
+   * @function switchAutoNum
+   * @description called when the autonum is toggled on/off needs to
+   * In theory, the value has already been changed
+   * - call calculateActualNum
+   * - set needToSaveCollections to true
+   */
+
+  function switchAutoNum() {
+    $collectionsStore["MODULES"][moduleId].autonum =
+      !$collectionsStore["MODULES"][moduleId].autonum;
+    calculateActualNum( $modulesStore, $collectionsStore["MODULES"]);
+
+    $collectionsStore["NEED_TO_SAVE_COLLECTIONS"] = true;
+  }
 
   const HELP = {
     configCollection: {
@@ -187,7 +209,8 @@
           >auto:
           <input
             type="checkbox"
-            bind:checked={$collectionsStore["MODULES"][moduleId].autonum}
+            on:change={switchAutoNum}
+            checked={$collectionsStore["MODULES"][moduleId].autonum}
             id="cc-module-config-{moduleId}-autonum"
             style="position:relative; top:-0.25rem; "
           />
@@ -292,14 +315,14 @@
   </sl-tooltip>
 </div>
 
-  <Editor
-    {html}
-    contentId="cc-module-config-{moduleId}-description-editor"
-    on:change={(evt) => {
-      $collectionsStore["MODULES"][moduleId].description = evt.detail;
-      $configStore["needToSaveCollections"] = true;
-    }}
-  />
+<Editor
+  {html}
+  contentId="cc-module-config-{moduleId}-description-editor"
+  on:change={(evt) => {
+    $collectionsStore["MODULES"][moduleId].description = evt.detail;
+    $configStore["needToSaveCollections"] = true;
+  }}
+/>
 
 <style>
   .cc-module-config-description {

@@ -529,3 +529,45 @@ const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 	"MODULES": {
 	}
 }; */
+
+  /**
+   * @function calculateActualNum
+   * @description Once we have collections and canvas details calculate the
+   * attribute 'actualNum' for each module.
+   */
+export function calculateActualNum( canvasModules , collectionsModules) {
+    let numCalculator = {};
+
+    // loop through each module in the array canvasDetails['courseModules']
+    // and set the attribute 'actualNum' to the number of modules in the
+    // collection that precede it
+    //for (let moduleKey in canvasDetails.courseModules ){
+    //canvasDetails.courseModules.forEach((module : {}) => {
+    canvasModules.forEach((module : {}) => {
+      const moduleId = module['id'];
+
+      // get the collections data about this module
+      //const collectionsModule = $collectionsStore["MODULES"][moduleId];
+      const collectionsModule = collectionsModules[moduleId];
+
+      if (collectionsModule) {
+        // does it have a hard coded num
+        if (collectionsModule.hasOwnProperty("num")) {
+          collectionsModule.actualNum = collectionsModule.num;
+        } else {
+          // if not, then calculate auto num based on the label and the
+          // order so far
+          const collectionName = collectionsModule.collection;
+          const label = collectionsModule.label;
+          if ( ! numCalculator.hasOwnProperty(collectionName)  ) {
+            numCalculator[collectionName] = {};
+          }
+          if ( ! numCalculator[collectionName].hasOwnProperty(label)) {
+            numCalculator[collectionName][label] = 0;
+          }
+          numCalculator[collectionName][label] = ++numCalculator[collectionName][label];
+          collectionsModule.actualNum = numCalculator[collectionName][label];
+          }
+        }
+    });
+  }

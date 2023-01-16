@@ -441,6 +441,11 @@ var app = (function () {
         : typeof globalThis !== 'undefined'
             ? globalThis
             : global);
+    function debug$1(file, line, column, values) {
+        console.log(`{@debug} ${file ? file + ' ' : ''}(${line}:${column})`); // eslint-disable-line no-console
+        console.log(values); // eslint-disable-line no-console
+        return '';
+    }
 
     function bind(component, name, callback, value) {
         const index = component.$$.props[name];
@@ -3009,3512 +3014,233 @@ var app = (function () {
     	}
     }
 
-    let t = {};
-
-    const exec = (command, value = null) => {
-      document.execCommand(command, false, value);
-    };
-
-    const getTagsRecursive = (element, tags) => {
-      tags = tags || (element && element.tagName ? [element.tagName] : []);
-
-      if (element && element.parentNode) {
-        element = element.parentNode;
-      } else {
-        return tags;
-      }
-
-      const tag = element.tagName;
-      if (element.style && element.getAttribute) {
-        [element.style.textAlign || element.getAttribute('align'), element.style.color || tag === 'FONT' && 'forecolor', element.style.backgroundColor && 'backcolor']
-          .filter((item) => item)
-          .forEach((item) => tags.push(item));
-      }
-
-      if (tag === 'DIV') {
-        return tags;
-      }
-
-      tags.push(tag);
-
-      return getTagsRecursive(element, tags).filter((_tag) => _tag != null);
-    };
-
-    const saveRange = (editor) => {
-      const documentSelection = document.getSelection();
-
-      t.range = null;
-
-      if (documentSelection.rangeCount) {
-        let savedRange = t.range = documentSelection.getRangeAt(0);
-        let range = document.createRange();
-        let rangeStart;
-        range.selectNodeContents(editor);
-        range.setEnd(savedRange.startContainer, savedRange.startOffset);
-        rangeStart = (range + '').length;
-        t.metaRange = {
-          start: rangeStart,
-          end: rangeStart + (savedRange + '').length
+    /**
+     * Define suite of methods to interact with Canvas during app set up
+     */
+    /**
+     * @function checkContext
+     * @returns {Object} containing editMode, courseId, modulesPage
+     * @description Check the current URL to determine it it is Canvas modules
+     * page, identify the courseId and if we're in edit mode
+     */
+    function checkContext() {
+        let context = {
+            editMode: false,
+            courseId: null,
+            modulesPage: false,
+            csrfToken: null,
+            currentCollection: 0,
+            showConfig: false
         };
-      }
-    };
-    const restoreRange = (editor) => {
-      let metaRange = t.metaRange;
-      let savedRange = t.range;
-      let documentSelection = document.getSelection();
-      let range;
-
-      if (!savedRange) {
-        return;
-      }
-
-      if (metaRange && metaRange.start !== metaRange.end) { // Algorithm from http://jsfiddle.net/WeWy7/3/
-        let charIndex = 0,
-            nodeStack = [editor],
-            node,
-            foundStart = false,
-            stop = false;
-
-        range = document.createRange();
-
-        while (!stop && (node = nodeStack.pop())) {
-          if (node.nodeType === 3) {
-            let nextCharIndex = charIndex + node.length;
-            if (!foundStart && metaRange.start >= charIndex && metaRange.start <= nextCharIndex) {
-              range.setStart(node, metaRange.start - charIndex);
-              foundStart = true;
+        // replace # at end of string
+        let url = new URL(window.location.href);
+        // check if there's a cc-collection-\d+ in the hash
+        // this is the case for internal navigation within collections
+        // i.e. we're on a modules page
+        let hash = url.hash;
+        if (hash) {
+            let checkNum = hash.match(/cc-collection-(\d+)/);
+            if (checkNum) {
+                // will set this to a number now, for later translation to collectionName
+                context.currentCollection = parseInt(checkNum[1]);
             }
-            if (foundStart && metaRange.end >= charIndex && metaRange.end <= nextCharIndex) {
-              range.setEnd(node, metaRange.end - charIndex);
-              stop = true;
-            }
-            charIndex = nextCharIndex;
-          } else {
-            let cn = node.childNodes;
-            let i = cn.length;
-
-            while (i > 0) {
-              i -= 1;
-              nodeStack.push(cn[i]);
-            }
-          }
         }
-      }
-
-      documentSelection.removeAllRanges();
-      documentSelection.addRange(range || savedRange);
-    };
-
-    const cleanHtml = (input) => {
-      const html = input.match(/<!--StartFragment-->(.*?)<!--EndFragment-->/);
-      let output = html && html[1] || input;
-      output = output
-        .replace(/\r?\n|\r/g, ' ')
-        .replace(/<!--(.*?)-->/g, '')
-        .replace(new RegExp('<(/)*(meta|link|span|\\?xml:|st1:|o:|font|w:sdt)(.*?)>', 'gi'), '')
-        .replace(/<!\[if !supportLists\]>(.*?)<!\[endif\]>/gi, '')
-        .replace(/style="[^"]*"/gi, '')
-        .replace(/style='[^']*'/gi, '')
-        .replace(/&nbsp;/gi, ' ')
-        .replace(/>(\s+)</g, '><')
-        .replace(/class="[^"]*"/gi, '')
-        .replace(/class='[^']*'/gi, '')
-        .replace(/<[^/].*?>/g, i => i.split(/[ >]/g)[0] + '>')
-        .trim();
-
-        output = removeBadTags(output);
-        return output;
-    };
-
-    const unwrap = (wrapper) => {
-    	const docFrag = document.createDocumentFragment();
-    	while (wrapper.firstChild) {
-    		const child = wrapper.removeChild(wrapper.firstChild);
-    		docFrag.appendChild(child);
-    	}
-
-    	// replace wrapper with document fragment
-    	wrapper.parentNode.replaceChild(docFrag, wrapper);
-    };
-
-    const removeBlockTagsRecursive = (elements, tagsToRemove) => {
-      Array.from(elements).forEach((item) => {
-        if (tagsToRemove.some((tag) => tag === item.tagName.toLowerCase())) {
-          if (item.children.length) {
-            removeBlockTagsRecursive(item.children, tagsToRemove);
-          }
-          unwrap(item);
+        url.hash = "";
+        const documentUrl = url.href;
+        //documentUrl = documentUrl.replace(/#$/, '');
+        // courseId
+        // Following adapted from https://github.com/msdlt/canvas-where-am-I
+        // if ENV object has a COURSE_ID field and it is an integer, set context.courseId
+        if (ENV.COURSE_ID && ENV.COURSE_ID.match(/^\d+$/)) {
+            context.courseId = ENV.COURSE_ID;
         }
-      });
-    };
-
-    const getActionBtns = (actions) => {
-      return Object.keys(actions).map((action) => actions[action]);
-    };
-
-    const getNewActionObj = (actions, userActions = []) => {
-        if (userActions && userActions.length) {
-          const newActions = {};
-          userActions.forEach((action) => {
-            if (typeof action === 'string') {
-              newActions[action] = Object.assign({}, actions[action]);
-            } else if (actions[action.name]) {
-              newActions[action.name] = Object.assign(actions[action.name], action);
-            } else {
-              newActions[action.name] = Object.assign({}, action);
+        else {
+            // try and extract it from the URL
+            let urlPartIncludingCourseId = documentUrl.split("courses/")[1];
+            if (urlPartIncludingCourseId) {
+                const localCourseId = urlPartIncludingCourseId.split("/")[0];
+                // if localCourseId is an integer, set context.courseId
+                if (localCourseId.match(/^\d+$/)) {
+                    context.courseId = localCourseId;
+                }
             }
-          });
-
-          return newActions;
-        } else {
-          return actions;
+        }
+        // fail here if we've not gotten a courseId
+        if (!context.courseId) {
+            throw new Error("No courseId found");
+        }
+        // modulesPage true if location ends with courses/${courseId}/modules
+        let regEx = new RegExp(`courses/${context.courseId}/modules(/*|#*|#[^/]+)$`);
+        context.modulesPage = regEx.test(documentUrl);
+        if (!context.modulesPage) {
+            // check to see if the home page has been set to modules
+            // homeModulesPage true iff
+            // - location ends with courses/${courseId}
+            // - div#context_modules is present
+            regEx = new RegExp(`courses/${context.courseId}$`);
+            context.modulesPage =
+                regEx.test(documentUrl) &&
+                    document.getElementById("context_modules") !== null;
+        }
+        // editMode true iff a#easy_student_view exists
+        // TODO - perhaps replace/extend this with another check using
+        // the course object later
+        context.editMode = document.getElementById("easy_student_view") !== null;
+        context.csrfToken = setCsrfToken();
+        return context;
+    }
+    /**
+    * @function setCsrfToken
+    * @returns {String} csrfToken
+     * Following adapted from https://github.com/msdlt/canvas-where-am-I
+     * Function which returns csrf_token from cookie see:
+     * https://community.canvaslms.com/thread/22500-mobile-javascript-development
+     */
+    function setCsrfToken() {
+        let csrfRegex = new RegExp('^_csrf_token=(.*)$');
+        let cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            let match = csrfRegex.exec(cookie);
+            if (match) {
+                return decodeURIComponent(match[1]);
+            }
+        }
+        return null;
+    }
+    /**
+     * Fetch function for retrieving information from a single endpoint request
+     * @param {String} reqUrl Endpoint URL to query the Canvas API
+     * @returns Response Object
+     */
+    const wf_fetchData = async (reqUrl) => {
+        const url = reqUrl;
+        try {
+            const res = await fetch(url);
+            if (res.status === 404) // Endpoint not found
+                return null;
+            if (res.status === 401) // User not authorized
+                return null;
+            const json = await res.json();
+            return json;
+        }
+        catch (e) {
+            console.error(`Could not fetch requested information: ${e}`);
         }
     };
-
-    const removeBadTags = (html) => {
-      ['style', 'script', 'applet', 'embed', 'noframes', 'noscript'].forEach((badTag) => {
-        html = html.replace(new RegExp(`<${badTag}.*?${badTag}(.*?)>`, 'gi'), '');
-      });
-
-      return html;
+    /**
+     * @function wf_postData
+     * @param reqUrl
+     * @param data
+     * @param csrf
+     * @param post - POST or PUT
+     * @returns json response (if successful), null otherwise
+     *
+     */
+    const wf_postData = async (reqUrl, data, csrf, post = "POST") => {
+        try {
+            const res = await fetch(reqUrl, {
+                method: post, credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json; charset=UTF-8",
+                    "Accept": "application/json; charset=UTF-8",
+                    "X-CSRF-Token": csrf
+                },
+                body: data,
+            });
+            if (res.status === 404) // Endpoint not found
+                return null;
+            if (res.status === 401) // User not authorized
+                return null;
+            const json = await res.json();
+            return json;
+        }
+        catch (e) {
+            console.error(`Could not post requested information: ${e}`);
+        }
     };
-
-    const isEditorClick = (target, editorWrapper) => {
-      if (target === editorWrapper) {
-        return true;
-      }
-      if (target.parentElement) {
-        return isEditorClick(target.parentElement, editorWrapper);
-      }
-      return false;
-    };
-
-    const linkSvg =
-    	'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M31.1 48.9l-6.7 6.7c-.8.8-1.6.9-2.1.9s-1.4-.1-2.1-.9L15 50.4c-1.1-1.1-1.1-3.1 0-4.2l6.1-6.1.2-.2 6.5-6.5c-1.2-.6-2.5-.9-3.8-.9-2.3 0-4.6.9-6.3 2.6L11 41.8c-3.5 3.5-3.5 9.2 0 12.7l5.2 5.2c1.7 1.7 4 2.6 6.3 2.6s4.6-.9 6.3-2.6l6.7-6.7c2.5-2.6 3.1-6.7 1.5-10l-5.9 5.9zM38.7 22.5l6.7-6.7c.8-.8 1.6-.9 2.1-.9s1.4.1 2.1.9l5.2 5.2c1.1 1.1 1.1 3.1 0 4.2l-6.1 6.1-.2.2L42 38c1.2.6 2.5.9 3.8.9 2.3 0 4.6-.9 6.3-2.6l6.7-6.7c3.5-3.5 3.5-9.2 0-12.7l-5.2-5.2c-1.7-1.7-4-2.6-6.3-2.6s-4.6.9-6.3 2.6l-6.7 6.7c-2.7 2.7-3.3 6.9-1.7 10.2l6.1-6.1c0 .1 0 .1 0 0z"></path><path d="M44.2 30.5c.2-.2.4-.6.4-.9 0-.3-.1-.6-.4-.9l-2.3-2.3c-.3-.2-.6-.4-.9-.4-.3 0-.6.1-.9.4L25.9 40.6c-.2.2-.4.6-.4.9 0 .3.1.6.4.9l2.3 2.3c.2.2.6.4.9.4.3 0 .6-.1.9-.4l14.2-14.2zM49.9 55.4h-8.5v-5h8.5v-8.9h5.2v8.9h8.5v5h-8.5v8.9h-5.2v-8.9z"></path></svg>';
-    const unlinkSvg =
-    	'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M30.9 49.1l-6.7 6.7c-.8.8-1.6.9-2.1.9s-1.4-.1-2.1-.9l-5.2-5.2c-1.1-1.1-1.1-3.1 0-4.2l6.1-6.1.2-.2 6.5-6.5c-1.2-.6-2.5-.9-3.8-.9-2.3 0-4.6.9-6.3 2.6L10.8 42c-3.5 3.5-3.5 9.2 0 12.7l5.2 5.2c1.7 1.7 4 2.6 6.3 2.6s4.6-.9 6.3-2.6l6.7-6.7C38 50.5 38.6 46.3 37 43l-6.1 6.1zM38.5 22.7l6.7-6.7c.8-.8 1.6-.9 2.1-.9s1.4.1 2.1.9l5.2 5.2c1.1 1.1 1.1 3.1 0 4.2l-6.1 6.1-.2.2-6.5 6.5c1.2.6 2.5.9 3.8.9 2.3 0 4.6-.9 6.3-2.6l6.7-6.7c3.5-3.5 3.5-9.2 0-12.7l-5.2-5.2c-1.7-1.7-4-2.6-6.3-2.6s-4.6.9-6.3 2.6l-6.7 6.7c-2.7 2.7-3.3 6.9-1.7 10.2l6.1-6.1z"></path><path d="M44.1 30.7c.2-.2.4-.6.4-.9 0-.3-.1-.6-.4-.9l-2.3-2.3c-.2-.2-.6-.4-.9-.4-.3 0-.6.1-.9.4L25.8 40.8c-.2.2-.4.6-.4.9 0 .3.1.6.4.9l2.3 2.3c.2.2.6.4.9.4.3 0 .6-.1.9-.4l14.2-14.2zM41.3 55.8v-5h22.2v5H41.3z"></path></svg>';
-
-    var defaultActions = {
-    	viewHtml: {
-    		icon:
-    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path fill="none" stroke="currentColor" stroke-width="8" stroke-miterlimit="10" d="M26.9 17.9L9 36.2 26.9 54M45 54l17.9-18.3L45 17.9"></path></svg>',
-    		title: "View HTML",
-    		result: function() {
-    			let refs = get_store_value(this.references);
-    			let actionObj = get_store_value(this.state).actionObj;
-    			let helper = get_store_value(this.helper);
-
-    			helper.showEditor = !helper.showEditor;
-    			refs.editor.style.display = helper.showEditor ? "block" : "none";
-    			refs.raw.style.display = helper.showEditor ? "none" : "block";
-    			if (helper.showEditor) {
-    				refs.editor.innerHTML = refs.raw.value;
-    			} else {
-    				refs.raw.value = refs.editor.innerHTML;
-    			}
-    			setTimeout(() => {
-    				Object.keys(actionObj).forEach(
-    					action => (actionObj[action].disabled = !helper.showEditor)
-    				);
-    				actionObj.viewHtml.disabled = false;
-    				actionObj.viewHtml.active = !helper.showEditor;
-
-    				this.state.update(state => {
-    					state.actionBtns = getActionBtns(actionObj);
-    					state.actionObj = actionObj;
-    					return state;
-    				});
-    			});
-    		}
-    	},
-    	undo: {
-    		icon:
-    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M61.2 51.2c0-5.1-2.1-9.7-5.4-13.1-3.3-3.3-8-5.4-13.1-5.4H26.1v-12L10.8 36l15.3 15.3V39.1h16.7c3.3 0 6.4 1.3 8.5 3.5 2.2 2.2 3.5 5.2 3.5 8.5h6.4z"></path></svg>',
-    		title: "Undo",
-    		result: () => exec("undo")
-    	},
-    	redo: {
-    		icon:
-    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M10.8 51.2c0-5.1 2.1-9.7 5.4-13.1 3.3-3.3 8-5.4 13.1-5.4H46v-12L61.3 36 45.9 51.3V39.1H29.3c-3.3 0-6.4 1.3-8.5 3.5-2.2 2.2-3.5 5.2-3.5 8.5h-6.5z"></path></svg>',
-    		title: "Redo",
-    		result: () => exec("redo")
-    	},
-    	b: {
-    		icon: "<b>B</b>",
-    		title: "Bold",
-    		result: () => exec("bold")
-    	},
-    	i: {
-    		icon: "<i>I</i>",
-    		title: "Italic",
-    		result: () => exec("italic")
-    	},
-    	u: {
-    		icon: "<u>U</u>",
-    		title: "Underline",
-    		result: () => exec("underline")
-    	},
-    	strike: {
-    		icon: "<strike>S</strike>",
-    		title: "Strike-through",
-    		result: () => exec("strikeThrough")
-    	},
-    	sup: {
-    		icon: "A<sup>2</sup>",
-    		title: "Superscript",
-    		result: () => exec("superscript")
-    	},
-    	sub: {
-    		icon: "A<sub>2</sub>",
-    		title: "Subscript",
-    		result: () => exec("subscript")
-    	},
-    	h1: {
-    		icon: "<b>H<sub>1</sub></b>",
-    		title: "Heading 1",
-    		result: () => exec("formatBlock", "<H1>")
-    	},
-    	h2: {
-    		icon: "<b>H<sub>2</sub></b>",
-    		title: "Heading 2",
-    		result: () => exec("formatBlock", "<H2>")
-    	},
-    	p: {
-    		icon: "&#182;",
-    		title: "Paragraph",
-    		result: () => exec("formatBlock", "<P>")
-    	},
-    	blockquote: {
-    		icon: "&#8220; &#8221;",
-    		title: "Quote",
-    		result: () => exec("formatBlock", "<BLOCKQUOTE>")
-    	},
-    	ol: {
-    		icon:
-    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M27 14h36v8H27zM27 50h36v8H27zM27 32h36v8H27zM11.8 15.8V22h1.8v-7.8h-1.5l-2.1 1 .3 1.3zM12.1 38.5l.7-.6c1.1-1 2.1-2.1 2.1-3.4 0-1.4-1-2.4-2.7-2.4-1.1 0-2 .4-2.6.8l.5 1.3c.4-.3 1-.6 1.7-.6.9 0 1.3.5 1.3 1.1 0 .9-.9 1.8-2.6 3.3l-1 .9V40H15v-1.5h-2.9zM13.3 53.9c1-.4 1.4-1 1.4-1.8 0-1.1-.9-1.9-2.6-1.9-1 0-1.9.3-2.4.6l.4 1.3c.3-.2 1-.5 1.6-.5.8 0 1.2.3 1.2.8 0 .7-.8.9-1.4.9h-.7v1.3h.7c.8 0 1.6.3 1.6 1.1 0 .6-.5 1-1.4 1-.7 0-1.5-.3-1.8-.5l-.4 1.4c.5.3 1.3.6 2.3.6 2 0 3.2-1 3.2-2.4 0-1.1-.8-1.8-1.7-1.9z"></path></svg>',
-    		title: "Ordered List",
-    		result: () => exec("insertOrderedList")
-    	},
-    	ul: {
-    		icon:
-    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M27 14h36v8H27zM27 50h36v8H27zM9 50h9v8H9zM9 32h9v8H9zM9 14h9v8H9zM27 32h36v8H27z"></path></svg>',
-    		title: "Unordered List",
-    		result: () => exec("insertUnorderedList")
-    	},
-    	hr: {
-    		icon: "&#8213;",
-    		title: "Horizontal Line",
-    		result: () => exec("insertHorizontalRule")
-    	},
-    	left: {
-    		icon:
-    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M9 14h54v8H9zM9 50h54v8H9zM9 32h36v8H9z"></path></svg>',
-    		title: "Justify left",
-    		result: () => exec("justifyLeft")
-    	},
-    	right: {
-    		icon:
-    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M9 14h54v8H9zM9 50h54v8H9zM27 32h36v8H27z"></path></svg>',
-    		title: "Justify right",
-    		result: () => exec("justifyRight")
-    	},
-    	center: {
-    		icon:
-    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M9 14h54v8H9zM9 50h54v8H9zM18 32h36v8H18z"></path></svg>',
-    		title: "Justify center",
-    		result: () => exec("justifyCenter")
-    	},
-    	justify: {
-    		icon:
-    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M9 14h54v8H9zM9 50h54v8H9zM9 32h54v8H9z"></path></svg>',
-    		title: "Justify full",
-    		result: () => exec("justifyFull")
-    	},
-    	a: {
-    		icon: linkSvg,
-    		title: "Insert link",
-    		result: function() {
-    			const actionObj = get_store_value(this.state).actionObj;
-    			const refs = get_store_value(this.references);
-
-    			if (actionObj.a.active) {
-    				const selection = window.getSelection();
-    				const range = document.createRange();
-    				range.selectNodeContents(document.getSelection().focusNode);
-    				selection.removeAllRanges();
-    				selection.addRange(range);
-    				exec("unlink");
-    				actionObj.a.title = "Insert link";
-    				actionObj.a.icon = linkSvg;
-    				this.state.update(state => {
-    					state.actionBtn = getActionBtns(actionObj);
-    					state.actionObj = actionObj;
-    					return state;
-    				});
-    			} else {
-    				saveRange(refs.editor);
-    				refs.modal.$set({
-    					show: true,
-    					event: "linkUrl",
-    					title: "Insert link",
-    					label: "Url"
-    				});
-    				if (!get_store_value(this.helper).link) {
-    					this.helper.update(state => {
-    						state.link = true;
-    						return state;
-    					});
-    					refs.modal.$on("linkUrl", event => {
-    						restoreRange(refs.editor);
-    						exec("createLink", event.detail);
-    						actionObj.a.title = "Unlink";
-    						actionObj.a.icon = unlinkSvg;
-
-    						this.state.update(state => {
-    							state.actionBtn = getActionBtns(actionObj);
-    							state.actionObj = actionObj;
-    							return state;
-    						});
-    					});
-    				}
-    			}
-    		}
-    	},
-    	image: {
-    		icon:
-    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M64 17v38H8V17h56m8-8H0v54h72V9z"></path><path d="M17.5 22C15 22 13 24 13 26.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5zM16 50h27L29.5 32zM36 36.2l8.9-8.5L60.2 50H45.9S35.6 35.9 36 36.2z"></path></svg>',
-    		title: "Image",
-    		result: function() {
-    			const refs = get_store_value(this.references);
-    			saveRange(refs.editor);
-    			refs.modal.$set({
-    				show: true,
-    				event: "imageUrl",
-    				title: "Insert image",
-    				label: "Url"
-    			});
-    			if (!get_store_value(this.helper).image) {
-    				this.helper.update(state => {
-    					state.image = true;
-    					return state;
-    				});
-    				refs.modal.$on("imageUrl", event => {
-    					restoreRange(refs.editor);
-    					exec("insertImage", event.detail);
-    				});
-    			}
-    		}
-    	},
-    	forecolor: {
-    		icon:
-    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M32 15h7.8L56 57.1h-7.9l-4-11.1H27.4l-4 11.1h-7.6L32 15zm-2.5 25.4h12.9L36 22.3h-.2l-6.3 18.1z"></path></svg>',
-    		title: "Text color",
-    		colorPicker: true,
-    		result: function() {
-    			showColorPicker.call(this, "foreColor");
-    		}
-    	},
-    	backcolor: {
-    		icon:
-    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M36.5 22.3l-6.3 18.1H43l-6.3-18.1z"></path><path d="M9 8.9v54.2h54.1V8.9H9zm39.9 48.2L45 46H28.2l-3.9 11.1h-7.6L32.8 15h7.8l16.2 42.1h-7.9z"></path></svg>',
-    		title: "Background color",
-    		colorPicker: true,
-    		result: function() {
-    			showColorPicker.call(this, "backColor");
-    		}
-    	},
-    	removeFormat: {
-    		icon:
-    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M58.2 54.6L52 48.5l3.6-3.6 6.1 6.1 6.4-6.4 3.8 3.8-6.4 6.4 6.1 6.1-3.6 3.6-6.1-6.1-6.4 6.4-3.7-3.8 6.4-6.4zM21.7 52.1H50V57H21.7zM18.8 15.2h34.1v6.4H39.5v24.2h-7.4V21.5H18.8v-6.3z"></path></svg>',
-    		title: "Remove format",
-    		result: function() {
-    			const refs = get_store_value(this.references);
-    			const selection = window.getSelection();
-    			if (!selection.toString().length) {
-    				removeBlockTagsRecursive(
-    					refs.editor.children,
-    					this.removeFormatTags
-    				);
-    				const range = document.createRange();
-    				range.selectNodeContents(refs.editor);
-    				selection.removeAllRanges();
-    				selection.addRange(range);
-    			}
-    			exec("removeFormat");
-    			selection.removeAllRanges();
-    		}
-    	}
-    };
-
-    const showColorPicker = function(cmd) {
-    	const refs = get_store_value(this.references);
-    	saveRange(refs.editor);
-    	refs.colorPicker.$set({show: true, event: cmd});
-    	if (!get_store_value(this.helper)[cmd]) {
-    		this.helper.update(state => {
-    			state[cmd] = true;
-    			return state;
-    		});
-    		refs.colorPicker.$on(cmd, event => {
-    			let item = event.detail;
-    			if (item.modal) {
-    				refs.modal.$set({
-    					show: true,
-    					event: `${cmd}Changed`,
-    					title: "Text color",
-    					label:
-    						cmd === "foreColor" ? "Text color" : "Background color"
-    				});
-    				const command = cmd;
-    				if (!get_store_value(this.helper)[`${command}Modal`]) {
-    					get_store_value(this.helper)[`${command}Modal`] = true;
-    					refs.modal.$on(`${command}Changed`, event => {
-    						let color = event.detail;
-    						restoreRange(refs.editor);
-    						exec(command, color);
-    					});
-    				}
-    			} else {
-    				restoreRange(refs.editor);
-    				exec(cmd, item.color);
-    			}
-    		});
-    	}
-    };
-
-    /* node_modules\cl-editor\src\helpers\EditorModal.svelte generated by Svelte v3.55.0 */
-    const file$k = "node_modules\\cl-editor\\src\\helpers\\EditorModal.svelte";
-
-    // (2:0) {#if show}
-    function create_if_block$c(ctx) {
-    	let div0;
-    	let t0;
-    	let div2;
-    	let div1;
-    	let span0;
-    	let t1;
-    	let t2;
-    	let form;
-    	let label_1;
-    	let input;
-    	let t3;
-    	let span2;
-    	let span1;
-    	let t4;
-    	let t5;
-    	let t6;
-    	let button0;
-    	let t8;
-    	let button1;
-    	let mounted;
-    	let dispose;
-    	let if_block = /*error*/ ctx[2] && create_if_block_1$9(ctx);
-
-    	const block = {
-    		c: function create() {
-    			div0 = element("div");
-    			t0 = space();
-    			div2 = element("div");
-    			div1 = element("div");
-    			span0 = element("span");
-    			t1 = text(/*title*/ ctx[3]);
-    			t2 = space();
-    			form = element("form");
-    			label_1 = element("label");
-    			input = element("input");
-    			t3 = space();
-    			span2 = element("span");
-    			span1 = element("span");
-    			t4 = text(/*label*/ ctx[4]);
-    			t5 = space();
-    			if (if_block) if_block.c();
-    			t6 = space();
-    			button0 = element("button");
-    			button0.textContent = "Confirm";
-    			t8 = space();
-    			button1 = element("button");
-    			button1.textContent = "Cancel";
-    			attr_dev(div0, "class", "cl-editor-overlay svelte-1eyz2ny");
-    			add_location(div0, file$k, 2, 2, 64);
-    			attr_dev(span0, "class", "modal-title svelte-1eyz2ny");
-    			add_location(span0, file$k, 5, 6, 188);
-    			attr_dev(input, "name", "text");
-    			attr_dev(input, "class", "svelte-1eyz2ny");
-    			add_location(input, file$k, 8, 10, 360);
-    			attr_dev(span1, "class", "svelte-1eyz2ny");
-    			add_location(span1, file$k, 10, 12, 507);
-    			attr_dev(span2, "class", "input-info svelte-1eyz2ny");
-    			add_location(span2, file$k, 9, 10, 469);
-    			attr_dev(label_1, "class", "modal-label svelte-1eyz2ny");
-    			toggle_class(label_1, "input-error", /*error*/ ctx[2]);
-    			add_location(label_1, file$k, 7, 8, 296);
-    			attr_dev(button0, "class", "modal-button modal-submit svelte-1eyz2ny");
-    			attr_dev(button0, "type", "submit");
-    			add_location(button0, file$k, 16, 8, 665);
-    			attr_dev(button1, "class", "modal-button modal-reset svelte-1eyz2ny");
-    			attr_dev(button1, "type", "reset");
-    			add_location(button1, file$k, 17, 8, 746);
-    			add_location(form, file$k, 6, 6, 235);
-    			attr_dev(div1, "class", "modal-box svelte-1eyz2ny");
-    			add_location(div1, file$k, 4, 4, 158);
-    			attr_dev(div2, "class", "cl-editor-modal svelte-1eyz2ny");
-    			add_location(div2, file$k, 3, 2, 124);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			insert_dev(target, t0, anchor);
-    			insert_dev(target, div2, anchor);
-    			append_dev(div2, div1);
-    			append_dev(div1, span0);
-    			append_dev(span0, t1);
-    			append_dev(div1, t2);
-    			append_dev(div1, form);
-    			append_dev(form, label_1);
-    			append_dev(label_1, input);
-    			/*input_binding*/ ctx[11](input);
-    			set_input_value(input, /*text*/ ctx[1]);
-    			append_dev(label_1, t3);
-    			append_dev(label_1, span2);
-    			append_dev(span2, span1);
-    			append_dev(span1, t4);
-    			append_dev(span2, t5);
-    			if (if_block) if_block.m(span2, null);
-    			append_dev(form, t6);
-    			append_dev(form, button0);
-    			append_dev(form, t8);
-    			append_dev(form, button1);
-
-    			if (!mounted) {
-    				dispose = [
-    					listen_dev(div0, "click", /*cancel*/ ctx[8], false, false, false),
-    					listen_dev(input, "keyup", /*hideError*/ ctx[9], false, false, false),
-    					action_destroyer(/*inputType*/ ctx[6].call(null, input)),
-    					listen_dev(input, "input", /*input_input_handler*/ ctx[12]),
-    					listen_dev(button1, "click", /*cancel*/ ctx[8], false, false, false),
-    					listen_dev(form, "submit", prevent_default(/*submit_handler*/ ctx[13]), false, true, false)
-    				];
-
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*title*/ 8) set_data_dev(t1, /*title*/ ctx[3]);
-
-    			if (dirty & /*text*/ 2 && input.value !== /*text*/ ctx[1]) {
-    				set_input_value(input, /*text*/ ctx[1]);
-    			}
-
-    			if (dirty & /*label*/ 16) set_data_dev(t4, /*label*/ ctx[4]);
-
-    			if (/*error*/ ctx[2]) {
-    				if (if_block) ; else {
-    					if_block = create_if_block_1$9(ctx);
-    					if_block.c();
-    					if_block.m(span2, null);
-    				}
-    			} else if (if_block) {
-    				if_block.d(1);
-    				if_block = null;
-    			}
-
-    			if (dirty & /*error*/ 4) {
-    				toggle_class(label_1, "input-error", /*error*/ ctx[2]);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			if (detaching) detach_dev(t0);
-    			if (detaching) detach_dev(div2);
-    			/*input_binding*/ ctx[11](null);
-    			if (if_block) if_block.d();
-    			mounted = false;
-    			run_all(dispose);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block$c.name,
-    		type: "if",
-    		source: "(2:0) {#if show}",
-    		ctx
-    	});
-
-    	return block;
+    /**
+     * add the div#canvas-collections-representation to the DOM ready for
+     * the Svelte component to be added
+     * Return the div if added, null if not
+     */
+    function addCollectionsRepresentation() {
+        debug("::::::::::::: addCollectionsRepresentation ::::::::::::::");
+        // check that there isn't already a div#canvas-collections-representation
+        // if there is, do nothing
+        const representation = document.querySelector("div#canvas-collections-representation");
+        if (representation) {
+            return null;
+        }
+        // get the div#context-modules
+        const contextModules = document.querySelector("div#context_modules");
+        if (!contextModules) {
+            return null;
+        }
+        // add a div#canvas-collections-representation as first child of div#context-modules
+        let canvasCollectionsRepresentation = document.createElement("div");
+        canvasCollectionsRepresentation.id = "canvas-collections-representation";
+        contextModules.prepend(canvasCollectionsRepresentation);
+        return canvasCollectionsRepresentation;
     }
-
-    // (12:12) {#if error}
-    function create_if_block_1$9(ctx) {
-    	let span;
-
-    	const block = {
-    		c: function create() {
-    			span = element("span");
-    			span.textContent = "Required";
-    			attr_dev(span, "class", "msg-error svelte-1eyz2ny");
-    			add_location(span, file$k, 12, 12, 564);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, span, anchor);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(span);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_1$9.name,
-    		type: "if",
-    		source: "(12:12) {#if error}",
-    		ctx
-    	});
-
-    	return block;
+    /**
+     * @function removeCollectionsRepresentation
+     * @description Remove the div#canvas-collections-representation from the DOM
+     */
+    function removeCollectionsRepresentation() {
+        debug(":::::::::::::: removeCollectionsRepresentation ::::::::::::::");
+        const representation = document.querySelector("div#canvas-collections-representation");
+        if (representation) {
+            representation.remove();
+        }
     }
-
-    function create_fragment$n(ctx) {
-    	let if_block_anchor;
-    	let if_block = /*show*/ ctx[0] && create_if_block$c(ctx);
-
-    	const block = {
-    		c: function create() {
-    			if (if_block) if_block.c();
-    			if_block_anchor = empty();
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			if (if_block) if_block.m(target, anchor);
-    			insert_dev(target, if_block_anchor, anchor);
-    		},
-    		p: function update(ctx, [dirty]) {
-    			if (/*show*/ ctx[0]) {
-    				if (if_block) {
-    					if_block.p(ctx, dirty);
-    				} else {
-    					if_block = create_if_block$c(ctx);
-    					if_block.c();
-    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
-    				}
-    			} else if (if_block) {
-    				if_block.d(1);
-    				if_block = null;
-    			}
-    		},
-    		i: noop,
-    		o: noop,
-    		d: function destroy(detaching) {
-    			if (if_block) if_block.d(detaching);
-    			if (detaching) detach_dev(if_block_anchor);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$n.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
+    /**
+     * @function removeModuleConfiguration
+     * @param {Object} modules - hash of module objects keyed on moduleId
+     * @description loop through all the modules and remove div#cc-module-config-<moduleId>
+     */
+    function removeModuleConfiguration(modules) {
+        // loop thru the keys of the modules hash
+        Object.keys(modules).forEach((moduleId) => {
+            const moduleConfig = document.querySelector(`div#cc-module-config-${moduleId}`);
+            if (moduleConfig) {
+                moduleConfig.remove();
+            }
+            // make sure all the modules are visible
+            const module = document.getElementById(`context_module_${moduleId}`);
+            if (module) {
+                module.style.display = "block";
+            }
+        });
     }
-
-    function instance$n($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('EditorModal', slots, []);
-    	let dispatcher = new createEventDispatcher();
-    	let { show = false } = $$props;
-    	let { text = '' } = $$props;
-    	let { event = '' } = $$props;
-    	let { title = '' } = $$props;
-    	let { label = '' } = $$props;
-    	let { error = false } = $$props;
-    	let refs = {};
-
-    	const inputType = e => {
-    		e.type = event.includes('Color') ? 'color' : 'text';
-    	};
-
-    	function confirm() {
-    		if (text) {
-    			dispatcher(event, text);
-    			cancel();
-    		} else {
-    			$$invalidate(2, error = true);
-    			refs.text.focus();
-    		}
-    	}
-
-    	function cancel() {
-    		$$invalidate(0, show = false);
-    		$$invalidate(1, text = '');
-    		$$invalidate(2, error = false);
-    	}
-
-    	function hideError() {
-    		$$invalidate(2, error = false);
-    	}
-
-    	const writable_props = ['show', 'text', 'event', 'title', 'label', 'error'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<EditorModal> was created with unknown prop '${key}'`);
-    	});
-
-    	function input_binding($$value) {
-    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
-    			refs.text = $$value;
-    			$$invalidate(5, refs);
-    		});
-    	}
-
-    	function input_input_handler() {
-    		text = this.value;
-    		$$invalidate(1, text);
-    	}
-
-    	const submit_handler = event => confirm();
-
-    	$$self.$$set = $$props => {
-    		if ('show' in $$props) $$invalidate(0, show = $$props.show);
-    		if ('text' in $$props) $$invalidate(1, text = $$props.text);
-    		if ('event' in $$props) $$invalidate(10, event = $$props.event);
-    		if ('title' in $$props) $$invalidate(3, title = $$props.title);
-    		if ('label' in $$props) $$invalidate(4, label = $$props.label);
-    		if ('error' in $$props) $$invalidate(2, error = $$props.error);
-    	};
-
-    	$$self.$capture_state = () => ({
-    		createEventDispatcher,
-    		dispatcher,
-    		show,
-    		text,
-    		event,
-    		title,
-    		label,
-    		error,
-    		refs,
-    		inputType,
-    		confirm,
-    		cancel,
-    		hideError
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('dispatcher' in $$props) dispatcher = $$props.dispatcher;
-    		if ('show' in $$props) $$invalidate(0, show = $$props.show);
-    		if ('text' in $$props) $$invalidate(1, text = $$props.text);
-    		if ('event' in $$props) $$invalidate(10, event = $$props.event);
-    		if ('title' in $$props) $$invalidate(3, title = $$props.title);
-    		if ('label' in $$props) $$invalidate(4, label = $$props.label);
-    		if ('error' in $$props) $$invalidate(2, error = $$props.error);
-    		if ('refs' in $$props) $$invalidate(5, refs = $$props.refs);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*show, refs*/ 33) {
-    			{
-    				if (show) {
-    					setTimeout(() => {
-    						refs.text.focus();
-    					});
-    				}
-    			}
-    		}
-    	};
-
-    	return [
-    		show,
-    		text,
-    		error,
-    		title,
-    		label,
-    		refs,
-    		inputType,
-    		confirm,
-    		cancel,
-    		hideError,
-    		event,
-    		input_binding,
-    		input_input_handler,
-    		submit_handler
-    	];
-    }
-
-    class EditorModal extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-
-    		init(this, options, instance$n, create_fragment$n, safe_not_equal, {
-    			show: 0,
-    			text: 1,
-    			event: 10,
-    			title: 3,
-    			label: 4,
-    			error: 2
-    		});
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "EditorModal",
-    			options,
-    			id: create_fragment$n.name
-    		});
-    	}
-
-    	get show() {
-    		return this.$$.ctx[0];
-    	}
-
-    	set show(show) {
-    		this.$$set({ show });
-    		flush();
-    	}
-
-    	get text() {
-    		return this.$$.ctx[1];
-    	}
-
-    	set text(text) {
-    		this.$$set({ text });
-    		flush();
-    	}
-
-    	get event() {
-    		return this.$$.ctx[10];
-    	}
-
-    	set event(event) {
-    		this.$$set({ event });
-    		flush();
-    	}
-
-    	get title() {
-    		return this.$$.ctx[3];
-    	}
-
-    	set title(title) {
-    		this.$$set({ title });
-    		flush();
-    	}
-
-    	get label() {
-    		return this.$$.ctx[4];
-    	}
-
-    	set label(label) {
-    		this.$$set({ label });
-    		flush();
-    	}
-
-    	get error() {
-    		return this.$$.ctx[2];
-    	}
-
-    	set error(error) {
-    		this.$$set({ error });
-    		flush();
-    	}
-    }
-
-    /* node_modules\cl-editor\src\helpers\EditorColorPicker.svelte generated by Svelte v3.55.0 */
-    const file$j = "node_modules\\cl-editor\\src\\helpers\\EditorColorPicker.svelte";
-
-    function get_each_context$a(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[8] = list[i];
-    	return child_ctx;
-    }
-
-    // (4:4) {#each btns as btn}
-    function create_each_block$a(ctx) {
-    	let button;
-    	let t_value = (/*btn*/ ctx[8].text || '') + "";
-    	let t;
-    	let mounted;
-    	let dispose;
-
-    	function click_handler(...args) {
-    		return /*click_handler*/ ctx[6](/*btn*/ ctx[8], ...args);
-    	}
-
-    	const block = {
-    		c: function create() {
-    			button = element("button");
-    			t = text(t_value);
-    			attr_dev(button, "type", "button");
-    			attr_dev(button, "class", "color-picker-btn svelte-mkzk4s");
-    			set_style(button, "background-color", /*btn*/ ctx[8].color);
-    			add_location(button, file$j, 4, 4, 176);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, button, anchor);
-    			append_dev(button, t);
-
-    			if (!mounted) {
-    				dispose = listen_dev(button, "click", click_handler, false, false, false);
-    				mounted = true;
-    			}
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-    			if (dirty & /*btns*/ 2 && t_value !== (t_value = (/*btn*/ ctx[8].text || '') + "")) set_data_dev(t, t_value);
-
-    			if (dirty & /*btns*/ 2) {
-    				set_style(button, "background-color", /*btn*/ ctx[8].color);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(button);
-    			mounted = false;
-    			dispose();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block$a.name,
-    		type: "each",
-    		source: "(4:4) {#each btns as btn}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment$m(ctx) {
-    	let div2;
-    	let div0;
-    	let t;
-    	let div1;
-    	let mounted;
-    	let dispose;
-    	let each_value = /*btns*/ ctx[1];
-    	validate_each_argument(each_value);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block$a(get_each_context$a(ctx, each_value, i));
-    	}
-
-    	const block = {
-    		c: function create() {
-    			div2 = element("div");
-    			div0 = element("div");
-    			t = space();
-    			div1 = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			attr_dev(div0, "class", "color-picker-overlay svelte-mkzk4s");
-    			add_location(div0, file$j, 1, 2, 51);
-    			attr_dev(div1, "class", "color-picker-wrapper svelte-mkzk4s");
-    			add_location(div1, file$j, 2, 2, 113);
-    			set_style(div2, "display", /*show*/ ctx[0] ? 'block' : 'none');
-    			add_location(div2, file$j, 0, 0, 0);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div2, anchor);
-    			append_dev(div2, div0);
-    			append_dev(div2, t);
-    			append_dev(div2, div1);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div1, null);
-    			}
-
-    			if (!mounted) {
-    				dispose = listen_dev(div0, "click", /*close*/ ctx[2], false, false, false);
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, [dirty]) {
-    			if (dirty & /*btns, selectColor*/ 10) {
-    				each_value = /*btns*/ ctx[1];
-    				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context$a(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks[i] = create_each_block$a(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(div1, null);
-    					}
-    				}
-
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value.length;
-    			}
-
-    			if (dirty & /*show*/ 1) {
-    				set_style(div2, "display", /*show*/ ctx[0] ? 'block' : 'none');
-    			}
-    		},
-    		i: noop,
-    		o: noop,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div2);
-    			destroy_each(each_blocks, detaching);
-    			mounted = false;
-    			dispose();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$m.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function instance$m($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('EditorColorPicker', slots, []);
-    	const dispatcher = new createEventDispatcher();
-    	let { show = false } = $$props;
-    	let { btns = [] } = $$props;
-    	let { event = '' } = $$props;
-    	let { colors = [] } = $$props;
-
-    	function close() {
-    		$$invalidate(0, show = false);
-    	}
-
-    	function selectColor(btn) {
-    		dispatcher(event, btn);
-    		close();
-    	}
-
-    	const writable_props = ['show', 'btns', 'event', 'colors'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<EditorColorPicker> was created with unknown prop '${key}'`);
-    	});
-
-    	const click_handler = (btn, event) => selectColor(btn);
-
-    	$$self.$$set = $$props => {
-    		if ('show' in $$props) $$invalidate(0, show = $$props.show);
-    		if ('btns' in $$props) $$invalidate(1, btns = $$props.btns);
-    		if ('event' in $$props) $$invalidate(4, event = $$props.event);
-    		if ('colors' in $$props) $$invalidate(5, colors = $$props.colors);
-    	};
-
-    	$$self.$capture_state = () => ({
-    		createEventDispatcher,
-    		dispatcher,
-    		show,
-    		btns,
-    		event,
-    		colors,
-    		close,
-    		selectColor
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('show' in $$props) $$invalidate(0, show = $$props.show);
-    		if ('btns' in $$props) $$invalidate(1, btns = $$props.btns);
-    		if ('event' in $$props) $$invalidate(4, event = $$props.event);
-    		if ('colors' in $$props) $$invalidate(5, colors = $$props.colors);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*colors*/ 32) {
-    			$$invalidate(1, btns = colors.map(color => ({ color })).concat([{ text: '#', modal: true }]));
-    		}
-    	};
-
-    	return [show, btns, close, selectColor, event, colors, click_handler];
-    }
-
-    class EditorColorPicker extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-    		init(this, options, instance$m, create_fragment$m, safe_not_equal, { show: 0, btns: 1, event: 4, colors: 5 });
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "EditorColorPicker",
-    			options,
-    			id: create_fragment$m.name
-    		});
-    	}
-
-    	get show() {
-    		throw new Error("<EditorColorPicker>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set show(value) {
-    		throw new Error("<EditorColorPicker>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get btns() {
-    		throw new Error("<EditorColorPicker>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set btns(value) {
-    		throw new Error("<EditorColorPicker>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get event() {
-    		throw new Error("<EditorColorPicker>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set event(value) {
-    		throw new Error("<EditorColorPicker>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get colors() {
-    		throw new Error("<EditorColorPicker>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set colors(value) {
-    		throw new Error("<EditorColorPicker>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-    }
-
-    const state = (function(name) {
-      let state = {
-        actionBtns: [],
-        actionObj: {}
-      };
-
-      const { subscribe, set, update } = writable(state);
-
-      return {
-        name,
-        set,
-        update,
-        subscribe
-      }
-    });
-
-    const createStateStore = state;
-
-    /* node_modules\cl-editor\src\Editor.svelte generated by Svelte v3.55.0 */
-
-    const { Object: Object_1$3 } = globals;
-    const file$i = "node_modules\\cl-editor\\src\\Editor.svelte";
-
-    function get_each_context$9(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[38] = list[i];
-    	return child_ctx;
-    }
-
-    // (8:4) {#each $state.actionBtns as action}
-    function create_each_block$9(ctx) {
-    	let button;
-    	let html_tag;
-    	let raw_value = /*action*/ ctx[38].icon + "";
-    	let t;
-    	let button_class_value;
-    	let button_title_value;
-    	let button_disabled_value;
-    	let mounted;
-    	let dispose;
-
-    	function click_handler_1(...args) {
-    		return /*click_handler_1*/ ctx[24](/*action*/ ctx[38], ...args);
-    	}
-
-    	const block = {
-    		c: function create() {
-    			button = element("button");
-    			html_tag = new HtmlTag(false);
-    			t = space();
-    			html_tag.a = t;
-    			attr_dev(button, "type", "button");
-    			attr_dev(button, "class", button_class_value = "cl-button " + (/*action*/ ctx[38].active ? 'active' : '') + " svelte-mfg49m");
-    			attr_dev(button, "title", button_title_value = /*action*/ ctx[38].title);
-    			button.disabled = button_disabled_value = /*action*/ ctx[38].disabled;
-    			add_location(button, file$i, 8, 6, 302);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, button, anchor);
-    			html_tag.m(raw_value, button);
-    			append_dev(button, t);
-
-    			if (!mounted) {
-    				dispose = listen_dev(button, "click", click_handler_1, false, false, false);
-    				mounted = true;
-    			}
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-    			if (dirty[0] & /*$state*/ 16 && raw_value !== (raw_value = /*action*/ ctx[38].icon + "")) html_tag.p(raw_value);
-
-    			if (dirty[0] & /*$state*/ 16 && button_class_value !== (button_class_value = "cl-button " + (/*action*/ ctx[38].active ? 'active' : '') + " svelte-mfg49m")) {
-    				attr_dev(button, "class", button_class_value);
-    			}
-
-    			if (dirty[0] & /*$state*/ 16 && button_title_value !== (button_title_value = /*action*/ ctx[38].title)) {
-    				attr_dev(button, "title", button_title_value);
-    			}
-
-    			if (dirty[0] & /*$state*/ 16 && button_disabled_value !== (button_disabled_value = /*action*/ ctx[38].disabled)) {
-    				prop_dev(button, "disabled", button_disabled_value);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(button);
-    			mounted = false;
-    			dispose();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block$9.name,
-    		type: "each",
-    		source: "(8:4) {#each $state.actionBtns as action}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment$l(ctx) {
-    	let div2;
-    	let div0;
-    	let t0;
-    	let div1;
-    	let t1;
-    	let textarea;
-    	let t2;
-    	let editormodal;
-    	let t3;
-    	let editorcolorpicker;
-    	let current;
-    	let mounted;
-    	let dispose;
-    	let each_value = /*$state*/ ctx[4].actionBtns;
-    	validate_each_argument(each_value);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block$9(get_each_context$9(ctx, each_value, i));
-    	}
-
-    	let editormodal_props = {};
-    	editormodal = new EditorModal({ props: editormodal_props, $$inline: true });
-    	/*editormodal_binding*/ ctx[31](editormodal);
-    	let editorcolorpicker_props = { colors: /*colors*/ ctx[2] };
-
-    	editorcolorpicker = new EditorColorPicker({
-    			props: editorcolorpicker_props,
-    			$$inline: true
-    		});
-
-    	/*editorcolorpicker_binding*/ ctx[32](editorcolorpicker);
-
-    	const block = {
-    		c: function create() {
-    			div2 = element("div");
-    			div0 = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t0 = space();
-    			div1 = element("div");
-    			t1 = space();
-    			textarea = element("textarea");
-    			t2 = space();
-    			create_component(editormodal.$$.fragment);
-    			t3 = space();
-    			create_component(editorcolorpicker.$$.fragment);
-    			attr_dev(div0, "class", "cl-actionbar svelte-mfg49m");
-    			add_location(div0, file$i, 6, 2, 229);
-    			attr_dev(div1, "id", /*contentId*/ ctx[1]);
-    			attr_dev(div1, "class", "cl-content svelte-mfg49m");
-    			set_style(div1, "height", /*height*/ ctx[0]);
-    			attr_dev(div1, "contenteditable", "true");
-    			add_location(div1, file$i, 17, 2, 568);
-    			attr_dev(textarea, "class", "cl-textarea svelte-mfg49m");
-    			set_style(textarea, "max-height", /*height*/ ctx[0]);
-    			set_style(textarea, "min-height", /*height*/ ctx[0]);
-    			add_location(textarea, file$i, 28, 2, 911);
-    			attr_dev(div2, "class", "cl svelte-mfg49m");
-    			add_location(div2, file$i, 5, 0, 172);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div2, anchor);
-    			append_dev(div2, div0);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div0, null);
-    			}
-
-    			append_dev(div2, t0);
-    			append_dev(div2, div1);
-    			/*div1_binding*/ ctx[25](div1);
-    			append_dev(div2, t1);
-    			append_dev(div2, textarea);
-    			/*textarea_binding*/ ctx[30](textarea);
-    			append_dev(div2, t2);
-    			mount_component(editormodal, div2, null);
-    			append_dev(div2, t3);
-    			mount_component(editorcolorpicker, div2, null);
-    			/*div2_binding*/ ctx[33](div2);
-    			current = true;
-
-    			if (!mounted) {
-    				dispose = [
-    					listen_dev(window, "click", /*click_handler*/ ctx[23], false, false, false),
-    					listen_dev(div1, "input", /*input_handler*/ ctx[26], false, false, false),
-    					listen_dev(div1, "mouseup", /*mouseup_handler*/ ctx[27], false, false, false),
-    					listen_dev(div1, "keyup", /*keyup_handler*/ ctx[28], false, false, false),
-    					listen_dev(div1, "paste", /*paste_handler*/ ctx[29], false, false, false)
-    				];
-
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*$state, _btnClicked*/ 272) {
-    				each_value = /*$state*/ ctx[4].actionBtns;
-    				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context$9(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks[i] = create_each_block$9(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(div0, null);
-    					}
-    				}
-
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value.length;
-    			}
-
-    			if (!current || dirty[0] & /*contentId*/ 2) {
-    				attr_dev(div1, "id", /*contentId*/ ctx[1]);
-    			}
-
-    			if (!current || dirty[0] & /*height*/ 1) {
-    				set_style(div1, "height", /*height*/ ctx[0]);
-    			}
-
-    			if (!current || dirty[0] & /*height*/ 1) {
-    				set_style(textarea, "max-height", /*height*/ ctx[0]);
-    			}
-
-    			if (!current || dirty[0] & /*height*/ 1) {
-    				set_style(textarea, "min-height", /*height*/ ctx[0]);
-    			}
-
-    			const editormodal_changes = {};
-    			editormodal.$set(editormodal_changes);
-    			const editorcolorpicker_changes = {};
-    			if (dirty[0] & /*colors*/ 4) editorcolorpicker_changes.colors = /*colors*/ ctx[2];
-    			editorcolorpicker.$set(editorcolorpicker_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(editormodal.$$.fragment, local);
-    			transition_in(editorcolorpicker.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(editormodal.$$.fragment, local);
-    			transition_out(editorcolorpicker.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div2);
-    			destroy_each(each_blocks, detaching);
-    			/*div1_binding*/ ctx[25](null);
-    			/*textarea_binding*/ ctx[30](null);
-    			/*editormodal_binding*/ ctx[31](null);
-    			destroy_component(editormodal);
-    			/*editorcolorpicker_binding*/ ctx[32](null);
-    			destroy_component(editorcolorpicker);
-    			/*div2_binding*/ ctx[33](null);
-    			mounted = false;
-    			run_all(dispose);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$l.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    const editors = [];
-
-    function instance$l($$self, $$props, $$invalidate) {
-    	let $references;
-    	let $helper;
-    	let $state;
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('Editor', slots, []);
-    	let dispatcher = new createEventDispatcher();
-    	let { actions = [] } = $$props;
-    	let { height = '300px' } = $$props;
-    	let { html = '' } = $$props;
-    	let { contentId = '' } = $$props;
-
-    	let { colors = [
-    		'#ffffff',
-    		'#000000',
-    		'#eeece1',
-    		'#1f497d',
-    		'#4f81bd',
-    		'#c0504d',
-    		'#9bbb59',
-    		'#8064a2',
-    		'#4bacc6',
-    		'#f79646',
-    		'#ffff00',
-    		'#f2f2f2',
-    		'#7f7f7f',
-    		'#ddd9c3',
-    		'#c6d9f0',
-    		'#dbe5f1',
-    		'#f2dcdb',
-    		'#ebf1dd',
-    		'#e5e0ec',
-    		'#dbeef3',
-    		'#fdeada',
-    		'#fff2ca',
-    		'#d8d8d8',
-    		'#595959',
-    		'#c4bd97',
-    		'#8db3e2',
-    		'#b8cce4',
-    		'#e5b9b7',
-    		'#d7e3bc',
-    		'#ccc1d9',
-    		'#b7dde8',
-    		'#fbd5b5',
-    		'#ffe694',
-    		'#bfbfbf',
-    		'#3f3f3f',
-    		'#938953',
-    		'#548dd4',
-    		'#95b3d7',
-    		'#d99694',
-    		'#c3d69b',
-    		'#b2a2c7',
-    		'#b7dde8',
-    		'#fac08f',
-    		'#f2c314',
-    		'#a5a5a5',
-    		'#262626',
-    		'#494429',
-    		'#17365d',
-    		'#366092',
-    		'#953734',
-    		'#76923c',
-    		'#5f497a',
-    		'#92cddc',
-    		'#e36c09',
-    		'#c09100',
-    		'#7f7f7f',
-    		'#0c0c0c',
-    		'#1d1b10',
-    		'#0f243e',
-    		'#244061',
-    		'#632423',
-    		'#4f6128',
-    		'#3f3151',
-    		'#31859b',
-    		'#974806',
-    		'#7f6000'
-    	] } = $$props;
-
-    	let { removeFormatTags = ['h1', 'h2', 'blockquote'] } = $$props;
-
-    	let helper = writable({
-    		foreColor: false,
-    		backColor: false,
-    		foreColorModal: false,
-    		backColorModal: false,
-    		image: false,
-    		link: false,
-    		showEditor: true,
-    		blurActive: false
-    	});
-
-    	validate_store(helper, 'helper');
-    	component_subscribe($$self, helper, value => $$invalidate(34, $helper = value));
-    	editors.push({});
-    	let contextKey = "editor_" + editors.length;
-    	let state = createStateStore(contextKey);
-    	validate_store(state, 'state');
-    	component_subscribe($$self, state, value => $$invalidate(4, $state = value));
-    	let references = writable({});
-    	validate_store(references, 'references');
-    	component_subscribe($$self, references, value => $$invalidate(3, $references = value));
-    	set_store_value(state, $state.actionObj = getNewActionObj(defaultActions, actions), $state);
-
-    	let context = {
-    		exec: exec$1,
-    		getHtml,
-    		getText,
-    		setHtml,
-    		saveRange: saveRange$1,
-    		restoreRange: restoreRange$1,
-    		helper,
-    		references,
-    		state,
-    		removeFormatTags
-    	};
-
-    	setContext(contextKey, context);
-
-    	onMount(() => {
-    		set_store_value(state, $state.actionBtns = getActionBtns($state.actionObj), $state);
-    		setHtml(html);
-    	});
-
-    	function _btnClicked(action) {
-    		$references.editor.focus();
-    		saveRange$1($references.editor);
-    		restoreRange$1($references.editor);
-    		action.result.call(context);
-    		_handleButtonStatus();
-    	}
-
-    	function _handleButtonStatus(clearBtns) {
-    		const tags = clearBtns
-    		? []
-    		: getTagsRecursive(document.getSelection().focusNode);
-
-    		Object.keys($state.actionObj).forEach(action => set_store_value(state, $state.actionObj[action].active = false, $state));
-    		tags.forEach(tag => ($state.actionObj[tag.toLowerCase()] || {}).active = true);
-    		set_store_value(state, $state.actionBtns = getActionBtns($state.actionObj), $state);
-    		state.set($state);
-    	}
-
-    	function _onPaste(event) {
-    		event.preventDefault();
-
-    		exec$1('insertHTML', event.clipboardData.getData('text/html')
-    		? cleanHtml(event.clipboardData.getData('text/html'))
-    		: event.clipboardData.getData('text'));
-    	}
-
-    	function _onChange(event) {
-    		dispatcher('change', event);
-    	}
-
-    	function _documentClick(event) {
-    		if (!isEditorClick(event.target, $references.editorWrapper) && $helper.blurActive) {
-    			dispatcher('blur', event);
-    		}
-
-    		set_store_value(helper, $helper.blurActive = true, $helper);
-    	}
-
-    	function exec$1(cmd, value) {
-    		exec(cmd, value);
-    	}
-
-    	function getHtml(sanitize) {
-    		return sanitize
-    		? removeBadTags($references.editor.innerHTML)
-    		: $references.editor.innerHTML;
-    	}
-
-    	function getText() {
-    		return $references.editor.innerText;
-    	}
-
-    	function setHtml(html, sanitize) {
-    		const htmlData = sanitize ? removeBadTags(html) : html || '';
-    		set_store_value(references, $references.editor.innerHTML = htmlData, $references);
-    		set_store_value(references, $references.raw.value = htmlData, $references);
-    	}
-
-    	function saveRange$1() {
-    		saveRange($references.editor);
-    	}
-
-    	function restoreRange$1() {
-    		restoreRange($references.editor);
-    	}
-
-    	const refs = $references;
-    	const writable_props = ['actions', 'height', 'html', 'contentId', 'colors', 'removeFormatTags'];
-
-    	Object_1$3.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Editor> was created with unknown prop '${key}'`);
-    	});
-
-    	const click_handler = event => _documentClick(event);
-    	const click_handler_1 = (action, event) => _btnClicked(action);
-
-    	function div1_binding($$value) {
-    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
-    			$references.editor = $$value;
-    			references.set($references);
-    		});
-    	}
-
-    	const input_handler = event => _onChange(event.target.innerHTML);
-    	const mouseup_handler = () => _handleButtonStatus();
-    	const keyup_handler = () => _handleButtonStatus();
-    	const paste_handler = event => _onPaste(event);
-
-    	function textarea_binding($$value) {
-    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
-    			$references.raw = $$value;
-    			references.set($references);
-    		});
-    	}
-
-    	function editormodal_binding($$value) {
-    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
-    			$references.modal = $$value;
-    			references.set($references);
-    		});
-    	}
-
-    	function editorcolorpicker_binding($$value) {
-    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
-    			$references.colorPicker = $$value;
-    			references.set($references);
-    		});
-    	}
-
-    	function div2_binding($$value) {
-    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
-    			$references.editorWrapper = $$value;
-    			references.set($references);
-    		});
-    	}
-
-    	$$self.$$set = $$props => {
-    		if ('actions' in $$props) $$invalidate(13, actions = $$props.actions);
-    		if ('height' in $$props) $$invalidate(0, height = $$props.height);
-    		if ('html' in $$props) $$invalidate(14, html = $$props.html);
-    		if ('contentId' in $$props) $$invalidate(1, contentId = $$props.contentId);
-    		if ('colors' in $$props) $$invalidate(2, colors = $$props.colors);
-    		if ('removeFormatTags' in $$props) $$invalidate(15, removeFormatTags = $$props.removeFormatTags);
-    	};
-
-    	$$self.$capture_state = () => ({
-    		editors,
-    		getTagsRecursive,
-    		_saveRange: saveRange,
-    		_restoreRange: restoreRange,
-    		_exec: exec,
-    		cleanHtml,
-    		getActionBtns,
-    		getNewActionObj,
-    		removeBadTags,
-    		isEditorClick,
-    		defaultActions,
-    		EditorModal,
-    		EditorColorPicker,
-    		onMount,
-    		createEventDispatcher,
-    		setContext,
-    		getContext,
-    		createStateStore,
-    		writable,
-    		dispatcher,
-    		actions,
-    		height,
-    		html,
-    		contentId,
-    		colors,
-    		removeFormatTags,
-    		helper,
-    		contextKey,
-    		state,
-    		references,
-    		context,
-    		_btnClicked,
-    		_handleButtonStatus,
-    		_onPaste,
-    		_onChange,
-    		_documentClick,
-    		exec: exec$1,
-    		getHtml,
-    		getText,
-    		setHtml,
-    		saveRange: saveRange$1,
-    		restoreRange: restoreRange$1,
-    		refs,
-    		$references,
-    		$helper,
-    		$state
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('dispatcher' in $$props) dispatcher = $$props.dispatcher;
-    		if ('actions' in $$props) $$invalidate(13, actions = $$props.actions);
-    		if ('height' in $$props) $$invalidate(0, height = $$props.height);
-    		if ('html' in $$props) $$invalidate(14, html = $$props.html);
-    		if ('contentId' in $$props) $$invalidate(1, contentId = $$props.contentId);
-    		if ('colors' in $$props) $$invalidate(2, colors = $$props.colors);
-    		if ('removeFormatTags' in $$props) $$invalidate(15, removeFormatTags = $$props.removeFormatTags);
-    		if ('helper' in $$props) $$invalidate(5, helper = $$props.helper);
-    		if ('contextKey' in $$props) contextKey = $$props.contextKey;
-    		if ('state' in $$props) $$invalidate(6, state = $$props.state);
-    		if ('references' in $$props) $$invalidate(7, references = $$props.references);
-    		if ('context' in $$props) context = $$props.context;
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [
-    		height,
-    		contentId,
-    		colors,
-    		$references,
-    		$state,
-    		helper,
-    		state,
-    		references,
-    		_btnClicked,
-    		_handleButtonStatus,
-    		_onPaste,
-    		_onChange,
-    		_documentClick,
-    		actions,
-    		html,
-    		removeFormatTags,
-    		exec$1,
-    		getHtml,
-    		getText,
-    		setHtml,
-    		saveRange$1,
-    		restoreRange$1,
-    		refs,
-    		click_handler,
-    		click_handler_1,
-    		div1_binding,
-    		input_handler,
-    		mouseup_handler,
-    		keyup_handler,
-    		paste_handler,
-    		textarea_binding,
-    		editormodal_binding,
-    		editorcolorpicker_binding,
-    		div2_binding
-    	];
-    }
-
-    class Editor extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-
-    		init(
-    			this,
-    			options,
-    			instance$l,
-    			create_fragment$l,
-    			safe_not_equal,
-    			{
-    				actions: 13,
-    				height: 0,
-    				html: 14,
-    				contentId: 1,
-    				colors: 2,
-    				removeFormatTags: 15,
-    				exec: 16,
-    				getHtml: 17,
-    				getText: 18,
-    				setHtml: 19,
-    				saveRange: 20,
-    				restoreRange: 21,
-    				refs: 22
-    			},
-    			null,
-    			[-1, -1]
-    		);
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "Editor",
-    			options,
-    			id: create_fragment$l.name
-    		});
-    	}
-
-    	get actions() {
-    		return this.$$.ctx[13];
-    	}
-
-    	set actions(actions) {
-    		this.$$set({ actions });
-    		flush();
-    	}
-
-    	get height() {
-    		return this.$$.ctx[0];
-    	}
-
-    	set height(height) {
-    		this.$$set({ height });
-    		flush();
-    	}
-
-    	get html() {
-    		return this.$$.ctx[14];
-    	}
-
-    	set html(html) {
-    		this.$$set({ html });
-    		flush();
-    	}
-
-    	get contentId() {
-    		return this.$$.ctx[1];
-    	}
-
-    	set contentId(contentId) {
-    		this.$$set({ contentId });
-    		flush();
-    	}
-
-    	get colors() {
-    		return this.$$.ctx[2];
-    	}
-
-    	set colors(colors) {
-    		this.$$set({ colors });
-    		flush();
-    	}
-
-    	get removeFormatTags() {
-    		return this.$$.ctx[15];
-    	}
-
-    	set removeFormatTags(removeFormatTags) {
-    		this.$$set({ removeFormatTags });
-    		flush();
-    	}
-
-    	get exec() {
-    		return this.$$.ctx[16];
-    	}
-
-    	set exec(value) {
-    		throw new Error("<Editor>: Cannot set read-only property 'exec'");
-    	}
-
-    	get getHtml() {
-    		return this.$$.ctx[17];
-    	}
-
-    	set getHtml(value) {
-    		throw new Error("<Editor>: Cannot set read-only property 'getHtml'");
-    	}
-
-    	get getText() {
-    		return this.$$.ctx[18];
-    	}
-
-    	set getText(value) {
-    		throw new Error("<Editor>: Cannot set read-only property 'getText'");
-    	}
-
-    	get setHtml() {
-    		return this.$$.ctx[19];
-    	}
-
-    	set setHtml(value) {
-    		throw new Error("<Editor>: Cannot set read-only property 'setHtml'");
-    	}
-
-    	get saveRange() {
-    		return this.$$.ctx[20];
-    	}
-
-    	set saveRange(value) {
-    		throw new Error("<Editor>: Cannot set read-only property 'saveRange'");
-    	}
-
-    	get restoreRange() {
-    		return this.$$.ctx[21];
-    	}
-
-    	set restoreRange(value) {
-    		throw new Error("<Editor>: Cannot set read-only property 'restoreRange'");
-    	}
-
-    	get refs() {
-    		return this.$$.ctx[22];
-    	}
-
-    	set refs(value) {
-    		throw new Error("<Editor>: Cannot set read-only property 'refs'");
-    	}
-    }
-
-    /* src\components\Configuration\ModuleGeneralConfiguration.svelte generated by Svelte v3.55.0 */
-    const file$h = "src\\components\\Configuration\\ModuleGeneralConfiguration.svelte";
-
-    function get_each_context$8(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[29] = list[i];
-    	return child_ctx;
-    }
-
-    // (78:10) {:else}
-    function create_else_block_4(ctx) {
-    	let option;
-
-    	const block = {
-    		c: function create() {
-    			option = element("option");
-    			option.textContent = "Unallocated";
-    			option.__value = "";
-    			option.value = option.__value;
-    			add_location(option, file$h, 78, 12, 3622);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, option, anchor);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(option);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_else_block_4.name,
-    		type: "else",
-    		source: "(78:10) {:else}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (76:10) {#if $collectionsStore["MODULES"][moduleId].collection === ""}
-    function create_if_block_4$3(ctx) {
-    	let option;
-
-    	const block = {
-    		c: function create() {
-    			option = element("option");
-    			option.textContent = "Unallocated";
-    			option.__value = "";
-    			option.value = option.__value;
-    			option.selected = true;
-    			add_location(option, file$h, 76, 12, 3543);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, option, anchor);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(option);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_4$3.name,
-    		type: "if",
-    		source: "(76:10) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].collection === \\\"\\\"}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (84:12) {:else}
-    function create_else_block_3(ctx) {
-    	let option;
-    	let t_value = /*collectionName*/ ctx[29] + "";
-    	let t;
-    	let option_value_value;
-
-    	const block = {
-    		c: function create() {
-    			option = element("option");
-    			t = text(t_value);
-    			option.__value = option_value_value = /*collectionName*/ ctx[29];
-    			option.value = option.__value;
-    			add_location(option, file$h, 84, 14, 3958);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, option, anchor);
-    			append_dev(option, t);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*$collectionsStore*/ 2 && t_value !== (t_value = /*collectionName*/ ctx[29] + "")) set_data_dev(t, t_value);
-
-    			if (dirty[0] & /*$collectionsStore*/ 2 && option_value_value !== (option_value_value = /*collectionName*/ ctx[29])) {
-    				prop_dev(option, "__value", option_value_value);
-    				option.value = option.__value;
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(option);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_else_block_3.name,
-    		type: "else",
-    		source: "(84:12) {:else}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (82:12) {#if $collectionsStore["MODULES"][moduleId].collection === collectionName}
-    function create_if_block_3$3(ctx) {
-    	let option;
-    	let t_value = /*collectionName*/ ctx[29] + "";
-    	let t;
-    	let option_value_value;
-
-    	const block = {
-    		c: function create() {
-    			option = element("option");
-    			t = text(t_value);
-    			option.__value = option_value_value = /*collectionName*/ ctx[29];
-    			option.value = option.__value;
-    			option.selected = true;
-    			add_location(option, file$h, 82, 14, 3856);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, option, anchor);
-    			append_dev(option, t);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*$collectionsStore*/ 2 && t_value !== (t_value = /*collectionName*/ ctx[29] + "")) set_data_dev(t, t_value);
-
-    			if (dirty[0] & /*$collectionsStore*/ 2 && option_value_value !== (option_value_value = /*collectionName*/ ctx[29])) {
-    				prop_dev(option, "__value", option_value_value);
-    				option.value = option.__value;
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(option);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_3$3.name,
-    		type: "if",
-    		source: "(82:12) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].collection === collectionName}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (81:10) {#each $collectionsStore["COLLECTIONS_ORDER"] as collectionName}
-    function create_each_block$8(ctx) {
-    	let if_block_anchor;
-
-    	function select_block_type_1(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].collection === /*collectionName*/ ctx[29]) return create_if_block_3$3;
-    		return create_else_block_3;
-    	}
-
-    	let current_block_type = select_block_type_1(ctx);
-    	let if_block = current_block_type(ctx);
-
-    	const block = {
-    		c: function create() {
-    			if_block.c();
-    			if_block_anchor = empty();
-    		},
-    		m: function mount(target, anchor) {
-    			if_block.m(target, anchor);
-    			insert_dev(target, if_block_anchor, anchor);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block) {
-    				if_block.p(ctx, dirty);
-    			} else {
-    				if_block.d(1);
-    				if_block = current_block_type(ctx);
-
-    				if (if_block) {
-    					if_block.c();
-    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
-    				}
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if_block.d(detaching);
-    			if (detaching) detach_dev(if_block_anchor);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block$8.name,
-    		type: "each",
-    		source: "(81:10) {#each $collectionsStore[\\\"COLLECTIONS_ORDER\\\"] as collectionName}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (129:8) {:else}
-    function create_else_block_2(ctx) {
-    	let input;
-    	let input_id_value;
-    	let mounted;
-    	let dispose;
-
-    	const block = {
-    		c: function create() {
-    			input = element("input");
-    			attr_dev(input, "type", "text");
-    			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyiText");
-    			set_style(input, "width", "10rem");
-    			input.disabled = true;
-    			attr_dev(input, "class", "svelte-1au0op9");
-    			add_location(input, file$h, 129, 10, 5543);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, input, anchor);
-    			set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyiText);
-
-    			if (!mounted) {
-    				dispose = listen_dev(input, "input", /*input_input_handler_1*/ ctx[10]);
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*moduleId, $collectionsStore*/ 3 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyiText")) {
-    				attr_dev(input, "id", input_id_value);
-    			}
-
-    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyiText) {
-    				set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyiText);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(input);
-    			mounted = false;
-    			dispose();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_else_block_2.name,
-    		type: "else",
-    		source: "(129:8) {:else}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (119:8) {#if $collectionsStore["MODULES"][moduleId].fyi}
-    function create_if_block_2$4(ctx) {
-    	let input;
-    	let input_id_value;
-    	let mounted;
-    	let dispose;
-
-    	const block = {
-    		c: function create() {
-    			input = element("input");
-    			attr_dev(input, "type", "text");
-    			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyiText");
-    			set_style(input, "width", "10rem");
-    			attr_dev(input, "class", "svelte-1au0op9");
-    			add_location(input, file$h, 119, 10, 5121);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, input, anchor);
-    			set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyiText);
-
-    			if (!mounted) {
-    				dispose = [
-    					listen_dev(input, "input", /*input_input_handler*/ ctx[7]),
-    					listen_dev(input, "click", /*click_handler*/ ctx[8], false, false, false),
-    					listen_dev(input, "keydown", stop_propagation(/*keydown_handler*/ ctx[9]), false, false, true)
-    				];
-
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*moduleId, $collectionsStore*/ 3 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyiText")) {
-    				attr_dev(input, "id", input_id_value);
-    			}
-
-    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyiText) {
-    				set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyiText);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(input);
-    			mounted = false;
-    			run_all(dispose);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_2$4.name,
-    		type: "if",
-    		source: "(119:8) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].fyi}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (201:8) {:else}
-    function create_else_block_1$1(ctx) {
-    	let input;
-    	let input_id_value;
-    	let mounted;
-    	let dispose;
-
-    	const block = {
-    		c: function create() {
-    			input = element("input");
-    			attr_dev(input, "type", "text");
-    			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num");
-    			set_style(input, "width", "3rem");
-    			add_location(input, file$h, 201, 10, 8153);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, input, anchor);
-    			set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].actualNum);
-
-    			if (!mounted) {
-    				dispose = [
-    					listen_dev(input, "input", /*input_input_handler_3*/ ctx[18]),
-    					listen_dev(input, "click", /*click_handler_3*/ ctx[19], false, false, false),
-    					listen_dev(input, "keydown", stop_propagation(/*keydown_handler_3*/ ctx[20]), false, false, true)
-    				];
-
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*moduleId, $collectionsStore*/ 3 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num")) {
-    				attr_dev(input, "id", input_id_value);
-    			}
-
-    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].actualNum) {
-    				set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].actualNum);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(input);
-    			mounted = false;
-    			run_all(dispose);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_else_block_1$1.name,
-    		type: "else",
-    		source: "(201:8) {:else}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (190:8) {#if $collectionsStore["MODULES"][moduleId].autonum}
-    function create_if_block_1$8(ctx) {
-    	let input;
-    	let input_id_value;
-    	let mounted;
-    	let dispose;
-
-    	const block = {
-    		c: function create() {
-    			input = element("input");
-    			attr_dev(input, "type", "text");
-    			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num");
-    			set_style(input, "width", "3rem");
-    			input.disabled = true;
-    			add_location(input, file$h, 190, 10, 7712);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, input, anchor);
-    			set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].actualNum);
-
-    			if (!mounted) {
-    				dispose = [
-    					listen_dev(input, "input", /*input_input_handler_2*/ ctx[15]),
-    					listen_dev(input, "click", /*click_handler_2*/ ctx[16], false, false, false),
-    					listen_dev(input, "keydown", stop_propagation(/*keydown_handler_2*/ ctx[17]), false, false, true)
-    				];
-
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*moduleId, $collectionsStore*/ 3 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num")) {
-    				attr_dev(input, "id", input_id_value);
-    			}
-
-    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].actualNum) {
-    				set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].actualNum);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(input);
-    			mounted = false;
-    			run_all(dispose);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_1$8.name,
-    		type: "if",
-    		source: "(190:8) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].autonum}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (254:8) {:else}
-    function create_else_block$4(ctx) {
-    	let input;
-    	let input_id_value;
-    	let mounted;
-    	let dispose;
-
-    	const block = {
-    		c: function create() {
-    			input = element("input");
-    			attr_dev(input, "type", "text");
-    			attr_dev(input, "class", "cc-module-config-engageText svelte-1au0op9");
-    			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engageText");
-    			set_style(input, "width", "10rem");
-    			add_location(input, file$h, 254, 10, 10011);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, input, anchor);
-    			set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engageText);
-
-    			if (!mounted) {
-    				dispose = [
-    					listen_dev(input, "input", /*input_input_handler_5*/ ctx[25]),
-    					listen_dev(input, "click", /*click_handler_5*/ ctx[26], false, false, false),
-    					listen_dev(input, "keydown", stop_propagation(/*keydown_handler_5*/ ctx[27]), false, false, true)
-    				];
-
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*moduleId, $collectionsStore*/ 3 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engageText")) {
-    				attr_dev(input, "id", input_id_value);
-    			}
-
-    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engageText) {
-    				set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engageText);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(input);
-    			mounted = false;
-    			run_all(dispose);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_else_block$4.name,
-    		type: "else",
-    		source: "(254:8) {:else}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (246:8) {#if !$collectionsStore["MODULES"][moduleId].engage}
-    function create_if_block$b(ctx) {
-    	let input;
-    	let input_id_value;
-    	let mounted;
-    	let dispose;
-
-    	const block = {
-    		c: function create() {
-    			input = element("input");
-    			attr_dev(input, "type", "text");
-    			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engageText");
-    			set_style(input, "width", "10rem");
-    			input.disabled = true;
-    			attr_dev(input, "class", "svelte-1au0op9");
-    			add_location(input, file$h, 246, 10, 9748);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, input, anchor);
-    			set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engageText);
-
-    			if (!mounted) {
-    				dispose = listen_dev(input, "input", /*input_input_handler_4*/ ctx[24]);
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*moduleId, $collectionsStore*/ 3 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engageText")) {
-    				attr_dev(input, "id", input_id_value);
-    			}
-
-    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engageText) {
-    				set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engageText);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(input);
-    			mounted = false;
-    			dispose();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block$b.name,
-    		type: "if",
-    		source: "(246:8) {#if !$collectionsStore[\\\"MODULES\\\"][moduleId].engage}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment$k(ctx) {
-    	let div6;
-    	let div2;
-    	let div1;
-    	let span0;
-    	let label0;
-    	let t0;
-    	let label0_for_value;
-    	let t1;
-    	let sl_tooltip0;
-    	let div0;
-    	let raw0_value = /*HELP*/ ctx[4].configCollection.tooltip + "";
-    	let t2;
-    	let a0;
-    	let i0;
-    	let t3;
-    	let span1;
-    	let select;
-    	let if_block0_anchor;
-    	let select_id_value;
-    	let t4;
-    	let div5;
-    	let div4;
-    	let span3;
-    	let label1;
-    	let t5;
-    	let label1_for_value;
-    	let t6;
-    	let sl_tooltip1;
-    	let div3;
-    	let raw1_value = /*HELP*/ ctx[4].configFYI.tooltip + "";
-    	let t7;
-    	let a1;
-    	let i1;
-    	let t8;
-    	let span2;
-    	let input0;
-    	let input0_id_value;
-    	let t9;
-    	let span4;
-    	let t10;
-    	let div13;
-    	let div9;
-    	let div8;
-    	let span5;
-    	let label2;
-    	let t11;
-    	let label2_for_value;
-    	let t12;
-    	let sl_tooltip2;
-    	let div7;
-    	let raw2_value = /*HELP*/ ctx[4].configLabel.tooltip + "";
-    	let t13;
-    	let a2;
-    	let i2;
-    	let t14;
-    	let span6;
-    	let input1;
-    	let input1_id_value;
-    	let t15;
-    	let div12;
-    	let div11;
-    	let span8;
-    	let label3;
-    	let t16;
-    	let label3_for_value;
-    	let t17;
-    	let sl_tooltip3;
-    	let div10;
-    	let raw3_value = /*HELP*/ ctx[4].configAutoNum.tooltip + "";
-    	let t18;
-    	let a3;
-    	let i3;
-    	let t19;
-    	let span7;
-    	let t20;
-    	let input2;
-    	let input2_id_value;
-    	let t21;
-    	let span9;
-    	let t22;
-    	let div18;
-    	let div16;
-    	let div15;
-    	let span11;
-    	let label4;
-    	let t23;
-    	let label4_for_value;
-    	let t24;
-    	let sl_tooltip4;
-    	let div14;
-    	let raw4_value = /*HELP*/ ctx[4].configEngage.tooltip + "";
-    	let t25;
-    	let a4;
-    	let i4;
-    	let t26;
-    	let span10;
-    	let input3;
-    	let input3_id_value;
-    	let t27;
-    	let span12;
-    	let t28;
-    	let div17;
-    	let t29;
-    	let div20;
-    	let label5;
-    	let t30;
-    	let label5_for_value;
-    	let t31;
-    	let sl_tooltip5;
-    	let div19;
-    	let raw5_value = /*HELP*/ ctx[4].configDescription.tooltip + "";
-    	let t32;
-    	let a5;
-    	let i5;
-    	let t33;
-    	let editor;
-    	let current;
-    	let mounted;
-    	let dispose;
-
-    	function select_block_type(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].collection === "") return create_if_block_4$3;
-    		return create_else_block_4;
-    	}
-
-    	let current_block_type = select_block_type(ctx);
-    	let if_block0 = current_block_type(ctx);
-    	let each_value = /*$collectionsStore*/ ctx[1]["COLLECTIONS_ORDER"];
-    	validate_each_argument(each_value);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block$8(get_each_context$8(ctx, each_value, i));
-    	}
-
-    	function select_block_type_2(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyi) return create_if_block_2$4;
-    		return create_else_block_2;
-    	}
-
-    	let current_block_type_1 = select_block_type_2(ctx);
-    	let if_block1 = current_block_type_1(ctx);
-
-    	function select_block_type_3(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].autonum) return create_if_block_1$8;
-    		return create_else_block_1$1;
-    	}
-
-    	let current_block_type_2 = select_block_type_3(ctx);
-    	let if_block2 = current_block_type_2(ctx);
-
-    	function select_block_type_4(ctx, dirty) {
-    		if (!/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engage) return create_if_block$b;
-    		return create_else_block$4;
-    	}
-
-    	let current_block_type_3 = select_block_type_4(ctx);
-    	let if_block3 = current_block_type_3(ctx);
-
-    	editor = new Editor({
-    			props: {
-    				html: /*html*/ ctx[3],
-    				contentId: "cc-module-config-" + /*moduleId*/ ctx[0] + "-description-editor"
-    			},
-    			$$inline: true
-    		});
-
-    	editor.$on("change", /*change_handler*/ ctx[28]);
-
-    	const block = {
-    		c: function create() {
-    			div6 = element("div");
-    			div2 = element("div");
-    			div1 = element("div");
-    			span0 = element("span");
-    			label0 = element("label");
-    			t0 = text("Collection");
-    			t1 = space();
-    			sl_tooltip0 = element("sl-tooltip");
-    			div0 = element("div");
-    			t2 = space();
-    			a0 = element("a");
-    			i0 = element("i");
-    			t3 = space();
-    			span1 = element("span");
-    			select = element("select");
-    			if_block0.c();
-    			if_block0_anchor = empty();
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t4 = space();
-    			div5 = element("div");
-    			div4 = element("div");
-    			span3 = element("span");
-    			label1 = element("label");
-    			t5 = text("FYI");
-    			t6 = space();
-    			sl_tooltip1 = element("sl-tooltip");
-    			div3 = element("div");
-    			t7 = space();
-    			a1 = element("a");
-    			i1 = element("i");
-    			t8 = space();
-    			span2 = element("span");
-    			input0 = element("input");
-    			t9 = space();
-    			span4 = element("span");
-    			if_block1.c();
-    			t10 = space();
-    			div13 = element("div");
-    			div9 = element("div");
-    			div8 = element("div");
-    			span5 = element("span");
-    			label2 = element("label");
-    			t11 = text("Label");
-    			t12 = space();
-    			sl_tooltip2 = element("sl-tooltip");
-    			div7 = element("div");
-    			t13 = space();
-    			a2 = element("a");
-    			i2 = element("i");
-    			t14 = space();
-    			span6 = element("span");
-    			input1 = element("input");
-    			t15 = space();
-    			div12 = element("div");
-    			div11 = element("div");
-    			span8 = element("span");
-    			label3 = element("label");
-    			t16 = text("Number");
-    			t17 = space();
-    			sl_tooltip3 = element("sl-tooltip");
-    			div10 = element("div");
-    			t18 = space();
-    			a3 = element("a");
-    			i3 = element("i");
-    			t19 = space();
-    			span7 = element("span");
-    			t20 = text("auto:\r\n          ");
-    			input2 = element("input");
-    			t21 = space();
-    			span9 = element("span");
-    			if_block2.c();
-    			t22 = space();
-    			div18 = element("div");
-    			div16 = element("div");
-    			div15 = element("div");
-    			span11 = element("span");
-    			label4 = element("label");
-    			t23 = text("Engage");
-    			t24 = space();
-    			sl_tooltip4 = element("sl-tooltip");
-    			div14 = element("div");
-    			t25 = space();
-    			a4 = element("a");
-    			i4 = element("i");
-    			t26 = space();
-    			span10 = element("span");
-    			input3 = element("input");
-    			t27 = space();
-    			span12 = element("span");
-    			if_block3.c();
-    			t28 = space();
-    			div17 = element("div");
-    			t29 = space();
-    			div20 = element("div");
-    			label5 = element("label");
-    			t30 = text("Description");
-    			t31 = space();
-    			sl_tooltip5 = element("sl-tooltip");
-    			div19 = element("div");
-    			t32 = space();
-    			a5 = element("a");
-    			i5 = element("i");
-    			t33 = space();
-    			create_component(editor.$$.fragment);
-    			attr_dev(label0, "for", label0_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-collection");
-    			add_location(label0, file$h, 56, 8, 2764);
-    			attr_dev(div0, "slot", "content");
-    			add_location(div0, file$h, 58, 10, 2868);
-    			attr_dev(i0, "class", "icon-question cc-module-icon");
-    			add_location(i0, file$h, 66, 12, 3164);
-    			attr_dev(a0, "id", "cc-about-basic-module-collection");
-    			attr_dev(a0, "href", /*HELP*/ ctx[4].configCollection.url);
-    			attr_dev(a0, "target", "_blank");
-    			attr_dev(a0, "rel", "noreferrer");
-    			attr_dev(a0, "class", "cc-module-link");
-    			add_location(a0, file$h, 59, 10, 2943);
-    			set_custom_element_data(sl_tooltip0, "class", "svelte-1au0op9");
-    			add_location(sl_tooltip0, file$h, 57, 8, 2844);
-    			attr_dev(span0, "class", "cc-module-label svelte-1au0op9");
-    			add_location(span0, file$h, 55, 6, 2724);
-    			attr_dev(select, "id", select_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-collection");
-    			attr_dev(select, "class", "svelte-1au0op9");
-    			if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].collection === void 0) add_render_callback(() => /*select_change_handler*/ ctx[5].call(select));
-    			add_location(select, file$h, 71, 8, 3308);
-    			attr_dev(span1, "class", "cc-module-input svelte-1au0op9");
-    			add_location(span1, file$h, 70, 6, 3268);
-    			attr_dev(div1, "class", "cc-module-form svelte-1au0op9");
-    			add_location(div1, file$h, 54, 4, 2688);
-    			attr_dev(div2, "class", "cc-module-col svelte-1au0op9");
-    			add_location(div2, file$h, 53, 2, 2655);
-    			attr_dev(label1, "for", label1_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyi");
-    			add_location(label1, file$h, 96, 8, 4300);
-    			attr_dev(div3, "slot", "content");
-    			add_location(div3, file$h, 98, 10, 4390);
-    			attr_dev(i1, "class", "icon-question cc-module-icon");
-    			add_location(i1, file$h, 105, 12, 4621);
-    			attr_dev(a1, "target", "_blank");
-    			attr_dev(a1, "rel", "noreferrer");
-    			attr_dev(a1, "href", /*HELP*/ ctx[4].configFYI.url);
-    			attr_dev(a1, "class", "cc-module-link");
-    			add_location(a1, file$h, 99, 10, 4458);
-    			set_custom_element_data(sl_tooltip1, "class", "svelte-1au0op9");
-    			add_location(sl_tooltip1, file$h, 97, 8, 4366);
-    			attr_dev(input0, "type", "checkbox");
-    			attr_dev(input0, "id", input0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyi");
-    			set_style(input0, "position", "relative");
-    			set_style(input0, "top", "-0.25rem");
-    			add_location(input0, file$h, 109, 10, 4756);
-    			attr_dev(span2, "class", "cc-config-autonum svelte-1au0op9");
-    			add_location(span2, file$h, 108, 8, 4712);
-    			attr_dev(span3, "class", "cc-module-label svelte-1au0op9");
-    			add_location(span3, file$h, 95, 6, 4260);
-    			attr_dev(span4, "class", "cc-module-input svelte-1au0op9");
-    			add_location(span4, file$h, 117, 6, 5021);
-    			attr_dev(div4, "class", "cc-module-form svelte-1au0op9");
-    			add_location(div4, file$h, 94, 4, 4224);
-    			attr_dev(div5, "class", "cc-module-col svelte-1au0op9");
-    			add_location(div5, file$h, 93, 2, 4191);
-    			attr_dev(div6, "class", "cc-module-row svelte-1au0op9");
-    			add_location(div6, file$h, 52, 0, 2624);
-    			attr_dev(label2, "for", label2_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-label");
-    			add_location(label2, file$h, 146, 8, 5976);
-    			attr_dev(div7, "slot", "content");
-    			add_location(div7, file$h, 148, 10, 6098);
-    			attr_dev(i2, "class", "icon-question cc-module-icon");
-    			add_location(i2, file$h, 150, 12, 6246);
-    			attr_dev(a2, "target", "_blank");
-    			attr_dev(a2, "href", /*HELP*/ ctx[4].configLabel.url);
-    			attr_dev(a2, "rel", "noreferrer");
-    			add_location(a2, file$h, 149, 10, 6168);
-    			set_custom_element_data(sl_tooltip2, "id", "cc-about-module-label");
-    			set_custom_element_data(sl_tooltip2, "class", "svelte-1au0op9");
-    			add_location(sl_tooltip2, file$h, 147, 8, 6047);
-    			attr_dev(span5, "class", "cc-module-label svelte-1au0op9");
-    			add_location(span5, file$h, 145, 6, 5936);
-    			attr_dev(input1, "type", "text");
-    			attr_dev(input1, "id", input1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-label");
-    			set_style(input1, "width", "10rem");
-    			add_location(input1, file$h, 155, 8, 6395);
-    			attr_dev(span6, "class", "cc-module-form-input");
-    			add_location(span6, file$h, 154, 6, 6350);
-    			attr_dev(div8, "class", "cc-module-form svelte-1au0op9");
-    			add_location(div8, file$h, 144, 4, 5900);
-    			attr_dev(div9, "class", "cc-module-col svelte-1au0op9");
-    			add_location(div9, file$h, 143, 2, 5867);
-    			attr_dev(label3, "for", label3_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num");
-    			add_location(label3, file$h, 171, 8, 6933);
-    			attr_dev(div10, "slot", "content");
-    			add_location(div10, file$h, 173, 10, 7026);
-    			attr_dev(i3, "class", "icon-question cc-module-icon");
-    			add_location(i3, file$h, 175, 12, 7178);
-    			attr_dev(a3, "target", "_blank");
-    			attr_dev(a3, "href", /*HELP*/ ctx[4].configAutoNum.url);
-    			attr_dev(a3, "rel", "noreferrer");
-    			add_location(a3, file$h, 174, 10, 7098);
-    			set_custom_element_data(sl_tooltip3, "class", "svelte-1au0op9");
-    			add_location(sl_tooltip3, file$h, 172, 8, 7002);
-    			attr_dev(input2, "type", "checkbox");
-    			attr_dev(input2, "id", input2_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-autonum");
-    			set_style(input2, "position", "relative");
-    			set_style(input2, "top", "-0.25rem");
-    			add_location(input2, file$h, 180, 10, 7330);
-    			attr_dev(span7, "class", "cc-config-autonum svelte-1au0op9");
-    			add_location(span7, file$h, 178, 8, 7269);
-    			attr_dev(span8, "class", "cc-module-label svelte-1au0op9");
-    			add_location(span8, file$h, 170, 6, 6893);
-    			attr_dev(span9, "class", "cc-module-form-input");
-    			add_location(span9, file$h, 188, 6, 7603);
-    			attr_dev(div11, "class", "cc-module-form svelte-1au0op9");
-    			add_location(div11, file$h, 169, 4, 6857);
-    			attr_dev(div12, "class", "cc-module-col svelte-1au0op9");
-    			add_location(div12, file$h, 168, 2, 6824);
-    			attr_dev(div13, "class", "cc-module-row svelte-1au0op9");
-    			add_location(div13, file$h, 142, 0, 5836);
-    			attr_dev(label4, "for", label4_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engage");
-    			add_location(label4, file$h, 220, 8, 8747);
-    			attr_dev(div14, "slot", "content");
-    			add_location(div14, file$h, 222, 10, 8843);
-    			attr_dev(i4, "class", "icon-question cc-module-icon");
-    			add_location(i4, file$h, 230, 12, 9082);
-    			attr_dev(a4, "target", "_blank");
-    			attr_dev(a4, "rel", "noreferrer");
-    			attr_dev(a4, "href", /*HELP*/ ctx[4].configEngage.url);
-    			attr_dev(a4, "class", "cc-module-link");
-    			add_location(a4, file$h, 224, 10, 8916);
-    			set_custom_element_data(sl_tooltip4, "class", "svelte-1au0op9");
-    			add_location(sl_tooltip4, file$h, 221, 8, 8819);
-    			attr_dev(input3, "type", "checkbox");
-    			attr_dev(input3, "id", input3_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engage");
-    			set_style(input3, "position", "relative");
-    			set_style(input3, "top", "-0.25rem");
-    			add_location(input3, file$h, 234, 10, 9217);
-    			attr_dev(span10, "class", "cc-config-autonum svelte-1au0op9");
-    			add_location(span10, file$h, 233, 8, 9173);
-    			attr_dev(span11, "class", "cc-module-label svelte-1au0op9");
-    			add_location(span11, file$h, 219, 6, 8707);
-    			attr_dev(span12, "class", "cc-module-input svelte-1au0op9");
-    			add_location(span12, file$h, 244, 6, 9644);
-    			attr_dev(div15, "class", "cc-module-form svelte-1au0op9");
-    			add_location(div15, file$h, 218, 4, 8671);
-    			attr_dev(div16, "class", "cc-module-col svelte-1au0op9");
-    			add_location(div16, file$h, 217, 2, 8638);
-    			attr_dev(div17, "class", "cc-module-col svelte-1au0op9");
-    			add_location(div17, file$h, 268, 2, 10515);
-    			attr_dev(div18, "class", "cc-module-row svelte-1au0op9");
-    			add_location(div18, file$h, 216, 0, 8607);
-    			attr_dev(label5, "for", label5_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-description");
-    			add_location(label5, file$h, 272, 2, 10602);
-    			attr_dev(div19, "slot", "content");
-    			add_location(div19, file$h, 274, 4, 10696);
-    			attr_dev(i5, "class", "icon-question cc-module-icon");
-    			add_location(i5, file$h, 282, 6, 10941);
-    			attr_dev(a5, "id", "cc-about-module-description");
-    			attr_dev(a5, "href", /*HELP*/ ctx[4].configDescription.url);
-    			attr_dev(a5, "target", "_blank");
-    			attr_dev(a5, "rel", "noreferrer");
-    			attr_dev(a5, "class", "cc-module-link");
-    			add_location(a5, file$h, 275, 4, 10766);
-    			set_custom_element_data(sl_tooltip5, "class", "svelte-1au0op9");
-    			add_location(sl_tooltip5, file$h, 273, 2, 10678);
-    			attr_dev(div20, "class", "cc-module-config-description svelte-1au0op9");
-    			add_location(div20, file$h, 271, 0, 10556);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div6, anchor);
-    			append_dev(div6, div2);
-    			append_dev(div2, div1);
-    			append_dev(div1, span0);
-    			append_dev(span0, label0);
-    			append_dev(label0, t0);
-    			append_dev(span0, t1);
-    			append_dev(span0, sl_tooltip0);
-    			append_dev(sl_tooltip0, div0);
-    			div0.innerHTML = raw0_value;
-    			append_dev(sl_tooltip0, t2);
-    			append_dev(sl_tooltip0, a0);
-    			append_dev(a0, i0);
-    			append_dev(div1, t3);
-    			append_dev(div1, span1);
-    			append_dev(span1, select);
-    			if_block0.m(select, null);
-    			append_dev(select, if_block0_anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(select, null);
-    			}
-
-    			select_option(select, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].collection);
-    			append_dev(div6, t4);
-    			append_dev(div6, div5);
-    			append_dev(div5, div4);
-    			append_dev(div4, span3);
-    			append_dev(span3, label1);
-    			append_dev(label1, t5);
-    			append_dev(span3, t6);
-    			append_dev(span3, sl_tooltip1);
-    			append_dev(sl_tooltip1, div3);
-    			div3.innerHTML = raw1_value;
-    			append_dev(sl_tooltip1, t7);
-    			append_dev(sl_tooltip1, a1);
-    			append_dev(a1, i1);
-    			append_dev(span3, t8);
-    			append_dev(span3, span2);
-    			append_dev(span2, input0);
-    			input0.checked = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyi;
-    			append_dev(div4, t9);
-    			append_dev(div4, span4);
-    			if_block1.m(span4, null);
-    			insert_dev(target, t10, anchor);
-    			insert_dev(target, div13, anchor);
-    			append_dev(div13, div9);
-    			append_dev(div9, div8);
-    			append_dev(div8, span5);
-    			append_dev(span5, label2);
-    			append_dev(label2, t11);
-    			append_dev(span5, t12);
-    			append_dev(span5, sl_tooltip2);
-    			append_dev(sl_tooltip2, div7);
-    			div7.innerHTML = raw2_value;
-    			append_dev(sl_tooltip2, t13);
-    			append_dev(sl_tooltip2, a2);
-    			append_dev(a2, i2);
-    			append_dev(div8, t14);
-    			append_dev(div8, span6);
-    			append_dev(span6, input1);
-    			set_input_value(input1, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].label);
-    			append_dev(div13, t15);
-    			append_dev(div13, div12);
-    			append_dev(div12, div11);
-    			append_dev(div11, span8);
-    			append_dev(span8, label3);
-    			append_dev(label3, t16);
-    			append_dev(span8, t17);
-    			append_dev(span8, sl_tooltip3);
-    			append_dev(sl_tooltip3, div10);
-    			div10.innerHTML = raw3_value;
-    			append_dev(sl_tooltip3, t18);
-    			append_dev(sl_tooltip3, a3);
-    			append_dev(a3, i3);
-    			append_dev(span8, t19);
-    			append_dev(span8, span7);
-    			append_dev(span7, t20);
-    			append_dev(span7, input2);
-    			input2.checked = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].autonum;
-    			append_dev(div11, t21);
-    			append_dev(div11, span9);
-    			if_block2.m(span9, null);
-    			insert_dev(target, t22, anchor);
-    			insert_dev(target, div18, anchor);
-    			append_dev(div18, div16);
-    			append_dev(div16, div15);
-    			append_dev(div15, span11);
-    			append_dev(span11, label4);
-    			append_dev(label4, t23);
-    			append_dev(span11, t24);
-    			append_dev(span11, sl_tooltip4);
-    			append_dev(sl_tooltip4, div14);
-    			div14.innerHTML = raw4_value;
-    			append_dev(sl_tooltip4, t25);
-    			append_dev(sl_tooltip4, a4);
-    			append_dev(a4, i4);
-    			append_dev(span11, t26);
-    			append_dev(span11, span10);
-    			append_dev(span10, input3);
-    			input3.checked = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engage;
-    			append_dev(div15, t27);
-    			append_dev(div15, span12);
-    			if_block3.m(span12, null);
-    			append_dev(div18, t28);
-    			append_dev(div18, div17);
-    			insert_dev(target, t29, anchor);
-    			insert_dev(target, div20, anchor);
-    			append_dev(div20, label5);
-    			append_dev(label5, t30);
-    			append_dev(div20, t31);
-    			append_dev(div20, sl_tooltip5);
-    			append_dev(sl_tooltip5, div19);
-    			div19.innerHTML = raw5_value;
-    			append_dev(sl_tooltip5, t32);
-    			append_dev(sl_tooltip5, a5);
-    			append_dev(a5, i5);
-    			insert_dev(target, t33, anchor);
-    			mount_component(editor, target, anchor);
-    			current = true;
-
-    			if (!mounted) {
-    				dispose = [
-    					listen_dev(select, "change", /*select_change_handler*/ ctx[5]),
-    					listen_dev(input0, "change", /*input0_change_handler*/ ctx[6]),
-    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[11]),
-    					listen_dev(input1, "click", /*click_handler_1*/ ctx[12], false, false, false),
-    					listen_dev(input1, "keydown", stop_propagation(/*keydown_handler_1*/ ctx[13]), false, false, true),
-    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[14]),
-    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[21]),
-    					listen_dev(input3, "click", /*click_handler_4*/ ctx[22], false, false, false),
-    					listen_dev(input3, "keydown", /*keydown_handler_4*/ ctx[23], false, false, false)
-    				];
-
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, dirty) {
-    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && label0_for_value !== (label0_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-collection")) {
-    				attr_dev(label0, "for", label0_for_value);
-    			}
-
-    			if (current_block_type !== (current_block_type = select_block_type(ctx))) {
-    				if_block0.d(1);
-    				if_block0 = current_block_type(ctx);
-
-    				if (if_block0) {
-    					if_block0.c();
-    					if_block0.m(select, if_block0_anchor);
-    				}
-    			}
-
-    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3) {
-    				each_value = /*$collectionsStore*/ ctx[1]["COLLECTIONS_ORDER"];
-    				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context$8(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks[i] = create_each_block$8(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(select, null);
-    					}
-    				}
-
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value.length;
-    			}
-
-    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && select_id_value !== (select_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-collection")) {
-    				attr_dev(select, "id", select_id_value);
-    			}
-
-    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3) {
-    				select_option(select, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].collection);
-    			}
-
-    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && label1_for_value !== (label1_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyi")) {
-    				attr_dev(label1, "for", label1_for_value);
-    			}
-
-    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && input0_id_value !== (input0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyi")) {
-    				attr_dev(input0, "id", input0_id_value);
-    			}
-
-    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3) {
-    				input0.checked = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyi;
-    			}
-
-    			if (current_block_type_1 === (current_block_type_1 = select_block_type_2(ctx)) && if_block1) {
-    				if_block1.p(ctx, dirty);
-    			} else {
-    				if_block1.d(1);
-    				if_block1 = current_block_type_1(ctx);
-
-    				if (if_block1) {
-    					if_block1.c();
-    					if_block1.m(span4, null);
-    				}
-    			}
-
-    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && label2_for_value !== (label2_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-label")) {
-    				attr_dev(label2, "for", label2_for_value);
-    			}
-
-    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && input1_id_value !== (input1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-label")) {
-    				attr_dev(input1, "id", input1_id_value);
-    			}
-
-    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input1.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].label) {
-    				set_input_value(input1, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].label);
-    			}
-
-    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && label3_for_value !== (label3_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num")) {
-    				attr_dev(label3, "for", label3_for_value);
-    			}
-
-    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && input2_id_value !== (input2_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-autonum")) {
-    				attr_dev(input2, "id", input2_id_value);
-    			}
-
-    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3) {
-    				input2.checked = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].autonum;
-    			}
-
-    			if (current_block_type_2 === (current_block_type_2 = select_block_type_3(ctx)) && if_block2) {
-    				if_block2.p(ctx, dirty);
-    			} else {
-    				if_block2.d(1);
-    				if_block2 = current_block_type_2(ctx);
-
-    				if (if_block2) {
-    					if_block2.c();
-    					if_block2.m(span9, null);
-    				}
-    			}
-
-    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && label4_for_value !== (label4_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engage")) {
-    				attr_dev(label4, "for", label4_for_value);
-    			}
-
-    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && input3_id_value !== (input3_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engage")) {
-    				attr_dev(input3, "id", input3_id_value);
-    			}
-
-    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3) {
-    				input3.checked = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engage;
-    			}
-
-    			if (current_block_type_3 === (current_block_type_3 = select_block_type_4(ctx)) && if_block3) {
-    				if_block3.p(ctx, dirty);
-    			} else {
-    				if_block3.d(1);
-    				if_block3 = current_block_type_3(ctx);
-
-    				if (if_block3) {
-    					if_block3.c();
-    					if_block3.m(span12, null);
-    				}
-    			}
-
-    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && label5_for_value !== (label5_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-description")) {
-    				attr_dev(label5, "for", label5_for_value);
-    			}
-
-    			const editor_changes = {};
-    			if (dirty[0] & /*moduleId*/ 1) editor_changes.contentId = "cc-module-config-" + /*moduleId*/ ctx[0] + "-description-editor";
-    			editor.$set(editor_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(editor.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(editor.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div6);
-    			if_block0.d();
-    			destroy_each(each_blocks, detaching);
-    			if_block1.d();
-    			if (detaching) detach_dev(t10);
-    			if (detaching) detach_dev(div13);
-    			if_block2.d();
-    			if (detaching) detach_dev(t22);
-    			if (detaching) detach_dev(div18);
-    			if_block3.d();
-    			if (detaching) detach_dev(t29);
-    			if (detaching) detach_dev(div20);
-    			if (detaching) detach_dev(t33);
-    			destroy_component(editor, detaching);
-    			mounted = false;
-    			run_all(dispose);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$k.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function instance$k($$self, $$props, $$invalidate) {
-    	let $collectionsStore;
-    	let $configStore;
-    	validate_store(collectionsStore, 'collectionsStore');
-    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(1, $collectionsStore = $$value));
-    	validate_store(configStore, 'configStore');
-    	component_subscribe($$self, configStore, $$value => $$invalidate(2, $configStore = $$value));
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('ModuleGeneralConfiguration', slots, []);
-    	let { moduleId } = $$props;
-    	let html = $collectionsStore["MODULES"][moduleId].description;
-
-    	onMount(() => {
-    		const editorId = `cc-module-config-${moduleId}-description-editor`;
-    		let editorElem = document.getElementById(editorId);
-
-    		if (editorElem) {
-    			editorElem.onkeydown = e => e.stopPropagation();
-    		}
-    	});
-
-    	const HELP = {
-    		configCollection: {
-    			tooltip: `To which of the available collections does this module belong?`,
-    			url: "https://djplaner.github.io/canvas-collections/getting-started/configure/modules/#module-properties"
-    		},
-    		configFYI: {
-    			tooltip: `<p>Represent the module as a "for your information" (fyi) object. Only display collection related information.
-		Display no information about the corresponding module. Always display the object, even when the module is unpublished.</p>
-		<p>Optionally, provide some text to add to the representation.</p>`,
-    			url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#fyi-objects"
-    		},
-    		configDescription: {
-    			tooltip: `Describe why, what or how the module relates to the students' learning`,
-    			url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#description"
-    		},
-    		configEngage: {
-    			tooltip: `For cards representations, specify <ol> <li> if there will be an "engage" button; and, </li> <li> what the button text will be. </li> </ol>`,
-    			url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button"
-    		},
-    		configLabel: {
-    			tooltip: `Describe the type of object the module represents (e.g. lecture, theme etc.)`,
-    			url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button"
-    		},
-    		configAutoNum: {
-    			tooltip: `If and how a label specific number will be calculated for the module 
-		(e.g. <em>Lecture 1</em> or <em>Workshop 5</em>)<p>Auto number or specify a value.</p>`,
-    			url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#labels-and-numbers"
-    		}
-    	};
-
-    	$$self.$$.on_mount.push(function () {
-    		if (moduleId === undefined && !('moduleId' in $$props || $$self.$$.bound[$$self.$$.props['moduleId']])) {
-    			console.warn("<ModuleGeneralConfiguration> was created without expected prop 'moduleId'");
-    		}
-    	});
-
-    	const writable_props = ['moduleId'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<ModuleGeneralConfiguration> was created with unknown prop '${key}'`);
-    	});
-
-    	function select_change_handler() {
-    		$collectionsStore["MODULES"][moduleId].collection = select_value(this);
-    		collectionsStore.set($collectionsStore);
-    	}
-
-    	function input0_change_handler() {
-    		$collectionsStore["MODULES"][moduleId].fyi = this.checked;
-    		collectionsStore.set($collectionsStore);
-    	}
-
-    	function input_input_handler() {
-    		$collectionsStore["MODULES"][moduleId].fyiText = this.value;
-    		collectionsStore.set($collectionsStore);
-    	}
-
-    	const click_handler = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
-    	const keydown_handler = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
-
-    	function input_input_handler_1() {
-    		$collectionsStore["MODULES"][moduleId].fyiText = this.value;
-    		collectionsStore.set($collectionsStore);
-    	}
-
-    	function input1_input_handler() {
-    		$collectionsStore["MODULES"][moduleId].label = this.value;
-    		collectionsStore.set($collectionsStore);
-    	}
-
-    	const click_handler_1 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
-    	const keydown_handler_1 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
-
-    	function input2_change_handler() {
-    		$collectionsStore["MODULES"][moduleId].autonum = this.checked;
-    		collectionsStore.set($collectionsStore);
-    	}
-
-    	function input_input_handler_2() {
-    		$collectionsStore["MODULES"][moduleId].actualNum = this.value;
-    		collectionsStore.set($collectionsStore);
-    	}
-
-    	const click_handler_2 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
-    	const keydown_handler_2 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
-
-    	function input_input_handler_3() {
-    		$collectionsStore["MODULES"][moduleId].actualNum = this.value;
-    		collectionsStore.set($collectionsStore);
-    	}
-
-    	const click_handler_3 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
-    	const keydown_handler_3 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
-
-    	function input3_change_handler() {
-    		$collectionsStore["MODULES"][moduleId].engage = this.checked;
-    		collectionsStore.set($collectionsStore);
-    	}
-
-    	const click_handler_4 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
-    	const keydown_handler_4 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
-
-    	function input_input_handler_4() {
-    		$collectionsStore["MODULES"][moduleId].engageText = this.value;
-    		collectionsStore.set($collectionsStore);
-    	}
-
-    	function input_input_handler_5() {
-    		$collectionsStore["MODULES"][moduleId].engageText = this.value;
-    		collectionsStore.set($collectionsStore);
-    	}
-
-    	const click_handler_5 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
-    	const keydown_handler_5 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
-
-    	const change_handler = evt => {
-    		set_store_value(collectionsStore, $collectionsStore["MODULES"][moduleId].description = evt.detail, $collectionsStore);
-    		set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
-    	};
-
-    	$$self.$$set = $$props => {
-    		if ('moduleId' in $$props) $$invalidate(0, moduleId = $$props.moduleId);
-    	};
-
-    	$$self.$capture_state = () => ({
-    		collectionsStore,
-    		configStore,
-    		onMount,
-    		Editor,
-    		moduleId,
-    		html,
-    		HELP,
-    		$collectionsStore,
-    		$configStore
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('moduleId' in $$props) $$invalidate(0, moduleId = $$props.moduleId);
-    		if ('html' in $$props) $$invalidate(3, html = $$props.html);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [
-    		moduleId,
-    		$collectionsStore,
-    		$configStore,
-    		html,
-    		HELP,
-    		select_change_handler,
-    		input0_change_handler,
-    		input_input_handler,
-    		click_handler,
-    		keydown_handler,
-    		input_input_handler_1,
-    		input1_input_handler,
-    		click_handler_1,
-    		keydown_handler_1,
-    		input2_change_handler,
-    		input_input_handler_2,
-    		click_handler_2,
-    		keydown_handler_2,
-    		input_input_handler_3,
-    		click_handler_3,
-    		keydown_handler_3,
-    		input3_change_handler,
-    		click_handler_4,
-    		keydown_handler_4,
-    		input_input_handler_4,
-    		input_input_handler_5,
-    		click_handler_5,
-    		keydown_handler_5,
-    		change_handler
-    	];
-    }
-
-    class ModuleGeneralConfiguration extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-    		init(this, options, instance$k, create_fragment$k, safe_not_equal, { moduleId: 0 }, null, [-1, -1]);
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "ModuleGeneralConfiguration",
-    			options,
-    			id: create_fragment$k.name
-    		});
-    	}
-
-    	get moduleId() {
-    		throw new Error("<ModuleGeneralConfiguration>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set moduleId(value) {
-    		throw new Error("<ModuleGeneralConfiguration>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
+    /**
+     * @function getPageName
+     * @param {String} pageName - name of the page
+     * @param {String} courseId - id of the course
+     * @param {Function} callBack - function to call when the page name is found (or not)
+     * @description Given the visible name of a page (e.g. "Canvas Collections Configuration")
+     * - Slugify the name (e.g. "canvas-collections-configuration")
+     * - use the Canvas API to get the page Object
+     * - return the pageName and the results (positive or not) to the callBack function
+     * - The pageObject will be null if page not found
+     */
+    function getPageName(pageName, courseId, callBack) {
+        debug(`-------------------- getPageName -- ${pageName} ---------------------`);
+        String.prototype.slugify = function (separator = "-") {
+            return this
+                .toString()
+                .normalize('NFD') // split an accented letter in the base letter and the acent
+                .replace(/[\u0300-\u036f]/g, '') // remove all previously split accents
+                .toLowerCase()
+                .trim()
+                .replace('@', 'at')
+                .replace(/[^a-z0-9 ]/g, '') // remove all chars not letters, numbers and spaces (to be replaced)
+                .replace(/\s+/g, separator);
+        };
+        const slugifiedPageName = pageName.slugify();
+        const apiUrl = `https://${document.location.hostname}/api/v1/courses/${courseId}/pages/${slugifiedPageName}`;
+        debug(`apiUrl: ${apiUrl}`);
+        wf_fetchData(apiUrl).then((data) => { callBack(pageName, data); });
     }
 
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -16169,6 +12895,4013 @@ var app = (function () {
       };
     };
 
+    /**
+     * @class CollectionsDetails
+     * @description Given a course Id retrieve and possibly update the content of
+     * the Canvas Collections Configuration page
+     *
+     * Process here is
+     * - requestConfigPageContents
+     *   Ask to get the contents of the page
+     * - if successful
+     *   - TODO check to see if it's moved from other course (and other checks)
+     *      - only if in edit mode
+     *   - parse the JSON into a data structure
+     *   - TODO retrieve last collection viewed
+     * - if not successful (i.e. page doesn't exist)
+     *   (only if edit mode)
+     *   - initialise config page
+     *   - save the config page
+     */
+    class CollectionsDetails {
+        constructor(finishedCallBack, config) {
+            this.finishedCallBack = finishedCallBack;
+            this.config = config;
+            this.collectionsPageResponse = null;
+            this.collections = null;
+            this.ccOn = false;
+            this.ccPublished = true;
+            this.currentHostName = document.location.hostname;
+            this.baseApiUrl = `https://${this.currentHostName}/api/v1`;
+            // convert courseId to integer - probably unnecessary at this stage
+            this["config"]["courseId"] = parseInt(this.config.courseId);
+            debug(`YYYYY collectionsDetails: constructor: ${this["config"]["courseId"]} `);
+            this.requestCollectionsPage();
+        }
+        /**
+         * @function requestConfigPageContents
+         * @description Request the contents of the Collections Configuration page
+         *
+         */
+        requestCollectionsPage() {
+            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}/pages/canvas-collections-configuration`).then((data) => {
+                this.collectionsPageResponse = data;
+                this.parseCollectionsPage();
+            });
+        }
+        /**
+         * @function parseCollectionsPage
+         * @description Parse the JSON from the Canvas Collections Configuration page
+         * contained in this.collectionsPageResponse.body and store it in this.collections
+         */
+        parseCollectionsPage() {
+            // does this.collectionsPageResponse have a body?
+            // e.g.
+            // - status: "unauthorized" suggesting student view and can't access it
+            // - ?? if there isn't one
+            if (!this.collectionsPageResponse.hasOwnProperty("body")) {
+                console.log(this.collectionsPageResponse);
+                if (this.collectionsPageResponse.hasOwnProperty("status")) {
+                    if (this.collectionsPageResponse["status"] === "unauthorized") {
+                        console.log("CollectionsDetails: parseCollectionsPage: unauthorized");
+                        this.ccOn = false;
+                        this.ccPublished = false;
+                        this.finishedCallBack();
+                        return null;
+                    }
+                }
+                else {
+                    throw new Error("No body in collectionsPageResponse");
+                }
+            }
+            const body = this["collectionsPageResponse"]["body"];
+            const parsed = new DOMParser().parseFromString(body, "text/html");
+            // Collections configuration is in div.cc_json
+            let config = parsed.querySelector("div.cc_json");
+            if (!config) {
+                throw new Error(`CollectionsDetails: parseCollectionsPage: no div.cc_json found in page`);
+            }
+            this.collections = JSON.parse(config.innerHTML);
+            // decode various fields in the collections
+            this.decodeCollections();
+            // misc. updates to handle old style collections configuration
+            this.updateCollections();
+            // double check and possibly convert an old configuration
+            //this.configConverted = this.checkConvertOldConfiguration();
+            // initialise the controller etc
+            this.ccOn = this.collections.STATUS === "on";
+            this.ccPublished = this.collectionsPageResponse.published;
+            this.finishedCallBack();
+            // add a COLLECTIONS_ORDER array to the config if it's not there
+            if (!this.collections.hasOwnProperty("COLLECTIONS_ORDER")) {
+                this.collections["COLLECTIONS_ORDER"] = Object.keys(this.collections["COLLECTIONS"]);
+            }
+            /*		for (let key in this.collections['MODULES']) {
+                // double check that we're not an import from another course
+                let courseImages = parsed.querySelector('div.cc-card-images');
+                const importConverted = this.checkConvertImport(courseImages);
+                // and make it gets saved if there was a change
+                if (importConverted) {
+                    this.configConverted = importConverted;
+                }
+                const updatesConverted = this.checkConvertUpdates();
+                if ( updatesConverted ) {
+                    this.configConverted = updatesConverted;
+                }
+        
+                // also need to decode the collection names in
+                // - keys for this.cc_configuration.COLLECTIONS
+                // - values in this.cc_configuration.COLLECTIONS_ORDER
+                // - values in this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
+        
+                // decode the keys for this.cc_configuration.COLLECTIONS
+                const collections = {};
+                for (let key in this.parentController.cc_configuration.COLLECTIONS) {
+                    const collection = this.parentController.cc_configuration.COLLECTIONS[key];
+                    collections[this.decodeHTML(key)] = collection;
+                }
+                this.parentController.cc_configuration.COLLECTIONS = collections;
+                // decode the values in this.cc_configuration.COLLECTIONS_ORDER
+                this.parentController.cc_configuration.COLLECTIONS_ORDER = this.parentController.cc_configuration.COLLECTIONS_ORDER.map((collection) => {
+                    return this.decodeHTML(collection);
+                });
+                // decode the value in the string this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
+                this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION = this.decodeHTML(
+                    this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
+            */
+        }
+        /**
+         * @function decodeCollections
+         * @description collectons config has been loaded, some fields will contain
+         * encoded HTML and other stuff that needs decoding
+         */
+        decodeCollections() {
+            if (this.collections.hasOwnProperty("MODULES")) {
+                const modules = this.collections["MODULES"];
+                for (let key in modules) {
+                    const module = modules[key];
+                    module.description = this.decodeHTML(module.description);
+                    module.collection = this.decodeHTML(module.collection);
+                    module.name = this.decodeHTML(module.name);
+                    if (module.hasOwnProperty("iframe") && module.iframe !== "") {
+                        module.iframe = this.decodeHTML(module.iframe, true);
+                    }
+                    if (module.hasOwnProperty("image") && module.image.startsWith("/")) {
+                        module.image = `https://${window.location.hostname}${module.image}`;
+                    }
+                    // decode each of the metadata fields
+                    for (let key in module.metadata) {
+                        module.metadata[key] = this.decodeHTML(module.metadata[key]);
+                    }
+                    // need to check the URL for image as the RCE screws with the URL
+                    // TODO is this needed?
+                    /*if (module.hasOwnProperty('image') && module.image.startsWith('/')) {
+                            module.image = `https://${window.location.hostname}${module.image}`;
+                        }*/
+                }
+            }
+        }
+        /**
+         * @function updateCollections
+         * @description collectons config has been loaded, but the config file may be
+         * old school. Do misc updates, including
+         * - any module's collection attribute ==='' is set to null
+         * - each module has an attribute 'configVisible' set to false
+         * - each module has an attribute 'actualNum' set to ""
+         * - each module has a proper date structure
+         */
+        updateCollections() {
+            // Focus on updates to modules
+            if (this.collections.hasOwnProperty("MODULES")) {
+                const modules = this.collections["MODULES"];
+                for (let key in modules) {
+                    const module = modules[key];
+                    if (module.collection === "") {
+                        module.collection = null;
+                    }
+                    if (!module.hasOwnProperty("configVisible")) {
+                        module.configVisible = false;
+                    }
+                    if (!module.hasOwnProperty("actualNum")) {
+                        module.actualNum = "";
+                    }
+                    if (!module.hasOwnProperty("metadata")) {
+                        module.metadata = {};
+                    }
+                    this.handleModuleDate(module);
+                }
+            }
+        }
+        /**
+         * @function handleModuleDate
+         * @param module - module object
+         * @description module has a date attribute, which may be a string or an object
+         * Each module should have a date structure that matches the following
+         * {
+         *   "label": "", "day": "Monday", "week": "3", "time": "",
+         *   "to": {
+         *    	"day": "", "week": "", "time": ""
+         *	},
+         *	"date": 20,
+         *	"month": "Mar",
+         *	"year": 2023
+         * }
+         * Make sure it does
+         */
+        handleModuleDate(module) {
+            if (!module.hasOwnProperty("date")) {
+                module.date = {
+                    label: "",
+                    day: "",
+                    week: "",
+                    time: "",
+                    to: { day: "", week: "", time: "" },
+                    date: "",
+                    month: "",
+                    year: "",
+                };
+            }
+            else {
+                // check each of the components
+                const components = [
+                    "label",
+                    "day",
+                    "week",
+                    "time",
+                    "date",
+                    "month",
+                    "year",
+                ];
+                for (let i = 0; i < components.length; i++) {
+                    const component = components[i];
+                    if (!module.date.hasOwnProperty(component)) {
+                        module.date[component] = "";
+                    }
+                }
+                if (!module.date.hasOwnProperty("to")) {
+                    module.date.to = { day: "", week: "", time: "" };
+                }
+            }
+        }
+        /**
+         * @function decodeHTML
+         * @param html - HTML
+         * @returns {string} - removed any HTML encodings and sanitised
+         */
+        decodeHTML(html, iframeAllowed = false) {
+            let txt = document.createElement("textarea");
+            txt.innerHTML = html;
+            let value = txt.value;
+            // do some sanitisation of the HTML https://github.com/apostrophecms/sanitize-html
+            let allowedTags = sanitizeHtml_1.defaults.allowedTags;
+            let allowedAttributes = {};
+            if (iframeAllowed) {
+                allowedTags = allowedTags.concat("iframe");
+                allowedAttributes = {
+                    iframe: ["src", "width", "height", "frameborder", "allowfullscreen"],
+                };
+            }
+            value = sanitizeHtml_1(value, {
+                allowedTags: allowedTags,
+                allowedAttributes: allowedAttributes,
+            });
+            return value;
+        }
+        encodeHTML(html, json = true) {
+            let txt = document.createElement("textarea");
+            txt.innerHTML = html;
+            let value = txt.innerHTML;
+            /*		if (json) {
+                    // for Canvas JSON, escape the quotes
+                    return value.replaceAll(/"/g, '\"');
+        
+                } else {
+                    // for not JSON (i.e. HTML) encode the quotes
+                    return value.replaceAll(/"/g, '&quot;');
+                } */
+            return value;
+        }
+        /**
+         * @function saveCollections(editMode,needToSave)
+         * @param editMode - boolean, true if in edit mode
+         * @param needToSave - boolean, true if need to save
+         * @description if editMode && needToSave save the colelctions config page
+         */
+        saveCollections(editMode, needToSave) {
+            if (editMode && needToSave) {
+                // TODO add in and call saveConfigPage
+                let callUrl = `/api/v1/courses/${this["config"]["courseId"]}/pages/canvas-collections-configuration`;
+                debug(`saveCollections callUrl = ${callUrl}`);
+                debug("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+                debug(this.collections);
+                debug("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+                const content = this.generateConfigPageContent();
+                let _body = {
+                    wiki_page: {
+                        body: content,
+                    },
+                };
+                let method = "put";
+                // if we're creating, change the URL and add the title
+                const bodyString = JSON.stringify(_body);
+                wf_postData(callUrl, bodyString, this["config"]["csrfToken"], method).then((data) => {
+                    // successful
+                    debug(`saveCollections response = `);
+                    debug(data);
+                    let localConfig = get_store_value(configStore);
+                    localConfig["needToSaveCollections"] = false;
+                    configStore.set(localConfig);
+                });
+            }
+        }
+        /**
+         * Generate and return the HTML to be added into the Canvas Collections Configuration page
+         * including
+         * - div.cc-config-explanation
+         *   User facing detail about the purpose of the file, a warning, and the time it was
+         *   last updated
+         * - div.cc_json
+         *   Invisible, encoded JSON representation of collections configuration data
+         * - div.cc-card-images id="cc-course-<courseId>"
+         *   Invisible, collection of img elements for any module collections images that
+         *   are in the course files area. Placed here to help with course copy (i.e. Canvas
+         *   will update these URLs which Collections will then handle)
+         */
+        generateConfigPageContent() {
+            // construct the new content for the page
+            // - boiler plate description HTML to start
+            let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
+            /*		if (
+                    this.parentController.hasOwnProperty('cc_configuration') &&
+                    this.parentController.cc_configuration.hasOwnProperty('MODULES')) { */
+            // files URL might be
+            // - direct or
+            //    https://lms.griffith.edu.au/files/
+            // - via the course
+            //    https://lms.../courses/12345/files/
+            // - or without the hostname starting with /
+            const filesUrl = `${window.location.hostname}/files/`;
+            const courseFilesUrl = `${window.location.hostname}/courses/${this["config"]["courseId"]}/files/`;
+            // loop thru each module in cc_configuration
+            // - if it has an image, add an img element to the div.cc-card-images
+            //   with the image URL
+            let images = "";
+            for (let moduleId in this["collections"]["MODULES"]) {
+                const module = this["collections"]["MODULES"][moduleId];
+                if (!module.image) {
+                    continue;
+                }
+                // add the hostname to module.image if it doesn't have it
+                if (module.image.startsWith("/")) {
+                    module.image = `https://${window.location.hostname}${module.image}`;
+                }
+                // if module has an image and it contains courseFilesUrl
+                if (module.image.includes(courseFilesUrl) ||
+                    module.image.includes(filesUrl)) {
+                    images += `
+					<img src="${module.image}" id="cc-moduleImage-${moduleId}" class="cc-moduleImage" />
+					`;
+                }
+            }
+            content = content.replace("{{COURSE_IMAGES}}", images);
+            //		}
+            // - div.json containing
+            //   - JSON stringify of this.parentController.cc_configuration
+            //   - however, each module needs to have it's description encoded as HTML
+            for (let key in this["collections"]["MODULES"]) {
+                const module = this["collections"]["MODULES"][key];
+                module.description = this.encodeHTML(module.description);
+                module.collection = this.encodeHTML(module.collection);
+                if (module.hasOwnProperty("iframe")) {
+                    module.iframe = this.encodeHTML(module.iframe);
+                }
+                module.name = this.encodeHTML(module.name);
+                // need to encode each of the metadata values
+                for (let metaKey in module.metadata) {
+                    module.metadata[metaKey] = this.encodeHTML(module.metadata[metaKey]);
+                }
+            }
+            let safeContent = JSON.stringify(this.collections);
+            if (safeContent) {
+                content = content.replace("{{CONFIG}}", safeContent);
+            }
+            // need to de-encode the description for the page so that
+            // it continues to work normally for live operation
+            for (let key in this["collections"]["MODULES"]) {
+                const module = this["collections"]["MODULES"][key];
+                module.description = this.decodeHTML(module.description);
+                module.collection = this.decodeHTML(module.collection);
+                module.name = this.decodeHTML(module.name);
+                if (module.hasOwnProperty("iframe")) {
+                    module.iframe = this.decodeHTML(module.iframe);
+                }
+                for (let metaKey in module.metadata) {
+                    module.metadata[metaKey] = this.decodeHTML(module.metadata[metaKey]);
+                }
+            }
+            // get the current time as string
+            let time = new Date().toLocaleString();
+            content = content.replace("{{VISIBLE_TEXT}}", `<p>saved at ${time}</p>`);
+            content = content.replace("{{COURSE_ID}}", this["config"]["courseId"]);
+            //<div class="cc-card-images" id="cc-course{{COURSE_ID}}" style="display:none"></div>
+            debug("----------------- saveConfigPageContent() -----------------");
+            debug(content);
+            return content;
+        }
+    }
+    /**
+     * Templates used in the above
+     * - CONFIGURATION_PAGE_HTML_TEMPLATE - used to save collections configuration page
+     */
+    const CONFIGURATION_PAGE_HTML_TEMPLATE = `
+<div class="cc-config-explanation">
+<div style="float:left;padding:0.5em">
+  <img src="https://repository-images.githubusercontent.com/444951314/42343d35-e259-45ae-b74e-b9957222211f"
+      alt="canvas-collections logo" width="123" height="92" />
+</div>
+<div style="padding:0.5em">
+  <h3>Canvas Collections Configuration page</h3>
+  <p>This page is used to configure <a href="https://djplaner.github.io/canvas-collections/">Canvas Collections</a>.  
+  Avoid direct modification to this page, instead use the Canvas Collections configuration interface.  </p>
+  {{VISIBLE_TEXT}}
+ </div>
+ </div>
+ <p style="clear:both"></p>
+<div class="cc_json" style="display:none">
+ {{CONFIG}}
+ </div>
+<div class="cc-card-images" id="cc-course-{{COURSE_ID}}" style="display:none">
+ {{COURSE_IMAGES}}
+</div>
+`;
+    /*const DEFAULT_CONFIGURATION_TEMPLATE = {
+        "STATUS": "off",
+        "DEFAULT_ACTIVE_COLLECTION": "",
+        "COLLECTIONS": {
+        },
+        "COLLECTIONS_ORDER": [],
+        "MODULES": {
+        }
+    }; */
+    /**
+     * @function calculateActualNum
+     * @description Once we have collections and canvas details calculate the
+     * attribute 'actualNum' for each module.
+     */
+    function calculateActualNum(canvasModules, collectionsModules) {
+        let numCalculator = {};
+        // loop through each module in the array canvasDetails['courseModules']
+        // and set the attribute 'actualNum' to the number of modules in the
+        // collection that precede it
+        //for (let moduleKey in canvasDetails.courseModules ){
+        //canvasDetails.courseModules.forEach((module : {}) => {
+        canvasModules.forEach((module) => {
+            const moduleId = module['id'];
+            // get the collections data about this module
+            //const collectionsModule = $collectionsStore["MODULES"][moduleId];
+            const collectionsModule = collectionsModules[moduleId];
+            if (collectionsModule) {
+                // does it have a hard coded num
+                if (collectionsModule.hasOwnProperty("num")) {
+                    collectionsModule.actualNum = collectionsModule.num;
+                }
+                else {
+                    // if not, then calculate auto num based on the label and the
+                    // order so far
+                    const collectionName = collectionsModule.collection;
+                    const label = collectionsModule.label;
+                    if (!numCalculator.hasOwnProperty(collectionName)) {
+                        numCalculator[collectionName] = {};
+                    }
+                    if (!numCalculator[collectionName].hasOwnProperty(label)) {
+                        numCalculator[collectionName][label] = 0;
+                    }
+                    numCalculator[collectionName][label] = ++numCalculator[collectionName][label];
+                    collectionsModule.actualNum = numCalculator[collectionName][label];
+                }
+            }
+        });
+    }
+
+    let t = {};
+
+    const exec = (command, value = null) => {
+      document.execCommand(command, false, value);
+    };
+
+    const getTagsRecursive = (element, tags) => {
+      tags = tags || (element && element.tagName ? [element.tagName] : []);
+
+      if (element && element.parentNode) {
+        element = element.parentNode;
+      } else {
+        return tags;
+      }
+
+      const tag = element.tagName;
+      if (element.style && element.getAttribute) {
+        [element.style.textAlign || element.getAttribute('align'), element.style.color || tag === 'FONT' && 'forecolor', element.style.backgroundColor && 'backcolor']
+          .filter((item) => item)
+          .forEach((item) => tags.push(item));
+      }
+
+      if (tag === 'DIV') {
+        return tags;
+      }
+
+      tags.push(tag);
+
+      return getTagsRecursive(element, tags).filter((_tag) => _tag != null);
+    };
+
+    const saveRange = (editor) => {
+      const documentSelection = document.getSelection();
+
+      t.range = null;
+
+      if (documentSelection.rangeCount) {
+        let savedRange = t.range = documentSelection.getRangeAt(0);
+        let range = document.createRange();
+        let rangeStart;
+        range.selectNodeContents(editor);
+        range.setEnd(savedRange.startContainer, savedRange.startOffset);
+        rangeStart = (range + '').length;
+        t.metaRange = {
+          start: rangeStart,
+          end: rangeStart + (savedRange + '').length
+        };
+      }
+    };
+    const restoreRange = (editor) => {
+      let metaRange = t.metaRange;
+      let savedRange = t.range;
+      let documentSelection = document.getSelection();
+      let range;
+
+      if (!savedRange) {
+        return;
+      }
+
+      if (metaRange && metaRange.start !== metaRange.end) { // Algorithm from http://jsfiddle.net/WeWy7/3/
+        let charIndex = 0,
+            nodeStack = [editor],
+            node,
+            foundStart = false,
+            stop = false;
+
+        range = document.createRange();
+
+        while (!stop && (node = nodeStack.pop())) {
+          if (node.nodeType === 3) {
+            let nextCharIndex = charIndex + node.length;
+            if (!foundStart && metaRange.start >= charIndex && metaRange.start <= nextCharIndex) {
+              range.setStart(node, metaRange.start - charIndex);
+              foundStart = true;
+            }
+            if (foundStart && metaRange.end >= charIndex && metaRange.end <= nextCharIndex) {
+              range.setEnd(node, metaRange.end - charIndex);
+              stop = true;
+            }
+            charIndex = nextCharIndex;
+          } else {
+            let cn = node.childNodes;
+            let i = cn.length;
+
+            while (i > 0) {
+              i -= 1;
+              nodeStack.push(cn[i]);
+            }
+          }
+        }
+      }
+
+      documentSelection.removeAllRanges();
+      documentSelection.addRange(range || savedRange);
+    };
+
+    const cleanHtml = (input) => {
+      const html = input.match(/<!--StartFragment-->(.*?)<!--EndFragment-->/);
+      let output = html && html[1] || input;
+      output = output
+        .replace(/\r?\n|\r/g, ' ')
+        .replace(/<!--(.*?)-->/g, '')
+        .replace(new RegExp('<(/)*(meta|link|span|\\?xml:|st1:|o:|font|w:sdt)(.*?)>', 'gi'), '')
+        .replace(/<!\[if !supportLists\]>(.*?)<!\[endif\]>/gi, '')
+        .replace(/style="[^"]*"/gi, '')
+        .replace(/style='[^']*'/gi, '')
+        .replace(/&nbsp;/gi, ' ')
+        .replace(/>(\s+)</g, '><')
+        .replace(/class="[^"]*"/gi, '')
+        .replace(/class='[^']*'/gi, '')
+        .replace(/<[^/].*?>/g, i => i.split(/[ >]/g)[0] + '>')
+        .trim();
+
+        output = removeBadTags(output);
+        return output;
+    };
+
+    const unwrap = (wrapper) => {
+    	const docFrag = document.createDocumentFragment();
+    	while (wrapper.firstChild) {
+    		const child = wrapper.removeChild(wrapper.firstChild);
+    		docFrag.appendChild(child);
+    	}
+
+    	// replace wrapper with document fragment
+    	wrapper.parentNode.replaceChild(docFrag, wrapper);
+    };
+
+    const removeBlockTagsRecursive = (elements, tagsToRemove) => {
+      Array.from(elements).forEach((item) => {
+        if (tagsToRemove.some((tag) => tag === item.tagName.toLowerCase())) {
+          if (item.children.length) {
+            removeBlockTagsRecursive(item.children, tagsToRemove);
+          }
+          unwrap(item);
+        }
+      });
+    };
+
+    const getActionBtns = (actions) => {
+      return Object.keys(actions).map((action) => actions[action]);
+    };
+
+    const getNewActionObj = (actions, userActions = []) => {
+        if (userActions && userActions.length) {
+          const newActions = {};
+          userActions.forEach((action) => {
+            if (typeof action === 'string') {
+              newActions[action] = Object.assign({}, actions[action]);
+            } else if (actions[action.name]) {
+              newActions[action.name] = Object.assign(actions[action.name], action);
+            } else {
+              newActions[action.name] = Object.assign({}, action);
+            }
+          });
+
+          return newActions;
+        } else {
+          return actions;
+        }
+    };
+
+    const removeBadTags = (html) => {
+      ['style', 'script', 'applet', 'embed', 'noframes', 'noscript'].forEach((badTag) => {
+        html = html.replace(new RegExp(`<${badTag}.*?${badTag}(.*?)>`, 'gi'), '');
+      });
+
+      return html;
+    };
+
+    const isEditorClick = (target, editorWrapper) => {
+      if (target === editorWrapper) {
+        return true;
+      }
+      if (target.parentElement) {
+        return isEditorClick(target.parentElement, editorWrapper);
+      }
+      return false;
+    };
+
+    const linkSvg =
+    	'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M31.1 48.9l-6.7 6.7c-.8.8-1.6.9-2.1.9s-1.4-.1-2.1-.9L15 50.4c-1.1-1.1-1.1-3.1 0-4.2l6.1-6.1.2-.2 6.5-6.5c-1.2-.6-2.5-.9-3.8-.9-2.3 0-4.6.9-6.3 2.6L11 41.8c-3.5 3.5-3.5 9.2 0 12.7l5.2 5.2c1.7 1.7 4 2.6 6.3 2.6s4.6-.9 6.3-2.6l6.7-6.7c2.5-2.6 3.1-6.7 1.5-10l-5.9 5.9zM38.7 22.5l6.7-6.7c.8-.8 1.6-.9 2.1-.9s1.4.1 2.1.9l5.2 5.2c1.1 1.1 1.1 3.1 0 4.2l-6.1 6.1-.2.2L42 38c1.2.6 2.5.9 3.8.9 2.3 0 4.6-.9 6.3-2.6l6.7-6.7c3.5-3.5 3.5-9.2 0-12.7l-5.2-5.2c-1.7-1.7-4-2.6-6.3-2.6s-4.6.9-6.3 2.6l-6.7 6.7c-2.7 2.7-3.3 6.9-1.7 10.2l6.1-6.1c0 .1 0 .1 0 0z"></path><path d="M44.2 30.5c.2-.2.4-.6.4-.9 0-.3-.1-.6-.4-.9l-2.3-2.3c-.3-.2-.6-.4-.9-.4-.3 0-.6.1-.9.4L25.9 40.6c-.2.2-.4.6-.4.9 0 .3.1.6.4.9l2.3 2.3c.2.2.6.4.9.4.3 0 .6-.1.9-.4l14.2-14.2zM49.9 55.4h-8.5v-5h8.5v-8.9h5.2v8.9h8.5v5h-8.5v8.9h-5.2v-8.9z"></path></svg>';
+    const unlinkSvg =
+    	'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M30.9 49.1l-6.7 6.7c-.8.8-1.6.9-2.1.9s-1.4-.1-2.1-.9l-5.2-5.2c-1.1-1.1-1.1-3.1 0-4.2l6.1-6.1.2-.2 6.5-6.5c-1.2-.6-2.5-.9-3.8-.9-2.3 0-4.6.9-6.3 2.6L10.8 42c-3.5 3.5-3.5 9.2 0 12.7l5.2 5.2c1.7 1.7 4 2.6 6.3 2.6s4.6-.9 6.3-2.6l6.7-6.7C38 50.5 38.6 46.3 37 43l-6.1 6.1zM38.5 22.7l6.7-6.7c.8-.8 1.6-.9 2.1-.9s1.4.1 2.1.9l5.2 5.2c1.1 1.1 1.1 3.1 0 4.2l-6.1 6.1-.2.2-6.5 6.5c1.2.6 2.5.9 3.8.9 2.3 0 4.6-.9 6.3-2.6l6.7-6.7c3.5-3.5 3.5-9.2 0-12.7l-5.2-5.2c-1.7-1.7-4-2.6-6.3-2.6s-4.6.9-6.3 2.6l-6.7 6.7c-2.7 2.7-3.3 6.9-1.7 10.2l6.1-6.1z"></path><path d="M44.1 30.7c.2-.2.4-.6.4-.9 0-.3-.1-.6-.4-.9l-2.3-2.3c-.2-.2-.6-.4-.9-.4-.3 0-.6.1-.9.4L25.8 40.8c-.2.2-.4.6-.4.9 0 .3.1.6.4.9l2.3 2.3c.2.2.6.4.9.4.3 0 .6-.1.9-.4l14.2-14.2zM41.3 55.8v-5h22.2v5H41.3z"></path></svg>';
+
+    var defaultActions = {
+    	viewHtml: {
+    		icon:
+    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path fill="none" stroke="currentColor" stroke-width="8" stroke-miterlimit="10" d="M26.9 17.9L9 36.2 26.9 54M45 54l17.9-18.3L45 17.9"></path></svg>',
+    		title: "View HTML",
+    		result: function() {
+    			let refs = get_store_value(this.references);
+    			let actionObj = get_store_value(this.state).actionObj;
+    			let helper = get_store_value(this.helper);
+
+    			helper.showEditor = !helper.showEditor;
+    			refs.editor.style.display = helper.showEditor ? "block" : "none";
+    			refs.raw.style.display = helper.showEditor ? "none" : "block";
+    			if (helper.showEditor) {
+    				refs.editor.innerHTML = refs.raw.value;
+    			} else {
+    				refs.raw.value = refs.editor.innerHTML;
+    			}
+    			setTimeout(() => {
+    				Object.keys(actionObj).forEach(
+    					action => (actionObj[action].disabled = !helper.showEditor)
+    				);
+    				actionObj.viewHtml.disabled = false;
+    				actionObj.viewHtml.active = !helper.showEditor;
+
+    				this.state.update(state => {
+    					state.actionBtns = getActionBtns(actionObj);
+    					state.actionObj = actionObj;
+    					return state;
+    				});
+    			});
+    		}
+    	},
+    	undo: {
+    		icon:
+    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M61.2 51.2c0-5.1-2.1-9.7-5.4-13.1-3.3-3.3-8-5.4-13.1-5.4H26.1v-12L10.8 36l15.3 15.3V39.1h16.7c3.3 0 6.4 1.3 8.5 3.5 2.2 2.2 3.5 5.2 3.5 8.5h6.4z"></path></svg>',
+    		title: "Undo",
+    		result: () => exec("undo")
+    	},
+    	redo: {
+    		icon:
+    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M10.8 51.2c0-5.1 2.1-9.7 5.4-13.1 3.3-3.3 8-5.4 13.1-5.4H46v-12L61.3 36 45.9 51.3V39.1H29.3c-3.3 0-6.4 1.3-8.5 3.5-2.2 2.2-3.5 5.2-3.5 8.5h-6.5z"></path></svg>',
+    		title: "Redo",
+    		result: () => exec("redo")
+    	},
+    	b: {
+    		icon: "<b>B</b>",
+    		title: "Bold",
+    		result: () => exec("bold")
+    	},
+    	i: {
+    		icon: "<i>I</i>",
+    		title: "Italic",
+    		result: () => exec("italic")
+    	},
+    	u: {
+    		icon: "<u>U</u>",
+    		title: "Underline",
+    		result: () => exec("underline")
+    	},
+    	strike: {
+    		icon: "<strike>S</strike>",
+    		title: "Strike-through",
+    		result: () => exec("strikeThrough")
+    	},
+    	sup: {
+    		icon: "A<sup>2</sup>",
+    		title: "Superscript",
+    		result: () => exec("superscript")
+    	},
+    	sub: {
+    		icon: "A<sub>2</sub>",
+    		title: "Subscript",
+    		result: () => exec("subscript")
+    	},
+    	h1: {
+    		icon: "<b>H<sub>1</sub></b>",
+    		title: "Heading 1",
+    		result: () => exec("formatBlock", "<H1>")
+    	},
+    	h2: {
+    		icon: "<b>H<sub>2</sub></b>",
+    		title: "Heading 2",
+    		result: () => exec("formatBlock", "<H2>")
+    	},
+    	p: {
+    		icon: "&#182;",
+    		title: "Paragraph",
+    		result: () => exec("formatBlock", "<P>")
+    	},
+    	blockquote: {
+    		icon: "&#8220; &#8221;",
+    		title: "Quote",
+    		result: () => exec("formatBlock", "<BLOCKQUOTE>")
+    	},
+    	ol: {
+    		icon:
+    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M27 14h36v8H27zM27 50h36v8H27zM27 32h36v8H27zM11.8 15.8V22h1.8v-7.8h-1.5l-2.1 1 .3 1.3zM12.1 38.5l.7-.6c1.1-1 2.1-2.1 2.1-3.4 0-1.4-1-2.4-2.7-2.4-1.1 0-2 .4-2.6.8l.5 1.3c.4-.3 1-.6 1.7-.6.9 0 1.3.5 1.3 1.1 0 .9-.9 1.8-2.6 3.3l-1 .9V40H15v-1.5h-2.9zM13.3 53.9c1-.4 1.4-1 1.4-1.8 0-1.1-.9-1.9-2.6-1.9-1 0-1.9.3-2.4.6l.4 1.3c.3-.2 1-.5 1.6-.5.8 0 1.2.3 1.2.8 0 .7-.8.9-1.4.9h-.7v1.3h.7c.8 0 1.6.3 1.6 1.1 0 .6-.5 1-1.4 1-.7 0-1.5-.3-1.8-.5l-.4 1.4c.5.3 1.3.6 2.3.6 2 0 3.2-1 3.2-2.4 0-1.1-.8-1.8-1.7-1.9z"></path></svg>',
+    		title: "Ordered List",
+    		result: () => exec("insertOrderedList")
+    	},
+    	ul: {
+    		icon:
+    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M27 14h36v8H27zM27 50h36v8H27zM9 50h9v8H9zM9 32h9v8H9zM9 14h9v8H9zM27 32h36v8H27z"></path></svg>',
+    		title: "Unordered List",
+    		result: () => exec("insertUnorderedList")
+    	},
+    	hr: {
+    		icon: "&#8213;",
+    		title: "Horizontal Line",
+    		result: () => exec("insertHorizontalRule")
+    	},
+    	left: {
+    		icon:
+    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M9 14h54v8H9zM9 50h54v8H9zM9 32h36v8H9z"></path></svg>',
+    		title: "Justify left",
+    		result: () => exec("justifyLeft")
+    	},
+    	right: {
+    		icon:
+    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M9 14h54v8H9zM9 50h54v8H9zM27 32h36v8H27z"></path></svg>',
+    		title: "Justify right",
+    		result: () => exec("justifyRight")
+    	},
+    	center: {
+    		icon:
+    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M9 14h54v8H9zM9 50h54v8H9zM18 32h36v8H18z"></path></svg>',
+    		title: "Justify center",
+    		result: () => exec("justifyCenter")
+    	},
+    	justify: {
+    		icon:
+    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M9 14h54v8H9zM9 50h54v8H9zM9 32h54v8H9z"></path></svg>',
+    		title: "Justify full",
+    		result: () => exec("justifyFull")
+    	},
+    	a: {
+    		icon: linkSvg,
+    		title: "Insert link",
+    		result: function() {
+    			const actionObj = get_store_value(this.state).actionObj;
+    			const refs = get_store_value(this.references);
+
+    			if (actionObj.a.active) {
+    				const selection = window.getSelection();
+    				const range = document.createRange();
+    				range.selectNodeContents(document.getSelection().focusNode);
+    				selection.removeAllRanges();
+    				selection.addRange(range);
+    				exec("unlink");
+    				actionObj.a.title = "Insert link";
+    				actionObj.a.icon = linkSvg;
+    				this.state.update(state => {
+    					state.actionBtn = getActionBtns(actionObj);
+    					state.actionObj = actionObj;
+    					return state;
+    				});
+    			} else {
+    				saveRange(refs.editor);
+    				refs.modal.$set({
+    					show: true,
+    					event: "linkUrl",
+    					title: "Insert link",
+    					label: "Url"
+    				});
+    				if (!get_store_value(this.helper).link) {
+    					this.helper.update(state => {
+    						state.link = true;
+    						return state;
+    					});
+    					refs.modal.$on("linkUrl", event => {
+    						restoreRange(refs.editor);
+    						exec("createLink", event.detail);
+    						actionObj.a.title = "Unlink";
+    						actionObj.a.icon = unlinkSvg;
+
+    						this.state.update(state => {
+    							state.actionBtn = getActionBtns(actionObj);
+    							state.actionObj = actionObj;
+    							return state;
+    						});
+    					});
+    				}
+    			}
+    		}
+    	},
+    	image: {
+    		icon:
+    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M64 17v38H8V17h56m8-8H0v54h72V9z"></path><path d="M17.5 22C15 22 13 24 13 26.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5zM16 50h27L29.5 32zM36 36.2l8.9-8.5L60.2 50H45.9S35.6 35.9 36 36.2z"></path></svg>',
+    		title: "Image",
+    		result: function() {
+    			const refs = get_store_value(this.references);
+    			saveRange(refs.editor);
+    			refs.modal.$set({
+    				show: true,
+    				event: "imageUrl",
+    				title: "Insert image",
+    				label: "Url"
+    			});
+    			if (!get_store_value(this.helper).image) {
+    				this.helper.update(state => {
+    					state.image = true;
+    					return state;
+    				});
+    				refs.modal.$on("imageUrl", event => {
+    					restoreRange(refs.editor);
+    					exec("insertImage", event.detail);
+    				});
+    			}
+    		}
+    	},
+    	forecolor: {
+    		icon:
+    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M32 15h7.8L56 57.1h-7.9l-4-11.1H27.4l-4 11.1h-7.6L32 15zm-2.5 25.4h12.9L36 22.3h-.2l-6.3 18.1z"></path></svg>',
+    		title: "Text color",
+    		colorPicker: true,
+    		result: function() {
+    			showColorPicker.call(this, "foreColor");
+    		}
+    	},
+    	backcolor: {
+    		icon:
+    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M36.5 22.3l-6.3 18.1H43l-6.3-18.1z"></path><path d="M9 8.9v54.2h54.1V8.9H9zm39.9 48.2L45 46H28.2l-3.9 11.1h-7.6L32.8 15h7.8l16.2 42.1h-7.9z"></path></svg>',
+    		title: "Background color",
+    		colorPicker: true,
+    		result: function() {
+    			showColorPicker.call(this, "backColor");
+    		}
+    	},
+    	removeFormat: {
+    		icon:
+    			'<svg viewBox="0 0 72 72" width="17px" height="100%"><path d="M58.2 54.6L52 48.5l3.6-3.6 6.1 6.1 6.4-6.4 3.8 3.8-6.4 6.4 6.1 6.1-3.6 3.6-6.1-6.1-6.4 6.4-3.7-3.8 6.4-6.4zM21.7 52.1H50V57H21.7zM18.8 15.2h34.1v6.4H39.5v24.2h-7.4V21.5H18.8v-6.3z"></path></svg>',
+    		title: "Remove format",
+    		result: function() {
+    			const refs = get_store_value(this.references);
+    			const selection = window.getSelection();
+    			if (!selection.toString().length) {
+    				removeBlockTagsRecursive(
+    					refs.editor.children,
+    					this.removeFormatTags
+    				);
+    				const range = document.createRange();
+    				range.selectNodeContents(refs.editor);
+    				selection.removeAllRanges();
+    				selection.addRange(range);
+    			}
+    			exec("removeFormat");
+    			selection.removeAllRanges();
+    		}
+    	}
+    };
+
+    const showColorPicker = function(cmd) {
+    	const refs = get_store_value(this.references);
+    	saveRange(refs.editor);
+    	refs.colorPicker.$set({show: true, event: cmd});
+    	if (!get_store_value(this.helper)[cmd]) {
+    		this.helper.update(state => {
+    			state[cmd] = true;
+    			return state;
+    		});
+    		refs.colorPicker.$on(cmd, event => {
+    			let item = event.detail;
+    			if (item.modal) {
+    				refs.modal.$set({
+    					show: true,
+    					event: `${cmd}Changed`,
+    					title: "Text color",
+    					label:
+    						cmd === "foreColor" ? "Text color" : "Background color"
+    				});
+    				const command = cmd;
+    				if (!get_store_value(this.helper)[`${command}Modal`]) {
+    					get_store_value(this.helper)[`${command}Modal`] = true;
+    					refs.modal.$on(`${command}Changed`, event => {
+    						let color = event.detail;
+    						restoreRange(refs.editor);
+    						exec(command, color);
+    					});
+    				}
+    			} else {
+    				restoreRange(refs.editor);
+    				exec(cmd, item.color);
+    			}
+    		});
+    	}
+    };
+
+    /* node_modules\cl-editor\src\helpers\EditorModal.svelte generated by Svelte v3.55.0 */
+    const file$k = "node_modules\\cl-editor\\src\\helpers\\EditorModal.svelte";
+
+    // (2:0) {#if show}
+    function create_if_block$c(ctx) {
+    	let div0;
+    	let t0;
+    	let div2;
+    	let div1;
+    	let span0;
+    	let t1;
+    	let t2;
+    	let form;
+    	let label_1;
+    	let input;
+    	let t3;
+    	let span2;
+    	let span1;
+    	let t4;
+    	let t5;
+    	let t6;
+    	let button0;
+    	let t8;
+    	let button1;
+    	let mounted;
+    	let dispose;
+    	let if_block = /*error*/ ctx[2] && create_if_block_1$9(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div0 = element("div");
+    			t0 = space();
+    			div2 = element("div");
+    			div1 = element("div");
+    			span0 = element("span");
+    			t1 = text(/*title*/ ctx[3]);
+    			t2 = space();
+    			form = element("form");
+    			label_1 = element("label");
+    			input = element("input");
+    			t3 = space();
+    			span2 = element("span");
+    			span1 = element("span");
+    			t4 = text(/*label*/ ctx[4]);
+    			t5 = space();
+    			if (if_block) if_block.c();
+    			t6 = space();
+    			button0 = element("button");
+    			button0.textContent = "Confirm";
+    			t8 = space();
+    			button1 = element("button");
+    			button1.textContent = "Cancel";
+    			attr_dev(div0, "class", "cl-editor-overlay svelte-1eyz2ny");
+    			add_location(div0, file$k, 2, 2, 64);
+    			attr_dev(span0, "class", "modal-title svelte-1eyz2ny");
+    			add_location(span0, file$k, 5, 6, 188);
+    			attr_dev(input, "name", "text");
+    			attr_dev(input, "class", "svelte-1eyz2ny");
+    			add_location(input, file$k, 8, 10, 360);
+    			attr_dev(span1, "class", "svelte-1eyz2ny");
+    			add_location(span1, file$k, 10, 12, 507);
+    			attr_dev(span2, "class", "input-info svelte-1eyz2ny");
+    			add_location(span2, file$k, 9, 10, 469);
+    			attr_dev(label_1, "class", "modal-label svelte-1eyz2ny");
+    			toggle_class(label_1, "input-error", /*error*/ ctx[2]);
+    			add_location(label_1, file$k, 7, 8, 296);
+    			attr_dev(button0, "class", "modal-button modal-submit svelte-1eyz2ny");
+    			attr_dev(button0, "type", "submit");
+    			add_location(button0, file$k, 16, 8, 665);
+    			attr_dev(button1, "class", "modal-button modal-reset svelte-1eyz2ny");
+    			attr_dev(button1, "type", "reset");
+    			add_location(button1, file$k, 17, 8, 746);
+    			add_location(form, file$k, 6, 6, 235);
+    			attr_dev(div1, "class", "modal-box svelte-1eyz2ny");
+    			add_location(div1, file$k, 4, 4, 158);
+    			attr_dev(div2, "class", "cl-editor-modal svelte-1eyz2ny");
+    			add_location(div2, file$k, 3, 2, 124);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div0, anchor);
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, div2, anchor);
+    			append_dev(div2, div1);
+    			append_dev(div1, span0);
+    			append_dev(span0, t1);
+    			append_dev(div1, t2);
+    			append_dev(div1, form);
+    			append_dev(form, label_1);
+    			append_dev(label_1, input);
+    			/*input_binding*/ ctx[11](input);
+    			set_input_value(input, /*text*/ ctx[1]);
+    			append_dev(label_1, t3);
+    			append_dev(label_1, span2);
+    			append_dev(span2, span1);
+    			append_dev(span1, t4);
+    			append_dev(span2, t5);
+    			if (if_block) if_block.m(span2, null);
+    			append_dev(form, t6);
+    			append_dev(form, button0);
+    			append_dev(form, t8);
+    			append_dev(form, button1);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(div0, "click", /*cancel*/ ctx[8], false, false, false),
+    					listen_dev(input, "keyup", /*hideError*/ ctx[9], false, false, false),
+    					action_destroyer(/*inputType*/ ctx[6].call(null, input)),
+    					listen_dev(input, "input", /*input_input_handler*/ ctx[12]),
+    					listen_dev(button1, "click", /*cancel*/ ctx[8], false, false, false),
+    					listen_dev(form, "submit", prevent_default(/*submit_handler*/ ctx[13]), false, true, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*title*/ 8) set_data_dev(t1, /*title*/ ctx[3]);
+
+    			if (dirty & /*text*/ 2 && input.value !== /*text*/ ctx[1]) {
+    				set_input_value(input, /*text*/ ctx[1]);
+    			}
+
+    			if (dirty & /*label*/ 16) set_data_dev(t4, /*label*/ ctx[4]);
+
+    			if (/*error*/ ctx[2]) {
+    				if (if_block) ; else {
+    					if_block = create_if_block_1$9(ctx);
+    					if_block.c();
+    					if_block.m(span2, null);
+    				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
+    			}
+
+    			if (dirty & /*error*/ 4) {
+    				toggle_class(label_1, "input-error", /*error*/ ctx[2]);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div0);
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(div2);
+    			/*input_binding*/ ctx[11](null);
+    			if (if_block) if_block.d();
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$c.name,
+    		type: "if",
+    		source: "(2:0) {#if show}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (12:12) {#if error}
+    function create_if_block_1$9(ctx) {
+    	let span;
+
+    	const block = {
+    		c: function create() {
+    			span = element("span");
+    			span.textContent = "Required";
+    			attr_dev(span, "class", "msg-error svelte-1eyz2ny");
+    			add_location(span, file$k, 12, 12, 564);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, span, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(span);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$9.name,
+    		type: "if",
+    		source: "(12:12) {#if error}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$n(ctx) {
+    	let if_block_anchor;
+    	let if_block = /*show*/ ctx[0] && create_if_block$c(ctx);
+
+    	const block = {
+    		c: function create() {
+    			if (if_block) if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			if (if_block) if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (/*show*/ ctx[0]) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
+    					if_block = create_if_block$c(ctx);
+    					if_block.c();
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
+    			}
+    		},
+    		i: noop,
+    		o: noop,
+    		d: function destroy(detaching) {
+    			if (if_block) if_block.d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$n.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$n($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('EditorModal', slots, []);
+    	let dispatcher = new createEventDispatcher();
+    	let { show = false } = $$props;
+    	let { text = '' } = $$props;
+    	let { event = '' } = $$props;
+    	let { title = '' } = $$props;
+    	let { label = '' } = $$props;
+    	let { error = false } = $$props;
+    	let refs = {};
+
+    	const inputType = e => {
+    		e.type = event.includes('Color') ? 'color' : 'text';
+    	};
+
+    	function confirm() {
+    		if (text) {
+    			dispatcher(event, text);
+    			cancel();
+    		} else {
+    			$$invalidate(2, error = true);
+    			refs.text.focus();
+    		}
+    	}
+
+    	function cancel() {
+    		$$invalidate(0, show = false);
+    		$$invalidate(1, text = '');
+    		$$invalidate(2, error = false);
+    	}
+
+    	function hideError() {
+    		$$invalidate(2, error = false);
+    	}
+
+    	const writable_props = ['show', 'text', 'event', 'title', 'label', 'error'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<EditorModal> was created with unknown prop '${key}'`);
+    	});
+
+    	function input_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			refs.text = $$value;
+    			$$invalidate(5, refs);
+    		});
+    	}
+
+    	function input_input_handler() {
+    		text = this.value;
+    		$$invalidate(1, text);
+    	}
+
+    	const submit_handler = event => confirm();
+
+    	$$self.$$set = $$props => {
+    		if ('show' in $$props) $$invalidate(0, show = $$props.show);
+    		if ('text' in $$props) $$invalidate(1, text = $$props.text);
+    		if ('event' in $$props) $$invalidate(10, event = $$props.event);
+    		if ('title' in $$props) $$invalidate(3, title = $$props.title);
+    		if ('label' in $$props) $$invalidate(4, label = $$props.label);
+    		if ('error' in $$props) $$invalidate(2, error = $$props.error);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		createEventDispatcher,
+    		dispatcher,
+    		show,
+    		text,
+    		event,
+    		title,
+    		label,
+    		error,
+    		refs,
+    		inputType,
+    		confirm,
+    		cancel,
+    		hideError
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('dispatcher' in $$props) dispatcher = $$props.dispatcher;
+    		if ('show' in $$props) $$invalidate(0, show = $$props.show);
+    		if ('text' in $$props) $$invalidate(1, text = $$props.text);
+    		if ('event' in $$props) $$invalidate(10, event = $$props.event);
+    		if ('title' in $$props) $$invalidate(3, title = $$props.title);
+    		if ('label' in $$props) $$invalidate(4, label = $$props.label);
+    		if ('error' in $$props) $$invalidate(2, error = $$props.error);
+    		if ('refs' in $$props) $$invalidate(5, refs = $$props.refs);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*show, refs*/ 33) {
+    			{
+    				if (show) {
+    					setTimeout(() => {
+    						refs.text.focus();
+    					});
+    				}
+    			}
+    		}
+    	};
+
+    	return [
+    		show,
+    		text,
+    		error,
+    		title,
+    		label,
+    		refs,
+    		inputType,
+    		confirm,
+    		cancel,
+    		hideError,
+    		event,
+    		input_binding,
+    		input_input_handler,
+    		submit_handler
+    	];
+    }
+
+    class EditorModal extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+
+    		init(this, options, instance$n, create_fragment$n, safe_not_equal, {
+    			show: 0,
+    			text: 1,
+    			event: 10,
+    			title: 3,
+    			label: 4,
+    			error: 2
+    		});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "EditorModal",
+    			options,
+    			id: create_fragment$n.name
+    		});
+    	}
+
+    	get show() {
+    		return this.$$.ctx[0];
+    	}
+
+    	set show(show) {
+    		this.$$set({ show });
+    		flush();
+    	}
+
+    	get text() {
+    		return this.$$.ctx[1];
+    	}
+
+    	set text(text) {
+    		this.$$set({ text });
+    		flush();
+    	}
+
+    	get event() {
+    		return this.$$.ctx[10];
+    	}
+
+    	set event(event) {
+    		this.$$set({ event });
+    		flush();
+    	}
+
+    	get title() {
+    		return this.$$.ctx[3];
+    	}
+
+    	set title(title) {
+    		this.$$set({ title });
+    		flush();
+    	}
+
+    	get label() {
+    		return this.$$.ctx[4];
+    	}
+
+    	set label(label) {
+    		this.$$set({ label });
+    		flush();
+    	}
+
+    	get error() {
+    		return this.$$.ctx[2];
+    	}
+
+    	set error(error) {
+    		this.$$set({ error });
+    		flush();
+    	}
+    }
+
+    /* node_modules\cl-editor\src\helpers\EditorColorPicker.svelte generated by Svelte v3.55.0 */
+    const file$j = "node_modules\\cl-editor\\src\\helpers\\EditorColorPicker.svelte";
+
+    function get_each_context$a(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[8] = list[i];
+    	return child_ctx;
+    }
+
+    // (4:4) {#each btns as btn}
+    function create_each_block$a(ctx) {
+    	let button;
+    	let t_value = (/*btn*/ ctx[8].text || '') + "";
+    	let t;
+    	let mounted;
+    	let dispose;
+
+    	function click_handler(...args) {
+    		return /*click_handler*/ ctx[6](/*btn*/ ctx[8], ...args);
+    	}
+
+    	const block = {
+    		c: function create() {
+    			button = element("button");
+    			t = text(t_value);
+    			attr_dev(button, "type", "button");
+    			attr_dev(button, "class", "color-picker-btn svelte-mkzk4s");
+    			set_style(button, "background-color", /*btn*/ ctx[8].color);
+    			add_location(button, file$j, 4, 4, 176);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, button, anchor);
+    			append_dev(button, t);
+
+    			if (!mounted) {
+    				dispose = listen_dev(button, "click", click_handler, false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+    			if (dirty & /*btns*/ 2 && t_value !== (t_value = (/*btn*/ ctx[8].text || '') + "")) set_data_dev(t, t_value);
+
+    			if (dirty & /*btns*/ 2) {
+    				set_style(button, "background-color", /*btn*/ ctx[8].color);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(button);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block$a.name,
+    		type: "each",
+    		source: "(4:4) {#each btns as btn}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$m(ctx) {
+    	let div2;
+    	let div0;
+    	let t;
+    	let div1;
+    	let mounted;
+    	let dispose;
+    	let each_value = /*btns*/ ctx[1];
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block$a(get_each_context$a(ctx, each_value, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			div2 = element("div");
+    			div0 = element("div");
+    			t = space();
+    			div1 = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr_dev(div0, "class", "color-picker-overlay svelte-mkzk4s");
+    			add_location(div0, file$j, 1, 2, 51);
+    			attr_dev(div1, "class", "color-picker-wrapper svelte-mkzk4s");
+    			add_location(div1, file$j, 2, 2, 113);
+    			set_style(div2, "display", /*show*/ ctx[0] ? 'block' : 'none');
+    			add_location(div2, file$j, 0, 0, 0);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div2, anchor);
+    			append_dev(div2, div0);
+    			append_dev(div2, t);
+    			append_dev(div2, div1);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div1, null);
+    			}
+
+    			if (!mounted) {
+    				dispose = listen_dev(div0, "click", /*close*/ ctx[2], false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*btns, selectColor*/ 10) {
+    				each_value = /*btns*/ ctx[1];
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context$a(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block$a(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(div1, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+
+    			if (dirty & /*show*/ 1) {
+    				set_style(div2, "display", /*show*/ ctx[0] ? 'block' : 'none');
+    			}
+    		},
+    		i: noop,
+    		o: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div2);
+    			destroy_each(each_blocks, detaching);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$m.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$m($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('EditorColorPicker', slots, []);
+    	const dispatcher = new createEventDispatcher();
+    	let { show = false } = $$props;
+    	let { btns = [] } = $$props;
+    	let { event = '' } = $$props;
+    	let { colors = [] } = $$props;
+
+    	function close() {
+    		$$invalidate(0, show = false);
+    	}
+
+    	function selectColor(btn) {
+    		dispatcher(event, btn);
+    		close();
+    	}
+
+    	const writable_props = ['show', 'btns', 'event', 'colors'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<EditorColorPicker> was created with unknown prop '${key}'`);
+    	});
+
+    	const click_handler = (btn, event) => selectColor(btn);
+
+    	$$self.$$set = $$props => {
+    		if ('show' in $$props) $$invalidate(0, show = $$props.show);
+    		if ('btns' in $$props) $$invalidate(1, btns = $$props.btns);
+    		if ('event' in $$props) $$invalidate(4, event = $$props.event);
+    		if ('colors' in $$props) $$invalidate(5, colors = $$props.colors);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		createEventDispatcher,
+    		dispatcher,
+    		show,
+    		btns,
+    		event,
+    		colors,
+    		close,
+    		selectColor
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('show' in $$props) $$invalidate(0, show = $$props.show);
+    		if ('btns' in $$props) $$invalidate(1, btns = $$props.btns);
+    		if ('event' in $$props) $$invalidate(4, event = $$props.event);
+    		if ('colors' in $$props) $$invalidate(5, colors = $$props.colors);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*colors*/ 32) {
+    			$$invalidate(1, btns = colors.map(color => ({ color })).concat([{ text: '#', modal: true }]));
+    		}
+    	};
+
+    	return [show, btns, close, selectColor, event, colors, click_handler];
+    }
+
+    class EditorColorPicker extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$m, create_fragment$m, safe_not_equal, { show: 0, btns: 1, event: 4, colors: 5 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "EditorColorPicker",
+    			options,
+    			id: create_fragment$m.name
+    		});
+    	}
+
+    	get show() {
+    		throw new Error("<EditorColorPicker>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set show(value) {
+    		throw new Error("<EditorColorPicker>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get btns() {
+    		throw new Error("<EditorColorPicker>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set btns(value) {
+    		throw new Error("<EditorColorPicker>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get event() {
+    		throw new Error("<EditorColorPicker>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set event(value) {
+    		throw new Error("<EditorColorPicker>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get colors() {
+    		throw new Error("<EditorColorPicker>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set colors(value) {
+    		throw new Error("<EditorColorPicker>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    const state = (function(name) {
+      let state = {
+        actionBtns: [],
+        actionObj: {}
+      };
+
+      const { subscribe, set, update } = writable(state);
+
+      return {
+        name,
+        set,
+        update,
+        subscribe
+      }
+    });
+
+    const createStateStore = state;
+
+    /* node_modules\cl-editor\src\Editor.svelte generated by Svelte v3.55.0 */
+
+    const { Object: Object_1$3 } = globals;
+    const file$i = "node_modules\\cl-editor\\src\\Editor.svelte";
+
+    function get_each_context$9(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[38] = list[i];
+    	return child_ctx;
+    }
+
+    // (8:4) {#each $state.actionBtns as action}
+    function create_each_block$9(ctx) {
+    	let button;
+    	let html_tag;
+    	let raw_value = /*action*/ ctx[38].icon + "";
+    	let t;
+    	let button_class_value;
+    	let button_title_value;
+    	let button_disabled_value;
+    	let mounted;
+    	let dispose;
+
+    	function click_handler_1(...args) {
+    		return /*click_handler_1*/ ctx[24](/*action*/ ctx[38], ...args);
+    	}
+
+    	const block = {
+    		c: function create() {
+    			button = element("button");
+    			html_tag = new HtmlTag(false);
+    			t = space();
+    			html_tag.a = t;
+    			attr_dev(button, "type", "button");
+    			attr_dev(button, "class", button_class_value = "cl-button " + (/*action*/ ctx[38].active ? 'active' : '') + " svelte-mfg49m");
+    			attr_dev(button, "title", button_title_value = /*action*/ ctx[38].title);
+    			button.disabled = button_disabled_value = /*action*/ ctx[38].disabled;
+    			add_location(button, file$i, 8, 6, 302);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, button, anchor);
+    			html_tag.m(raw_value, button);
+    			append_dev(button, t);
+
+    			if (!mounted) {
+    				dispose = listen_dev(button, "click", click_handler_1, false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+    			if (dirty[0] & /*$state*/ 16 && raw_value !== (raw_value = /*action*/ ctx[38].icon + "")) html_tag.p(raw_value);
+
+    			if (dirty[0] & /*$state*/ 16 && button_class_value !== (button_class_value = "cl-button " + (/*action*/ ctx[38].active ? 'active' : '') + " svelte-mfg49m")) {
+    				attr_dev(button, "class", button_class_value);
+    			}
+
+    			if (dirty[0] & /*$state*/ 16 && button_title_value !== (button_title_value = /*action*/ ctx[38].title)) {
+    				attr_dev(button, "title", button_title_value);
+    			}
+
+    			if (dirty[0] & /*$state*/ 16 && button_disabled_value !== (button_disabled_value = /*action*/ ctx[38].disabled)) {
+    				prop_dev(button, "disabled", button_disabled_value);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(button);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block$9.name,
+    		type: "each",
+    		source: "(8:4) {#each $state.actionBtns as action}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$l(ctx) {
+    	let div2;
+    	let div0;
+    	let t0;
+    	let div1;
+    	let t1;
+    	let textarea;
+    	let t2;
+    	let editormodal;
+    	let t3;
+    	let editorcolorpicker;
+    	let current;
+    	let mounted;
+    	let dispose;
+    	let each_value = /*$state*/ ctx[4].actionBtns;
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block$9(get_each_context$9(ctx, each_value, i));
+    	}
+
+    	let editormodal_props = {};
+    	editormodal = new EditorModal({ props: editormodal_props, $$inline: true });
+    	/*editormodal_binding*/ ctx[31](editormodal);
+    	let editorcolorpicker_props = { colors: /*colors*/ ctx[2] };
+
+    	editorcolorpicker = new EditorColorPicker({
+    			props: editorcolorpicker_props,
+    			$$inline: true
+    		});
+
+    	/*editorcolorpicker_binding*/ ctx[32](editorcolorpicker);
+
+    	const block = {
+    		c: function create() {
+    			div2 = element("div");
+    			div0 = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t0 = space();
+    			div1 = element("div");
+    			t1 = space();
+    			textarea = element("textarea");
+    			t2 = space();
+    			create_component(editormodal.$$.fragment);
+    			t3 = space();
+    			create_component(editorcolorpicker.$$.fragment);
+    			attr_dev(div0, "class", "cl-actionbar svelte-mfg49m");
+    			add_location(div0, file$i, 6, 2, 229);
+    			attr_dev(div1, "id", /*contentId*/ ctx[1]);
+    			attr_dev(div1, "class", "cl-content svelte-mfg49m");
+    			set_style(div1, "height", /*height*/ ctx[0]);
+    			attr_dev(div1, "contenteditable", "true");
+    			add_location(div1, file$i, 17, 2, 568);
+    			attr_dev(textarea, "class", "cl-textarea svelte-mfg49m");
+    			set_style(textarea, "max-height", /*height*/ ctx[0]);
+    			set_style(textarea, "min-height", /*height*/ ctx[0]);
+    			add_location(textarea, file$i, 28, 2, 911);
+    			attr_dev(div2, "class", "cl svelte-mfg49m");
+    			add_location(div2, file$i, 5, 0, 172);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div2, anchor);
+    			append_dev(div2, div0);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div0, null);
+    			}
+
+    			append_dev(div2, t0);
+    			append_dev(div2, div1);
+    			/*div1_binding*/ ctx[25](div1);
+    			append_dev(div2, t1);
+    			append_dev(div2, textarea);
+    			/*textarea_binding*/ ctx[30](textarea);
+    			append_dev(div2, t2);
+    			mount_component(editormodal, div2, null);
+    			append_dev(div2, t3);
+    			mount_component(editorcolorpicker, div2, null);
+    			/*div2_binding*/ ctx[33](div2);
+    			current = true;
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(window, "click", /*click_handler*/ ctx[23], false, false, false),
+    					listen_dev(div1, "input", /*input_handler*/ ctx[26], false, false, false),
+    					listen_dev(div1, "mouseup", /*mouseup_handler*/ ctx[27], false, false, false),
+    					listen_dev(div1, "keyup", /*keyup_handler*/ ctx[28], false, false, false),
+    					listen_dev(div1, "paste", /*paste_handler*/ ctx[29], false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*$state, _btnClicked*/ 272) {
+    				each_value = /*$state*/ ctx[4].actionBtns;
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context$9(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block$9(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(div0, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+
+    			if (!current || dirty[0] & /*contentId*/ 2) {
+    				attr_dev(div1, "id", /*contentId*/ ctx[1]);
+    			}
+
+    			if (!current || dirty[0] & /*height*/ 1) {
+    				set_style(div1, "height", /*height*/ ctx[0]);
+    			}
+
+    			if (!current || dirty[0] & /*height*/ 1) {
+    				set_style(textarea, "max-height", /*height*/ ctx[0]);
+    			}
+
+    			if (!current || dirty[0] & /*height*/ 1) {
+    				set_style(textarea, "min-height", /*height*/ ctx[0]);
+    			}
+
+    			const editormodal_changes = {};
+    			editormodal.$set(editormodal_changes);
+    			const editorcolorpicker_changes = {};
+    			if (dirty[0] & /*colors*/ 4) editorcolorpicker_changes.colors = /*colors*/ ctx[2];
+    			editorcolorpicker.$set(editorcolorpicker_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(editormodal.$$.fragment, local);
+    			transition_in(editorcolorpicker.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(editormodal.$$.fragment, local);
+    			transition_out(editorcolorpicker.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div2);
+    			destroy_each(each_blocks, detaching);
+    			/*div1_binding*/ ctx[25](null);
+    			/*textarea_binding*/ ctx[30](null);
+    			/*editormodal_binding*/ ctx[31](null);
+    			destroy_component(editormodal);
+    			/*editorcolorpicker_binding*/ ctx[32](null);
+    			destroy_component(editorcolorpicker);
+    			/*div2_binding*/ ctx[33](null);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$l.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    const editors = [];
+
+    function instance$l($$self, $$props, $$invalidate) {
+    	let $references;
+    	let $helper;
+    	let $state;
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('Editor', slots, []);
+    	let dispatcher = new createEventDispatcher();
+    	let { actions = [] } = $$props;
+    	let { height = '300px' } = $$props;
+    	let { html = '' } = $$props;
+    	let { contentId = '' } = $$props;
+
+    	let { colors = [
+    		'#ffffff',
+    		'#000000',
+    		'#eeece1',
+    		'#1f497d',
+    		'#4f81bd',
+    		'#c0504d',
+    		'#9bbb59',
+    		'#8064a2',
+    		'#4bacc6',
+    		'#f79646',
+    		'#ffff00',
+    		'#f2f2f2',
+    		'#7f7f7f',
+    		'#ddd9c3',
+    		'#c6d9f0',
+    		'#dbe5f1',
+    		'#f2dcdb',
+    		'#ebf1dd',
+    		'#e5e0ec',
+    		'#dbeef3',
+    		'#fdeada',
+    		'#fff2ca',
+    		'#d8d8d8',
+    		'#595959',
+    		'#c4bd97',
+    		'#8db3e2',
+    		'#b8cce4',
+    		'#e5b9b7',
+    		'#d7e3bc',
+    		'#ccc1d9',
+    		'#b7dde8',
+    		'#fbd5b5',
+    		'#ffe694',
+    		'#bfbfbf',
+    		'#3f3f3f',
+    		'#938953',
+    		'#548dd4',
+    		'#95b3d7',
+    		'#d99694',
+    		'#c3d69b',
+    		'#b2a2c7',
+    		'#b7dde8',
+    		'#fac08f',
+    		'#f2c314',
+    		'#a5a5a5',
+    		'#262626',
+    		'#494429',
+    		'#17365d',
+    		'#366092',
+    		'#953734',
+    		'#76923c',
+    		'#5f497a',
+    		'#92cddc',
+    		'#e36c09',
+    		'#c09100',
+    		'#7f7f7f',
+    		'#0c0c0c',
+    		'#1d1b10',
+    		'#0f243e',
+    		'#244061',
+    		'#632423',
+    		'#4f6128',
+    		'#3f3151',
+    		'#31859b',
+    		'#974806',
+    		'#7f6000'
+    	] } = $$props;
+
+    	let { removeFormatTags = ['h1', 'h2', 'blockquote'] } = $$props;
+
+    	let helper = writable({
+    		foreColor: false,
+    		backColor: false,
+    		foreColorModal: false,
+    		backColorModal: false,
+    		image: false,
+    		link: false,
+    		showEditor: true,
+    		blurActive: false
+    	});
+
+    	validate_store(helper, 'helper');
+    	component_subscribe($$self, helper, value => $$invalidate(34, $helper = value));
+    	editors.push({});
+    	let contextKey = "editor_" + editors.length;
+    	let state = createStateStore(contextKey);
+    	validate_store(state, 'state');
+    	component_subscribe($$self, state, value => $$invalidate(4, $state = value));
+    	let references = writable({});
+    	validate_store(references, 'references');
+    	component_subscribe($$self, references, value => $$invalidate(3, $references = value));
+    	set_store_value(state, $state.actionObj = getNewActionObj(defaultActions, actions), $state);
+
+    	let context = {
+    		exec: exec$1,
+    		getHtml,
+    		getText,
+    		setHtml,
+    		saveRange: saveRange$1,
+    		restoreRange: restoreRange$1,
+    		helper,
+    		references,
+    		state,
+    		removeFormatTags
+    	};
+
+    	setContext(contextKey, context);
+
+    	onMount(() => {
+    		set_store_value(state, $state.actionBtns = getActionBtns($state.actionObj), $state);
+    		setHtml(html);
+    	});
+
+    	function _btnClicked(action) {
+    		$references.editor.focus();
+    		saveRange$1($references.editor);
+    		restoreRange$1($references.editor);
+    		action.result.call(context);
+    		_handleButtonStatus();
+    	}
+
+    	function _handleButtonStatus(clearBtns) {
+    		const tags = clearBtns
+    		? []
+    		: getTagsRecursive(document.getSelection().focusNode);
+
+    		Object.keys($state.actionObj).forEach(action => set_store_value(state, $state.actionObj[action].active = false, $state));
+    		tags.forEach(tag => ($state.actionObj[tag.toLowerCase()] || {}).active = true);
+    		set_store_value(state, $state.actionBtns = getActionBtns($state.actionObj), $state);
+    		state.set($state);
+    	}
+
+    	function _onPaste(event) {
+    		event.preventDefault();
+
+    		exec$1('insertHTML', event.clipboardData.getData('text/html')
+    		? cleanHtml(event.clipboardData.getData('text/html'))
+    		: event.clipboardData.getData('text'));
+    	}
+
+    	function _onChange(event) {
+    		dispatcher('change', event);
+    	}
+
+    	function _documentClick(event) {
+    		if (!isEditorClick(event.target, $references.editorWrapper) && $helper.blurActive) {
+    			dispatcher('blur', event);
+    		}
+
+    		set_store_value(helper, $helper.blurActive = true, $helper);
+    	}
+
+    	function exec$1(cmd, value) {
+    		exec(cmd, value);
+    	}
+
+    	function getHtml(sanitize) {
+    		return sanitize
+    		? removeBadTags($references.editor.innerHTML)
+    		: $references.editor.innerHTML;
+    	}
+
+    	function getText() {
+    		return $references.editor.innerText;
+    	}
+
+    	function setHtml(html, sanitize) {
+    		const htmlData = sanitize ? removeBadTags(html) : html || '';
+    		set_store_value(references, $references.editor.innerHTML = htmlData, $references);
+    		set_store_value(references, $references.raw.value = htmlData, $references);
+    	}
+
+    	function saveRange$1() {
+    		saveRange($references.editor);
+    	}
+
+    	function restoreRange$1() {
+    		restoreRange($references.editor);
+    	}
+
+    	const refs = $references;
+    	const writable_props = ['actions', 'height', 'html', 'contentId', 'colors', 'removeFormatTags'];
+
+    	Object_1$3.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Editor> was created with unknown prop '${key}'`);
+    	});
+
+    	const click_handler = event => _documentClick(event);
+    	const click_handler_1 = (action, event) => _btnClicked(action);
+
+    	function div1_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			$references.editor = $$value;
+    			references.set($references);
+    		});
+    	}
+
+    	const input_handler = event => _onChange(event.target.innerHTML);
+    	const mouseup_handler = () => _handleButtonStatus();
+    	const keyup_handler = () => _handleButtonStatus();
+    	const paste_handler = event => _onPaste(event);
+
+    	function textarea_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			$references.raw = $$value;
+    			references.set($references);
+    		});
+    	}
+
+    	function editormodal_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			$references.modal = $$value;
+    			references.set($references);
+    		});
+    	}
+
+    	function editorcolorpicker_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			$references.colorPicker = $$value;
+    			references.set($references);
+    		});
+    	}
+
+    	function div2_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			$references.editorWrapper = $$value;
+    			references.set($references);
+    		});
+    	}
+
+    	$$self.$$set = $$props => {
+    		if ('actions' in $$props) $$invalidate(13, actions = $$props.actions);
+    		if ('height' in $$props) $$invalidate(0, height = $$props.height);
+    		if ('html' in $$props) $$invalidate(14, html = $$props.html);
+    		if ('contentId' in $$props) $$invalidate(1, contentId = $$props.contentId);
+    		if ('colors' in $$props) $$invalidate(2, colors = $$props.colors);
+    		if ('removeFormatTags' in $$props) $$invalidate(15, removeFormatTags = $$props.removeFormatTags);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		editors,
+    		getTagsRecursive,
+    		_saveRange: saveRange,
+    		_restoreRange: restoreRange,
+    		_exec: exec,
+    		cleanHtml,
+    		getActionBtns,
+    		getNewActionObj,
+    		removeBadTags,
+    		isEditorClick,
+    		defaultActions,
+    		EditorModal,
+    		EditorColorPicker,
+    		onMount,
+    		createEventDispatcher,
+    		setContext,
+    		getContext,
+    		createStateStore,
+    		writable,
+    		dispatcher,
+    		actions,
+    		height,
+    		html,
+    		contentId,
+    		colors,
+    		removeFormatTags,
+    		helper,
+    		contextKey,
+    		state,
+    		references,
+    		context,
+    		_btnClicked,
+    		_handleButtonStatus,
+    		_onPaste,
+    		_onChange,
+    		_documentClick,
+    		exec: exec$1,
+    		getHtml,
+    		getText,
+    		setHtml,
+    		saveRange: saveRange$1,
+    		restoreRange: restoreRange$1,
+    		refs,
+    		$references,
+    		$helper,
+    		$state
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('dispatcher' in $$props) dispatcher = $$props.dispatcher;
+    		if ('actions' in $$props) $$invalidate(13, actions = $$props.actions);
+    		if ('height' in $$props) $$invalidate(0, height = $$props.height);
+    		if ('html' in $$props) $$invalidate(14, html = $$props.html);
+    		if ('contentId' in $$props) $$invalidate(1, contentId = $$props.contentId);
+    		if ('colors' in $$props) $$invalidate(2, colors = $$props.colors);
+    		if ('removeFormatTags' in $$props) $$invalidate(15, removeFormatTags = $$props.removeFormatTags);
+    		if ('helper' in $$props) $$invalidate(5, helper = $$props.helper);
+    		if ('contextKey' in $$props) contextKey = $$props.contextKey;
+    		if ('state' in $$props) $$invalidate(6, state = $$props.state);
+    		if ('references' in $$props) $$invalidate(7, references = $$props.references);
+    		if ('context' in $$props) context = $$props.context;
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [
+    		height,
+    		contentId,
+    		colors,
+    		$references,
+    		$state,
+    		helper,
+    		state,
+    		references,
+    		_btnClicked,
+    		_handleButtonStatus,
+    		_onPaste,
+    		_onChange,
+    		_documentClick,
+    		actions,
+    		html,
+    		removeFormatTags,
+    		exec$1,
+    		getHtml,
+    		getText,
+    		setHtml,
+    		saveRange$1,
+    		restoreRange$1,
+    		refs,
+    		click_handler,
+    		click_handler_1,
+    		div1_binding,
+    		input_handler,
+    		mouseup_handler,
+    		keyup_handler,
+    		paste_handler,
+    		textarea_binding,
+    		editormodal_binding,
+    		editorcolorpicker_binding,
+    		div2_binding
+    	];
+    }
+
+    class Editor extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+
+    		init(
+    			this,
+    			options,
+    			instance$l,
+    			create_fragment$l,
+    			safe_not_equal,
+    			{
+    				actions: 13,
+    				height: 0,
+    				html: 14,
+    				contentId: 1,
+    				colors: 2,
+    				removeFormatTags: 15,
+    				exec: 16,
+    				getHtml: 17,
+    				getText: 18,
+    				setHtml: 19,
+    				saveRange: 20,
+    				restoreRange: 21,
+    				refs: 22
+    			},
+    			null,
+    			[-1, -1]
+    		);
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "Editor",
+    			options,
+    			id: create_fragment$l.name
+    		});
+    	}
+
+    	get actions() {
+    		return this.$$.ctx[13];
+    	}
+
+    	set actions(actions) {
+    		this.$$set({ actions });
+    		flush();
+    	}
+
+    	get height() {
+    		return this.$$.ctx[0];
+    	}
+
+    	set height(height) {
+    		this.$$set({ height });
+    		flush();
+    	}
+
+    	get html() {
+    		return this.$$.ctx[14];
+    	}
+
+    	set html(html) {
+    		this.$$set({ html });
+    		flush();
+    	}
+
+    	get contentId() {
+    		return this.$$.ctx[1];
+    	}
+
+    	set contentId(contentId) {
+    		this.$$set({ contentId });
+    		flush();
+    	}
+
+    	get colors() {
+    		return this.$$.ctx[2];
+    	}
+
+    	set colors(colors) {
+    		this.$$set({ colors });
+    		flush();
+    	}
+
+    	get removeFormatTags() {
+    		return this.$$.ctx[15];
+    	}
+
+    	set removeFormatTags(removeFormatTags) {
+    		this.$$set({ removeFormatTags });
+    		flush();
+    	}
+
+    	get exec() {
+    		return this.$$.ctx[16];
+    	}
+
+    	set exec(value) {
+    		throw new Error("<Editor>: Cannot set read-only property 'exec'");
+    	}
+
+    	get getHtml() {
+    		return this.$$.ctx[17];
+    	}
+
+    	set getHtml(value) {
+    		throw new Error("<Editor>: Cannot set read-only property 'getHtml'");
+    	}
+
+    	get getText() {
+    		return this.$$.ctx[18];
+    	}
+
+    	set getText(value) {
+    		throw new Error("<Editor>: Cannot set read-only property 'getText'");
+    	}
+
+    	get setHtml() {
+    		return this.$$.ctx[19];
+    	}
+
+    	set setHtml(value) {
+    		throw new Error("<Editor>: Cannot set read-only property 'setHtml'");
+    	}
+
+    	get saveRange() {
+    		return this.$$.ctx[20];
+    	}
+
+    	set saveRange(value) {
+    		throw new Error("<Editor>: Cannot set read-only property 'saveRange'");
+    	}
+
+    	get restoreRange() {
+    		return this.$$.ctx[21];
+    	}
+
+    	set restoreRange(value) {
+    		throw new Error("<Editor>: Cannot set read-only property 'restoreRange'");
+    	}
+
+    	get refs() {
+    		return this.$$.ctx[22];
+    	}
+
+    	set refs(value) {
+    		throw new Error("<Editor>: Cannot set read-only property 'refs'");
+    	}
+    }
+
+    /* src\components\Configuration\ModuleGeneralConfiguration.svelte generated by Svelte v3.55.0 */
+
+    const { console: console_1$2 } = globals;
+    const file$h = "src\\components\\Configuration\\ModuleGeneralConfiguration.svelte";
+
+    function get_each_context$8(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[30] = list[i];
+    	return child_ctx;
+    }
+
+    // (95:10) {:else}
+    function create_else_block_4(ctx) {
+    	let option;
+
+    	const block = {
+    		c: function create() {
+    			option = element("option");
+    			option.textContent = "Unallocated";
+    			option.__value = "";
+    			option.value = option.__value;
+    			add_location(option, file$h, 95, 12, 4346);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, option, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(option);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_4.name,
+    		type: "else",
+    		source: "(95:10) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (93:10) {#if $collectionsStore["MODULES"][moduleId].collection === ""}
+    function create_if_block_4$3(ctx) {
+    	let option;
+
+    	const block = {
+    		c: function create() {
+    			option = element("option");
+    			option.textContent = "Unallocated";
+    			option.__value = "";
+    			option.value = option.__value;
+    			option.selected = true;
+    			add_location(option, file$h, 93, 12, 4267);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, option, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(option);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_4$3.name,
+    		type: "if",
+    		source: "(93:10) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].collection === \\\"\\\"}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (101:12) {:else}
+    function create_else_block_3(ctx) {
+    	let option;
+    	let t_value = /*collectionName*/ ctx[30] + "";
+    	let t;
+    	let option_value_value;
+
+    	const block = {
+    		c: function create() {
+    			option = element("option");
+    			t = text(t_value);
+    			option.__value = option_value_value = /*collectionName*/ ctx[30];
+    			option.value = option.__value;
+    			add_location(option, file$h, 101, 14, 4682);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, option, anchor);
+    			append_dev(option, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*$collectionsStore*/ 2 && t_value !== (t_value = /*collectionName*/ ctx[30] + "")) set_data_dev(t, t_value);
+
+    			if (dirty[0] & /*$collectionsStore*/ 2 && option_value_value !== (option_value_value = /*collectionName*/ ctx[30])) {
+    				prop_dev(option, "__value", option_value_value);
+    				option.value = option.__value;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(option);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_3.name,
+    		type: "else",
+    		source: "(101:12) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (99:12) {#if $collectionsStore["MODULES"][moduleId].collection === collectionName}
+    function create_if_block_3$3(ctx) {
+    	let option;
+    	let t_value = /*collectionName*/ ctx[30] + "";
+    	let t;
+    	let option_value_value;
+
+    	const block = {
+    		c: function create() {
+    			option = element("option");
+    			t = text(t_value);
+    			option.__value = option_value_value = /*collectionName*/ ctx[30];
+    			option.value = option.__value;
+    			option.selected = true;
+    			add_location(option, file$h, 99, 14, 4580);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, option, anchor);
+    			append_dev(option, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*$collectionsStore*/ 2 && t_value !== (t_value = /*collectionName*/ ctx[30] + "")) set_data_dev(t, t_value);
+
+    			if (dirty[0] & /*$collectionsStore*/ 2 && option_value_value !== (option_value_value = /*collectionName*/ ctx[30])) {
+    				prop_dev(option, "__value", option_value_value);
+    				option.value = option.__value;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(option);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_3$3.name,
+    		type: "if",
+    		source: "(99:12) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].collection === collectionName}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (98:10) {#each $collectionsStore["COLLECTIONS_ORDER"] as collectionName}
+    function create_each_block$8(ctx) {
+    	let if_block_anchor;
+
+    	function select_block_type_1(ctx, dirty) {
+    		if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].collection === /*collectionName*/ ctx[30]) return create_if_block_3$3;
+    		return create_else_block_3;
+    	}
+
+    	let current_block_type = select_block_type_1(ctx);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if_block.d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block$8.name,
+    		type: "each",
+    		source: "(98:10) {#each $collectionsStore[\\\"COLLECTIONS_ORDER\\\"] as collectionName}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (146:8) {:else}
+    function create_else_block_2(ctx) {
+    	let input;
+    	let input_id_value;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			input = element("input");
+    			attr_dev(input, "type", "text");
+    			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyiText");
+    			set_style(input, "width", "10rem");
+    			input.disabled = true;
+    			attr_dev(input, "class", "svelte-1au0op9");
+    			add_location(input, file$h, 146, 10, 6267);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, input, anchor);
+    			set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyiText);
+
+    			if (!mounted) {
+    				dispose = listen_dev(input, "input", /*input_input_handler_1*/ ctx[11]);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*moduleId, $collectionsStore*/ 3 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyiText")) {
+    				attr_dev(input, "id", input_id_value);
+    			}
+
+    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyiText) {
+    				set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyiText);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(input);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_2.name,
+    		type: "else",
+    		source: "(146:8) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (136:8) {#if $collectionsStore["MODULES"][moduleId].fyi}
+    function create_if_block_2$4(ctx) {
+    	let input;
+    	let input_id_value;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			input = element("input");
+    			attr_dev(input, "type", "text");
+    			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyiText");
+    			set_style(input, "width", "10rem");
+    			attr_dev(input, "class", "svelte-1au0op9");
+    			add_location(input, file$h, 136, 10, 5845);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, input, anchor);
+    			set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyiText);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(input, "input", /*input_input_handler*/ ctx[8]),
+    					listen_dev(input, "click", /*click_handler*/ ctx[9], false, false, false),
+    					listen_dev(input, "keydown", stop_propagation(/*keydown_handler*/ ctx[10]), false, false, true)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*moduleId, $collectionsStore*/ 3 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyiText")) {
+    				attr_dev(input, "id", input_id_value);
+    			}
+
+    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyiText) {
+    				set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyiText);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(input);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2$4.name,
+    		type: "if",
+    		source: "(136:8) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].fyi}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (219:8) {:else}
+    function create_else_block_1$1(ctx) {
+    	let input;
+    	let input_id_value;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			input = element("input");
+    			attr_dev(input, "type", "text");
+    			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num");
+    			set_style(input, "width", "3rem");
+    			add_location(input, file$h, 219, 10, 8911);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, input, anchor);
+    			set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].actualNum);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(input, "input", /*input_input_handler_3*/ ctx[18]),
+    					listen_dev(input, "click", /*click_handler_3*/ ctx[19], false, false, false),
+    					listen_dev(input, "keydown", stop_propagation(/*keydown_handler_3*/ ctx[20]), false, false, true)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*moduleId, $collectionsStore*/ 3 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num")) {
+    				attr_dev(input, "id", input_id_value);
+    			}
+
+    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].actualNum) {
+    				set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].actualNum);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(input);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_1$1.name,
+    		type: "else",
+    		source: "(219:8) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (208:8) {#if $collectionsStore["MODULES"][moduleId].autonum}
+    function create_if_block_1$8(ctx) {
+    	let input;
+    	let input_id_value;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			input = element("input");
+    			attr_dev(input, "type", "text");
+    			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num");
+    			set_style(input, "width", "3rem");
+    			input.disabled = true;
+    			add_location(input, file$h, 208, 10, 8470);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, input, anchor);
+    			set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].actualNum);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(input, "input", /*input_input_handler_2*/ ctx[15]),
+    					listen_dev(input, "click", /*click_handler_2*/ ctx[16], false, false, false),
+    					listen_dev(input, "keydown", stop_propagation(/*keydown_handler_2*/ ctx[17]), false, false, true)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*moduleId, $collectionsStore*/ 3 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num")) {
+    				attr_dev(input, "id", input_id_value);
+    			}
+
+    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].actualNum) {
+    				set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].actualNum);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(input);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$8.name,
+    		type: "if",
+    		source: "(208:8) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].autonum}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (272:8) {:else}
+    function create_else_block$4(ctx) {
+    	let input;
+    	let input_id_value;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			input = element("input");
+    			attr_dev(input, "type", "text");
+    			attr_dev(input, "class", "cc-module-config-engageText svelte-1au0op9");
+    			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engageText");
+    			set_style(input, "width", "10rem");
+    			add_location(input, file$h, 272, 10, 10769);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, input, anchor);
+    			set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engageText);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(input, "input", /*input_input_handler_5*/ ctx[25]),
+    					listen_dev(input, "click", /*click_handler_5*/ ctx[26], false, false, false),
+    					listen_dev(input, "keydown", stop_propagation(/*keydown_handler_5*/ ctx[27]), false, false, true)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*moduleId, $collectionsStore*/ 3 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engageText")) {
+    				attr_dev(input, "id", input_id_value);
+    			}
+
+    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engageText) {
+    				set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engageText);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(input);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block$4.name,
+    		type: "else",
+    		source: "(272:8) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (264:8) {#if !$collectionsStore["MODULES"][moduleId].engage}
+    function create_if_block$b(ctx) {
+    	let input;
+    	let input_id_value;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			input = element("input");
+    			attr_dev(input, "type", "text");
+    			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engageText");
+    			set_style(input, "width", "10rem");
+    			input.disabled = true;
+    			attr_dev(input, "class", "svelte-1au0op9");
+    			add_location(input, file$h, 264, 10, 10506);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, input, anchor);
+    			set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engageText);
+
+    			if (!mounted) {
+    				dispose = listen_dev(input, "input", /*input_input_handler_4*/ ctx[24]);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*moduleId, $collectionsStore*/ 3 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engageText")) {
+    				attr_dev(input, "id", input_id_value);
+    			}
+
+    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engageText) {
+    				set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engageText);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(input);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$b.name,
+    		type: "if",
+    		source: "(264:8) {#if !$collectionsStore[\\\"MODULES\\\"][moduleId].engage}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$k(ctx) {
+    	let div6;
+    	let div2;
+    	let div1;
+    	let span0;
+    	let label0;
+    	let t0;
+    	let label0_for_value;
+    	let t1;
+    	let sl_tooltip0;
+    	let div0;
+    	let raw0_value = /*HELP*/ ctx[5].configCollection.tooltip + "";
+    	let t2;
+    	let a0;
+    	let i0;
+    	let t3;
+    	let span1;
+    	let select;
+    	let if_block0_anchor;
+    	let select_id_value;
+    	let t4;
+    	let div5;
+    	let div4;
+    	let span3;
+    	let label1;
+    	let t5;
+    	let label1_for_value;
+    	let t6;
+    	let sl_tooltip1;
+    	let div3;
+    	let raw1_value = /*HELP*/ ctx[5].configFYI.tooltip + "";
+    	let t7;
+    	let a1;
+    	let i1;
+    	let t8;
+    	let span2;
+    	let input0;
+    	let input0_id_value;
+    	let t9;
+    	let span4;
+    	let t10;
+    	let div13;
+    	let div9;
+    	let div8;
+    	let span5;
+    	let label2;
+    	let t11;
+    	let label2_for_value;
+    	let t12;
+    	let sl_tooltip2;
+    	let div7;
+    	let raw2_value = /*HELP*/ ctx[5].configLabel.tooltip + "";
+    	let t13;
+    	let a2;
+    	let i2;
+    	let t14;
+    	let span6;
+    	let input1;
+    	let input1_id_value;
+    	let t15;
+    	let div12;
+    	let div11;
+    	let span8;
+    	let label3;
+    	let t16;
+    	let label3_for_value;
+    	let t17;
+    	let sl_tooltip3;
+    	let div10;
+    	let raw3_value = /*HELP*/ ctx[5].configAutoNum.tooltip + "";
+    	let t18;
+    	let a3;
+    	let i3;
+    	let t19;
+    	let span7;
+    	let t20;
+    	let input2;
+    	let input2_checked_value;
+    	let input2_id_value;
+    	let t21;
+    	let span9;
+    	let t22;
+    	let div18;
+    	let div16;
+    	let div15;
+    	let span11;
+    	let label4;
+    	let t23;
+    	let label4_for_value;
+    	let t24;
+    	let sl_tooltip4;
+    	let div14;
+    	let raw4_value = /*HELP*/ ctx[5].configEngage.tooltip + "";
+    	let t25;
+    	let a4;
+    	let i4;
+    	let t26;
+    	let span10;
+    	let input3;
+    	let input3_id_value;
+    	let t27;
+    	let span12;
+    	let t28;
+    	let div17;
+    	let t29;
+    	let div20;
+    	let label5;
+    	let t30;
+    	let label5_for_value;
+    	let t31;
+    	let sl_tooltip5;
+    	let div19;
+    	let raw5_value = /*HELP*/ ctx[5].configDescription.tooltip + "";
+    	let t32;
+    	let a5;
+    	let i5;
+    	let t33;
+    	let editor;
+    	let current;
+    	let mounted;
+    	let dispose;
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].collection === "") return create_if_block_4$3;
+    		return create_else_block_4;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block0 = current_block_type(ctx);
+    	let each_value = /*$collectionsStore*/ ctx[1]["COLLECTIONS_ORDER"];
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block$8(get_each_context$8(ctx, each_value, i));
+    	}
+
+    	function select_block_type_2(ctx, dirty) {
+    		if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyi) return create_if_block_2$4;
+    		return create_else_block_2;
+    	}
+
+    	let current_block_type_1 = select_block_type_2(ctx);
+    	let if_block1 = current_block_type_1(ctx);
+
+    	function select_block_type_3(ctx, dirty) {
+    		if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].autonum) return create_if_block_1$8;
+    		return create_else_block_1$1;
+    	}
+
+    	let current_block_type_2 = select_block_type_3(ctx);
+    	let if_block2 = current_block_type_2(ctx);
+
+    	function select_block_type_4(ctx, dirty) {
+    		if (!/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engage) return create_if_block$b;
+    		return create_else_block$4;
+    	}
+
+    	let current_block_type_3 = select_block_type_4(ctx);
+    	let if_block3 = current_block_type_3(ctx);
+
+    	editor = new Editor({
+    			props: {
+    				html: /*html*/ ctx[3],
+    				contentId: "cc-module-config-" + /*moduleId*/ ctx[0] + "-description-editor"
+    			},
+    			$$inline: true
+    		});
+
+    	editor.$on("change", /*change_handler*/ ctx[28]);
+
+    	const block = {
+    		c: function create() {
+    			div6 = element("div");
+    			div2 = element("div");
+    			div1 = element("div");
+    			span0 = element("span");
+    			label0 = element("label");
+    			t0 = text("Collection");
+    			t1 = space();
+    			sl_tooltip0 = element("sl-tooltip");
+    			div0 = element("div");
+    			t2 = space();
+    			a0 = element("a");
+    			i0 = element("i");
+    			t3 = space();
+    			span1 = element("span");
+    			select = element("select");
+    			if_block0.c();
+    			if_block0_anchor = empty();
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t4 = space();
+    			div5 = element("div");
+    			div4 = element("div");
+    			span3 = element("span");
+    			label1 = element("label");
+    			t5 = text("FYI");
+    			t6 = space();
+    			sl_tooltip1 = element("sl-tooltip");
+    			div3 = element("div");
+    			t7 = space();
+    			a1 = element("a");
+    			i1 = element("i");
+    			t8 = space();
+    			span2 = element("span");
+    			input0 = element("input");
+    			t9 = space();
+    			span4 = element("span");
+    			if_block1.c();
+    			t10 = space();
+    			div13 = element("div");
+    			div9 = element("div");
+    			div8 = element("div");
+    			span5 = element("span");
+    			label2 = element("label");
+    			t11 = text("Label");
+    			t12 = space();
+    			sl_tooltip2 = element("sl-tooltip");
+    			div7 = element("div");
+    			t13 = space();
+    			a2 = element("a");
+    			i2 = element("i");
+    			t14 = space();
+    			span6 = element("span");
+    			input1 = element("input");
+    			t15 = space();
+    			div12 = element("div");
+    			div11 = element("div");
+    			span8 = element("span");
+    			label3 = element("label");
+    			t16 = text("Number");
+    			t17 = space();
+    			sl_tooltip3 = element("sl-tooltip");
+    			div10 = element("div");
+    			t18 = space();
+    			a3 = element("a");
+    			i3 = element("i");
+    			t19 = space();
+    			span7 = element("span");
+    			t20 = text("auto:\r\n          ");
+    			input2 = element("input");
+    			t21 = space();
+    			span9 = element("span");
+    			if_block2.c();
+    			t22 = space();
+    			div18 = element("div");
+    			div16 = element("div");
+    			div15 = element("div");
+    			span11 = element("span");
+    			label4 = element("label");
+    			t23 = text("Engage");
+    			t24 = space();
+    			sl_tooltip4 = element("sl-tooltip");
+    			div14 = element("div");
+    			t25 = space();
+    			a4 = element("a");
+    			i4 = element("i");
+    			t26 = space();
+    			span10 = element("span");
+    			input3 = element("input");
+    			t27 = space();
+    			span12 = element("span");
+    			if_block3.c();
+    			t28 = space();
+    			div17 = element("div");
+    			t29 = space();
+    			div20 = element("div");
+    			label5 = element("label");
+    			t30 = text("Description");
+    			t31 = space();
+    			sl_tooltip5 = element("sl-tooltip");
+    			div19 = element("div");
+    			t32 = space();
+    			a5 = element("a");
+    			i5 = element("i");
+    			t33 = space();
+    			create_component(editor.$$.fragment);
+    			attr_dev(label0, "for", label0_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-collection");
+    			add_location(label0, file$h, 73, 8, 3488);
+    			attr_dev(div0, "slot", "content");
+    			add_location(div0, file$h, 75, 10, 3592);
+    			attr_dev(i0, "class", "icon-question cc-module-icon");
+    			add_location(i0, file$h, 83, 12, 3888);
+    			attr_dev(a0, "id", "cc-about-basic-module-collection");
+    			attr_dev(a0, "href", /*HELP*/ ctx[5].configCollection.url);
+    			attr_dev(a0, "target", "_blank");
+    			attr_dev(a0, "rel", "noreferrer");
+    			attr_dev(a0, "class", "cc-module-link");
+    			add_location(a0, file$h, 76, 10, 3667);
+    			set_custom_element_data(sl_tooltip0, "class", "svelte-1au0op9");
+    			add_location(sl_tooltip0, file$h, 74, 8, 3568);
+    			attr_dev(span0, "class", "cc-module-label svelte-1au0op9");
+    			add_location(span0, file$h, 72, 6, 3448);
+    			attr_dev(select, "id", select_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-collection");
+    			attr_dev(select, "class", "svelte-1au0op9");
+    			if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].collection === void 0) add_render_callback(() => /*select_change_handler*/ ctx[6].call(select));
+    			add_location(select, file$h, 88, 8, 4032);
+    			attr_dev(span1, "class", "cc-module-input svelte-1au0op9");
+    			add_location(span1, file$h, 87, 6, 3992);
+    			attr_dev(div1, "class", "cc-module-form svelte-1au0op9");
+    			add_location(div1, file$h, 71, 4, 3412);
+    			attr_dev(div2, "class", "cc-module-col svelte-1au0op9");
+    			add_location(div2, file$h, 70, 2, 3379);
+    			attr_dev(label1, "for", label1_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyi");
+    			add_location(label1, file$h, 113, 8, 5024);
+    			attr_dev(div3, "slot", "content");
+    			add_location(div3, file$h, 115, 10, 5114);
+    			attr_dev(i1, "class", "icon-question cc-module-icon");
+    			add_location(i1, file$h, 122, 12, 5345);
+    			attr_dev(a1, "target", "_blank");
+    			attr_dev(a1, "rel", "noreferrer");
+    			attr_dev(a1, "href", /*HELP*/ ctx[5].configFYI.url);
+    			attr_dev(a1, "class", "cc-module-link");
+    			add_location(a1, file$h, 116, 10, 5182);
+    			set_custom_element_data(sl_tooltip1, "class", "svelte-1au0op9");
+    			add_location(sl_tooltip1, file$h, 114, 8, 5090);
+    			attr_dev(input0, "type", "checkbox");
+    			attr_dev(input0, "id", input0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyi");
+    			set_style(input0, "position", "relative");
+    			set_style(input0, "top", "-0.25rem");
+    			add_location(input0, file$h, 126, 10, 5480);
+    			attr_dev(span2, "class", "cc-config-autonum svelte-1au0op9");
+    			add_location(span2, file$h, 125, 8, 5436);
+    			attr_dev(span3, "class", "cc-module-label svelte-1au0op9");
+    			add_location(span3, file$h, 112, 6, 4984);
+    			attr_dev(span4, "class", "cc-module-input svelte-1au0op9");
+    			add_location(span4, file$h, 134, 6, 5745);
+    			attr_dev(div4, "class", "cc-module-form svelte-1au0op9");
+    			add_location(div4, file$h, 111, 4, 4948);
+    			attr_dev(div5, "class", "cc-module-col svelte-1au0op9");
+    			add_location(div5, file$h, 110, 2, 4915);
+    			attr_dev(div6, "class", "cc-module-row svelte-1au0op9");
+    			add_location(div6, file$h, 69, 0, 3348);
+    			attr_dev(label2, "for", label2_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-label");
+    			add_location(label2, file$h, 163, 8, 6700);
+    			attr_dev(div7, "slot", "content");
+    			add_location(div7, file$h, 165, 10, 6822);
+    			attr_dev(i2, "class", "icon-question cc-module-icon");
+    			add_location(i2, file$h, 167, 12, 6970);
+    			attr_dev(a2, "target", "_blank");
+    			attr_dev(a2, "href", /*HELP*/ ctx[5].configLabel.url);
+    			attr_dev(a2, "rel", "noreferrer");
+    			add_location(a2, file$h, 166, 10, 6892);
+    			set_custom_element_data(sl_tooltip2, "id", "cc-about-module-label");
+    			set_custom_element_data(sl_tooltip2, "class", "svelte-1au0op9");
+    			add_location(sl_tooltip2, file$h, 164, 8, 6771);
+    			attr_dev(span5, "class", "cc-module-label svelte-1au0op9");
+    			add_location(span5, file$h, 162, 6, 6660);
+    			attr_dev(input1, "type", "text");
+    			attr_dev(input1, "id", input1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-label");
+    			set_style(input1, "width", "10rem");
+    			add_location(input1, file$h, 172, 8, 7119);
+    			attr_dev(span6, "class", "cc-module-form-input");
+    			add_location(span6, file$h, 171, 6, 7074);
+    			attr_dev(div8, "class", "cc-module-form svelte-1au0op9");
+    			add_location(div8, file$h, 161, 4, 6624);
+    			attr_dev(div9, "class", "cc-module-col svelte-1au0op9");
+    			add_location(div9, file$h, 160, 2, 6591);
+    			attr_dev(label3, "for", label3_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num");
+    			add_location(label3, file$h, 188, 8, 7657);
+    			attr_dev(div10, "slot", "content");
+    			add_location(div10, file$h, 190, 10, 7750);
+    			attr_dev(i3, "class", "icon-question cc-module-icon");
+    			add_location(i3, file$h, 192, 12, 7902);
+    			attr_dev(a3, "target", "_blank");
+    			attr_dev(a3, "href", /*HELP*/ ctx[5].configAutoNum.url);
+    			attr_dev(a3, "rel", "noreferrer");
+    			add_location(a3, file$h, 191, 10, 7822);
+    			set_custom_element_data(sl_tooltip3, "class", "svelte-1au0op9");
+    			add_location(sl_tooltip3, file$h, 189, 8, 7726);
+    			attr_dev(input2, "type", "checkbox");
+    			input2.checked = input2_checked_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].autonum;
+    			attr_dev(input2, "id", input2_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-autonum");
+    			set_style(input2, "position", "relative");
+    			set_style(input2, "top", "-0.25rem");
+    			add_location(input2, file$h, 197, 10, 8054);
+    			attr_dev(span7, "class", "cc-config-autonum svelte-1au0op9");
+    			add_location(span7, file$h, 195, 8, 7993);
+    			attr_dev(span8, "class", "cc-module-label svelte-1au0op9");
+    			add_location(span8, file$h, 187, 6, 7617);
+    			attr_dev(span9, "class", "cc-module-form-input");
+    			add_location(span9, file$h, 206, 6, 8361);
+    			attr_dev(div11, "class", "cc-module-form svelte-1au0op9");
+    			add_location(div11, file$h, 186, 4, 7581);
+    			attr_dev(div12, "class", "cc-module-col svelte-1au0op9");
+    			add_location(div12, file$h, 185, 2, 7548);
+    			attr_dev(div13, "class", "cc-module-row svelte-1au0op9");
+    			add_location(div13, file$h, 159, 0, 6560);
+    			attr_dev(label4, "for", label4_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engage");
+    			add_location(label4, file$h, 238, 8, 9505);
+    			attr_dev(div14, "slot", "content");
+    			add_location(div14, file$h, 240, 10, 9601);
+    			attr_dev(i4, "class", "icon-question cc-module-icon");
+    			add_location(i4, file$h, 248, 12, 9840);
+    			attr_dev(a4, "target", "_blank");
+    			attr_dev(a4, "rel", "noreferrer");
+    			attr_dev(a4, "href", /*HELP*/ ctx[5].configEngage.url);
+    			attr_dev(a4, "class", "cc-module-link");
+    			add_location(a4, file$h, 242, 10, 9674);
+    			set_custom_element_data(sl_tooltip4, "class", "svelte-1au0op9");
+    			add_location(sl_tooltip4, file$h, 239, 8, 9577);
+    			attr_dev(input3, "type", "checkbox");
+    			attr_dev(input3, "id", input3_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engage");
+    			set_style(input3, "position", "relative");
+    			set_style(input3, "top", "-0.25rem");
+    			add_location(input3, file$h, 252, 10, 9975);
+    			attr_dev(span10, "class", "cc-config-autonum svelte-1au0op9");
+    			add_location(span10, file$h, 251, 8, 9931);
+    			attr_dev(span11, "class", "cc-module-label svelte-1au0op9");
+    			add_location(span11, file$h, 237, 6, 9465);
+    			attr_dev(span12, "class", "cc-module-input svelte-1au0op9");
+    			add_location(span12, file$h, 262, 6, 10402);
+    			attr_dev(div15, "class", "cc-module-form svelte-1au0op9");
+    			add_location(div15, file$h, 236, 4, 9429);
+    			attr_dev(div16, "class", "cc-module-col svelte-1au0op9");
+    			add_location(div16, file$h, 235, 2, 9396);
+    			attr_dev(div17, "class", "cc-module-col svelte-1au0op9");
+    			add_location(div17, file$h, 286, 2, 11273);
+    			attr_dev(div18, "class", "cc-module-row svelte-1au0op9");
+    			add_location(div18, file$h, 234, 0, 9365);
+    			attr_dev(label5, "for", label5_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-description");
+    			add_location(label5, file$h, 290, 2, 11360);
+    			attr_dev(div19, "slot", "content");
+    			add_location(div19, file$h, 292, 4, 11454);
+    			attr_dev(i5, "class", "icon-question cc-module-icon");
+    			add_location(i5, file$h, 300, 6, 11699);
+    			attr_dev(a5, "id", "cc-about-module-description");
+    			attr_dev(a5, "href", /*HELP*/ ctx[5].configDescription.url);
+    			attr_dev(a5, "target", "_blank");
+    			attr_dev(a5, "rel", "noreferrer");
+    			attr_dev(a5, "class", "cc-module-link");
+    			add_location(a5, file$h, 293, 4, 11524);
+    			set_custom_element_data(sl_tooltip5, "class", "svelte-1au0op9");
+    			add_location(sl_tooltip5, file$h, 291, 2, 11436);
+    			attr_dev(div20, "class", "cc-module-config-description svelte-1au0op9");
+    			add_location(div20, file$h, 289, 0, 11314);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div6, anchor);
+    			append_dev(div6, div2);
+    			append_dev(div2, div1);
+    			append_dev(div1, span0);
+    			append_dev(span0, label0);
+    			append_dev(label0, t0);
+    			append_dev(span0, t1);
+    			append_dev(span0, sl_tooltip0);
+    			append_dev(sl_tooltip0, div0);
+    			div0.innerHTML = raw0_value;
+    			append_dev(sl_tooltip0, t2);
+    			append_dev(sl_tooltip0, a0);
+    			append_dev(a0, i0);
+    			append_dev(div1, t3);
+    			append_dev(div1, span1);
+    			append_dev(span1, select);
+    			if_block0.m(select, null);
+    			append_dev(select, if_block0_anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(select, null);
+    			}
+
+    			select_option(select, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].collection);
+    			append_dev(div6, t4);
+    			append_dev(div6, div5);
+    			append_dev(div5, div4);
+    			append_dev(div4, span3);
+    			append_dev(span3, label1);
+    			append_dev(label1, t5);
+    			append_dev(span3, t6);
+    			append_dev(span3, sl_tooltip1);
+    			append_dev(sl_tooltip1, div3);
+    			div3.innerHTML = raw1_value;
+    			append_dev(sl_tooltip1, t7);
+    			append_dev(sl_tooltip1, a1);
+    			append_dev(a1, i1);
+    			append_dev(span3, t8);
+    			append_dev(span3, span2);
+    			append_dev(span2, input0);
+    			input0.checked = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyi;
+    			append_dev(div4, t9);
+    			append_dev(div4, span4);
+    			if_block1.m(span4, null);
+    			insert_dev(target, t10, anchor);
+    			insert_dev(target, div13, anchor);
+    			append_dev(div13, div9);
+    			append_dev(div9, div8);
+    			append_dev(div8, span5);
+    			append_dev(span5, label2);
+    			append_dev(label2, t11);
+    			append_dev(span5, t12);
+    			append_dev(span5, sl_tooltip2);
+    			append_dev(sl_tooltip2, div7);
+    			div7.innerHTML = raw2_value;
+    			append_dev(sl_tooltip2, t13);
+    			append_dev(sl_tooltip2, a2);
+    			append_dev(a2, i2);
+    			append_dev(div8, t14);
+    			append_dev(div8, span6);
+    			append_dev(span6, input1);
+    			set_input_value(input1, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].label);
+    			append_dev(div13, t15);
+    			append_dev(div13, div12);
+    			append_dev(div12, div11);
+    			append_dev(div11, span8);
+    			append_dev(span8, label3);
+    			append_dev(label3, t16);
+    			append_dev(span8, t17);
+    			append_dev(span8, sl_tooltip3);
+    			append_dev(sl_tooltip3, div10);
+    			div10.innerHTML = raw3_value;
+    			append_dev(sl_tooltip3, t18);
+    			append_dev(sl_tooltip3, a3);
+    			append_dev(a3, i3);
+    			append_dev(span8, t19);
+    			append_dev(span8, span7);
+    			append_dev(span7, t20);
+    			append_dev(span7, input2);
+    			append_dev(div11, t21);
+    			append_dev(div11, span9);
+    			if_block2.m(span9, null);
+    			insert_dev(target, t22, anchor);
+    			insert_dev(target, div18, anchor);
+    			append_dev(div18, div16);
+    			append_dev(div16, div15);
+    			append_dev(div15, span11);
+    			append_dev(span11, label4);
+    			append_dev(label4, t23);
+    			append_dev(span11, t24);
+    			append_dev(span11, sl_tooltip4);
+    			append_dev(sl_tooltip4, div14);
+    			div14.innerHTML = raw4_value;
+    			append_dev(sl_tooltip4, t25);
+    			append_dev(sl_tooltip4, a4);
+    			append_dev(a4, i4);
+    			append_dev(span11, t26);
+    			append_dev(span11, span10);
+    			append_dev(span10, input3);
+    			input3.checked = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engage;
+    			append_dev(div15, t27);
+    			append_dev(div15, span12);
+    			if_block3.m(span12, null);
+    			append_dev(div18, t28);
+    			append_dev(div18, div17);
+    			insert_dev(target, t29, anchor);
+    			insert_dev(target, div20, anchor);
+    			append_dev(div20, label5);
+    			append_dev(label5, t30);
+    			append_dev(div20, t31);
+    			append_dev(div20, sl_tooltip5);
+    			append_dev(sl_tooltip5, div19);
+    			div19.innerHTML = raw5_value;
+    			append_dev(sl_tooltip5, t32);
+    			append_dev(sl_tooltip5, a5);
+    			append_dev(a5, i5);
+    			insert_dev(target, t33, anchor);
+    			mount_component(editor, target, anchor);
+    			current = true;
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(select, "change", /*select_change_handler*/ ctx[6]),
+    					listen_dev(input0, "change", /*input0_change_handler*/ ctx[7]),
+    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[12]),
+    					listen_dev(input1, "click", /*click_handler_1*/ ctx[13], false, false, false),
+    					listen_dev(input1, "keydown", stop_propagation(/*keydown_handler_1*/ ctx[14]), false, false, true),
+    					listen_dev(input2, "change", /*switchAutoNum*/ ctx[4], false, false, false),
+    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[21]),
+    					listen_dev(input3, "click", /*click_handler_4*/ ctx[22], false, false, false),
+    					listen_dev(input3, "keydown", /*keydown_handler_4*/ ctx[23], false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && label0_for_value !== (label0_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-collection")) {
+    				attr_dev(label0, "for", label0_for_value);
+    			}
+
+    			if (current_block_type !== (current_block_type = select_block_type(ctx))) {
+    				if_block0.d(1);
+    				if_block0 = current_block_type(ctx);
+
+    				if (if_block0) {
+    					if_block0.c();
+    					if_block0.m(select, if_block0_anchor);
+    				}
+    			}
+
+    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3) {
+    				each_value = /*$collectionsStore*/ ctx[1]["COLLECTIONS_ORDER"];
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context$8(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block$8(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(select, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+
+    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && select_id_value !== (select_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-collection")) {
+    				attr_dev(select, "id", select_id_value);
+    			}
+
+    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3) {
+    				select_option(select, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].collection);
+    			}
+
+    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && label1_for_value !== (label1_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyi")) {
+    				attr_dev(label1, "for", label1_for_value);
+    			}
+
+    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && input0_id_value !== (input0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyi")) {
+    				attr_dev(input0, "id", input0_id_value);
+    			}
+
+    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3) {
+    				input0.checked = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].fyi;
+    			}
+
+    			if (current_block_type_1 === (current_block_type_1 = select_block_type_2(ctx)) && if_block1) {
+    				if_block1.p(ctx, dirty);
+    			} else {
+    				if_block1.d(1);
+    				if_block1 = current_block_type_1(ctx);
+
+    				if (if_block1) {
+    					if_block1.c();
+    					if_block1.m(span4, null);
+    				}
+    			}
+
+    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && label2_for_value !== (label2_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-label")) {
+    				attr_dev(label2, "for", label2_for_value);
+    			}
+
+    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && input1_id_value !== (input1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-label")) {
+    				attr_dev(input1, "id", input1_id_value);
+    			}
+
+    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3 && input1.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].label) {
+    				set_input_value(input1, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].label);
+    			}
+
+    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && label3_for_value !== (label3_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num")) {
+    				attr_dev(label3, "for", label3_for_value);
+    			}
+
+    			if (!current || dirty[0] & /*$collectionsStore, moduleId*/ 3 && input2_checked_value !== (input2_checked_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].autonum)) {
+    				prop_dev(input2, "checked", input2_checked_value);
+    			}
+
+    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && input2_id_value !== (input2_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-autonum")) {
+    				attr_dev(input2, "id", input2_id_value);
+    			}
+
+    			if (current_block_type_2 === (current_block_type_2 = select_block_type_3(ctx)) && if_block2) {
+    				if_block2.p(ctx, dirty);
+    			} else {
+    				if_block2.d(1);
+    				if_block2 = current_block_type_2(ctx);
+
+    				if (if_block2) {
+    					if_block2.c();
+    					if_block2.m(span9, null);
+    				}
+    			}
+
+    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && label4_for_value !== (label4_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engage")) {
+    				attr_dev(label4, "for", label4_for_value);
+    			}
+
+    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && input3_id_value !== (input3_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engage")) {
+    				attr_dev(input3, "id", input3_id_value);
+    			}
+
+    			if (dirty[0] & /*$collectionsStore, moduleId*/ 3) {
+    				input3.checked = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].engage;
+    			}
+
+    			if (current_block_type_3 === (current_block_type_3 = select_block_type_4(ctx)) && if_block3) {
+    				if_block3.p(ctx, dirty);
+    			} else {
+    				if_block3.d(1);
+    				if_block3 = current_block_type_3(ctx);
+
+    				if (if_block3) {
+    					if_block3.c();
+    					if_block3.m(span12, null);
+    				}
+    			}
+
+    			if (!current || dirty[0] & /*moduleId, $collectionsStore*/ 3 && label5_for_value !== (label5_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-description")) {
+    				attr_dev(label5, "for", label5_for_value);
+    			}
+
+    			const editor_changes = {};
+    			if (dirty[0] & /*moduleId*/ 1) editor_changes.contentId = "cc-module-config-" + /*moduleId*/ ctx[0] + "-description-editor";
+    			editor.$set(editor_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(editor.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(editor.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div6);
+    			if_block0.d();
+    			destroy_each(each_blocks, detaching);
+    			if_block1.d();
+    			if (detaching) detach_dev(t10);
+    			if (detaching) detach_dev(div13);
+    			if_block2.d();
+    			if (detaching) detach_dev(t22);
+    			if (detaching) detach_dev(div18);
+    			if_block3.d();
+    			if (detaching) detach_dev(t29);
+    			if (detaching) detach_dev(div20);
+    			if (detaching) detach_dev(t33);
+    			destroy_component(editor, detaching);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$k.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$k($$self, $$props, $$invalidate) {
+    	let $collectionsStore;
+    	let $modulesStore;
+    	let $configStore;
+    	validate_store(collectionsStore, 'collectionsStore');
+    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(1, $collectionsStore = $$value));
+    	validate_store(modulesStore, 'modulesStore');
+    	component_subscribe($$self, modulesStore, $$value => $$invalidate(29, $modulesStore = $$value));
+    	validate_store(configStore, 'configStore');
+    	component_subscribe($$self, configStore, $$value => $$invalidate(2, $configStore = $$value));
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('ModuleGeneralConfiguration', slots, []);
+    	let { moduleId } = $$props;
+    	let html = $collectionsStore["MODULES"][moduleId].description;
+    	console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
+    	console.log($modulesStore);
+
+    	onMount(() => {
+    		const editorId = `cc-module-config-${moduleId}-description-editor`;
+    		let editorElem = document.getElementById(editorId);
+
+    		if (editorElem) {
+    			editorElem.onkeydown = e => e.stopPropagation();
+    		}
+    	});
+
+    	/**
+     * @function switchAutoNum
+     * @description called when the autonum is toggled on/off needs to
+     * In theory, the value has already been changed
+     * - call calculateActualNum
+     * - set needToSaveCollections to true
+     */
+    	function switchAutoNum() {
+    		set_store_value(collectionsStore, $collectionsStore["MODULES"][moduleId].autonum = !$collectionsStore["MODULES"][moduleId].autonum, $collectionsStore);
+    		calculateActualNum($modulesStore, $collectionsStore["MODULES"]);
+    		set_store_value(collectionsStore, $collectionsStore["NEED_TO_SAVE_COLLECTIONS"] = true, $collectionsStore);
+    	}
+
+    	const HELP = {
+    		configCollection: {
+    			tooltip: `To which of the available collections does this module belong?`,
+    			url: "https://djplaner.github.io/canvas-collections/getting-started/configure/modules/#module-properties"
+    		},
+    		configFYI: {
+    			tooltip: `<p>Represent the module as a "for your information" (fyi) object. Only display collection related information.
+		Display no information about the corresponding module. Always display the object, even when the module is unpublished.</p>
+		<p>Optionally, provide some text to add to the representation.</p>`,
+    			url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#fyi-objects"
+    		},
+    		configDescription: {
+    			tooltip: `Describe why, what or how the module relates to the students' learning`,
+    			url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#description"
+    		},
+    		configEngage: {
+    			tooltip: `For cards representations, specify <ol> <li> if there will be an "engage" button; and, </li> <li> what the button text will be. </li> </ol>`,
+    			url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button"
+    		},
+    		configLabel: {
+    			tooltip: `Describe the type of object the module represents (e.g. lecture, theme etc.)`,
+    			url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button"
+    		},
+    		configAutoNum: {
+    			tooltip: `If and how a label specific number will be calculated for the module 
+		(e.g. <em>Lecture 1</em> or <em>Workshop 5</em>)<p>Auto number or specify a value.</p>`,
+    			url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#labels-and-numbers"
+    		}
+    	};
+
+    	$$self.$$.on_mount.push(function () {
+    		if (moduleId === undefined && !('moduleId' in $$props || $$self.$$.bound[$$self.$$.props['moduleId']])) {
+    			console_1$2.warn("<ModuleGeneralConfiguration> was created without expected prop 'moduleId'");
+    		}
+    	});
+
+    	const writable_props = ['moduleId'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$2.warn(`<ModuleGeneralConfiguration> was created with unknown prop '${key}'`);
+    	});
+
+    	function select_change_handler() {
+    		$collectionsStore["MODULES"][moduleId].collection = select_value(this);
+    		collectionsStore.set($collectionsStore);
+    	}
+
+    	function input0_change_handler() {
+    		$collectionsStore["MODULES"][moduleId].fyi = this.checked;
+    		collectionsStore.set($collectionsStore);
+    	}
+
+    	function input_input_handler() {
+    		$collectionsStore["MODULES"][moduleId].fyiText = this.value;
+    		collectionsStore.set($collectionsStore);
+    	}
+
+    	const click_handler = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+    	const keydown_handler = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+
+    	function input_input_handler_1() {
+    		$collectionsStore["MODULES"][moduleId].fyiText = this.value;
+    		collectionsStore.set($collectionsStore);
+    	}
+
+    	function input1_input_handler() {
+    		$collectionsStore["MODULES"][moduleId].label = this.value;
+    		collectionsStore.set($collectionsStore);
+    	}
+
+    	const click_handler_1 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+    	const keydown_handler_1 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+
+    	function input_input_handler_2() {
+    		$collectionsStore["MODULES"][moduleId].actualNum = this.value;
+    		collectionsStore.set($collectionsStore);
+    	}
+
+    	const click_handler_2 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+    	const keydown_handler_2 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+
+    	function input_input_handler_3() {
+    		$collectionsStore["MODULES"][moduleId].actualNum = this.value;
+    		collectionsStore.set($collectionsStore);
+    	}
+
+    	const click_handler_3 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+    	const keydown_handler_3 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+
+    	function input3_change_handler() {
+    		$collectionsStore["MODULES"][moduleId].engage = this.checked;
+    		collectionsStore.set($collectionsStore);
+    	}
+
+    	const click_handler_4 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+    	const keydown_handler_4 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+
+    	function input_input_handler_4() {
+    		$collectionsStore["MODULES"][moduleId].engageText = this.value;
+    		collectionsStore.set($collectionsStore);
+    	}
+
+    	function input_input_handler_5() {
+    		$collectionsStore["MODULES"][moduleId].engageText = this.value;
+    		collectionsStore.set($collectionsStore);
+    	}
+
+    	const click_handler_5 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+    	const keydown_handler_5 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+
+    	const change_handler = evt => {
+    		set_store_value(collectionsStore, $collectionsStore["MODULES"][moduleId].description = evt.detail, $collectionsStore);
+    		set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+    	};
+
+    	$$self.$$set = $$props => {
+    		if ('moduleId' in $$props) $$invalidate(0, moduleId = $$props.moduleId);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		modulesStore,
+    		collectionsStore,
+    		configStore,
+    		calculateActualNum,
+    		onMount,
+    		Editor,
+    		debug: debug$1,
+    		moduleId,
+    		html,
+    		switchAutoNum,
+    		HELP,
+    		$collectionsStore,
+    		$modulesStore,
+    		$configStore
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('moduleId' in $$props) $$invalidate(0, moduleId = $$props.moduleId);
+    		if ('html' in $$props) $$invalidate(3, html = $$props.html);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [
+    		moduleId,
+    		$collectionsStore,
+    		$configStore,
+    		html,
+    		switchAutoNum,
+    		HELP,
+    		select_change_handler,
+    		input0_change_handler,
+    		input_input_handler,
+    		click_handler,
+    		keydown_handler,
+    		input_input_handler_1,
+    		input1_input_handler,
+    		click_handler_1,
+    		keydown_handler_1,
+    		input_input_handler_2,
+    		click_handler_2,
+    		keydown_handler_2,
+    		input_input_handler_3,
+    		click_handler_3,
+    		keydown_handler_3,
+    		input3_change_handler,
+    		click_handler_4,
+    		keydown_handler_4,
+    		input_input_handler_4,
+    		input_input_handler_5,
+    		click_handler_5,
+    		keydown_handler_5,
+    		change_handler
+    	];
+    }
+
+    class ModuleGeneralConfiguration extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$k, create_fragment$k, safe_not_equal, { moduleId: 0 }, null, [-1, -1]);
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "ModuleGeneralConfiguration",
+    			options,
+    			id: create_fragment$k.name
+    		});
+    	}
+
+    	get moduleId() {
+    		throw new Error("<ModuleGeneralConfiguration>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set moduleId(value) {
+    		throw new Error("<ModuleGeneralConfiguration>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
     /* src\components\Configuration\ModuleBannerConfiguration.svelte generated by Svelte v3.55.0 */
     const file$g = "src\\components\\Configuration\\ModuleBannerConfiguration.svelte";
 
@@ -17722,235 +18455,6 @@ Do you want to use the sanitised value?`)) {
     	set moduleId(value) {
     		throw new Error("<ModuleMetaDataConfiguration>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
-    }
-
-    /**
-     * Define suite of methods to interact with Canvas during app set up
-     */
-    /**
-     * @function checkContext
-     * @returns {Object} containing editMode, courseId, modulesPage
-     * @description Check the current URL to determine it it is Canvas modules
-     * page, identify the courseId and if we're in edit mode
-     */
-    function checkContext() {
-        let context = {
-            editMode: false,
-            courseId: null,
-            modulesPage: false,
-            csrfToken: null,
-            currentCollection: 0,
-            showConfig: false
-        };
-        // replace # at end of string
-        let url = new URL(window.location.href);
-        // check if there's a cc-collection-\d+ in the hash
-        // this is the case for internal navigation within collections
-        // i.e. we're on a modules page
-        let hash = url.hash;
-        if (hash) {
-            let checkNum = hash.match(/cc-collection-(\d+)/);
-            if (checkNum) {
-                // will set this to a number now, for later translation to collectionName
-                context.currentCollection = parseInt(checkNum[1]);
-            }
-        }
-        url.hash = "";
-        const documentUrl = url.href;
-        //documentUrl = documentUrl.replace(/#$/, '');
-        // courseId
-        // Following adapted from https://github.com/msdlt/canvas-where-am-I
-        // if ENV object has a COURSE_ID field and it is an integer, set context.courseId
-        if (ENV.COURSE_ID && ENV.COURSE_ID.match(/^\d+$/)) {
-            context.courseId = ENV.COURSE_ID;
-        }
-        else {
-            // try and extract it from the URL
-            let urlPartIncludingCourseId = documentUrl.split("courses/")[1];
-            if (urlPartIncludingCourseId) {
-                const localCourseId = urlPartIncludingCourseId.split("/")[0];
-                // if localCourseId is an integer, set context.courseId
-                if (localCourseId.match(/^\d+$/)) {
-                    context.courseId = localCourseId;
-                }
-            }
-        }
-        // fail here if we've not gotten a courseId
-        if (!context.courseId) {
-            throw new Error("No courseId found");
-        }
-        // modulesPage true if location ends with courses/${courseId}/modules
-        let regEx = new RegExp(`courses/${context.courseId}/modules(/*|#*|#[^/]+)$`);
-        context.modulesPage = regEx.test(documentUrl);
-        if (!context.modulesPage) {
-            // check to see if the home page has been set to modules
-            // homeModulesPage true iff
-            // - location ends with courses/${courseId}
-            // - div#context_modules is present
-            regEx = new RegExp(`courses/${context.courseId}$`);
-            context.modulesPage =
-                regEx.test(documentUrl) &&
-                    document.getElementById("context_modules") !== null;
-        }
-        // editMode true iff a#easy_student_view exists
-        // TODO - perhaps replace/extend this with another check using
-        // the course object later
-        context.editMode = document.getElementById("easy_student_view") !== null;
-        context.csrfToken = setCsrfToken();
-        return context;
-    }
-    /**
-    * @function setCsrfToken
-    * @returns {String} csrfToken
-     * Following adapted from https://github.com/msdlt/canvas-where-am-I
-     * Function which returns csrf_token from cookie see:
-     * https://community.canvaslms.com/thread/22500-mobile-javascript-development
-     */
-    function setCsrfToken() {
-        let csrfRegex = new RegExp('^_csrf_token=(.*)$');
-        let cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            let cookie = cookies[i].trim();
-            let match = csrfRegex.exec(cookie);
-            if (match) {
-                return decodeURIComponent(match[1]);
-            }
-        }
-        return null;
-    }
-    /**
-     * Fetch function for retrieving information from a single endpoint request
-     * @param {String} reqUrl Endpoint URL to query the Canvas API
-     * @returns Response Object
-     */
-    const wf_fetchData = async (reqUrl) => {
-        const url = reqUrl;
-        try {
-            const res = await fetch(url);
-            if (res.status === 404) // Endpoint not found
-                return null;
-            if (res.status === 401) // User not authorized
-                return null;
-            const json = await res.json();
-            return json;
-        }
-        catch (e) {
-            console.error(`Could not fetch requested information: ${e}`);
-        }
-    };
-    /**
-     * @function wf_postData
-     * @param reqUrl
-     * @param data
-     * @param csrf
-     * @param post - POST or PUT
-     * @returns json response (if successful), null otherwise
-     *
-     */
-    const wf_postData = async (reqUrl, data, csrf, post = "POST") => {
-        try {
-            const res = await fetch(reqUrl, {
-                method: post, credentials: 'include',
-                headers: {
-                    "Content-Type": "application/json; charset=UTF-8",
-                    "Accept": "application/json; charset=UTF-8",
-                    "X-CSRF-Token": csrf
-                },
-                body: data,
-            });
-            if (res.status === 404) // Endpoint not found
-                return null;
-            if (res.status === 401) // User not authorized
-                return null;
-            const json = await res.json();
-            return json;
-        }
-        catch (e) {
-            console.error(`Could not post requested information: ${e}`);
-        }
-    };
-    /**
-     * add the div#canvas-collections-representation to the DOM ready for
-     * the Svelte component to be added
-     * Return the div if added, null if not
-     */
-    function addCollectionsRepresentation() {
-        debug("::::::::::::: addCollectionsRepresentation ::::::::::::::");
-        // check that there isn't already a div#canvas-collections-representation
-        // if there is, do nothing
-        const representation = document.querySelector("div#canvas-collections-representation");
-        if (representation) {
-            return null;
-        }
-        // get the div#context-modules
-        const contextModules = document.querySelector("div#context_modules");
-        if (!contextModules) {
-            return null;
-        }
-        // add a div#canvas-collections-representation as first child of div#context-modules
-        let canvasCollectionsRepresentation = document.createElement("div");
-        canvasCollectionsRepresentation.id = "canvas-collections-representation";
-        contextModules.prepend(canvasCollectionsRepresentation);
-        return canvasCollectionsRepresentation;
-    }
-    /**
-     * @function removeCollectionsRepresentation
-     * @description Remove the div#canvas-collections-representation from the DOM
-     */
-    function removeCollectionsRepresentation() {
-        debug(":::::::::::::: removeCollectionsRepresentation ::::::::::::::");
-        const representation = document.querySelector("div#canvas-collections-representation");
-        if (representation) {
-            representation.remove();
-        }
-    }
-    /**
-     * @function removeModuleConfiguration
-     * @param {Object} modules - hash of module objects keyed on moduleId
-     * @description loop through all the modules and remove div#cc-module-config-<moduleId>
-     */
-    function removeModuleConfiguration(modules) {
-        // loop thru the keys of the modules hash
-        Object.keys(modules).forEach((moduleId) => {
-            const moduleConfig = document.querySelector(`div#cc-module-config-${moduleId}`);
-            if (moduleConfig) {
-                moduleConfig.remove();
-            }
-            // make sure all the modules are visible
-            const module = document.getElementById(`context_module_${moduleId}`);
-            if (module) {
-                module.style.display = "block";
-            }
-        });
-    }
-    /**
-     * @function getPageName
-     * @param {String} pageName - name of the page
-     * @param {String} courseId - id of the course
-     * @param {Function} callBack - function to call when the page name is found (or not)
-     * @description Given the visible name of a page (e.g. "Canvas Collections Configuration")
-     * - Slugify the name (e.g. "canvas-collections-configuration")
-     * - use the Canvas API to get the page Object
-     * - return the pageName and the results (positive or not) to the callBack function
-     * - The pageObject will be null if page not found
-     */
-    function getPageName(pageName, courseId, callBack) {
-        debug(`-------------------- getPageName -- ${pageName} ---------------------`);
-        String.prototype.slugify = function (separator = "-") {
-            return this
-                .toString()
-                .normalize('NFD') // split an accented letter in the base letter and the acent
-                .replace(/[\u0300-\u036f]/g, '') // remove all previously split accents
-                .toLowerCase()
-                .trim()
-                .replace('@', 'at')
-                .replace(/[^a-z0-9 ]/g, '') // remove all chars not letters, numbers and spaces (to be replaced)
-                .replace(/\s+/g, separator);
-        };
-        const slugifiedPageName = pageName.slugify();
-        const apiUrl = `https://${document.location.hostname}/api/v1/courses/${courseId}/pages/${slugifiedPageName}`;
-        debug(`apiUrl: ${apiUrl}`);
-        wf_fetchData(apiUrl).then((data) => { callBack(pageName, data); });
     }
 
     /* src\components\ModuleConfiguration.svelte generated by Svelte v3.55.0 */
@@ -20909,7 +21413,7 @@ Do you want to use the sanitised value?`)) {
     	return child_ctx;
     }
 
-    // (99:4) {#if !(!$collectionsStore["MODULES"][theModule.id].published && !$configStore["editMode"])}
+    // (97:4) {#if !(!$collectionsStore["MODULES"][theModule.id].published && !$configStore["editMode"])}
     function create_if_block$6(ctx) {
     	let div9;
     	let div8;
@@ -20930,19 +21434,19 @@ Do you want to use the sanitised value?`)) {
     	let div3;
     	let div1;
     	let span;
-    	let t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].label + "";
+    	let t6_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].label + "";
     	let t6;
     	let t7;
-    	let t8_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].actualNum + "";
+    	let t8_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].actualNum + "";
     	let t8;
     	let t9;
     	let h3;
-    	let t10_value = /*deLabelModuleName*/ ctx[6](/*theModule*/ ctx[8].id) + "";
+    	let t10_value = /*deLabelModuleName*/ ctx[5](/*theModule*/ ctx[8].id) + "";
     	let t10;
     	let h3_data_moduleid_value;
     	let t11;
     	let div2;
-    	let raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].description + "";
+    	let raw_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].description + "";
     	let div3_class_value;
     	let t12;
     	let div6;
@@ -20955,7 +21459,7 @@ Do you want to use the sanitised value?`)) {
     	let current;
     	let mounted;
     	let dispose;
-    	var switch_value = /*BANNER_TRANSLATION*/ ctx[5][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].banner];
+    	var switch_value = /*BANNER_TRANSLATION*/ ctx[4][/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].banner];
 
     	function switch_props(ctx) {
     		return {
@@ -20970,15 +21474,15 @@ Do you want to use the sanitised value?`)) {
 
     	datewidget = new DateWidget({
     			props: {
-    				date: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].date,
-    				calendar: /*calendar*/ ctx[1]
+    				date: /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].date,
+    				calendar: /*calendar*/ ctx[0]
     			},
     			$$inline: true
     		});
 
-    	let if_block0 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_3$1(ctx);
-    	let if_block1 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].published && create_if_block_2$2(ctx);
-    	let if_block2 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_1$4(ctx);
+    	let if_block0 = /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_3$1(ctx);
+    	let if_block1 = !/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].published && create_if_block_2$2(ctx);
+    	let if_block2 = /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_1$4(ctx);
 
     	const block = {
     		c: function create() {
@@ -21018,43 +21522,43 @@ Do you want to use the sanitised value?`)) {
     			attr_dev(a, "class", "cc-card-link svelte-1oao3hv");
     			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
     			attr_dev(a, "style", "");
-    			add_location(a, file$9, 110, 14, 3982);
+    			add_location(a, file$9, 108, 14, 3911);
     			attr_dev(div0, "class", "cc-card-banner-container svelte-1oao3hv");
     			attr_dev(div0, "data-moduleid", div0_data_moduleid_value = /*theModule*/ ctx[8].id);
-    			add_location(div0, file$9, 109, 12, 3899);
+    			add_location(div0, file$9, 107, 12, 3828);
     			attr_dev(span, "class", "cc-card-label svelte-1oao3hv");
-    			add_location(span, file$9, 147, 18, 5551);
+    			add_location(span, file$9, 145, 18, 5480);
     			attr_dev(h3, "class", "cc-card-title svelte-1oao3hv");
     			attr_dev(h3, "data-moduleid", h3_data_moduleid_value = /*theModule*/ ctx[8].id);
-    			add_location(h3, file$9, 151, 18, 5774);
+    			add_location(h3, file$9, 149, 18, 5703);
     			attr_dev(div1, "class", "cc-card-label svelte-1oao3hv");
-    			add_location(div1, file$9, 146, 16, 5504);
+    			add_location(div1, file$9, 144, 16, 5433);
     			attr_dev(div2, "class", "cc-card-description svelte-1oao3hv");
-    			add_location(div2, file$9, 155, 16, 5951);
+    			add_location(div2, file$9, 153, 16, 5880);
 
-    			attr_dev(div3, "class", div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
+    			attr_dev(div3, "class", div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].fyi
     			? "cc-card-content"
     			: "cc-unclickable-card-content") + " svelte-1oao3hv"));
 
-    			add_location(div3, file$9, 141, 14, 5302);
+    			add_location(div3, file$9, 139, 14, 5231);
     			attr_dev(div4, "class", "cc-card-content-height svelte-1oao3hv");
-    			add_location(div4, file$9, 139, 12, 5191);
+    			add_location(div4, file$9, 137, 12, 5120);
     			attr_dev(div5, "class", "cc-progress svelte-1oao3hv");
-    			add_location(div5, file$9, 169, 14, 6650);
+    			add_location(div5, file$9, 167, 14, 6579);
     			attr_dev(div6, "class", "cc-card-footer svelte-1oao3hv");
-    			add_location(div6, file$9, 160, 12, 6146);
+    			add_location(div6, file$9, 158, 12, 6075);
     			attr_dev(div7, "class", "cc-card-flex svelte-1oao3hv");
-    			add_location(div7, file$9, 108, 10, 3859);
+    			add_location(div7, file$9, 106, 10, 3788);
     			attr_dev(div8, "id", div8_id_value = "cc_module_" + /*theModule*/ ctx[8].id);
     			attr_dev(div8, "class", "cc-card svelte-1oao3hv");
-    			add_location(div8, file$9, 107, 8, 3796);
+    			add_location(div8, file$9, 105, 8, 3725);
     			attr_dev(div9, "id", div9_id_value = "cc_module_" + /*theModule*/ ctx[8].id);
 
-    			attr_dev(div9, "class", div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
+    			attr_dev(div9, "class", div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].fyi
     			? "cc-unclickable-card"
     			: "cc-clickable-card") + " svelte-1oao3hv"));
 
-    			add_location(div9, file$9, 99, 6, 3530);
+    			add_location(div9, file$9, 97, 6, 3459);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div9, anchor);
@@ -21103,14 +21607,14 @@ Do you want to use the sanitised value?`)) {
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (!current || dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
+    			if (!current || dirty & /*modules*/ 4 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
     				attr_dev(a, "href", a_href_value);
     			}
 
     			const switch_instance_changes = {};
-    			if (dirty & /*modules*/ 8) switch_instance_changes.moduleId = /*theModule*/ ctx[8].id;
+    			if (dirty & /*modules*/ 4) switch_instance_changes.moduleId = /*theModule*/ ctx[8].id;
 
-    			if (switch_value !== (switch_value = /*BANNER_TRANSLATION*/ ctx[5][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].banner])) {
+    			if (switch_value !== (switch_value = /*BANNER_TRANSLATION*/ ctx[4][/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].banner])) {
     				if (switch_instance) {
     					group_outros();
     					const old_component = switch_instance;
@@ -21135,11 +21639,11 @@ Do you want to use the sanitised value?`)) {
     			}
 
     			const datewidget_changes = {};
-    			if (dirty & /*$collectionsStore, modules*/ 12) datewidget_changes.date = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].date;
-    			if (dirty & /*calendar*/ 2) datewidget_changes.calendar = /*calendar*/ ctx[1];
+    			if (dirty & /*$collectionsStore, modules*/ 6) datewidget_changes.date = /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].date;
+    			if (dirty & /*calendar*/ 1) datewidget_changes.calendar = /*calendar*/ ctx[0];
     			datewidget.$set(datewidget_changes);
 
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
+    			if (/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
@@ -21152,7 +21656,7 @@ Do you want to use the sanitised value?`)) {
     				if_block0 = null;
     			}
 
-    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].published) {
+    			if (!/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].published) {
     				if (if_block1) ; else {
     					if_block1 = create_if_block_2$2(ctx);
     					if_block1.c();
@@ -21163,26 +21667,26 @@ Do you want to use the sanitised value?`)) {
     				if_block1 = null;
     			}
 
-    			if (!current || dirty & /*modules*/ 8 && div0_data_moduleid_value !== (div0_data_moduleid_value = /*theModule*/ ctx[8].id)) {
+    			if (!current || dirty & /*modules*/ 4 && div0_data_moduleid_value !== (div0_data_moduleid_value = /*theModule*/ ctx[8].id)) {
     				attr_dev(div0, "data-moduleid", div0_data_moduleid_value);
     			}
 
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && t6_value !== (t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].label + "")) set_data_dev(t6, t6_value);
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && t8_value !== (t8_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].actualNum + "")) set_data_dev(t8, t8_value);
-    			if ((!current || dirty & /*modules*/ 8) && t10_value !== (t10_value = /*deLabelModuleName*/ ctx[6](/*theModule*/ ctx[8].id) + "")) set_data_dev(t10, t10_value);
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 6) && t6_value !== (t6_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].label + "")) set_data_dev(t6, t6_value);
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 6) && t8_value !== (t8_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].actualNum + "")) set_data_dev(t8, t8_value);
+    			if ((!current || dirty & /*modules*/ 4) && t10_value !== (t10_value = /*deLabelModuleName*/ ctx[5](/*theModule*/ ctx[8].id) + "")) set_data_dev(t10, t10_value);
 
-    			if (!current || dirty & /*modules*/ 8 && h3_data_moduleid_value !== (h3_data_moduleid_value = /*theModule*/ ctx[8].id)) {
+    			if (!current || dirty & /*modules*/ 4 && h3_data_moduleid_value !== (h3_data_moduleid_value = /*theModule*/ ctx[8].id)) {
     				attr_dev(h3, "data-moduleid", h3_data_moduleid_value);
     			}
 
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw_value !== (raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].description + "")) div2.innerHTML = raw_value;
-    			if (!current || dirty & /*$collectionsStore, modules*/ 12 && div3_class_value !== (div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 6) && raw_value !== (raw_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].description + "")) div2.innerHTML = raw_value;
+    			if (!current || dirty & /*$collectionsStore, modules*/ 6 && div3_class_value !== (div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].fyi
     			? "cc-card-content"
     			: "cc-unclickable-card-content") + " svelte-1oao3hv"))) {
     				attr_dev(div3, "class", div3_class_value);
     			}
 
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
+    			if (/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
     				if (if_block2) {
     					if_block2.p(ctx, dirty);
     				} else {
@@ -21195,15 +21699,15 @@ Do you want to use the sanitised value?`)) {
     				if_block2 = null;
     			}
 
-    			if (!current || dirty & /*modules*/ 8 && div8_id_value !== (div8_id_value = "cc_module_" + /*theModule*/ ctx[8].id)) {
+    			if (!current || dirty & /*modules*/ 4 && div8_id_value !== (div8_id_value = "cc_module_" + /*theModule*/ ctx[8].id)) {
     				attr_dev(div8, "id", div8_id_value);
     			}
 
-    			if (!current || dirty & /*modules*/ 8 && div9_id_value !== (div9_id_value = "cc_module_" + /*theModule*/ ctx[8].id)) {
+    			if (!current || dirty & /*modules*/ 4 && div9_id_value !== (div9_id_value = "cc_module_" + /*theModule*/ ctx[8].id)) {
     				attr_dev(div9, "id", div9_id_value);
     			}
 
-    			if (!current || dirty & /*$collectionsStore, modules*/ 12 && div9_class_value !== (div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
+    			if (!current || dirty & /*$collectionsStore, modules*/ 6 && div9_class_value !== (div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].fyi
     			? "cc-unclickable-card"
     			: "cc-clickable-card") + " svelte-1oao3hv"))) {
     				attr_dev(div9, "class", div9_class_value);
@@ -21236,20 +21740,20 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block$6.name,
     		type: "if",
-    		source: "(99:4) {#if !(!$collectionsStore[\\\"MODULES\\\"][theModule.id].published && !$configStore[\\\"editMode\\\"])}",
+    		source: "(97:4) {#if !(!$collectionsStore[\\\"MODULES\\\"][theModule.id].published && !$configStore[\\\"editMode\\\"])}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (125:14) {#if $collectionsStore["MODULES"][theModule.id].fyi}
+    // (123:14) {#if $collectionsStore["MODULES"][theModule.id].fyi}
     function create_if_block_3$1(ctx) {
     	let div;
     	let span;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText) return create_if_block_4$1;
+    		if (/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].fyiText) return create_if_block_4$1;
     		return create_else_block;
     	}
 
@@ -21262,9 +21766,9 @@ Do you want to use the sanitised value?`)) {
     			span = element("span");
     			if_block.c();
     			attr_dev(span, "class", "cc-fyi-text");
-    			add_location(span, file$9, 126, 18, 4657);
+    			add_location(span, file$9, 124, 18, 4586);
     			attr_dev(div, "class", "cc-card-fyi svelte-1oao3hv");
-    			add_location(div, file$9, 125, 16, 4612);
+    			add_location(div, file$9, 123, 16, 4541);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -21294,14 +21798,14 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block_3$1.name,
     		type: "if",
-    		source: "(125:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		source: "(123:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (130:20) {:else}
+    // (128:20) {:else}
     function create_else_block(ctx) {
     	let t;
 
@@ -21322,16 +21826,16 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(130:20) {:else}",
+    		source: "(128:20) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (128:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
+    // (126:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
     function create_if_block_4$1(ctx) {
-    	let t_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "";
+    	let t_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "";
     	let t;
 
     	const block = {
@@ -21342,7 +21846,7 @@ Do you want to use the sanitised value?`)) {
     			insert_dev(target, t, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 12 && t_value !== (t_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "")) set_data_dev(t, t_value);
+    			if (dirty & /*$collectionsStore, modules*/ 6 && t_value !== (t_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(t);
@@ -21353,14 +21857,14 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block_4$1.name,
     		type: "if",
-    		source: "(128:20) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText}",
+    		source: "(126:20) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (136:14) {#if !$collectionsStore["MODULES"][theModule.id].published}
+    // (134:14) {#if !$collectionsStore["MODULES"][theModule.id].published}
     function create_if_block_2$2(ctx) {
     	let div;
 
@@ -21369,7 +21873,7 @@ Do you want to use the sanitised value?`)) {
     			div = element("div");
     			div.textContent = "Unpublished";
     			attr_dev(div, "class", "cc-card-published svelte-1oao3hv");
-    			add_location(div, file$9, 136, 16, 5088);
+    			add_location(div, file$9, 134, 16, 5017);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -21383,14 +21887,14 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block_2$2.name,
     		type: "if",
-    		source: "(136:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].published}",
+    		source: "(134:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].published}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (162:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
+    // (160:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
     function create_if_block_1$4(ctx) {
     	let div1;
     	let div0;
@@ -21398,7 +21902,7 @@ Do you want to use the sanitised value?`)) {
     	let t0;
     	let a_href_value;
     	let t1;
-    	let t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engageText + "";
+    	let t2_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].engageText + "";
     	let t2;
 
     	const block = {
@@ -21411,11 +21915,11 @@ Do you want to use the sanitised value?`)) {
     			t2 = text(t2_value);
     			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
     			attr_dev(a, "class", "gu-engage svelte-1oao3hv");
-    			add_location(a, file$9, 164, 20, 6419);
+    			add_location(a, file$9, 162, 20, 6348);
     			attr_dev(div0, "class", "cc-card-engage-button svelte-1oao3hv");
-    			add_location(div0, file$9, 163, 18, 6362);
+    			add_location(div0, file$9, 161, 18, 6291);
     			attr_dev(div1, "class", "cc-card-engage svelte-1oao3hv");
-    			add_location(div1, file$9, 162, 16, 6314);
+    			add_location(div1, file$9, 160, 16, 6243);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -21426,11 +21930,11 @@ Do you want to use the sanitised value?`)) {
     			append_dev(div0, t2);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
+    			if (dirty & /*modules*/ 4 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
     				attr_dev(a, "href", a_href_value);
     			}
 
-    			if (dirty & /*$collectionsStore, modules*/ 12 && t2_value !== (t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engageText + "")) set_data_dev(t2, t2_value);
+    			if (dirty & /*$collectionsStore, modules*/ 6 && t2_value !== (t2_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].engageText + "")) set_data_dev(t2, t2_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div1);
@@ -21441,18 +21945,18 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block_1$4.name,
     		type: "if",
-    		source: "(162:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		source: "(160:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (98:2) {#each modules as theModule}
+    // (96:2) {#each modules as theModule}
     function create_each_block$5(ctx) {
     	let if_block_anchor;
     	let current;
-    	let if_block = !(!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].published && !/*$configStore*/ ctx[4]["editMode"]) && create_if_block$6(ctx);
+    	let if_block = !(!/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].published && !/*$configStore*/ ctx[3]["editMode"]) && create_if_block$6(ctx);
 
     	const block = {
     		c: function create() {
@@ -21465,11 +21969,11 @@ Do you want to use the sanitised value?`)) {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (!(!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].published && !/*$configStore*/ ctx[4]["editMode"])) {
+    			if (!(!/*$collectionsStore*/ ctx[1]["MODULES"][/*theModule*/ ctx[8].id].published && !/*$configStore*/ ctx[3]["editMode"])) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
 
-    					if (dirty & /*$collectionsStore, modules, $configStore*/ 28) {
+    					if (dirty & /*$collectionsStore, modules, $configStore*/ 14) {
     						transition_in(if_block, 1);
     					}
     				} else {
@@ -21507,7 +22011,7 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_each_block$5.name,
     		type: "each",
-    		source: "(98:2) {#each modules as theModule}",
+    		source: "(96:2) {#each modules as theModule}",
     		ctx
     	});
 
@@ -21515,13 +22019,9 @@ Do you want to use the sanitised value?`)) {
     }
 
     function create_fragment$c(ctx) {
-    	let h3;
-    	let t0;
-    	let t1;
-    	let t2;
     	let div;
     	let current;
-    	let each_value = /*modules*/ ctx[3];
+    	let each_value = /*modules*/ ctx[2];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -21535,28 +22035,19 @@ Do you want to use the sanitised value?`)) {
 
     	const block = {
     		c: function create() {
-    			h3 = element("h3");
-    			t0 = text("This is the cards representation - collection ");
-    			t1 = text(/*collection*/ ctx[0]);
-    			t2 = space();
     			div = element("div");
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			add_location(h3, file$9, 94, 0, 3273);
     			attr_dev(div, "class", "cc-card-interface cc-representation svelte-1oao3hv");
-    			add_location(div, file$9, 96, 0, 3344);
+    			add_location(div, file$9, 94, 0, 3273);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, h3, anchor);
-    			append_dev(h3, t0);
-    			append_dev(h3, t1);
-    			insert_dev(target, t2, anchor);
     			insert_dev(target, div, anchor);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -21566,10 +22057,8 @@ Do you want to use the sanitised value?`)) {
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
-    			if (!current || dirty & /*collection*/ 1) set_data_dev(t1, /*collection*/ ctx[0]);
-
-    			if (dirty & /*modules, $collectionsStore, cardClick, getModuleUrl, deLabelModuleName, calendar, BANNER_TRANSLATION, $configStore*/ 126) {
-    				each_value = /*modules*/ ctx[3];
+    			if (dirty & /*modules, $collectionsStore, cardClick, getModuleUrl, deLabelModuleName, calendar, BANNER_TRANSLATION, $configStore*/ 63) {
+    				each_value = /*modules*/ ctx[2];
     				validate_each_argument(each_value);
     				let i;
 
@@ -21615,8 +22104,6 @@ Do you want to use the sanitised value?`)) {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(h3);
-    			if (detaching) detach_dev(t2);
     			if (detaching) detach_dev(div);
     			destroy_each(each_blocks, detaching);
     		}
@@ -21663,11 +22150,11 @@ Do you want to use the sanitised value?`)) {
     	let $modulesStore;
     	let $configStore;
     	validate_store(collectionsStore, 'collectionsStore');
-    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(2, $collectionsStore = $$value));
+    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(1, $collectionsStore = $$value));
     	validate_store(modulesStore, 'modulesStore');
     	component_subscribe($$self, modulesStore, $$value => $$invalidate(7, $modulesStore = $$value));
     	validate_store(configStore, 'configStore');
-    	component_subscribe($$self, configStore, $$value => $$invalidate(4, $configStore = $$value));
+    	component_subscribe($$self, configStore, $$value => $$invalidate(3, $configStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('GriffithCards', slots, []);
     	let { collection } = $$props;
@@ -21744,8 +22231,8 @@ Do you want to use the sanitised value?`)) {
     	});
 
     	$$self.$$set = $$props => {
-    		if ('collection' in $$props) $$invalidate(0, collection = $$props.collection);
-    		if ('calendar' in $$props) $$invalidate(1, calendar = $$props.calendar);
+    		if ('collection' in $$props) $$invalidate(6, collection = $$props.collection);
+    		if ('calendar' in $$props) $$invalidate(0, calendar = $$props.calendar);
     	};
 
     	$$self.$capture_state = () => ({
@@ -21774,9 +22261,9 @@ Do you want to use the sanitised value?`)) {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('collection' in $$props) $$invalidate(0, collection = $$props.collection);
-    		if ('calendar' in $$props) $$invalidate(1, calendar = $$props.calendar);
-    		if ('modules' in $$props) $$invalidate(3, modules = $$props.modules);
+    		if ('collection' in $$props) $$invalidate(6, collection = $$props.collection);
+    		if ('calendar' in $$props) $$invalidate(0, calendar = $$props.calendar);
+    		if ('modules' in $$props) $$invalidate(2, modules = $$props.modules);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -21784,28 +22271,28 @@ Do you want to use the sanitised value?`)) {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*collection, $collectionsStore*/ 5) {
+    		if ($$self.$$.dirty & /*collection, $collectionsStore*/ 66) {
     			{
-    				$$invalidate(3, modules = getCollectionCanvasModules(collection, $collectionsStore["MODULES"]));
+    				$$invalidate(2, modules = getCollectionCanvasModules(collection, $collectionsStore["MODULES"]));
     			} //modifyCanvasModulesList(moduleIds, $collectionsStore["MODULES"],$configStore['editMode'])
     		}
     	};
 
     	return [
-    		collection,
     		calendar,
     		$collectionsStore,
     		modules,
     		$configStore,
     		BANNER_TRANSLATION,
-    		deLabelModuleName
+    		deLabelModuleName,
+    		collection
     	];
     }
 
     class GriffithCards extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$c, create_fragment$c, safe_not_equal, { collection: 0, calendar: 1 });
+    		init(this, options, instance$c, create_fragment$c, safe_not_equal, { collection: 6, calendar: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -25820,451 +26307,12 @@ Do you want to use the sanitised value?`)) {
         }
     }
 
-    /**
-     * @class CollectionsDetails
-     * @description Given a course Id retrieve and possibly update the content of
-     * the Canvas Collections Configuration page
-     *
-     * Process here is
-     * - requestConfigPageContents
-     *   Ask to get the contents of the page
-     * - if successful
-     *   - TODO check to see if it's moved from other course (and other checks)
-     *      - only if in edit mode
-     *   - parse the JSON into a data structure
-     *   - TODO retrieve last collection viewed
-     * - if not successful (i.e. page doesn't exist)
-     *   (only if edit mode)
-     *   - initialise config page
-     *   - save the config page
-     */
-    class CollectionsDetails {
-        constructor(finishedCallBack, config) {
-            this.finishedCallBack = finishedCallBack;
-            this.config = config;
-            this.collectionsPageResponse = null;
-            this.collections = null;
-            this.ccOn = false;
-            this.ccPublished = true;
-            this.currentHostName = document.location.hostname;
-            this.baseApiUrl = `https://${this.currentHostName}/api/v1`;
-            // convert courseId to integer - probably unnecessary at this stage
-            this["config"]["courseId"] = parseInt(this.config.courseId);
-            debug(`YYYYY collectionsDetails: constructor: ${this["config"]["courseId"]} `);
-            this.requestCollectionsPage();
-        }
-        /**
-         * @function requestConfigPageContents
-         * @description Request the contents of the Collections Configuration page
-         *
-         */
-        requestCollectionsPage() {
-            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}/pages/canvas-collections-configuration`).then((data) => {
-                this.collectionsPageResponse = data;
-                this.parseCollectionsPage();
-            });
-        }
-        /**
-         * @function parseCollectionsPage
-         * @description Parse the JSON from the Canvas Collections Configuration page
-         * contained in this.collectionsPageResponse.body and store it in this.collections
-         */
-        parseCollectionsPage() {
-            // does this.collectionsPageResponse have a body?
-            // e.g.
-            // - status: "unauthorized" suggesting student view and can't access it
-            // - ?? if there isn't one
-            if (!this.collectionsPageResponse.hasOwnProperty("body")) {
-                console.log(this.collectionsPageResponse);
-                if (this.collectionsPageResponse.hasOwnProperty("status")) {
-                    if (this.collectionsPageResponse["status"] === "unauthorized") {
-                        console.log("CollectionsDetails: parseCollectionsPage: unauthorized");
-                        this.ccOn = false;
-                        this.ccPublished = false;
-                        this.finishedCallBack();
-                        return null;
-                    }
-                }
-                else {
-                    throw new Error("No body in collectionsPageResponse");
-                }
-            }
-            const body = this["collectionsPageResponse"]["body"];
-            const parsed = new DOMParser().parseFromString(body, "text/html");
-            // Collections configuration is in div.cc_json
-            let config = parsed.querySelector("div.cc_json");
-            if (!config) {
-                throw new Error(`CollectionsDetails: parseCollectionsPage: no div.cc_json found in page`);
-            }
-            this.collections = JSON.parse(config.innerHTML);
-            // decode various fields in the collections
-            this.decodeCollections();
-            // misc. updates to handle old style collections configuration
-            this.updateCollections();
-            // double check and possibly convert an old configuration
-            //this.configConverted = this.checkConvertOldConfiguration();
-            // initialise the controller etc
-            this.ccOn = this.collections.STATUS === "on";
-            this.ccPublished = this.collectionsPageResponse.published;
-            this.finishedCallBack();
-            // add a COLLECTIONS_ORDER array to the config if it's not there
-            if (!this.collections.hasOwnProperty("COLLECTIONS_ORDER")) {
-                this.collections["COLLECTIONS_ORDER"] = Object.keys(this.collections["COLLECTIONS"]);
-            }
-            /*		for (let key in this.collections['MODULES']) {
-                // double check that we're not an import from another course
-                let courseImages = parsed.querySelector('div.cc-card-images');
-                const importConverted = this.checkConvertImport(courseImages);
-                // and make it gets saved if there was a change
-                if (importConverted) {
-                    this.configConverted = importConverted;
-                }
-                const updatesConverted = this.checkConvertUpdates();
-                if ( updatesConverted ) {
-                    this.configConverted = updatesConverted;
-                }
-        
-                // also need to decode the collection names in
-                // - keys for this.cc_configuration.COLLECTIONS
-                // - values in this.cc_configuration.COLLECTIONS_ORDER
-                // - values in this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
-        
-                // decode the keys for this.cc_configuration.COLLECTIONS
-                const collections = {};
-                for (let key in this.parentController.cc_configuration.COLLECTIONS) {
-                    const collection = this.parentController.cc_configuration.COLLECTIONS[key];
-                    collections[this.decodeHTML(key)] = collection;
-                }
-                this.parentController.cc_configuration.COLLECTIONS = collections;
-                // decode the values in this.cc_configuration.COLLECTIONS_ORDER
-                this.parentController.cc_configuration.COLLECTIONS_ORDER = this.parentController.cc_configuration.COLLECTIONS_ORDER.map((collection) => {
-                    return this.decodeHTML(collection);
-                });
-                // decode the value in the string this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
-                this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION = this.decodeHTML(
-                    this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
-            */
-        }
-        /**
-         * @function decodeCollections
-         * @description collectons config has been loaded, some fields will contain
-         * encoded HTML and other stuff that needs decoding
-         */
-        decodeCollections() {
-            if (this.collections.hasOwnProperty("MODULES")) {
-                const modules = this.collections["MODULES"];
-                for (let key in modules) {
-                    const module = modules[key];
-                    module.description = this.decodeHTML(module.description);
-                    module.collection = this.decodeHTML(module.collection);
-                    module.name = this.decodeHTML(module.name);
-                    if (module.hasOwnProperty("iframe") && module.iframe !== "") {
-                        module.iframe = this.decodeHTML(module.iframe, true);
-                    }
-                    if (module.hasOwnProperty("image") && module.image.startsWith("/")) {
-                        module.image = `https://${window.location.hostname}${module.image}`;
-                    }
-                    // decode each of the metadata fields
-                    for (let key in module.metadata) {
-                        module.metadata[key] = this.decodeHTML(module.metadata[key]);
-                    }
-                    // need to check the URL for image as the RCE screws with the URL
-                    // TODO is this needed?
-                    /*if (module.hasOwnProperty('image') && module.image.startsWith('/')) {
-                            module.image = `https://${window.location.hostname}${module.image}`;
-                        }*/
-                }
-            }
-        }
-        /**
-         * @function updateCollections
-         * @description collectons config has been loaded, but the config file may be
-         * old school. Do misc updates, including
-         * - any module's collection attribute ==='' is set to null
-         * - each module has an attribute 'configVisible' set to false
-         * - each module has an attribute 'actualNum' set to ""
-         * - each module has a proper date structure
-         */
-        updateCollections() {
-            // Focus on updates to modules
-            if (this.collections.hasOwnProperty("MODULES")) {
-                const modules = this.collections["MODULES"];
-                for (let key in modules) {
-                    const module = modules[key];
-                    if (module.collection === "") {
-                        module.collection = null;
-                    }
-                    if (!module.hasOwnProperty("configVisible")) {
-                        module.configVisible = false;
-                    }
-                    if (!module.hasOwnProperty("actualNum")) {
-                        module.actualNum = "";
-                    }
-                    if (!module.hasOwnProperty("metadata")) {
-                        module.metadata = {};
-                    }
-                    this.handleModuleDate(module);
-                }
-            }
-        }
-        /**
-         * @function handleModuleDate
-         * @param module - module object
-         * @description module has a date attribute, which may be a string or an object
-         * Each module should have a date structure that matches the following
-         * {
-         *   "label": "", "day": "Monday", "week": "3", "time": "",
-         *   "to": {
-         *    	"day": "", "week": "", "time": ""
-         *	},
-         *	"date": 20,
-         *	"month": "Mar",
-         *	"year": 2023
-         * }
-         * Make sure it does
-         */
-        handleModuleDate(module) {
-            if (!module.hasOwnProperty("date")) {
-                module.date = {
-                    label: "",
-                    day: "",
-                    week: "",
-                    time: "",
-                    to: { day: "", week: "", time: "" },
-                    date: "",
-                    month: "",
-                    year: "",
-                };
-            }
-            else {
-                // check each of the components
-                const components = [
-                    "label",
-                    "day",
-                    "week",
-                    "time",
-                    "date",
-                    "month",
-                    "year",
-                ];
-                for (let i = 0; i < components.length; i++) {
-                    const component = components[i];
-                    if (!module.date.hasOwnProperty(component)) {
-                        module.date[component] = "";
-                    }
-                }
-                if (!module.date.hasOwnProperty("to")) {
-                    module.date.to = { day: "", week: "", time: "" };
-                }
-            }
-        }
-        /**
-         * @function decodeHTML
-         * @param html - HTML
-         * @returns {string} - removed any HTML encodings and sanitised
-         */
-        decodeHTML(html, iframeAllowed = false) {
-            let txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            let value = txt.value;
-            // do some sanitisation of the HTML https://github.com/apostrophecms/sanitize-html
-            let allowedTags = sanitizeHtml_1.defaults.allowedTags;
-            let allowedAttributes = {};
-            if (iframeAllowed) {
-                allowedTags = allowedTags.concat("iframe");
-                allowedAttributes = {
-                    iframe: ["src", "width", "height", "frameborder", "allowfullscreen"],
-                };
-            }
-            value = sanitizeHtml_1(value, {
-                allowedTags: allowedTags,
-                allowedAttributes: allowedAttributes,
-            });
-            return value;
-        }
-        encodeHTML(html, json = true) {
-            let txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            let value = txt.innerHTML;
-            /*		if (json) {
-                    // for Canvas JSON, escape the quotes
-                    return value.replaceAll(/"/g, '\"');
-        
-                } else {
-                    // for not JSON (i.e. HTML) encode the quotes
-                    return value.replaceAll(/"/g, '&quot;');
-                } */
-            return value;
-        }
-        /**
-         * @function saveCollections(editMode,needToSave)
-         * @param editMode - boolean, true if in edit mode
-         * @param needToSave - boolean, true if need to save
-         * @description if editMode && needToSave save the colelctions config page
-         */
-        saveCollections(editMode, needToSave) {
-            if (editMode && needToSave) {
-                // TODO add in and call saveConfigPage
-                let callUrl = `/api/v1/courses/${this["config"]["courseId"]}/pages/canvas-collections-configuration`;
-                debug(`saveCollections callUrl = ${callUrl}`);
-                debug("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                debug(this.collections);
-                debug("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                const content = this.generateConfigPageContent();
-                let _body = {
-                    wiki_page: {
-                        body: content,
-                    },
-                };
-                let method = "put";
-                // if we're creating, change the URL and add the title
-                const bodyString = JSON.stringify(_body);
-                wf_postData(callUrl, bodyString, this["config"]["csrfToken"], method).then((data) => {
-                    // successful
-                    debug(`saveCollections response = `);
-                    debug(data);
-                    let localConfig = get_store_value(configStore);
-                    localConfig["needToSaveCollections"] = false;
-                    configStore.set(localConfig);
-                });
-            }
-        }
-        /**
-         * Generate and return the HTML to be added into the Canvas Collections Configuration page
-         * including
-         * - div.cc-config-explanation
-         *   User facing detail about the purpose of the file, a warning, and the time it was
-         *   last updated
-         * - div.cc_json
-         *   Invisible, encoded JSON representation of collections configuration data
-         * - div.cc-card-images id="cc-course-<courseId>"
-         *   Invisible, collection of img elements for any module collections images that
-         *   are in the course files area. Placed here to help with course copy (i.e. Canvas
-         *   will update these URLs which Collections will then handle)
-         */
-        generateConfigPageContent() {
-            // construct the new content for the page
-            // - boiler plate description HTML to start
-            let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
-            /*		if (
-                    this.parentController.hasOwnProperty('cc_configuration') &&
-                    this.parentController.cc_configuration.hasOwnProperty('MODULES')) { */
-            // files URL might be
-            // - direct or
-            //    https://lms.griffith.edu.au/files/
-            // - via the course
-            //    https://lms.../courses/12345/files/
-            // - or without the hostname starting with /
-            const filesUrl = `${window.location.hostname}/files/`;
-            const courseFilesUrl = `${window.location.hostname}/courses/${this["config"]["courseId"]}/files/`;
-            // loop thru each module in cc_configuration
-            // - if it has an image, add an img element to the div.cc-card-images
-            //   with the image URL
-            let images = "";
-            for (let moduleId in this["collections"]["MODULES"]) {
-                const module = this["collections"]["MODULES"][moduleId];
-                if (!module.image) {
-                    continue;
-                }
-                // add the hostname to module.image if it doesn't have it
-                if (module.image.startsWith("/")) {
-                    module.image = `https://${window.location.hostname}${module.image}`;
-                }
-                // if module has an image and it contains courseFilesUrl
-                if (module.image.includes(courseFilesUrl) ||
-                    module.image.includes(filesUrl)) {
-                    images += `
-					<img src="${module.image}" id="cc-moduleImage-${moduleId}" class="cc-moduleImage" />
-					`;
-                }
-            }
-            content = content.replace("{{COURSE_IMAGES}}", images);
-            //		}
-            // - div.json containing
-            //   - JSON stringify of this.parentController.cc_configuration
-            //   - however, each module needs to have it's description encoded as HTML
-            for (let key in this["collections"]["MODULES"]) {
-                const module = this["collections"]["MODULES"][key];
-                module.description = this.encodeHTML(module.description);
-                module.collection = this.encodeHTML(module.collection);
-                if (module.hasOwnProperty("iframe")) {
-                    module.iframe = this.encodeHTML(module.iframe);
-                }
-                module.name = this.encodeHTML(module.name);
-                // need to encode each of the metadata values
-                for (let metaKey in module.metadata) {
-                    module.metadata[metaKey] = this.encodeHTML(module.metadata[metaKey]);
-                }
-            }
-            let safeContent = JSON.stringify(this.collections);
-            if (safeContent) {
-                content = content.replace("{{CONFIG}}", safeContent);
-            }
-            // need to de-encode the description for the page so that
-            // it continues to work normally for live operation
-            for (let key in this["collections"]["MODULES"]) {
-                const module = this["collections"]["MODULES"][key];
-                module.description = this.decodeHTML(module.description);
-                module.collection = this.decodeHTML(module.collection);
-                module.name = this.decodeHTML(module.name);
-                if (module.hasOwnProperty("iframe")) {
-                    module.iframe = this.decodeHTML(module.iframe);
-                }
-                for (let metaKey in module.metadata) {
-                    module.metadata[metaKey] = this.decodeHTML(module.metadata[metaKey]);
-                }
-            }
-            // get the current time as string
-            let time = new Date().toLocaleString();
-            content = content.replace("{{VISIBLE_TEXT}}", `<p>saved at ${time}</p>`);
-            content = content.replace("{{COURSE_ID}}", this["config"]["courseId"]);
-            //<div class="cc-card-images" id="cc-course{{COURSE_ID}}" style="display:none"></div>
-            debug("----------------- saveConfigPageContent() -----------------");
-            debug(content);
-            return content;
-        }
-    }
-    /**
-     * Templates used in the above
-     * - CONFIGURATION_PAGE_HTML_TEMPLATE - used to save collections configuration page
-     */
-    const CONFIGURATION_PAGE_HTML_TEMPLATE = `
-<div class="cc-config-explanation">
-<div style="float:left;padding:0.5em">
-  <img src="https://repository-images.githubusercontent.com/444951314/42343d35-e259-45ae-b74e-b9957222211f"
-      alt="canvas-collections logo" width="123" height="92" />
-</div>
-<div style="padding:0.5em">
-  <h3>Canvas Collections Configuration page</h3>
-  <p>This page is used to configure <a href="https://djplaner.github.io/canvas-collections/">Canvas Collections</a>.  
-  Avoid direct modification to this page, instead use the Canvas Collections configuration interface.  </p>
-  {{VISIBLE_TEXT}}
- </div>
- </div>
- <p style="clear:both"></p>
-<div class="cc_json" style="display:none">
- {{CONFIG}}
- </div>
-<div class="cc-card-images" id="cc-course-{{COURSE_ID}}" style="display:none">
- {{COURSE_IMAGES}}
-</div>
-`;
-    /*const DEFAULT_CONFIGURATION_TEMPLATE = {
-        "STATUS": "off",
-        "DEFAULT_ACTIVE_COLLECTION": "",
-        "COLLECTIONS": {
-        },
-        "COLLECTIONS_ORDER": [],
-        "MODULES": {
-        }
-    }; */
-
     /* src\CanvasCollections.svelte generated by Svelte v3.55.0 */
 
     const { console: console_1 } = globals;
     const file = "src\\CanvasCollections.svelte";
 
-    // (251:0) {#if editMode && modulesPage}
+    // (214:0) {#if editMode && modulesPage}
     function create_if_block(ctx) {
     	let div2;
     	let div1;
@@ -26312,21 +26360,21 @@ Do you want to use the sanitised value?`)) {
     			t9 = space();
     			if (if_block3) if_block3.c();
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 254, 8, 10512);
+    			add_location(div0, file, 217, 8, 8888);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 259, 9, 10673);
+    			add_location(i, file, 222, 9, 9049);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "href", /*HELP*/ ctx[12].switchTitle.url);
-    			add_location(a, file, 255, 6, 10572);
-    			add_location(sl_tooltip, file, 253, 6, 10490);
-    			add_location(small, file, 272, 6, 11085);
+    			add_location(a, file, 218, 6, 8948);
+    			add_location(sl_tooltip, file, 216, 6, 8866);
+    			add_location(small, file, 235, 6, 9461);
     			set_style(span, "font-size", "50%");
-    			add_location(span, file, 273, 6, 11126);
+    			add_location(span, file, 236, 6, 9502);
     			attr_dev(div1, "class", "cc-switch-title svelte-17owish");
-    			add_location(div1, file, 252, 4, 10453);
+    			add_location(div1, file, 215, 4, 8829);
     			attr_dev(div2, "class", "cc-switch-container svelte-17owish");
-    			add_location(div2, file, 251, 2, 10414);
+    			add_location(div2, file, 214, 2, 8790);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -26433,14 +26481,14 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(251:0) {#if editMode && modulesPage}",
+    		source: "(214:0) {#if editMode && modulesPage}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (263:6) {#if canvasDataLoaded && collectionsDataLoaded}
+    // (226:6) {#if canvasDataLoaded && collectionsDataLoaded}
     function create_if_block_4(ctx) {
     	let i;
     	let i_class_value;
@@ -26456,7 +26504,7 @@ Do you want to use the sanitised value?`)) {
     			? 'icon-mini-arrow-down'
     			: 'icon-mini-arrow-right') + " cc-module-icon"));
 
-    			add_location(i, file, 263, 8, 10813);
+    			add_location(i, file, 226, 8, 9189);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -26488,14 +26536,14 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(263:6) {#if canvasDataLoaded && collectionsDataLoaded}",
+    		source: "(226:6) {#if canvasDataLoaded && collectionsDataLoaded}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (277:4) {#if canvasDataLoaded && collectionsDataLoaded}
+    // (240:4) {#if canvasDataLoaded && collectionsDataLoaded}
     function create_if_block_3(ctx) {
     	let label;
     	let sl_switch;
@@ -26518,19 +26566,19 @@ Do you want to use the sanitised value?`)) {
     			set_custom_element_data(sl_switch, "checked", /*checked*/ ctx[3]);
     			set_custom_element_data(sl_switch, "id", "cc-switch");
     			set_custom_element_data(sl_switch, "class", "svelte-17owish");
-    			add_location(sl_switch, file, 278, 6, 11297);
+    			add_location(sl_switch, file, 241, 6, 9673);
     			attr_dev(label, "class", "cc-switch svelte-17owish");
     			attr_dev(label, "for", "cc-switch");
-    			add_location(label, file, 277, 6, 11248);
+    			add_location(label, file, 240, 6, 9624);
 
     			attr_dev(button, "class", button_class_value = "" + (null_to_empty(/*$configStore*/ ctx[8]["needToSaveCollections"]
     			? "cc-active-save-button"
     			: "cc-save-button") + " svelte-17owish"));
 
     			attr_dev(button, "id", "cc-save-button");
-    			add_location(button, file, 285, 8, 11466);
+    			add_location(button, file, 248, 8, 9842);
     			attr_dev(div, "class", "cc-save svelte-17owish");
-    			add_location(div, file, 284, 6, 11435);
+    			add_location(div, file, 247, 6, 9811);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, label, anchor);
@@ -26584,14 +26632,14 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(277:4) {#if canvasDataLoaded && collectionsDataLoaded}",
+    		source: "(240:4) {#if canvasDataLoaded && collectionsDataLoaded}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (299:4) {#if !ccPublished}
+    // (262:4) {#if !ccPublished}
     function create_if_block_2(ctx) {
     	let div1;
     	let sl_badge;
@@ -26614,20 +26662,20 @@ Do you want to use the sanitised value?`)) {
     			i = element("i");
     			t1 = text(" \r\n          unpublished");
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 303, 8, 12113);
+    			add_location(div0, file, 266, 8, 10489);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 309, 13, 12394);
+    			add_location(i, file, 272, 13, 10770);
     			attr_dev(a, "id", "cc-about-unpublished");
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "href", "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/");
-    			add_location(a, file, 304, 10, 12183);
-    			add_location(sl_tooltip, file, 302, 6, 12091);
+    			add_location(a, file, 267, 10, 10559);
+    			add_location(sl_tooltip, file, 265, 6, 10467);
     			set_custom_element_data(sl_badge, "variant", "warning");
     			set_custom_element_data(sl_badge, "pill", "");
-    			add_location(sl_badge, file, 301, 10, 12050);
+    			add_location(sl_badge, file, 264, 10, 10426);
     			attr_dev(div1, "class", "cc-unpublished svelte-17owish");
-    			add_location(div1, file, 299, 6, 11936);
+    			add_location(div1, file, 262, 6, 10312);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -26650,14 +26698,14 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(299:4) {#if !ccPublished}",
+    		source: "(262:4) {#if !ccPublished}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (318:4) {#if showConfig}
+    // (281:4) {#if showConfig}
     function create_if_block_1(ctx) {
     	let div;
     	let collectionsconfiguration;
@@ -26670,7 +26718,7 @@ Do you want to use the sanitised value?`)) {
     			create_component(collectionsconfiguration.$$.fragment);
     			attr_dev(div, "id", "cc-config");
     			attr_dev(div, "class", "border border-trbl svelte-17owish");
-    			add_location(div, file, 318, 6, 12601);
+    			add_location(div, file, 281, 6, 10977);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -26696,7 +26744,7 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(318:4) {#if showConfig}",
+    		source: "(281:4) {#if showConfig}",
     		ctx
     	});
 
@@ -26723,10 +26771,10 @@ Do you want to use the sanitised value?`)) {
     			if_block_anchor = empty();
     			attr_dev(link, "rel", "stylesheet");
     			attr_dev(link, "href", "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/themes/light.css");
-    			add_location(link, file, 246, 2, 10111);
+    			add_location(link, file, 209, 2, 8487);
     			attr_dev(script, "type", "module");
     			if (!src_url_equal(script.src, script_src_value = "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/shoelace.js")) attr_dev(script, "src", script_src_value);
-    			add_location(script, file, 247, 4, 10239);
+    			add_location(script, file, 210, 4, 8615);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -26943,7 +26991,7 @@ Do you want to use the sanitised value?`)) {
     	function checkAllDataLoaded() {
     		if (canvasDataLoaded && collectionsDataLoaded) {
     			set_store_value(collectionsStore, $collectionsStore = collectionsDetails.collections, $collectionsStore);
-    			calculateActualNum();
+    			calculateActualNum(canvasDetails.courseModules, $collectionsStore["MODULES"]);
     			$$invalidate(3, checked = $configStore["ccOn"]);
 
     			if ($configStore["ccOn"]) {
@@ -26959,50 +27007,6 @@ Do you want to use the sanitised value?`)) {
     				}
     			}
     		}
-    	}
-
-    	/**
-     * @function calculateActualNum
-     * @description Once we have collections and canvas details calculate the
-     * attribute 'actualNum' for each module.
-     */
-    	function calculateActualNum() {
-    		let numCalculator = {};
-
-    		// loop through each module in the array canvasDetails['courseModules']
-    		// and set the attribute 'actualNum' to the number of modules in the
-    		// collection that precede it
-    		//for (let moduleKey in canvasDetails.courseModules ){
-    		canvasDetails.courseModules.forEach(module => {
-    			const moduleId = module['id'];
-
-    			// get the collections data about this module
-    			const collectionsModule = $collectionsStore["MODULES"][moduleId];
-
-    			if (collectionsModule) {
-    				// does it have a hard coded num
-    				if (collectionsModule.hasOwnProperty("num")) {
-    					collectionsModule.actualNum = collectionsModule.num;
-    				} else {
-    					// if not, then calculate auto num based on the label and the
-    					// order so far
-    					const collectionName = collectionsModule.collection;
-
-    					const label = collectionsModule.label;
-
-    					if (!numCalculator.hasOwnProperty(collectionName)) {
-    						numCalculator[collectionName] = {};
-    					}
-
-    					if (!numCalculator[collectionName].hasOwnProperty(label)) {
-    						numCalculator[collectionName][label] = 0;
-    					}
-
-    					numCalculator[collectionName][label] = ++numCalculator[collectionName][label];
-    					collectionsModule.actualNum = numCalculator[collectionName][label];
-    				}
-    			}
-    		});
     	}
 
     	/**
@@ -27165,6 +27169,7 @@ Do you want to use the sanitised value?`)) {
     		removeModuleConfiguration,
     		CanvasDetails,
     		CollectionsDetails,
+    		calculateActualNum,
     		debug,
     		CC_VERSION,
     		TIME_BETWEEN_SAVES,
@@ -27185,7 +27190,6 @@ Do you want to use the sanitised value?`)) {
     		gotCanvasDetails,
     		gotCollectionsDetails,
     		checkAllDataLoaded,
-    		calculateActualNum,
     		toggleCollectionsSwitch,
     		toggleConfigShow,
     		addCollectionsDisplay,

@@ -115,8 +115,6 @@
   } */
 </script>
 
-<h3>This is the cards representation - collection {collection}</h3>
-
 <div class="cc-card-interface cc-representation">
   {#each modules as theModule}
     {#if !(!$collectionsStore["MODULES"][theModule.id].published && !$configStore["editMode"])}

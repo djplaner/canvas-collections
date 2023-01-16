@@ -9,7 +9,8 @@
     removeModuleConfiguration
   } from "./lib/CanvasSetup";
   import { CanvasDetails } from "./lib/CanvasDetails";
-  import { CollectionsDetails } from "./lib/CollectionsDetails";
+  import { CollectionsDetails, calculateActualNum } from "./lib/CollectionsDetails";
+
 
   import { debug } from "./lib/debug";
   debug("______________ CanvasCollections.svelte _______________");
@@ -104,7 +105,7 @@
   function checkAllDataLoaded() {
     if (canvasDataLoaded && collectionsDataLoaded) {
       $collectionsStore = collectionsDetails.collections;
-      calculateActualNum();
+      calculateActualNum(canvasDetails.courseModules,$collectionsStore["MODULES"]);
       checked=$configStore["ccOn"];
       if ($configStore["ccOn"]) {
         addCollectionsDisplay();
@@ -120,45 +121,6 @@
     }
   }
 
-  /**
-   * @function calculateActualNum
-   * @description Once we have collections and canvas details calculate the
-   * attribute 'actualNum' for each module.
-   */
-  function calculateActualNum() {
-    let numCalculator = {};
-
-    // loop through each module in the array canvasDetails['courseModules']
-    // and set the attribute 'actualNum' to the number of modules in the
-    // collection that precede it
-    //for (let moduleKey in canvasDetails.courseModules ){
-    canvasDetails.courseModules.forEach((module : {}) => {
-      const moduleId = module['id'];
-
-      // get the collections data about this module
-      const collectionsModule = $collectionsStore["MODULES"][moduleId];
-
-      if (collectionsModule) {
-        // does it have a hard coded num
-        if (collectionsModule.hasOwnProperty("num")) {
-          collectionsModule.actualNum = collectionsModule.num;
-        } else {
-          // if not, then calculate auto num based on the label and the
-          // order so far
-          const collectionName = collectionsModule.collection;
-          const label = collectionsModule.label;
-          if ( ! numCalculator.hasOwnProperty(collectionName)  ) {
-            numCalculator[collectionName] = {};
-          }
-          if ( ! numCalculator[collectionName].hasOwnProperty(label)) {
-            numCalculator[collectionName][label] = 0;
-          }
-          numCalculator[collectionName][label] = ++numCalculator[collectionName][label];
-          collectionsModule.actualNum = numCalculator[collectionName][label];
-          }
-        }
-    });
-  }
 
   /**
    * Called when the collections on/off switch is clicked
