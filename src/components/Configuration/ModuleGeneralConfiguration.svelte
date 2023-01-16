@@ -124,7 +124,6 @@
           {/each}
         </select>
 
-        <!--  value={$collectionsStore["MODULES"][moduleId].collection} -->
       </span>
     </div>
   </div>

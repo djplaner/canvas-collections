@@ -1,10 +1,7 @@
 # Canvas Collections (svelte)
 
-{% note %}
+> **Warning:** this is very much still under development
 
-**Warning:** this is very much still under development
-
-{% endnote %}
 
 Reimplementation of Canvas Collections using [Svelte](https://svelte.dev) to develop both a userscript, and live version.
 
