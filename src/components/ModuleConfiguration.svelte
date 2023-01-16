@@ -79,7 +79,7 @@
       id="cc-module-config-{module}-switch"
       class="{$collectionsStore['MODULES'][module].configVisible
         ? 'icon-mini-arrow-down'
-        : 'icon-mini-arrow-right'} cc-module-icon"
+        : 'icon-mini-arrow-right'}"
       on:click={toggleModuleConfigShow}
       on:keydown={toggleModuleConfigShow}
     />
@@ -96,7 +96,7 @@
         rel="noreferrer"
         class="cc-module-link"
       >
-        <i class="icon-question cc-module-icon" />
+        <i class="icon-question" />
       </a>
     </sl-tooltip>
   </span>
@@ -115,7 +115,7 @@
             rel="noreferrer"
             class="cc-module-link"
           >
-            <i class="icon-question cc-module-icon" />
+            <i class="icon-question" />
           </a>
         </sl-tooltip>
       </sl-tab>
@@ -129,7 +129,7 @@
             rel="noreferrer"
             class="cc-module-link"
           >
-            <i class="icon-question cc-module-icon" />
+            <i class="icon-question" />
           </a>
         </sl-tooltip>
       </sl-tab>
@@ -138,22 +138,21 @@
         <sl-tooltip>
           <div slot="content">{@html HELP.moduleBanner.tooltip}</div>
           <a href={HELP.moduleBanner.url} target="_blank" rel="noreferrer"
-            ><i class="icon-question cc-module-icon" /></a
+            ><i class="icon-question" /></a
           >
         </sl-tooltip>
       </sl-tab>
       <sl-tab slot="nav" panel="metadata" style="text-align:right">
-        Metadata
-        <sl-tooltip>
-          <div slot="content">{@html HELP.moduleMetaData.tooltip}</div>
-          <a
-            href={HELP.moduleMetaData.url}
-            target="_blank"
-            rel="noreferrer">
-            <i class="icon-question cc-module-icon" />
-          </a>
-        </sl-tooltip>
-        </sl-tab>
+        <div>
+          Metadata&nbsp;
+          <sl-tooltip>
+            <div slot="content">{@html HELP.moduleMetaData.tooltip}</div>
+            <a href={HELP.moduleMetaData.url} target="_blank" rel="noreferrer">
+              <i class="icon-question" />
+            </a>
+          </sl-tooltip>
+        </div>
+      </sl-tab>
 
       <sl-tab-panel name="general">
         <ModuleGeneralConfiguration moduleId={module} />
@@ -187,10 +186,6 @@
     padding-right: 0.5rem;
   }
 
-  .cc-module-icon {
-    position: relative;
-    top: -0.2rem;
-  }
 
   sl-tab {
     font-size: var(--sl-font-size-small);

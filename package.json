@@ -10,6 +10,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
+    "live": "rollup -c rollup.live.config.js",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {

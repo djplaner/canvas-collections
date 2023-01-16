@@ -20,9 +20,8 @@
 
   let html = $collectionsStore["MODULES"][moduleId].description;
 
-  console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
-  console.log($modulesStore)
-
+  console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
+  console.log($modulesStore);
 
   onMount(() => {
     const editorId = `cc-module-config-${moduleId}-description-editor`;
@@ -43,9 +42,25 @@
   function switchAutoNum() {
     $collectionsStore["MODULES"][moduleId].autonum =
       !$collectionsStore["MODULES"][moduleId].autonum;
-    calculateActualNum( $modulesStore, $collectionsStore["MODULES"]);
+    calculateActualNum($modulesStore, $collectionsStore["MODULES"]);
 
-    $collectionsStore["NEED_TO_SAVE_COLLECTIONS"] = true;
+    $configStore["needToSaveCollections"] = true;
+  }
+
+  /**
+   * @function changeCollectionAllocation
+   * @param {Event} e
+   * @description called when the collection allocation is changed
+   * - modify the modules collection based on the value of the select
+   * - call calculateActualNum
+   * - set needToSaveCollections to true
+   */
+
+  function changeCollectionAllocation(e: Event) {
+    $collectionsStore["MODULES"][moduleId].collection = e.target.value;
+    calculateActualNum($modulesStore, $collectionsStore["MODULES"]);
+
+    $configStore["needToSaveCollections"] = true;
   }
 
   const HELP = {
@@ -100,19 +115,12 @@
       <span class="cc-module-input">
         <select
           id="cc-module-config-{moduleId}-collection"
-          bind:value={$collectionsStore["MODULES"][moduleId].collection}
+          value={$collectionsStore["MODULES"][moduleId].collection}
+          on:change={(e) => changeCollectionAllocation(e)}
         >
-          {#if $collectionsStore["MODULES"][moduleId].collection === ""}
-            <option value="" selected>Unallocated</option>
-          {:else}
-            <option value="">Unallocated</option>
-          {/if}
+          <option value="">Unallocated</option>
           {#each $collectionsStore["COLLECTIONS_ORDER"] as collectionName}
-            {#if $collectionsStore["MODULES"][moduleId].collection === collectionName}
-              <option value={collectionName} selected>{collectionName}</option>
-            {:else}
-              <option value={collectionName}>{collectionName}</option>
-            {/if}
+            <option value={collectionName}>{collectionName}</option>
           {/each}
         </select>
 
