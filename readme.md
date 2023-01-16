@@ -1,90 +1,31 @@
-# Tampermonkey Svelte Template
-## What is this template?
-This template allows easy creation of UserScripts for [Tampermonkey](https://www.tampermonkey.net/) using [Svelte](https://svelte.dev/).
+# Canvas Collections (svelte)
 
-## Getting Started
-Replace `your-project-name` with whatever you would like the name of your project to be.
+{% note %}
 
-```bash
-npm degit lpshanley/tampermonkey-svelte your-project-name
-cd your-project-name
-npm i
-npm run dev
-```
+**Warning:** this is very much still under development
 
-If you do not have Tampermonkey installed yet [click here](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) to install from the chrome web store.
+{% endnote %}
 
-*Note:* Allowing an extension access to files can have security risks. Please read and be informed about these risks prior to moving forward.
+Reimplementation of Canvas Collections using [Svelte](https://svelte.dev) to develop both a userscript, and live version.
 
-After you install tampermonkey enable the `"Allow access to file URL's"` setting in the chrome extension settings for tampermonkey.
+The userscript version allows individual designers/teachers to use [Tampermonkey](https://www.tampermonkey.net/) to experiment with Collections without the institution installing it. It also allows supports developers working on Collections.
 
-Copy **only** the header details from `dist/bundle.js`. It should look like this
-```
-// ==UserScript==
-// @name        tampermonkey-svelte-dev
-// @description Tampermonkey template that uses svelte to build UserScripts
-// @namespace   https://github.com
-// @version     1.0.0
-// @homepage    https://github.com/lpshanley/tampermonkey-svelte#readme
-// @author      Lucas Shanley
-// @resource    css file:///D:/tampermonkey-svelte/dist/bundle.css
-// @match       https://*.github.com/*
-// @connect     github.com
-// @run-at      document-idle
-// @require     file:///D:/tampermonkey-svelte/dist/bundle.js
-// @grant       GM_addStyle
-// @grant       GM_getResourceText
-// @grant       GM_xmlhttpRequest
-// ==/UserScript==
-```
+The live version is for institutions to install
 
-Add this as a new script into tampermonkey. Remember to **only** copy the header details. Once this is done you should be able to reload your webpage and being creating your script. When running `npm run dev` your source will be watched and changes will rebuild automatically, you will need to refresh the browser to pickup the new changes.
+## Development
 
-***IMPORTANT NOTE*** changes outside of `/src` are not watched. If you make
-changes to files like `meta.js`, `package.json`, etc you will need to stop 
-the dev server and restart it. Changes to the header will need to be copied 
-and pasted into tampermonkey any time a change occurs. Failing to do this
-may cause expected functionality to not behave as expected.
+- `npm run dev` will start a development server with hot reloading.
+- `npm run build` will build a "production" version of the userscript. **Not fully tested**
+- `npm run live` will build a "production" version of collections for the live version.
 
-## Files to update
+Ouputs placed in the `dist` folder.
 
-### package.json
-```jsonc
-{
-    "name": "your-project-name",
-    "description": "Your project description...",
-    "author": "Your Name",
-    "homepage": "https://yourhomepage.com"
-    ...
-}
-```
+- `bundle.css` - CSS for both versions
+- `bundle.js` - userscript for Tampermonkey (not a production version)
+- `canvas-collections.js` - live version of Collections
+- `live-canvas-collections.js` - Javascript that can be loaded into the Canvas themes editor and will load the live version of Collections using a CDN
 
-### meta.js
-```javascript
-...
-const distURLBase = `https://yourdisturl.com/dist`;
-...
-let meta = {
-    ...
-    // Namespace of the script (ex: https://example.com)
-    "namespace": "https://example.com",
-    ...
-    // URL's you would like you scripts to run on
-    "match": [],
-    ...
-    // Domains you need to make requests from
-    "connect": [],
-    ...
-}
-```
-By default some of the metadata for your project is shared with `package.json`. This behavior is fine to alter to your needs by changing the values in `meta.js`.
 
-See [Tampermonkey Documentation](https://www.tampermonkey.net/documentation.php) for more details.
+## Based On
 
-## Ready to share?
-You can run `npm run build` and this will change the header details in the dist script so that they are ready to deploy for people to use. This removes the references to local scripts and creates references to web urls.
-
-## Additional References
-- [Svelte](https://svelte.dev/)
-- [Tampermonkey](https://www.tampermonkey.net/documentation.php)
-- [Rollup](https://rollupjs.org/guide/en/)
+Tampermonkey development relies on [this Tampermonkey Svelte Template](https://github.com/lpshanley/tampermonkey-svelte#readme)

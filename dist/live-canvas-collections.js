@@ -1,9 +1,9 @@
 (function () {
 	const jsIncludes = [
-		"https://raw.githubusercontent.com/djplaner/canvas-collections/svelte/dist/bundle.js"
+		"https://raw.githack.com/djplaner/canvas-collections/svelte/dist/canvas-collections.js"
 	]
 	const cssIncludes = [
-		"https://raw.githubusercontent.com/djplaner/canvas-collections/svelte/dist/bundle.css"
+		"https://raw.githack.com/djplaner/canvas-collections/svelte/dist/bundle.css"
 	]
 
 	jsIncludes.forEach(include => {
