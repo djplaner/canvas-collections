@@ -183,9 +183,24 @@ for the module
     ) as HTMLInputElement;
 
     // if no change in name, nothing to do
-    if ( originalName === name.value) {
+    if (originalName === name.value) {
       return;
     }
+
+    // check for duplicate of existing name
+    if (
+      $collectionsStore["MODULES"][moduleId].metadata.hasOwnProperty([
+        name.value,
+      ])
+    ) {
+      alert(
+        `There already exists a metadata entry with the name 
+    ${name.value}
+Please choose a different name.`
+      );
+      return;
+    }
+
 
     let metadata = $collectionsStore["MODULES"][moduleId].metadata;
     metadata[name.value] = metadata[originalName];
@@ -226,8 +241,8 @@ Do you want to use the sanitised value?`
       }
     }
 
-	$collectionsStore["MODULES"][moduleId].metadata[name] = sanitisedValue;
-	$configStore["needToSaveCollections"] = true;
+    $collectionsStore["MODULES"][moduleId].metadata[name] = sanitisedValue;
+    $configStore["needToSaveCollections"] = true;
   }
 
   //------------- HELP tooltips and urls
