@@ -948,7 +948,7 @@ class cc_View {
 
 
 
-const CC_VERSION = "0.9.9";
+const CC_VERSION = "0.9.10";
 
 const CV_DEFAULT_DATE_LABEL = "Starting";
 
@@ -6130,6 +6130,7 @@ const TABLE_ROW_HTML = `
             <div class="cc-table-cell-text">
             {{DESCRIPTION}}
             </div>
+            {{UNALLOCATED}}
           </td>
           <td role="cell">
             <span class="cc-responsive-table__heading" aria-hidden="true">Weighting</span>
@@ -6199,7 +6200,7 @@ class AssessmentTableView extends cc_View {
     this.TABLE_HTML_FIELD_NAMES = [
       'DESCRIPTION', 'CAPTION', 'TABLE-ROWS',
       'TITLE', 'TYPE', 'DATE-LABEL', 'DUE-DATE', 'WEIGHTING', 'LEARNING-OUTCOMES',
-      'DESCRIPTION', 'MODULE-ID'
+      'DESCRIPTION', 'MODULE-ID', "UNALLOCATED"
     ];
 
     this.currentCollection = this.model.getCurrentCollection();
@@ -6256,8 +6257,13 @@ class AssessmentTableView extends cc_View {
 
     for (let i = 0; i < modules.length; i++) {
 
+      let moduleUnallocated = "<p style='font-size: x-small'><strong>No collection allocated</strong></p>";
+      if (modules[i].collection !== "" || !editMode) {
+        moduleUnallocated = "";
+      }
+
       // skip if row doesn't match currentCollection
-      if (modules[i].collection !== collectionName) {
+      if (modules[i].collection!=="" && modules[i].collection !== collectionName) {
         continue;
       }
       // exclude modules for other reasons
@@ -6328,7 +6334,8 @@ class AssessmentTableView extends cc_View {
         'TITLE': modules[i].name,
         'TYPE': modules[i].label,
         'DUE-DATE': dueDateString,
-        'DATE-LABEL': dateLabel
+        'DATE-LABEL': dateLabel,
+        'UNALLOCATED': moduleUnallocated
       };
 
       // for a claytons view - MODULE-ID needs to become a full link
@@ -6956,7 +6963,14 @@ class GriffithCardsView extends cc_View {
 			DEBUG && console.log(module);
 			// still need to skip generate card
 
-			if (module.collection !== collectionName) {
+			// don't show this module's card if
+			// - it hasn't been published and we're not in edit mode
+			if (!this.model.getEditMode() && !module.published) {
+				continue;
+			}
+			// - it is allocated to a collection and this isn't its collection
+			if (module.collection !== "" &&
+				module.collection !== collectionName) {
 				continue;
 			}
 
@@ -7051,7 +7065,7 @@ class GriffithCardsView extends cc_View {
 
 		// if the banner is an iframe, then the header link doesn't expand
 		// but it's still needed
-		if (banner==="iframe") {
+		if (banner === "iframe") {
 			cardLinkStyle = "";
 		}
 		let CARD_LINK = `<a href="${modulesUrl}#module_${module.id}" 
@@ -7060,7 +7074,7 @@ class GriffithCardsView extends cc_View {
 			cardClass = 'cc-card-unclickable';
 			cardContentClass = "cc-unclickable-card-content";
 			CARD_LINK = '';
-			CONTENT_CARD_LINK='';
+			CONTENT_CARD_LINK = '';
 		}
 
 		const cardHtml = `
@@ -7242,7 +7256,7 @@ class GriffithCardsView extends cc_View {
 		if (!module.comingSoon) {
 			return "";
 		}
-
+	
 		// TODO 
 		// - handle also the calculation of dual dates
 		// - move these date functions to the Uni Date class
@@ -7250,7 +7264,7 @@ class GriffithCardsView extends cc_View {
 		// TODO
 		// - handle all the date variations
 		const message = `Available ${date.MONTH} ${date.DATE}`;
-
+	
 		return `
 		<div class="cc-coming-soon-message">
 		  <span>🚧</span>
@@ -7523,12 +7537,12 @@ class GriffithCardsView extends cc_View {
 	}
 
 	/**
- * If module has completion requirements return a progress bar element
- * - use https://github.com/GMartigny/circular-progress-bar
- * 
- * @param Object module 
- * @returns DOM element representing progress bar
- */
+	* If module has completion requirements return a progress bar element
+	* - use https://github.com/GMartigny/circular-progress-bar
+	* 
+	* @param Object module 
+	* @returns DOM element representing progress bar
+	*/
 	getCardProgressElement(module) {
 		if (module.cc_itemsCompleted === undefined) {
 			return undefined;
@@ -7775,25 +7789,25 @@ class GriffithCardsView extends cc_View {
 		// to make the link work for all contents of banner need to use this approach
 		// https://www.w3docs.com/snippets/css/how-to-make-a-div-a-clickable-link.html
 		// i.e. add that styling to the existing a.cc-card-link
-/*		for (let i = 0; i < cardBanners.length; i++) {
-			let banner = cardBanners[i];
-			const moduleId = banner.dataset.moduleid;
-			const module = modules[parseInt(moduleId)];
-			// don't add the link if it's an FYI module
-			if (module && module.hasOwnProperty('fyi') && module.fyi) {
-				continue;
-			}
-
-			// can't wrap a div in an anchor, canvas RCE breaks it
-			// try wrapping the internals of the div
-
-			let link = doc.createElement('a');
-			link.classList.add('cc-card-link-image');
-			link.href = `${modulesUrl}#modules_${moduleId}`;
-			link.innerHTML = banner.innerHTML;
-			banner.innerHTML = link.outerHTML;
-			//banner.parentNode.replaceChild(link, banner);
-		} */
+		/*		for (let i = 0; i < cardBanners.length; i++) {
+					let banner = cardBanners[i];
+					const moduleId = banner.dataset.moduleid;
+					const module = modules[parseInt(moduleId)];
+					// don't add the link if it's an FYI module
+					if (module && module.hasOwnProperty('fyi') && module.fyi) {
+						continue;
+					}
+		
+					// can't wrap a div in an anchor, canvas RCE breaks it
+					// try wrapping the internals of the div
+		
+					let link = doc.createElement('a');
+					link.classList.add('cc-card-link-image');
+					link.href = `${modulesUrl}#modules_${moduleId}`;
+					link.innerHTML = banner.innerHTML;
+					banner.innerHTML = link.outerHTML;
+					//banner.parentNode.replaceChild(link, banner);
+				} */
 		// add a link around cc-card-title innerHTML
 		let titles = div.querySelectorAll('h3.cc-card-title');
 
@@ -7897,7 +7911,6 @@ class GriffithCardsView extends cc_View {
  * - Representation for Canvas Collections that is given the name of a Canvas page
  * - It will hide all modules, get the content of the Canvas page, and display that
  * 
- * Currently hard coded to show a padlet embed, not yet getting page name data
  */
 
 
@@ -8290,7 +8303,7 @@ class CollectionsView extends cc_View {
 				.replace(/[\u0300-\u036f]/g, '')   // remove all previously split accents
 				.toLowerCase()
 				.trim()
- 		        .replace('@','at')
+				.replace('@', 'at')
 				.replace(/[^a-z0-9 ]/g, '')   // remove all chars not letters, numbers and spaces (to be replaced)
 				.replace(/\s+/g, separator);
 		};
@@ -8426,15 +8439,14 @@ class CollectionsView extends cc_View {
 
 		// show modules matching this collection, hide modules with collections that aren't
 		for (let module of modulesCollections) {
-			// if no collection for this module and in staff view, leave it here
-			// and maybe change the appearence here or later
 			if (!module.hasOwnProperty('collection') || module.collection === "" || module.collection === "undefined") {
-				if (!editMode) {
-					const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
-					if (contextModule) {
-						contextModule.style.display = 'none';
-					}
+				// if no collection, always display it
+				//				if (!editMode) {
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				if (contextModule) {
+					contextModule.style.display = 'block';
 				}
+				//				}
 				// TODO? colour it someway
 			} else if (module.collection !== currentCollection) {
 				// not the right collection, skip this one

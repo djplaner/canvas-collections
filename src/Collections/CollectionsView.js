@@ -193,7 +193,7 @@ export default class CollectionsView extends cc_View {
 				.replace(/[\u0300-\u036f]/g, '')   // remove all previously split accents
 				.toLowerCase()
 				.trim()
- 		        .replace('@','at')
+				.replace('@', 'at')
 				.replace(/[^a-z0-9 ]/g, '')   // remove all chars not letters, numbers and spaces (to be replaced)
 				.replace(/\s+/g, separator);
 		};
@@ -329,15 +329,14 @@ export default class CollectionsView extends cc_View {
 
 		// show modules matching this collection, hide modules with collections that aren't
 		for (let module of modulesCollections) {
-			// if no collection for this module and in staff view, leave it here
-			// and maybe change the appearence here or later
 			if (!module.hasOwnProperty('collection') || module.collection === "" || module.collection === "undefined") {
-				if (!editMode) {
-					const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
-					if (contextModule) {
-						contextModule.style.display = 'none';
-					}
+				// if no collection, always display it
+				//				if (!editMode) {
+				const contextModule = document.querySelector(`div.context_module[data-module-id="${module.id}"]`);
+				if (contextModule) {
+					contextModule.style.display = 'block';
 				}
+				//				}
 				// TODO? colour it someway
 			} else if (module.collection !== currentCollection) {
 				// not the right collection, skip this one

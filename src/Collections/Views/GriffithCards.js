@@ -466,7 +466,14 @@ export default class GriffithCardsView extends cc_View {
 			DEBUG && console.log(module);
 			// still need to skip generate card
 
-			if (module.collection !== collectionName) {
+			// don't show this module's card if
+			// - it hasn't been published and we're not in edit mode
+			if (!this.model.getEditMode() && !module.published) {
+				continue;
+			}
+			// - it is allocated to a collection and this isn't its collection
+			if (module.collection !== "" &&
+				module.collection !== collectionName) {
 				continue;
 			}
 
@@ -561,7 +568,7 @@ export default class GriffithCardsView extends cc_View {
 
 		// if the banner is an iframe, then the header link doesn't expand
 		// but it's still needed
-		if (banner==="iframe") {
+		if (banner === "iframe") {
 			cardLinkStyle = "";
 		}
 		let CARD_LINK = `<a href="${modulesUrl}#module_${module.id}" 
@@ -570,7 +577,7 @@ export default class GriffithCardsView extends cc_View {
 			cardClass = 'cc-card-unclickable';
 			cardContentClass = "cc-unclickable-card-content";
 			CARD_LINK = '';
-			CONTENT_CARD_LINK='';
+			CONTENT_CARD_LINK = '';
 		}
 
 		const cardHtml = `
@@ -752,7 +759,7 @@ export default class GriffithCardsView extends cc_View {
 		if (!module.comingSoon) {
 			return "";
 		}
-
+	
 		// TODO 
 		// - handle also the calculation of dual dates
 		// - move these date functions to the Uni Date class
@@ -760,7 +767,7 @@ export default class GriffithCardsView extends cc_View {
 		// TODO
 		// - handle all the date variations
 		const message = `Available ${date.MONTH} ${date.DATE}`;
-
+	
 		return `
 		<div class="cc-coming-soon-message">
 		  <span>🚧</span>
@@ -1033,12 +1040,12 @@ export default class GriffithCardsView extends cc_View {
 	}
 
 	/**
- * If module has completion requirements return a progress bar element
- * - use https://github.com/GMartigny/circular-progress-bar
- * 
- * @param Object module 
- * @returns DOM element representing progress bar
- */
+	* If module has completion requirements return a progress bar element
+	* - use https://github.com/GMartigny/circular-progress-bar
+	* 
+	* @param Object module 
+	* @returns DOM element representing progress bar
+	*/
 	getCardProgressElement(module) {
 		if (module.cc_itemsCompleted === undefined) {
 			return undefined;
@@ -1285,25 +1292,25 @@ export default class GriffithCardsView extends cc_View {
 		// to make the link work for all contents of banner need to use this approach
 		// https://www.w3docs.com/snippets/css/how-to-make-a-div-a-clickable-link.html
 		// i.e. add that styling to the existing a.cc-card-link
-/*		for (let i = 0; i < cardBanners.length; i++) {
-			let banner = cardBanners[i];
-			const moduleId = banner.dataset.moduleid;
-			const module = modules[parseInt(moduleId)];
-			// don't add the link if it's an FYI module
-			if (module && module.hasOwnProperty('fyi') && module.fyi) {
-				continue;
-			}
-
-			// can't wrap a div in an anchor, canvas RCE breaks it
-			// try wrapping the internals of the div
-
-			let link = doc.createElement('a');
-			link.classList.add('cc-card-link-image');
-			link.href = `${modulesUrl}#modules_${moduleId}`;
-			link.innerHTML = banner.innerHTML;
-			banner.innerHTML = link.outerHTML;
-			//banner.parentNode.replaceChild(link, banner);
-		} */
+		/*		for (let i = 0; i < cardBanners.length; i++) {
+					let banner = cardBanners[i];
+					const moduleId = banner.dataset.moduleid;
+					const module = modules[parseInt(moduleId)];
+					// don't add the link if it's an FYI module
+					if (module && module.hasOwnProperty('fyi') && module.fyi) {
+						continue;
+					}
+		
+					// can't wrap a div in an anchor, canvas RCE breaks it
+					// try wrapping the internals of the div
+		
+					let link = doc.createElement('a');
+					link.classList.add('cc-card-link-image');
+					link.href = `${modulesUrl}#modules_${moduleId}`;
+					link.innerHTML = banner.innerHTML;
+					banner.innerHTML = link.outerHTML;
+					//banner.parentNode.replaceChild(link, banner);
+				} */
 		// add a link around cc-card-title innerHTML
 		let titles = div.querySelectorAll('h3.cc-card-title');
 

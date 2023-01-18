@@ -246,6 +246,7 @@ const TABLE_ROW_HTML = `
             <div class="cc-table-cell-text">
             {{DESCRIPTION}}
             </div>
+            {{UNALLOCATED}}
           </td>
           <td role="cell">
             <span class="cc-responsive-table__heading" aria-hidden="true">Weighting</span>
@@ -315,7 +316,7 @@ export default class AssessmentTableView extends cc_View {
     this.TABLE_HTML_FIELD_NAMES = [
       'DESCRIPTION', 'CAPTION', 'TABLE-ROWS',
       'TITLE', 'TYPE', 'DATE-LABEL', 'DUE-DATE', 'WEIGHTING', 'LEARNING-OUTCOMES',
-      'DESCRIPTION', 'MODULE-ID'
+      'DESCRIPTION', 'MODULE-ID', "UNALLOCATED"
     ];
 
     this.currentCollection = this.model.getCurrentCollection();
@@ -372,8 +373,13 @@ export default class AssessmentTableView extends cc_View {
 
     for (let i = 0; i < modules.length; i++) {
 
+      let moduleUnallocated = "<p style='font-size: x-small'><strong>No collection allocated</strong></p>";
+      if (modules[i].collection !== "" || !editMode) {
+        moduleUnallocated = "";
+      }
+
       // skip if row doesn't match currentCollection
-      if (modules[i].collection !== collectionName) {
+      if (modules[i].collection!=="" && modules[i].collection !== collectionName) {
         continue;
       }
       // exclude modules for other reasons
@@ -444,7 +450,8 @@ export default class AssessmentTableView extends cc_View {
         'TITLE': modules[i].name,
         'TYPE': modules[i].label,
         'DUE-DATE': dueDateString,
-        'DATE-LABEL': dateLabel
+        'DATE-LABEL': dateLabel,
+        'UNALLOCATED': moduleUnallocated
       };
 
       // for a claytons view - MODULE-ID needs to become a full link
