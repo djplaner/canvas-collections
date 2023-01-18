@@ -33,6 +33,9 @@
       "name": "canvas-collections",
       "namespace": "https://djon.es/",
       "homepage": "https://github.com/djplaner/canvas-collections/tree/main#canvas-collections",
+      "updateURL":	"https://raw.githubusercontent.com/djplaner/canvas-collections/main/dev/canvas-collections.user.js",
+      "downloadURL":	"https://raw.githubusercontent.com/djplaner/canvas-collections/main/dev/canvas-collections.user.js",
+
       "match": "https://*/courses/*",
       "grant": "none",
       "require": [
