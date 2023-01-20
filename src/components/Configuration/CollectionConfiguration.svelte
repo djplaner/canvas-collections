@@ -210,7 +210,7 @@
     $collectionsStore["COLLECTIONS"][newCollectionName] =
       $collectionsStore["COLLECTIONS"][collectionName];
     delete $collectionsStore["COLLECTIONS"][collectionName];
-    $configStore["needToSaveCollections"]=true;
+    $configStore["needToSaveCollections"] = true;
   }
 
   /**
@@ -220,13 +220,13 @@
    * If not turn give an alert
    */
   function doesIncludePageExist(pageName, pageObject) {
-    debug(`---------- doesIncludePageExist --${pageName}--------`)
-    debug(pageObject)
+    debug(`---------- doesIncludePageExist --${pageName}--------`);
+    debug(pageObject);
 
     if (!pageObject) {
       alert(`Unable to find a page matching the include page name
       ${pageName}
-      `)
+      `);
     }
   }
 
@@ -234,10 +234,59 @@
     if (!pageObject) {
       alert(`Unable to find a page matching the output page name
       ${pageName}
-      `)
+      `);
     }
   }
 
+  const HELP = {
+    configName: {
+      tooltip: `A collection's name will be used to navigate between collections`,
+      url: "https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties",
+    },
+    configRepresentation: {
+      tooltip: `Specify how the collection will be displayed by choosing one of the available representations. Representations can be changed at any time.`,
+      url: "https://djplaner.github.io/canvas-collections/reference/representations/overview/",
+    },
+    configDefault: {
+      tooltip: `The default collection will be the first people see when the visit for the first time.`,
+      url: "https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties",
+    },
+    configHide: {
+      tooltip: `<p>Make collection invisible to students. 
+		(Note: can't hide the default collection)</p>
+		<p><i class="icon-warning"></i> Also unpublish all the collection's modules to be ensure they are hidden.`,
+      url: "https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties",
+    },
+    configUnallocated: {
+      tooltip: `<p>When students view this collection, include modules not allocated to any collection.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties",
+    },
+    configIncludePage: {
+      tooltip: `Specify the name of an existing Canvas page and the content of that page
+		will be displayed before the current collection's representation 
+		(it is <strong>included</strong>)`,
+      url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#include-page",
+    },
+    configIncludePageAfter: {
+      tooltip: `<p>By default, include page contents placed <em>before</em> the collection. When selected
+		will place the include page contents <em>after</em> the collection.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#include-page",
+    },
+    configOutputPage: {
+      tooltip: `Update the <em>output page</em> with the collection's current representation.
+		<p><strong>Note:</strong> This is how you can use Collections with students without it being
+		installed by your institution.</p>
+		`,
+      url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#output-page",
+    },
+    configApplyLabels: {
+      tooltip: `<p>🚧🧪☠️ <strong>Warning:</strong> This feature is experimental, under construction, and
+		potentially destructive. Only use as suggested and if you're certain.</p>
+		<p>Modify the names of Canvas modules by apply the Collection's label/number</p>
+		`,
+      url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#apply-module-labels",
+    },
+  };
 </script>
 
 <!-- {#if !removed} -->
@@ -277,30 +326,46 @@
   <!-- modify the collection's name 
 	  TODO - on change function to do the required modifications
 -->
-  <div class="cc-collection-representation">
-    <label for="cc-collection-{collectionName}-collectionName">Name</label>
-    <input
-      type="text"
-      id="cc-collection-{collectionName}-collectionName"
-      value={collectionName}
-      on:change={changeCollectionName}
-    />
+
+  <div class="cc-collection-form">
+    <span class="cc-collection-label">
+      <label for="cc-collection-{collectionName}-collectionName">Name</label>
+      <sl-tooltip>
+        <div slot="content">{@html HELP.configName.tooltip}</div>
+        <a href={HELP.configName.url} rel="noreferrer" target="_blank">
+          <i class="icon-question cc-module-icon" /></a
+        >
+      </sl-tooltip>
+    </span>
+    <span class="cc-collection-input">
+      <input
+        type="text"
+        id="cc-collection-{collectionName}-collectionName"
+        value={collectionName}
+        on:change={changeCollectionName}
+      />
+    </span>
   </div>
 
-  <!-- Modify the collection's representation
-	TODO - implement a select box and be reactive -->
-  <div class="cc-collection-representation">
-    <a
-      href="https://djplaner.github.io/canvas-collections/reference/representations/overview/"
-      rel="noreferrer"
-      target="_blank"
-    >
-      <i class="icon-question cc-module-icon" /></a
-    >
-    <label for="cc-collection-{collectionName}-representation"
-      >Representation</label
-    >
-    <span id="cc-collection-{collectionName}-representation">
+  <div class="cc-collection-form">
+    <span class="cc-collection-label">
+      <label for="cc-collection-{collectionName}-representation"
+        >Representation</label
+      >
+      <sl-tooltip>
+        <div slot="content">
+          {@html HELP.configRepresentation.tooltip}
+        </div>
+        <a
+          href={HELP.configRepresentation.url}
+          rel="noreferrer"
+          target="_blank"
+        >
+          <i class="icon-question cc-module-icon" /></a
+        >
+      </sl-tooltip>
+    </span>
+    <span class="cc-collection-input">
       <select
         id="cc-collection-{collectionName}-representation"
         class="cc-collection-representation"
@@ -317,162 +382,205 @@
     </span>
   </div>
 
-  <!-- default and hide collection - finished -->
-  <div class="cc-collection-representation">
-    <fieldset
-      class="ic-Fieldset ic-Fieldset--radio-checkbox"
-      style="margin-bottom:0.5em"
-    >
-      <div class="ic-Checkbox-group">
-        <div>
-          <a
-            href="https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <i
-              class="icon-question cc-module-icon"
-              id="cc-about-default-collection"
-            />
-          </a>
-
-          <input
-            type="checkbox"
-            id="cc-config-collection-${collectionName}-default"
-            class="cc-config-collection-default"
-            checked={$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] ===
-              collectionName}
-            on:click={changeDefaultCollection}
-          />
-          <label for="cc-config-collection-${collectionName}-default">
-            Default collection?
-          </label>
+  <div class="cc-collection-double">
+    <div>
+      <label for="cc-config-collection-{collectionName}-default">
+        Default
+      </label>
+      <sl-tooltip>
+        <div slot="content">
+          {@html HELP.configDefault.tooltip}
         </div>
-        <!-- <div class="ic-Form-control ic-Form-control--checkbox"> -->
-        <div>
-          <a
-            target="_blank"
-            href="https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-operations"
-            rel="noreferrer"
-          >
-            <i class="icon-question cc-module-icon" /></a
-          >
-          <!--          <input
-            type="checkbox"
-            id="cc-config-collection-${collectionName}-hide"
-            class="cc-config-collection-hide"
-            bind:checked={$collectionsStore["COLLECTIONS"][collectionName][
-              "hide"
-            ]}
-            disabled={$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] ===
-              collectionName}
-          /> -->
-          <label for="cc-config-collection-${collectionName}-hide">
-            Hide collection?
-          </label>
+        <a href={HELP.configDefault.url} target="_blank" rel="noreferrer">
+          <i class="icon-question cc-module-icon" />
+        </a>
+      </sl-tooltip>
+      <input
+        type="checkbox"
+        id="cc-config-collection-{collectionName}-default"
+        checked={$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] ===
+          collectionName}
+        on:click={changeDefaultCollection}
+      />
+    </div>
+    <div class="cc-collection-double-center">
+      <label for="cc-config-collection-{collectionName}-hide"> Hide </label>
+      <sl-tooltip>
+        <div slot="content">
+          {@html HELP.configHide.tooltip}
         </div>
-      </div>
-    </fieldset>
+        <a target="_blank" href={HELP.configHide.url} rel="noreferrer">
+          <i class="icon-question cc-module-icon" /></a
+        >
+      </sl-tooltip>
+      <input
+        type="checkbox"
+        id="cc-config-collection-{collectionName}-hide"
+        class="cc-config-collection-hide"
+        bind:checked={$collectionsStore["COLLECTIONS"][collectionName]["hide"]}
+        disabled={$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] ===
+          collectionName}
+      />
+    </div>
+    <div>
+      <label for="cc-config-collection-{collectionName}-unallocated">
+        Add unallocated
+      </label>
+      <sl-tooltip>
+        <div slot="content">
+          {@html HELP.configUnallocated.tooltip}
+        </div>
+        <a href={HELP.configUnallocated.url} target="_blank" rel="noreferrer">
+          <i class="icon-question cc-module-icon" />
+        </a>
+      </sl-tooltip>
+      <input
+        type="checkbox"
+        id="cc-config-collection-{collectionName}-unallocated"
+      />
+      <!--
+        checked={$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] ===
+          collectionName}
+        on:click={changeDefaultCollection}
+      />
+        -->
+    </div>
   </div>
 
   <!-- include page -->
 
-  <div>
-    <a
-      id="cc-about-include-page"
-      rel="noreferrer"
-      target="_blank"
-      href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#include-page"
-      ><i class="icon-question cc-module-icon" /></a
-    >
-    Include page
-        <!-- on:stopTyping={onStopTyping} -->
-    <div style="padding-left:0.5em">
+  <div class="cc-collection-two-line">
+    <div class="cc-collection-two-line-header">
+      <label for="cc-collection-{collectionName}-include-page"
+        >Include Page</label
+      >
+      <sl-tooltip>
+        <div slot="content">
+          {@html HELP.configIncludePage.tooltip}
+        </div>
+        <a
+          id="cc-about-include-page"
+          rel="noreferrer"
+          target="_blank"
+          href={HELP.configIncludePage.url}
+          ><i class="icon-question cc-module-icon" /></a
+        >
+      </sl-tooltip>
+    </div>
+    <div>&nbsp;</div>
+    <div class="cc-collection-two-line-body">
       <input
-        id="cc-collection-${collectionName}-include-page"
+        id="cc-collection-{collectionName}-include-page"
         bind:value={$collectionsStore["COLLECTIONS"][collectionName]
           .includePage}
         on:click={() => ($configStore["needToSaveCollections"] = true)}
         on:keydown={() => ($configStore["needToSaveCollections"] = true)}
-        on:focusout={() => (getPageName($collectionsStore["COLLECTIONS"][collectionName]
-          .includePage,$configStore["courseId"],doesIncludePageExist))}
+        on:focusout={() =>
+          getPageName(
+            $collectionsStore["COLLECTIONS"][collectionName].includePage,
+            $configStore["courseId"],
+            doesIncludePageExist
+          )}
         class="cc-existing-collection"
       />
-      <a
-        id="cc-about-include-after"
-        href="https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <i class="icon-question cc-module-icon" />
-      </a>
-      <input
-        type="checkbox"
-        id="cc-config-collection-${collectionName}-include-after"
-        class="cc-config-collection-include-after"
-        on:click={() => ($configStore["needToSaveCollections"] = true)}
-        on:keydown={() => ($configStore["needToSaveCollections"] = true)}
-        bind:checked={$collectionsStore["COLLECTIONS"][collectionName]
-          .includeAfter}
-      />
-      <label for="cc-config-collection-${collectionName}-include-after">
-        After?
-      </label>
+
+      <span class="cc-collection-label">
+        <label for="cc-config-collection-{collectionName}-include-after">
+          After?
+        </label>
+        <sl-tooltip>
+          <div slot="content">
+            {@html HELP.configIncludePageAfter.tooltip}
+          </div>
+          <a
+            id="cc-about-include-after"
+            href={HELP.configIncludePageAfter.url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <i class="icon-question cc-module-icon" />
+          </a>
+        </sl-tooltip>
+        <input
+          type="checkbox"
+          id="cc-config-collection-{collectionName}-include-after"
+          class="cc-config-collection-include-after"
+          on:click={() => ($configStore["needToSaveCollections"] = true)}
+          on:keydown={() => ($configStore["needToSaveCollections"] = true)}
+          bind:checked={$collectionsStore["COLLECTIONS"][collectionName]
+            .includeAfter}
+        />
+      </span>
     </div>
   </div>
   <!-- output page -->
-  <div style="margin-top:0.5em">
-    <a
-      id="cc-about-update-output-page"
-      target="_blank"
-      href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#output-page"
-      rel="noreferrer"
-    >
-      <i class="icon-question cc-module-icon" /></a
-    >
-    Output page
-    <div class="cc-collection-representation">
-      <!--					<label for="cc-collection-${collectionName}-output-page">Name</label> -->
+  <div class="cc-collection-two-line">
+    <div class="cc-collection-two-line-header">
+      <label for="cc-collection-{collectionName}-output-page">
+        Output page
+      </label>
+      <sl-tooltip>
+        <div slot="content">
+          {@html HELP.configOutputPage.tooltip}
+        </div>
+        <a
+          id="cc-about-update-output-page"
+          target="_blank"
+          href={HELP.configOutputPage.url}
+          rel="noreferrer"
+        >
+          <i class="icon-question cc-module-icon" /></a
+        >
+      </sl-tooltip>
+    </div>
+    <div>&nbsp;</div>
+    <div class="cc-collection-two-line-body">
       <input
-        id="cc-collection-${collectionName}-output-page"
+        id="cc-collection-{collectionName}-output-page"
         bind:value={$collectionsStore["COLLECTIONS"][collectionName].outputPage}
         on:click={() => ($configStore["needToSaveCollections"] = true)}
         on:keydown={() => ($configStore["needToSaveCollections"] = true)}
-        on:focusout={() => (getPageName($collectionsStore["COLLECTIONS"][collectionName]
-          .outputPage,$configStore["courseId"],doesOutputPageExist))}
+        on:focusout={() =>
+          getPageName(
+            $collectionsStore["COLLECTIONS"][collectionName].outputPage,
+            $configStore["courseId"],
+            doesOutputPageExist
+          )}
         class="cc-existing-collection"
       />
-      <span
-        class="cc-collection-representation cc-output-page-update **outputPageExists**"
+      <button
+        id="cc-collection-{collectionName}-output-page-update"
+        class="btn cc-existing-collection">Update</button
       >
-        <!-- TODO onclick for output page button -->
-        <button
-          id="cc-collection-${collectionName}-output-page-update"
-          class="btn cc-existing-collection">Update</button
-        >
-      </span>
     </div>
-    <div style="display:flex;margin-top:1em;margin-bottom:0.5em">
-      <div style="margin-right:0.5em">
-        <sl-tooltip class="cc-about-apply-module-labels">
-          <div slot="content" />
-          <a
-            id="cc-about-apply-module-labels"
-            target="_blank"
-            href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#apply-module-labels"
-            rel="noreferrer"
-          >
-            <i class="icon-question cc-module-icon" /></a
-          >
-          🧪Apply module labels ☠️
-        </sl-tooltip>
-      </div>
+  </div>
+
+  <div class="cc-collection-form-reverse">
+    <span class="cc-collection-input-reverse">
+      <label for="cc-collection-{collectionName}-apply-module-labels">
+        🧪Apply module labels ☠️
+      </label>
+      <sl-tooltip class="cc-about-apply-module-labels">
+        <div slot="content">
+          {@html HELP.configApplyLabels.tooltip}
+        </div>
+        <a
+          id="cc-about-apply-module-labels"
+          target="_blank"
+          href={HELP.configApplyLabels.url}
+          rel="noreferrer"
+        >
+          <i class="icon-question cc-module-icon" /></a
+        >
+      </sl-tooltip>
+    </span>
+    <span class="cc-collection-label-reverse">
       <!-- TODO onclick for apply module labels -->
       <button
-        id="cc-collection-${collectionName}-apply-module-labels"
+        id="cc-collection-{collectionName}-apply-module-labels"
         class="btn cc-existing-collection">Apply</button
       >
-    </div>
+    </span>
   </div>
 </div>
 
@@ -501,14 +609,14 @@
     font-size: 0.8em;
   }
 
-  .cc-collection-representation {
+  /*  .cc-collection-representation {
     display: flex;
     align-items: center;
     justify-content: space-around;
-  }
+  } */
 
   .cc-existing-collection input {
-    width: 10em;
+    width: 15em;
     margin: 0.1em;
     font-size: 0.8em;
     padding-left: 0.5em;
@@ -516,7 +624,7 @@
 
   button.cc-existing-collection {
     font-size: 0.8em;
-    padding: 0.5em 1em;
+    padding: 0.2em;
   }
   /*  .cc-config-collection select {
     font-size: 0.8em;
@@ -528,5 +636,88 @@
     font-size: 0.8em;
     width: 10rem;
     height: 2rem;
+  }
+
+  .cc-collection-form {
+    display: grid;
+    grid-template-columns: 8em 1fr;
+    grid-gap: 1em;
+    padding-bottom: 0.25em;
+  }
+
+  .cc-collection-label {
+    grid-column: 1/ 2;
+    text-align: right;
+  }
+
+  .cc-collection-input {
+    grid-column: 2/ 3;
+  }
+
+  .cc-collection-form-reverse {
+    display: grid;
+    grid-template-columns: 1fr 8em;
+    grid-gap: 1em;
+    padding: 0.25em;
+  }
+
+  .cc-collection-label-reverse {
+    grid-column: 2/3;
+    text-align: left;
+  }
+
+  .cc-collection-input-reverse {
+    grid-column: 1/2;
+  }
+
+  .cc-collection-double {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 0em;
+    text-align: right;
+  }
+
+  .cc-collection-double-center {
+    text-align: center;
+  }
+
+  .cc-collection-two-line {
+    display: grid;
+    grid-template-columns: 8em 1fr;
+  }
+
+  .cc-collection-two-line-body {
+    grid-column: 1/3;
+    grid-row: 2/3;
+    text-align: left;
+  }
+
+  .cc-collection-two-line-header {
+    grid-column: 1/2;
+    text-align: left;
+    padding-left: 0.5em;
+  }
+
+  .cc-collection-input > select,
+  .cc-collection-input > input[type="text"] {
+    width: 90%;
+  }
+
+/*  .cc-collection-input > input[type="checkbox"] {
+    width: auto;
+    margin-left: 1em;
+  } */
+
+  sl-tooltip {
+    text-align: left;
+    white-space: normal;
+  }
+
+  label, select {
+    margin-bottom: 0em;
+  }
+
+  input[type="checkbox"] {
+    width: auto;
   }
 </style>
