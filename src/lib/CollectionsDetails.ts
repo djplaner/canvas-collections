@@ -492,6 +492,76 @@ export class CollectionsDetails {
 
     return content;
   }
+
+  /**
+   * @method saveLastCollectionViewed
+   * @description Save the name of the collection that was last viewed in local storage
+   */
+
+  saveLastCollectionViewed(collectionName : string) {
+    let hostname = window.location.hostname
+    localStorage.setItem(`cc-${hostname}-${this.config['courseId']}-last-collection`, collectionName);
+  }
+  
+
+  /**
+   * @method getCurrentCollection
+   * @description Return the name of the collection that should be displayed - current collection
+   * This will need to consider
+   * - whether the URL specifies a collection using #cc-collection-X
+   * - whether a cookie/local storage is set for the collection the user last viewed
+   * - or by default using the DEFAULT_ACTIVE_COLLECTION
+   */
+  getCurrentCollection() {
+    const urlHashCollection = this.getUrlHashCollection();
+
+    if (urlHashCollection) {
+      return urlHashCollection;
+    }
+
+    let hostname = window.location.hostname
+    const lastCollectionViewed = localStorage.getItem(`cc-${hostname}-${this.config['courseId']}-last-collection`);
+    if ( lastCollectionViewed) {
+      // check that the collection name still exists
+      if (this["collections"]["COLLECTIONS"].hasOwnProperty(lastCollectionViewed)) {
+        return lastCollectionViewed;
+      }
+    }
+
+    // by default return the DEFAULT_ACTIVE_COLLECTION
+    const defaultCollection = this["collections"]["DEFAULT_ACTIVE_COLLECTION"];
+    if (defaultCollection) {
+      return defaultCollection;
+    }
+    return ""
+  }
+
+  /**
+   * @method getUrlHashCollectionNum
+   * @returns the name of the collection matching the X in #cc-collection-X
+   * if it exists, otherwise null
+   */
+
+  private getUrlHashCollection() {
+    let url = new URL(window.location.href);
+    // check if there's a cc-collection-\d+ in the hash
+    // this is the case for internal navigation within collections
+    // i.e. we're on a modules page
+    let hash = url.hash;
+    if (hash) {
+      let checkNum = hash.match(/cc-collection-(\d+)/);
+      if (checkNum) {
+        const collectionNum = parseInt(checkNum[1]);
+        if (
+          collectionNum >= 0 &&
+          collectionNum < this.collections["COLLECTIONS_ORDER"].length
+        ) {
+          return this.collections["COLLECTIONS_ORDER"][collectionNum];
+        }
+      }
+    }
+    return null;
+  }
 }
 
 /**
@@ -530,44 +600,46 @@ const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 	}
 }; */
 
-  /**
-   * @function calculateActualNum
-   * @description Once we have collections and canvas details calculate the
-   * attribute 'actualNum' for each module.
-   */
-export function calculateActualNum( canvasModules , collectionsModules) {
-    let numCalculator = {};
+/**
+ * @function calculateActualNum
+ * @description Once we have collections and canvas details calculate the
+ * attribute 'actualNum' for each module.
+ */
+export function calculateActualNum(canvasModules, collectionsModules) {
+  let numCalculator = {};
 
-    // loop through each module in the array canvasDetails['courseModules']
-    // and set the attribute 'actualNum' to the number of modules in the
-    // collection that precede it
-    //for (let moduleKey in canvasDetails.courseModules ){
-    //canvasDetails.courseModules.forEach((module : {}) => {
-    canvasModules.forEach((module : {}) => {
-      const moduleId = module['id'];
+  // loop through each module in the array canvasDetails['courseModules']
+  // and set the attribute 'actualNum' to the number of modules in the
+  // collection that precede it
+  //for (let moduleKey in canvasDetails.courseModules ){
+  //canvasDetails.courseModules.forEach((module : {}) => {
+  canvasModules.forEach((module: {}) => {
+    const moduleId = module["id"];
 
-      // get the collections data about this module
-      //const collectionsModule = $collectionsStore["MODULES"][moduleId];
-      const collectionsModule = collectionsModules[moduleId];
+    // get the collections data about this module
+    //const collectionsModule = $collectionsStore["MODULES"][moduleId];
+    const collectionsModule = collectionsModules[moduleId];
 
-      if (collectionsModule) {
-        // does it have a hard coded num
-        if (collectionsModule.hasOwnProperty("num")) {
-          collectionsModule.actualNum = collectionsModule.num;
-        } else {
-          // if not, then calculate auto num based on the label and the
-          // order so far
-          const collectionName = collectionsModule.collection;
-          const label = collectionsModule.label;
-          if ( ! numCalculator.hasOwnProperty(collectionName)  ) {
-            numCalculator[collectionName] = {};
-          }
-          if ( ! numCalculator[collectionName].hasOwnProperty(label)) {
-            numCalculator[collectionName][label] = 0;
-          }
-          numCalculator[collectionName][label] = ++numCalculator[collectionName][label];
-          collectionsModule.actualNum = numCalculator[collectionName][label];
-          }
+    if (collectionsModule) {
+      // does it have a hard coded num
+      if (collectionsModule.hasOwnProperty("num")) {
+        collectionsModule.actualNum = collectionsModule.num;
+      } else {
+        // if not, then calculate auto num based on the label and the
+        // order so far
+        const collectionName = collectionsModule.collection;
+        const label = collectionsModule.label;
+        if (!numCalculator.hasOwnProperty(collectionName)) {
+          numCalculator[collectionName] = {};
         }
-    });
-  }
+        if (!numCalculator[collectionName].hasOwnProperty(label)) {
+          numCalculator[collectionName][label] = 0;
+        }
+        numCalculator[collectionName][label] = ++numCalculator[collectionName][
+          label
+        ];
+        collectionsModule.actualNum = numCalculator[collectionName][label];
+      }
+    }
+  });
+}

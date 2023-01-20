@@ -30,15 +30,15 @@ export function checkContext() : object {
   // check if there's a cc-collection-\d+ in the hash
   // this is the case for internal navigation within collections
   // i.e. we're on a modules page
-  let hash = url.hash;
+/*  let hash = url.hash;
   if (hash) {
     let checkNum = hash.match(/cc-collection-(\d+)/);
     if (checkNum) {
       // will set this to a number now, for later translation to collectionName
       context.currentCollection = parseInt(checkNum[1]) ;
     }
-  }
-  url.hash = "";
+  } */
+  url.hash = ""; 
   const documentUrl = url.href;
   //documentUrl = documentUrl.replace(/#$/, '');
 

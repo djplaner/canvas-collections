@@ -3037,14 +3037,14 @@ var app = (function () {
         // check if there's a cc-collection-\d+ in the hash
         // this is the case for internal navigation within collections
         // i.e. we're on a modules page
-        let hash = url.hash;
-        if (hash) {
+        /*  let hash = url.hash;
+          if (hash) {
             let checkNum = hash.match(/cc-collection-(\d+)/);
             if (checkNum) {
-                // will set this to a number now, for later translation to collectionName
-                context.currentCollection = parseInt(checkNum[1]);
+              // will set this to a number now, for later translation to collectionName
+              context.currentCollection = parseInt(checkNum[1]) ;
             }
-        }
+          } */
         url.hash = "";
         const documentUrl = url.href;
         //documentUrl = documentUrl.replace(/#$/, '');
@@ -13298,6 +13298,65 @@ var app = (function () {
             debug(content);
             return content;
         }
+        /**
+         * @method saveLastCollectionViewed
+         * @description Save the name of the collection that was last viewed in local storage
+         */
+        saveLastCollectionViewed(collectionName) {
+            let hostname = window.location.hostname;
+            localStorage.setItem(`cc-${hostname}-${this.config['courseId']}-last-collection`, collectionName);
+        }
+        /**
+         * @method getCurrentCollection
+         * @description Return the name of the collection that should be displayed - current collection
+         * This will need to consider
+         * - whether the URL specifies a collection using #cc-collection-X
+         * - whether a cookie/local storage is set for the collection the user last viewed
+         * - or by default using the DEFAULT_ACTIVE_COLLECTION
+         */
+        getCurrentCollection() {
+            const urlHashCollection = this.getUrlHashCollection();
+            if (urlHashCollection) {
+                return urlHashCollection;
+            }
+            let hostname = window.location.hostname;
+            const lastCollectionViewed = localStorage.getItem(`cc-${hostname}-${this.config['courseId']}-last-collection`);
+            if (lastCollectionViewed) {
+                // check that the collection name still exists
+                if (this["collections"]["COLLECTIONS"].hasOwnProperty(lastCollectionViewed)) {
+                    return lastCollectionViewed;
+                }
+            }
+            // by default return the DEFAULT_ACTIVE_COLLECTION
+            const defaultCollection = this["collections"]["DEFAULT_ACTIVE_COLLECTION"];
+            if (defaultCollection) {
+                return defaultCollection;
+            }
+            return "";
+        }
+        /**
+         * @method getUrlHashCollectionNum
+         * @returns the name of the collection matching the X in #cc-collection-X
+         * if it exists, otherwise null
+         */
+        getUrlHashCollection() {
+            let url = new URL(window.location.href);
+            // check if there's a cc-collection-\d+ in the hash
+            // this is the case for internal navigation within collections
+            // i.e. we're on a modules page
+            let hash = url.hash;
+            if (hash) {
+                let checkNum = hash.match(/cc-collection-(\d+)/);
+                if (checkNum) {
+                    const collectionNum = parseInt(checkNum[1]);
+                    if (collectionNum >= 0 &&
+                        collectionNum < this.collections["COLLECTIONS_ORDER"].length) {
+                        return this.collections["COLLECTIONS_ORDER"][collectionNum];
+                    }
+                }
+            }
+            return null;
+        }
     }
     /**
      * Templates used in the above
@@ -13346,7 +13405,7 @@ var app = (function () {
         //for (let moduleKey in canvasDetails.courseModules ){
         //canvasDetails.courseModules.forEach((module : {}) => {
         canvasModules.forEach((module) => {
-            const moduleId = module['id'];
+            const moduleId = module["id"];
             // get the collections data about this module
             //const collectionsModule = $collectionsStore["MODULES"][moduleId];
             const collectionsModule = collectionsModules[moduleId];
@@ -26505,7 +26564,7 @@ Do you want to use the sanitised value?`)) {
     const { console: console_1 } = globals;
     const file = "src\\CanvasCollections.svelte";
 
-    // (214:0) {#if editMode && modulesPage}
+    // (233:0) {#if editMode && modulesPage}
     function create_if_block(ctx) {
     	let div2;
     	let div1;
@@ -26523,9 +26582,9 @@ Do you want to use the sanitised value?`)) {
     	let t8;
     	let t9;
     	let current;
-    	let if_block0 = /*canvasDataLoaded*/ ctx[4] && /*collectionsDataLoaded*/ ctx[5] && create_if_block_4(ctx);
-    	let if_block1 = /*canvasDataLoaded*/ ctx[4] && /*collectionsDataLoaded*/ ctx[5] && create_if_block_3(ctx);
-    	let if_block2 = !/*ccPublished*/ ctx[7] && create_if_block_2(ctx);
+    	let if_block0 = /*canvasDataLoaded*/ ctx[3] && /*collectionsDataLoaded*/ ctx[4] && create_if_block_4(ctx);
+    	let if_block1 = /*canvasDataLoaded*/ ctx[3] && /*collectionsDataLoaded*/ ctx[4] && create_if_block_3(ctx);
+    	let if_block2 = !/*ccPublished*/ ctx[8] && create_if_block_2(ctx);
     	let if_block3 = /*showConfig*/ ctx[0] && create_if_block_1(ctx);
 
     	const block = {
@@ -26553,21 +26612,21 @@ Do you want to use the sanitised value?`)) {
     			t9 = space();
     			if (if_block3) if_block3.c();
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 217, 8, 8888);
+    			add_location(div0, file, 236, 8, 9438);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 222, 9, 9049);
+    			add_location(i, file, 238, 11, 9576);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "href", /*HELP*/ ctx[12].switchTitle.url);
-    			add_location(a, file, 218, 6, 8948);
-    			add_location(sl_tooltip, file, 216, 6, 8866);
-    			add_location(small, file, 235, 6, 9461);
+    			add_location(a, file, 237, 8, 9500);
+    			add_location(sl_tooltip, file, 235, 6, 9416);
+    			add_location(small, file, 251, 6, 9990);
     			set_style(span, "font-size", "50%");
-    			add_location(span, file, 236, 6, 9502);
-    			attr_dev(div1, "class", "cc-switch-title svelte-17owish");
-    			add_location(div1, file, 215, 4, 8829);
-    			attr_dev(div2, "class", "cc-switch-container svelte-17owish");
-    			add_location(div2, file, 214, 2, 8790);
+    			add_location(span, file, 252, 6, 10031);
+    			attr_dev(div1, "class", "cc-switch-title svelte-1dz0qwy");
+    			add_location(div1, file, 234, 4, 9379);
+    			attr_dev(div2, "class", "cc-switch-container svelte-1dz0qwy");
+    			add_location(div2, file, 233, 2, 9340);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -26592,7 +26651,7 @@ Do you want to use the sanitised value?`)) {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (/*canvasDataLoaded*/ ctx[4] && /*collectionsDataLoaded*/ ctx[5]) {
+    			if (/*canvasDataLoaded*/ ctx[3] && /*collectionsDataLoaded*/ ctx[4]) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
@@ -26605,7 +26664,7 @@ Do you want to use the sanitised value?`)) {
     				if_block0 = null;
     			}
 
-    			if (/*canvasDataLoaded*/ ctx[4] && /*collectionsDataLoaded*/ ctx[5]) {
+    			if (/*canvasDataLoaded*/ ctx[3] && /*collectionsDataLoaded*/ ctx[4]) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
@@ -26618,7 +26677,7 @@ Do you want to use the sanitised value?`)) {
     				if_block1 = null;
     			}
 
-    			if (!/*ccPublished*/ ctx[7]) {
+    			if (!/*ccPublished*/ ctx[8]) {
     				if (if_block2) {
     					if_block2.p(ctx, dirty);
     				} else {
@@ -26674,14 +26733,14 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(214:0) {#if editMode && modulesPage}",
+    		source: "(233:0) {#if editMode && modulesPage}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (226:6) {#if canvasDataLoaded && collectionsDataLoaded}
+    // (242:6) {#if canvasDataLoaded && collectionsDataLoaded}
     function create_if_block_4(ctx) {
     	let i;
     	let i_class_value;
@@ -26697,7 +26756,7 @@ Do you want to use the sanitised value?`)) {
     			? 'icon-mini-arrow-down'
     			: 'icon-mini-arrow-right') + " cc-module-icon"));
 
-    			add_location(i, file, 226, 8, 9189);
+    			add_location(i, file, 242, 8, 9718);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -26729,14 +26788,14 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(226:6) {#if canvasDataLoaded && collectionsDataLoaded}",
+    		source: "(242:6) {#if canvasDataLoaded && collectionsDataLoaded}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (240:4) {#if canvasDataLoaded && collectionsDataLoaded}
+    // (256:4) {#if canvasDataLoaded && collectionsDataLoaded}
     function create_if_block_3(ctx) {
     	let label;
     	let sl_switch;
@@ -26756,22 +26815,22 @@ Do you want to use the sanitised value?`)) {
     			div = element("div");
     			button = element("button");
     			t1 = text("Save");
-    			set_custom_element_data(sl_switch, "checked", /*checked*/ ctx[3]);
+    			set_custom_element_data(sl_switch, "checked", /*checked*/ ctx[7]);
     			set_custom_element_data(sl_switch, "id", "cc-switch");
-    			set_custom_element_data(sl_switch, "class", "svelte-17owish");
-    			add_location(sl_switch, file, 241, 6, 9673);
-    			attr_dev(label, "class", "cc-switch svelte-17owish");
+    			set_custom_element_data(sl_switch, "class", "svelte-1dz0qwy");
+    			add_location(sl_switch, file, 257, 8, 10204);
+    			attr_dev(label, "class", "cc-switch svelte-1dz0qwy");
     			attr_dev(label, "for", "cc-switch");
-    			add_location(label, file, 240, 6, 9624);
+    			add_location(label, file, 256, 6, 10153);
 
-    			attr_dev(button, "class", button_class_value = "" + (null_to_empty(/*$configStore*/ ctx[8]["needToSaveCollections"]
+    			attr_dev(button, "class", button_class_value = "" + (null_to_empty(/*$configStore*/ ctx[6]["needToSaveCollections"]
     			? "cc-active-save-button"
-    			: "cc-save-button") + " svelte-17owish"));
+    			: "cc-save-button") + " svelte-1dz0qwy"));
 
     			attr_dev(button, "id", "cc-save-button");
-    			add_location(button, file, 248, 8, 9842);
-    			attr_dev(div, "class", "cc-save svelte-17owish");
-    			add_location(div, file, 247, 6, 9811);
+    			add_location(button, file, 264, 8, 10378);
+    			attr_dev(div, "class", "cc-save svelte-1dz0qwy");
+    			add_location(div, file, 263, 6, 10347);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, label, anchor);
@@ -26788,7 +26847,7 @@ Do you want to use the sanitised value?`)) {
     						button,
     						"click",
     						function () {
-    							if (is_function(/*collectionsDetails*/ ctx[6].saveCollections(/*$configStore*/ ctx[8]["editMode"], /*$configStore*/ ctx[8]["needToSaveCollections"]))) /*collectionsDetails*/ ctx[6].saveCollections(/*$configStore*/ ctx[8]["editMode"], /*$configStore*/ ctx[8]["needToSaveCollections"]).apply(this, arguments);
+    							if (is_function(/*collectionsDetails*/ ctx[5].saveCollections(/*$configStore*/ ctx[6]["editMode"], /*$configStore*/ ctx[6]["needToSaveCollections"]))) /*collectionsDetails*/ ctx[5].saveCollections(/*$configStore*/ ctx[6]["editMode"], /*$configStore*/ ctx[6]["needToSaveCollections"]).apply(this, arguments);
     						},
     						false,
     						false,
@@ -26802,13 +26861,13 @@ Do you want to use the sanitised value?`)) {
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
 
-    			if (dirty & /*checked*/ 8) {
-    				set_custom_element_data(sl_switch, "checked", /*checked*/ ctx[3]);
+    			if (dirty & /*checked*/ 128) {
+    				set_custom_element_data(sl_switch, "checked", /*checked*/ ctx[7]);
     			}
 
-    			if (dirty & /*$configStore*/ 256 && button_class_value !== (button_class_value = "" + (null_to_empty(/*$configStore*/ ctx[8]["needToSaveCollections"]
+    			if (dirty & /*$configStore*/ 64 && button_class_value !== (button_class_value = "" + (null_to_empty(/*$configStore*/ ctx[6]["needToSaveCollections"]
     			? "cc-active-save-button"
-    			: "cc-save-button") + " svelte-17owish"))) {
+    			: "cc-save-button") + " svelte-1dz0qwy"))) {
     				attr_dev(button, "class", button_class_value);
     			}
     		},
@@ -26825,14 +26884,14 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(240:4) {#if canvasDataLoaded && collectionsDataLoaded}",
+    		source: "(256:4) {#if canvasDataLoaded && collectionsDataLoaded}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (262:4) {#if !ccPublished}
+    // (278:4) {#if !ccPublished}
     function create_if_block_2(ctx) {
     	let div1;
     	let sl_badge;
@@ -26853,22 +26912,22 @@ Do you want to use the sanitised value?`)) {
     			t0 = space();
     			a = element("a");
     			i = element("i");
-    			t1 = text(" \r\n          unpublished");
+    			t1 = text("  unpublished");
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 266, 8, 10489);
+    			add_location(div0, file, 282, 12, 11030);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 272, 13, 10770);
+    			add_location(i, file, 288, 15, 11323);
     			attr_dev(a, "id", "cc-about-unpublished");
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "href", "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/");
-    			add_location(a, file, 267, 10, 10559);
-    			add_location(sl_tooltip, file, 265, 6, 10467);
+    			add_location(a, file, 283, 12, 11102);
+    			add_location(sl_tooltip, file, 281, 10, 11004);
     			set_custom_element_data(sl_badge, "variant", "warning");
     			set_custom_element_data(sl_badge, "pill", "");
-    			add_location(sl_badge, file, 264, 10, 10426);
-    			attr_dev(div1, "class", "cc-unpublished svelte-17owish");
-    			add_location(div1, file, 262, 6, 10312);
+    			add_location(sl_badge, file, 280, 8, 10959);
+    			attr_dev(div1, "class", "cc-unpublished svelte-1dz0qwy");
+    			add_location(div1, file, 278, 6, 10848);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -26891,14 +26950,14 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(262:4) {#if !ccPublished}",
+    		source: "(278:4) {#if !ccPublished}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (281:4) {#if showConfig}
+    // (297:4) {#if showConfig}
     function create_if_block_1(ctx) {
     	let div;
     	let collectionsconfiguration;
@@ -26910,8 +26969,8 @@ Do you want to use the sanitised value?`)) {
     			div = element("div");
     			create_component(collectionsconfiguration.$$.fragment);
     			attr_dev(div, "id", "cc-config");
-    			attr_dev(div, "class", "border border-trbl svelte-17owish");
-    			add_location(div, file, 281, 6, 10977);
+    			attr_dev(div, "class", "border border-trbl svelte-1dz0qwy");
+    			add_location(div, file, 297, 6, 11538);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -26937,7 +26996,7 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(281:4) {#if showConfig}",
+    		source: "(297:4) {#if showConfig}",
     		ctx
     	});
 
@@ -26964,10 +27023,10 @@ Do you want to use the sanitised value?`)) {
     			if_block_anchor = empty();
     			attr_dev(link, "rel", "stylesheet");
     			attr_dev(link, "href", "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/themes/light.css");
-    			add_location(link, file, 209, 2, 8487);
+    			add_location(link, file, 222, 2, 9012);
     			attr_dev(script, "type", "module");
     			if (!src_url_equal(script.src, script_src_value = "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/shoelace.js")) attr_dev(script, "src", script_src_value);
-    			add_location(script, file, 210, 4, 8615);
+    			add_location(script, file, 226, 2, 9151);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -27049,11 +27108,11 @@ Do you want to use the sanitised value?`)) {
     	let $collectionsStore;
     	let $modulesStore;
     	validate_store(configStore, 'configStore');
-    	component_subscribe($$self, configStore, $$value => $$invalidate(8, $configStore = $$value));
+    	component_subscribe($$self, configStore, $$value => $$invalidate(6, $configStore = $$value));
     	validate_store(collectionsStore, 'collectionsStore');
-    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(18, $collectionsStore = $$value));
+    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(17, $collectionsStore = $$value));
     	validate_store(modulesStore, 'modulesStore');
-    	component_subscribe($$self, modulesStore, $$value => $$invalidate(19, $modulesStore = $$value));
+    	component_subscribe($$self, modulesStore, $$value => $$invalidate(18, $modulesStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('CanvasCollections', slots, []);
 
@@ -27098,7 +27157,6 @@ Do you want to use the sanitised value?`)) {
     	let { editMode } = $$props;
     	let { csrfToken } = $$props;
     	let { modulesPage } = $$props;
-    	let { currentCollection } = $$props;
     	let { showConfig } = $$props;
     	let checked = false;
 
@@ -27134,7 +27192,7 @@ Do you want to use the sanitised value?`)) {
     	function gotCanvasDetails() {
     		console.log("XXXXXXXXXXXXXXX getCanvasDetails");
     		console.log(canvasDetails);
-    		$$invalidate(4, canvasDataLoaded = true);
+    		$$invalidate(3, canvasDataLoaded = true);
 
     		// canvasDetails.courseModules is an array of Canvas module objects
     		// set $modulesStore to a dict of Canvas module objects keyed on the module id
@@ -27157,18 +27215,25 @@ Do you want to use the sanitised value?`)) {
     		//ccOn = collectionsDetails.ccOn;
     		set_store_value(configStore, $configStore["ccOn"] = collectionsDetails.ccOn, $configStore);
 
-    		$$invalidate(7, ccPublished = collectionsDetails.ccPublished);
+    		$$invalidate(8, ccPublished = collectionsDetails.ccPublished);
+    		set_store_value(configStore, $configStore["currentCollection"] = collectionsDetails.getCurrentCollection(), $configStore);
 
     		// if a student is viewing and no collections, then limit what is done
     		if (!(!$configStore["ccOn"] && !$configStore["editMode"])) {
+    			// figure out what should be the current collection
     			// if currentCollection is a number, then the URL include #cc-collection-<num>
     			// Need to set current collection to the name matching that collection
-    			if (typeof currentCollection === "number" && currentCollection < collectionsDetails.collections.COLLECTIONS_ORDER.length && currentCollection >= 0) {
-    				set_store_value(configStore, $configStore["currentCollection"] = collectionsDetails.collections.COLLECTIONS_ORDER[currentCollection], $configStore);
-    			}
-
+    			/*if (
+      typeof currentCollection === "number" &&
+      currentCollection <
+        collectionsDetails.collections.COLLECTIONS_ORDER.length &&
+      currentCollection >= 0
+    ) {
+      $configStore["currentCollection"] =
+        collectionsDetails.collections.COLLECTIONS_ORDER[currentCollection];
+    } */
     			//----- Indicate we've loaded the data and check if ready for next step
-    			$$invalidate(5, collectionsDataLoaded = true);
+    			$$invalidate(4, collectionsDataLoaded = true);
 
     			checkAllDataLoaded();
     		}
@@ -27185,7 +27250,7 @@ Do you want to use the sanitised value?`)) {
     		if (canvasDataLoaded && collectionsDataLoaded) {
     			set_store_value(collectionsStore, $collectionsStore = collectionsDetails.collections, $collectionsStore);
     			calculateActualNum(canvasDetails.courseModules, $collectionsStore["MODULES"]);
-    			$$invalidate(3, checked = $configStore["ccOn"]);
+    			$$invalidate(7, checked = $configStore["ccOn"]);
 
     			if ($configStore["ccOn"]) {
     				addCollectionsDisplay();
@@ -27208,7 +27273,7 @@ Do you want to use the sanitised value?`)) {
      */
     	function toggleCollectionsSwitch() {
     		set_store_value(configStore, $configStore["ccOn"] = !$configStore["ccOn"], $configStore);
-    		$$invalidate(3, checked = $configStore["ccOn"]);
+    		$$invalidate(7, checked = $configStore["ccOn"]);
     		set_store_value(collectionsStore, $collectionsStore["STATUS"] = $configStore["ccOn"] ? "on" : "off", $collectionsStore);
     		set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
 
@@ -27261,7 +27326,7 @@ Do you want to use the sanitised value?`)) {
     		// - modules
     		if (modulesPage) {
     			canvasDetails = new CanvasDetails(gotCanvasDetails, { courseId, csrfToken });
-    			$$invalidate(6, collectionsDetails = new CollectionsDetails(gotCollectionsDetails, { courseId, csrfToken }));
+    			$$invalidate(5, collectionsDetails = new CollectionsDetails(gotCollectionsDetails, { courseId, csrfToken }));
     		}
     	}));
 
@@ -27317,23 +27382,12 @@ Do you want to use the sanitised value?`)) {
     			console_1.warn("<CanvasCollections> was created without expected prop 'modulesPage'");
     		}
 
-    		if (currentCollection === undefined && !('currentCollection' in $$props || $$self.$$.bound[$$self.$$.props['currentCollection']])) {
-    			console_1.warn("<CanvasCollections> was created without expected prop 'currentCollection'");
-    		}
-
     		if (showConfig === undefined && !('showConfig' in $$props || $$self.$$.bound[$$self.$$.props['showConfig']])) {
     			console_1.warn("<CanvasCollections> was created without expected prop 'showConfig'");
     		}
     	});
 
-    	const writable_props = [
-    		'courseId',
-    		'editMode',
-    		'csrfToken',
-    		'modulesPage',
-    		'currentCollection',
-    		'showConfig'
-    	];
+    	const writable_props = ['courseId', 'editMode', 'csrfToken', 'modulesPage', 'showConfig'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<CanvasCollections> was created with unknown prop '${key}'`);
@@ -27344,7 +27398,6 @@ Do you want to use the sanitised value?`)) {
     		if ('editMode' in $$props) $$invalidate(1, editMode = $$props.editMode);
     		if ('csrfToken' in $$props) $$invalidate(14, csrfToken = $$props.csrfToken);
     		if ('modulesPage' in $$props) $$invalidate(2, modulesPage = $$props.modulesPage);
-    		if ('currentCollection' in $$props) $$invalidate(15, currentCollection = $$props.currentCollection);
     		if ('showConfig' in $$props) $$invalidate(0, showConfig = $$props.showConfig);
     	};
 
@@ -27371,7 +27424,6 @@ Do you want to use the sanitised value?`)) {
     		editMode,
     		csrfToken,
     		modulesPage,
-    		currentCollection,
     		showConfig,
     		checked,
     		canvasDataLoaded,
@@ -27400,38 +27452,50 @@ Do you want to use the sanitised value?`)) {
     		if ('editMode' in $$props) $$invalidate(1, editMode = $$props.editMode);
     		if ('csrfToken' in $$props) $$invalidate(14, csrfToken = $$props.csrfToken);
     		if ('modulesPage' in $$props) $$invalidate(2, modulesPage = $$props.modulesPage);
-    		if ('currentCollection' in $$props) $$invalidate(15, currentCollection = $$props.currentCollection);
     		if ('showConfig' in $$props) $$invalidate(0, showConfig = $$props.showConfig);
-    		if ('checked' in $$props) $$invalidate(3, checked = $$props.checked);
-    		if ('canvasDataLoaded' in $$props) $$invalidate(4, canvasDataLoaded = $$props.canvasDataLoaded);
-    		if ('collectionsDataLoaded' in $$props) $$invalidate(5, collectionsDataLoaded = $$props.collectionsDataLoaded);
+    		if ('checked' in $$props) $$invalidate(7, checked = $$props.checked);
+    		if ('canvasDataLoaded' in $$props) $$invalidate(3, canvasDataLoaded = $$props.canvasDataLoaded);
+    		if ('collectionsDataLoaded' in $$props) $$invalidate(4, collectionsDataLoaded = $$props.collectionsDataLoaded);
     		if ('canvasDetails' in $$props) canvasDetails = $$props.canvasDetails;
-    		if ('collectionsDetails' in $$props) $$invalidate(6, collectionsDetails = $$props.collectionsDetails);
+    		if ('collectionsDetails' in $$props) $$invalidate(5, collectionsDetails = $$props.collectionsDetails);
     		if ('saveInterval' in $$props) saveInterval = $$props.saveInterval;
-    		if ('ccPublished' in $$props) $$invalidate(7, ccPublished = $$props.ccPublished);
+    		if ('ccPublished' in $$props) $$invalidate(8, ccPublished = $$props.ccPublished);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*$configStore, canvasDataLoaded, collectionsDataLoaded, collectionsDetails*/ 120) {
+    			// Whenever currentCollection is changed, save the last collection viewed
+    			// into local storage
+    			{
+    				let lastViewedCollection = $configStore["currentCollection"];
+
+    				if (canvasDataLoaded && collectionsDataLoaded) {
+    					collectionsDetails.saveLastCollectionViewed(lastViewedCollection);
+    				}
+    			}
+    		}
+    	};
+
     	return [
     		showConfig,
     		editMode,
     		modulesPage,
-    		checked,
     		canvasDataLoaded,
     		collectionsDataLoaded,
     		collectionsDetails,
-    		ccPublished,
     		$configStore,
+    		checked,
+    		ccPublished,
     		toggleCollectionsSwitch,
     		toggleConfigShow,
     		beforeUnload,
     		HELP,
     		courseId,
-    		csrfToken,
-    		currentCollection
+    		csrfToken
     	];
     }
 
@@ -27444,7 +27508,6 @@ Do you want to use the sanitised value?`)) {
     			editMode: 1,
     			csrfToken: 14,
     			modulesPage: 2,
-    			currentCollection: 15,
     			showConfig: 0
     		});
 
@@ -27485,14 +27548,6 @@ Do you want to use the sanitised value?`)) {
     	}
 
     	set modulesPage(value) {
-    		throw new Error("<CanvasCollections>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get currentCollection() {
-    		throw new Error("<CanvasCollections>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set currentCollection(value) {
     		throw new Error("<CanvasCollections>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 

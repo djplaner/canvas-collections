@@ -6,11 +6,13 @@
   import {
     addCollectionsRepresentation,
     removeCollectionsRepresentation,
-    removeModuleConfiguration
+    removeModuleConfiguration,
   } from "./lib/CanvasSetup";
   import { CanvasDetails } from "./lib/CanvasDetails";
-  import { CollectionsDetails, calculateActualNum } from "./lib/CollectionsDetails";
-
+  import {
+    CollectionsDetails,
+    calculateActualNum,
+  } from "./lib/CollectionsDetails";
 
   import { debug } from "./lib/debug";
   debug("______________ CanvasCollections.svelte _______________");
@@ -23,7 +25,8 @@
   export let editMode: boolean;
   export let csrfToken: string;
   export let modulesPage: boolean;
-  export let currentCollection: number;
+  // this may need to come back?
+  //  export let currentCollection: number;
   export let showConfig: boolean;
 
   let checked = false;
@@ -35,18 +38,27 @@
     modulesPage: modulesPage,
     currentCollection: null,
     needToSaveCollections: false,
-    ccOn: false
+    ccOn: false,
   };
 
   // whether or data canvas and collections data loaded
-  let canvasDataLoaded = false;
-  let collectionsDataLoaded = false;
+  let canvasDataLoaded = false
+  let collectionsDataLoaded = false
   // the actual data objects for canvas and collections data
-  let canvasDetails = null;
-  let collectionsDetails = null;
-  let saveInterval = null;
+  let canvasDetails = null
+  let collectionsDetails = null
+  let saveInterval = null
 
-  let ccPublished = true;
+  let ccPublished = true
+
+  // Whenever currentCollection is changed, save the last collection viewed
+  // into local storage
+  $: {
+    let lastViewedCollection = $configStore["currentCollection"];
+    if (canvasDataLoaded && collectionsDataLoaded) {
+      collectionsDetails.saveLastCollectionViewed(lastViewedCollection)
+    }
+  }
 
   /**
    * Callback function for when canvasDetails is loaded
@@ -57,7 +69,7 @@
     canvasDataLoaded = true;
     // canvasDetails.courseModules is an array of Canvas module objects
     // set $modulesStore to a dict of Canvas module objects keyed on the module id
-    $modulesStore = canvasDetails.courseModules;/*.reduce((acc, module) => {
+    $modulesStore = canvasDetails.courseModules; /*.reduce((acc, module) => {
       acc[module.id] = module;
       return acc;
     }, {}); */
@@ -75,11 +87,16 @@
     $configStore["ccOn"] = collectionsDetails.ccOn;
     ccPublished = collectionsDetails.ccPublished;
 
+    $configStore["currentCollection"] =
+      collectionsDetails.getCurrentCollection();
+
     // if a student is viewing and no collections, then limit what is done
     if (!(!$configStore["ccOn"] && !$configStore["editMode"])) {
+      // figure out what should be the current collection
+
       // if currentCollection is a number, then the URL include #cc-collection-<num>
       // Need to set current collection to the name matching that collection
-      if (
+      /*if (
         typeof currentCollection === "number" &&
         currentCollection <
           collectionsDetails.collections.COLLECTIONS_ORDER.length &&
@@ -87,7 +104,7 @@
       ) {
         $configStore["currentCollection"] =
           collectionsDetails.collections.COLLECTIONS_ORDER[currentCollection];
-      }
+      } */
 
       //----- Indicate we've loaded the data and check if ready for next step
       collectionsDataLoaded = true;
@@ -105,8 +122,11 @@
   function checkAllDataLoaded() {
     if (canvasDataLoaded && collectionsDataLoaded) {
       $collectionsStore = collectionsDetails.collections;
-      calculateActualNum(canvasDetails.courseModules,$collectionsStore["MODULES"]);
-      checked=$configStore["ccOn"];
+      calculateActualNum(
+        canvasDetails.courseModules,
+        $collectionsStore["MODULES"]
+      );
+      checked = $configStore["ccOn"];
       if ($configStore["ccOn"]) {
         addCollectionsDisplay();
         if ($configStore["editMode"] && AUTO_SAVE) {
@@ -121,7 +141,6 @@
     }
   }
 
-
   /**
    * Called when the collections on/off switch is clicked
    * Turn collections on or off and indicate a need to save
@@ -129,7 +148,7 @@
 
   function toggleCollectionsSwitch() {
     $configStore["ccOn"] = !$configStore["ccOn"];
-    checked=$configStore["ccOn"];
+    checked = $configStore["ccOn"];
     $collectionsStore["STATUS"] = $configStore["ccOn"] ? "on" : "off";
     $configStore["needToSaveCollections"] = true;
     // modify the display accordingly
@@ -171,7 +190,7 @@
    */
   function removeCollectionsDisplay() {
     removeCollectionsRepresentation();
-    removeModuleConfiguration($collectionsStore["MODULES"])
+    removeModuleConfiguration($collectionsStore["MODULES"]);
   }
 
   onMount(async () => {
@@ -216,27 +235,32 @@
       $configStore["editMode"],
       $configStore["needToSaveCollections"]
     );
-     console.log("fred")
+    console.log("fred");
   }
 
   const HELP = {
-    switchTitle : {
+    switchTitle: {
       tooltip: `Collections helps you group modules into collections and customising their representation.`,
-      url: "https://djplaner.github.io/canvas-collections/"
+      url: "https://djplaner.github.io/canvas-collections/",
     },
-    unpublished : {
+    unpublished: {
       tooltip: `<p>The <em>Canvas Collections Configuration</em> page</a> is unpublished.  The live Collections view will <strong>not</strong> be visible in "Student View" or for students.</p> <p>Any Claytons Collections will be visible, if the relevant pages are published.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
+      url: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/",
     },
-  }
+  };
 </script>
-
 
 <svelte:window on:beforeunload={beforeUnload} />
 
 <svelte:head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/themes/light.css" />
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/shoelace.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/themes/light.css"
+  />
+  <script
+    type="module"
+    src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/shoelace.js"
+  ></script>
 </svelte:head>
 
 {#if editMode && modulesPage}
@@ -244,12 +268,9 @@
     <div class="cc-switch-title">
       <sl-tooltip>
         <div slot="content">{HELP.switchTitle.tooltip}</div>
-      <a
-        target="_blank"
-        rel="noreferrer"
-        href={HELP.switchTitle.url}
-        ><i class="icon-question cc-module-icon" /></a
-      >
+        <a target="_blank" rel="noreferrer" href={HELP.switchTitle.url}
+          ><i class="icon-question cc-module-icon" /></a
+        >
       </sl-tooltip>
       {#if canvasDataLoaded && collectionsDataLoaded}
         <i
@@ -267,10 +288,10 @@
 
     {#if canvasDataLoaded && collectionsDataLoaded}
       <label class="cc-switch" for="cc-switch">
-      <sl-switch
-        {checked}
-        id="cc-switch"
-        on:sl-change={toggleCollectionsSwitch} 
+        <sl-switch
+          {checked}
+          id="cc-switch"
+          on:sl-change={toggleCollectionsSwitch}
         />
       </label>
       <div class="cc-save">
@@ -288,22 +309,22 @@
       </div>
     {/if}
     {#if !ccPublished}
-      <div class="cc-unpublished"> 
+      <div class="cc-unpublished">
         <!--<span style="padding-top: 0.25em;padding-right:0.25em"> -->
-          <sl-badge variant="warning" pill>
-      <sl-tooltip>
-        <div slot="content">{@html HELP.unpublished.tooltip}</div>
-          <a
-            id="cc-about-unpublished"
-            target="_blank"
-            rel="noreferrer"
-            href="https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
-            ><i class="icon-question cc-module-icon" /></a
-          >&nbsp;
-          unpublished
-          </sl-badge>
-          </div>
-        <!--</span>
+        <sl-badge variant="warning" pill>
+          <sl-tooltip>
+            <div slot="content">{@html HELP.unpublished.tooltip}</div>
+            <a
+              id="cc-about-unpublished"
+              target="_blank"
+              rel="noreferrer"
+              href="https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
+              ><i class="icon-question cc-module-icon" /></a
+            >&nbsp; unpublished
+          </sl-tooltip></sl-badge
+        >
+      </div>
+      <!--</span>
       </div>-->
     {/if}
     {#if showConfig}
@@ -343,8 +364,8 @@
   }
 
   .cc-unpublished {
-    margin-top: 0.4em
-  /*  font-size: 0.75em;
+    margin-top: 0.4em;
+    /*  font-size: 0.75em;
     background-color: #ffe08a;
     border-radius: 0.5em;
     padding-left: 0.5em;
@@ -447,5 +468,4 @@
   #cc-switch::part(control) {
     --sl-color-primary-600: #328c04;
   }
-
 </style>
