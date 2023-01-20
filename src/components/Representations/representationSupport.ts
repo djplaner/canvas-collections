@@ -80,12 +80,14 @@ export function generateModuleDate(module) {
  * @function modifyCanvasModulesList
  * @param collection  - string for current collection
  * @param modules - array of Canvas module objects
+ * @param editMode - whether we're in editMode or not
+ * @param showUnallocated - whether to show unallocated modules or not
  * @description Modify Canvas's display of modules in three possible ways
  * 1. Hide all modules with collection defined and not in collection
  * 2. Ensure all modules in collection are showing
  * 3. If editMode add ModuleConfiguration components to the module
  */
-export function modifyCanvasModulesList(collection, allModules, editMode) {
+export function modifyCanvasModulesList(collection, allModules, editMode, showUnallocated) {
   debug(
     `_________________________________ modifyCanvasModulesList moduleIds ${collection} editMode ${editMode} _________________`
   );
@@ -120,6 +122,13 @@ export function modifyCanvasModulesList(collection, allModules, editMode) {
           // have a ModuleConfiguration component
           module.style.display = "block";
           addModuleConfiguration(parseInt(moduleId, 10));
+        } else {
+          if (showUnallocated) {
+            // make sure that unallocated modules are visible
+            module.style.display = "block";
+          } else {
+            module.style.display = "none";
+          }
         }
       }
     }

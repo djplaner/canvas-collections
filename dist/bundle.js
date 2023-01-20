@@ -13022,7 +13022,7 @@ var app = (function () {
         }
         /**
          * @function decodeCollections
-         * @description collectons config has been loaded, some fields will contain
+         * @description collections config has been loaded, some fields will contain
          * encoded HTML and other stuff that needs decoding
          */
         decodeCollections() {
@@ -13061,6 +13061,15 @@ var app = (function () {
          * - each module has a proper date structure
          */
         updateCollections() {
+            // modify collections settings
+            if (this.collections.hasOwnProperty("COLLECTIONS")) {
+                for (let collectionName in this.collections["COLLECTIONS"]) {
+                    const collection = this.collections["COLLECTIONS"][collectionName];
+                    if (!collection.hasOwnProperty("unallocated")) {
+                        collection.unallocated = true;
+                    }
+                }
+            }
             // Focus on updates to modules
             if (this.collections.hasOwnProperty("MODULES")) {
                 const modules = this.collections["MODULES"];
@@ -19077,12 +19086,14 @@ Do you want to use the sanitised value?`)) {
      * @function modifyCanvasModulesList
      * @param collection  - string for current collection
      * @param modules - array of Canvas module objects
+     * @param editMode - whether we're in editMode or not
+     * @param showUnallocated - whether to show unallocated modules or not
      * @description Modify Canvas's display of modules in three possible ways
      * 1. Hide all modules with collection defined and not in collection
      * 2. Ensure all modules in collection are showing
      * 3. If editMode add ModuleConfiguration components to the module
      */
-    function modifyCanvasModulesList(collection, allModules, editMode) {
+    function modifyCanvasModulesList(collection, allModules, editMode, showUnallocated) {
         debug(`_________________________________ modifyCanvasModulesList moduleIds ${collection} editMode ${editMode} _________________`);
         const modules = getCollectionCanvasModules(collection, allModules);
         // create array moduleIds that contains the module.ids from modules
@@ -19113,6 +19124,15 @@ Do you want to use the sanitised value?`)) {
                         // have a ModuleConfiguration component
                         module.style.display = "block";
                         addModuleConfiguration(parseInt(moduleId, 10));
+                    }
+                    else {
+                        if (showUnallocated) {
+                            // make sure that unallocated modules are visible
+                            module.style.display = "block";
+                        }
+                        else {
+                            module.style.display = "none";
+                        }
                     }
                 }
             }
@@ -23407,7 +23427,7 @@ Do you want to use the sanitised value?`)) {
 
     				if ($configStore["ccOn"]) {
     					debug(`calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`);
-    					modifyCanvasModulesList($configStore["currentCollection"], $collectionsStore["MODULES"], $configStore["editMode"]);
+    					modifyCanvasModulesList($configStore["currentCollection"], $collectionsStore["MODULES"], $configStore["editMode"], $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]]["unallocated"]);
     					debug(`after calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`);
     				}
     			}
@@ -23956,7 +23976,7 @@ Do you want to use the sanitised value?`)) {
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[31] = list[i];
+    	child_ctx[34] = list[i];
     	return child_ctx;
     }
 
@@ -24061,14 +24081,14 @@ Do you want to use the sanitised value?`)) {
     // (323:8) {#each availableRepresentations as representation}
     function create_each_block$2(ctx) {
     	let option;
-    	let t_value = /*representation*/ ctx[31] + "";
+    	let t_value = /*representation*/ ctx[34] + "";
     	let t;
 
     	const block = {
     		c: function create() {
     			option = element("option");
     			t = text(t_value);
-    			option.__value = /*representation*/ ctx[31];
+    			option.__value = /*representation*/ ctx[34];
     			option.value = option.__value;
     			add_location(option, file$5, 323, 10, 14407);
     		},
@@ -24524,118 +24544,118 @@ Do you want to use the sanitised value?`)) {
     			add_location(div7, file$5, 350, 4, 15215);
     			attr_dev(label4, "for", label4_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated");
     			attr_dev(label4, "class", "svelte-1lzd0eh");
-    			add_location(label4, file$5, 370, 6, 15963);
+    			add_location(label4, file$5, 371, 6, 16037);
     			attr_dev(div8, "slot", "content");
-    			add_location(div8, file$5, 374, 8, 16097);
+    			add_location(div8, file$5, 375, 8, 16171);
     			attr_dev(i5, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i5, file$5, 378, 10, 16275);
+    			add_location(i5, file$5, 379, 10, 16349);
     			attr_dev(a4, "href", /*HELP*/ ctx[14].configUnallocated.url);
     			attr_dev(a4, "target", "_blank");
     			attr_dev(a4, "rel", "noreferrer");
-    			add_location(a4, file$5, 377, 8, 16193);
+    			add_location(a4, file$5, 378, 8, 16267);
     			set_custom_element_data(sl_tooltip4, "class", "svelte-1lzd0eh");
-    			add_location(sl_tooltip4, file$5, 373, 6, 16075);
+    			add_location(sl_tooltip4, file$5, 374, 6, 16149);
     			attr_dev(input3, "type", "checkbox");
     			attr_dev(input3, "id", input3_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated");
     			attr_dev(input3, "class", "svelte-1lzd0eh");
-    			add_location(input3, file$5, 381, 6, 16360);
-    			add_location(div9, file$5, 369, 4, 15950);
+    			add_location(input3, file$5, 382, 6, 16434);
+    			add_location(div9, file$5, 370, 4, 16024);
     			attr_dev(div10, "class", "cc-collection-double svelte-1lzd0eh");
     			add_location(div10, file$5, 329, 2, 14526);
     			attr_dev(label5, "for", label5_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page");
     			attr_dev(label5, "class", "svelte-1lzd0eh");
-    			add_location(label5, file$5, 398, 6, 16788);
+    			add_location(label5, file$5, 401, 6, 17024);
     			attr_dev(div11, "slot", "content");
-    			add_location(div11, file$5, 402, 8, 16913);
+    			add_location(div11, file$5, 405, 8, 17149);
     			attr_dev(i6, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i6, file$5, 410, 11, 17162);
+    			add_location(i6, file$5, 413, 11, 17398);
     			attr_dev(a5, "id", "cc-about-include-page");
     			attr_dev(a5, "rel", "noreferrer");
     			attr_dev(a5, "target", "_blank");
     			attr_dev(a5, "href", /*HELP*/ ctx[14].configIncludePage.url);
-    			add_location(a5, file$5, 405, 8, 17009);
+    			add_location(a5, file$5, 408, 8, 17245);
     			set_custom_element_data(sl_tooltip5, "class", "svelte-1lzd0eh");
-    			add_location(sl_tooltip5, file$5, 401, 6, 16891);
+    			add_location(sl_tooltip5, file$5, 404, 6, 17127);
     			attr_dev(div12, "class", "cc-collection-two-line-header svelte-1lzd0eh");
-    			add_location(div12, file$5, 397, 4, 16737);
-    			add_location(div13, file$5, 414, 4, 17257);
+    			add_location(div12, file$5, 400, 4, 16973);
+    			add_location(div13, file$5, 417, 4, 17493);
     			attr_dev(input4, "id", input4_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page");
     			attr_dev(input4, "class", "cc-existing-collection svelte-1lzd0eh");
-    			add_location(input4, file$5, 416, 6, 17329);
+    			add_location(input4, file$5, 419, 6, 17565);
     			attr_dev(label6, "for", label6_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after");
     			attr_dev(label6, "class", "svelte-1lzd0eh");
-    			add_location(label6, file$5, 432, 8, 17954);
+    			add_location(label6, file$5, 435, 8, 18190);
     			attr_dev(div14, "slot", "content");
-    			add_location(div14, file$5, 436, 10, 18089);
+    			add_location(div14, file$5, 439, 10, 18325);
     			attr_dev(i7, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i7, file$5, 445, 12, 18377);
+    			add_location(i7, file$5, 448, 12, 18613);
     			attr_dev(a6, "id", "cc-about-include-after");
     			attr_dev(a6, "href", /*HELP*/ ctx[14].configIncludePageAfter.url);
     			attr_dev(a6, "target", "_blank");
     			attr_dev(a6, "rel", "noreferrer");
-    			add_location(a6, file$5, 439, 10, 18196);
+    			add_location(a6, file$5, 442, 10, 18432);
     			set_custom_element_data(sl_tooltip6, "class", "svelte-1lzd0eh");
-    			add_location(sl_tooltip6, file$5, 435, 8, 18065);
+    			add_location(sl_tooltip6, file$5, 438, 8, 18301);
     			attr_dev(input5, "type", "checkbox");
     			attr_dev(input5, "id", input5_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after");
     			attr_dev(input5, "class", "cc-config-collection-include-after svelte-1lzd0eh");
-    			add_location(input5, file$5, 448, 8, 18468);
+    			add_location(input5, file$5, 451, 8, 18704);
     			attr_dev(span5, "class", "cc-collection-label svelte-1lzd0eh");
-    			add_location(span5, file$5, 431, 6, 17910);
+    			add_location(span5, file$5, 434, 6, 18146);
     			attr_dev(div15, "class", "cc-collection-two-line-body svelte-1lzd0eh");
-    			add_location(div15, file$5, 415, 4, 17280);
+    			add_location(div15, file$5, 418, 4, 17516);
     			attr_dev(div16, "class", "cc-collection-two-line svelte-1lzd0eh");
-    			add_location(div16, file$5, 396, 2, 16695);
+    			add_location(div16, file$5, 399, 2, 16931);
     			attr_dev(label7, "for", label7_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page");
     			attr_dev(label7, "class", "svelte-1lzd0eh");
-    			add_location(label7, file$5, 463, 6, 19047);
+    			add_location(label7, file$5, 466, 6, 19283);
     			attr_dev(div17, "slot", "content");
-    			add_location(div17, file$5, 467, 8, 19170);
+    			add_location(div17, file$5, 470, 8, 19406);
     			attr_dev(i8, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i8, file$5, 476, 10, 19433);
+    			add_location(i8, file$5, 479, 10, 19669);
     			attr_dev(a7, "id", "cc-about-update-output-page");
     			attr_dev(a7, "target", "_blank");
     			attr_dev(a7, "href", /*HELP*/ ctx[14].configOutputPage.url);
     			attr_dev(a7, "rel", "noreferrer");
-    			add_location(a7, file$5, 470, 8, 19265);
+    			add_location(a7, file$5, 473, 8, 19501);
     			set_custom_element_data(sl_tooltip7, "class", "svelte-1lzd0eh");
-    			add_location(sl_tooltip7, file$5, 466, 6, 19148);
+    			add_location(sl_tooltip7, file$5, 469, 6, 19384);
     			attr_dev(div18, "class", "cc-collection-two-line-header svelte-1lzd0eh");
-    			add_location(div18, file$5, 462, 4, 18996);
-    			add_location(div19, file$5, 480, 4, 19528);
+    			add_location(div18, file$5, 465, 4, 19232);
+    			add_location(div19, file$5, 483, 4, 19764);
     			attr_dev(input6, "id", input6_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page");
     			attr_dev(input6, "class", "cc-existing-collection svelte-1lzd0eh");
-    			add_location(input6, file$5, 482, 6, 19600);
+    			add_location(input6, file$5, 485, 6, 19836);
     			attr_dev(button0, "id", button0_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page-update");
     			attr_dev(button0, "class", "btn cc-existing-collection svelte-1lzd0eh");
-    			add_location(button0, file$5, 495, 6, 20163);
+    			add_location(button0, file$5, 498, 6, 20399);
     			attr_dev(div20, "class", "cc-collection-two-line-body svelte-1lzd0eh");
-    			add_location(div20, file$5, 481, 4, 19551);
+    			add_location(div20, file$5, 484, 4, 19787);
     			attr_dev(div21, "class", "cc-collection-two-line svelte-1lzd0eh");
-    			add_location(div21, file$5, 461, 2, 18954);
+    			add_location(div21, file$5, 464, 2, 19190);
     			attr_dev(label8, "for", label8_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-apply-module-labels");
     			attr_dev(label8, "class", "svelte-1lzd0eh");
-    			add_location(label8, file$5, 504, 6, 20426);
+    			add_location(label8, file$5, 507, 6, 20662);
     			attr_dev(div22, "slot", "content");
-    			add_location(div22, file$5, 508, 8, 20607);
+    			add_location(div22, file$5, 511, 8, 20843);
     			attr_dev(i9, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i9, file$5, 517, 10, 20873);
+    			add_location(i9, file$5, 520, 10, 21109);
     			attr_dev(a8, "id", "cc-about-apply-module-labels");
     			attr_dev(a8, "target", "_blank");
     			attr_dev(a8, "href", /*HELP*/ ctx[14].configApplyLabels.url);
     			attr_dev(a8, "rel", "noreferrer");
-    			add_location(a8, file$5, 511, 8, 20703);
+    			add_location(a8, file$5, 514, 8, 20939);
     			set_custom_element_data(sl_tooltip8, "class", "cc-about-apply-module-labels svelte-1lzd0eh");
-    			add_location(sl_tooltip8, file$5, 507, 6, 20548);
+    			add_location(sl_tooltip8, file$5, 510, 6, 20784);
     			attr_dev(span6, "class", "cc-collection-input-reverse svelte-1lzd0eh");
-    			add_location(span6, file$5, 503, 4, 20376);
+    			add_location(span6, file$5, 506, 4, 20612);
     			attr_dev(button1, "id", button1_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-apply-module-labels");
     			attr_dev(button1, "class", "btn cc-existing-collection svelte-1lzd0eh");
-    			add_location(button1, file$5, 523, 6, 21072);
+    			add_location(button1, file$5, 526, 6, 21308);
     			attr_dev(span7, "class", "cc-collection-label-reverse svelte-1lzd0eh");
-    			add_location(span7, file$5, 521, 4, 20969);
+    			add_location(span7, file$5, 524, 4, 21205);
     			attr_dev(div23, "class", "cc-collection-form-reverse svelte-1lzd0eh");
-    			add_location(div23, file$5, 502, 2, 20330);
+    			add_location(div23, file$5, 505, 2, 20566);
     			attr_dev(div24, "class", "cc-existing-collection border border-trbl svelte-1lzd0eh");
     			attr_dev(div24, "id", div24_id_value = "cc-collection-" + /*collectionName*/ ctx[0]);
     			add_location(div24, file$5, 237, 0, 11735);
@@ -24736,6 +24756,7 @@ Do you want to use the sanitised value?`)) {
     			append_dev(a4, i5);
     			append_dev(div9, t33);
     			append_dev(div9, input3);
+    			input3.checked = /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]]["unallocated"];
     			append_dev(div24, t34);
     			append_dev(div24, div16);
     			append_dev(div16, div12);
@@ -24815,17 +24836,20 @@ Do you want to use the sanitised value?`)) {
     					listen_dev(select, "change", /*change_handler*/ ctx[16], false, false, false),
     					listen_dev(input1, "click", /*changeDefaultCollection*/ ctx[8], false, false, false),
     					listen_dev(input2, "change", /*input2_change_handler*/ ctx[17]),
-    					listen_dev(input4, "input", /*input4_input_handler*/ ctx[18]),
-    					listen_dev(input4, "click", /*click_handler*/ ctx[19], false, false, false),
-    					listen_dev(input4, "keydown", /*keydown_handler*/ ctx[20], false, false, false),
-    					listen_dev(input4, "focusout", /*focusout_handler*/ ctx[21], false, false, false),
-    					listen_dev(input5, "click", /*click_handler_1*/ ctx[22], false, false, false),
-    					listen_dev(input5, "keydown", /*keydown_handler_1*/ ctx[23], false, false, false),
-    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[24]),
-    					listen_dev(input6, "input", /*input6_input_handler*/ ctx[25]),
-    					listen_dev(input6, "click", /*click_handler_2*/ ctx[26], false, false, false),
-    					listen_dev(input6, "keydown", /*keydown_handler_2*/ ctx[27], false, false, false),
-    					listen_dev(input6, "focusout", /*focusout_handler_1*/ ctx[28], false, false, false)
+    					listen_dev(input2, "change", /*change_handler_1*/ ctx[18], false, false, false),
+    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[19]),
+    					listen_dev(input3, "change", /*change_handler_2*/ ctx[20], false, false, false),
+    					listen_dev(input4, "input", /*input4_input_handler*/ ctx[21]),
+    					listen_dev(input4, "click", /*click_handler*/ ctx[22], false, false, false),
+    					listen_dev(input4, "keydown", /*keydown_handler*/ ctx[23], false, false, false),
+    					listen_dev(input4, "focusout", /*focusout_handler*/ ctx[24], false, false, false),
+    					listen_dev(input5, "click", /*click_handler_1*/ ctx[25], false, false, false),
+    					listen_dev(input5, "keydown", /*keydown_handler_1*/ ctx[26], false, false, false),
+    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[27]),
+    					listen_dev(input6, "input", /*input6_input_handler*/ ctx[28]),
+    					listen_dev(input6, "click", /*click_handler_2*/ ctx[29], false, false, false),
+    					listen_dev(input6, "keydown", /*keydown_handler_2*/ ctx[30], false, false, false),
+    					listen_dev(input6, "focusout", /*focusout_handler_1*/ ctx[31], false, false, false)
     				];
 
     				mounted = true;
@@ -24948,6 +24972,10 @@ Do you want to use the sanitised value?`)) {
     				attr_dev(input3, "id", input3_id_value);
     			}
 
+    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 145) {
+    				input3.checked = /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]]["unallocated"];
+    			}
+
     			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && label5_for_value !== (label5_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page")) {
     				attr_dev(label5, "for", label5_for_value);
     			}
@@ -25040,7 +25068,7 @@ Do you want to use the sanitised value?`)) {
     	validate_store(collectionsStore, 'collectionsStore');
     	component_subscribe($$self, collectionsStore, $$value => $$invalidate(4, $collectionsStore = $$value));
     	validate_store(representationsStore, 'representationsStore');
-    	component_subscribe($$self, representationsStore, $$value => $$invalidate(29, $representationsStore = $$value));
+    	component_subscribe($$self, representationsStore, $$value => $$invalidate(32, $representationsStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('CollectionConfiguration', slots, []);
     	let { collectionName } = $$props;
@@ -25325,6 +25353,16 @@ Do you want to use the sanitised value?`)) {
     		$$invalidate(7, availableRepresentations);
     	}
 
+    	const change_handler_1 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+
+    	function input3_change_handler() {
+    		$collectionsStore["COLLECTIONS"][collectionName]["unallocated"] = this.checked;
+    		collectionsStore.set($collectionsStore);
+    		$$invalidate(7, availableRepresentations);
+    	}
+
+    	const change_handler_2 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
+
     	function input4_input_handler() {
     		$collectionsStore["COLLECTIONS"][collectionName].includePage = this.value;
     		collectionsStore.set($collectionsStore);
@@ -25418,6 +25456,9 @@ Do you want to use the sanitised value?`)) {
     		select_change_handler,
     		change_handler,
     		input2_change_handler,
+    		change_handler_1,
+    		input3_change_handler,
+    		change_handler_2,
     		input4_input_handler,
     		click_handler,
     		keydown_handler,

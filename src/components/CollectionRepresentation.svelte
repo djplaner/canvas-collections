@@ -56,7 +56,8 @@
       modifyCanvasModulesList(
         $configStore["currentCollection"],
         $collectionsStore["MODULES"],
-        $configStore["editMode"]
+        $configStore["editMode"],
+        $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]]["unallocated"]
       );
       debug(
         `after calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`

@@ -175,7 +175,7 @@ export class CollectionsDetails {
 
   /**
    * @function decodeCollections
-   * @description collectons config has been loaded, some fields will contain
+   * @description collections config has been loaded, some fields will contain
    * encoded HTML and other stuff that needs decoding
    */
   decodeCollections() {
@@ -217,6 +217,15 @@ export class CollectionsDetails {
    */
 
   updateCollections() {
+    // modify collections settings
+    if (this.collections.hasOwnProperty("COLLECTIONS")) {
+      for ( let collectionName in this.collections["COLLECTIONS"] ) {
+        const collection = this.collections["COLLECTIONS"][collectionName];
+        if (!collection.hasOwnProperty("unallocated")) {
+          collection.unallocated = true;
+        }
+      }
+    }
     // Focus on updates to modules
     if (this.collections.hasOwnProperty("MODULES")) {
       const modules = this.collections["MODULES"];

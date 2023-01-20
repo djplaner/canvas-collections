@@ -420,6 +420,7 @@
         bind:checked={$collectionsStore["COLLECTIONS"][collectionName]["hide"]}
         disabled={$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] ===
           collectionName}
+        on:change={() => ($configStore["needToSaveCollections"] = true)}
       />
     </div>
     <div>
@@ -437,6 +438,8 @@
       <input
         type="checkbox"
         id="cc-config-collection-{collectionName}-unallocated"
+        bind:checked={$collectionsStore["COLLECTIONS"][collectionName]["unallocated"]}
+        on:change={() => ($configStore["needToSaveCollections"] = true)}
       />
       <!--
         checked={$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] ===
