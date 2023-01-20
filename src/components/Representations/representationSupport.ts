@@ -15,7 +15,7 @@ export function getCollectionCanvasModules(collection, allModules) {
   for (const module in allModules) {
     if (allModules[module].collection === collection) {
       modules.push(allModules[module]);
-    }
+    } 
   }
   return modules;
 
@@ -33,6 +33,29 @@ export function getCollectionCanvasModules(collection, allModules) {
   /*  return moduleIds.map((moduleId) => {
     return parseInt(moduleId, 10);
   }); */
+}
+
+/**
+ * @function addUnallocatedModules
+ * @param collectionName 
+ * @param allModules 
+ * @param editMode
+ * @returns [] - Array of modules
+ * @description Return an array of all the modules that do not have a collection
+ * i.e. collection===null
+ */
+
+export function addUnallocatedModules(allModules : [], editMode: boolean) : any[] {
+  let modules = []
+
+  for (const module in allModules) {
+    if (allModules[module]['collection'] === null ) {
+      if (editMode || allModules[module]['published']) {
+        modules.push(allModules[module])
+      }
+    } 
+  }
+  return modules
 }
 
 /**

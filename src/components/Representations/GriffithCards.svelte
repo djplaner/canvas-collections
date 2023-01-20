@@ -13,6 +13,7 @@
 
   import {
     getCollectionCanvasModules,
+    addUnallocatedModules,
     //    modifyCanvasModulesList,
     generateModuleDate,
     checkModuleMetaData,
@@ -44,6 +45,13 @@
       collection,
       $collectionsStore["MODULES"]
     );
+    modules = modules.concat(
+      addUnallocatedModules(
+        $collectionsStore["MODULES"],
+        $configStore["editMode"]
+      )
+    );
+    console.log(modules);
     //modifyCanvasModulesList(moduleIds, $collectionsStore["MODULES"],$configStore['editMode'])
   }
 
@@ -105,7 +113,7 @@
     return newName;
   }
 
-/*  function generateCardDate(moduleId) {
+  /*  function generateCardDate(moduleId) {
     const module = $collectionsStore["MODULES"][moduleId];
     debug(`XXXXXXXXXXXXX ${line}`);
     debug(module);
@@ -117,83 +125,83 @@
 
 <div class="cc-card-interface cc-representation">
   {#each modules as theModule}
-    {#if !(!$collectionsStore["MODULES"][theModule.id].published && !$configStore["editMode"])}
-      <div
-        id="cc_module_{theModule.id}"
-        class={$collectionsStore["MODULES"][theModule.id].fyi
-          ? "cc-unclickable-card"
-          : "cc-clickable-card"}
-        on:click|once={cardClick}
-        on:keydown|once={cardClick}
-      >
-        <div id="cc_module_{theModule.id}" class="cc-card">
-          <div class="cc-card-flex">
-            <div class="cc-card-banner-container" data-moduleid={theModule.id}>
-              <a class="cc-card-link" href={getModuleUrl(theModule.id)} style=""
-                >&nbsp;</a
-              >
-              <svelte:component
-                this={BANNER_TRANSLATION[
-                  $collectionsStore["MODULES"][theModule.id].banner
-                ]}
-                moduleId={theModule.id}
-              />
-              <DateWidget
-                date={$collectionsStore["MODULES"][theModule.id].date}
-                calendar={calendar}
-              />
-              <!--               $**DATE_WIDGET** -->
-              {#if $collectionsStore["MODULES"][theModule.id].fyi}
-                <div class="cc-card-fyi">
-                  <span class="cc-fyi-text">
-                    {#if $collectionsStore["MODULES"][theModule.id].fyiText}
-                      {$collectionsStore["MODULES"][theModule.id].fyiText}
-                    {:else}
-                      &nbsp;
-                    {/if}
-                  </span>
-                </div>
-              {/if}
-              {#if !$collectionsStore["MODULES"][theModule.id].published}
-                <div class="cc-card-published">Unpublished</div>
-              {/if}
-            </div>
-            <div class="cc-card-content-height">
-              <!-- this needs to be $cardContentClass -->
-              <div
-                class={$collectionsStore["MODULES"][theModule.id].fyi
-                  ? "cc-card-content"
-                  : "cc-unclickable-card-content"}
-              > 
-                <div class="cc-card-label">
-                  <span class="cc-card-label">
-                    {$collectionsStore["MODULES"][theModule.id].label}
-                    {$collectionsStore["MODULES"][theModule.id].actualNum}
-                  </span>
-                  <h3 class="cc-card-title" data-moduleid={theModule.id}>
-                    {deLabelModuleName(theModule.id)}
-                  </h3>
-                </div>
-                <div class="cc-card-description">
-                  {@html $collectionsStore["MODULES"][theModule.id].description}
-                </div>
+    <div
+      id="cc_module_{theModule.id}"
+      class={$collectionsStore["MODULES"][theModule.id].fyi
+        ? "cc-unclickable-card"
+        : "cc-clickable-card"}
+      on:click|once={cardClick}
+      on:keydown|once={cardClick}
+    >
+      <div id="cc_module_{theModule.id}" class="cc-card">
+        <div class="cc-card-flex">
+          <div class="cc-card-banner-container" data-moduleid={theModule.id}>
+            <a class="cc-card-link" href={getModuleUrl(theModule.id)} style=""
+              >&nbsp;</a
+            >
+            <svelte:component
+              this={BANNER_TRANSLATION[
+                $collectionsStore["MODULES"][theModule.id].banner
+              ]}
+              moduleId={theModule.id}
+            />
+            <DateWidget
+              date={$collectionsStore["MODULES"][theModule.id].date}
+              {calendar}
+            />
+            <!--               $**DATE_WIDGET** -->
+            {#if $collectionsStore["MODULES"][theModule.id].fyi}
+              <div class="cc-card-fyi">
+                <span class="cc-fyi-text">
+                  {#if $collectionsStore["MODULES"][theModule.id].fyiText}
+                    {$collectionsStore["MODULES"][theModule.id].fyiText}
+                  {:else}
+                    &nbsp;
+                  {/if}
+                </span>
+              </div>
+            {/if}
+            {#if !$collectionsStore["MODULES"][theModule.id].published}
+              <div class="cc-card-published">Unpublished</div>
+            {/if}
+          </div>
+          <div class="cc-card-content-height">
+            <!-- this needs to be $cardContentClass -->
+            <div
+              class={$collectionsStore["MODULES"][theModule.id].fyi
+                ? "cc-card-content"
+                : "cc-unclickable-card-content"}
+            >
+              <div class="cc-card-label">
+                <span class="cc-card-label">
+                  {$collectionsStore["MODULES"][theModule.id].label}
+                  {$collectionsStore["MODULES"][theModule.id].actualNum}
+                </span>
+                <h3 class="cc-card-title" data-moduleid={theModule.id}>
+                  {deLabelModuleName(theModule.id)}
+                </h3>
+              </div>
+              <div class="cc-card-description">
+                {@html $collectionsStore["MODULES"][theModule.id].description}
               </div>
             </div>
-            <div class="cc-card-footer">
-              {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
-                <div class="cc-card-engage">
-                  <div class="cc-card-engage-button">
-                    <a href={getModuleUrl(theModule.id)} class="gu-engage">&nbsp;</a>
-                      {$collectionsStore["MODULES"][theModule.id].engageText}
-                  </div>
+          </div>
+          <div class="cc-card-footer">
+            {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
+              <div class="cc-card-engage">
+                <div class="cc-card-engage-button">
+                  <a href={getModuleUrl(theModule.id)} class="gu-engage"
+                    >&nbsp;</a
+                  >
+                  {$collectionsStore["MODULES"][theModule.id].engageText}
                 </div>
-              {/if}
-              <div class="cc-progress" />
-            </div>
+              </div>
+            {/if}
+            <div class="cc-progress" />
           </div>
         </div>
       </div>
-    {/if}
+    </div>
   {/each}
 </div>
 

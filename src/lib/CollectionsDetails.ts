@@ -219,7 +219,7 @@ export class CollectionsDetails {
   updateCollections() {
     // modify collections settings
     if (this.collections.hasOwnProperty("COLLECTIONS")) {
-      for ( let collectionName in this.collections["COLLECTIONS"] ) {
+      for (let collectionName in this.collections["COLLECTIONS"]) {
         const collection = this.collections["COLLECTIONS"][collectionName];
         if (!collection.hasOwnProperty("unallocated")) {
           collection.unallocated = true;
@@ -245,6 +245,34 @@ export class CollectionsDetails {
           module.metadata = {};
         }
         this.handleModuleDate(module);
+        this.removeCanvasModuleDetails(module);
+      }
+    }
+  }
+
+  /**
+   * @function removeCanvasModuleDetails
+   * @param module - module object
+   * @description Remove from the Collections module object any Canvas
+   * module fields that shouldn't be here
+   *
+   * Idea is we want to refresh these (if any) that we'll add later
+   * Make sure any old crusty left overs aren't there
+   */
+
+  removeCanvasModuleDetails(module) {
+    const canvasModuleFields = [
+      "position",
+      "unlock_at",
+      "require_sequential_progress",
+      "published",
+      "items_url",
+      "prerequisite_module_ids",
+      "completion_requirements",
+    ];
+    for (let field of canvasModuleFields) {
+      if (module.hasOwnProperty(field)) {
+        delete module[field];
       }
     }
   }
@@ -507,11 +535,13 @@ export class CollectionsDetails {
    * @description Save the name of the collection that was last viewed in local storage
    */
 
-  saveLastCollectionViewed(collectionName : string) {
-    let hostname = window.location.hostname
-    localStorage.setItem(`cc-${hostname}-${this.config['courseId']}-last-collection`, collectionName);
+  saveLastCollectionViewed(collectionName: string) {
+    let hostname = window.location.hostname;
+    localStorage.setItem(
+      `cc-${hostname}-${this.config["courseId"]}-last-collection`,
+      collectionName
+    );
   }
-  
 
   /**
    * @method getCurrentCollection
@@ -528,11 +558,15 @@ export class CollectionsDetails {
       return urlHashCollection;
     }
 
-    let hostname = window.location.hostname
-    const lastCollectionViewed = localStorage.getItem(`cc-${hostname}-${this.config['courseId']}-last-collection`);
-    if ( lastCollectionViewed) {
+    let hostname = window.location.hostname;
+    const lastCollectionViewed = localStorage.getItem(
+      `cc-${hostname}-${this.config["courseId"]}-last-collection`
+    );
+    if (lastCollectionViewed) {
       // check that the collection name still exists
-      if (this["collections"]["COLLECTIONS"].hasOwnProperty(lastCollectionViewed)) {
+      if (
+        this["collections"]["COLLECTIONS"].hasOwnProperty(lastCollectionViewed)
+      ) {
         return lastCollectionViewed;
       }
     }
@@ -542,7 +576,7 @@ export class CollectionsDetails {
     if (defaultCollection) {
       return defaultCollection;
     }
-    return ""
+    return "";
   }
 
   /**
@@ -570,6 +604,50 @@ export class CollectionsDetails {
       }
     }
     return null;
+  }
+
+  /**
+   * @method addCanvasModuleData
+   * @param canvasData - array of objects containing module data from Canvas
+   * @param editMode - boolean
+   * @description Add a sub set of the Canvas module data to the relevant collections
+   * module data
+   */
+  addCanvasModuleData(canvasData: [], editMode) {
+    let modules = this["collections"]["MODULES"];
+
+    // setting published this way will work in editMode
+    const fieldsToAdd = ["published"];
+
+    // loop through the canvas data
+    for (let i = 0; i < canvasData.length; i++) {
+      // for each fieldsToAdd, add the data to the module
+      for (let j = 0; j < fieldsToAdd.length; j++) {
+        const field = fieldsToAdd[j];
+        if (canvasData[i].hasOwnProperty(field)) {
+          const moduleId = canvasData[i].id;
+          // convert moduleId to int
+          if (modules.hasOwnProperty(moduleId)) {
+            modules[moduleId][field] = canvasData[i][field];
+          }
+        }
+      }
+
+      // if we're not in edit mode, add published==true to all modules
+      // - this is because students only ever can see published modules
+
+      // extract the ids from the canvasData
+      let canvasModuleIds = canvasData.map((module) => module.id);
+      if (!editMode) {
+        // loop through all the modules
+        for (let moduleId in modules) {
+          // if moduleId is in canvasModulesIds, set published to true
+          if (canvasModuleIds.includes(parseInt(moduleId))) {
+            modules[moduleId].published = true;
+          }
+        }
+      }
+    }
   }
 }
 

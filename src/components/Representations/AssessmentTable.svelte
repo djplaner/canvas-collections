@@ -15,8 +15,9 @@
   import { collectionsStore, modulesStore, configStore } from "../../stores";
   import {
     getCollectionCanvasModules,
+    addUnallocatedModules,
     getModuleUrl,
-//    modifyCanvasModulesList,
+    //    modifyCanvasModulesList,
     generateModuleDate,
     checkModuleMetaData,
   } from "./representationSupport";
@@ -34,12 +35,12 @@
       collection,
       $collectionsStore["MODULES"]
     );
-    console.log("assessment table");
-    console.log(modules)
-    console.log('--- moduleStore')
-    console.log($modulesStore)
+    if ($collectionsStore["COLLECTIONS"][collection]["unallocated"]) {
+      modules = modules.concat(
+        addUnallocatedModules($collectionsStore["MODULES"])
+      );
+    }
   }
-
 
   /** TODO
    * Finish generate module date
@@ -47,8 +48,6 @@
    * 2. If not in edit mode, need to exclude modules that are not published
    */
 </script>
-
-<h3>This is the Assessment table representation - collection {collection}</h3>
 
 <div id="cc-assessment-table" class="cc-assessment-container cc-representation">
   <table class="cc-responsive-table" role="table">
@@ -74,7 +73,6 @@
     </thead>
     <tbody>
       {#each modules as module}
-        {#if !(!$collectionsStore["MODULES"][module.id].published && !$configStore["editMode"])}
           <tr role="row">
             <td role="cell">
               <span class="cc-responsive-table__heading" aria-hidden="true"
@@ -94,7 +92,9 @@
                 >Description</span
               >
               <div class="cc-table-cell-text">
-                <p>{@html $collectionsStore["MODULES"][module.id].description}</p>
+                <p>
+                  {@html $collectionsStore["MODULES"][module.id].description}
+                </p>
               </div>
             </td>
             <td role="cell">
@@ -136,7 +136,6 @@
               </div>
             </td>
           </tr>
-        {/if}
       {/each}
     </tbody>
   </table>

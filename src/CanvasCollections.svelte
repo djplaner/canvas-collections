@@ -42,21 +42,21 @@
   };
 
   // whether or data canvas and collections data loaded
-  let canvasDataLoaded = false
-  let collectionsDataLoaded = false
+  let canvasDataLoaded = false;
+  let collectionsDataLoaded = false;
   // the actual data objects for canvas and collections data
-  let canvasDetails = null
-  let collectionsDetails = null
-  let saveInterval = null
+  let canvasDetails = null;
+  let collectionsDetails = null;
+  let saveInterval = null;
 
-  let ccPublished = true
+  let ccPublished = true;
 
   // Whenever currentCollection is changed, save the last collection viewed
   // into local storage
   $: {
     let lastViewedCollection = $configStore["currentCollection"];
     if (canvasDataLoaded && collectionsDataLoaded) {
-      collectionsDetails.saveLastCollectionViewed(lastViewedCollection)
+      collectionsDetails.saveLastCollectionViewed(lastViewedCollection);
     }
   }
 
@@ -121,6 +121,12 @@
    */
   function checkAllDataLoaded() {
     if (canvasDataLoaded && collectionsDataLoaded) {
+      // add in some Canvas module data to the collections module data
+      collectionsDetails.addCanvasModuleData(
+        canvasDetails.courseModules,
+        $configStore["editMode"]
+      );
+
       $collectionsStore = collectionsDetails.collections;
       calculateActualNum(
         canvasDetails.courseModules,
