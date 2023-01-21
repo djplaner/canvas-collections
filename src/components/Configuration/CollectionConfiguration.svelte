@@ -288,11 +288,16 @@ does not exist.
    * VERY EXPERIMENTAL and incomplete
    */
   function updateOutputPage(collectionName) {
-    const updateController = new updatePageController( 
-      $collectionsStore, undefined, collectionName );
+    const updateController = new updatePageController(
+      collectionName,
+      updateOutputPageCompleted
+    );
 
     updateController.execute();
+  }
 
+  function updateOutputPageCompleted(updateController) {
+    alert("finished updating the output apge");
   }
 
   const HELP = {
@@ -620,9 +625,8 @@ does not exist.
         class="btn cc-existing-collection"
         disabled={outputPageName[collectionName] === ""}
         on:click={() => {
-          updateOutputPage( collectionName);
-        }}
-        >Update</button
+          updateOutputPage(collectionName);
+        }}>Update</button
       >
     </div>
     {#if !outputPageExists[collectionName]}
