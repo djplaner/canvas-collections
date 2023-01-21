@@ -20,7 +20,10 @@
 import CollectionRepresentation from "../components/CollectionRepresentation.svelte";
 
 import { get } from "svelte/store";
-import { configStore, collectionsStore } from "../stores.ts";
+import { configStore, collectionsStore } from "../stores";
+
+import { toastAlert } from "../lib/ui";
+
 
 export class updatePageController {
   // easy read access to stores
@@ -65,7 +68,6 @@ export class updatePageController {
 
   execute() {
     if (this.errors.length !== 0) {
-      //alert(`Full Claytons not possible. execute: can't got errors ${this.errors.toString()}`);
       this.complete();
     } else {
       this.startUpdate();
@@ -111,6 +113,8 @@ export class updatePageController {
         error: false,
         errors: [],
       });
+
+	  return;
     }
 
     /* Standard task list - update each collection's output page */
@@ -325,9 +329,16 @@ export class updatePageController {
         } - errors - ${task.errors.join("\n     ")} </li>`;
       } else if (task.completed) {
         if (task.hasOwnProperty("collection")) {
-          summary += `<li> ${task.collection} - ${task.outputPageURL} - success </li>`;
+          summary += `<li> <em>${task.collection}</em> - 
+		  <a href="/courses/${this.configStore["courseId"]}/pages/${task.outputPageUrl}" 
+		  target="_blank" rel="noreferrer">${task.outputPage}</a> - 
+		  <span style="color:rgb(1,101,1);">success</span>
+		  </li>`;
         } else if (task.hasOwnProperty("collections")) {
-          summary += `<li> ${task.outputPageURL} - tab navigation update - success </li>`;
+          summary += `<li> Tab navigation -
+		  <a href="/courses/${this.configStore["courseId"]}/pages/${task.outputPageUrl}" 
+		  target="_blank" rel="noreferrer">${task.outputPage}</a> - 
+		  <span style="color:rgb(1,101,1);">success</span></li>`
         }
       }
     }
@@ -757,15 +768,20 @@ export class updatePageController {
     } else {
       if (this.tasks[0].hasOwnProperty("collection")) {
         // we're updating a single page for a collection
-        alert(
-          `Updated output page ${outputPageURL} for collection ${this.tasks[0].collection}`
-        );
+		const updateMsg = `<p>Updated 
+		<a href="/courses/${this.configStore["courseId"]}/pages/${outputPageURL}" target="_blank" rel="noreferrer">
+		<em>${this.tasks[0].outputPage}</em></a>
+		for the collection <em>${this.tasks[0].collection}</em></p>`
+		toastAlert(updateMsg, "success")
       } else if (
         this.navOption === 3 &&
         this.tasks[0].hasOwnProperty("collections")
       ) {
         // we've been adding a tab interface
-        alert(`Add tab navigation to ${outputPageURL}`);
+		const updateMsg = `<p>Added tab navigation to 
+		<a href="/courses/${this.configStore["courseId"]}/pages/${outputPageURL}" target="_blank" rel="noreferrer">
+		<em>${this.tasks[0].outputPage}</em></a></p>`
+		toastAlert(updateMsg,"success")
       }
       // finish up a successful task by moving it to completed
       let finishedTask = this.tasks.shift();

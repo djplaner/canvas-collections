@@ -297,7 +297,6 @@ does not exist.
   }
 
   function updateOutputPageCompleted(updateController) {
-    alert("finished updating the output apge");
   }
 
   const HELP = {
