@@ -43,10 +43,7 @@
 
   let representationComponent: any;
   $: {
-    const localRep =
-      $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
-        "representation"
-      ];
+    const localRep = $collectionsStore["COLLECTIONS"][collection]["representation"]
     if (!$representationsStore.hasOwnProperty(localRep)) {
       alert(
         `CollectionRepresentation component requires a valid representation prop. ${localRep} is not valid`
@@ -55,9 +52,6 @@
     representationComponent = $representationsStore[localRep];
 
     if ($configStore["ccOn"]) {
-      debug(
-        `calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`
-      );
       modifyCanvasModulesList(
         $configStore["currentCollection"],
         $collectionsStore["MODULES"],
@@ -65,9 +59,6 @@
         $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
           "unallocated"
         ]
-      );
-      debug(
-        `after calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`
       );
     }
   }

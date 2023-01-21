@@ -24,6 +24,11 @@
   } from "./representationSupport";
 
   export let collection: string;
+  export let claytons: boolean;
+
+  if (!claytons) {
+    claytons = false;
+  }
 
   // kludge to test reactive nature
   // set collection to currentCollection
@@ -35,115 +40,220 @@
     modules = getRepresentationModules(
       collection,
       $collectionsStore["MODULES"],
-      $configStore["editMode"],
+      $configStore["editMode"], claytons,
       $collectionsStore["COLLECTIONS"][collection]["unallocated"]
     );
   }
-
-  /** TODO
-   * Finish generate module date
-   * 1. calculate the module URL for module-ID
-   * 2. If not in edit mode, need to exclude modules that are not published
-   */
 </script>
 
-<div id="cc-assessment-table" class="cc-assessment-container cc-representation">
-  <table class="cc-responsive-table" role="table">
-    <!-- <caption></caption> -->
-    <thead role="rowgroup">
-      <tr role="row">
-        <th role="columnheader" scope="col"
-          ><span class="cc-table-header-text">Title</span></th
-        >
-        <th role="columnheader" scope="col"
-          ><span class="cc-table-header-text">Description</span></th
-        >
-        <th role="columnheader" scope="col"
-          ><span class="cc-table-header-text">Weighting</span></th
-        >
-        <th role="columnheader" scope="col"
-          ><span class="cc-table-header-text">Due Date</span></th
-        >
-        <th role="columnheader" scope="col"
-          ><span class="cc-table-header-text">Learning Outcomes</span></th
-        >
-      </tr>
-    </thead>
-    <tbody>
-      {#each modules as module}
-        <tr role="row">
-          <td role="cell">
-            <span class="cc-responsive-table__heading" aria-hidden="true"
-              >Title</span
-            >
-            <div class="cc-table-cell-text">
-              <p>
-                <a href={getModuleUrl(module.id)}>
-                  <!-- {$modulesStore[module.id].name} -->
-                  {$collectionsStore["MODULES"][module.id].name}
-                </a>
-              </p>
-            </div>
-          </td>
-          <td role="cell" class="descriptionCell">
-            <span class="cc-responsive-table__heading" aria-hidden="true"
-              >Description</span
-            >
-            {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
-              <div class="cc-published">Unpublished</div>
-            {/if}
-            {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection!==collection}
-              <div class="cc-unallocated">No collection allocated</div>
-            {/if}
-            <div class="cc-table-cell-text">
-              <p>
-                {@html $collectionsStore["MODULES"][module.id].description}
-              </p>
-            </div>
-          </td>
-          <td role="cell">
-            <span class="cc-responsive-table__heading" aria-hidden="true"
-              >Weighting</span
-            >
-            <div class="cc-table-cell-text">
-              <p>
-                {checkModuleMetaData(
-                  $collectionsStore["MODULES"][module.id],
-                  "weighting",
-                  $configStore["editMode"]
-                )}
-              </p>
-            </div>
-          </td>
-          <td role="cell">
-            <span class="cc-responsive-table__heading" aria-hidden="true"
-              >Due Date</span
-            >
-            <div class="cc-table-cell-text">
-              <p>
-                {generateModuleDate($collectionsStore["MODULES"][module.id])}
-              </p>
-            </div>
-          </td>
-          <td role="cell">
-            <span class="cc-responsive-table__heading" aria-hidden="true"
-              >Learning Outcomes</span
-            >
-            <div class="cc-table-cell-text">
-              <p>
-                {checkModuleMetaData(
-                  $collectionsStore["MODULES"][module.id],
-                  "learning outcomes",
-                  $configStore["editMode"]
-                )}
-              </p>
-            </div>
-          </td>
+{#if claytons}
+  <div id="cc-assessment-table">
+    <table
+      class="ic-Table--hover-row ic-Table ic-Table--striped -ic-Table-condensed"
+    >
+      <thead>
+        <tr>
+          <th
+            role="columnheader"
+            scope="col"
+            style="background-color: #e03e2d;"
+          >
+            <span style="color: #ffffff;">Title</span></th
+          >
+          <th
+            role="columnheader"
+            scope="col"
+            style="background-color: #e03e2d; width: 20rem;"
+          >
+            <span style="color: #ffffff;">Description</span></th
+          >
+          <th
+            role="columnheader"
+            scope="col"
+            style="background-color: #e03e2d;"
+          >
+            <span style="color: #ffffff;">Weighting</span></th
+          >
+          <th
+            role="columnheader"
+            scope="col"
+            style="background-color: #e03e2d;"
+          >
+            <span style="color: #ffffff;">Due Date</span></th
+          >
+          <th
+            role="columnheader"
+            scope="col"
+            style="background-color: #e03e2d;"
+          >
+            <span style="color: #ffffff;">Learning Outcomes</span></th
+          >
         </tr>
-      {/each}
-    </tbody>
-  </table>
-</div>
+      </thead>
+      <tbody>
+        {#each modules as module}
+          <tr>
+            <td role="cell" style="display: table-cell; text-align:left;">
+              <div style="margin:0; font-size:0.8rem">
+                <p>
+                  <a href={getModuleUrl(module.id)}>
+                    <!-- {$modulesStore[module.id].name} -->
+                    {$collectionsStore["MODULES"][module.id].name}
+                  </a>
+                </p>
+              </div>
+            </td>
+            <td role="cell" style="display:table-cell; text-align:left;">
+              {#if $configStore["editMode"] && ! claytons && !$collectionsStore["MODULES"][module.id].published}
+                <div class="cc-published">Unpublished</div>
+              {/if}
+              {#if $configStore["editMode"] && ! claytons && $collectionsStore["MODULES"][module.id].collection !== collection}
+                <div class="cc-unallocated">No collection allocated</div>
+              {/if}
+              <div style="margin:0; font-size:0.8rem">
+                <p>
+                  {@html $collectionsStore["MODULES"][module.id].description}
+                </p>
+              </div>
+            </td>
+            <td role="cell">
+              <div style="margin:0; font-size:0.8rem">
+                <p>
+                  {checkModuleMetaData(
+                    $collectionsStore["MODULES"][module.id],
+                    "weighting",
+                    $configStore["editMode"],
+                    claytons
+                  )}
+                </p>
+              </div>
+            </td>
+            <td role="cell">
+              <div style="margin:0; font-size:0.8rem">
+                <p>
+                  {generateModuleDate($collectionsStore["MODULES"][module.id])}
+                </p>
+              </div>
+            </td>
+            <td role="cell">
+              <div style="margin:0; font-size:0.8rem">
+                <p>
+                  {checkModuleMetaData(
+                    $collectionsStore["MODULES"][module.id],
+                    "learning outcomes",
+                    $configStore["editMode"],
+                    claytons
+                  )}
+                </p>
+              </div>
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
+{:else}
+  <div
+    id="cc-assessment-table"
+    class="cc-assessment-container cc-representation"
+  >
+    <table class="cc-responsive-table" role="table">
+      <!-- <caption></caption> -->
+      <thead role="rowgroup">
+        <tr role="row">
+          <th role="columnheader" scope="col"
+            ><span class="cc-table-header-text">Title</span></th
+          >
+          <th role="columnheader" scope="col"
+            ><span class="cc-table-header-text">Description</span></th
+          >
+          <th role="columnheader" scope="col"
+            ><span class="cc-table-header-text">Weighting</span></th
+          >
+          <th role="columnheader" scope="col"
+            ><span class="cc-table-header-text">Due Date</span></th
+          >
+          <th role="columnheader" scope="col"
+            ><span class="cc-table-header-text">Learning Outcomes</span></th
+          >
+        </tr>
+      </thead>
+      <tbody>
+        {#each modules as module}
+          <tr role="row">
+            <td role="cell">
+              <span class="cc-responsive-table__heading" aria-hidden="true"
+                >Title</span
+              >
+              <div class="cc-table-cell-text">
+                <p>
+                  <a href={getModuleUrl(module.id)}>
+                    <!-- {$modulesStore[module.id].name} -->
+                    {$collectionsStore["MODULES"][module.id].name}
+                  </a>
+                </p>
+              </div>
+            </td>
+            <td role="cell" class="descriptionCell">
+              <span class="cc-responsive-table__heading" aria-hidden="true"
+                >Description</span
+              >
+              {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
+                <div class="cc-published">Unpublished</div>
+              {/if}
+              {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection !== collection}
+                <div class="cc-unallocated">No collection allocated</div>
+              {/if}
+              <div class="cc-table-cell-text">
+                <p>
+                  {@html $collectionsStore["MODULES"][module.id].description}
+                </p>
+              </div>
+            </td>
+            <td role="cell">
+              <span class="cc-responsive-table__heading" aria-hidden="true"
+                >Weighting</span
+              >
+              <div class="cc-table-cell-text">
+                <p>
+                  {checkModuleMetaData(
+                    $collectionsStore["MODULES"][module.id],
+                    "weighting",
+                    $configStore["editMode"]
+                  )}
+                </p>
+              </div>
+            </td>
+            <td role="cell">
+              <span class="cc-responsive-table__heading" aria-hidden="true"
+                >Due Date</span
+              >
+              <div class="cc-table-cell-text">
+                <p>
+                  {generateModuleDate($collectionsStore["MODULES"][module.id])}
+                </p>
+              </div>
+            </td>
+            <td role="cell">
+              <span class="cc-responsive-table__heading" aria-hidden="true"
+                >Learning Outcomes</span
+              >
+              <div class="cc-table-cell-text">
+                <p>
+                  {checkModuleMetaData(
+                    $collectionsStore["MODULES"][module.id],
+                    "learning outcomes",
+                    $configStore["editMode"]
+                  )}
+                </p>
+              </div>
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
+{/if}
 
 <style>
   .cc-assessment-container {

@@ -1604,7 +1604,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    function get_each_context_1(ctx, list, i) {
+    function get_each_context_1$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
     	child_ctx[24] = list[i];
     	return child_ctx;
@@ -1623,7 +1623,7 @@ var app = (function () {
     }
 
     // (212:8) {:else}
-    function create_else_block$5(ctx) {
+    function create_else_block$6(ctx) {
     	let input;
     	let input_id_value;
 
@@ -1652,7 +1652,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$5.name,
+    		id: create_else_block$6.name,
     		type: "else",
     		source: "(212:8) {:else}",
     		ctx
@@ -1784,7 +1784,7 @@ var app = (function () {
     }
 
     // (303:10) {#each daysOfWeek as day}
-    function create_each_block_1(ctx) {
+    function create_each_block_1$2(ctx) {
     	let option;
     	let t_value = /*day*/ ctx[24] + "";
     	let t;
@@ -1809,7 +1809,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block_1.name,
+    		id: create_each_block_1$2.name,
     		type: "each",
     		source: "(303:10) {#each daysOfWeek as day}",
     		ctx
@@ -1990,7 +1990,7 @@ var app = (function () {
     		if (dirty & /*$collectionsStore, moduleId*/ 5) show_if = null;
     		if (show_if == null) show_if = !!(/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].hasOwnProperty("date") && /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].date.hasOwnProperty("label"));
     		if (show_if) return create_if_block$d;
-    		return create_else_block$5;
+    		return create_else_block$6;
     	}
 
     	let current_block_type = select_block_type(ctx, -1);
@@ -2016,7 +2016,7 @@ var app = (function () {
     	let each_blocks_1 = [];
 
     	for (let i = 0; i < each_value_1.length; i += 1) {
-    		each_blocks_1[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    		each_blocks_1[i] = create_each_block_1$2(get_each_context_1$2(ctx, each_value_1, i));
     	}
 
     	let each_value = /*weeksOfTerm*/ ctx[5];
@@ -2614,12 +2614,12 @@ var app = (function () {
     				let i;
 
     				for (i = 0; i < each_value_1.length; i += 1) {
-    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+    					const child_ctx = get_each_context_1$2(ctx, each_value_1, i);
 
     					if (each_blocks_1[i]) {
     						each_blocks_1[i].p(child_ctx, dirty);
     					} else {
-    						each_blocks_1[i] = create_each_block_1(child_ctx);
+    						each_blocks_1[i] = create_each_block_1$2(child_ctx);
     						each_blocks_1[i].c();
     						each_blocks_1[i].m(select2, null);
     					}
@@ -14005,7 +14005,7 @@ var app = (function () {
     	let button1;
     	let mounted;
     	let dispose;
-    	let if_block = /*error*/ ctx[2] && create_if_block_1$a(ctx);
+    	let if_block = /*error*/ ctx[2] && create_if_block_1$b(ctx);
 
     	const block = {
     		c: function create() {
@@ -14105,7 +14105,7 @@ var app = (function () {
 
     			if (/*error*/ ctx[2]) {
     				if (if_block) ; else {
-    					if_block = create_if_block_1$a(ctx);
+    					if_block = create_if_block_1$b(ctx);
     					if_block.c();
     					if_block.m(span2, null);
     				}
@@ -14141,7 +14141,7 @@ var app = (function () {
     }
 
     // (12:12) {#if error}
-    function create_if_block_1$a(ctx) {
+    function create_if_block_1$b(ctx) {
     	let span;
 
     	const block = {
@@ -14161,7 +14161,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$a.name,
+    		id: create_if_block_1$b.name,
     		type: "if",
     		source: "(12:12) {#if error}",
     		ctx
@@ -15546,7 +15546,7 @@ var app = (function () {
     }
 
     // (151:8) {:else}
-    function create_else_block_2(ctx) {
+    function create_else_block_2$1(ctx) {
     	let input;
     	let input_id_value;
     	let mounted;
@@ -15589,7 +15589,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block_2.name,
+    		id: create_else_block_2$1.name,
     		type: "else",
     		source: "(151:8) {:else}",
     		ctx
@@ -15599,7 +15599,7 @@ var app = (function () {
     }
 
     // (141:8) {#if $collectionsStore["MODULES"][moduleId].fyi}
-    function create_if_block_2$5(ctx) {
+    function create_if_block_2$6(ctx) {
     	let input;
     	let input_id_value;
     	let mounted;
@@ -15646,7 +15646,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$5.name,
+    		id: create_if_block_2$6.name,
     		type: "if",
     		source: "(141:8) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].fyi}",
     		ctx
@@ -15712,7 +15712,7 @@ var app = (function () {
     }
 
     // (213:8) {#if $collectionsStore["MODULES"][moduleId].autonum}
-    function create_if_block_1$9(ctx) {
+    function create_if_block_1$a(ctx) {
     	let input;
     	let input_id_value;
     	let mounted;
@@ -15759,7 +15759,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$9.name,
+    		id: create_if_block_1$a.name,
     		type: "if",
     		source: "(213:8) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].autonum}",
     		ctx
@@ -15769,7 +15769,7 @@ var app = (function () {
     }
 
     // (277:8) {:else}
-    function create_else_block$4(ctx) {
+    function create_else_block$5(ctx) {
     	let input;
     	let input_id_value;
     	let mounted;
@@ -15816,7 +15816,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$4.name,
+    		id: create_else_block$5.name,
     		type: "else",
     		source: "(277:8) {:else}",
     		ctx
@@ -16009,15 +16009,15 @@ var app = (function () {
     	}
 
     	function select_block_type(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].fyi) return create_if_block_2$5;
-    		return create_else_block_2;
+    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].fyi) return create_if_block_2$6;
+    		return create_else_block_2$1;
     	}
 
     	let current_block_type = select_block_type(ctx);
     	let if_block0 = current_block_type(ctx);
 
     	function select_block_type_1(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].autonum) return create_if_block_1$9;
+    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].autonum) return create_if_block_1$a;
     		return create_else_block_1$2;
     	}
 
@@ -16026,7 +16026,7 @@ var app = (function () {
 
     	function select_block_type_2(ctx, dirty) {
     		if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].engage) return create_if_block$b;
-    		return create_else_block$4;
+    		return create_else_block$5;
     	}
 
     	let current_block_type_2 = select_block_type_2(ctx);
@@ -18432,7 +18432,7 @@ Do you want to use the sanitised value?`)) {
     const file$e = "src\\components\\ModuleConfiguration.svelte";
 
     // (52:2) {#if !allocated}
-    function create_if_block_1$8(ctx) {
+    function create_if_block_1$9(ctx) {
     	let div;
     	let t;
     	let div_id_value;
@@ -18461,7 +18461,7 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$8.name,
+    		id: create_if_block_1$9.name,
     		type: "if",
     		source: "(52:2) {#if !allocated}",
     		ctx
@@ -18794,7 +18794,7 @@ Do you want to use the sanitised value?`)) {
     	let current;
     	let mounted;
     	let dispose;
-    	let if_block0 = !/*allocated*/ ctx[2] && create_if_block_1$8(ctx);
+    	let if_block0 = !/*allocated*/ ctx[2] && create_if_block_1$9(ctx);
     	let if_block1 = /*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[0]].configVisible && create_if_block$a(ctx);
 
     	const block = {
@@ -18878,7 +18878,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
-    					if_block0 = create_if_block_1$8(ctx);
+    					if_block0 = create_if_block_1$9(ctx);
     					if_block0.c();
     					if_block0.m(div1, t0);
     				}
@@ -19146,10 +19146,20 @@ Do you want to use the sanitised value?`)) {
      * - all the modules without collections (if that switch is set)
      *
      */
-    function getRepresentationModules(collectionName, allModules, editMode, unallocated) {
+    function getRepresentationModules(collectionName, allModules, editMode, claytons, unallocated) {
         let modules = [];
         modules = getCollectionCanvasModules(collectionName, allModules);
-        if (editMode || unallocated) {
+        // add unallocated modules if,
+        if (!editMode) {
+            // student only if unallocated for this collection is true
+            if (unallocated) {
+                modules = modules.concat(addUnallocatedModules(allModules, editMode));
+            }
+        }
+        else if ((claytons && unallocated) || !claytons) {
+            // staff add if
+            // - claytons mode and unallocated is true
+            // - ! claytons
             modules = modules.concat(addUnallocatedModules(allModules, editMode));
         }
         return modules;
@@ -19164,12 +19174,12 @@ Do you want to use the sanitised value?`)) {
      * - the string {metaDataValue} if it does not exist and we're in editMode
      * - an empty string if it does not exist and we're not in editMode
      */
-    function checkModuleMetaData(module, metaDataValue, editMode) {
+    function checkModuleMetaData(module, metaDataValue, editMode, claytons = false) {
         if (module.hasOwnProperty("metadata") &&
             module["metadata"].hasOwnProperty(metaDataValue)) {
             return module["metadata"][metaDataValue];
         }
-        if (editMode) {
+        if (editMode && !claytons) {
             return `{${metaDataValue}}`;
         }
         return "";
@@ -19314,10 +19324,10 @@ Do you want to use the sanitised value?`)) {
     /* src\components\Representations\GriffithCards\BannerIframe.svelte generated by Svelte v3.55.0 */
     const file$d = "src\\components\\Representations\\GriffithCards\\BannerIframe.svelte";
 
-    // (18:0) {:else}
-    function create_else_block$3(ctx) {
+    // (22:0) {:else}
+    function create_else_block$4(ctx) {
     	let div;
-    	let if_block = /*$configStore*/ ctx[2]["editMode"] && create_if_block_1$7(ctx);
+    	let if_block = /*$configStore*/ ctx[2]["editMode"] && create_if_block_1$8(ctx);
 
     	const block = {
     		c: function create() {
@@ -19327,7 +19337,7 @@ Do you want to use the sanitised value?`)) {
     			set_style(div, "background-color", "#ffffff");
     			set_style(div, "width", "100%");
     			set_style(div, "height", "10rem");
-    			add_location(div, file$d, 18, 2, 593);
+    			add_location(div, file$d, 22, 2, 659);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -19336,7 +19346,7 @@ Do you want to use the sanitised value?`)) {
     		p: function update(ctx, dirty) {
     			if (/*$configStore*/ ctx[2]["editMode"]) {
     				if (if_block) ; else {
-    					if_block = create_if_block_1$7(ctx);
+    					if_block = create_if_block_1$8(ctx);
     					if_block.c();
     					if_block.m(div, null);
     				}
@@ -19353,16 +19363,16 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$3.name,
+    		id: create_else_block$4.name,
     		type: "else",
-    		source: "(18:0) {:else}",
+    		source: "(22:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (16:0) {#if isValidIframe($collectionsStore["MODULES"][moduleId].iframe)}
+    // (20:0) {#if isValidIframe($collectionsStore["MODULES"][moduleId].iframe)}
     function create_if_block$9(ctx) {
     	let html_tag;
     	let raw_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].iframe + "";
@@ -19391,15 +19401,15 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block$9.name,
     		type: "if",
-    		source: "(16:0) {#if isValidIframe($collectionsStore[\\\"MODULES\\\"][moduleId].iframe)}",
+    		source: "(20:0) {#if isValidIframe($collectionsStore[\\\"MODULES\\\"][moduleId].iframe)}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (23:4) {#if $configStore["editMode"]}
-    function create_if_block_1$7(ctx) {
+    // (27:4) {#if $configStore["editMode"]}
+    function create_if_block_1$8(ctx) {
     	let p;
     	let t0;
     	let em;
@@ -19412,8 +19422,8 @@ Do you want to use the sanitised value?`)) {
     			em = element("em");
     			em.textContent = "No iframe specified";
     			t2 = text(")");
-    			add_location(em, file$d, 23, 10, 743);
-    			add_location(p, file$d, 23, 6, 739);
+    			add_location(em, file$d, 27, 10, 809);
+    			add_location(p, file$d, 27, 6, 805);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -19428,9 +19438,9 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$7.name,
+    		id: create_if_block_1$8.name,
     		type: "if",
-    		source: "(23:4) {#if $configStore[\\\"editMode\\\"]}",
+    		source: "(27:4) {#if $configStore[\\\"editMode\\\"]}",
     		ctx
     	});
 
@@ -19445,7 +19455,7 @@ Do you want to use the sanitised value?`)) {
     		if (dirty & /*$collectionsStore, moduleId*/ 3) show_if = null;
     		if (show_if == null) show_if = !!/*isValidIframe*/ ctx[3](/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].iframe);
     		if (show_if) return create_if_block$9;
-    		return create_else_block$3;
+    		return create_else_block$4;
     	}
 
     	let current_block_type = select_block_type(ctx, -1);
@@ -19505,6 +19515,11 @@ Do you want to use the sanitised value?`)) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('BannerIframe', slots, []);
     	let { moduleId } = $$props;
+    	let { claytons } = $$props;
+
+    	if (!claytons) {
+    		claytons = false;
+    	}
 
     	/**
      * @function isValidIframe
@@ -19522,9 +19537,13 @@ Do you want to use the sanitised value?`)) {
     		if (moduleId === undefined && !('moduleId' in $$props || $$self.$$.bound[$$self.$$.props['moduleId']])) {
     			console.warn("<BannerIframe> was created without expected prop 'moduleId'");
     		}
+
+    		if (claytons === undefined && !('claytons' in $$props || $$self.$$.bound[$$self.$$.props['claytons']])) {
+    			console.warn("<BannerIframe> was created without expected prop 'claytons'");
+    		}
     	});
 
-    	const writable_props = ['moduleId'];
+    	const writable_props = ['moduleId', 'claytons'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<BannerIframe> was created with unknown prop '${key}'`);
@@ -19532,12 +19551,14 @@ Do you want to use the sanitised value?`)) {
 
     	$$self.$$set = $$props => {
     		if ('moduleId' in $$props) $$invalidate(0, moduleId = $$props.moduleId);
+    		if ('claytons' in $$props) $$invalidate(4, claytons = $$props.claytons);
     	};
 
     	$$self.$capture_state = () => ({
     		collectionsStore,
     		configStore,
     		moduleId,
+    		claytons,
     		isValidIframe,
     		$collectionsStore,
     		$configStore
@@ -19545,19 +19566,20 @@ Do you want to use the sanitised value?`)) {
 
     	$$self.$inject_state = $$props => {
     		if ('moduleId' in $$props) $$invalidate(0, moduleId = $$props.moduleId);
+    		if ('claytons' in $$props) $$invalidate(4, claytons = $$props.claytons);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [moduleId, $collectionsStore, $configStore, isValidIframe];
+    	return [moduleId, $collectionsStore, $configStore, isValidIframe, claytons];
     }
 
     class BannerIframe extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$g, create_fragment$g, safe_not_equal, { moduleId: 0 });
+    		init(this, options, instance$g, create_fragment$g, safe_not_equal, { moduleId: 0, claytons: 4 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -19572,6 +19594,14 @@ Do you want to use the sanitised value?`)) {
     	}
 
     	set moduleId(value) {
+    		throw new Error("<BannerIframe>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get claytons() {
+    		throw new Error("<BannerIframe>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set claytons(value) {
     		throw new Error("<BannerIframe>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -19589,7 +19619,7 @@ Do you want to use the sanitised value?`)) {
     			t = text(" ");
     			attr_dev(div, "class", "cc-banner-colour svelte-1545ek9");
     			set_style(div, "background-color", /*$collectionsStore*/ ctx[1]['MODULES'][/*moduleId*/ ctx[0]].bannerColour);
-    			add_location(div, file$c, 4, 0, 106);
+    			add_location(div, file$c, 8, 0, 172);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -19628,14 +19658,23 @@ Do you want to use the sanitised value?`)) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('BannerColour', slots, []);
     	let { moduleId } = $$props;
+    	let { claytons } = $$props;
+
+    	if (!claytons) {
+    		claytons = false;
+    	}
 
     	$$self.$$.on_mount.push(function () {
     		if (moduleId === undefined && !('moduleId' in $$props || $$self.$$.bound[$$self.$$.props['moduleId']])) {
     			console.warn("<BannerColour> was created without expected prop 'moduleId'");
     		}
+
+    		if (claytons === undefined && !('claytons' in $$props || $$self.$$.bound[$$self.$$.props['claytons']])) {
+    			console.warn("<BannerColour> was created without expected prop 'claytons'");
+    		}
     	});
 
-    	const writable_props = ['moduleId'];
+    	const writable_props = ['moduleId', 'claytons'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<BannerColour> was created with unknown prop '${key}'`);
@@ -19643,29 +19682,32 @@ Do you want to use the sanitised value?`)) {
 
     	$$self.$$set = $$props => {
     		if ('moduleId' in $$props) $$invalidate(0, moduleId = $$props.moduleId);
+    		if ('claytons' in $$props) $$invalidate(2, claytons = $$props.claytons);
     	};
 
     	$$self.$capture_state = () => ({
     		collectionsStore,
     		moduleId,
+    		claytons,
     		$collectionsStore
     	});
 
     	$$self.$inject_state = $$props => {
     		if ('moduleId' in $$props) $$invalidate(0, moduleId = $$props.moduleId);
+    		if ('claytons' in $$props) $$invalidate(2, claytons = $$props.claytons);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [moduleId, $collectionsStore];
+    	return [moduleId, $collectionsStore, claytons];
     }
 
     class BannerColour extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$f, create_fragment$f, safe_not_equal, { moduleId: 0 });
+    		init(this, options, instance$f, create_fragment$f, safe_not_equal, { moduleId: 0, claytons: 2 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -19682,13 +19724,21 @@ Do you want to use the sanitised value?`)) {
     	set moduleId(value) {
     		throw new Error("<BannerColour>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get claytons() {
+    		throw new Error("<BannerColour>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set claytons(value) {
+    		throw new Error("<BannerColour>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
     /* src\components\Representations\GriffithCards\BannerImage.svelte generated by Svelte v3.55.0 */
     const file$b = "src\\components\\Representations\\GriffithCards\\BannerImage.svelte";
 
-    // (32:0) {:else}
-    function create_else_block$2(ctx) {
+    // (49:0) {:else}
+    function create_else_block$3(ctx) {
     	let img;
     	let img_src_value;
     	let img_alt_value;
@@ -19698,19 +19748,19 @@ Do you want to use the sanitised value?`)) {
     			img = element("img");
     			attr_dev(img, "class", "cc-card-image svelte-nejx1g");
     			if (!src_url_equal(img.src, img_src_value = "https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png")) attr_dev(img, "src", img_src_value);
-    			attr_dev(img, "data-moduleid", /*moduleId*/ ctx[0]);
-    			attr_dev(img, "alt", img_alt_value = "Image representing '" + /*$collectionsStore*/ ctx[1]['MODULES'][/*moduleId*/ ctx[0]].name.replace(/(["'])/g, '\\$1') + "'");
-    			add_location(img, file$b, 32, 2, 952);
+    			attr_dev(img, "data-moduleid", /*moduleId*/ ctx[1]);
+    			attr_dev(img, "alt", img_alt_value = "Image representing '" + /*$collectionsStore*/ ctx[2]['MODULES'][/*moduleId*/ ctx[1]].name.replace(/(["'])/g, '\\$1') + "'");
+    			add_location(img, file$b, 49, 2, 1474);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*moduleId*/ 1) {
-    				attr_dev(img, "data-moduleid", /*moduleId*/ ctx[0]);
+    			if (dirty & /*moduleId*/ 2) {
+    				attr_dev(img, "data-moduleid", /*moduleId*/ ctx[1]);
     			}
 
-    			if (dirty & /*$collectionsStore, moduleId*/ 3 && img_alt_value !== (img_alt_value = "Image representing '" + /*$collectionsStore*/ ctx[1]['MODULES'][/*moduleId*/ ctx[0]].name.replace(/(["'])/g, '\\$1') + "'")) {
+    			if (dirty & /*$collectionsStore, moduleId*/ 6 && img_alt_value !== (img_alt_value = "Image representing '" + /*$collectionsStore*/ ctx[2]['MODULES'][/*moduleId*/ ctx[1]].name.replace(/(["'])/g, '\\$1') + "'")) {
     				attr_dev(img, "alt", img_alt_value);
     			}
     		},
@@ -19721,16 +19771,71 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$2.name,
+    		id: create_else_block$3.name,
     		type: "else",
-    		source: "(32:0) {:else}",
+    		source: "(49:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (20:0) {#if $collectionsStore["MODULES"][moduleId].image}
+    // (36:68) 
+    function create_if_block_1$7(ctx) {
+    	let img;
+    	let img_class_value;
+    	let img_src_value;
+    	let img_data_moduleid_value;
+    	let img_alt_value;
+
+    	const block = {
+    		c: function create() {
+    			img = element("img");
+    			attr_dev(img, "class", img_class_value = "cc-card-image " + calculateImageSize(/*$collectionsStore*/ ctx[2]['MODULES'][/*moduleId*/ ctx[1]].imageSize) + " svelte-nejx1g");
+    			set_style(img, "height", "10rem");
+    			set_style(img, "width", "100%");
+    			if (!src_url_equal(img.src, img_src_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[1]].image)) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "data-moduleid", img_data_moduleid_value = "$" + /*moduleId*/ ctx[1]);
+    			attr_dev(img, "alt", img_alt_value = "Image representing '" + /*$collectionsStore*/ ctx[2]['MODULES'][/*moduleId*/ ctx[1]].name.replace(/(["'])/g, '\\$1') + "\r\n\t'");
+    			add_location(img, file$b, 36, 2, 1091);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, img, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$collectionsStore, moduleId*/ 6 && img_class_value !== (img_class_value = "cc-card-image " + calculateImageSize(/*$collectionsStore*/ ctx[2]['MODULES'][/*moduleId*/ ctx[1]].imageSize) + " svelte-nejx1g")) {
+    				attr_dev(img, "class", img_class_value);
+    			}
+
+    			if (dirty & /*$collectionsStore, moduleId*/ 6 && !src_url_equal(img.src, img_src_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[1]].image)) {
+    				attr_dev(img, "src", img_src_value);
+    			}
+
+    			if (dirty & /*moduleId*/ 2 && img_data_moduleid_value !== (img_data_moduleid_value = "$" + /*moduleId*/ ctx[1])) {
+    				attr_dev(img, "data-moduleid", img_data_moduleid_value);
+    			}
+
+    			if (dirty & /*$collectionsStore, moduleId*/ 6 && img_alt_value !== (img_alt_value = "Image representing '" + /*$collectionsStore*/ ctx[2]['MODULES'][/*moduleId*/ ctx[1]].name.replace(/(["'])/g, '\\$1') + "\r\n\t'")) {
+    				attr_dev(img, "alt", img_alt_value);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(img);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$7.name,
+    		type: "if",
+    		source: "(36:68) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (24:0) {#if $collectionsStore["MODULES"][moduleId].image && claytons}
     function create_if_block$8(ctx) {
     	let img;
     	let img_class_value;
@@ -19741,29 +19846,29 @@ Do you want to use the sanitised value?`)) {
     	const block = {
     		c: function create() {
     			img = element("img");
-    			attr_dev(img, "class", img_class_value = "cc-card-image " + calculateImageSize(/*$collectionsStore*/ ctx[1]['MODULES'][/*moduleId*/ ctx[0]].imageSize) + " svelte-nejx1g");
-    			if (!src_url_equal(img.src, img_src_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].image)) attr_dev(img, "src", img_src_value);
-    			attr_dev(img, "data-moduleid", img_data_moduleid_value = "$" + /*moduleId*/ ctx[0]);
-    			attr_dev(img, "alt", img_alt_value = "Image representing '" + /*$collectionsStore*/ ctx[1]['MODULES'][/*moduleId*/ ctx[0]].name.replace(/(["'])/g, '\\$1') + "\r\n\t'");
-    			add_location(img, file$b, 20, 2, 606);
+    			attr_dev(img, "class", img_class_value = "cc-card-image " + calculateImageSize(/*$collectionsStore*/ ctx[2]['MODULES'][/*moduleId*/ ctx[1]].imageSize) + " svelte-nejx1g");
+    			if (!src_url_equal(img.src, img_src_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[1]].image)) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "data-moduleid", img_data_moduleid_value = "$" + /*moduleId*/ ctx[1]);
+    			attr_dev(img, "alt", img_alt_value = "Image representing '" + /*$collectionsStore*/ ctx[2]['MODULES'][/*moduleId*/ ctx[1]].name.replace(/(["'])/g, '\\$1') + "\r\n\t'");
+    			add_location(img, file$b, 24, 2, 684);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, moduleId*/ 3 && img_class_value !== (img_class_value = "cc-card-image " + calculateImageSize(/*$collectionsStore*/ ctx[1]['MODULES'][/*moduleId*/ ctx[0]].imageSize) + " svelte-nejx1g")) {
+    			if (dirty & /*$collectionsStore, moduleId*/ 6 && img_class_value !== (img_class_value = "cc-card-image " + calculateImageSize(/*$collectionsStore*/ ctx[2]['MODULES'][/*moduleId*/ ctx[1]].imageSize) + " svelte-nejx1g")) {
     				attr_dev(img, "class", img_class_value);
     			}
 
-    			if (dirty & /*$collectionsStore, moduleId*/ 3 && !src_url_equal(img.src, img_src_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].image)) {
+    			if (dirty & /*$collectionsStore, moduleId*/ 6 && !src_url_equal(img.src, img_src_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[1]].image)) {
     				attr_dev(img, "src", img_src_value);
     			}
 
-    			if (dirty & /*moduleId*/ 1 && img_data_moduleid_value !== (img_data_moduleid_value = "$" + /*moduleId*/ ctx[0])) {
+    			if (dirty & /*moduleId*/ 2 && img_data_moduleid_value !== (img_data_moduleid_value = "$" + /*moduleId*/ ctx[1])) {
     				attr_dev(img, "data-moduleid", img_data_moduleid_value);
     			}
 
-    			if (dirty & /*$collectionsStore, moduleId*/ 3 && img_alt_value !== (img_alt_value = "Image representing '" + /*$collectionsStore*/ ctx[1]['MODULES'][/*moduleId*/ ctx[0]].name.replace(/(["'])/g, '\\$1') + "\r\n\t'")) {
+    			if (dirty & /*$collectionsStore, moduleId*/ 6 && img_alt_value !== (img_alt_value = "Image representing '" + /*$collectionsStore*/ ctx[2]['MODULES'][/*moduleId*/ ctx[1]].name.replace(/(["'])/g, '\\$1') + "\r\n\t'")) {
     				attr_dev(img, "alt", img_alt_value);
     			}
     		},
@@ -19776,7 +19881,7 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block$8.name,
     		type: "if",
-    		source: "(20:0) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].image}",
+    		source: "(24:0) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].image && claytons}",
     		ctx
     	});
 
@@ -19787,8 +19892,9 @@ Do you want to use the sanitised value?`)) {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].image) return create_if_block$8;
-    		return create_else_block$2;
+    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[1]].image && /*claytons*/ ctx[0]) return create_if_block$8;
+    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[1]].image && !/*claytons*/ ctx[0]) return create_if_block_1$7;
+    		return create_else_block$3;
     	}
 
     	let current_block_type = select_block_type(ctx);
@@ -19854,49 +19960,61 @@ Do you want to use the sanitised value?`)) {
     function instance$e($$self, $$props, $$invalidate) {
     	let $collectionsStore;
     	validate_store(collectionsStore, 'collectionsStore');
-    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(1, $collectionsStore = $$value));
+    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(2, $collectionsStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('BannerImage', slots, []);
     	let { moduleId } = $$props;
+    	let { claytons } = $$props;
+
+    	if (!claytons) {
+    		claytons = false;
+    	}
 
     	$$self.$$.on_mount.push(function () {
     		if (moduleId === undefined && !('moduleId' in $$props || $$self.$$.bound[$$self.$$.props['moduleId']])) {
     			console.warn("<BannerImage> was created without expected prop 'moduleId'");
     		}
+
+    		if (claytons === undefined && !('claytons' in $$props || $$self.$$.bound[$$self.$$.props['claytons']])) {
+    			console.warn("<BannerImage> was created without expected prop 'claytons'");
+    		}
     	});
 
-    	const writable_props = ['moduleId'];
+    	const writable_props = ['moduleId', 'claytons'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<BannerImage> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$$set = $$props => {
-    		if ('moduleId' in $$props) $$invalidate(0, moduleId = $$props.moduleId);
+    		if ('moduleId' in $$props) $$invalidate(1, moduleId = $$props.moduleId);
+    		if ('claytons' in $$props) $$invalidate(0, claytons = $$props.claytons);
     	};
 
     	$$self.$capture_state = () => ({
     		collectionsStore,
     		moduleId,
+    		claytons,
     		calculateImageSize,
     		$collectionsStore
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('moduleId' in $$props) $$invalidate(0, moduleId = $$props.moduleId);
+    		if ('moduleId' in $$props) $$invalidate(1, moduleId = $$props.moduleId);
+    		if ('claytons' in $$props) $$invalidate(0, claytons = $$props.claytons);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [moduleId, $collectionsStore];
+    	return [claytons, moduleId, $collectionsStore];
     }
 
     class BannerImage extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$e, create_fragment$e, safe_not_equal, { moduleId: 0 });
+    		init(this, options, instance$e, create_fragment$e, safe_not_equal, { moduleId: 1, claytons: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -19911,6 +20029,14 @@ Do you want to use the sanitised value?`)) {
     	}
 
     	set moduleId(value) {
+    		throw new Error("<BannerImage>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get claytons() {
+    		throw new Error("<BannerImage>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set claytons(value) {
     		throw new Error("<BannerImage>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -20130,9 +20256,9 @@ Do you want to use the sanitised value?`)) {
     	let if_block0 = /*date*/ ctx[0]["label"] && create_if_block_17(ctx);
     	let if_block1 = (/*date*/ ctx[0]["week"] || /*date*/ ctx[0]["to"]["week"]) && create_if_block_14(ctx);
     	let if_block2 = (/*date*/ ctx[0]["time"] || /*date*/ ctx[0]["to"]["time"]) && create_if_block_11(ctx);
-    	let if_block3 = (/*date*/ ctx[0]["day"] || /*date*/ ctx[0]["to"]["day"]) && create_if_block_8(ctx);
+    	let if_block3 = (/*date*/ ctx[0]["day"] || /*date*/ ctx[0]["to"]["day"]) && create_if_block_8$1(ctx);
     	let if_block4 = (/*date*/ ctx[0]["month"] || /*date*/ ctx[0]["to"]["month"]) && create_if_block_5$1(ctx);
-    	let if_block5 = (/*date*/ ctx[0]["date"] || /*date*/ ctx[0]["to"]["date"]) && create_if_block_2$4(ctx);
+    	let if_block5 = (/*date*/ ctx[0]["date"] || /*date*/ ctx[0]["to"]["date"]) && create_if_block_2$5(ctx);
 
     	const block = {
     		c: function create() {
@@ -20209,7 +20335,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block3) {
     					if_block3.p(ctx, dirty);
     				} else {
-    					if_block3 = create_if_block_8(ctx);
+    					if_block3 = create_if_block_8$1(ctx);
     					if_block3.c();
     					if_block3.m(div, t3);
     				}
@@ -20235,7 +20361,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block5) {
     					if_block5.p(ctx, dirty);
     				} else {
-    					if_block5 = create_if_block_2$4(ctx);
+    					if_block5 = create_if_block_2$5(ctx);
     					if_block5.c();
     					if_block5.m(div, null);
     				}
@@ -20531,7 +20657,7 @@ Do you want to use the sanitised value?`)) {
 
     	function select_block_type_1(ctx, dirty) {
     		if (/*date*/ ctx[0]["week"] && /*date*/ ctx[0]["to"]["week"] && /*date*/ ctx[0]["week"] !== /*date*/ ctx[0]["to"]["week"]) return create_if_block_16;
-    		return create_else_block$1;
+    		return create_else_block$2;
     	}
 
     	let current_block_type = select_block_type_1(ctx);
@@ -20602,7 +20728,7 @@ Do you want to use the sanitised value?`)) {
     }
 
     // (90:10) {:else}
-    function create_else_block$1(ctx) {
+    function create_else_block$2(ctx) {
     	let t;
 
     	const block = {
@@ -20619,7 +20745,7 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$1.name,
+    		id: create_else_block$2.name,
     		type: "else",
     		source: "(90:10) {:else}",
     		ctx
@@ -20830,7 +20956,7 @@ Do you want to use the sanitised value?`)) {
     }
 
     // (113:6) {#if date["day"] || date["to"]["day"]}
-    function create_if_block_8(ctx) {
+    function create_if_block_8$1(ctx) {
     	let div2;
     	let div0;
     	let t;
@@ -20897,7 +21023,7 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_8.name,
+    		id: create_if_block_8$1.name,
     		type: "if",
     		source: "(113:6) {#if date[\\\"day\\\"] || date[\\\"to\\\"][\\\"day\\\"]}",
     		ctx
@@ -20974,8 +21100,8 @@ Do you want to use the sanitised value?`)) {
     	let div0;
     	let t;
     	let div1;
-    	let if_block0 = /*date*/ ctx[0]["month"] && create_if_block_7(ctx);
-    	let if_block1 = /*date*/ ctx[0]["to"]["month"] && create_if_block_6(ctx);
+    	let if_block0 = /*date*/ ctx[0]["month"] && create_if_block_7$1(ctx);
+    	let if_block1 = /*date*/ ctx[0]["to"]["month"] && create_if_block_6$1(ctx);
 
     	const block = {
     		c: function create() {
@@ -21005,7 +21131,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
-    					if_block0 = create_if_block_7(ctx);
+    					if_block0 = create_if_block_7$1(ctx);
     					if_block0.c();
     					if_block0.m(div0, null);
     				}
@@ -21018,7 +21144,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
-    					if_block1 = create_if_block_6(ctx);
+    					if_block1 = create_if_block_6$1(ctx);
     					if_block1.c();
     					if_block1.m(div1, null);
     				}
@@ -21046,7 +21172,7 @@ Do you want to use the sanitised value?`)) {
     }
 
     // (130:12) {#if date["month"]}
-    function create_if_block_7(ctx) {
+    function create_if_block_7$1(ctx) {
     	let t_value = /*date*/ ctx[0]["month"] + "";
     	let t;
 
@@ -21067,7 +21193,7 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_7.name,
+    		id: create_if_block_7$1.name,
     		type: "if",
     		source: "(130:12) {#if date[\\\"month\\\"]}",
     		ctx
@@ -21077,7 +21203,7 @@ Do you want to use the sanitised value?`)) {
     }
 
     // (135:12) {#if date["to"]["month"]}
-    function create_if_block_6(ctx) {
+    function create_if_block_6$1(ctx) {
     	let t_value = /*date*/ ctx[0]["to"]["month"] + "";
     	let t;
 
@@ -21098,7 +21224,7 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_6.name,
+    		id: create_if_block_6$1.name,
     		type: "if",
     		source: "(135:12) {#if date[\\\"to\\\"][\\\"month\\\"]}",
     		ctx
@@ -21108,13 +21234,13 @@ Do you want to use the sanitised value?`)) {
     }
 
     // (141:6) {#if date["date"] || date["to"]["date"]}
-    function create_if_block_2$4(ctx) {
+    function create_if_block_2$5(ctx) {
     	let div2;
     	let div0;
     	let t;
     	let div1;
-    	let if_block0 = /*date*/ ctx[0]["date"] && create_if_block_4$2(ctx);
-    	let if_block1 = /*date*/ ctx[0]["to"]["date"] && create_if_block_3$3(ctx);
+    	let if_block0 = /*date*/ ctx[0]["date"] && create_if_block_4$3(ctx);
+    	let if_block1 = /*date*/ ctx[0]["to"]["date"] && create_if_block_3$4(ctx);
 
     	const block = {
     		c: function create() {
@@ -21144,7 +21270,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
-    					if_block0 = create_if_block_4$2(ctx);
+    					if_block0 = create_if_block_4$3(ctx);
     					if_block0.c();
     					if_block0.m(div0, null);
     				}
@@ -21157,7 +21283,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
-    					if_block1 = create_if_block_3$3(ctx);
+    					if_block1 = create_if_block_3$4(ctx);
     					if_block1.c();
     					if_block1.m(div1, null);
     				}
@@ -21175,7 +21301,7 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$4.name,
+    		id: create_if_block_2$5.name,
     		type: "if",
     		source: "(141:6) {#if date[\\\"date\\\"] || date[\\\"to\\\"][\\\"date\\\"]}",
     		ctx
@@ -21185,7 +21311,7 @@ Do you want to use the sanitised value?`)) {
     }
 
     // (144:12) {#if date["date"]}
-    function create_if_block_4$2(ctx) {
+    function create_if_block_4$3(ctx) {
     	let t_value = /*date*/ ctx[0]["date"] + "";
     	let t;
 
@@ -21206,7 +21332,7 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_4$2.name,
+    		id: create_if_block_4$3.name,
     		type: "if",
     		source: "(144:12) {#if date[\\\"date\\\"]}",
     		ctx
@@ -21216,7 +21342,7 @@ Do you want to use the sanitised value?`)) {
     }
 
     // (149:12) {#if date["to"]["date"]}
-    function create_if_block_3$3(ctx) {
+    function create_if_block_3$4(ctx) {
     	let t_value = /*date*/ ctx[0]["to"]["date"] + "";
     	let t;
 
@@ -21237,7 +21363,7 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_3$3.name,
+    		id: create_if_block_3$4.name,
     		type: "if",
     		source: "(149:12) {#if date[\\\"to\\\"][\\\"date\\\"]}",
     		ctx
@@ -21435,14 +21561,122 @@ Do you want to use the sanitised value?`)) {
     /* src\components\Representations\GriffithCards.svelte generated by Svelte v3.55.0 */
     const file$9 = "src\\components\\Representations\\GriffithCards.svelte";
 
+    function get_each_context_1$1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[9] = list[i];
+    	return child_ctx;
+    }
+
     function get_each_context$5(ctx, list, i) {
     	const child_ctx = ctx.slice();
     	child_ctx[9] = list[i];
     	return child_ctx;
     }
 
-    // (92:0) {:else}
-    function create_else_block(ctx) {
+    // (213:0) {:else}
+    function create_else_block_1(ctx) {
+    	let div;
+    	let current;
+    	let each_value_1 = /*modules*/ ctx[5];
+    	validate_each_argument(each_value_1);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1$1(get_each_context_1$1(ctx, each_value_1, i));
+    	}
+
+    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+    		each_blocks[i] = null;
+    	});
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr_dev(div, "class", "cc-card-interface cc-representation svelte-1oao3hv");
+    			add_location(div, file$9, 213, 2, 8478);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*modules, $collectionsStore, cardClick, getModuleUrl, deLabelModuleName, $configStore, collection, calendar, BANNER_TRANSLATION*/ 254) {
+    				each_value_1 = /*modules*/ ctx[5];
+    				validate_each_argument(each_value_1);
+    				let i;
+
+    				for (i = 0; i < each_value_1.length; i += 1) {
+    					const child_ctx = get_each_context_1$1(ctx, each_value_1, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    						transition_in(each_blocks[i], 1);
+    					} else {
+    						each_blocks[i] = create_each_block_1$1(child_ctx);
+    						each_blocks[i].c();
+    						transition_in(each_blocks[i], 1);
+    						each_blocks[i].m(div, null);
+    					}
+    				}
+
+    				group_outros();
+
+    				for (i = each_value_1.length; i < each_blocks.length; i += 1) {
+    					out(i);
+    				}
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			for (let i = 0; i < each_value_1.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			each_blocks = each_blocks.filter(Boolean);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			destroy_each(each_blocks, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_1.name,
+    		type: "else",
+    		source: "(213:0) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (90:0) {#if claytons}
+    function create_if_block$6(ctx) {
+    	let h1;
+    	let t1;
     	let div;
     	let current;
     	let each_value = /*modules*/ ctx[5];
@@ -21459,16 +21693,24 @@ Do you want to use the sanitised value?`)) {
 
     	const block = {
     		c: function create() {
+    			h1 = element("h1");
+    			h1.textContent = "Claytons Canvas Collections - the cards";
+    			t1 = space();
     			div = element("div");
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			attr_dev(div, "class", "cc-card-interface cc-representation svelte-1oao3hv");
-    			add_location(div, file$9, 92, 2, 3211);
+    			add_location(h1, file$9, 90, 2, 3172);
+    			set_style(div, "flex-wrap", "wrap");
+    			set_style(div, "display", "flex");
+    			set_style(div, "margin-top", "0.5em");
+    			add_location(div, file$9, 93, 2, 3287);
     		},
     		m: function mount(target, anchor) {
+    			insert_dev(target, h1, anchor);
+    			insert_dev(target, t1, anchor);
     			insert_dev(target, div, anchor);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -21478,7 +21720,7 @@ Do you want to use the sanitised value?`)) {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*modules, $collectionsStore, cardClick, getModuleUrl, deLabelModuleName, $configStore, collection, calendar, BANNER_TRANSLATION*/ 254) {
+    			if (dirty & /*modules, getModuleUrl, $collectionsStore, deLabelModuleName, calendar, BANNER_TRANSLATION, claytons*/ 237) {
     				each_value = /*modules*/ ctx[5];
     				validate_each_argument(each_value);
     				let i;
@@ -21525,40 +21767,10 @@ Do you want to use the sanitised value?`)) {
     			current = false;
     		},
     		d: function destroy(detaching) {
+    			if (detaching) detach_dev(h1);
+    			if (detaching) detach_dev(t1);
     			if (detaching) detach_dev(div);
     			destroy_each(each_blocks, detaching);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_else_block.name,
-    		type: "else",
-    		source: "(92:0) {:else}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (90:0) {#if claytons}
-    function create_if_block$6(ctx) {
-    	let h1;
-
-    	const block = {
-    		c: function create() {
-    			h1 = element("h1");
-    			h1.textContent = "Claytons Canvas Collections";
-    			add_location(h1, file$9, 90, 2, 3162);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, h1, anchor);
-    		},
-    		p: noop,
-    		i: noop,
-    		o: noop,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(h1);
     		}
     	};
 
@@ -21573,17 +21785,17 @@ Do you want to use the sanitised value?`)) {
     	return block;
     }
 
-    // (120:14) {#if $collectionsStore["MODULES"][theModule.id].fyi}
-    function create_if_block_4$1(ctx) {
+    // (241:14) {#if $collectionsStore["MODULES"][theModule.id].fyi}
+    function create_if_block_7(ctx) {
     	let div;
     	let span;
 
-    	function select_block_type_1(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyiText) return create_if_block_5;
-    		return create_else_block_1;
+    	function select_block_type_2(ctx, dirty) {
+    		if (/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyiText) return create_if_block_8;
+    		return create_else_block_2;
     	}
 
-    	let current_block_type = select_block_type_1(ctx);
+    	let current_block_type = select_block_type_2(ctx);
     	let if_block = current_block_type(ctx);
 
     	const block = {
@@ -21592,9 +21804,9 @@ Do you want to use the sanitised value?`)) {
     			span = element("span");
     			if_block.c();
     			attr_dev(span, "class", "cc-fyi-text");
-    			add_location(span, file$9, 121, 18, 4420);
+    			add_location(span, file$9, 242, 18, 9687);
     			attr_dev(div, "class", "cc-card-fyi svelte-1oao3hv");
-    			add_location(div, file$9, 120, 16, 4375);
+    			add_location(div, file$9, 241, 16, 9642);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -21602,7 +21814,7 @@ Do you want to use the sanitised value?`)) {
     			if_block.m(span, null);
     		},
     		p: function update(ctx, dirty) {
-    			if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block) {
+    			if (current_block_type === (current_block_type = select_block_type_2(ctx)) && if_block) {
     				if_block.p(ctx, dirty);
     			} else {
     				if_block.d(1);
@@ -21622,17 +21834,17 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_4$1.name,
+    		id: create_if_block_7.name,
     		type: "if",
-    		source: "(120:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		source: "(241:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (125:20) {:else}
-    function create_else_block_1(ctx) {
+    // (246:20) {:else}
+    function create_else_block_2(ctx) {
     	let t;
 
     	const block = {
@@ -21650,17 +21862,17 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block_1.name,
+    		id: create_else_block_2.name,
     		type: "else",
-    		source: "(125:20) {:else}",
+    		source: "(246:20) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (123:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
-    function create_if_block_5(ctx) {
+    // (244:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
+    function create_if_block_8(ctx) {
     	let t_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyiText + "";
     	let t;
 
@@ -21681,20 +21893,20 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_5.name,
+    		id: create_if_block_8.name,
     		type: "if",
-    		source: "(123:20) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText}",
+    		source: "(244:20) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (131:14) {#if !$collectionsStore["MODULES"][theModule.id].published}
-    function create_if_block_2$3(ctx) {
+    // (252:14) {#if !$collectionsStore["MODULES"][theModule.id].published}
+    function create_if_block_5(ctx) {
     	let div;
     	let t;
-    	let if_block = /*$configStore*/ ctx[4]["editMode"] && /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].collection !== /*collection*/ ctx[1] && create_if_block_3$2(ctx);
+    	let if_block = /*$configStore*/ ctx[4]["editMode"] && /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].collection !== /*collection*/ ctx[1] && create_if_block_6(ctx);
 
     	const block = {
     		c: function create() {
@@ -21702,7 +21914,7 @@ Do you want to use the sanitised value?`)) {
     			t = text("Unpublished.\r\n                  ");
     			if (if_block) if_block.c();
     			attr_dev(div, "class", "cc-card-published svelte-1oao3hv");
-    			add_location(div, file$9, 131, 16, 4851);
+    			add_location(div, file$9, 252, 16, 10118);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -21712,7 +21924,7 @@ Do you want to use the sanitised value?`)) {
     		p: function update(ctx, dirty) {
     			if (/*$configStore*/ ctx[4]["editMode"] && /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].collection !== /*collection*/ ctx[1]) {
     				if (if_block) ; else {
-    					if_block = create_if_block_3$2(ctx);
+    					if_block = create_if_block_6(ctx);
     					if_block.c();
     					if_block.m(div, null);
     				}
@@ -21729,17 +21941,17 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$3.name,
+    		id: create_if_block_5.name,
     		type: "if",
-    		source: "(131:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].published}",
+    		source: "(252:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].published}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (134:18) {#if $configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection}
-    function create_if_block_3$2(ctx) {
+    // (255:18) {#if $configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection}
+    function create_if_block_6(ctx) {
     	let t;
 
     	const block = {
@@ -21756,17 +21968,17 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_3$2.name,
+    		id: create_if_block_6.name,
     		type: "if",
-    		source: "(134:18) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][theModule.id].collection !== collection}",
+    		source: "(255:18) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][theModule.id].collection !== collection}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (162:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
-    function create_if_block_1$5(ctx) {
+    // (283:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
+    function create_if_block_4$2(ctx) {
     	let div1;
     	let div0;
     	let a;
@@ -21786,11 +21998,11 @@ Do you want to use the sanitised value?`)) {
     			t2 = text(t2_value);
     			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
     			attr_dev(a, "class", "gu-engage svelte-1oao3hv");
-    			add_location(a, file$9, 164, 20, 6413);
+    			add_location(a, file$9, 285, 20, 11680);
     			attr_dev(div0, "class", "cc-card-engage-button svelte-1oao3hv");
-    			add_location(div0, file$9, 163, 18, 6356);
+    			add_location(div0, file$9, 284, 18, 11623);
     			attr_dev(div1, "class", "cc-card-engage svelte-1oao3hv");
-    			add_location(div1, file$9, 162, 16, 6308);
+    			add_location(div1, file$9, 283, 16, 11575);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -21814,17 +22026,17 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$5.name,
+    		id: create_if_block_4$2.name,
     		type: "if",
-    		source: "(162:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		source: "(283:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (94:4) {#each modules as theModule}
-    function create_each_block$5(ctx) {
+    // (215:4) {#each modules as theModule}
+    function create_each_block_1$1(ctx) {
     	let div9;
     	let div8;
     	let div7;
@@ -21890,9 +22102,9 @@ Do you want to use the sanitised value?`)) {
     			$$inline: true
     		});
 
-    	let if_block0 = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_4$1(ctx);
-    	let if_block1 = !/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].published && create_if_block_2$3(ctx);
-    	let if_block2 = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].engage && !/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_1$5(ctx);
+    	let if_block0 = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_7(ctx);
+    	let if_block1 = !/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].published && create_if_block_5(ctx);
+    	let if_block2 = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].engage && !/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_4$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -21932,43 +22144,43 @@ Do you want to use the sanitised value?`)) {
     			attr_dev(a, "class", "cc-card-link svelte-1oao3hv");
     			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
     			attr_dev(a, "style", "");
-    			add_location(a, file$9, 105, 14, 3754);
+    			add_location(a, file$9, 226, 14, 9021);
     			attr_dev(div0, "class", "cc-card-banner-container svelte-1oao3hv");
     			attr_dev(div0, "data-moduleid", div0_data_moduleid_value = /*theModule*/ ctx[9].id);
-    			add_location(div0, file$9, 104, 12, 3671);
+    			add_location(div0, file$9, 225, 12, 8938);
     			attr_dev(span, "class", "cc-card-label svelte-1oao3hv");
-    			add_location(span, file$9, 147, 18, 5545);
+    			add_location(span, file$9, 268, 18, 10812);
     			attr_dev(h3, "class", "cc-card-title svelte-1oao3hv");
     			attr_dev(h3, "data-moduleid", h3_data_moduleid_value = /*theModule*/ ctx[9].id);
-    			add_location(h3, file$9, 151, 18, 5768);
+    			add_location(h3, file$9, 272, 18, 11035);
     			attr_dev(div1, "class", "cc-card-label svelte-1oao3hv");
-    			add_location(div1, file$9, 146, 16, 5498);
+    			add_location(div1, file$9, 267, 16, 10765);
     			attr_dev(div2, "class", "cc-card-description svelte-1oao3hv");
-    			add_location(div2, file$9, 155, 16, 5945);
+    			add_location(div2, file$9, 276, 16, 11212);
 
     			attr_dev(div3, "class", div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi
     			? "cc-card-content"
     			: "cc-unclickable-card-content") + " svelte-1oao3hv"));
 
-    			add_location(div3, file$9, 141, 14, 5297);
+    			add_location(div3, file$9, 262, 14, 10564);
     			attr_dev(div4, "class", "cc-card-content-height svelte-1oao3hv");
-    			add_location(div4, file$9, 139, 12, 5186);
+    			add_location(div4, file$9, 260, 12, 10453);
     			attr_dev(div5, "class", "cc-progress svelte-1oao3hv");
-    			add_location(div5, file$9, 171, 14, 6688);
+    			add_location(div5, file$9, 292, 14, 11955);
     			attr_dev(div6, "class", "cc-card-footer svelte-1oao3hv");
-    			add_location(div6, file$9, 160, 12, 6140);
+    			add_location(div6, file$9, 281, 12, 11407);
     			attr_dev(div7, "class", "cc-card-flex svelte-1oao3hv");
-    			add_location(div7, file$9, 103, 10, 3631);
+    			add_location(div7, file$9, 224, 10, 8898);
     			attr_dev(div8, "id", div8_id_value = "cc_module_" + /*theModule*/ ctx[9].id);
     			attr_dev(div8, "class", "cc-card svelte-1oao3hv");
-    			add_location(div8, file$9, 102, 8, 3568);
+    			add_location(div8, file$9, 223, 8, 8835);
     			attr_dev(div9, "id", div9_id_value = "cc_module_" + /*theModule*/ ctx[9].id);
 
     			attr_dev(div9, "class", div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi
     			? "cc-unclickable-card"
     			: "cc-clickable-card") + " svelte-1oao3hv"));
 
-    			add_location(div9, file$9, 94, 6, 3302);
+    			add_location(div9, file$9, 215, 6, 8569);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div9, anchor);
@@ -22057,7 +22269,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
-    					if_block0 = create_if_block_4$1(ctx);
+    					if_block0 = create_if_block_7(ctx);
     					if_block0.c();
     					if_block0.m(div0, t4);
     				}
@@ -22070,7 +22282,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
-    					if_block1 = create_if_block_2$3(ctx);
+    					if_block1 = create_if_block_5(ctx);
     					if_block1.c();
     					if_block1.m(div0, null);
     				}
@@ -22102,7 +22314,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block2) {
     					if_block2.p(ctx, dirty);
     				} else {
-    					if_block2 = create_if_block_1$5(ctx);
+    					if_block2 = create_if_block_4$2(ctx);
     					if_block2.c();
     					if_block2.m(div6, t13);
     				}
@@ -22150,9 +22362,534 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
+    		id: create_each_block_1$1.name,
+    		type: "each",
+    		source: "(215:4) {#each modules as theModule}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (133:14) {#if $collectionsStore["MODULES"][theModule.id].fyi}
+    function create_if_block_2$4(ctx) {
+    	let div;
+    	let span;
+
+    	function select_block_type_1(ctx, dirty) {
+    		if (/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyiText) return create_if_block_3$3;
+    		return create_else_block$1;
+    	}
+
+    	let current_block_type = select_block_type_1(ctx);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			span = element("span");
+    			if_block.c();
+    			attr_dev(span, "class", "cc-fyi-text");
+    			add_location(span, file$9, 137, 18, 5193);
+    			attr_dev(div, "class", "cc-card-fyi svelte-1oao3hv");
+    			set_style(div, "position", "absolute");
+    			set_style(div, "background", "rgba(0,0,0,0.75)");
+    			set_style(div, "color", "white");
+    			set_style(div, "width", "100%");
+    			set_style(div, "padding", "0.25rem");
+    			set_style(div, "font-size", "x-small");
+    			set_style(div, "text-align", "center");
+    			add_location(div, file$9, 133, 16, 4961);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, span);
+    			if_block.m(span, null);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(span, null);
+    				}
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if_block.d();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2$4.name,
+    		type: "if",
+    		source: "(133:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (141:20) {:else}
+    function create_else_block$1(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text(" ");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block$1.name,
+    		type: "else",
+    		source: "(141:20) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (139:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
+    function create_if_block_3$3(ctx) {
+    	let t_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyiText + "";
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text(t_value);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$collectionsStore, modules*/ 40 && t_value !== (t_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyiText + "")) set_data_dev(t, t_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_3$3.name,
+    		type: "if",
+    		source: "(139:20) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (191:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
+    function create_if_block_1$5(ctx) {
+    	let div1;
+    	let div0;
+    	let a;
+    	let t_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].engageText + "";
+    	let t;
+    	let a_href_value;
+
+    	const block = {
+    		c: function create() {
+    			div1 = element("div");
+    			div0 = element("div");
+    			a = element("a");
+    			t = text(t_value);
+    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
+    			attr_dev(a, "class", "gu-engage svelte-1oao3hv");
+    			set_style(a, "text-decoration", "none");
+    			add_location(a, file$9, 196, 20, 8022);
+    			attr_dev(div0, "class", "cc-card-engage-button svelte-1oao3hv");
+    			attr_dev(div0, "style", "flot:right;color:rgba(30,58,138,1);border-radius:0.25rem;padding0.5rem 1rem 0.5rem 1rem;border:1px solid rgba(30,58,138,1)");
+    			add_location(div0, file$9, 192, 18, 7772);
+    			attr_dev(div1, "class", "cc-card-engage svelte-1oao3hv");
+    			set_style(div1, "padding-right", "1rem");
+    			add_location(div1, file$9, 191, 16, 7695);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, div0);
+    			append_dev(div0, a);
+    			append_dev(a, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$collectionsStore, modules*/ 40 && t_value !== (t_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].engageText + "")) set_data_dev(t, t_value);
+
+    			if (dirty & /*modules*/ 32 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[9].id))) {
+    				attr_dev(a, "href", a_href_value);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div1);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$5.name,
+    		type: "if",
+    		source: "(191:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (95:4) {#each modules as theModule}
+    function create_each_block$5(ctx) {
+    	let div8;
+    	let div7;
+    	let div6;
+    	let div0;
+    	let a0;
+    	let t0;
+    	let a0_href_value;
+    	let t1;
+    	let switch_instance;
+    	let t2;
+    	let datewidget;
+    	let t3;
+    	let div0_data_moduleid_value;
+    	let t4;
+    	let div4;
+    	let a1;
+    	let t5;
+    	let a1_href_value;
+    	let t6;
+    	let div3;
+    	let div1;
+    	let span;
+    	let t7_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].label + "";
+    	let t7;
+    	let t8;
+    	let t9_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].actualNum + "";
+    	let t9;
+    	let t10;
+    	let h3;
+    	let a2;
+    	let t11_value = /*deLabelModuleName*/ ctx[7](/*theModule*/ ctx[9].id) + "";
+    	let t11;
+    	let a2_href_value;
+    	let h3_data_moduleid_value;
+    	let t12;
+    	let div2;
+    	let raw_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].description + "";
+    	let div3_class_value;
+    	let t13;
+    	let div5;
+    	let div7_id_value;
+    	let t14;
+    	let div8_id_value;
+    	let current;
+    	var switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].banner];
+
+    	function switch_props(ctx) {
+    		return {
+    			props: {
+    				moduleId: /*theModule*/ ctx[9].id,
+    				claytons: /*claytons*/ ctx[0]
+    			},
+    			$$inline: true
+    		};
+    	}
+
+    	if (switch_value) {
+    		switch_instance = construct_svelte_component_dev(switch_value, switch_props(ctx));
+    	}
+
+    	datewidget = new DateWidget({
+    			props: {
+    				date: /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].date,
+    				calendar: /*calendar*/ ctx[2]
+    			},
+    			$$inline: true
+    		});
+
+    	let if_block0 = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_2$4(ctx);
+    	let if_block1 = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].engage && !/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_1$5(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div8 = element("div");
+    			div7 = element("div");
+    			div6 = element("div");
+    			div0 = element("div");
+    			a0 = element("a");
+    			t0 = text(" ");
+    			t1 = space();
+    			if (switch_instance) create_component(switch_instance.$$.fragment);
+    			t2 = space();
+    			create_component(datewidget.$$.fragment);
+    			t3 = space();
+    			if (if_block0) if_block0.c();
+    			t4 = space();
+    			div4 = element("div");
+    			a1 = element("a");
+    			t5 = text(" ");
+    			t6 = space();
+    			div3 = element("div");
+    			div1 = element("div");
+    			span = element("span");
+    			t7 = text(t7_value);
+    			t8 = space();
+    			t9 = text(t9_value);
+    			t10 = space();
+    			h3 = element("h3");
+    			a2 = element("a");
+    			t11 = text(t11_value);
+    			t12 = space();
+    			div2 = element("div");
+    			t13 = space();
+    			div5 = element("div");
+    			if (if_block1) if_block1.c();
+    			t14 = space();
+    			attr_dev(a0, "class", "cc-card-link svelte-1oao3hv");
+    			attr_dev(a0, "href", a0_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
+    			attr_dev(a0, "style", "position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;");
+    			add_location(a0, file$9, 114, 14, 4138);
+    			attr_dev(div0, "class", "cc-card-banner-container svelte-1oao3hv");
+    			attr_dev(div0, "data-moduleid", div0_data_moduleid_value = /*theModule*/ ctx[9].id);
+    			set_style(div0, "position", "relative");
+    			add_location(div0, file$9, 109, 12, 3969);
+    			attr_dev(a1, "class", "cc-card-link svelte-1oao3hv");
+    			attr_dev(a1, "href", a1_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
+    			attr_dev(a1, "style", "position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;");
+    			add_location(a1, file$9, 151, 14, 5715);
+    			attr_dev(span, "class", "cc-card-label svelte-1oao3hv");
+    			set_style(span, "font-size", "0.9rem");
+    			add_location(span, file$9, 166, 18, 6483);
+    			attr_dev(a2, "class", "cc-card-link svelte-1oao3hv");
+    			attr_dev(a2, "href", a2_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
+    			set_style(a2, "text-decoration", "none");
+    			add_location(a2, file$9, 175, 20, 6937);
+    			attr_dev(h3, "class", "cc-card-title svelte-1oao3hv");
+    			attr_dev(h3, "data-moduleid", h3_data_moduleid_value = /*theModule*/ ctx[9].id);
+    			set_style(h3, "font-size", "1rem");
+    			set_style(h3, "font-weight", "strong");
+    			add_location(h3, file$9, 170, 18, 6732);
+    			attr_dev(div1, "class", "cc-card-label svelte-1oao3hv");
+    			set_style(div1, "font-size", "0.9rem");
+    			add_location(div1, file$9, 165, 16, 6410);
+    			attr_dev(div2, "class", "cc-card-description svelte-1oao3hv");
+    			set_style(div2, "font-size", "0.75rem");
+    			add_location(div2, file$9, 184, 16, 7266);
+
+    			attr_dev(div3, "class", div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi
+    			? "cc-card-content"
+    			: "cc-unclickable-card-content") + " svelte-1oao3hv"));
+
+    			set_style(div3, "padding", "0.5rem");
+    			set_style(div3, "flex", "1 1 0%");
+    			set_style(div3, "display", "flex");
+    			set_style(div3, "flex-direction", "column");
+    			add_location(div3, file$9, 159, 14, 6120);
+    			attr_dev(div4, "class", "cc-card-content-height svelte-1oao3hv");
+    			set_style(div4, "height", "12rem");
+    			set_style(div4, "overflow", "auto");
+    			set_style(div4, "position", "relative");
+    			add_location(div4, file$9, 147, 12, 5565);
+    			attr_dev(div5, "class", "cc-card-footer svelte-1oao3hv");
+    			set_style(div5, "height", "4rem");
+    			set_style(div5, "position", "relative");
+    			add_location(div5, file$9, 189, 12, 7488);
+    			attr_dev(div6, "class", "cc-card-flex svelte-1oao3hv");
+    			set_style(div6, "overflow", "hidden");
+    			set_style(div6, "flex-direction", "column");
+    			set_style(div6, "flex", "1 1 0%");
+    			set_style(div6, "display", "flex");
+    			set_style(div6, "position", "relative");
+    			set_style(div6, "border-style", "outset");
+    			set_style(div6, "border-radius", "1em");
+    			add_location(div6, file$9, 105, 10, 3760);
+    			attr_dev(div7, "id", div7_id_value = "cc_module_" + /*theModule*/ ctx[9].id);
+    			attr_dev(div7, "class", "cc-card svelte-1oao3hv");
+    			set_style(div7, "background-color", "#fff");
+    			set_style(div7, "border-radius", "1em");
+    			add_location(div7, file$9, 100, 8, 3602);
+    			attr_dev(div8, "id", div8_id_value = "cc_module_" + /*theModule*/ ctx[9].id);
+    			set_style(div8, "padding", "0.75rem");
+    			set_style(div8, "flex-direction", "column");
+    			set_style(div8, "display", "flex");
+    			set_style(div8, "width", "30%");
+    			attr_dev(div8, "class", "svelte-1oao3hv");
+    			add_location(div8, file$9, 96, 6, 3458);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div8, anchor);
+    			append_dev(div8, div7);
+    			append_dev(div7, div6);
+    			append_dev(div6, div0);
+    			append_dev(div0, a0);
+    			append_dev(a0, t0);
+    			append_dev(div0, t1);
+    			if (switch_instance) mount_component(switch_instance, div0, null);
+    			append_dev(div0, t2);
+    			mount_component(datewidget, div0, null);
+    			append_dev(div0, t3);
+    			if (if_block0) if_block0.m(div0, null);
+    			append_dev(div6, t4);
+    			append_dev(div6, div4);
+    			append_dev(div4, a1);
+    			append_dev(a1, t5);
+    			append_dev(div4, t6);
+    			append_dev(div4, div3);
+    			append_dev(div3, div1);
+    			append_dev(div1, span);
+    			append_dev(span, t7);
+    			append_dev(span, t8);
+    			append_dev(span, t9);
+    			append_dev(div1, t10);
+    			append_dev(div1, h3);
+    			append_dev(h3, a2);
+    			append_dev(a2, t11);
+    			append_dev(div3, t12);
+    			append_dev(div3, div2);
+    			div2.innerHTML = raw_value;
+    			append_dev(div6, t13);
+    			append_dev(div6, div5);
+    			if (if_block1) if_block1.m(div5, null);
+    			append_dev(div8, t14);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (!current || dirty & /*modules*/ 32 && a0_href_value !== (a0_href_value = getModuleUrl(/*theModule*/ ctx[9].id))) {
+    				attr_dev(a0, "href", a0_href_value);
+    			}
+
+    			const switch_instance_changes = {};
+    			if (dirty & /*modules*/ 32) switch_instance_changes.moduleId = /*theModule*/ ctx[9].id;
+    			if (dirty & /*claytons*/ 1) switch_instance_changes.claytons = /*claytons*/ ctx[0];
+
+    			if (switch_value !== (switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].banner])) {
+    				if (switch_instance) {
+    					group_outros();
+    					const old_component = switch_instance;
+
+    					transition_out(old_component.$$.fragment, 1, 0, () => {
+    						destroy_component(old_component, 1);
+    					});
+
+    					check_outros();
+    				}
+
+    				if (switch_value) {
+    					switch_instance = construct_svelte_component_dev(switch_value, switch_props(ctx));
+    					create_component(switch_instance.$$.fragment);
+    					transition_in(switch_instance.$$.fragment, 1);
+    					mount_component(switch_instance, div0, t2);
+    				} else {
+    					switch_instance = null;
+    				}
+    			} else if (switch_value) {
+    				switch_instance.$set(switch_instance_changes);
+    			}
+
+    			const datewidget_changes = {};
+    			if (dirty & /*$collectionsStore, modules*/ 40) datewidget_changes.date = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].date;
+    			if (dirty & /*calendar*/ 4) datewidget_changes.calendar = /*calendar*/ ctx[2];
+    			datewidget.$set(datewidget_changes);
+
+    			if (/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi) {
+    				if (if_block0) {
+    					if_block0.p(ctx, dirty);
+    				} else {
+    					if_block0 = create_if_block_2$4(ctx);
+    					if_block0.c();
+    					if_block0.m(div0, null);
+    				}
+    			} else if (if_block0) {
+    				if_block0.d(1);
+    				if_block0 = null;
+    			}
+
+    			if (!current || dirty & /*modules*/ 32 && div0_data_moduleid_value !== (div0_data_moduleid_value = /*theModule*/ ctx[9].id)) {
+    				attr_dev(div0, "data-moduleid", div0_data_moduleid_value);
+    			}
+
+    			if (!current || dirty & /*modules*/ 32 && a1_href_value !== (a1_href_value = getModuleUrl(/*theModule*/ ctx[9].id))) {
+    				attr_dev(a1, "href", a1_href_value);
+    			}
+
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 40) && t7_value !== (t7_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].label + "")) set_data_dev(t7, t7_value);
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 40) && t9_value !== (t9_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].actualNum + "")) set_data_dev(t9, t9_value);
+    			if ((!current || dirty & /*modules*/ 32) && t11_value !== (t11_value = /*deLabelModuleName*/ ctx[7](/*theModule*/ ctx[9].id) + "")) set_data_dev(t11, t11_value);
+
+    			if (!current || dirty & /*modules*/ 32 && a2_href_value !== (a2_href_value = getModuleUrl(/*theModule*/ ctx[9].id))) {
+    				attr_dev(a2, "href", a2_href_value);
+    			}
+
+    			if (!current || dirty & /*modules*/ 32 && h3_data_moduleid_value !== (h3_data_moduleid_value = /*theModule*/ ctx[9].id)) {
+    				attr_dev(h3, "data-moduleid", h3_data_moduleid_value);
+    			}
+
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 40) && raw_value !== (raw_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].description + "")) div2.innerHTML = raw_value;
+    			if (!current || dirty & /*$collectionsStore, modules*/ 40 && div3_class_value !== (div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi
+    			? "cc-card-content"
+    			: "cc-unclickable-card-content") + " svelte-1oao3hv"))) {
+    				attr_dev(div3, "class", div3_class_value);
+    			}
+
+    			if (/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].engage && !/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi) {
+    				if (if_block1) {
+    					if_block1.p(ctx, dirty);
+    				} else {
+    					if_block1 = create_if_block_1$5(ctx);
+    					if_block1.c();
+    					if_block1.m(div5, null);
+    				}
+    			} else if (if_block1) {
+    				if_block1.d(1);
+    				if_block1 = null;
+    			}
+
+    			if (!current || dirty & /*modules*/ 32 && div7_id_value !== (div7_id_value = "cc_module_" + /*theModule*/ ctx[9].id)) {
+    				attr_dev(div7, "id", div7_id_value);
+    			}
+
+    			if (!current || dirty & /*modules*/ 32 && div8_id_value !== (div8_id_value = "cc_module_" + /*theModule*/ ctx[9].id)) {
+    				attr_dev(div8, "id", div8_id_value);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			if (switch_instance) transition_in(switch_instance.$$.fragment, local);
+    			transition_in(datewidget.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (switch_instance) transition_out(switch_instance.$$.fragment, local);
+    			transition_out(datewidget.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div8);
+    			if (switch_instance) destroy_component(switch_instance);
+    			destroy_component(datewidget);
+    			if (if_block0) if_block0.d();
+    			if (if_block1) if_block1.d();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
     		id: create_each_block$5.name,
     		type: "each",
-    		source: "(94:4) {#each modules as theModule}",
+    		source: "(95:4) {#each modules as theModule}",
     		ctx
     	});
 
@@ -22164,7 +22901,7 @@ Do you want to use the sanitised value?`)) {
     	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block$6, create_else_block];
+    	const if_block_creators = [create_if_block$6, create_else_block_1];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -22407,9 +23144,9 @@ Do you want to use the sanitised value?`)) {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*collection, $collectionsStore, $configStore*/ 26) {
+    		if ($$self.$$.dirty & /*collection, $collectionsStore, $configStore, claytons*/ 27) {
     			{
-    				$$invalidate(5, modules = getRepresentationModules(collection, $collectionsStore["MODULES"], $configStore["editMode"], $collectionsStore["COLLECTIONS"][collection]["unallocated"]));
+    				$$invalidate(5, modules = getRepresentationModules(collection, $collectionsStore["MODULES"], $configStore["editMode"], claytons, $collectionsStore["COLLECTIONS"][collection]["unallocated"]));
     			}
     		}
     	};
@@ -22520,58 +23257,350 @@ Do you want to use the sanitised value?`)) {
 
     const file$8 = "src\\components\\Representations\\AssessmentTable.svelte";
 
-    function get_each_context$4(ctx, list, i) {
+    function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[4] = list[i];
+    	child_ctx[5] = list[i];
     	return child_ctx;
     }
 
-    // (75:12) {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
-    function create_if_block_1$4(ctx) {
+    function get_each_context$4(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[5] = list[i];
+    	return child_ctx;
+    }
+
+    // (138:0) {:else}
+    function create_else_block(ctx) {
     	let div;
+    	let table;
+    	let thead;
+    	let tr;
+    	let th0;
+    	let span0;
+    	let t1;
+    	let th1;
+    	let span1;
+    	let t3;
+    	let th2;
+    	let span2;
+    	let t5;
+    	let th3;
+    	let span3;
+    	let t7;
+    	let th4;
+    	let span4;
+    	let t9;
+    	let tbody;
+    	let each_value_1 = /*modules*/ ctx[4];
+    	validate_each_argument(each_value_1);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	}
 
     	const block = {
     		c: function create() {
     			div = element("div");
-    			div.textContent = "Unpublished";
-    			attr_dev(div, "class", "cc-published svelte-aolpib");
-    			add_location(div, file$8, 75, 14, 3025);
+    			table = element("table");
+    			thead = element("thead");
+    			tr = element("tr");
+    			th0 = element("th");
+    			span0 = element("span");
+    			span0.textContent = "Title";
+    			t1 = space();
+    			th1 = element("th");
+    			span1 = element("span");
+    			span1.textContent = "Description";
+    			t3 = space();
+    			th2 = element("th");
+    			span2 = element("span");
+    			span2.textContent = "Weighting";
+    			t5 = space();
+    			th3 = element("th");
+    			span3 = element("span");
+    			span3.textContent = "Due Date";
+    			t7 = space();
+    			th4 = element("th");
+    			span4 = element("span");
+    			span4.textContent = "Learning Outcomes";
+    			t9 = space();
+    			tbody = element("tbody");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr_dev(span0, "class", "cc-table-header-text svelte-aolpib");
+    			add_location(span0, file$8, 147, 13, 5182);
+    			attr_dev(th0, "role", "columnheader");
+    			attr_dev(th0, "scope", "col");
+    			attr_dev(th0, "class", "svelte-aolpib");
+    			add_location(th0, file$8, 146, 10, 5132);
+    			attr_dev(span1, "class", "cc-table-header-text svelte-aolpib");
+    			add_location(span1, file$8, 150, 13, 5308);
+    			attr_dev(th1, "role", "columnheader");
+    			attr_dev(th1, "scope", "col");
+    			attr_dev(th1, "class", "svelte-aolpib");
+    			add_location(th1, file$8, 149, 10, 5258);
+    			attr_dev(span2, "class", "cc-table-header-text svelte-aolpib");
+    			add_location(span2, file$8, 153, 13, 5440);
+    			attr_dev(th2, "role", "columnheader");
+    			attr_dev(th2, "scope", "col");
+    			attr_dev(th2, "class", "svelte-aolpib");
+    			add_location(th2, file$8, 152, 10, 5390);
+    			attr_dev(span3, "class", "cc-table-header-text svelte-aolpib");
+    			add_location(span3, file$8, 156, 13, 5570);
+    			attr_dev(th3, "role", "columnheader");
+    			attr_dev(th3, "scope", "col");
+    			attr_dev(th3, "class", "svelte-aolpib");
+    			add_location(th3, file$8, 155, 10, 5520);
+    			attr_dev(span4, "class", "cc-table-header-text svelte-aolpib");
+    			add_location(span4, file$8, 159, 13, 5699);
+    			attr_dev(th4, "role", "columnheader");
+    			attr_dev(th4, "scope", "col");
+    			attr_dev(th4, "class", "svelte-aolpib");
+    			add_location(th4, file$8, 158, 10, 5649);
+    			attr_dev(tr, "role", "row");
+    			attr_dev(tr, "class", "svelte-aolpib");
+    			add_location(tr, file$8, 145, 8, 5105);
+    			attr_dev(thead, "role", "rowgroup");
+    			attr_dev(thead, "class", "svelte-aolpib");
+    			add_location(thead, file$8, 144, 6, 5072);
+    			attr_dev(tbody, "class", "svelte-aolpib");
+    			add_location(tbody, file$8, 163, 6, 5814);
+    			attr_dev(table, "class", "cc-responsive-table svelte-aolpib");
+    			attr_dev(table, "role", "table");
+    			add_location(table, file$8, 142, 4, 4980);
+    			attr_dev(div, "id", "cc-assessment-table");
+    			attr_dev(div, "class", "cc-assessment-container cc-representation svelte-aolpib");
+    			add_location(div, file$8, 138, 2, 4880);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
+    			append_dev(div, table);
+    			append_dev(table, thead);
+    			append_dev(thead, tr);
+    			append_dev(tr, th0);
+    			append_dev(th0, span0);
+    			append_dev(tr, t1);
+    			append_dev(tr, th1);
+    			append_dev(th1, span1);
+    			append_dev(tr, t3);
+    			append_dev(tr, th2);
+    			append_dev(th2, span2);
+    			append_dev(tr, t5);
+    			append_dev(tr, th3);
+    			append_dev(th3, span3);
+    			append_dev(tr, t7);
+    			append_dev(tr, th4);
+    			append_dev(th4, span4);
+    			append_dev(table, t9);
+    			append_dev(table, tbody);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(tbody, null);
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*checkModuleMetaData, $collectionsStore, modules, $configStore, generateModuleDate, collection, getModuleUrl*/ 30) {
+    				each_value_1 = /*modules*/ ctx[4];
+    				validate_each_argument(each_value_1);
+    				let i;
+
+    				for (i = 0; i < each_value_1.length; i += 1) {
+    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block_1(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(tbody, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value_1.length;
+    			}
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			destroy_each(each_blocks, detaching);
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$4.name,
-    		type: "if",
-    		source: "(75:12) {#if $configStore[\\\"editMode\\\"] && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(138:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (78:12) {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection!==collection}
+    // (32:0) {#if claytons}
     function create_if_block$5(ctx) {
     	let div;
+    	let table;
+    	let thead;
+    	let tr;
+    	let th0;
+    	let span0;
+    	let t1;
+    	let th1;
+    	let span1;
+    	let t3;
+    	let th2;
+    	let span2;
+    	let t5;
+    	let th3;
+    	let span3;
+    	let t7;
+    	let th4;
+    	let span4;
+    	let t9;
+    	let tbody;
+    	let each_value = /*modules*/ ctx[4];
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block$4(get_each_context$4(ctx, each_value, i));
+    	}
 
     	const block = {
     		c: function create() {
     			div = element("div");
-    			div.textContent = "No collection allocated";
-    			attr_dev(div, "class", "cc-unallocated svelte-aolpib");
-    			add_location(div, file$8, 78, 14, 3214);
+    			table = element("table");
+    			thead = element("thead");
+    			tr = element("tr");
+    			th0 = element("th");
+    			span0 = element("span");
+    			span0.textContent = "Title";
+    			t1 = space();
+    			th1 = element("th");
+    			span1 = element("span");
+    			span1.textContent = "Description";
+    			t3 = space();
+    			th2 = element("th");
+    			span2 = element("span");
+    			span2.textContent = "Weighting";
+    			t5 = space();
+    			th3 = element("th");
+    			span3 = element("span");
+    			span3.textContent = "Due Date";
+    			t7 = space();
+    			th4 = element("th");
+    			span4 = element("span");
+    			span4.textContent = "Learning Outcomes";
+    			t9 = space();
+    			tbody = element("tbody");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			set_style(span0, "color", "#ffffff");
+    			add_location(span0, file$8, 43, 12, 1560);
+    			attr_dev(th0, "role", "columnheader");
+    			attr_dev(th0, "scope", "col");
+    			set_style(th0, "background-color", "#e03e2d");
+    			add_location(th0, file$8, 38, 10, 1424);
+    			set_style(span1, "color", "#ffffff");
+    			add_location(span1, file$8, 50, 12, 1781);
+    			attr_dev(th1, "role", "columnheader");
+    			attr_dev(th1, "scope", "col");
+    			set_style(th1, "background-color", "#e03e2d");
+    			set_style(th1, "width", "20rem");
+    			add_location(th1, file$8, 45, 10, 1631);
+    			set_style(span2, "color", "#ffffff");
+    			add_location(span2, file$8, 57, 12, 1994);
+    			attr_dev(th2, "role", "columnheader");
+    			attr_dev(th2, "scope", "col");
+    			set_style(th2, "background-color", "#e03e2d");
+    			add_location(th2, file$8, 52, 10, 1858);
+    			set_style(span3, "color", "#ffffff");
+    			add_location(span3, file$8, 64, 12, 2205);
+    			attr_dev(th3, "role", "columnheader");
+    			attr_dev(th3, "scope", "col");
+    			set_style(th3, "background-color", "#e03e2d");
+    			add_location(th3, file$8, 59, 10, 2069);
+    			set_style(span4, "color", "#ffffff");
+    			add_location(span4, file$8, 71, 12, 2415);
+    			attr_dev(th4, "role", "columnheader");
+    			attr_dev(th4, "scope", "col");
+    			set_style(th4, "background-color", "#e03e2d");
+    			add_location(th4, file$8, 66, 10, 2279);
+    			add_location(tr, file$8, 37, 8, 1408);
+    			add_location(thead, file$8, 36, 6, 1391);
+    			attr_dev(tbody, "class", "svelte-aolpib");
+    			add_location(tbody, file$8, 75, 6, 2525);
+    			attr_dev(table, "class", "ic-Table--hover-row ic-Table ic-Table--striped -ic-Table-condensed");
+    			add_location(table, file$8, 33, 4, 1288);
+    			attr_dev(div, "id", "cc-assessment-table");
+    			attr_dev(div, "class", "svelte-aolpib");
+    			add_location(div, file$8, 32, 2, 1252);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
+    			append_dev(div, table);
+    			append_dev(table, thead);
+    			append_dev(thead, tr);
+    			append_dev(tr, th0);
+    			append_dev(th0, span0);
+    			append_dev(tr, t1);
+    			append_dev(tr, th1);
+    			append_dev(th1, span1);
+    			append_dev(tr, t3);
+    			append_dev(tr, th2);
+    			append_dev(th2, span2);
+    			append_dev(tr, t5);
+    			append_dev(tr, th3);
+    			append_dev(th3, span3);
+    			append_dev(tr, t7);
+    			append_dev(tr, th4);
+    			append_dev(th4, span4);
+    			append_dev(table, t9);
+    			append_dev(table, tbody);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(tbody, null);
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*checkModuleMetaData, $collectionsStore, modules, $configStore, claytons, generateModuleDate, collection, getModuleUrl*/ 31) {
+    				each_value = /*modules*/ ctx[4];
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context$4(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block$4(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(tbody, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			destroy_each(each_blocks, detaching);
     		}
     	};
 
@@ -22579,15 +23608,75 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_if_block$5.name,
     		type: "if",
-    		source: "(78:12) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][module.id].collection!==collection}",
+    		source: "(32:0) {#if claytons}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (56:6) {#each modules as module}
-    function create_each_block$4(ctx) {
+    // (184:14) {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
+    function create_if_block_4$1(ctx) {
+    	let div;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			div.textContent = "Unpublished";
+    			attr_dev(div, "class", "cc-published svelte-aolpib");
+    			add_location(div, file$8, 184, 16, 6679);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_4$1.name,
+    		type: "if",
+    		source: "(184:14) {#if $configStore[\\\"editMode\\\"] && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (187:14) {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection !== collection}
+    function create_if_block_3$2(ctx) {
+    	let div;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			div.textContent = "No collection allocated";
+    			attr_dev(div, "class", "cc-unallocated svelte-aolpib");
+    			add_location(div, file$8, 187, 16, 6876);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_3$2.name,
+    		type: "if",
+    		source: "(187:14) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collection}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (165:8) {#each modules as module}
+    function create_each_block_1(ctx) {
     	let tr;
     	let td0;
     	let span0;
@@ -22595,7 +23684,7 @@ Do you want to use the sanitised value?`)) {
     	let div0;
     	let p0;
     	let a;
-    	let t2_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id].name + "";
+    	let t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].name + "";
     	let t2;
     	let a_href_value;
     	let t3;
@@ -22606,14 +23695,14 @@ Do you want to use the sanitised value?`)) {
     	let t7;
     	let div1;
     	let p1;
-    	let raw_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id].description + "";
+    	let raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].description + "";
     	let t8;
     	let td2;
     	let span2;
     	let t10;
     	let div2;
     	let p2;
-    	let t11_value = checkModuleMetaData(/*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id], "weighting", /*$configStore*/ ctx[2]["editMode"]) + "";
+    	let t11_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "weighting", /*$configStore*/ ctx[3]["editMode"]) + "";
     	let t11;
     	let t12;
     	let td3;
@@ -22621,7 +23710,7 @@ Do you want to use the sanitised value?`)) {
     	let t14;
     	let div3;
     	let p3;
-    	let t15_value = generateModuleDate(/*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id]) + "";
+    	let t15_value = generateModuleDate(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id]) + "";
     	let t15;
     	let t16;
     	let td4;
@@ -22629,11 +23718,11 @@ Do you want to use the sanitised value?`)) {
     	let t18;
     	let div4;
     	let p4;
-    	let t19_value = checkModuleMetaData(/*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id], "learning outcomes", /*$configStore*/ ctx[2]["editMode"]) + "";
+    	let t19_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "learning outcomes", /*$configStore*/ ctx[3]["editMode"]) + "";
     	let t19;
     	let t20;
-    	let if_block0 = /*$configStore*/ ctx[2]["editMode"] && !/*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id].published && create_if_block_1$4(ctx);
-    	let if_block1 = /*$configStore*/ ctx[2]["editMode"] && /*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id].collection !== /*collection*/ ctx[0] && create_if_block$5(ctx);
+    	let if_block0 = /*$configStore*/ ctx[3]["editMode"] && !/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].published && create_if_block_4$1(ctx);
+    	let if_block1 = /*$configStore*/ ctx[3]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].collection !== /*collection*/ ctx[1] && create_if_block_3$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -22684,59 +23773,59 @@ Do you want to use the sanitised value?`)) {
     			t20 = space();
     			attr_dev(span0, "class", "cc-responsive-table__heading svelte-aolpib");
     			attr_dev(span0, "aria-hidden", "true");
-    			add_location(span0, file$8, 58, 12, 2309);
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*module*/ ctx[4].id));
-    			add_location(a, file$8, 63, 16, 2496);
+    			add_location(span0, file$8, 167, 14, 5929);
+    			attr_dev(a, "href", a_href_value = getModuleUrl(/*module*/ ctx[5].id));
+    			add_location(a, file$8, 172, 18, 6126);
     			attr_dev(p0, "class", "svelte-aolpib");
-    			add_location(p0, file$8, 62, 14, 2475);
+    			add_location(p0, file$8, 171, 16, 6103);
     			attr_dev(div0, "class", "cc-table-cell-text svelte-aolpib");
-    			add_location(div0, file$8, 61, 12, 2427);
+    			add_location(div0, file$8, 170, 14, 6053);
     			attr_dev(td0, "role", "cell");
     			attr_dev(td0, "class", "svelte-aolpib");
-    			add_location(td0, file$8, 57, 10, 2279);
+    			add_location(td0, file$8, 166, 12, 5897);
     			attr_dev(span1, "class", "cc-responsive-table__heading svelte-aolpib");
     			attr_dev(span1, "aria-hidden", "true");
-    			add_location(span1, file$8, 71, 12, 2801);
+    			add_location(span1, file$8, 180, 14, 6447);
     			attr_dev(p1, "class", "svelte-aolpib");
-    			add_location(p1, file$8, 81, 14, 3352);
+    			add_location(p1, file$8, 190, 16, 7020);
     			attr_dev(div1, "class", "cc-table-cell-text svelte-aolpib");
-    			add_location(div1, file$8, 80, 12, 3304);
+    			add_location(div1, file$8, 189, 14, 6970);
     			attr_dev(td1, "role", "cell");
     			attr_dev(td1, "class", "descriptionCell svelte-aolpib");
-    			add_location(td1, file$8, 70, 10, 2747);
+    			add_location(td1, file$8, 179, 12, 6391);
     			attr_dev(span2, "class", "cc-responsive-table__heading svelte-aolpib");
     			attr_dev(span2, "aria-hidden", "true");
-    			add_location(span2, file$8, 87, 12, 3531);
+    			add_location(span2, file$8, 196, 14, 7211);
     			attr_dev(p2, "class", "svelte-aolpib");
-    			add_location(p2, file$8, 91, 14, 3701);
+    			add_location(p2, file$8, 200, 16, 7389);
     			attr_dev(div2, "class", "cc-table-cell-text svelte-aolpib");
-    			add_location(div2, file$8, 90, 12, 3653);
+    			add_location(div2, file$8, 199, 14, 7339);
     			attr_dev(td2, "role", "cell");
     			attr_dev(td2, "class", "svelte-aolpib");
-    			add_location(td2, file$8, 86, 10, 3501);
+    			add_location(td2, file$8, 195, 12, 7179);
     			attr_dev(span3, "class", "cc-responsive-table__heading svelte-aolpib");
     			attr_dev(span3, "aria-hidden", "true");
-    			add_location(span3, file$8, 101, 12, 3998);
+    			add_location(span3, file$8, 210, 14, 7706);
     			attr_dev(p3, "class", "svelte-aolpib");
-    			add_location(p3, file$8, 105, 14, 4167);
+    			add_location(p3, file$8, 214, 16, 7883);
     			attr_dev(div3, "class", "cc-table-cell-text svelte-aolpib");
-    			add_location(div3, file$8, 104, 12, 4119);
+    			add_location(div3, file$8, 213, 14, 7833);
     			attr_dev(td3, "role", "cell");
     			attr_dev(td3, "class", "svelte-aolpib");
-    			add_location(td3, file$8, 100, 10, 3968);
+    			add_location(td3, file$8, 209, 12, 7674);
     			attr_dev(span4, "class", "cc-responsive-table__heading svelte-aolpib");
     			attr_dev(span4, "aria-hidden", "true");
-    			add_location(span4, file$8, 111, 12, 4348);
+    			add_location(span4, file$8, 220, 14, 8076);
     			attr_dev(p4, "class", "svelte-aolpib");
-    			add_location(p4, file$8, 115, 14, 4526);
+    			add_location(p4, file$8, 224, 16, 8262);
     			attr_dev(div4, "class", "cc-table-cell-text svelte-aolpib");
-    			add_location(div4, file$8, 114, 12, 4478);
+    			add_location(div4, file$8, 223, 14, 8212);
     			attr_dev(td4, "role", "cell");
     			attr_dev(td4, "class", "svelte-aolpib");
-    			add_location(td4, file$8, 110, 10, 4318);
+    			add_location(td4, file$8, 219, 12, 8044);
     			attr_dev(tr, "role", "row");
     			attr_dev(tr, "class", "svelte-aolpib");
-    			add_location(tr, file$8, 56, 8, 2252);
+    			add_location(tr, file$8, 165, 10, 5868);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -22782,15 +23871,15 @@ Do you want to use the sanitised value?`)) {
     			append_dev(tr, t20);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 10 && t2_value !== (t2_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id].name + "")) set_data_dev(t2, t2_value);
+    			if (dirty & /*$collectionsStore, modules*/ 20 && t2_value !== (t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].name + "")) set_data_dev(t2, t2_value);
 
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*module*/ ctx[4].id))) {
+    			if (dirty & /*modules*/ 16 && a_href_value !== (a_href_value = getModuleUrl(/*module*/ ctx[5].id))) {
     				attr_dev(a, "href", a_href_value);
     			}
 
-    			if (/*$configStore*/ ctx[2]["editMode"] && !/*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id].published) {
+    			if (/*$configStore*/ ctx[3]["editMode"] && !/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].published) {
     				if (if_block0) ; else {
-    					if_block0 = create_if_block_1$4(ctx);
+    					if_block0 = create_if_block_4$1(ctx);
     					if_block0.c();
     					if_block0.m(td1, t6);
     				}
@@ -22799,9 +23888,9 @@ Do you want to use the sanitised value?`)) {
     				if_block0 = null;
     			}
 
-    			if (/*$configStore*/ ctx[2]["editMode"] && /*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id].collection !== /*collection*/ ctx[0]) {
+    			if (/*$configStore*/ ctx[3]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].collection !== /*collection*/ ctx[1]) {
     				if (if_block1) ; else {
-    					if_block1 = create_if_block$5(ctx);
+    					if_block1 = create_if_block_3$2(ctx);
     					if_block1.c();
     					if_block1.m(td1, t7);
     				}
@@ -22810,9 +23899,268 @@ Do you want to use the sanitised value?`)) {
     				if_block1 = null;
     			}
 
-    			if (dirty & /*$collectionsStore, modules*/ 10 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id].description + "")) p1.innerHTML = raw_value;			if (dirty & /*$collectionsStore, modules, $configStore*/ 14 && t11_value !== (t11_value = checkModuleMetaData(/*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id], "weighting", /*$configStore*/ ctx[2]["editMode"]) + "")) set_data_dev(t11, t11_value);
-    			if (dirty & /*$collectionsStore, modules*/ 10 && t15_value !== (t15_value = generateModuleDate(/*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id]) + "")) set_data_dev(t15, t15_value);
-    			if (dirty & /*$collectionsStore, modules, $configStore*/ 14 && t19_value !== (t19_value = checkModuleMetaData(/*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[4].id], "learning outcomes", /*$configStore*/ ctx[2]["editMode"]) + "")) set_data_dev(t19, t19_value);
+    			if (dirty & /*$collectionsStore, modules*/ 20 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].description + "")) p1.innerHTML = raw_value;			if (dirty & /*$collectionsStore, modules, $configStore*/ 28 && t11_value !== (t11_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "weighting", /*$configStore*/ ctx[3]["editMode"]) + "")) set_data_dev(t11, t11_value);
+    			if (dirty & /*$collectionsStore, modules*/ 20 && t15_value !== (t15_value = generateModuleDate(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id]) + "")) set_data_dev(t15, t15_value);
+    			if (dirty & /*$collectionsStore, modules, $configStore*/ 28 && t19_value !== (t19_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "learning outcomes", /*$configStore*/ ctx[3]["editMode"]) + "")) set_data_dev(t19, t19_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(tr);
+    			if (if_block0) if_block0.d();
+    			if (if_block1) if_block1.d();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1.name,
+    		type: "each",
+    		source: "(165:8) {#each modules as module}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (90:14) {#if $configStore["editMode"] && ! claytons && !$collectionsStore["MODULES"][module.id].published}
+    function create_if_block_2$3(ctx) {
+    	let div;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			div.textContent = "Unpublished";
+    			attr_dev(div, "class", "cc-published svelte-aolpib");
+    			add_location(div, file$8, 90, 16, 3214);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2$3.name,
+    		type: "if",
+    		source: "(90:14) {#if $configStore[\\\"editMode\\\"] && ! claytons && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (93:14) {#if $configStore["editMode"] && ! claytons && $collectionsStore["MODULES"][module.id].collection !== collection}
+    function create_if_block_1$4(ctx) {
+    	let div;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			div.textContent = "No collection allocated";
+    			attr_dev(div, "class", "cc-unallocated svelte-aolpib");
+    			add_location(div, file$8, 93, 16, 3425);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$4.name,
+    		type: "if",
+    		source: "(93:14) {#if $configStore[\\\"editMode\\\"] && ! claytons && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collection}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (77:8) {#each modules as module}
+    function create_each_block$4(ctx) {
+    	let tr;
+    	let td0;
+    	let div0;
+    	let p0;
+    	let a;
+    	let t0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].name + "";
+    	let t0;
+    	let a_href_value;
+    	let t1;
+    	let td1;
+    	let t2;
+    	let t3;
+    	let div1;
+    	let p1;
+    	let raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].description + "";
+    	let t4;
+    	let td2;
+    	let div2;
+    	let p2;
+    	let t5_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "weighting", /*$configStore*/ ctx[3]["editMode"], /*claytons*/ ctx[0]) + "";
+    	let t5;
+    	let t6;
+    	let td3;
+    	let div3;
+    	let p3;
+    	let t7_value = generateModuleDate(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id]) + "";
+    	let t7;
+    	let t8;
+    	let td4;
+    	let div4;
+    	let p4;
+    	let t9_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "learning outcomes", /*$configStore*/ ctx[3]["editMode"], /*claytons*/ ctx[0]) + "";
+    	let t9;
+    	let t10;
+    	let if_block0 = /*$configStore*/ ctx[3]["editMode"] && !/*claytons*/ ctx[0] && !/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].published && create_if_block_2$3(ctx);
+    	let if_block1 = /*$configStore*/ ctx[3]["editMode"] && !/*claytons*/ ctx[0] && /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].collection !== /*collection*/ ctx[1] && create_if_block_1$4(ctx);
+
+    	const block = {
+    		c: function create() {
+    			tr = element("tr");
+    			td0 = element("td");
+    			div0 = element("div");
+    			p0 = element("p");
+    			a = element("a");
+    			t0 = text(t0_value);
+    			t1 = space();
+    			td1 = element("td");
+    			if (if_block0) if_block0.c();
+    			t2 = space();
+    			if (if_block1) if_block1.c();
+    			t3 = space();
+    			div1 = element("div");
+    			p1 = element("p");
+    			t4 = space();
+    			td2 = element("td");
+    			div2 = element("div");
+    			p2 = element("p");
+    			t5 = text(t5_value);
+    			t6 = space();
+    			td3 = element("td");
+    			div3 = element("div");
+    			p3 = element("p");
+    			t7 = text(t7_value);
+    			t8 = space();
+    			td4 = element("td");
+    			div4 = element("div");
+    			p4 = element("p");
+    			t9 = text(t9_value);
+    			t10 = space();
+    			attr_dev(a, "href", a_href_value = getModuleUrl(/*module*/ ctx[5].id));
+    			add_location(a, file$8, 81, 18, 2756);
+    			add_location(p0, file$8, 80, 16, 2733);
+    			set_style(div0, "margin", "0");
+    			set_style(div0, "font-size", "0.8rem");
+    			add_location(div0, file$8, 79, 14, 2675);
+    			attr_dev(td0, "role", "cell");
+    			set_style(td0, "display", "table-cell");
+    			set_style(td0, "text-align", "left");
+    			attr_dev(td0, "class", "svelte-aolpib");
+    			add_location(td0, file$8, 78, 12, 2597);
+    			add_location(p1, file$8, 96, 16, 3577);
+    			set_style(div1, "margin", "0");
+    			set_style(div1, "font-size", "0.8rem");
+    			add_location(div1, file$8, 95, 14, 3519);
+    			attr_dev(td1, "role", "cell");
+    			set_style(td1, "display", "table-cell");
+    			set_style(td1, "text-align", "left");
+    			attr_dev(td1, "class", "svelte-aolpib");
+    			add_location(td1, file$8, 88, 12, 3021);
+    			add_location(p2, file$8, 103, 16, 3826);
+    			set_style(div2, "margin", "0");
+    			set_style(div2, "font-size", "0.8rem");
+    			add_location(div2, file$8, 102, 14, 3768);
+    			attr_dev(td2, "role", "cell");
+    			attr_dev(td2, "class", "svelte-aolpib");
+    			add_location(td2, file$8, 101, 12, 3736);
+    			add_location(p3, file$8, 115, 16, 4232);
+    			set_style(div3, "margin", "0");
+    			set_style(div3, "font-size", "0.8rem");
+    			add_location(div3, file$8, 114, 14, 4174);
+    			attr_dev(td3, "role", "cell");
+    			attr_dev(td3, "class", "svelte-aolpib");
+    			add_location(td3, file$8, 113, 12, 4142);
+    			add_location(p4, file$8, 122, 16, 4483);
+    			set_style(div4, "margin", "0");
+    			set_style(div4, "font-size", "0.8rem");
+    			add_location(div4, file$8, 121, 14, 4425);
+    			attr_dev(td4, "role", "cell");
+    			attr_dev(td4, "class", "svelte-aolpib");
+    			add_location(td4, file$8, 120, 12, 4393);
+    			attr_dev(tr, "class", "svelte-aolpib");
+    			add_location(tr, file$8, 77, 10, 2579);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, tr, anchor);
+    			append_dev(tr, td0);
+    			append_dev(td0, div0);
+    			append_dev(div0, p0);
+    			append_dev(p0, a);
+    			append_dev(a, t0);
+    			append_dev(tr, t1);
+    			append_dev(tr, td1);
+    			if (if_block0) if_block0.m(td1, null);
+    			append_dev(td1, t2);
+    			if (if_block1) if_block1.m(td1, null);
+    			append_dev(td1, t3);
+    			append_dev(td1, div1);
+    			append_dev(div1, p1);
+    			p1.innerHTML = raw_value;
+    			append_dev(tr, t4);
+    			append_dev(tr, td2);
+    			append_dev(td2, div2);
+    			append_dev(div2, p2);
+    			append_dev(p2, t5);
+    			append_dev(tr, t6);
+    			append_dev(tr, td3);
+    			append_dev(td3, div3);
+    			append_dev(div3, p3);
+    			append_dev(p3, t7);
+    			append_dev(tr, t8);
+    			append_dev(tr, td4);
+    			append_dev(td4, div4);
+    			append_dev(div4, p4);
+    			append_dev(p4, t9);
+    			append_dev(tr, t10);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$collectionsStore, modules*/ 20 && t0_value !== (t0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].name + "")) set_data_dev(t0, t0_value);
+
+    			if (dirty & /*modules*/ 16 && a_href_value !== (a_href_value = getModuleUrl(/*module*/ ctx[5].id))) {
+    				attr_dev(a, "href", a_href_value);
+    			}
+
+    			if (/*$configStore*/ ctx[3]["editMode"] && !/*claytons*/ ctx[0] && !/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].published) {
+    				if (if_block0) ; else {
+    					if_block0 = create_if_block_2$3(ctx);
+    					if_block0.c();
+    					if_block0.m(td1, t2);
+    				}
+    			} else if (if_block0) {
+    				if_block0.d(1);
+    				if_block0 = null;
+    			}
+
+    			if (/*$configStore*/ ctx[3]["editMode"] && !/*claytons*/ ctx[0] && /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].collection !== /*collection*/ ctx[1]) {
+    				if (if_block1) ; else {
+    					if_block1 = create_if_block_1$4(ctx);
+    					if_block1.c();
+    					if_block1.m(td1, t3);
+    				}
+    			} else if (if_block1) {
+    				if_block1.d(1);
+    				if_block1 = null;
+    			}
+
+    			if (dirty & /*$collectionsStore, modules*/ 20 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].description + "")) p1.innerHTML = raw_value;			if (dirty & /*$collectionsStore, modules, $configStore, claytons*/ 29 && t5_value !== (t5_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "weighting", /*$configStore*/ ctx[3]["editMode"], /*claytons*/ ctx[0]) + "")) set_data_dev(t5, t5_value);
+    			if (dirty & /*$collectionsStore, modules*/ 20 && t7_value !== (t7_value = generateModuleDate(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id]) + "")) set_data_dev(t7, t7_value);
+    			if (dirty & /*$collectionsStore, modules, $configStore, claytons*/ 29 && t9_value !== (t9_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "learning outcomes", /*$configStore*/ ctx[3]["editMode"], /*claytons*/ ctx[0]) + "")) set_data_dev(t9, t9_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(tr);
@@ -22825,7 +24173,7 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_each_block$4.name,
     		type: "each",
-    		source: "(56:6) {#each modules as module}",
+    		source: "(77:8) {#each modules as module}",
     		ctx
     	});
 
@@ -22833,170 +24181,46 @@ Do you want to use the sanitised value?`)) {
     }
 
     function create_fragment$a(ctx) {
-    	let div;
-    	let table;
-    	let thead;
-    	let tr;
-    	let th0;
-    	let span0;
-    	let t1;
-    	let th1;
-    	let span1;
-    	let t3;
-    	let th2;
-    	let span2;
-    	let t5;
-    	let th3;
-    	let span3;
-    	let t7;
-    	let th4;
-    	let span4;
-    	let t9;
-    	let tbody;
-    	let each_value = /*modules*/ ctx[3];
-    	validate_each_argument(each_value);
-    	let each_blocks = [];
+    	let if_block_anchor;
 
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block$4(get_each_context$4(ctx, each_value, i));
+    	function select_block_type(ctx, dirty) {
+    		if (/*claytons*/ ctx[0]) return create_if_block$5;
+    		return create_else_block;
     	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block = current_block_type(ctx);
 
     	const block = {
     		c: function create() {
-    			div = element("div");
-    			table = element("table");
-    			thead = element("thead");
-    			tr = element("tr");
-    			th0 = element("th");
-    			span0 = element("span");
-    			span0.textContent = "Title";
-    			t1 = space();
-    			th1 = element("th");
-    			span1 = element("span");
-    			span1.textContent = "Description";
-    			t3 = space();
-    			th2 = element("th");
-    			span2 = element("span");
-    			span2.textContent = "Weighting";
-    			t5 = space();
-    			th3 = element("th");
-    			span3 = element("span");
-    			span3.textContent = "Due Date";
-    			t7 = space();
-    			th4 = element("th");
-    			span4 = element("span");
-    			span4.textContent = "Learning Outcomes";
-    			t9 = space();
-    			tbody = element("tbody");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			attr_dev(span0, "class", "cc-table-header-text svelte-aolpib");
-    			add_location(span0, file$8, 38, 11, 1602);
-    			attr_dev(th0, "role", "columnheader");
-    			attr_dev(th0, "scope", "col");
-    			attr_dev(th0, "class", "svelte-aolpib");
-    			add_location(th0, file$8, 37, 8, 1554);
-    			attr_dev(span1, "class", "cc-table-header-text svelte-aolpib");
-    			add_location(span1, file$8, 41, 11, 1722);
-    			attr_dev(th1, "role", "columnheader");
-    			attr_dev(th1, "scope", "col");
-    			attr_dev(th1, "class", "svelte-aolpib");
-    			add_location(th1, file$8, 40, 8, 1674);
-    			attr_dev(span2, "class", "cc-table-header-text svelte-aolpib");
-    			add_location(span2, file$8, 44, 11, 1848);
-    			attr_dev(th2, "role", "columnheader");
-    			attr_dev(th2, "scope", "col");
-    			attr_dev(th2, "class", "svelte-aolpib");
-    			add_location(th2, file$8, 43, 8, 1800);
-    			attr_dev(span3, "class", "cc-table-header-text svelte-aolpib");
-    			add_location(span3, file$8, 47, 11, 1972);
-    			attr_dev(th3, "role", "columnheader");
-    			attr_dev(th3, "scope", "col");
-    			attr_dev(th3, "class", "svelte-aolpib");
-    			add_location(th3, file$8, 46, 8, 1924);
-    			attr_dev(span4, "class", "cc-table-header-text svelte-aolpib");
-    			add_location(span4, file$8, 50, 11, 2095);
-    			attr_dev(th4, "role", "columnheader");
-    			attr_dev(th4, "scope", "col");
-    			attr_dev(th4, "class", "svelte-aolpib");
-    			add_location(th4, file$8, 49, 8, 2047);
-    			attr_dev(tr, "role", "row");
-    			attr_dev(tr, "class", "svelte-aolpib");
-    			add_location(tr, file$8, 36, 6, 1529);
-    			attr_dev(thead, "role", "rowgroup");
-    			attr_dev(thead, "class", "svelte-aolpib");
-    			add_location(thead, file$8, 35, 4, 1498);
-    			attr_dev(tbody, "class", "svelte-aolpib");
-    			add_location(tbody, file$8, 54, 4, 2202);
-    			attr_dev(table, "class", "cc-responsive-table svelte-aolpib");
-    			attr_dev(table, "role", "table");
-    			add_location(table, file$8, 33, 2, 1410);
-    			attr_dev(div, "id", "cc-assessment-table");
-    			attr_dev(div, "class", "cc-assessment-container cc-representation svelte-aolpib");
-    			add_location(div, file$8, 32, 0, 1326);
+    			if_block.c();
+    			if_block_anchor = empty();
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, table);
-    			append_dev(table, thead);
-    			append_dev(thead, tr);
-    			append_dev(tr, th0);
-    			append_dev(th0, span0);
-    			append_dev(tr, t1);
-    			append_dev(tr, th1);
-    			append_dev(th1, span1);
-    			append_dev(tr, t3);
-    			append_dev(tr, th2);
-    			append_dev(th2, span2);
-    			append_dev(tr, t5);
-    			append_dev(tr, th3);
-    			append_dev(th3, span3);
-    			append_dev(tr, t7);
-    			append_dev(tr, th4);
-    			append_dev(th4, span4);
-    			append_dev(table, t9);
-    			append_dev(table, tbody);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(tbody, null);
-    			}
+    			if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*checkModuleMetaData, $collectionsStore, modules, $configStore, generateModuleDate, collection, getModuleUrl*/ 15) {
-    				each_value = /*modules*/ ctx[3];
-    				validate_each_argument(each_value);
-    				let i;
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
 
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context$4(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks[i] = create_each_block$4(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(tbody, null);
-    					}
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
     				}
-
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value.length;
     			}
     		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			destroy_each(each_blocks, detaching);
+    			if_block.d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
     		}
     	};
 
@@ -23015,12 +24239,17 @@ Do you want to use the sanitised value?`)) {
     	let $collectionsStore;
     	let $configStore;
     	validate_store(collectionsStore, 'collectionsStore');
-    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(1, $collectionsStore = $$value));
+    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(2, $collectionsStore = $$value));
     	validate_store(configStore, 'configStore');
-    	component_subscribe($$self, configStore, $$value => $$invalidate(2, $configStore = $$value));
+    	component_subscribe($$self, configStore, $$value => $$invalidate(3, $configStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('AssessmentTable', slots, []);
     	let { collection } = $$props;
+    	let { claytons } = $$props;
+
+    	if (!claytons) {
+    		claytons = false;
+    	}
 
     	// kludge to test reactive nature
     	// set collection to currentCollection
@@ -23032,16 +24261,21 @@ Do you want to use the sanitised value?`)) {
     		if (collection === undefined && !('collection' in $$props || $$self.$$.bound[$$self.$$.props['collection']])) {
     			console.warn("<AssessmentTable> was created without expected prop 'collection'");
     		}
+
+    		if (claytons === undefined && !('claytons' in $$props || $$self.$$.bound[$$self.$$.props['claytons']])) {
+    			console.warn("<AssessmentTable> was created without expected prop 'claytons'");
+    		}
     	});
 
-    	const writable_props = ['collection'];
+    	const writable_props = ['collection', 'claytons'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<AssessmentTable> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$$set = $$props => {
-    		if ('collection' in $$props) $$invalidate(0, collection = $$props.collection);
+    		if ('collection' in $$props) $$invalidate(1, collection = $$props.collection);
+    		if ('claytons' in $$props) $$invalidate(0, claytons = $$props.claytons);
     	};
 
     	$$self.$capture_state = () => ({
@@ -23055,14 +24289,16 @@ Do you want to use the sanitised value?`)) {
     		generateModuleDate,
     		checkModuleMetaData,
     		collection,
+    		claytons,
     		modules,
     		$collectionsStore,
     		$configStore
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('collection' in $$props) $$invalidate(0, collection = $$props.collection);
-    		if ('modules' in $$props) $$invalidate(3, modules = $$props.modules);
+    		if ('collection' in $$props) $$invalidate(1, collection = $$props.collection);
+    		if ('claytons' in $$props) $$invalidate(0, claytons = $$props.claytons);
+    		if ('modules' in $$props) $$invalidate(4, modules = $$props.modules);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -23070,20 +24306,20 @@ Do you want to use the sanitised value?`)) {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*collection, $collectionsStore, $configStore*/ 7) {
+    		if ($$self.$$.dirty & /*collection, $collectionsStore, $configStore, claytons*/ 15) {
     			{
-    				$$invalidate(3, modules = getRepresentationModules(collection, $collectionsStore["MODULES"], $configStore["editMode"], $collectionsStore["COLLECTIONS"][collection]["unallocated"]));
+    				$$invalidate(4, modules = getRepresentationModules(collection, $collectionsStore["MODULES"], $configStore["editMode"], claytons, $collectionsStore["COLLECTIONS"][collection]["unallocated"]));
     			}
     		}
     	};
 
-    	return [collection, $collectionsStore, $configStore, modules];
+    	return [claytons, collection, $collectionsStore, $configStore, modules];
     }
 
     class AssessmentTable extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$a, create_fragment$a, safe_not_equal, { collection: 0 });
+    		init(this, options, instance$a, create_fragment$a, safe_not_equal, { collection: 1, claytons: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -23098,6 +24334,14 @@ Do you want to use the sanitised value?`)) {
     	}
 
     	set collection(value) {
+    		throw new Error("<AssessmentTable>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get claytons() {
+    		throw new Error("<AssessmentTable>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set claytons(value) {
     		throw new Error("<AssessmentTable>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -23682,9 +24926,9 @@ Do you want to use the sanitised value?`)) {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*$collectionsStore, $configStore, $representationsStore*/ 112) {
+    		if ($$self.$$.dirty & /*$collectionsStore, collection, $representationsStore, $configStore*/ 113) {
     			{
-    				const localRep = $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]]["representation"];
+    				const localRep = $collectionsStore["COLLECTIONS"][collection]["representation"];
 
     				if (!$representationsStore.hasOwnProperty(localRep)) {
     					alert(`CollectionRepresentation component requires a valid representation prop. ${localRep} is not valid`);
@@ -23693,9 +24937,7 @@ Do you want to use the sanitised value?`)) {
     				$$invalidate(2, representationComponent = $representationsStore[localRep]);
 
     				if ($configStore["ccOn"]) {
-    					debug(`calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`);
     					modifyCanvasModulesList($configStore["currentCollection"], $collectionsStore["MODULES"], $configStore["editMode"], $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]]["unallocated"]);
-    					debug(`after calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`);
     				}
     			}
     		}
@@ -24367,6 +25609,9 @@ Do you want to use the sanitised value?`)) {
                 console.log(`startUpdate: includePageName ${includePageName}`);
                 this.getIncludePageContent(includePageName);
             }
+            else {
+                this.getOutputPage();
+            }
         }
         /**
          * @function errorFirstTask
@@ -24466,7 +25711,8 @@ Do you want to use the sanitised value?`)) {
             const escCollectionName = collectionName.replace(/ /g, "-");
             //----------------------------------------------
             // generate the Claytons HTML
-            const insertContentHtml = "<h1>Simple test of update</h1>";
+            const insertContentHtml = this.generateClaytons(collectionName);
+            //"<h1>Simple test of update</h1>";
             /* this.collectionsView.generateHTML(
               collectionName,
               "claytons",
@@ -24541,6 +25787,29 @@ Do you want to use the sanitised value?`)) {
             this.writeOutputPage();
         }
         /**
+         * @method generateClaytons
+         * @param {string} collectionName
+         * @description Generate HTML string for Claytons representation of the collection
+         * named "collectionName"
+         * - create a div element
+         * - create a new CollectionRepresentation object with claytons true add to div
+         * - return the innerHTML
+         */
+        generateClaytons(collectionName) {
+            const div = document.createElement("div");
+            // set up the props to pass to component
+            // use ColelctionRepresentation and add to div
+            new CollectionRepresentation({
+                target: div,
+                props: {
+                    collection: collectionName,
+                    claytons: true,
+                },
+            });
+            // TODO error checking?
+            return div.innerHTML;
+        }
+        /**
          * @method writeOutputPage
          * @description Write the new content for the first task in the list to the
          * appropriate Canvas page via the Canvas API
@@ -24577,7 +25846,7 @@ Do you want to use the sanitised value?`)) {
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
                     Accept: "application/json; charset=UTF-8",
-                    "X-CSRF-Token": this.configStore['csrfToken']
+                    "X-CSRF-Token": this.configStore["csrfToken"],
                 },
                 body: bodyString,
             });

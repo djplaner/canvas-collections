@@ -1,6 +1,10 @@
 <script lang="ts">
   import { collectionsStore } from "../../../stores";
   export let moduleId: Number;
+  export let claytons: boolean;
+  if (!claytons) {
+    claytons = false;
+  }
 
   /**
    * Figure out the correct CSS class based on image size
@@ -18,11 +22,24 @@
   }
 </script>
 
-{#if $collectionsStore["MODULES"][moduleId].image}
+{#if $collectionsStore["MODULES"][moduleId].image && claytons}
   <img
     class="cc-card-image {calculateImageSize(
       $collectionsStore['MODULES'][moduleId].imageSize
     )}"
+    src={$collectionsStore["MODULES"][moduleId].image}
+    data-moduleid="${moduleId}"
+    alt="Image representing '{$collectionsStore['MODULES'][
+      moduleId
+    ].name.replace(/(["'])/g, '\\$1')}
+	'"
+  />
+{:else if $collectionsStore["MODULES"][moduleId].image && !claytons}
+  <img
+    class="cc-card-image {calculateImageSize(
+      $collectionsStore['MODULES'][moduleId].imageSize
+    )}"
+    style="height:10rem;width:100%"
     src={$collectionsStore["MODULES"][moduleId].image}
     data-moduleid="${moduleId}"
     alt="Image representing '{$collectionsStore['MODULES'][

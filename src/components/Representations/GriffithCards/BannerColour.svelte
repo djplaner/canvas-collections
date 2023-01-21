@@ -1,6 +1,10 @@
 <script lang="ts">
   import { collectionsStore } from "../../../stores";
   export let moduleId: Number;
+  export let claytons: boolean;
+  if (!claytons) {
+    claytons = false;
+  }
 </script>
 
 <div

@@ -161,7 +161,7 @@ export class updatePageController {
       console.log(`startUpdate: includePageName ${includePageName}`);
       this.getIncludePageContent(includePageName);
     } else {
-      //     this.getOutputPage();
+      this.getOutputPage();
     }
   }
 
@@ -294,7 +294,9 @@ export class updatePageController {
 
     //----------------------------------------------
     // generate the Claytons HTML
-    const insertContentHtml = "<h1>Simple test of update</h1>";
+
+    const insertContentHtml = this.generateClaytons(collectionName);
+    //"<h1>Simple test of update</h1>";
     /* this.collectionsView.generateHTML(
       collectionName,
       "claytons",
@@ -388,6 +390,34 @@ export class updatePageController {
   }
 
   /**
+   * @method generateClaytons
+   * @param {string} collectionName
+   * @description Generate HTML string for Claytons representation of the collection
+   * named "collectionName"
+   * - create a div element
+   * - create a new CollectionRepresentation object with claytons true add to div
+   * - return the innerHTML
+   */
+
+  private generateClaytons(collectionName: string): string {
+    const div = document.createElement("div");
+
+    // set up the props to pass to component
+
+    // use ColelctionRepresentation and add to div
+    const app = new CollectionRepresentation({
+      target: div,
+      props: {
+        collection: collectionName,
+        claytons: true,
+      },
+    });
+	// TODO error checking?
+
+    return div.innerHTML;
+  }
+
+  /**
    * @method writeOutputPage
    * @description Write the new content for the first task in the list to the
    * appropriate Canvas page via the Canvas API
@@ -434,7 +464,7 @@ export class updatePageController {
       headers: {
         "Content-type": "application/json; charset=UTF-8",
         Accept: "application/json; charset=UTF-8",
-        "X-CSRF-Token": this.configStore['csrfToken']
+        "X-CSRF-Token": this.configStore["csrfToken"],
       },
       body: bodyString,
     });

@@ -50,6 +50,7 @@
       collection,
       $collectionsStore["MODULES"],
       $configStore["editMode"],
+      claytons,
       $collectionsStore["COLLECTIONS"][collection]["unallocated"]
     );
   }
@@ -114,7 +115,128 @@
 </script>
 
 {#if claytons}
-  <h1>Claytons Canvas Collections</h1>
+  <h1>Claytons Canvas Collections - the cards</h1>
+
+  <!-- <div class="cc-card-interface cc-representation">-->
+  <div style="flex-wrap: wrap; display:flex; margin-top: 0.5em">
+    {#each modules as theModule}
+      <!-- TODO need to handle styles for cc-unclickable-card -->
+      <div
+        id="cc_module_{theModule.id}"
+        style="padding: 0.75rem; flex-direction: column; display:flex;width:30%"
+      >
+        <div
+          id="cc_module_{theModule.id}"
+          class="cc-card"
+          style="background-color: #fff; border-radius: 1em;"
+        >
+          <div
+            class="cc-card-flex"
+            style="overflow:hidden;flex-direction:column; flex: 1 1 0%; display:flex;position:relative;border-style:outset;border-radius:1em;"
+          >
+            <div
+              class="cc-card-banner-container"
+              data-moduleid={theModule.id}
+              style="position:relative;"
+            >
+              <a
+                class="cc-card-link"
+                href={getModuleUrl(theModule.id)}
+                style="position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;"
+                >&nbsp;</a>
+              <!-- TODO add in CLAYTONS-->
+              <svelte:component
+                this={BANNER_TRANSLATION[
+                  $collectionsStore["MODULES"][theModule.id].banner
+                ]}
+                moduleId={theModule.id}
+                claytons={claytons}
+              />
+              <DateWidget
+                date={$collectionsStore["MODULES"][theModule.id].date}
+                {calendar}
+              />
+              <!--               $**DATE_WIDGET** -->
+              {#if $collectionsStore["MODULES"][theModule.id].fyi}
+                <div
+                  class="cc-card-fyi"
+                  style="position:absolute;background:rgba(0,0,0,0.75);color:white;width:100%;padding: 0.25rem;font-size:x-small;text-align:center;"
+                >
+                  <span class="cc-fyi-text">
+                    {#if $collectionsStore["MODULES"][theModule.id].fyiText}
+                      {$collectionsStore["MODULES"][theModule.id].fyiText}
+                    {:else}
+                      &nbsp;
+                    {/if}
+                  </span>
+                </div>
+              {/if}
+            </div>
+            <div
+              class="cc-card-content-height"
+              style="height:12rem;overflow:auto;position:relative;"
+            >
+              <a
+                class="cc-card-link"
+                href={getModuleUrl(theModule.id)}
+                style="position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;"
+                >&nbsp;</a
+              >
+              <!-- this needs to be $cardContentClass -->
+              <!-- handling cc-card-content and cc-unclickable-card-content  -->
+              <div
+                class={$collectionsStore["MODULES"][theModule.id].fyi
+                  ? "cc-card-content"
+                  : "cc-unclickable-card-content"}
+                style="padding:0.5rem;flex: 1 1 0%; display:flex;flex-direction:column"
+              >
+                <div class="cc-card-label" style="font-size: 0.9rem">
+                  <span class="cc-card-label" style="font-size: 0.9rem">
+                    {$collectionsStore["MODULES"][theModule.id].label}
+                    {$collectionsStore["MODULES"][theModule.id].actualNum}
+                  </span>
+                  <h3
+                    class="cc-card-title"
+                    data-moduleid={theModule.id}
+                    style="font-size: 1rem; font-weight:strong;"
+                  >
+                    <a
+                      class="cc-card-link"
+                      href={getModuleUrl(theModule.id)}
+                      style="text-decoration:none;"
+                    >
+                      {deLabelModuleName(theModule.id)}
+                    </a>
+                  </h3>
+                </div>
+                <div class="cc-card-description" style="font-size:0.75rem;">
+                  {@html $collectionsStore["MODULES"][theModule.id].description}
+                </div>
+              </div>
+            </div>
+            <div class="cc-card-footer" style="height:4rem;position:relative;">
+              {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
+                <div class="cc-card-engage" style="padding-right: 1rem;">
+                  <div
+                    class="cc-card-engage-button"
+                    style="flot:right;color:rgba(30,58,138,1);border-radius:0.25rem;padding0.5rem 1rem 0.5rem 1rem;border:1px solid rgba(30,58,138,1)"
+                  >
+                    <a
+                      href={getModuleUrl(theModule.id)}
+                      class="gu-engage"
+                      style="text-decoration:none;"
+                    >
+                      {$collectionsStore["MODULES"][theModule.id].engageText}
+                    </a>
+                  </div>
+                </div>
+              {/if}
+            </div>
+          </div>
+        </div>
+      </div>
+    {/each}
+  </div>
 {:else}
   <div class="cc-card-interface cc-representation">
     {#each modules as theModule}

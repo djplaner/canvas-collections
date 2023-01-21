@@ -81,12 +81,22 @@ export function getRepresentationModules(
   collectionName: string,
   allModules: any[],
   editMode: boolean,
+  claytons: boolean,
   unallocated: boolean
 ): any[] {
   let modules = [];
 
   modules = getCollectionCanvasModules(collectionName, allModules);
-  if (editMode || unallocated) {
+  // add unallocated modules if,
+  if ( !editMode ) {
+    // student only if unallocated for this collection is true
+    if (unallocated) {
+      modules = modules.concat(addUnallocatedModules(allModules, editMode));
+    }
+  } else if ( ( claytons && unallocated ) || !claytons) {
+    // staff add if
+    // - claytons mode and unallocated is true
+    // - ! claytons
     modules = modules.concat(addUnallocatedModules(allModules, editMode));
   }
 
@@ -104,14 +114,14 @@ export function getRepresentationModules(
  * - an empty string if it does not exist and we're not in editMode
  */
 
-export function checkModuleMetaData(module, metaDataValue, editMode) {
+export function checkModuleMetaData(module, metaDataValue, editMode, claytons = false) {
   if (
     module.hasOwnProperty("metadata") &&
     module["metadata"].hasOwnProperty(metaDataValue)
   ) {
     return module["metadata"][metaDataValue];
   }
-  if (editMode) {
+  if (editMode && ! claytons) {
     return `{${metaDataValue}}`;
   }
   return "";
