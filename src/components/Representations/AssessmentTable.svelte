@@ -17,6 +17,7 @@
     getCollectionCanvasModules,
     addUnallocatedModules,
     getModuleUrl,
+    getRepresentationModules,
     //    modifyCanvasModulesList,
     generateModuleDate,
     checkModuleMetaData,
@@ -31,18 +32,12 @@
 
   let modules;
   $: {
-    modules = getCollectionCanvasModules(
+    modules = getRepresentationModules(
       collection,
-      $collectionsStore["MODULES"]
+      $collectionsStore["MODULES"],
+      $configStore["editMode"],
+      $collectionsStore["COLLECTIONS"][collection]["unallocated"]
     );
-    if ($collectionsStore["COLLECTIONS"][collection]["unallocated"]) {
-      modules = modules.concat(
-        addUnallocatedModules(
-          $collectionsStore["MODULES"],
-          $configStore["editMode"]
-        )
-      );
-    }
   }
 
   /** TODO
@@ -96,6 +91,9 @@
             >
             {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
               <div class="cc-published">Unpublished</div>
+            {/if}
+            {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection!==collection}
+              <div class="cc-unallocated">No collection allocated</div>
             {/if}
             <div class="cc-table-cell-text">
               <p>
@@ -309,7 +307,7 @@
     background: black;
   }
 
-  .cc-published  {
+  .cc-published {
     background: rgb(255, 0, 0, 0.75);
     color: white;
     font-size: x-small;
@@ -317,5 +315,14 @@
     text-align: center;
     width: 100%;
     padding-bottom: 0.25em;
+  }
+
+  .cc-unallocated {
+    background-color: #e03e2d;
+    color: white;
+    font-size: x-small;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
   }
 </style>

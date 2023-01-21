@@ -26,9 +26,19 @@ This list of already existing collections allows you to
     * include page
     * output page
 
+### Default collection
+
+Specifies which collection you will see the very first time you (using your current web browser) view a modules page with Collections. 
+
+After your first view, your web browser will remember the last collection you viewed and display that when you return to the same modules page with the same web browser.
+
 ### Hide a collection
 
-Configure a collection so that students will not see it.
+Configure a collection so that students will not be able to see it.
+
+### Add unallocated
+
+Canvas modules can belong (be allocated to) a collection or not. By default, when viewing a collection you will only see the modules that belong to that collection. If you turn _Add unallocated_ on, then you will also see any modules that are not allocated to any collection.
 
 ### Output page
 

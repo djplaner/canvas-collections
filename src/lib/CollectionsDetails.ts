@@ -222,7 +222,7 @@ export class CollectionsDetails {
       for (let collectionName in this.collections["COLLECTIONS"]) {
         const collection = this.collections["COLLECTIONS"][collectionName];
         if (!collection.hasOwnProperty("unallocated")) {
-          collection.unallocated = true;
+          collection.unallocated = false;
         }
       }
     }

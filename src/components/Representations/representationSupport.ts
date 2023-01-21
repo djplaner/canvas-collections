@@ -15,7 +15,7 @@ export function getCollectionCanvasModules(collection, allModules) {
   for (const module in allModules) {
     if (allModules[module].collection === collection) {
       modules.push(allModules[module]);
-    } 
+    }
   }
   return modules;
 
@@ -37,25 +37,60 @@ export function getCollectionCanvasModules(collection, allModules) {
 
 /**
  * @function addUnallocatedModules
- * @param collectionName 
- * @param allModules 
+ * @param collectionName
+ * @param allModules
  * @param editMode
  * @returns [] - Array of modules
  * @description Return an array of all the modules that do not have a collection
  * i.e. collection===null
  */
 
-export function addUnallocatedModules(allModules : [], editMode: boolean) : any[] {
-  let modules = []
+export function addUnallocatedModules(
+  allModules: any[],
+  editMode: boolean
+): any[] {
+  let modules = [];
 
   for (const module in allModules) {
-    if (allModules[module]['collection'] === null ) {
-      if (editMode || allModules[module]['published']) {
-        modules.push(allModules[module])
+    if (
+      allModules[module]["collection"] === null ||
+      allModules[module]["collection"] === ""
+    ) {
+      if (editMode || allModules[module]["published"]) {
+        modules.push(allModules[module]);
       }
-    } 
+    }
   }
-  return modules
+  return modules;
+}
+
+/**
+ * @function getRepresentationModules
+ * @param String collectionName - name of "current" collection
+ * @param [] allModules - all current info about modules
+ * @param boolean editMode
+ * @param boolean unallocated
+ * @returns [] - Array of modules
+ * @description Given a collection, get all the modules that a representation
+ * will need to display that collection, may include
+ * - all the modules in the collection
+ * - all the modules without collections (if that switch is set)
+ *
+ */
+export function getRepresentationModules(
+  collectionName: string,
+  allModules: any[],
+  editMode: boolean,
+  unallocated: boolean
+): any[] {
+  let modules = [];
+
+  modules = getCollectionCanvasModules(collectionName, allModules);
+  if (editMode || unallocated) {
+    modules = modules.concat(addUnallocatedModules(allModules, editMode));
+  }
+
+  return modules;
 }
 
 /**
@@ -110,7 +145,12 @@ export function generateModuleDate(module) {
  * 2. Ensure all modules in collection are showing
  * 3. If editMode add ModuleConfiguration components to the module
  */
-export function modifyCanvasModulesList(collection, allModules, editMode, showUnallocated) {
+export function modifyCanvasModulesList(
+  collection,
+  allModules,
+  editMode,
+  showUnallocated
+) {
   debug(
     `_________________________________ modifyCanvasModulesList moduleIds ${collection} editMode ${editMode} _________________`
   );

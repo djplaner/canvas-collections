@@ -14,6 +14,7 @@
   import {
     getCollectionCanvasModules,
     addUnallocatedModules,
+    getRepresentationModules,
     //    modifyCanvasModulesList,
     generateModuleDate,
     checkModuleMetaData,
@@ -41,18 +42,12 @@
   // calculate the moduleIds belonging to collection
   let modules;
   $: {
-    modules = getCollectionCanvasModules(
+    modules = getRepresentationModules(
       collection,
-      $collectionsStore["MODULES"]
+      $collectionsStore["MODULES"],
+      $configStore["editMode"],
+      $collectionsStore["COLLECTIONS"][collection]["unallocated"]
     );
-    modules = modules.concat(
-      addUnallocatedModules(
-        $collectionsStore["MODULES"],
-        $configStore["editMode"]
-      )
-    );
-    console.log(modules);
-    //modifyCanvasModulesList(moduleIds, $collectionsStore["MODULES"],$configStore['editMode'])
   }
 
   /**
@@ -112,15 +107,6 @@
 
     return newName;
   }
-
-  /*  function generateCardDate(moduleId) {
-    const module = $collectionsStore["MODULES"][moduleId];
-    debug(`XXXXXXXXXXXXX ${line}`);
-    debug(module);
-    debug(module.date);
-
-    return "<strong>DATE</strong>";
-  } */
 </script>
 
 <div class="cc-card-interface cc-representation">
@@ -162,7 +148,12 @@
               </div>
             {/if}
             {#if !$collectionsStore["MODULES"][theModule.id].published}
-              <div class="cc-card-published">Unpublished</div>
+              <div class="cc-card-published">
+                Unpublished.
+                {#if $configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection}
+                  No collection allocated.
+                {/if}
+              </div>
             {/if}
           </div>
           <div class="cc-card-content-height">

@@ -259,7 +259,7 @@
     },
     configUnallocated: {
       tooltip: `<p>When students view this collection, include modules not allocated to any collection.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties",
+      url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#hide-a-collection",
     },
     configIncludePage: {
       tooltip: `Specify the name of an existing Canvas page and the content of that page
