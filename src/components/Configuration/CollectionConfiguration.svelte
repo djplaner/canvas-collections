@@ -21,6 +21,32 @@
     `__________________ CollectionConfiguration.svelte __collection ${collectionName} order ${order} numCollections ${numCollections}_______________`
   );
 
+  // Assume inclduePage and outputPage exist
+  let includePageExists = {},
+    outputPageExists = {};
+  let includePageName = {},
+    outputPageName = {};
+  // loop through each collection
+  Object.keys($collectionsStore["COLLECTIONS"]).forEach((collectionName) => {
+    includePageExists[collectionName] = true;
+    outputPageExists[collectionName] = true;
+    includePageName[collectionName] =
+      $collectionsStore["COLLECTIONS"][collectionName].includePage;
+    outputPageName[collectionName] =
+      $collectionsStore["COLLECTIONS"][collectionName].outputPage;
+  });
+
+  getPageName(
+    $collectionsStore["COLLECTIONS"][collectionName].includePage,
+    $configStore["courseId"],
+    doesIncludePageExist
+  );
+  getPageName(
+    $collectionsStore["COLLECTIONS"][collectionName].outputPage,
+    $configStore["courseId"],
+    doesOutputPageExist
+  );
+
   /*  let removed = false;
   // experiment to see if we can detect when this component for this collection
   // is being called, after the collection has already been deleted
@@ -223,18 +249,36 @@
     debug(`---------- doesIncludePageExist --${pageName}--------`);
     debug(pageObject);
 
+    includePageName[collectionName] = pageName;
+
     if (!pageObject) {
-      alert(`Unable to find a page matching the include page name
-      ${pageName}
+      alert(`The include page called
+    ${pageName}
+for the collection
+    ${collectionName}
+does not exist.
       `);
+      includePageExists[collectionName] = false;
+    } else {
+      includePageExists[collectionName] = true;
     }
   }
 
+  /**
+   * @function doesOutputPageExists
+   * @param pageName
+   * @param pageObject
+   * @description Called after Canvas API call returns a page Object. Set
+   * outputPageExists and other variables appropriately
+   * No alerts for this (unlike include page) because if the output page
+   * doesn't exist it will be created
+   */
   function doesOutputPageExist(pageName, pageObject) {
+    outputPageName[collectionName] = pageName;
     if (!pageObject) {
-      alert(`Unable to find a page matching the output page name
-      ${pageName}
-      `);
+      outputPageExists[collectionName] = false;
+    } else {
+      outputPageExists[collectionName] = true;
     }
   }
 
@@ -438,7 +482,9 @@
       <input
         type="checkbox"
         id="cc-config-collection-{collectionName}-unallocated"
-        bind:checked={$collectionsStore["COLLECTIONS"][collectionName]["unallocated"]}
+        bind:checked={$collectionsStore["COLLECTIONS"][collectionName][
+          "unallocated"
+        ]}
         on:change={() => ($configStore["needToSaveCollections"] = true)}
       />
       <!--
@@ -455,7 +501,7 @@
   <div class="cc-collection-two-line">
     <div class="cc-collection-two-line-header">
       <label for="cc-collection-{collectionName}-include-page"
-        >Include Page</label
+        >Include page</label
       >
       <sl-tooltip>
         <div slot="content">
@@ -515,6 +561,11 @@
         />
       </span>
     </div>
+    {#if !includePageExists[collectionName]}
+      <div class="cc-collection-two-line-error">
+        Page <strong>{includePageName[collectionName]}</strong> does not exist
+      </div>
+    {/if}
   </div>
   <!-- output page -->
   <div class="cc-collection-two-line">
@@ -553,9 +604,17 @@
       />
       <button
         id="cc-collection-{collectionName}-output-page-update"
-        class="btn cc-existing-collection">Update</button
+        class="btn cc-existing-collection"
+        disabled={outputPageName[collectionName] === ""}>Update</button
       >
     </div>
+    {#if !outputPageExists[collectionName]}
+      <div class="cc-collection-two-line-warning">
+        Will create a new page named <strong
+          >{outputPageName[collectionName]}</strong
+        >
+      </div>
+    {/if}
   </div>
 
   <div class="cc-collection-form-reverse">
@@ -695,6 +754,24 @@
     text-align: left;
   }
 
+  .cc-collection-two-line-error {
+    grid-column: 1/3;
+    grid-row: 3/4;
+    text-align: center;
+    background-color: red;
+    font-size: x-small;
+    color: white;
+  }
+
+  .cc-collection-two-line-warning {
+    grid-column: 1/3;
+    grid-row: 3/4;
+    text-align: center;
+    background-color: yellow;
+    font-size: x-small;
+    color: black;
+  }
+
   .cc-collection-two-line-header {
     grid-column: 1/2;
     text-align: left;
@@ -706,7 +783,7 @@
     width: 90%;
   }
 
-/*  .cc-collection-input > input[type="checkbox"] {
+  /*  .cc-collection-input > input[type="checkbox"] {
     width: auto;
     margin-left: 1em;
   } */
@@ -716,7 +793,8 @@
     white-space: normal;
   }
 
-  label, select {
+  label,
+  select {
     margin-bottom: 0em;
   }
 

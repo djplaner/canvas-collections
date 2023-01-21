@@ -15599,7 +15599,7 @@ var app = (function () {
     }
 
     // (141:8) {#if $collectionsStore["MODULES"][moduleId].fyi}
-    function create_if_block_2$4(ctx) {
+    function create_if_block_2$5(ctx) {
     	let input;
     	let input_id_value;
     	let mounted;
@@ -15646,7 +15646,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$4.name,
+    		id: create_if_block_2$5.name,
     		type: "if",
     		source: "(141:8) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].fyi}",
     		ctx
@@ -16009,7 +16009,7 @@ var app = (function () {
     	}
 
     	function select_block_type(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].fyi) return create_if_block_2$4;
+    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].fyi) return create_if_block_2$5;
     		return create_else_block_2;
     	}
 
@@ -20132,7 +20132,7 @@ Do you want to use the sanitised value?`)) {
     	let if_block2 = (/*date*/ ctx[0]["time"] || /*date*/ ctx[0]["to"]["time"]) && create_if_block_11(ctx);
     	let if_block3 = (/*date*/ ctx[0]["day"] || /*date*/ ctx[0]["to"]["day"]) && create_if_block_8(ctx);
     	let if_block4 = (/*date*/ ctx[0]["month"] || /*date*/ ctx[0]["to"]["month"]) && create_if_block_5(ctx);
-    	let if_block5 = (/*date*/ ctx[0]["date"] || /*date*/ ctx[0]["to"]["date"]) && create_if_block_2$3(ctx);
+    	let if_block5 = (/*date*/ ctx[0]["date"] || /*date*/ ctx[0]["to"]["date"]) && create_if_block_2$4(ctx);
 
     	const block = {
     		c: function create() {
@@ -20235,7 +20235,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block5) {
     					if_block5.p(ctx, dirty);
     				} else {
-    					if_block5 = create_if_block_2$3(ctx);
+    					if_block5 = create_if_block_2$4(ctx);
     					if_block5.c();
     					if_block5.m(div, null);
     				}
@@ -21108,13 +21108,13 @@ Do you want to use the sanitised value?`)) {
     }
 
     // (141:6) {#if date["date"] || date["to"]["date"]}
-    function create_if_block_2$3(ctx) {
+    function create_if_block_2$4(ctx) {
     	let div2;
     	let div0;
     	let t;
     	let div1;
     	let if_block0 = /*date*/ ctx[0]["date"] && create_if_block_4$2(ctx);
-    	let if_block1 = /*date*/ ctx[0]["to"]["date"] && create_if_block_3$2(ctx);
+    	let if_block1 = /*date*/ ctx[0]["to"]["date"] && create_if_block_3$3(ctx);
 
     	const block = {
     		c: function create() {
@@ -21157,7 +21157,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
-    					if_block1 = create_if_block_3$2(ctx);
+    					if_block1 = create_if_block_3$3(ctx);
     					if_block1.c();
     					if_block1.m(div1, null);
     				}
@@ -21175,7 +21175,7 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$3.name,
+    		id: create_if_block_2$4.name,
     		type: "if",
     		source: "(141:6) {#if date[\\\"date\\\"] || date[\\\"to\\\"][\\\"date\\\"]}",
     		ctx
@@ -21216,7 +21216,7 @@ Do you want to use the sanitised value?`)) {
     }
 
     // (149:12) {#if date["to"]["date"]}
-    function create_if_block_3$2(ctx) {
+    function create_if_block_3$3(ctx) {
     	let t_value = /*date*/ ctx[0]["to"]["date"] + "";
     	let t;
 
@@ -21237,7 +21237,7 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_3$2.name,
+    		id: create_if_block_3$3.name,
     		type: "if",
     		source: "(149:12) {#if date[\\\"to\\\"][\\\"date\\\"]}",
     		ctx
@@ -21442,7 +21442,7 @@ Do you want to use the sanitised value?`)) {
     }
 
     // (113:12) {#if $collectionsStore["MODULES"][theModule.id].fyi}
-    function create_if_block_3$1(ctx) {
+    function create_if_block_3$2(ctx) {
     	let div;
     	let span;
 
@@ -21490,7 +21490,7 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_3$1.name,
+    		id: create_if_block_3$2.name,
     		type: "if",
     		source: "(113:12) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
@@ -21562,7 +21562,7 @@ Do you want to use the sanitised value?`)) {
     function create_if_block_1$5(ctx) {
     	let div;
     	let t;
-    	let if_block = /*$configStore*/ ctx[3]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].collection !== /*collection*/ ctx[0] && create_if_block_2$2(ctx);
+    	let if_block = /*$configStore*/ ctx[3]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].collection !== /*collection*/ ctx[0] && create_if_block_2$3(ctx);
 
     	const block = {
     		c: function create() {
@@ -21580,7 +21580,7 @@ Do you want to use the sanitised value?`)) {
     		p: function update(ctx, dirty) {
     			if (/*$configStore*/ ctx[3]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].collection !== /*collection*/ ctx[0]) {
     				if (if_block) ; else {
-    					if_block = create_if_block_2$2(ctx);
+    					if_block = create_if_block_2$3(ctx);
     					if_block.c();
     					if_block.m(div, null);
     				}
@@ -21607,7 +21607,7 @@ Do you want to use the sanitised value?`)) {
     }
 
     // (127:16) {#if $configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection}
-    function create_if_block_2$2(ctx) {
+    function create_if_block_2$3(ctx) {
     	let t;
 
     	const block = {
@@ -21624,7 +21624,7 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$2.name,
+    		id: create_if_block_2$3.name,
     		type: "if",
     		source: "(127:16) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][theModule.id].collection !== collection}",
     		ctx
@@ -21758,7 +21758,7 @@ Do you want to use the sanitised value?`)) {
     			$$inline: true
     		});
 
-    	let if_block0 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_3$1(ctx);
+    	let if_block0 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_3$2(ctx);
     	let if_block1 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].published && create_if_block_1$5(ctx);
     	let if_block2 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block$6(ctx);
 
@@ -21925,7 +21925,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
-    					if_block0 = create_if_block_3$1(ctx);
+    					if_block0 = create_if_block_3$2(ctx);
     					if_block0.c();
     					if_block0.m(div0, t4);
     				}
@@ -23732,7 +23732,7 @@ Do you want to use the sanitised value?`)) {
     		});
 
     	binding_callbacks.push(() => bind(collectionsnavigation, 'collection', collectionsnavigation_collection_binding, /*$configStore*/ ctx[1]["currentCollection"]));
-    	let if_block0 = /*$collectionsStore*/ ctx[0]["COLLECTIONS"][/*$configStore*/ ctx[1]["currentCollection"]].includePage !== "" && /*$collectionsStore*/ ctx[0]["COLLECTIONS"][/*$configStore*/ ctx[1]["currentCollection"]].includeAfter === false && create_if_block_2$1(ctx);
+    	let if_block0 = /*$collectionsStore*/ ctx[0]["COLLECTIONS"][/*$configStore*/ ctx[1]["currentCollection"]].includePage !== "" && /*$collectionsStore*/ ctx[0]["COLLECTIONS"][/*$configStore*/ ctx[1]["currentCollection"]].includeAfter === false && create_if_block_2$2(ctx);
 
     	collectionrepresentation = new CollectionRepresentation({
     			props: {
@@ -23784,7 +23784,7 @@ Do you want to use the sanitised value?`)) {
     						transition_in(if_block0, 1);
     					}
     				} else {
-    					if_block0 = create_if_block_2$1(ctx);
+    					if_block0 = create_if_block_2$2(ctx);
     					if_block0.c();
     					transition_in(if_block0, 1);
     					if_block0.m(t1.parentNode, t1);
@@ -23865,7 +23865,7 @@ Do you want to use the sanitised value?`)) {
     }
 
     // (21:2) {#if (       $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includePage!=="" &&      $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter===false    )}
-    function create_if_block_2$1(ctx) {
+    function create_if_block_2$2(ctx) {
     	let includepage;
     	let current;
 
@@ -23905,7 +23905,7 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$1.name,
+    		id: create_if_block_2$2.name,
     		type: "if",
     		source: "(21:2) {#if (       $collectionsStore[\\\"COLLECTIONS\\\"][$configStore[\\\"currentCollection\\\"]].includePage!==\\\"\\\" &&      $collectionsStore[\\\"COLLECTIONS\\\"][$configStore[\\\"currentCollection\\\"]].includeAfter===false    )}",
     		ctx
@@ -24092,12 +24092,12 @@ Do you want to use the sanitised value?`)) {
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[34] = list[i];
+    	child_ctx[39] = list[i];
     	return child_ctx;
     }
 
-    // (246:6) {#if order > 0}
-    function create_if_block_1$1(ctx) {
+    // (279:6) {#if order > 0}
+    function create_if_block_3$1(ctx) {
     	let i;
     	let i_id_value;
     	let mounted;
@@ -24106,24 +24106,24 @@ Do you want to use the sanitised value?`)) {
     	const block = {
     		c: function create() {
     			i = element("i");
-    			attr_dev(i, "class", "icon-arrow-up cc-move-collection svelte-1lzd0eh");
+    			attr_dev(i, "class", "icon-arrow-up cc-move-collection svelte-qjc48k");
     			attr_dev(i, "id", i_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-up");
-    			add_location(i, file$5, 246, 8, 11960);
+    			add_location(i, file$5, 279, 8, 13370);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(i, "click", /*moveCollectionUp*/ ctx[9], false, false, false),
-    					listen_dev(i, "keydown", /*moveCollectionUp*/ ctx[9], false, false, false)
+    					listen_dev(i, "click", /*moveCollectionUp*/ ctx[13], false, false, false),
+    					listen_dev(i, "keydown", /*moveCollectionUp*/ ctx[13], false, false, false)
     				];
 
     				mounted = true;
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && i_id_value !== (i_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-up")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && i_id_value !== (i_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-up")) {
     				attr_dev(i, "id", i_id_value);
     			}
     		},
@@ -24136,17 +24136,17 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$1.name,
+    		id: create_if_block_3$1.name,
     		type: "if",
-    		source: "(246:6) {#if order > 0}",
+    		source: "(279:6) {#if order > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (254:6) {#if order < numCollections - 1}
-    function create_if_block$2(ctx) {
+    // (287:6) {#if order < numCollections - 1}
+    function create_if_block_2$1(ctx) {
     	let i;
     	let i_id_value;
     	let mounted;
@@ -24155,24 +24155,24 @@ Do you want to use the sanitised value?`)) {
     	const block = {
     		c: function create() {
     			i = element("i");
-    			attr_dev(i, "class", "icon-arrow-down cc-move-collection svelte-1lzd0eh");
+    			attr_dev(i, "class", "icon-arrow-down cc-move-collection svelte-qjc48k");
     			attr_dev(i, "id", i_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-down");
-    			add_location(i, file$5, 254, 8, 12220);
+    			add_location(i, file$5, 287, 8, 13630);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(i, "click", /*moveCollectionDown*/ ctx[10], false, false, false),
-    					listen_dev(i, "keydown", /*moveCollectionDown*/ ctx[10], false, false, false)
+    					listen_dev(i, "click", /*moveCollectionDown*/ ctx[14], false, false, false),
+    					listen_dev(i, "keydown", /*moveCollectionDown*/ ctx[14], false, false, false)
     				];
 
     				mounted = true;
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && i_id_value !== (i_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-down")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && i_id_value !== (i_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-down")) {
     				attr_dev(i, "id", i_id_value);
     			}
     		},
@@ -24185,28 +24185,28 @@ Do you want to use the sanitised value?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$2.name,
+    		id: create_if_block_2$1.name,
     		type: "if",
-    		source: "(254:6) {#if order < numCollections - 1}",
+    		source: "(287:6) {#if order < numCollections - 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (323:8) {#each availableRepresentations as representation}
+    // (356:8) {#each availableRepresentations as representation}
     function create_each_block$2(ctx) {
     	let option;
-    	let t_value = /*representation*/ ctx[34] + "";
+    	let t_value = /*representation*/ ctx[39] + "";
     	let t;
 
     	const block = {
     		c: function create() {
     			option = element("option");
     			t = text(t_value);
-    			option.__value = /*representation*/ ctx[34];
+    			option.__value = /*representation*/ ctx[39];
     			option.value = option.__value;
-    			add_location(option, file$5, 323, 10, 14396);
+    			add_location(option, file$5, 356, 10, 15806);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -24222,7 +24222,96 @@ Do you want to use the sanitised value?`)) {
     		block,
     		id: create_each_block$2.name,
     		type: "each",
-    		source: "(323:8) {#each availableRepresentations as representation}",
+    		source: "(356:8) {#each availableRepresentations as representation}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (498:4) {#if !includePageExists[collectionName]}
+    function create_if_block_1$1(ctx) {
+    	let div;
+    	let t0;
+    	let strong;
+    	let t1_value = /*includePageName*/ ctx[5][/*collectionName*/ ctx[0]] + "";
+    	let t1;
+    	let t2;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			t0 = text("Page ");
+    			strong = element("strong");
+    			t1 = text(t1_value);
+    			t2 = text(" does not exist");
+    			add_location(strong, file$5, 499, 13, 20684);
+    			attr_dev(div, "class", "cc-collection-two-line-error svelte-qjc48k");
+    			add_location(div, file$5, 498, 6, 20627);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, t0);
+    			append_dev(div, strong);
+    			append_dev(strong, t1);
+    			append_dev(div, t2);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*includePageName, collectionName*/ 33 && t1_value !== (t1_value = /*includePageName*/ ctx[5][/*collectionName*/ ctx[0]] + "")) set_data_dev(t1, t1_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$1.name,
+    		type: "if",
+    		source: "(498:4) {#if !includePageExists[collectionName]}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (545:4) {#if !outputPageExists[collectionName]}
+    function create_if_block$2(ctx) {
+    	let div;
+    	let t0;
+    	let strong;
+    	let t1_value = /*outputPageName*/ ctx[6][/*collectionName*/ ctx[0]] + "";
+    	let t1;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			t0 = text("Will create a new page named ");
+    			strong = element("strong");
+    			t1 = text(t1_value);
+    			add_location(strong, file$5, 546, 37, 22366);
+    			attr_dev(div, "class", "cc-collection-two-line-warning svelte-qjc48k");
+    			add_location(div, file$5, 545, 6, 22283);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, t0);
+    			append_dev(div, strong);
+    			append_dev(strong, t1);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*outputPageName, collectionName*/ 65 && t1_value !== (t1_value = /*outputPageName*/ ctx[6][/*collectionName*/ ctx[0]] + "")) set_data_dev(t1, t1_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$2.name,
+    		type: "if",
+    		source: "(545:4) {#if !outputPageExists[collectionName]}",
     		ctx
     	});
 
@@ -24252,7 +24341,7 @@ Do you want to use the sanitised value?`)) {
     	let t10;
     	let sl_tooltip0;
     	let div0;
-    	let raw0_value = /*HELP*/ ctx[14].configName.tooltip + "";
+    	let raw0_value = /*HELP*/ ctx[19].configName.tooltip + "";
     	let t11;
     	let a0;
     	let i1;
@@ -24269,7 +24358,7 @@ Do you want to use the sanitised value?`)) {
     	let t15;
     	let sl_tooltip1;
     	let div2;
-    	let raw1_value = /*HELP*/ ctx[14].configRepresentation.tooltip + "";
+    	let raw1_value = /*HELP*/ ctx[19].configRepresentation.tooltip + "";
     	let t16;
     	let a1;
     	let i2;
@@ -24287,7 +24376,7 @@ Do you want to use the sanitised value?`)) {
     	let t21;
     	let sl_tooltip2;
     	let div4;
-    	let raw2_value = /*HELP*/ ctx[14].configDefault.tooltip + "";
+    	let raw2_value = /*HELP*/ ctx[19].configDefault.tooltip + "";
     	let t22;
     	let a2;
     	let i3;
@@ -24303,7 +24392,7 @@ Do you want to use the sanitised value?`)) {
     	let t26;
     	let sl_tooltip3;
     	let div6;
-    	let raw3_value = /*HELP*/ ctx[14].configHide.tooltip + "";
+    	let raw3_value = /*HELP*/ ctx[19].configHide.tooltip + "";
     	let t27;
     	let a3;
     	let i4;
@@ -24319,7 +24408,7 @@ Do you want to use the sanitised value?`)) {
     	let t31;
     	let sl_tooltip4;
     	let div8;
-    	let raw4_value = /*HELP*/ ctx[14].configUnallocated.tooltip + "";
+    	let raw4_value = /*HELP*/ ctx[19].configUnallocated.tooltip + "";
     	let t32;
     	let a4;
     	let i5;
@@ -24335,7 +24424,7 @@ Do you want to use the sanitised value?`)) {
     	let t36;
     	let sl_tooltip5;
     	let div11;
-    	let raw5_value = /*HELP*/ ctx[14].configIncludePage.tooltip + "";
+    	let raw5_value = /*HELP*/ ctx[19].configIncludePage.tooltip + "";
     	let t37;
     	let a5;
     	let i6;
@@ -24353,7 +24442,7 @@ Do you want to use the sanitised value?`)) {
     	let t43;
     	let sl_tooltip6;
     	let div14;
-    	let raw6_value = /*HELP*/ ctx[14].configIncludePageAfter.tooltip + "";
+    	let raw6_value = /*HELP*/ ctx[19].configIncludePageAfter.tooltip + "";
     	let t44;
     	let a6;
     	let i7;
@@ -24361,52 +24450,55 @@ Do you want to use the sanitised value?`)) {
     	let input5;
     	let input5_id_value;
     	let t46;
+    	let t47;
     	let div21;
     	let div18;
     	let label7;
-    	let t47;
-    	let label7_for_value;
     	let t48;
+    	let label7_for_value;
+    	let t49;
     	let sl_tooltip7;
     	let div17;
-    	let raw7_value = /*HELP*/ ctx[14].configOutputPage.tooltip + "";
-    	let t49;
+    	let raw7_value = /*HELP*/ ctx[19].configOutputPage.tooltip + "";
+    	let t50;
     	let a7;
     	let i8;
-    	let t50;
+    	let t51;
     	let div19;
-    	let t52;
+    	let t53;
     	let div20;
     	let input6;
     	let input6_id_value;
-    	let t53;
-    	let button0;
     	let t54;
-    	let button0_id_value;
+    	let button0;
     	let t55;
+    	let button0_id_value;
+    	let button0_disabled_value;
+    	let t56;
+    	let t57;
     	let div23;
     	let span6;
     	let label8;
-    	let t56;
+    	let t58;
     	let label8_for_value;
-    	let t57;
+    	let t59;
     	let sl_tooltip8;
     	let div22;
-    	let raw8_value = /*HELP*/ ctx[14].configApplyLabels.tooltip + "";
-    	let t58;
+    	let raw8_value = /*HELP*/ ctx[19].configApplyLabels.tooltip + "";
+    	let t60;
     	let a8;
     	let i9;
-    	let t59;
+    	let t61;
     	let span7;
     	let button1;
-    	let t60;
+    	let t62;
     	let button1_id_value;
     	let div24_id_value;
     	let mounted;
     	let dispose;
-    	let if_block0 = /*order*/ ctx[1] > 0 && create_if_block_1$1(ctx);
-    	let if_block1 = /*order*/ ctx[1] < /*numCollections*/ ctx[2] - 1 && create_if_block$2(ctx);
-    	let each_value = /*availableRepresentations*/ ctx[7];
+    	let if_block0 = /*order*/ ctx[1] > 0 && create_if_block_3$1(ctx);
+    	let if_block1 = /*order*/ ctx[1] < /*numCollections*/ ctx[2] - 1 && create_if_block_2$1(ctx);
+    	let each_value = /*availableRepresentations*/ ctx[11];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -24414,15 +24506,18 @@ Do you want to use the sanitised value?`)) {
     		each_blocks[i] = create_each_block$2(get_each_context$2(ctx, each_value, i));
     	}
 
+    	let if_block2 = !/*includePageExists*/ ctx[3][/*collectionName*/ ctx[0]] && create_if_block_1$1(ctx);
+    	let if_block3 = !/*outputPageExists*/ ctx[4][/*collectionName*/ ctx[0]] && create_if_block$2(ctx);
+
     	const block = {
     		c: function create() {
     			div24 = element("div");
     			p = element("p");
     			t0 = text(/*collectionName*/ ctx[0]);
     			t1 = text(" - (");
-    			t2 = text(/*moduleCount*/ ctx[5]);
+    			t2 = text(/*moduleCount*/ ctx[9]);
     			t3 = space();
-    			t4 = text(/*moduleName*/ ctx[6]);
+    			t4 = text(/*moduleName*/ ctx[10]);
     			t5 = text(")\r\n    ");
     			span0 = element("span");
     			if (if_block0) if_block0.c();
@@ -24505,7 +24600,7 @@ Do you want to use the sanitised value?`)) {
     			div16 = element("div");
     			div12 = element("div");
     			label5 = element("label");
-    			t35 = text("Include Page");
+    			t35 = text("Include page");
     			t36 = space();
     			sl_tooltip5 = element("sl-tooltip");
     			div11 = element("div");
@@ -24531,250 +24626,255 @@ Do you want to use the sanitised value?`)) {
     			t45 = space();
     			input5 = element("input");
     			t46 = space();
+    			if (if_block2) if_block2.c();
+    			t47 = space();
     			div21 = element("div");
     			div18 = element("div");
     			label7 = element("label");
-    			t47 = text("Output page");
-    			t48 = space();
+    			t48 = text("Output page");
+    			t49 = space();
     			sl_tooltip7 = element("sl-tooltip");
     			div17 = element("div");
-    			t49 = space();
+    			t50 = space();
     			a7 = element("a");
     			i8 = element("i");
-    			t50 = space();
+    			t51 = space();
     			div19 = element("div");
     			div19.textContent = " ";
-    			t52 = space();
+    			t53 = space();
     			div20 = element("div");
     			input6 = element("input");
-    			t53 = space();
+    			t54 = space();
     			button0 = element("button");
-    			t54 = text("Update");
-    			t55 = space();
+    			t55 = text("Update");
+    			t56 = space();
+    			if (if_block3) if_block3.c();
+    			t57 = space();
     			div23 = element("div");
     			span6 = element("span");
     			label8 = element("label");
-    			t56 = text("🧪Apply module labels ☠️");
-    			t57 = space();
+    			t58 = text("🧪Apply module labels ☠️");
+    			t59 = space();
     			sl_tooltip8 = element("sl-tooltip");
     			div22 = element("div");
-    			t58 = space();
+    			t60 = space();
     			a8 = element("a");
     			i9 = element("i");
-    			t59 = space();
+    			t61 = space();
     			span7 = element("span");
     			button1 = element("button");
-    			t60 = text("Apply");
-    			attr_dev(i0, "class", "icon-trash cc-delete-collection svelte-1lzd0eh");
+    			t62 = text("Apply");
+    			attr_dev(i0, "class", "icon-trash cc-delete-collection svelte-qjc48k");
     			attr_dev(i0, "id", i0_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-delete");
-    			add_location(i0, file$5, 261, 6, 12446);
-    			attr_dev(span0, "class", "cc-collection-move svelte-1lzd0eh");
-    			add_location(span0, file$5, 244, 4, 11894);
-    			attr_dev(p, "class", "svelte-1lzd0eh");
-    			add_location(p, file$5, 241, 2, 11827);
+    			add_location(i0, file$5, 294, 6, 13856);
+    			attr_dev(span0, "class", "cc-collection-move svelte-qjc48k");
+    			add_location(span0, file$5, 277, 4, 13304);
+    			attr_dev(p, "class", "svelte-qjc48k");
+    			add_location(p, file$5, 274, 2, 13237);
     			attr_dev(label0, "for", label0_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-collectionName");
-    			attr_dev(label0, "class", "svelte-1lzd0eh");
-    			add_location(label0, file$5, 276, 6, 12851);
+    			attr_dev(label0, "class", "svelte-qjc48k");
+    			add_location(label0, file$5, 309, 6, 14261);
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file$5, 278, 8, 12952);
-    			attr_dev(i1, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i1, file$5, 280, 10, 13094);
-    			attr_dev(a0, "href", /*HELP*/ ctx[14].configName.url);
+    			add_location(div0, file$5, 311, 8, 14362);
+    			attr_dev(i1, "class", "icon-question cc-module-icon svelte-qjc48k");
+    			add_location(i1, file$5, 313, 10, 14504);
+    			attr_dev(a0, "href", /*HELP*/ ctx[19].configName.url);
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "target", "_blank");
-    			add_location(a0, file$5, 279, 8, 13019);
-    			set_custom_element_data(sl_tooltip0, "class", "svelte-1lzd0eh");
-    			add_location(sl_tooltip0, file$5, 277, 6, 12930);
-    			attr_dev(span1, "class", "cc-collection-label svelte-1lzd0eh");
-    			add_location(span1, file$5, 275, 4, 12809);
+    			add_location(a0, file$5, 312, 8, 14429);
+    			set_custom_element_data(sl_tooltip0, "class", "svelte-qjc48k");
+    			add_location(sl_tooltip0, file$5, 310, 6, 14340);
+    			attr_dev(span1, "class", "cc-collection-label svelte-qjc48k");
+    			add_location(span1, file$5, 308, 4, 14219);
     			attr_dev(input0, "type", "text");
     			attr_dev(input0, "id", input0_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-collectionName");
     			input0.value = /*collectionName*/ ctx[0];
-    			attr_dev(input0, "class", "svelte-1lzd0eh");
-    			add_location(input0, file$5, 285, 6, 13232);
-    			attr_dev(span2, "class", "cc-collection-input svelte-1lzd0eh");
-    			add_location(span2, file$5, 284, 4, 13190);
-    			attr_dev(div1, "class", "cc-collection-form svelte-1lzd0eh");
-    			add_location(div1, file$5, 274, 2, 12771);
+    			attr_dev(input0, "class", "svelte-qjc48k");
+    			add_location(input0, file$5, 318, 6, 14642);
+    			attr_dev(span2, "class", "cc-collection-input svelte-qjc48k");
+    			add_location(span2, file$5, 317, 4, 14600);
+    			attr_dev(div1, "class", "cc-collection-form svelte-qjc48k");
+    			add_location(div1, file$5, 307, 2, 14181);
     			attr_dev(label1, "for", label1_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-representation");
-    			attr_dev(label1, "class", "svelte-1lzd0eh");
-    			add_location(label1, file$5, 296, 6, 13512);
+    			attr_dev(label1, "class", "svelte-qjc48k");
+    			add_location(label1, file$5, 329, 6, 14922);
     			attr_dev(div2, "slot", "content");
-    			add_location(div2, file$5, 300, 8, 13641);
-    			attr_dev(i2, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i2, file$5, 308, 10, 13868);
-    			attr_dev(a1, "href", /*HELP*/ ctx[14].configRepresentation.url);
+    			add_location(div2, file$5, 333, 8, 15051);
+    			attr_dev(i2, "class", "icon-question cc-module-icon svelte-qjc48k");
+    			add_location(i2, file$5, 341, 10, 15278);
+    			attr_dev(a1, "href", /*HELP*/ ctx[19].configRepresentation.url);
     			attr_dev(a1, "rel", "noreferrer");
     			attr_dev(a1, "target", "_blank");
-    			add_location(a1, file$5, 303, 8, 13740);
-    			set_custom_element_data(sl_tooltip1, "class", "svelte-1lzd0eh");
-    			add_location(sl_tooltip1, file$5, 299, 6, 13619);
-    			attr_dev(span3, "class", "cc-collection-label svelte-1lzd0eh");
-    			add_location(span3, file$5, 295, 4, 13470);
+    			add_location(a1, file$5, 336, 8, 15150);
+    			set_custom_element_data(sl_tooltip1, "class", "svelte-qjc48k");
+    			add_location(sl_tooltip1, file$5, 332, 6, 15029);
+    			attr_dev(span3, "class", "cc-collection-label svelte-qjc48k");
+    			add_location(span3, file$5, 328, 4, 14880);
     			attr_dev(select, "id", select_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-representation");
-    			attr_dev(select, "class", "cc-collection-representation svelte-1lzd0eh");
-    			if (/*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]]["representation"] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[15].call(select));
-    			add_location(select, file$5, 313, 6, 14006);
-    			attr_dev(span4, "class", "cc-collection-input svelte-1lzd0eh");
-    			add_location(span4, file$5, 312, 4, 13964);
-    			attr_dev(div3, "class", "cc-collection-form svelte-1lzd0eh");
-    			add_location(div3, file$5, 294, 2, 13432);
+    			attr_dev(select, "class", "cc-collection-representation svelte-qjc48k");
+    			if (/*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]]["representation"] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[20].call(select));
+    			add_location(select, file$5, 346, 6, 15416);
+    			attr_dev(span4, "class", "cc-collection-input svelte-qjc48k");
+    			add_location(span4, file$5, 345, 4, 15374);
+    			attr_dev(div3, "class", "cc-collection-form svelte-qjc48k");
+    			add_location(div3, file$5, 327, 2, 14842);
     			attr_dev(label2, "for", label2_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-default");
-    			attr_dev(label2, "class", "svelte-1lzd0eh");
-    			add_location(label2, file$5, 331, 6, 14568);
+    			attr_dev(label2, "class", "svelte-qjc48k");
+    			add_location(label2, file$5, 364, 6, 15978);
     			attr_dev(div4, "slot", "content");
-    			add_location(div4, file$5, 335, 8, 14690);
-    			attr_dev(i3, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i3, file$5, 339, 10, 14860);
-    			attr_dev(a2, "href", /*HELP*/ ctx[14].configDefault.url);
+    			add_location(div4, file$5, 368, 8, 16100);
+    			attr_dev(i3, "class", "icon-question cc-module-icon svelte-qjc48k");
+    			add_location(i3, file$5, 372, 10, 16270);
+    			attr_dev(a2, "href", /*HELP*/ ctx[19].configDefault.url);
     			attr_dev(a2, "target", "_blank");
     			attr_dev(a2, "rel", "noreferrer");
-    			add_location(a2, file$5, 338, 8, 14782);
-    			set_custom_element_data(sl_tooltip2, "class", "svelte-1lzd0eh");
-    			add_location(sl_tooltip2, file$5, 334, 6, 14668);
+    			add_location(a2, file$5, 371, 8, 16192);
+    			set_custom_element_data(sl_tooltip2, "class", "svelte-qjc48k");
+    			add_location(sl_tooltip2, file$5, 367, 6, 16078);
     			attr_dev(input1, "type", "checkbox");
     			attr_dev(input1, "id", input1_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-default");
-    			input1.checked = input1_checked_value = /*$collectionsStore*/ ctx[4]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0];
-    			attr_dev(input1, "class", "svelte-1lzd0eh");
-    			add_location(input1, file$5, 342, 6, 14945);
-    			add_location(div5, file$5, 330, 4, 14555);
+    			input1.checked = input1_checked_value = /*$collectionsStore*/ ctx[8]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0];
+    			attr_dev(input1, "class", "svelte-qjc48k");
+    			add_location(input1, file$5, 375, 6, 16355);
+    			add_location(div5, file$5, 363, 4, 15965);
     			attr_dev(label3, "for", label3_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide");
-    			attr_dev(label3, "class", "svelte-1lzd0eh");
-    			add_location(label3, file$5, 351, 6, 15253);
+    			attr_dev(label3, "class", "svelte-qjc48k");
+    			add_location(label3, file$5, 384, 6, 16663);
     			attr_dev(div6, "slot", "content");
-    			add_location(div6, file$5, 353, 8, 15353);
-    			attr_dev(i4, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i4, file$5, 357, 10, 15517);
+    			add_location(div6, file$5, 386, 8, 16763);
+    			attr_dev(i4, "class", "icon-question cc-module-icon svelte-qjc48k");
+    			add_location(i4, file$5, 390, 10, 16927);
     			attr_dev(a3, "target", "_blank");
-    			attr_dev(a3, "href", /*HELP*/ ctx[14].configHide.url);
+    			attr_dev(a3, "href", /*HELP*/ ctx[19].configHide.url);
     			attr_dev(a3, "rel", "noreferrer");
-    			add_location(a3, file$5, 356, 8, 15442);
-    			set_custom_element_data(sl_tooltip3, "class", "svelte-1lzd0eh");
-    			add_location(sl_tooltip3, file$5, 352, 6, 15331);
+    			add_location(a3, file$5, 389, 8, 16852);
+    			set_custom_element_data(sl_tooltip3, "class", "svelte-qjc48k");
+    			add_location(sl_tooltip3, file$5, 385, 6, 16741);
     			attr_dev(input2, "type", "checkbox");
     			attr_dev(input2, "id", input2_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide");
-    			attr_dev(input2, "class", "cc-config-collection-hide svelte-1lzd0eh");
-    			input2.disabled = input2_disabled_value = /*$collectionsStore*/ ctx[4]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0];
-    			add_location(input2, file$5, 360, 6, 15602);
-    			attr_dev(div7, "class", "cc-collection-double-center svelte-1lzd0eh");
-    			add_location(div7, file$5, 350, 4, 15204);
+    			attr_dev(input2, "class", "cc-config-collection-hide svelte-qjc48k");
+    			input2.disabled = input2_disabled_value = /*$collectionsStore*/ ctx[8]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0];
+    			add_location(input2, file$5, 393, 6, 17012);
+    			attr_dev(div7, "class", "cc-collection-double-center svelte-qjc48k");
+    			add_location(div7, file$5, 383, 4, 16614);
     			attr_dev(label4, "for", label4_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated");
-    			attr_dev(label4, "class", "svelte-1lzd0eh");
-    			add_location(label4, file$5, 371, 6, 16026);
+    			attr_dev(label4, "class", "svelte-qjc48k");
+    			add_location(label4, file$5, 404, 6, 17436);
     			attr_dev(div8, "slot", "content");
-    			add_location(div8, file$5, 375, 8, 16160);
-    			attr_dev(i5, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i5, file$5, 379, 10, 16338);
-    			attr_dev(a4, "href", /*HELP*/ ctx[14].configUnallocated.url);
+    			add_location(div8, file$5, 408, 8, 17570);
+    			attr_dev(i5, "class", "icon-question cc-module-icon svelte-qjc48k");
+    			add_location(i5, file$5, 412, 10, 17748);
+    			attr_dev(a4, "href", /*HELP*/ ctx[19].configUnallocated.url);
     			attr_dev(a4, "target", "_blank");
     			attr_dev(a4, "rel", "noreferrer");
-    			add_location(a4, file$5, 378, 8, 16256);
-    			set_custom_element_data(sl_tooltip4, "class", "svelte-1lzd0eh");
-    			add_location(sl_tooltip4, file$5, 374, 6, 16138);
+    			add_location(a4, file$5, 411, 8, 17666);
+    			set_custom_element_data(sl_tooltip4, "class", "svelte-qjc48k");
+    			add_location(sl_tooltip4, file$5, 407, 6, 17548);
     			attr_dev(input3, "type", "checkbox");
     			attr_dev(input3, "id", input3_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated");
-    			attr_dev(input3, "class", "svelte-1lzd0eh");
-    			add_location(input3, file$5, 382, 6, 16423);
-    			add_location(div9, file$5, 370, 4, 16013);
-    			attr_dev(div10, "class", "cc-collection-double svelte-1lzd0eh");
-    			add_location(div10, file$5, 329, 2, 14515);
+    			attr_dev(input3, "class", "svelte-qjc48k");
+    			add_location(input3, file$5, 415, 6, 17833);
+    			add_location(div9, file$5, 403, 4, 17423);
+    			attr_dev(div10, "class", "cc-collection-double svelte-qjc48k");
+    			add_location(div10, file$5, 362, 2, 15925);
     			attr_dev(label5, "for", label5_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page");
-    			attr_dev(label5, "class", "svelte-1lzd0eh");
-    			add_location(label5, file$5, 401, 6, 17013);
+    			attr_dev(label5, "class", "svelte-qjc48k");
+    			add_location(label5, file$5, 436, 6, 18445);
     			attr_dev(div11, "slot", "content");
-    			add_location(div11, file$5, 405, 8, 17138);
-    			attr_dev(i6, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i6, file$5, 413, 11, 17387);
+    			add_location(div11, file$5, 440, 8, 18570);
+    			attr_dev(i6, "class", "icon-question cc-module-icon svelte-qjc48k");
+    			add_location(i6, file$5, 448, 11, 18819);
     			attr_dev(a5, "id", "cc-about-include-page");
     			attr_dev(a5, "rel", "noreferrer");
     			attr_dev(a5, "target", "_blank");
-    			attr_dev(a5, "href", /*HELP*/ ctx[14].configIncludePage.url);
-    			add_location(a5, file$5, 408, 8, 17234);
-    			set_custom_element_data(sl_tooltip5, "class", "svelte-1lzd0eh");
-    			add_location(sl_tooltip5, file$5, 404, 6, 17116);
-    			attr_dev(div12, "class", "cc-collection-two-line-header svelte-1lzd0eh");
-    			add_location(div12, file$5, 400, 4, 16962);
-    			add_location(div13, file$5, 417, 4, 17482);
+    			attr_dev(a5, "href", /*HELP*/ ctx[19].configIncludePage.url);
+    			add_location(a5, file$5, 443, 8, 18666);
+    			set_custom_element_data(sl_tooltip5, "class", "svelte-qjc48k");
+    			add_location(sl_tooltip5, file$5, 439, 6, 18548);
+    			attr_dev(div12, "class", "cc-collection-two-line-header svelte-qjc48k");
+    			add_location(div12, file$5, 435, 4, 18394);
+    			add_location(div13, file$5, 452, 4, 18914);
     			attr_dev(input4, "id", input4_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page");
-    			attr_dev(input4, "class", "cc-existing-collection svelte-1lzd0eh");
-    			add_location(input4, file$5, 419, 6, 17554);
+    			attr_dev(input4, "class", "cc-existing-collection svelte-qjc48k");
+    			add_location(input4, file$5, 454, 6, 18986);
     			attr_dev(label6, "for", label6_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after");
-    			attr_dev(label6, "class", "svelte-1lzd0eh");
-    			add_location(label6, file$5, 435, 8, 18179);
+    			attr_dev(label6, "class", "svelte-qjc48k");
+    			add_location(label6, file$5, 470, 8, 19611);
     			attr_dev(div14, "slot", "content");
-    			add_location(div14, file$5, 439, 10, 18314);
-    			attr_dev(i7, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i7, file$5, 448, 12, 18602);
+    			add_location(div14, file$5, 474, 10, 19746);
+    			attr_dev(i7, "class", "icon-question cc-module-icon svelte-qjc48k");
+    			add_location(i7, file$5, 483, 12, 20034);
     			attr_dev(a6, "id", "cc-about-include-after");
-    			attr_dev(a6, "href", /*HELP*/ ctx[14].configIncludePageAfter.url);
+    			attr_dev(a6, "href", /*HELP*/ ctx[19].configIncludePageAfter.url);
     			attr_dev(a6, "target", "_blank");
     			attr_dev(a6, "rel", "noreferrer");
-    			add_location(a6, file$5, 442, 10, 18421);
-    			set_custom_element_data(sl_tooltip6, "class", "svelte-1lzd0eh");
-    			add_location(sl_tooltip6, file$5, 438, 8, 18290);
+    			add_location(a6, file$5, 477, 10, 19853);
+    			set_custom_element_data(sl_tooltip6, "class", "svelte-qjc48k");
+    			add_location(sl_tooltip6, file$5, 473, 8, 19722);
     			attr_dev(input5, "type", "checkbox");
     			attr_dev(input5, "id", input5_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after");
-    			attr_dev(input5, "class", "cc-config-collection-include-after svelte-1lzd0eh");
-    			add_location(input5, file$5, 451, 8, 18693);
-    			attr_dev(span5, "class", "cc-collection-label svelte-1lzd0eh");
-    			add_location(span5, file$5, 434, 6, 18135);
-    			attr_dev(div15, "class", "cc-collection-two-line-body svelte-1lzd0eh");
-    			add_location(div15, file$5, 418, 4, 17505);
-    			attr_dev(div16, "class", "cc-collection-two-line svelte-1lzd0eh");
-    			add_location(div16, file$5, 399, 2, 16920);
+    			attr_dev(input5, "class", "cc-config-collection-include-after svelte-qjc48k");
+    			add_location(input5, file$5, 486, 8, 20125);
+    			attr_dev(span5, "class", "cc-collection-label svelte-qjc48k");
+    			add_location(span5, file$5, 469, 6, 19567);
+    			attr_dev(div15, "class", "cc-collection-two-line-body svelte-qjc48k");
+    			add_location(div15, file$5, 453, 4, 18937);
+    			attr_dev(div16, "class", "cc-collection-two-line svelte-qjc48k");
+    			add_location(div16, file$5, 434, 2, 18352);
     			attr_dev(label7, "for", label7_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page");
-    			attr_dev(label7, "class", "svelte-1lzd0eh");
-    			add_location(label7, file$5, 466, 6, 19272);
+    			attr_dev(label7, "class", "svelte-qjc48k");
+    			add_location(label7, file$5, 506, 6, 20905);
     			attr_dev(div17, "slot", "content");
-    			add_location(div17, file$5, 470, 8, 19395);
-    			attr_dev(i8, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i8, file$5, 479, 10, 19658);
+    			add_location(div17, file$5, 510, 8, 21028);
+    			attr_dev(i8, "class", "icon-question cc-module-icon svelte-qjc48k");
+    			add_location(i8, file$5, 519, 10, 21291);
     			attr_dev(a7, "id", "cc-about-update-output-page");
     			attr_dev(a7, "target", "_blank");
-    			attr_dev(a7, "href", /*HELP*/ ctx[14].configOutputPage.url);
+    			attr_dev(a7, "href", /*HELP*/ ctx[19].configOutputPage.url);
     			attr_dev(a7, "rel", "noreferrer");
-    			add_location(a7, file$5, 473, 8, 19490);
-    			set_custom_element_data(sl_tooltip7, "class", "svelte-1lzd0eh");
-    			add_location(sl_tooltip7, file$5, 469, 6, 19373);
-    			attr_dev(div18, "class", "cc-collection-two-line-header svelte-1lzd0eh");
-    			add_location(div18, file$5, 465, 4, 19221);
-    			add_location(div19, file$5, 483, 4, 19753);
+    			add_location(a7, file$5, 513, 8, 21123);
+    			set_custom_element_data(sl_tooltip7, "class", "svelte-qjc48k");
+    			add_location(sl_tooltip7, file$5, 509, 6, 21006);
+    			attr_dev(div18, "class", "cc-collection-two-line-header svelte-qjc48k");
+    			add_location(div18, file$5, 505, 4, 20854);
+    			add_location(div19, file$5, 523, 4, 21386);
     			attr_dev(input6, "id", input6_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page");
-    			attr_dev(input6, "class", "cc-existing-collection svelte-1lzd0eh");
-    			add_location(input6, file$5, 485, 6, 19825);
+    			attr_dev(input6, "class", "cc-existing-collection svelte-qjc48k");
+    			add_location(input6, file$5, 525, 6, 21458);
     			attr_dev(button0, "id", button0_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page-update");
-    			attr_dev(button0, "class", "btn cc-existing-collection svelte-1lzd0eh");
-    			add_location(button0, file$5, 498, 6, 20388);
-    			attr_dev(div20, "class", "cc-collection-two-line-body svelte-1lzd0eh");
-    			add_location(div20, file$5, 484, 4, 19776);
-    			attr_dev(div21, "class", "cc-collection-two-line svelte-1lzd0eh");
-    			add_location(div21, file$5, 464, 2, 19179);
+    			attr_dev(button0, "class", "btn cc-existing-collection svelte-qjc48k");
+    			button0.disabled = button0_disabled_value = /*outputPageName*/ ctx[6][/*collectionName*/ ctx[0]] === "";
+    			add_location(button0, file$5, 538, 6, 22021);
+    			attr_dev(div20, "class", "cc-collection-two-line-body svelte-qjc48k");
+    			add_location(div20, file$5, 524, 4, 21409);
+    			attr_dev(div21, "class", "cc-collection-two-line svelte-qjc48k");
+    			add_location(div21, file$5, 504, 2, 20812);
     			attr_dev(label8, "for", label8_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-apply-module-labels");
-    			attr_dev(label8, "class", "svelte-1lzd0eh");
-    			add_location(label8, file$5, 507, 6, 20651);
+    			attr_dev(label8, "class", "svelte-qjc48k");
+    			add_location(label8, file$5, 555, 6, 22574);
     			attr_dev(div22, "slot", "content");
-    			add_location(div22, file$5, 511, 8, 20832);
-    			attr_dev(i9, "class", "icon-question cc-module-icon svelte-1lzd0eh");
-    			add_location(i9, file$5, 520, 10, 21098);
+    			add_location(div22, file$5, 559, 8, 22755);
+    			attr_dev(i9, "class", "icon-question cc-module-icon svelte-qjc48k");
+    			add_location(i9, file$5, 568, 10, 23021);
     			attr_dev(a8, "id", "cc-about-apply-module-labels");
     			attr_dev(a8, "target", "_blank");
-    			attr_dev(a8, "href", /*HELP*/ ctx[14].configApplyLabels.url);
+    			attr_dev(a8, "href", /*HELP*/ ctx[19].configApplyLabels.url);
     			attr_dev(a8, "rel", "noreferrer");
-    			add_location(a8, file$5, 514, 8, 20928);
-    			set_custom_element_data(sl_tooltip8, "class", "cc-about-apply-module-labels svelte-1lzd0eh");
-    			add_location(sl_tooltip8, file$5, 510, 6, 20773);
-    			attr_dev(span6, "class", "cc-collection-input-reverse svelte-1lzd0eh");
-    			add_location(span6, file$5, 506, 4, 20601);
+    			add_location(a8, file$5, 562, 8, 22851);
+    			set_custom_element_data(sl_tooltip8, "class", "cc-about-apply-module-labels svelte-qjc48k");
+    			add_location(sl_tooltip8, file$5, 558, 6, 22696);
+    			attr_dev(span6, "class", "cc-collection-input-reverse svelte-qjc48k");
+    			add_location(span6, file$5, 554, 4, 22524);
     			attr_dev(button1, "id", button1_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-apply-module-labels");
-    			attr_dev(button1, "class", "btn cc-existing-collection svelte-1lzd0eh");
-    			add_location(button1, file$5, 526, 6, 21297);
-    			attr_dev(span7, "class", "cc-collection-label-reverse svelte-1lzd0eh");
-    			add_location(span7, file$5, 524, 4, 21194);
-    			attr_dev(div23, "class", "cc-collection-form-reverse svelte-1lzd0eh");
-    			add_location(div23, file$5, 505, 2, 20555);
-    			attr_dev(div24, "class", "cc-existing-collection border border-trbl svelte-1lzd0eh");
+    			attr_dev(button1, "class", "btn cc-existing-collection svelte-qjc48k");
+    			add_location(button1, file$5, 574, 6, 23220);
+    			attr_dev(span7, "class", "cc-collection-label-reverse svelte-qjc48k");
+    			add_location(span7, file$5, 572, 4, 23117);
+    			attr_dev(div23, "class", "cc-collection-form-reverse svelte-qjc48k");
+    			add_location(div23, file$5, 553, 2, 22478);
+    			attr_dev(div24, "class", "cc-existing-collection border border-trbl svelte-qjc48k");
     			attr_dev(div24, "id", div24_id_value = "cc-collection-" + /*collectionName*/ ctx[0]);
-    			add_location(div24, file$5, 237, 0, 11724);
+    			add_location(div24, file$5, 270, 0, 13134);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -24830,7 +24930,7 @@ Do you want to use the sanitised value?`)) {
     				each_blocks[i].m(select, null);
     			}
 
-    			select_option(select, /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]]["representation"]);
+    			select_option(select, /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]]["representation"]);
     			append_dev(div24, t19);
     			append_dev(div24, div10);
     			append_dev(div10, div5);
@@ -24858,7 +24958,7 @@ Do you want to use the sanitised value?`)) {
     			append_dev(a3, i4);
     			append_dev(div7, t28);
     			append_dev(div7, input2);
-    			input2.checked = /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]]["hide"];
+    			input2.checked = /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]]["hide"];
     			append_dev(div10, t29);
     			append_dev(div10, div9);
     			append_dev(div9, label4);
@@ -24872,7 +24972,7 @@ Do you want to use the sanitised value?`)) {
     			append_dev(a4, i5);
     			append_dev(div9, t33);
     			append_dev(div9, input3);
-    			input3.checked = /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]]["unallocated"];
+    			input3.checked = /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]]["unallocated"];
     			append_dev(div24, t34);
     			append_dev(div24, div16);
     			append_dev(div16, div12);
@@ -24890,7 +24990,7 @@ Do you want to use the sanitised value?`)) {
     			append_dev(div16, t40);
     			append_dev(div16, div15);
     			append_dev(div15, input4);
-    			set_input_value(input4, /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]].includePage);
+    			set_input_value(input4, /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]].includePage);
     			append_dev(div15, t41);
     			append_dev(div15, span5);
     			append_dev(span5, label6);
@@ -24904,68 +25004,72 @@ Do you want to use the sanitised value?`)) {
     			append_dev(a6, i7);
     			append_dev(span5, t45);
     			append_dev(span5, input5);
-    			input5.checked = /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]].includeAfter;
-    			append_dev(div24, t46);
+    			input5.checked = /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]].includeAfter;
+    			append_dev(div16, t46);
+    			if (if_block2) if_block2.m(div16, null);
+    			append_dev(div24, t47);
     			append_dev(div24, div21);
     			append_dev(div21, div18);
     			append_dev(div18, label7);
-    			append_dev(label7, t47);
-    			append_dev(div18, t48);
+    			append_dev(label7, t48);
+    			append_dev(div18, t49);
     			append_dev(div18, sl_tooltip7);
     			append_dev(sl_tooltip7, div17);
     			div17.innerHTML = raw7_value;
-    			append_dev(sl_tooltip7, t49);
+    			append_dev(sl_tooltip7, t50);
     			append_dev(sl_tooltip7, a7);
     			append_dev(a7, i8);
-    			append_dev(div21, t50);
+    			append_dev(div21, t51);
     			append_dev(div21, div19);
-    			append_dev(div21, t52);
+    			append_dev(div21, t53);
     			append_dev(div21, div20);
     			append_dev(div20, input6);
-    			set_input_value(input6, /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]].outputPage);
-    			append_dev(div20, t53);
+    			set_input_value(input6, /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]].outputPage);
+    			append_dev(div20, t54);
     			append_dev(div20, button0);
-    			append_dev(button0, t54);
-    			append_dev(div24, t55);
+    			append_dev(button0, t55);
+    			append_dev(div21, t56);
+    			if (if_block3) if_block3.m(div21, null);
+    			append_dev(div24, t57);
     			append_dev(div24, div23);
     			append_dev(div23, span6);
     			append_dev(span6, label8);
-    			append_dev(label8, t56);
-    			append_dev(span6, t57);
+    			append_dev(label8, t58);
+    			append_dev(span6, t59);
     			append_dev(span6, sl_tooltip8);
     			append_dev(sl_tooltip8, div22);
     			div22.innerHTML = raw8_value;
-    			append_dev(sl_tooltip8, t58);
+    			append_dev(sl_tooltip8, t60);
     			append_dev(sl_tooltip8, a8);
     			append_dev(a8, i9);
-    			append_dev(div23, t59);
+    			append_dev(div23, t61);
     			append_dev(div23, span7);
     			append_dev(span7, button1);
-    			append_dev(button1, t60);
+    			append_dev(button1, t62);
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(i0, "click", /*deleteCollection*/ ctx[11], false, false, false),
-    					listen_dev(i0, "keydown", /*deleteCollection*/ ctx[11], false, false, false),
-    					listen_dev(input0, "change", /*changeCollectionName*/ ctx[12], false, false, false),
-    					listen_dev(select, "change", /*select_change_handler*/ ctx[15]),
-    					listen_dev(select, "change", /*change_handler*/ ctx[16], false, false, false),
-    					listen_dev(input1, "click", /*changeDefaultCollection*/ ctx[8], false, false, false),
-    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[17]),
-    					listen_dev(input2, "change", /*change_handler_1*/ ctx[18], false, false, false),
-    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[19]),
-    					listen_dev(input3, "change", /*change_handler_2*/ ctx[20], false, false, false),
-    					listen_dev(input4, "input", /*input4_input_handler*/ ctx[21]),
-    					listen_dev(input4, "click", /*click_handler*/ ctx[22], false, false, false),
-    					listen_dev(input4, "keydown", /*keydown_handler*/ ctx[23], false, false, false),
-    					listen_dev(input4, "focusout", /*focusout_handler*/ ctx[24], false, false, false),
-    					listen_dev(input5, "click", /*click_handler_1*/ ctx[25], false, false, false),
-    					listen_dev(input5, "keydown", /*keydown_handler_1*/ ctx[26], false, false, false),
-    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[27]),
-    					listen_dev(input6, "input", /*input6_input_handler*/ ctx[28]),
-    					listen_dev(input6, "click", /*click_handler_2*/ ctx[29], false, false, false),
-    					listen_dev(input6, "keydown", /*keydown_handler_2*/ ctx[30], false, false, false),
-    					listen_dev(input6, "focusout", /*focusout_handler_1*/ ctx[31], false, false, false)
+    					listen_dev(i0, "click", /*deleteCollection*/ ctx[15], false, false, false),
+    					listen_dev(i0, "keydown", /*deleteCollection*/ ctx[15], false, false, false),
+    					listen_dev(input0, "change", /*changeCollectionName*/ ctx[16], false, false, false),
+    					listen_dev(select, "change", /*select_change_handler*/ ctx[20]),
+    					listen_dev(select, "change", /*change_handler*/ ctx[21], false, false, false),
+    					listen_dev(input1, "click", /*changeDefaultCollection*/ ctx[12], false, false, false),
+    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[22]),
+    					listen_dev(input2, "change", /*change_handler_1*/ ctx[23], false, false, false),
+    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[24]),
+    					listen_dev(input3, "change", /*change_handler_2*/ ctx[25], false, false, false),
+    					listen_dev(input4, "input", /*input4_input_handler*/ ctx[26]),
+    					listen_dev(input4, "click", /*click_handler*/ ctx[27], false, false, false),
+    					listen_dev(input4, "keydown", /*keydown_handler*/ ctx[28], false, false, false),
+    					listen_dev(input4, "focusout", /*focusout_handler*/ ctx[29], false, false, false),
+    					listen_dev(input5, "click", /*click_handler_1*/ ctx[30], false, false, false),
+    					listen_dev(input5, "keydown", /*keydown_handler_1*/ ctx[31], false, false, false),
+    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[32]),
+    					listen_dev(input6, "input", /*input6_input_handler*/ ctx[33]),
+    					listen_dev(input6, "click", /*click_handler_2*/ ctx[34], false, false, false),
+    					listen_dev(input6, "keydown", /*keydown_handler_2*/ ctx[35], false, false, false),
+    					listen_dev(input6, "focusout", /*focusout_handler_1*/ ctx[36], false, false, false)
     				];
 
     				mounted = true;
@@ -24978,7 +25082,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
-    					if_block0 = create_if_block_1$1(ctx);
+    					if_block0 = create_if_block_3$1(ctx);
     					if_block0.c();
     					if_block0.m(span0, t6);
     				}
@@ -24991,7 +25095,7 @@ Do you want to use the sanitised value?`)) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
-    					if_block1 = create_if_block$2(ctx);
+    					if_block1 = create_if_block_2$1(ctx);
     					if_block1.c();
     					if_block1.m(span0, t7);
     				}
@@ -25000,28 +25104,28 @@ Do you want to use the sanitised value?`)) {
     				if_block1 = null;
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && i0_id_value !== (i0_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-delete")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && i0_id_value !== (i0_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-delete")) {
     				attr_dev(i0, "id", i0_id_value);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && label0_for_value !== (label0_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-collectionName")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && label0_for_value !== (label0_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-collectionName")) {
     				attr_dev(label0, "for", label0_for_value);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && input0_id_value !== (input0_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-collectionName")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && input0_id_value !== (input0_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-collectionName")) {
     				attr_dev(input0, "id", input0_id_value);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && input0.value !== /*collectionName*/ ctx[0]) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && input0.value !== /*collectionName*/ ctx[0]) {
     				prop_dev(input0, "value", /*collectionName*/ ctx[0]);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && label1_for_value !== (label1_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-representation")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && label1_for_value !== (label1_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-representation")) {
     				attr_dev(label1, "for", label1_for_value);
     			}
 
-    			if (dirty[0] & /*availableRepresentations*/ 128) {
-    				each_value = /*availableRepresentations*/ ctx[7];
+    			if (dirty[0] & /*availableRepresentations*/ 2048) {
+    				each_value = /*availableRepresentations*/ ctx[11];
     				validate_each_argument(each_value);
     				let i;
 
@@ -25044,103 +25148,133 @@ Do you want to use the sanitised value?`)) {
     				each_blocks.length = each_value.length;
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && select_id_value !== (select_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-representation")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && select_id_value !== (select_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-representation")) {
     				attr_dev(select, "id", select_id_value);
     			}
 
-    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 145) {
-    				select_option(select, /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]]["representation"]);
+    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 2305) {
+    				select_option(select, /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]]["representation"]);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && label2_for_value !== (label2_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-default")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && label2_for_value !== (label2_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-default")) {
     				attr_dev(label2, "for", label2_for_value);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && input1_id_value !== (input1_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-default")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && input1_id_value !== (input1_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-default")) {
     				attr_dev(input1, "id", input1_id_value);
     			}
 
-    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 145 && input1_checked_value !== (input1_checked_value = /*$collectionsStore*/ ctx[4]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0])) {
+    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 2305 && input1_checked_value !== (input1_checked_value = /*$collectionsStore*/ ctx[8]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0])) {
     				prop_dev(input1, "checked", input1_checked_value);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && label3_for_value !== (label3_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && label3_for_value !== (label3_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide")) {
     				attr_dev(label3, "for", label3_for_value);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && input2_id_value !== (input2_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && input2_id_value !== (input2_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide")) {
     				attr_dev(input2, "id", input2_id_value);
     			}
 
-    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 145 && input2_disabled_value !== (input2_disabled_value = /*$collectionsStore*/ ctx[4]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0])) {
+    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 2305 && input2_disabled_value !== (input2_disabled_value = /*$collectionsStore*/ ctx[8]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0])) {
     				prop_dev(input2, "disabled", input2_disabled_value);
     			}
 
-    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 145) {
-    				input2.checked = /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]]["hide"];
+    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 2305) {
+    				input2.checked = /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]]["hide"];
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && label4_for_value !== (label4_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && label4_for_value !== (label4_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated")) {
     				attr_dev(label4, "for", label4_for_value);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && input3_id_value !== (input3_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && input3_id_value !== (input3_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated")) {
     				attr_dev(input3, "id", input3_id_value);
     			}
 
-    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 145) {
-    				input3.checked = /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]]["unallocated"];
+    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 2305) {
+    				input3.checked = /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]]["unallocated"];
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && label5_for_value !== (label5_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && label5_for_value !== (label5_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page")) {
     				attr_dev(label5, "for", label5_for_value);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && input4_id_value !== (input4_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && input4_id_value !== (input4_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page")) {
     				attr_dev(input4, "id", input4_id_value);
     			}
 
-    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 145 && input4.value !== /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]].includePage) {
-    				set_input_value(input4, /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]].includePage);
+    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 2305 && input4.value !== /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]].includePage) {
+    				set_input_value(input4, /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]].includePage);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && label6_for_value !== (label6_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && label6_for_value !== (label6_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after")) {
     				attr_dev(label6, "for", label6_for_value);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && input5_id_value !== (input5_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && input5_id_value !== (input5_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after")) {
     				attr_dev(input5, "id", input5_id_value);
     			}
 
-    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 145) {
-    				input5.checked = /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]].includeAfter;
+    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 2305) {
+    				input5.checked = /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]].includeAfter;
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && label7_for_value !== (label7_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page")) {
+    			if (!/*includePageExists*/ ctx[3][/*collectionName*/ ctx[0]]) {
+    				if (if_block2) {
+    					if_block2.p(ctx, dirty);
+    				} else {
+    					if_block2 = create_if_block_1$1(ctx);
+    					if_block2.c();
+    					if_block2.m(div16, null);
+    				}
+    			} else if (if_block2) {
+    				if_block2.d(1);
+    				if_block2 = null;
+    			}
+
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && label7_for_value !== (label7_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page")) {
     				attr_dev(label7, "for", label7_for_value);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && input6_id_value !== (input6_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && input6_id_value !== (input6_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page")) {
     				attr_dev(input6, "id", input6_id_value);
     			}
 
-    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 145 && input6.value !== /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]].outputPage) {
-    				set_input_value(input6, /*$collectionsStore*/ ctx[4]["COLLECTIONS"][/*collectionName*/ ctx[0]].outputPage);
+    			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 2305 && input6.value !== /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]].outputPage) {
+    				set_input_value(input6, /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]].outputPage);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && button0_id_value !== (button0_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page-update")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && button0_id_value !== (button0_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page-update")) {
     				attr_dev(button0, "id", button0_id_value);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && label8_for_value !== (label8_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-apply-module-labels")) {
+    			if (dirty[0] & /*outputPageName, collectionName, availableRepresentations*/ 2113 && button0_disabled_value !== (button0_disabled_value = /*outputPageName*/ ctx[6][/*collectionName*/ ctx[0]] === "")) {
+    				prop_dev(button0, "disabled", button0_disabled_value);
+    			}
+
+    			if (!/*outputPageExists*/ ctx[4][/*collectionName*/ ctx[0]]) {
+    				if (if_block3) {
+    					if_block3.p(ctx, dirty);
+    				} else {
+    					if_block3 = create_if_block$2(ctx);
+    					if_block3.c();
+    					if_block3.m(div21, null);
+    				}
+    			} else if (if_block3) {
+    				if_block3.d(1);
+    				if_block3 = null;
+    			}
+
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && label8_for_value !== (label8_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-apply-module-labels")) {
     				attr_dev(label8, "for", label8_for_value);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && button1_id_value !== (button1_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-apply-module-labels")) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && button1_id_value !== (button1_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-apply-module-labels")) {
     				attr_dev(button1, "id", button1_id_value);
     			}
 
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 129 && div24_id_value !== (div24_id_value = "cc-collection-" + /*collectionName*/ ctx[0])) {
+    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && div24_id_value !== (div24_id_value = "cc-collection-" + /*collectionName*/ ctx[0])) {
     				attr_dev(div24, "id", div24_id_value);
     			}
     		},
@@ -25151,6 +25285,8 @@ Do you want to use the sanitised value?`)) {
     			if (if_block0) if_block0.d();
     			if (if_block1) if_block1.d();
     			destroy_each(each_blocks, detaching);
+    			if (if_block2) if_block2.d();
+    			if (if_block3) if_block3.d();
     			mounted = false;
     			run_all(dispose);
     		}
@@ -25167,30 +25303,38 @@ Do you want to use the sanitised value?`)) {
     	return block;
     }
 
-    function doesOutputPageExist(pageName, pageObject) {
-    	if (!pageObject) {
-    		alert(`Unable to find a page matching the output page name
-      ${pageName}
-      `);
-    	}
-    }
-
     function instance$5($$self, $$props, $$invalidate) {
     	let $configStore;
     	let $collectionsStore;
     	let $representationsStore;
     	validate_store(configStore, 'configStore');
-    	component_subscribe($$self, configStore, $$value => $$invalidate(3, $configStore = $$value));
+    	component_subscribe($$self, configStore, $$value => $$invalidate(7, $configStore = $$value));
     	validate_store(collectionsStore, 'collectionsStore');
-    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(4, $collectionsStore = $$value));
+    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(8, $collectionsStore = $$value));
     	validate_store(representationsStore, 'representationsStore');
-    	component_subscribe($$self, representationsStore, $$value => $$invalidate(32, $representationsStore = $$value));
+    	component_subscribe($$self, representationsStore, $$value => $$invalidate(37, $representationsStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('CollectionConfiguration', slots, []);
     	let { collectionName } = $$props;
     	let { order } = $$props;
     	let { numCollections } = $$props;
     	debug(`__________________ CollectionConfiguration.svelte __collection ${collectionName} order ${order} numCollections ${numCollections}_______________`);
+
+    	// Assume inclduePage and outputPage exist
+    	let includePageExists = {}, outputPageExists = {};
+
+    	let includePageName = {}, outputPageName = {};
+
+    	// loop through each collection
+    	Object.keys($collectionsStore["COLLECTIONS"]).forEach(collectionName => {
+    		$$invalidate(3, includePageExists[collectionName] = true, includePageExists);
+    		$$invalidate(4, outputPageExists[collectionName] = true, outputPageExists);
+    		$$invalidate(5, includePageName[collectionName] = $collectionsStore["COLLECTIONS"][collectionName].includePage, includePageName);
+    		$$invalidate(6, outputPageName[collectionName] = $collectionsStore["COLLECTIONS"][collectionName].outputPage, outputPageName);
+    	});
+
+    	getPageName($collectionsStore["COLLECTIONS"][collectionName].includePage, $configStore["courseId"], doesIncludePageExist);
+    	getPageName($collectionsStore["COLLECTIONS"][collectionName].outputPage, $configStore["courseId"], doesOutputPageExist);
 
     	/*  let removed = false;
     // experiment to see if we can detect when this component for this collection
@@ -25377,11 +25521,38 @@ Do you want to use the sanitised value?`)) {
     	function doesIncludePageExist(pageName, pageObject) {
     		debug(`---------- doesIncludePageExist --${pageName}--------`);
     		debug(pageObject);
+    		$$invalidate(5, includePageName[collectionName] = pageName, includePageName);
 
     		if (!pageObject) {
-    			alert(`Unable to find a page matching the include page name
-      ${pageName}
+    			alert(`The include page called
+    ${pageName}
+for the collection
+    ${collectionName}
+does not exist.
       `);
+
+    			$$invalidate(3, includePageExists[collectionName] = false, includePageExists);
+    		} else {
+    			$$invalidate(3, includePageExists[collectionName] = true, includePageExists);
+    		}
+    	}
+
+    	/**
+     * @function doesOutputPageExists
+     * @param pageName
+     * @param pageObject
+     * @description Called after Canvas API call returns a page Object. Set
+     * outputPageExists and other variables appropriately
+     * No alerts for this (unlike include page) because if the output page
+     * doesn't exist it will be created
+     */
+    	function doesOutputPageExist(pageName, pageObject) {
+    		$$invalidate(6, outputPageName[collectionName] = pageName, outputPageName);
+
+    		if (!pageObject) {
+    			$$invalidate(4, outputPageExists[collectionName] = false, outputPageExists);
+    		} else {
+    			$$invalidate(4, outputPageExists[collectionName] = true, outputPageExists);
     		}
     	}
 
@@ -25458,7 +25629,7 @@ Do you want to use the sanitised value?`)) {
     	function select_change_handler() {
     		$collectionsStore["COLLECTIONS"][collectionName]["representation"] = select_value(this);
     		collectionsStore.set($collectionsStore);
-    		$$invalidate(7, availableRepresentations);
+    		$$invalidate(11, availableRepresentations);
     	}
 
     	const change_handler = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
@@ -25466,7 +25637,7 @@ Do you want to use the sanitised value?`)) {
     	function input2_change_handler() {
     		$collectionsStore["COLLECTIONS"][collectionName]["hide"] = this.checked;
     		collectionsStore.set($collectionsStore);
-    		$$invalidate(7, availableRepresentations);
+    		$$invalidate(11, availableRepresentations);
     	}
 
     	const change_handler_1 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
@@ -25474,7 +25645,7 @@ Do you want to use the sanitised value?`)) {
     	function input3_change_handler() {
     		$collectionsStore["COLLECTIONS"][collectionName]["unallocated"] = this.checked;
     		collectionsStore.set($collectionsStore);
-    		$$invalidate(7, availableRepresentations);
+    		$$invalidate(11, availableRepresentations);
     	}
 
     	const change_handler_2 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
@@ -25482,7 +25653,7 @@ Do you want to use the sanitised value?`)) {
     	function input4_input_handler() {
     		$collectionsStore["COLLECTIONS"][collectionName].includePage = this.value;
     		collectionsStore.set($collectionsStore);
-    		$$invalidate(7, availableRepresentations);
+    		$$invalidate(11, availableRepresentations);
     	}
 
     	const click_handler = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
@@ -25494,13 +25665,13 @@ Do you want to use the sanitised value?`)) {
     	function input5_change_handler() {
     		$collectionsStore["COLLECTIONS"][collectionName].includeAfter = this.checked;
     		collectionsStore.set($collectionsStore);
-    		$$invalidate(7, availableRepresentations);
+    		$$invalidate(11, availableRepresentations);
     	}
 
     	function input6_input_handler() {
     		$collectionsStore["COLLECTIONS"][collectionName].outputPage = this.value;
     		collectionsStore.set($collectionsStore);
-    		$$invalidate(7, availableRepresentations);
+    		$$invalidate(11, availableRepresentations);
     	}
 
     	const click_handler_2 = () => set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
@@ -25523,6 +25694,10 @@ Do you want to use the sanitised value?`)) {
     		order,
     		numCollections,
     		debug,
+    		includePageExists,
+    		outputPageExists,
+    		includePageName,
+    		outputPageName,
     		modules,
     		moduleCount,
     		moduleName,
@@ -25544,9 +25719,13 @@ Do you want to use the sanitised value?`)) {
     		if ('collectionName' in $$props) $$invalidate(0, collectionName = $$props.collectionName);
     		if ('order' in $$props) $$invalidate(1, order = $$props.order);
     		if ('numCollections' in $$props) $$invalidate(2, numCollections = $$props.numCollections);
-    		if ('moduleCount' in $$props) $$invalidate(5, moduleCount = $$props.moduleCount);
-    		if ('moduleName' in $$props) $$invalidate(6, moduleName = $$props.moduleName);
-    		if ('availableRepresentations' in $$props) $$invalidate(7, availableRepresentations = $$props.availableRepresentations);
+    		if ('includePageExists' in $$props) $$invalidate(3, includePageExists = $$props.includePageExists);
+    		if ('outputPageExists' in $$props) $$invalidate(4, outputPageExists = $$props.outputPageExists);
+    		if ('includePageName' in $$props) $$invalidate(5, includePageName = $$props.includePageName);
+    		if ('outputPageName' in $$props) $$invalidate(6, outputPageName = $$props.outputPageName);
+    		if ('moduleCount' in $$props) $$invalidate(9, moduleCount = $$props.moduleCount);
+    		if ('moduleName' in $$props) $$invalidate(10, moduleName = $$props.moduleName);
+    		if ('availableRepresentations' in $$props) $$invalidate(11, availableRepresentations = $$props.availableRepresentations);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -25557,6 +25736,10 @@ Do you want to use the sanitised value?`)) {
     		collectionName,
     		order,
     		numCollections,
+    		includePageExists,
+    		outputPageExists,
+    		includePageName,
+    		outputPageName,
     		$configStore,
     		$collectionsStore,
     		moduleCount,
@@ -25568,6 +25751,7 @@ Do you want to use the sanitised value?`)) {
     		deleteCollection,
     		changeCollectionName,
     		doesIncludePageExist,
+    		doesOutputPageExist,
     		HELP,
     		select_change_handler,
     		change_handler,
