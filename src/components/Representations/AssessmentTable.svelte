@@ -37,7 +37,10 @@
     );
     if ($collectionsStore["COLLECTIONS"][collection]["unallocated"]) {
       modules = modules.concat(
-        addUnallocatedModules($collectionsStore["MODULES"])
+        addUnallocatedModules(
+          $collectionsStore["MODULES"],
+          $configStore["editMode"]
+        )
       );
     }
   }
@@ -73,69 +76,72 @@
     </thead>
     <tbody>
       {#each modules as module}
-          <tr role="row">
-            <td role="cell">
-              <span class="cc-responsive-table__heading" aria-hidden="true"
-                >Title</span
-              >
-              <div class="cc-table-cell-text">
-                <p>
-                  <a href={getModuleUrl(module.id)}>
-                    <!-- {$modulesStore[module.id].name} -->
-                    {$collectionsStore["MODULES"][module.id].name}
-                  </a>
-                </p>
-              </div>
-            </td>
-            <td role="cell" class="descriptionCell">
-              <span class="cc-responsive-table__heading" aria-hidden="true"
-                >Description</span
-              >
-              <div class="cc-table-cell-text">
-                <p>
-                  {@html $collectionsStore["MODULES"][module.id].description}
-                </p>
-              </div>
-            </td>
-            <td role="cell">
-              <span class="cc-responsive-table__heading" aria-hidden="true"
-                >Weighting</span
-              >
-              <div class="cc-table-cell-text">
-                <p>
-                  {checkModuleMetaData(
-                    $collectionsStore["MODULES"][module.id],
-                    "weighting",
-                    $configStore["editMode"]
-                  )}
-                </p>
-              </div>
-            </td>
-            <td role="cell">
-              <span class="cc-responsive-table__heading" aria-hidden="true"
-                >Due Date</span
-              >
-              <div class="cc-table-cell-text">
-                <p>
-                  {generateModuleDate($collectionsStore["MODULES"][module.id])}
-                </p>
-              </div>
-            </td>
-            <td role="cell">
-              <span class="cc-responsive-table__heading" aria-hidden="true"
-                >Learning Outcomes</span
-              >
-              <div class="cc-table-cell-text">
-                <p>
-                  {checkModuleMetaData(
-                    $collectionsStore["MODULES"][module.id],
-                    "learning outcomes",
-                    $configStore["editMode"]
-                  )}
-                </p>
-              </div>
-            </td>
-          </tr>
+        <tr role="row">
+          <td role="cell">
+            <span class="cc-responsive-table__heading" aria-hidden="true"
+              >Title</span
+            >
+            <div class="cc-table-cell-text">
+              <p>
+                <a href={getModuleUrl(module.id)}>
+                  <!-- {$modulesStore[module.id].name} -->
+                  {$collectionsStore["MODULES"][module.id].name}
+                </a>
+              </p>
+            </div>
+          </td>
+          <td role="cell" class="descriptionCell">
+            <span class="cc-responsive-table__heading" aria-hidden="true"
+              >Description</span
+            >
+            {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
+              <div class="cc-published">Unpublished</div>
+            {/if}
+            <div class="cc-table-cell-text">
+              <p>
+                {@html $collectionsStore["MODULES"][module.id].description}
+              </p>
+            </div>
+          </td>
+          <td role="cell">
+            <span class="cc-responsive-table__heading" aria-hidden="true"
+              >Weighting</span
+            >
+            <div class="cc-table-cell-text">
+              <p>
+                {checkModuleMetaData(
+                  $collectionsStore["MODULES"][module.id],
+                  "weighting",
+                  $configStore["editMode"]
+                )}
+              </p>
+            </div>
+          </td>
+          <td role="cell">
+            <span class="cc-responsive-table__heading" aria-hidden="true"
+              >Due Date</span
+            >
+            <div class="cc-table-cell-text">
+              <p>
+                {generateModuleDate($collectionsStore["MODULES"][module.id])}
+              </p>
+            </div>
+          </td>
+          <td role="cell">
+            <span class="cc-responsive-table__heading" aria-hidden="true"
+              >Learning Outcomes</span
+            >
+            <div class="cc-table-cell-text">
+              <p>
+                {checkModuleMetaData(
+                  $collectionsStore["MODULES"][module.id],
+                  "learning outcomes",
+                  $configStore["editMode"]
+                )}
+              </p>
+            </div>
+          </td>
+        </tr>
       {/each}
     </tbody>
   </table>
@@ -301,5 +307,15 @@
     text-align: center;
     color: white;
     background: black;
+  }
+
+  .cc-published  {
+    background: rgb(255, 0, 0, 0.75);
+    color: white;
+    font-size: x-small;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    padding-bottom: 0.25em;
   }
 </style>
