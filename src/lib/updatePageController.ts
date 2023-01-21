@@ -292,11 +292,12 @@ export class updatePageController {
 
   /**
    * @method generateOutcomesString
-   * @desc Generate a string summarising outcomes
+   * @param {String} preamble - a string to add to the start of the summary
    * @returns {String}
+   * @desc Generate a string summarising outcomes
    */
 
-  generateOutcomesString() {
+  generateOutcomesString(preamble: string) {
     // how many completedTasks?
     let completedTasks = this.completedTasks.length;
     // how many completed tasks with completed === true
@@ -311,24 +312,38 @@ export class updatePageController {
     if (errors > 0) {
       endSummary = ` with ${errors} errors`;
     }
-    let summary = `completed ${completed} of ${completedTasks} tasks${endSummary}.`;
+    let summary = `${preamble} completed ${completed} of ${completedTasks} tasks${endSummary}.`;
+
+	if (this.completedTasks.length > 0) {
+	  summary += "<ul>";
+	}
 
     for (let task of this.completedTasks) {
       if (task.error) {
-        summary += `\n- ${task.collection} - ${
+        summary += `<li> ${task.collection} - ${
           task.outputPageURL
-        } - errors - ${task.errors.join("\n     ")}`;
+        } - errors - ${task.errors.join("\n     ")} </li>`;
       } else if (task.completed) {
         if (task.hasOwnProperty("collection")) {
-          summary += `\n- ${task.collection} - ${task.outputPageURL} - success`;
+          summary += `<li> ${task.collection} - ${task.outputPageURL} - success </li>`;
         } else if (task.hasOwnProperty("collections")) {
-          summary += `\n- ${task.outputPageURL} - tab navigation update - success`;
+          summary += `<li> ${task.outputPageURL} - tab navigation update - success </li>`;
         }
       }
     }
 
+	if (this.completedTasks.length > 0) {
+		summary += "</ul>";
+	}
+
     if (this.errors.length > 0) {
-      summary += `\n\nErrors:\n${this.errors.join("\n")}`;
+ //     summary += `<p>Errors:</p>${this.errors.join("\n")}`;
+		// add to summary as a list
+		summary += '<p style="color: red">Errors:</p><ul>'
+		for (let error of this.errors) {
+			summary += `<li>${error}</li>`;
+		}
+		summary += "</ul>";
     }
 
     return summary;

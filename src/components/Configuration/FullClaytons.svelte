@@ -1,5 +1,6 @@
 <script lang="ts">
   import { updatePageController } from "../../lib/updatePageController";
+  import { toastAlert } from "../../lib/ui"
 
   /**
    * @function updateOutputPage
@@ -18,10 +19,10 @@
   }
 
   function fullClaytonsCompleted(pageController) {
-    let outcomes = pageController.generateOutcomesString();
+    let outcomes = pageController.generateOutcomesString( "Full Claytons update");
 
     if ( ! pageController.singleCollection ) {
-      alert(`Full Claytons update ${outcomes}`)
+      toastAlert(outcomes, "danger")
     }
   }
 </script>
