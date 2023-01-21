@@ -1,11 +1,29 @@
 <script lang="ts">
+  import { updatePageController } from "../../lib/updatePageController";
 
-	import { debug } from "../../lib/debug";
+  /**
+   * @function updateOutputPage
+   * @param {string} navOption
+   * @description  Implement full claytons using the provided nav option
+   */
+  function startFullClaytons(navOption: string) {
+    const convertNavOption = ["none", "pages", "tabs"].indexOf(navOption) + 1;
+    const updateController = new updatePageController(
+      undefined,
+      fullClaytonsCompleted,
+      convertNavOption
+    );
 
-	function fullClaytons(navigationOption) {
-		// TODO
-			debug(`fullClaytons ${navigationOption}`);
-	}
+    updateController.execute();
+  }
+
+  function fullClaytonsCompleted(pageController) {
+    let outcomes = pageController.generateOutcomesString();
+
+    if ( ! pageController.singleCollection ) {
+      alert(`Full Claytons update ${outcomes}`)
+    }
+  }
 </script>
 
 <div style="margin-top:0.5em">
@@ -32,19 +50,25 @@
       >Navigation Bar Options</label
     >
     <div class="cc-config-full-claytons-navigation-option">
-      <button class="btn" on:click={() => fullClaytons("none")}>None</button>
-      <button class="btn" on:click={() => fullClaytons("pages")}>Pages</button>
-      <button class="btn" on:click={() => fullClaytons("tabs")}>Tabs</button>
+      <button class="btn" on:click={() => startFullClaytons("none")}
+        >None</button
+      >
+      <button class="btn" on:click={() => startFullClaytons("pages")}
+        >Pages</button
+      >
+      <button class="btn" on:click={() => startFullClaytons("tabs")}
+        >Tabs</button
+      >
     </div>
   </div>
 </div>
 
 <style>
-	.cc-config-full-claytons-navigation-option {
-		text-align: center;
-	}
-	.cc-config-full-claytons-navigation-option button {
-		font-size: 0.8em;
-		padding: 0.5em;
-	}
+  .cc-config-full-claytons-navigation-option {
+    text-align: center;
+  }
+  .cc-config-full-claytons-navigation-option button {
+    font-size: 0.8em;
+    padding: 0.5em;
+  }
 </style>

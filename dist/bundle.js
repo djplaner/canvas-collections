@@ -25569,6 +25569,84 @@ Do you want to use the sanitised value?`)) {
                     errors: [],
                 });
             }
+            /* Standard task list - update each collection's output page */
+            // for each collection, create task Object
+            // - collection
+            // - outputPage and outputPageURL
+            // - representation
+            // - completed/error/errors
+            const collections = this.collectionsStore["COLLECTIONS_ORDER"].filter((collectionName) => {
+                if (this.collectionsStore["COLLECTIONS"][collectionName].hasOwnProperty("outputPage") &&
+                    this.collectionsStore["COLLECTIONS"][collectionName].outputPage !== "") {
+                    return collectionName;
+                }
+            });
+            for (let collection of collections) {
+                const collectionConfig = this.collectionsStore["COLLECTIONS"][collection];
+                const outputPageName = collectionConfig.outputPage;
+                const representationName = collectionConfig.representation;
+                const outputPageURL = outputPageName.toLowerCase().replace(/ /g, "-");
+                this.tasks.push({
+                    collection: collection,
+                    outputPage: outputPageName,
+                    outputPageURL: outputPageURL,
+                    representation: representationName,
+                    completed: false,
+                    error: false,
+                    errors: [],
+                });
+            }
+            // Only go further for the tab nav option
+            if (this.navOption !== 3) {
+                return;
+            }
+            /* add the "tab" task list as it's navOption===3 i.e. tabs */
+            // One task for each page with multiple collections
+            // For each page, create task object
+            // - collections **this is the check in updateContent**
+            // - outputPage and outputPageURL
+            // - representation
+            // - completed/error/errors
+            const pagesWithMultipleCollections = this.getPagesWithMultipleCollections();
+            // loop through dictionary of pages with multiple collections
+            for (let pageName in pagesWithMultipleCollections) {
+                const collections = pagesWithMultipleCollections[pageName];
+                const outputPageURL = pageName.toLowerCase().replace(/ /g, "-");
+                this.tasks.push({
+                    collections: collections,
+                    outputPage: pageName,
+                    outputPageURL: outputPageURL,
+                    completed: false,
+                    error: false,
+                    errors: [],
+                });
+            }
+        }
+        getPagesWithMultipleCollections() {
+            const collectionNames = this.collectionsStore["COLLECTIONS_ORDER"];
+            const collections = this.collectionsStore["COLLECTIONS"];
+            const pages = {};
+            collectionNames.forEach((collectionName) => {
+                // if there's an output page
+                if (collections[collectionName].hasOwnProperty("outputPage") &&
+                    collections[collectionName].outputPage !== "") {
+                    // if the page is not in the pages dictionary
+                    if (!pages.hasOwnProperty(collections[collectionName].outputPage)) {
+                        // add it with an array containing the collection name
+                        pages[collections[collectionName].outputPage] = [collectionName];
+                    }
+                    else {
+                        // otherwise add the collection name to the array
+                        pages[collections[collectionName].outputPage].push(collectionName);
+                    }
+                }
+            });
+            for (let pageName in pages) {
+                if (pages[pageName].length < 2) {
+                    delete pages[pageName];
+                }
+            }
+            return pages;
         }
         /**
          * @method checkTaskList
@@ -25601,8 +25679,14 @@ Do you want to use the sanitised value?`)) {
                 this.complete();
                 return;
             }
-            let includePageName = this.collectionsStore["COLLECTIONS"][this.tasks[0].collection]["includePage"];
-            if (includePageName) {
+            // only get include page if
+            // - this task has a "collection" field (the nav bar update won't)
+            // - the collection has an includePage
+            // - that includePage has a value
+            if (this.tasks[0].hasOwnProperty("collection") &&
+                this.collectionsStore["COLLECTIONS"][this.tasks[0].collection].hasOwnProperty("includePage") &&
+                this.collectionsStore["COLLECTIONS"][this.tasks[0].collection]["includePage"] !== "") {
+                let includePageName = this.collectionsStore["COLLECTIONS"][this.tasks[0].collection]["includePage"];
                 // get the include page content
                 // a chain that eventually starts getOutputPage
                 includePageName = includePageName.toLowerCase().replace(/ /g, "-");
@@ -25629,6 +25713,41 @@ Do you want to use the sanitised value?`)) {
             // this.getOutputPage();
             // But I think this should go back to start update to handle the include page
             this.startUpdate();
+        }
+        /**
+         * @method generateOutcomesString
+         * @desc Generate a string summarising outcomes
+         * @returns {String}
+         */
+        generateOutcomesString() {
+            // how many completedTasks?
+            let completedTasks = this.completedTasks.length;
+            // how many completed tasks with completed === true
+            let completed = this.completedTasks.filter((task) => task.completed === true).length;
+            // how many completed tasks with error === true
+            let errors = this.completedTasks.filter((task) => task.error === true).length;
+            let endSummary = "";
+            if (errors > 0) {
+                endSummary = ` with ${errors} errors`;
+            }
+            let summary = `completed ${completed} of ${completedTasks} tasks${endSummary}.`;
+            for (let task of this.completedTasks) {
+                if (task.error) {
+                    summary += `\n- ${task.collection} - ${task.outputPageURL} - errors - ${task.errors.join("\n     ")}`;
+                }
+                else if (task.completed) {
+                    if (task.hasOwnProperty("collection")) {
+                        summary += `\n- ${task.collection} - ${task.outputPageURL} - success`;
+                    }
+                    else if (task.hasOwnProperty("collections")) {
+                        summary += `\n- ${task.outputPageURL} - tab navigation update - success`;
+                    }
+                }
+            }
+            if (this.errors.length > 0) {
+                summary += `\n\nErrors:\n${this.errors.join("\n")}`;
+            }
+            return summary;
         }
         /**
          * @method getIncludePageContent
@@ -25693,6 +25812,100 @@ Do you want to use the sanitised value?`)) {
             if (this.tasks[0].hasOwnProperty("collection")) {
                 this.updateOutputContent();
             }
+            else {
+                // just adding the tab interface
+                this.updateTabContent();
+            }
+        }
+        /**
+         * @function updateTabContent
+         * @descr Task is focused on a page with multiple collections. Aiming to wrap
+         * a new "tab" interface around the collection divs. Once complete call writeOutputPage
+         *
+         * Self generate the tab interface based on the collection names
+         *
+         * Two options:
+         * 1. tab interface already there - div#cc-nav exists
+         *    - the collections should be there
+         *    - extract them and their content from the existing page
+         *    - remove them all from the page (this includes some recently added)
+         *    - insert them into new div#cc-nav
+         *    - delete the existing div#cc-nav
+         * 2. tab interface not there - div#cc-nav does not exist
+         *    - tab interface will be appended at the end of the page
+         *    - any existing collection divs will be removed from the page
+         *    - inserted into the new tab interface (in order of collections)
+         */
+        updateTabContent() {
+            // updating a tabbed page
+            if (!this.tasks[0].hasOwnProperty("pageObject")) {
+                this.errorFirstTask(`No pageObject for ${this.tasks[0].outputPageURL}`);
+                return;
+            }
+            const pageObject = this.tasks[0].pageObject;
+            const collectionNames = this.tasks[0].collections;
+            const escCollectionNames = collectionNames.map((collectionName) => collectionName.replace(/ /g, "-"));
+            const originalContent = pageObject.body;
+            // start parsing what's in the existing content
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(originalContent, "text/html");
+            // remove (and save) all the divs for the collections
+            let collectionDivHTML = "";
+            for (let i = 0; i < escCollectionNames.length; i++) {
+                const divId = `cc-output-${escCollectionNames[i]}`;
+                const collectionDiv = doc.getElementById(divId);
+                if (collectionDiv) {
+                    // save the div
+                    collectionDivHTML += collectionDiv.outerHTML;
+                    // remove the old collection div
+                    collectionDiv.remove();
+                }
+            }
+            // remove all .cc-includePage divs
+            const includePageDivs = doc.getElementsByClassName("cc-includePage");
+            for (let i = 0; i < includePageDivs.length; i++) {
+                includePageDivs[i].remove();
+            }
+            // get the tab interface HTML from navView
+            let tabInterfaceHtml = this.generateTabHtml(collectionNames, collectionDivHTML);
+            // check if there's a tab interface already there
+            const navDiv = doc.getElementById("cc-nav");
+            if (navDiv) {
+                // replace the existing navDiv with tabInterfaceHTML
+                navDiv.innerHTML = tabInterfaceHtml;
+            }
+            else {
+                doc.body.insertAdjacentHTML("beforeend", tabInterfaceHtml);
+            }
+            // update the new page content and write the output page
+            this.tasks[0].newContent = doc.body.innerHTML;
+            this.writeOutputPage();
+        }
+        /**
+         * @method generateTabHtml
+         * @desc Generate the HTML for the tabs based on collection names
+         * @param {Array} collectionNames
+         * @returns {String} Canvas tab html
+         * TODO - move to using more svelte components for this
+         */
+        generateTabHtml(collectionNames, collectionDivHTML) {
+            let navBarHTML = "";
+            for (let collectionName of collectionNames) {
+                // remove spaces from collectionName
+                let escCollectionName = collectionName.replace(/ /g, "-");
+                navBarHTML = `${navBarHTML}
+<li style="display: table-cell; width: 100%; float: none;">
+    <a style="float: none;text-decoration: none; display: block; text-align: center; padding: 1.5em 1em; font-size: 1.3em;white-space:break-spaces;" 
+        href="#cc-output-${escCollectionName}">${collectionName}</a></li>`;
+            }
+            return `
+<div id="cc-nav" class="enhanceable_content tabs" style="font-size: small;">
+  <ul class="cc-nav" style="list-style-type: none; margin: 0; padding: 0; overflow: hidden; background-color: #eeeeee; display: table; table-layout: fixed; width: 100%;">
+    ${navBarHTML}
+  </ul>
+
+  ${collectionDivHTML}
+</div>`;
         }
         /**
          * @function updateOutputContent
@@ -28340,36 +28553,36 @@ does not exist.
     			button2 = element("button");
     			button2.textContent = "Tabs";
     			attr_dev(i0, "class", "icon-question cc-module-icon");
-    			add_location(i0, file$2, 15, 6, 428);
+    			add_location(i0, file$2, 27, 6, 977);
     			attr_dev(a0, "id", "cc-about-full-claytons");
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "href", "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview");
     			attr_dev(a0, "rel", "noreferrer");
-    			add_location(a0, file$2, 9, 4, 225);
-    			add_location(strong, file$2, 17, 4, 486);
-    			add_location(div0, file$2, 8, 2, 214);
+    			add_location(a0, file$2, 21, 4, 774);
+    			add_location(strong, file$2, 29, 4, 1035);
+    			add_location(div0, file$2, 20, 2, 763);
     			attr_dev(i1, "class", "icon-question cc-module-icon");
-    			add_location(i1, file$2, 25, 7, 831);
+    			add_location(i1, file$2, 37, 7, 1380);
     			attr_dev(a1, "id", "cc-about-full-claytons-navigation-option");
     			attr_dev(a1, "rel", "noreferrer");
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "href", "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview/#navigation-bar-options");
-    			add_location(a1, file$2, 20, 4, 592);
+    			add_location(a1, file$2, 32, 4, 1141);
     			attr_dev(label, "for", "cc-config-full-claytons-navigation-option");
-    			add_location(label, file$2, 27, 4, 889);
-    			attr_dev(button0, "class", "btn svelte-1ogzflp");
-    			add_location(button0, file$2, 31, 6, 1057);
-    			attr_dev(button1, "class", "btn svelte-1ogzflp");
-    			add_location(button1, file$2, 32, 6, 1136);
-    			attr_dev(button2, "class", "btn svelte-1ogzflp");
-    			add_location(button2, file$2, 33, 6, 1217);
-    			attr_dev(div1, "class", "cc-config-full-claytons-navigation-option svelte-1ogzflp");
-    			add_location(div1, file$2, 30, 4, 994);
+    			add_location(label, file$2, 39, 4, 1438);
+    			attr_dev(button0, "class", "btn svelte-dui1vd");
+    			add_location(button0, file$2, 43, 6, 1606);
+    			attr_dev(button1, "class", "btn svelte-dui1vd");
+    			add_location(button1, file$2, 46, 6, 1708);
+    			attr_dev(button2, "class", "btn svelte-dui1vd");
+    			add_location(button2, file$2, 49, 6, 1812);
+    			attr_dev(div1, "class", "cc-config-full-claytons-navigation-option svelte-dui1vd");
+    			add_location(div1, file$2, 42, 4, 1543);
     			attr_dev(div2, "class", "border border-trbl");
     			set_style(div2, "padding", "0.5em");
-    			add_location(div2, file$2, 19, 2, 532);
+    			add_location(div2, file$2, 31, 2, 1081);
     			set_style(div3, "margin-top", "0.5em");
-    			add_location(div3, file$2, 7, 0, 180);
+    			add_location(div3, file$2, 19, 0, 729);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -28426,13 +28639,22 @@ does not exist.
     	return block;
     }
 
+    function fullClaytonsCompleted(pageController) {
+    	let outcomes = pageController.generateOutcomesString();
+
+    	if (!pageController.singleCollection) {
+    		alert(`Full Claytons update ${outcomes}`);
+    	}
+    }
+
     function instance$2($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('FullClaytons', slots, []);
 
-    	function fullClaytons(navigationOption) {
-    		// TODO
-    		debug(`fullClaytons ${navigationOption}`);
+    	function startFullClaytons(navOption) {
+    		const convertNavOption = ["none", "pages", "tabs"].indexOf(navOption) + 1;
+    		const updateController = new updatePageController(undefined, fullClaytonsCompleted, convertNavOption);
+    		updateController.execute();
     	}
 
     	const writable_props = [];
@@ -28441,11 +28663,17 @@ does not exist.
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<FullClaytons> was created with unknown prop '${key}'`);
     	});
 
-    	const click_handler = () => fullClaytons("none");
-    	const click_handler_1 = () => fullClaytons("pages");
-    	const click_handler_2 = () => fullClaytons("tabs");
-    	$$self.$capture_state = () => ({ debug, fullClaytons });
-    	return [fullClaytons, click_handler, click_handler_1, click_handler_2];
+    	const click_handler = () => startFullClaytons("none");
+    	const click_handler_1 = () => startFullClaytons("pages");
+    	const click_handler_2 = () => startFullClaytons("tabs");
+
+    	$$self.$capture_state = () => ({
+    		updatePageController,
+    		startFullClaytons,
+    		fullClaytonsCompleted
+    	});
+
+    	return [startFullClaytons, click_handler, click_handler_1, click_handler_2];
     }
 
     class FullClaytons extends SvelteComponentDev {

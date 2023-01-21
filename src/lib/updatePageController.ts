@@ -112,6 +112,101 @@ export class updatePageController {
         errors: [],
       });
     }
+
+    /* Standard task list - update each collection's output page */
+    // for each collection, create task Object
+    // - collection
+    // - outputPage and outputPageURL
+    // - representation
+    // - completed/error/errors
+    const collections = this.collectionsStore["COLLECTIONS_ORDER"].filter(
+      (collectionName) => {
+        if (
+          this.collectionsStore["COLLECTIONS"][collectionName].hasOwnProperty(
+            "outputPage"
+          ) &&
+          this.collectionsStore["COLLECTIONS"][collectionName].outputPage !== ""
+        ) {
+          return collectionName;
+        }
+      }
+    );
+
+    for (let collection of collections) {
+      const collectionConfig = this.collectionsStore["COLLECTIONS"][collection];
+      const outputPageName = collectionConfig.outputPage;
+      const representationName = collectionConfig.representation;
+      const outputPageURL = outputPageName.toLowerCase().replace(/ /g, "-");
+
+      this.tasks.push({
+        collection: collection,
+        outputPage: outputPageName,
+        outputPageURL: outputPageURL,
+        representation: representationName,
+        completed: false,
+        error: false,
+        errors: [],
+      });
+    }
+
+    // Only go further for the tab nav option
+    if (this.navOption !== 3) {
+      return;
+    }
+
+    /* add the "tab" task list as it's navOption===3 i.e. tabs */
+    // One task for each page with multiple collections
+    // For each page, create task object
+    // - collections **this is the check in updateContent**
+    // - outputPage and outputPageURL
+    // - representation
+    // - completed/error/errors
+
+    const pagesWithMultipleCollections = this.getPagesWithMultipleCollections();
+    // loop through dictionary of pages with multiple collections
+    for (let pageName in pagesWithMultipleCollections) {
+      const collections = pagesWithMultipleCollections[pageName];
+      const outputPageURL = pageName.toLowerCase().replace(/ /g, "-");
+
+      this.tasks.push({
+        collections: collections,
+        outputPage: pageName,
+        outputPageURL: outputPageURL,
+        completed: false,
+        error: false,
+        errors: [],
+      });
+    }
+  }
+
+  private getPagesWithMultipleCollections() {
+    const collectionNames = this.collectionsStore["COLLECTIONS_ORDER"];
+    const collections = this.collectionsStore["COLLECTIONS"];
+    const pages = {};
+    collectionNames.forEach((collectionName) => {
+      // if there's an output page
+      if (
+        collections[collectionName].hasOwnProperty("outputPage") &&
+        collections[collectionName].outputPage !== ""
+      ) {
+        // if the page is not in the pages dictionary
+        if (!pages.hasOwnProperty(collections[collectionName].outputPage)) {
+          // add it with an array containing the collection name
+          pages[collections[collectionName].outputPage] = [collectionName];
+        } else {
+          // otherwise add the collection name to the array
+          pages[collections[collectionName].outputPage].push(collectionName);
+        }
+      }
+    });
+
+    for (let pageName in pages) {
+      if (pages[pageName].length < 2) {
+        delete pages[pageName];
+      }
+    }
+
+    return pages;
   }
 
   /**
@@ -150,11 +245,23 @@ export class updatePageController {
       return;
     }
 
-    let includePageName =
+    // only get include page if
+    // - this task has a "collection" field (the nav bar update won't)
+    // - the collection has an includePage
+    // - that includePage has a value
+    if (
+      this.tasks[0].hasOwnProperty("collection") &&
+      this.collectionsStore["COLLECTIONS"][
+        this.tasks[0].collection
+      ].hasOwnProperty("includePage") &&
       this.collectionsStore["COLLECTIONS"][this.tasks[0].collection][
         "includePage"
-      ];
-    if (includePageName) {
+      ] !== ""
+    ) {
+      let includePageName =
+        this.collectionsStore["COLLECTIONS"][this.tasks[0].collection][
+          "includePage"
+        ];
       // get the include page content
       // a chain that eventually starts getOutputPage
       includePageName = includePageName.toLowerCase().replace(/ /g, "-");
@@ -181,6 +288,50 @@ export class updatePageController {
     // this.getOutputPage();
     // But I think this should go back to start update to handle the include page
     this.startUpdate();
+  }
+
+  /**
+   * @method generateOutcomesString
+   * @desc Generate a string summarising outcomes
+   * @returns {String}
+   */
+
+  generateOutcomesString() {
+    // how many completedTasks?
+    let completedTasks = this.completedTasks.length;
+    // how many completed tasks with completed === true
+    let completed = this.completedTasks.filter(
+      (task) => task.completed === true
+    ).length;
+    // how many completed tasks with error === true
+    let errors = this.completedTasks.filter(
+      (task) => task.error === true
+    ).length;
+    let endSummary = "";
+    if (errors > 0) {
+      endSummary = ` with ${errors} errors`;
+    }
+    let summary = `completed ${completed} of ${completedTasks} tasks${endSummary}.`;
+
+    for (let task of this.completedTasks) {
+      if (task.error) {
+        summary += `\n- ${task.collection} - ${
+          task.outputPageURL
+        } - errors - ${task.errors.join("\n     ")}`;
+      } else if (task.completed) {
+        if (task.hasOwnProperty("collection")) {
+          summary += `\n- ${task.collection} - ${task.outputPageURL} - success`;
+        } else if (task.hasOwnProperty("collections")) {
+          summary += `\n- ${task.outputPageURL} - tab navigation update - success`;
+        }
+      }
+    }
+
+    if (this.errors.length > 0) {
+      summary += `\n\nErrors:\n${this.errors.join("\n")}`;
+    }
+
+    return summary;
   }
 
   /**
@@ -216,6 +367,7 @@ export class updatePageController {
     }
 
     const newPageObject = await response.json();
+
     // save the include page content for this task for latter use in the pipeline
     this.tasks[0].includePageContent = `
 		<div id="cc-${this.tasks[0].collection}-includePage" class="cc-includePage">
@@ -265,8 +417,116 @@ export class updatePageController {
       this.updateOutputContent();
     } else {
       // just adding the tab interface
-      //this.updateTabContent();
+      this.updateTabContent();
     }
+  }
+
+  /**
+   * @function updateTabContent
+   * @descr Task is focused on a page with multiple collections. Aiming to wrap
+   * a new "tab" interface around the collection divs. Once complete call writeOutputPage
+   *
+   * Self generate the tab interface based on the collection names
+   *
+   * Two options:
+   * 1. tab interface already there - div#cc-nav exists
+   *    - the collections should be there
+   *    - extract them and their content from the existing page
+   *    - remove them all from the page (this includes some recently added)
+   *    - insert them into new div#cc-nav
+   *    - delete the existing div#cc-nav
+   * 2. tab interface not there - div#cc-nav does not exist
+   *    - tab interface will be appended at the end of the page
+   *    - any existing collection divs will be removed from the page
+   *    - inserted into the new tab interface (in order of collections)
+   */
+  updateTabContent() {
+    // updating a tabbed page
+
+    if (!this.tasks[0].hasOwnProperty("pageObject")) {
+      this.errorFirstTask(`No pageObject for ${this.tasks[0].outputPageURL}`);
+      return;
+    }
+    const pageObject = this.tasks[0].pageObject;
+    const collectionNames = this.tasks[0].collections;
+    const escCollectionNames = collectionNames.map((collectionName) =>
+      collectionName.replace(/ /g, "-")
+    );
+    const originalContent = pageObject.body;
+
+    // start parsing what's in the existing content
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(originalContent, "text/html");
+
+    // remove (and save) all the divs for the collections
+    let collectionDivHTML = "";
+    for (let i = 0; i < escCollectionNames.length; i++) {
+      const divId = `cc-output-${escCollectionNames[i]}`;
+      const collectionDiv = doc.getElementById(divId);
+      if (collectionDiv) {
+        // save the div
+        collectionDivHTML += collectionDiv.outerHTML;
+
+        // remove the old collection div
+        collectionDiv.remove();
+      }
+    }
+
+    // remove all .cc-includePage divs
+    const includePageDivs = doc.getElementsByClassName("cc-includePage");
+    for (let i = 0; i < includePageDivs.length; i++) {
+      includePageDivs[i].remove();
+    }
+
+    // get the tab interface HTML from navView
+    let tabInterfaceHtml = this.generateTabHtml(
+      collectionNames,
+      collectionDivHTML
+    );
+
+    // check if there's a tab interface already there
+    const navDiv = doc.getElementById("cc-nav");
+    if (navDiv) {
+      // replace the existing navDiv with tabInterfaceHTML
+      navDiv.innerHTML = tabInterfaceHtml;
+    } else {
+      doc.body.insertAdjacentHTML("beforeend", tabInterfaceHtml);
+    }
+
+    // update the new page content and write the output page
+    this.tasks[0].newContent = doc.body.innerHTML;
+    this.writeOutputPage();
+  }
+
+  /**
+   * @method generateTabHtml
+   * @desc Generate the HTML for the tabs based on collection names
+   * @param {Array} collectionNames
+   * @returns {String} Canvas tab html
+   * TODO - move to using more svelte components for this
+   */
+
+  generateTabHtml(collectionNames: string[], collectionDivHTML: string) {
+    let navBarHTML = "";
+
+    for (let collectionName of collectionNames) {
+      // remove spaces from collectionName
+      let escCollectionName = collectionName.replace(/ /g, "-");
+
+      navBarHTML = `${navBarHTML}
+<li style="display: table-cell; width: 100%; float: none;">
+    <a style="float: none;text-decoration: none; display: block; text-align: center; padding: 1.5em 1em; font-size: 1.3em;white-space:break-spaces;" 
+        href="#cc-output-${escCollectionName}">${collectionName}</a></li>`;
+    }
+
+    return `
+<div id="cc-nav" class="enhanceable_content tabs" style="font-size: small;">
+  <ul class="cc-nav" style="list-style-type: none; margin: 0; padding: 0; overflow: hidden; background-color: #eeeeee; display: table; table-layout: fixed; width: 100%;">
+    ${navBarHTML}
+  </ul>
+
+  ${collectionDivHTML}
+</div>`;
   }
 
   /**
@@ -412,7 +672,7 @@ export class updatePageController {
         claytons: true,
       },
     });
-	// TODO error checking?
+    // TODO error checking?
 
     return div.innerHTML;
   }
