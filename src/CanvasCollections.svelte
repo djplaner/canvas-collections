@@ -29,6 +29,7 @@
   //  export let currentCollection: number;
   export let showConfig: boolean;
 
+
   let checked = false;
 
   $configStore = {
@@ -40,6 +41,8 @@
     needToSaveCollections: false,
     ccOn: false,
   };
+
+  let collectionsConfigUrl = `/courses/${$configStore['courseId']}/pages/canvas-collections-configuration`;
 
   // whether or data canvas and collections data loaded
   let canvasDataLoaded = false;
@@ -250,7 +253,11 @@
       url: "https://djplaner.github.io/canvas-collections/",
     },
     unpublished: {
-      tooltip: `<p>The <em>Canvas Collections Configuration</em> page</a> is unpublished.  The live Collections view will <strong>not</strong> be visible in "Student View" or for students.</p> <p>Any Claytons Collections will be visible, if the relevant pages are published.</p>`,
+      tooltip: `<p>The <em>Canvas Collections Configuration</em> page</a> is unpublished.
+        (Click the <em>unpublished</em> button to publish the page) </p> 
+        <p>Meaning live Collections will <strong>not</strong> be visible in 
+          "Student View" or for students.</p> 
+          <p>Any Claytons Collections will be visible, if the relevant pages are published.</p>`,
       url: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/",
     },
   };
@@ -316,22 +323,20 @@
     {/if}
     {#if !ccPublished}
       <div class="cc-unpublished">
-        <!--<span style="padding-top: 0.25em;padding-right:0.25em"> -->
-        <sl-badge variant="warning" pill>
-          <sl-tooltip>
+        <sl-tooltip trigger="hover focus">
             <div slot="content">{@html HELP.unpublished.tooltip}</div>
             <a
               id="cc-about-unpublished"
               target="_blank"
               rel="noreferrer"
-              href="https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/"
+              href={HELP.unpublished.url}
               ><i class="icon-question cc-module-icon" /></a
-            >&nbsp; unpublished
-          </sl-tooltip></sl-badge
-        >
-      </div>
-      <!--</span>
-      </div>-->
+            >
+          </sl-tooltip>
+        <a href="{collectionsConfigUrl}" target="_blank" rel="noreferrer">
+        <sl-button pill size="small" variant="warning">unpublished</sl-button>
+        </a>
+      </div> 
     {/if}
     {#if showConfig}
       <div id="cc-config" class="border border-trbl">
@@ -349,7 +354,6 @@
     z-index: 99;
     background-color: #f5f5f5;
     width: auto;
-    /*padding: 1rem; */
   }
   /* The switch - the box around the slider */
   .cc-switch {
@@ -357,7 +361,6 @@
     display: inline-block;
     width: 2rem;
     height: 1.2rem;
-    margin-top: 0.75rem;
     margin-right: 0.5rem;
   }
 
@@ -367,64 +370,18 @@
     color: var(--ic-brand-font-color-dark);
     display: flex;
     position: relative;
+    align-items: center;
   }
 
   .cc-unpublished {
-    margin-top: 0.4em;
-    /*  font-size: 0.75em;
-    background-color: #ffe08a;
-    border-radius: 0.5em;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    height: 2em;
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
-    margin-top: 0.7rem; */
+    margin-right: 0.5em;
   }
 
   .cc-switch-title {
     margin: 0.5rem;
   }
 
-  /* styles for the module configs */
-  /*		    .cc-module-config {
-				padding: 1em;
-				font-size: smaller;
-				margin:0;
-			/*	font-weight: bold; */
-  /*			}
-
-		   .cc-module-no-collection {
-				float:right;
-				background: red;
-				color:white;
-				border-radius: 0.25rem;
-				padding-left: 0.5rem;
-				padding-right: 0.5rem;
-				display:none;
-		   }
-
-		   .cc-module-config-additional-metadata {
-			    margin-top: 0.5rem;
-				margin-bottom: 0.5rem;
-				padding-left: 0.5rem;
-				padding-right: 0.5rem;
-		   }
-
-
-
-			.cc-module-config-detail {  
-				display: grid; 
-				grid-template-columns: 1fr 1fr; 
-				grid-template-rows: 1fr; 
-				gap: 0px 1em; 
-				grid-auto-flow: row; 
-				grid-template-areas: ". .";
-				height: 100%;
-			} */
-
   .cc-save {
-    margin-top: 0.5rem;
     margin-right: 0.5rem;
   }
 
@@ -444,11 +401,6 @@
     font-size: 65%;
     transition: background-color 0.2s ease-in-out;
   }
-
-  /*
-			.cc-active-save-button:hover {
-				background: var(--ic-brand-primary);
-			} */
 
   .cc-save-button {
     background: #f5f5f5;
@@ -473,5 +425,10 @@
 
   #cc-switch::part(control) {
     --sl-color-primary-600: #328c04;
+  }
+
+  sl-tooltip {
+    text-align: left;
+    white-space: normal;
   }
 </style>

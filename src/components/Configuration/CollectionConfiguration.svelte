@@ -280,7 +280,7 @@ does not exist.
   }
 
   /**
-   * @function updateIncludePage
+   * @function updateOutputPage
    * @param outputPageName
    * @param collectionName
    * @description Should update the specified Canvas page with the representation
