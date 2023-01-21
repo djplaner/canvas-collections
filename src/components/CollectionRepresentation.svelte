@@ -30,9 +30,14 @@
   import { debug } from "../lib/debug";
 
   export let collection: string;
+  export let claytons: boolean;
+
+  if (!claytons) {
+    claytons = false;
+  }
 
   debug(
-    `_______________ CollectionRepresentation.svelte __collection ${collection} _____________`
+    `_______________ CollectionRepresentation.svelte __collection ${collection} __ Claytons ${claytons}___________`
   );
   debug($configStore);
 
@@ -57,7 +62,9 @@
         $configStore["currentCollection"],
         $collectionsStore["MODULES"],
         $configStore["editMode"],
-        $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]]["unallocated"]
+        $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
+          "unallocated"
+        ]
       );
       debug(
         `after calling modifyCanvasModulesList with ${$configStore["currentCollection"]}`
@@ -73,7 +80,12 @@
   }
 </script>
 
-<svelte:component this={representationComponent} bind:collection={collection} calendar={calendar} />
+<svelte:component
+  this={representationComponent}
+  bind:collection
+  {calendar}
+  {claytons}
+/>
 
 <style>
 </style>

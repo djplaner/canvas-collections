@@ -8,6 +8,7 @@
     configStore,
     representationsStore,
   } from "../../stores";
+  import { updatePageController } from "../../lib/updatePageController";
   import { getCollectionCanvasModules } from "../Representations/representationSupport";
   import { getPageName } from "../../lib/CanvasSetup";
 
@@ -148,10 +149,6 @@
       return;
     }
 
-    debug("Deleting collection: " + collectionName);
-    debug("before");
-    debug($collectionsStore);
-
     // remove the collection from $collectionsStore["COLLECTIONS_ORDER"]
     let index = $collectionsStore["COLLECTIONS_ORDER"].indexOf(collectionName);
     $collectionsStore["COLLECTIONS_ORDER"].splice(index, 1);
@@ -280,6 +277,22 @@ does not exist.
     } else {
       outputPageExists[collectionName] = true;
     }
+  }
+
+  /**
+   * @function updateIncludePage
+   * @param outputPageName
+   * @param collectionName
+   * @description Should update the specified Canvas page with the representation
+   * of a specific collection
+   * VERY EXPERIMENTAL and incomplete
+   */
+  function updateOutputPage(collectionName) {
+    const updateController = new updatePageController( 
+      $collectionsStore, undefined, collectionName );
+
+    updateController.execute();
+
   }
 
   const HELP = {
@@ -605,7 +618,11 @@ does not exist.
       <button
         id="cc-collection-{collectionName}-output-page-update"
         class="btn cc-existing-collection"
-        disabled={outputPageName[collectionName] === ""}>Update</button
+        disabled={outputPageName[collectionName] === ""}
+        on:click={() => {
+          updateOutputPage( collectionName);
+        }}
+        >Update</button
       >
     </div>
     {#if !outputPageExists[collectionName]}
