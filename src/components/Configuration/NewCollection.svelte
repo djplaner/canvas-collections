@@ -115,19 +115,26 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
+    margin:0.5em;
   }
 
   .cc-config-collection {
     padding-top: 0.5em;
     padding-left: 0.5em;
+    padding-bottom: 0.5em;
   }
 
   .cc-config-collection label {
     font-size: 0.8em;
+    margin: 0em;
   }
 
   .cc-config-collection input {
     font-size: 0.8em;
+    width: 15em;
+    margin: 0.5em;
+    font-size: 0.8em;
+    padding-left: 0.5em;
   }
 
   .cc-config-collection button {
@@ -136,12 +143,15 @@
   }
   .cc-config-collection select {
     font-size: 0.8em;
-    width: 7rem;
+    width: 8rem;
     height: 2rem;
+    padding-left: 0.5em;
+    margin: 0em;
   }
   #cc-config-new-collection-button {
     left: 50%;
     transform: translateX(-50%);
     font-size: 0.8em;
   }
+
 </style>

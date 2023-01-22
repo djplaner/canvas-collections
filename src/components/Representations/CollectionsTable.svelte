@@ -41,7 +41,39 @@
     collectionsOrder = [
       "unallocated",
       ...$collectionsStore["COLLECTIONS_ORDER"],
-    ];
+    ]
+
+    labelHeader = getMostUsedLabel()
+  }
+
+  /**
+   * @function getMostUsedLabel
+   * @description Return the label that is used the most by the modules
+  */
+
+  function getMostUsedLabel() {
+    let labelCounts = {
+    };
+
+    // loop through all of the modules
+    // - count the number of times each label is used
+    console.log($collectionsStore["MODULES"])
+
+    for (const key in $collectionsStore["MODULES"]) {
+      if (!labelCounts.hasOwnProperty($collectionsStore["MODULES"][key].label)) {
+        labelCounts[$collectionsStore["MODULES"][key].label] = 0;
+      }
+      labelCounts[$collectionsStore["MODULES"][key].label] += 1;
+    }
+
+//    $collectionsStore["MODULES"].forEach((module) => {
+
+ //   });
+
+    // return the label that is used the most
+    return Object.keys(labelCounts).reduce((a, b) =>
+      labelCounts[a] > labelCounts[b] ? a : b
+    );
   }
 
   /**

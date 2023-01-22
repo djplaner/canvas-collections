@@ -685,11 +685,14 @@
     justify-content: space-around;
   } */
 
-  .cc-existing-collection input {
+  /*.cc-existing-collection input { */
+  input {
     width: 15em;
     margin: 0.1em;
     font-size: 0.8em;
     padding-left: 0.5em;
+    padding-top: 0em;
+    padding-bottom: 0em;
   }
 
   button.cc-existing-collection {
@@ -706,6 +709,7 @@
     font-size: 0.8em;
     width: 10rem;
     height: 2rem;
+    padding:0em;
   }
 
   .cc-collection-form {
@@ -713,6 +717,7 @@
     grid-template-columns: 8em 1fr;
     grid-gap: 1em;
     padding-bottom: 0.25em;
+    align-items: center;
   }
 
   .cc-collection-label {
@@ -729,6 +734,7 @@
     grid-template-columns: 1fr 8em;
     grid-gap: 1em;
     padding: 0.25em;
+    align-items: center;
   }
 
   .cc-collection-label-reverse {
@@ -745,6 +751,7 @@
     grid-template-columns: 1fr 1fr;
     grid-gap: 0em;
     text-align: right;
+    align-items: center;
   }
 
   .cc-collection-double-center {
@@ -789,6 +796,8 @@
   .cc-collection-input > select,
   .cc-collection-input > input[type="text"] {
     width: 90%;
+    padding-top: 0em;
+    padding-bottom: 0em;
   }
 
   /*  .cc-collection-input > input[type="checkbox"] {
@@ -804,6 +813,8 @@
   label,
   select {
     margin-bottom: 0em;
+    padding-top: 0em;
+    padding-bottom: 0em;
   }
 
   input[type="checkbox"] {

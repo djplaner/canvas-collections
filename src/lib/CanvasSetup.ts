@@ -360,24 +360,27 @@ export function getPageName(
   debug(
     `-------------------- getPageName -- ${pageName} ---------------------`
   );
-  String.prototype.slugify = function (separator = "-") {
-    return this.toString()
-      .normalize("NFD") // split an accented letter in the base letter and the acent
-      .replace(/[\u0300-\u036f]/g, "") // remove all previously split accents
-      .toLowerCase()
-      .trim()
-      .replace("@", "at")
-      .replace(/[^a-z0-9 ]/g, "") // remove all chars not letters, numbers and spaces (to be replaced)
-      .replace(/\s+/g, separator);
-  };
-  const slugifiedPageName = pageName.slugify();
-  const apiUrl = `https://${document.location.hostname}/api/v1/courses/${courseId}/pages/${slugifiedPageName}`;
 
-  debug(`apiUrl: ${apiUrl}`);
+  if (pageName) {
+    String.prototype.slugify = function (separator = "-") {
+      return this.toString()
+        .normalize("NFD") // split an accented letter in the base letter and the acent
+        .replace(/[\u0300-\u036f]/g, "") // remove all previously split accents
+        .toLowerCase()
+        .trim()
+        .replace("@", "at")
+        .replace(/[^a-z0-9 ]/g, "") // remove all chars not letters, numbers and spaces (to be replaced)
+        .replace(/\s+/g, separator);
+    };
+    const slugifiedPageName = pageName.slugify();
+    const apiUrl = `https://${document.location.hostname}/api/v1/courses/${courseId}/pages/${slugifiedPageName}`;
 
-  wf_fetchData(apiUrl).then((res) => {
-    if (res.status === 200) {
-      callBack(pageName, res.body);
-    }
-  });
+    debug(`apiUrl: ${apiUrl}`);
+
+    wf_fetchData(apiUrl).then((res) => {
+      if (res.status === 200) {
+        callBack(pageName, res.body);
+      }
+    });
+  }
 }
