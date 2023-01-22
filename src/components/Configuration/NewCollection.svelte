@@ -56,6 +56,10 @@
     newCollection.representation = representation;
     $collectionsStore["COLLECTIONS"][collectionName] = newCollection;
 
+    // reset the value of the input/select
+    collectionName = "";
+    representation = "";
+
     // set needToSaveCollections to true
     $configStore["needToSaveCollections"] = true;
   }

@@ -29186,7 +29186,7 @@ Do you wish to proceed?`)) {
     	return child_ctx;
     }
 
-    // (78:6) {#each availableRepresentations as representation}
+    // (81:6) {#each availableRepresentations as representation}
     function create_each_block(ctx) {
     	let option;
     	let t_value = /*representation*/ ctx[1] + "";
@@ -29198,7 +29198,7 @@ Do you wish to proceed?`)) {
     			t = text(t_value);
     			option.__value = /*representation*/ ctx[1];
     			option.value = option.__value;
-    			add_location(option, file$3, 78, 8, 2754);
+    			add_location(option, file$3, 81, 8, 2850);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -29214,7 +29214,7 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(78:6) {#each availableRepresentations as representation}",
+    		source: "(81:6) {#each availableRepresentations as representation}",
     		ctx
     	});
 
@@ -29281,42 +29281,42 @@ Do you wish to proceed?`)) {
     			button = element("button");
     			button.textContent = "Add";
     			attr_dev(i0, "class", "icon-question cc-module-icon");
-    			add_location(i0, file$3, 48, 2, 1811);
+    			add_location(i0, file$3, 51, 2, 1907);
     			attr_dev(a0, "href", "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection");
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
-    			add_location(a0, file$3, 43, 0, 1654);
-    			add_location(strong, file$3, 50, 0, 1861);
+    			add_location(a0, file$3, 46, 0, 1750);
+    			add_location(strong, file$3, 53, 0, 1957);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "id", "cc-config-new-collection-name");
     			attr_dev(input, "placeholder", "Name for new collection");
     			attr_dev(input, "class", "svelte-tc40gc");
-    			add_location(input, file$3, 54, 4, 2021);
+    			add_location(input, file$3, 57, 4, 2117);
     			attr_dev(div0, "class", "ic-Form-control");
     			set_style(div0, "margin-bottom", "0px");
-    			add_location(div0, file$3, 53, 2, 1959);
+    			add_location(div0, file$3, 56, 2, 2055);
     			attr_dev(i1, "class", "icon-question cc-module-icon");
-    			add_location(i1, file$3, 68, 6, 2400);
+    			add_location(i1, file$3, 71, 6, 2496);
     			attr_dev(a1, "href", "https://djplaner.github.io/canvas-collections/reference/representations/overview/");
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noreferrer");
-    			add_location(a1, file$3, 63, 4, 2240);
+    			add_location(a1, file$3, 66, 4, 2336);
     			attr_dev(label, "for", "cc-config-new-collection-representation");
     			attr_dev(label, "class", "svelte-tc40gc");
-    			add_location(label, file$3, 71, 4, 2460);
+    			add_location(label, file$3, 74, 4, 2556);
     			attr_dev(select, "id", "cc-config-new-collection-representation");
     			attr_dev(select, "class", "cc-collection-representation svelte-tc40gc");
     			if (/*representation*/ ctx[1] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[5].call(select));
-    			add_location(select, file$3, 72, 4, 2541);
+    			add_location(select, file$3, 75, 4, 2637);
     			attr_dev(div1, "class", "cc-collection-representation svelte-tc40gc");
-    			add_location(div1, file$3, 62, 2, 2192);
+    			add_location(div1, file$3, 65, 2, 2288);
     			attr_dev(button, "class", "btn btn-primary svelte-tc40gc");
     			attr_dev(button, "id", "cc-config-new-collection-button");
-    			add_location(button, file$3, 84, 4, 2920);
+    			add_location(button, file$3, 87, 4, 3016);
     			attr_dev(fieldset, "class", "ic-Fieldset ic-Fieldset--radio-checkbox");
-    			add_location(fieldset, file$3, 83, 2, 2856);
+    			add_location(fieldset, file$3, 86, 2, 2952);
     			attr_dev(div2, "class", "cc-config-collection border border-trbl svelte-tc40gc");
-    			add_location(div2, file$3, 52, 0, 1902);
+    			add_location(div2, file$3, 55, 0, 1998);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -29472,6 +29472,11 @@ Do you wish to proceed?`)) {
     		newCollection.name = collectionName;
     		newCollection.representation = representation;
     		set_store_value(collectionsStore, $collectionsStore["COLLECTIONS"][collectionName] = newCollection, $collectionsStore);
+
+    		// reset the value of the input/select
+    		$$invalidate(0, collectionName = "");
+
+    		$$invalidate(1, representation = "");
 
     		// set needToSaveCollections to true
     		set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
