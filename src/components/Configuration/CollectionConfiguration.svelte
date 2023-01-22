@@ -227,23 +227,28 @@
 
   /**
    * @function doesIncludePageExists
-   * @param pageObject - canvas page object returned from the API
-   * @description Checks if the pageObject is a page that exists in the course
+   * @param pageName - name of the page to tried to retrive
+   * @param msg - message back from canvas API { status: res: body }
+   * @description Call back after trying to get the page object for an include
+   * page
    * If not turn give an alert
    */
-  function doesIncludePageExist(pageName, pageObject) {
+  function doesIncludePageExist(pageName, msg) {
+    const pageObject = msg.body;
     debug(`---------- doesIncludePageExist --${pageName}--------`);
     debug(pageObject);
 
     includePageName[collectionName] = pageName;
 
     if (!pageObject) {
-      toastAlert(`<p>The include page called</p>
+      toastAlert(
+        `<p>Unable to retrieve the include page</p>
 <p style="margin-left: 1em">${pageName}</p>
 <p>for the collection</p>
-<p style="margin-left: 1em">${collectionName}</p>
-<p>does not exist.</p>, "danger"
-      `);
+<p style="margin-left: 1em">${collectionName}</p>`,
+        "danger",
+        3000
+      );
       includePageExists[collectionName] = false;
     } else {
       includePageExists[collectionName] = true;
@@ -253,13 +258,14 @@
   /**
    * @function doesOutputPageExists
    * @param pageName
-   * @param pageObject
+   * @param msg
    * @description Called after Canvas API call returns a page Object. Set
    * outputPageExists and other variables appropriately
    * No alerts for this (unlike include page) because if the output page
    * doesn't exist it will be created
    */
-  function doesOutputPageExist(pageName, pageObject) {
+  function doesOutputPageExist(pageName, msg) {
+    const pageObject = msg.body;
     outputPageName[collectionName] = pageName;
     if (!pageObject) {
       outputPageExists[collectionName] = false;
@@ -529,12 +535,14 @@
           .includePage}
         on:click={() => ($configStore["needToSaveCollections"] = true)}
         on:keydown={() => ($configStore["needToSaveCollections"] = true)}
-        on:focusout={() =>
+        on:focusout={() => {
+          includePageExists[collectionName] = true;
           getPageName(
             $collectionsStore["COLLECTIONS"][collectionName].includePage,
             $configStore["courseId"],
             doesIncludePageExist
-          )}
+          );
+        }}
         class="cc-existing-collection"
       />
 
@@ -599,12 +607,14 @@
         bind:value={$collectionsStore["COLLECTIONS"][collectionName].outputPage}
         on:click={() => ($configStore["needToSaveCollections"] = true)}
         on:keydown={() => ($configStore["needToSaveCollections"] = true)}
-        on:focusout={() =>
+        on:focusout={() => {
+          outputPageExists[collectionName] = true;
           getPageName(
             $collectionsStore["COLLECTIONS"][collectionName].outputPage,
             $configStore["courseId"],
             doesOutputPageExist
-          )}
+          );
+        }}
         class="cc-existing-collection"
       />
       <button
@@ -709,7 +719,7 @@
     font-size: 0.8em;
     width: 10rem;
     height: 2rem;
-    padding:0em;
+    padding: 0em;
   }
 
   .cc-collection-form {

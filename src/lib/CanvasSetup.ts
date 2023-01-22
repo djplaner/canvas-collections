@@ -162,12 +162,12 @@ export const wf_fetchData = async (reqUrl) => {
   const url = reqUrl;
   try {
     const res = await fetch(url);
-    if (res.status === 404)
+/*    if (res.status === 404)
       // Endpoint not found
       return null;
     if (res.status === 401)
       // User not authorized
-      return null;
+      return null; */
     const body = await res.json();
     const msg = {
       status: res.status,
@@ -361,7 +361,8 @@ export function getPageName(
     `-------------------- getPageName -- ${pageName} ---------------------`
   );
 
-  if (pageName) {
+  if (pageName!=="") {
+    // only do this if we've a valid page name
     String.prototype.slugify = function (separator = "-") {
       return this.toString()
         .normalize("NFD") // split an accented letter in the base letter and the acent
@@ -377,10 +378,8 @@ export function getPageName(
 
     debug(`apiUrl: ${apiUrl}`);
 
-    wf_fetchData(apiUrl).then((res) => {
-      if (res.status === 200) {
-        callBack(pageName, res.body);
-      }
+    wf_fetchData(apiUrl).then((msg) => {
+        callBack(pageName, msg.body);
     });
   }
 }

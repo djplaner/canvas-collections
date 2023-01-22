@@ -228,6 +228,9 @@ export class CollectionsDetails {
         if (!collection.hasOwnProperty("unallocated")) {
           collection.unallocated = false;
         }
+        if (!collection.hasOwnProperty("includePage")) {
+          collection.includePage = "";
+        }
       }
     }
     // Focus on updates to modules

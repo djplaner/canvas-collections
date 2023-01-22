@@ -11,7 +11,7 @@
  * https://shoelace.style/components/alert
  */
 
-export function toastAlert(message, status = "primary") {
+export function toastAlert(message, status = "primary", duration = null) {
   const iconMapping = {
     primary: "info-circle",
     success: "check2-circle",
@@ -25,6 +25,9 @@ export function toastAlert(message, status = "primary") {
   alert.setAttribute("variant", status);
   //alert.setAttribute("duration", "5000");
   alert.setAttribute("closable", "true");
+  if (duration) {
+    alert.setAttribute("duration", duration);
+  }
   alert.innerHTML = `
     <sl-icon slot="icon" name="${iconMapping[status]}"></sl-icon>
     ${message}
