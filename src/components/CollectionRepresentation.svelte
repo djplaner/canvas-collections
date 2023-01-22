@@ -17,10 +17,7 @@
     configStore,
     representationsStore,
   } from "../stores";
-  /*  import GriffithCards from "./Representations/GriffithCards.svelte";
-  import AssessmentTable from "./Representations/AssessmentTable.svelte";
-  import CollectionOnly from "./Representations/CollectionOnly.svelte";
-  */
+
   import UniversityDateCalendar from "../lib/university-date-calendar";
 
   let calendar = new UniversityDateCalendar();
@@ -51,7 +48,11 @@
     }
     representationComponent = $representationsStore[localRep];
 
-    if ($configStore["ccOn"]) {
+    // don't modify canvas modules if 
+    // - collections is one
+    // - the current collection's representation is CollectionsTable
+    if ($configStore["ccOn"] && 
+    $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]]["representation"] !== "CollectionsTable") {
       modifyCanvasModulesList(
         $configStore["currentCollection"],
         $collectionsStore["MODULES"],

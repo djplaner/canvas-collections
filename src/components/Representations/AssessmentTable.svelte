@@ -283,7 +283,7 @@
     padding: 0.5em 1em 0.5em 0;
     vertical-align: top;
     text-align: left;
-    background-color: #e03e2d;
+    background-color: #c02123;
     color: #fff;
     font-weight: bold;
   }
