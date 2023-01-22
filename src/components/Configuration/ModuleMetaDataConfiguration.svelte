@@ -11,6 +11,8 @@
   import { collectionsStore, configStore } from "../../stores";
   import { debug } from "../../lib/debug";
 
+  import { toastAlert, ccConfirm } from "../../lib/ui";
+
   export let moduleId: Number;
 
   let readyToAdd = true;
@@ -39,10 +41,18 @@
       `cc-module-config-${moduleId}-metadata-add-value`
     ) as HTMLInputElement;
 
-    if (name.value === "" || value.value === "") {
-      alert("Name and value must have values before adding");
-      return;
-    }
+    // Not required as the form action prevents either case
+/*    if (name.value === "" || value.value === "") {
+      if (name.value==="") {
+        toastAlert("<p>A new meta data item must have a <em>name</em> to be added.</p>",
+        "danger")
+      }
+      if (value.value) {
+        toastAlert("<p>The <em>value</em> for the new meta data item is empty</p>",
+        "warning" )
+      }
+      return; 
+    } */
 
     // do some sanitisation of the HTML https://github.com/apostrophecms/sanitize-html
     // - value will be allowed HTML, including iframes
@@ -53,31 +63,43 @@
     // if the sanitised name is different to the original, warn the user
     // also warn if the sanitised name is empty
     if (sanitisedName !== name.value || sanitisedName === "") {
-      if (
-        !confirm(
-          `The new metadata item name 
-    ${name.value} 
-has been sanitised (removing forbidden characters) to 
-    ${sanitisedName}. 
-Please check that this is what you want. (If the sanitised name is empty, the metadata item will not be added.)`
-        )
-      ) {
-        return;
-      }
-      if (sanitisedName === "") {
-        return;
-      }
+      ccConfirm(
+        `<p>The new metadata name <xmp>${name.value}</xmp> has been sanitised 
+          (removing/replacing forbidden characters) to <xmp>${sanitisedName}</xmp> 
+(If the sanitised name is empty, the metadata item will not be added.)</p>
+ <p>Are you happy to use the sanitised name?</p>`
+      ).then((ok) => {
+        if (!ok) {
+          return;
+        }
+        if (sanitisedName === "") {
+          return;
+        }
+        handleAddMetaData(name, value, sanitisedName, sanitisedValue);
+      });
+    } else {
+      handleAddMetaData(name, value, sanitisedName, sanitisedValue);
     }
+  }
 
+  function handleAddMetaData(
+    name: HTMLInputElement,
+    value: HTMLInputElement,
+    sanitisedName: string,
+    sanitisedValue: string
+  ) {
     // check for duplicate of existing name
     if (
       $collectionsStore["MODULES"][moduleId].metadata.hasOwnProperty([
         name.value,
       ])
     ) {
-      alert(
-        `There already exists a metadata entry with the name ${name.value}`
+      toastAlert(
+        `<p>There already exists a metadata entry with the name</p>
+        <p style="margin-left: 1em">${name.value}</p>`,
+        "danger"
       );
+      name.value = "";
       return;
     }
 
@@ -147,25 +169,24 @@ Please check that this is what you want. (If the sanitised name is empty, the me
   function deleteMetaData(key: string) {
     // check if they really want to delete
     const moduleName = $collectionsStore["MODULES"][moduleId].name;
-    if (
-      !confirm(
-        `Are you sure you want to delete the metadata entry 
-    ${key} 
-for the module 
-    ${moduleName}`
-      )
-    ) {
-      return;
-    }
-    // create a complete new object to remove the key
-    // Necessary to ensure the reactive display of the list of metadata
-    // removes the correct entry (it doesn't if you just delete from the existing object)
-    let metadata = $collectionsStore["MODULES"][moduleId].metadata;
-    delete metadata[key];
+    ccConfirm(
+      `<p>About to delete the metadata entry<br /> 
+        <span style="margin:1em">${key}</span><br /> for the module <br />
+    <span style="margin:1em">${moduleName}<span></p>
+      <p>Proceed?</p>`
+    ).then((ok) => {
+      if (ok) {
+        // create a complete new object to remove the key
+        // Necessary to ensure the reactive display of the list of metadata
+        // removes the correct entry (it doesn't if you just delete from the existing object)
+        let metadata = $collectionsStore["MODULES"][moduleId].metadata;
+        delete metadata[key];
 
-    // force the reactive update of the entire list of metadata
-    $collectionsStore["MODULES"][moduleId].metadata = metadata;
-    $configStore["needToSaveCollections"] = true;
+        // force the reactive update of the entire list of metadata
+        $collectionsStore["MODULES"][moduleId].metadata = metadata;
+        $configStore["needToSaveCollections"] = true;
+      }
+    });
   }
 
   /**
@@ -193,14 +214,14 @@ for the module
         name.value,
       ])
     ) {
-      alert(
-        `There already exists a metadata entry with the name 
-    ${name.value}
-Please choose a different name.`
+      toastAlert(
+        `<p>There already exists a metadata entry with the name</p>
+    <div style="margin-left: 1em">${name.value}</div>
+    <p>Please choose a different name.</p>`, "danger"
       );
+      name.value = originalName;
       return;
     }
-
 
     let metadata = $collectionsStore["MODULES"][moduleId].metadata;
     metadata[name.value] = metadata[originalName];
@@ -228,21 +249,23 @@ Please choose a different name.`
 
     // if the sanitised value is different to the original, warn the user
     if (sanitisedValue !== value.value) {
-      if (
-        !confirm(
-          `The new metadata item value 
-    ${value.value}
-has been sanitised to
-    ${sanitisedValue}
-Do you want to use the sanitised value?`
-        )
-      ) {
-        return;
-      }
+      ccConfirm(
+        `<p>The new metadata item value</p> 
+    <div style="margin-left:1em"><xmp>${value.value}</xmp></div>
+<p>has been sanitised to</p>
+    <div style="margin-left:1em"><xmp>${sanitisedValue}</xmp></div>
+    <p>Do you want to use the sanitised value?</p>`
+      ).then((ok) => {
+        if (ok) {
+          $collectionsStore["MODULES"][moduleId].metadata[name] =
+            sanitisedValue;
+          $configStore["needToSaveCollections"] = true;
+        }
+      });
+    } else {
+      $collectionsStore["MODULES"][moduleId].metadata[name] = sanitisedValue;
+      $configStore["needToSaveCollections"] = true;
     }
-
-    $collectionsStore["MODULES"][moduleId].metadata[name] = sanitisedValue;
-    $configStore["needToSaveCollections"] = true;
   }
 
   //------------- HELP tooltips and urls
@@ -284,7 +307,6 @@ Do you want to use the sanitised value?`
           ><input
             type="text"
             id="cc-module-config-{moduleId}-metadata-add-name"
-            pattern={String.raw`[^"<>]`}
             on:keydown|stopPropagation
             on:keyup={() => (readyToAdd = isReadyToAdd())}
           /></td

@@ -11,6 +11,7 @@
   import { updatePageController } from "../../lib/updatePageController";
   import { getCollectionCanvasModules } from "../Representations/representationSupport";
   import { getPageName } from "../../lib/CanvasSetup";
+  import { toastAlert, ccConfirm } from "../../lib/ui";
 
   export let collectionName: string;
   export let order: Number;
@@ -48,18 +49,6 @@
     doesOutputPageExist
   );
 
-  /*  let removed = false;
-  // experiment to see if we can detect when this component for this collection
-  // is being called, after the collection has already been deleted
-  $: {
-    if (!$collectionsStore["COLLECTIONS"].hasOwnProperty(collectionName)) {
-      alert(
-        `Collection ${collectionName} has been deleted but trying to do stuff`
-      );
-      removed = true;
-    }
-  } */
-
   const modules = getCollectionCanvasModules(
     collectionName,
     $collectionsStore["MODULES"]
@@ -86,8 +75,10 @@
 
     if (!event.srcElement.checked) {
       event.preventDefault();
-      alert(
-        "There must always be a default collection. Change the default collection by selecting another collection"
+      toastAlert(
+        `<p>There must always be a default collection. 
+        Change the default collection by selecting another collection as the new default.</p>`,
+        "warning"
       );
       return false;
     }
@@ -141,48 +132,43 @@
 
   function deleteCollection() {
     // confirm that they actually want to delete the collection
-    if (
-      !confirm(
-        `Are you sure you want to delete the collection ${collectionName}?`
-      )
-    ) {
-      return;
-    }
+    ccConfirm(
+      `<p>Are you sure you want to delete the collection <em>${collectionName}</em>?</p>`
+    ).then((ok) => {
+      if (ok) {
+        // remove the collection from $collectionsStore["COLLECTIONS_ORDER"]
+        let index =
+          $collectionsStore["COLLECTIONS_ORDER"].indexOf(collectionName);
+        $collectionsStore["COLLECTIONS_ORDER"].splice(index, 1);
+        $collectionsStore["COLLECTIONS_ORDER"] =
+          $collectionsStore["COLLECTIONS_ORDER"];
 
-    // remove the collection from $collectionsStore["COLLECTIONS_ORDER"]
-    let index = $collectionsStore["COLLECTIONS_ORDER"].indexOf(collectionName);
-    $collectionsStore["COLLECTIONS_ORDER"].splice(index, 1);
-    $collectionsStore["COLLECTIONS_ORDER"] =
-      $collectionsStore["COLLECTIONS_ORDER"];
+        // if currently the DEFAULT_ACTIVE_COLLECTION Change the DEFAULT_ACTIVE_COLLECTION to the first collection left
+        if ($collectionsStore["DEFAULT_ACTIVE_COLLECTION"] === collectionName) {
+          $collectionsStore["DEFAULT_ACTIVE_COLLECTION"] =
+            $collectionsStore["COLLECTIONS_ORDER"][0];
+        }
 
-    // if currently the DEFAULT_ACTIVE_COLLECTION Change the DEFAULT_ACTIVE_COLLECTION to the first collection left
-    if ($collectionsStore["DEFAULT_ACTIVE_COLLECTION"] === collectionName) {
-      $collectionsStore["DEFAULT_ACTIVE_COLLECTION"] =
-        $collectionsStore["COLLECTIONS_ORDER"][0];
-    }
-
-    // change the currentCollection
-    if ($configStore["currentCollection"] === collectionName) {
-      $configStore["currentCollection"] =
-        $collectionsStore["DEFAULT_ACTIVE_COLLECTION"];
-    }
-    // set the collection attribute for all modules in the collection to "none"
-    for (const moduleId in $collectionsStore["MODULES"]) {
-      if (
-        $collectionsStore["MODULES"][moduleId].collection === collectionName
-      ) {
-        $collectionsStore["MODULES"][moduleId].collection = null;
+        // change the currentCollection
+        if ($configStore["currentCollection"] === collectionName) {
+          $configStore["currentCollection"] =
+            $collectionsStore["DEFAULT_ACTIVE_COLLECTION"];
+        }
+        // set the collection attribute for all modules in the collection to "none"
+        for (const moduleId in $collectionsStore["MODULES"]) {
+          if (
+            $collectionsStore["MODULES"][moduleId].collection === collectionName
+          ) {
+            $collectionsStore["MODULES"][moduleId].collection = null;
+          }
+        }
+        // remove the collection from $collectionsStore["COLLECTIONS"]
+        delete $collectionsStore["COLLECTIONS"][collectionName];
+        //$collectionsStore = $collectionsStore;
+        // TODO is this really needed?
+        //$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = collectionName;
       }
-    }
-    // remove the collection from $collectionsStore["COLLECTIONS"]
-    delete $collectionsStore["COLLECTIONS"][collectionName];
-    //$collectionsStore = $collectionsStore;
-    // TODO is this really needed?
-    //$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = collectionName;
-    debug("after");
-    debug($collectionsStore);
-    debug("config");
-    debug($configStore);
+    });
   }
 
   /**
@@ -199,41 +185,44 @@
   function changeCollectionName(event) {
     const newCollectionName = event.target.value;
     // confirm that they actually want to delete the collection
-    if (
-      !confirm(
-        `Are you sure you want to change the collection's name \nfrom "${collectionName}" to "${newCollectionName}"`
-      )
-    ) {
-      return;
-    }
+    ccConfirm(
+      `<p>Are you sure you want to change the collection's name from 
+          <em>${collectionName}</em> to <em>${newCollectionName}</em></p>`
+    ).then((ok) => {
+      if (!ok) {
+        event.target.value = collectionName;
+      } else {
+        // modify collectionName in array $collectionsStore["COLLECTIONS_ORDER"] to newCollectionName
+        let index =
+          $collectionsStore["COLLECTIONS_ORDER"].indexOf(collectionName);
+        $collectionsStore["COLLECTIONS_ORDER"][index] = newCollectionName;
 
-    // modify collectionName in array $collectionsStore["COLLECTIONS_ORDER"] to newCollectionName
-    let index = $collectionsStore["COLLECTIONS_ORDER"].indexOf(collectionName);
-    $collectionsStore["COLLECTIONS_ORDER"][index] = newCollectionName;
+        // if currently the DEFAULT_ACTIVE_COLLECTION Change the DEFAULT_ACTIVE_COLLECTION to the first collection left
+        if ($collectionsStore["DEFAULT_ACTIVE_COLLECTION"] === collectionName) {
+          $collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = newCollectionName;
+        }
 
-    // if currently the DEFAULT_ACTIVE_COLLECTION Change the DEFAULT_ACTIVE_COLLECTION to the first collection left
-    if ($collectionsStore["DEFAULT_ACTIVE_COLLECTION"] === collectionName) {
-      $collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = newCollectionName;
-    }
-
-    // change the currentCollection
-    if ($configStore["currentCollection"] === collectionName) {
-      $configStore["currentCollection"] =
-        $collectionsStore["DEFAULT_ACTIVE_COLLECTION"];
-    }
-    // set the collection attribute for all modules in the collection to newCollectionName
-    for (const moduleId in $collectionsStore["MODULES"]) {
-      if (
-        $collectionsStore["MODULES"][moduleId].collection === collectionName
-      ) {
-        $collectionsStore["MODULES"][moduleId].collection = newCollectionName;
+        // change the currentCollection
+        if ($configStore["currentCollection"] === collectionName) {
+          $configStore["currentCollection"] =
+            $collectionsStore["DEFAULT_ACTIVE_COLLECTION"];
+        }
+        // set the collection attribute for all modules in the collection to newCollectionName
+        for (const moduleId in $collectionsStore["MODULES"]) {
+          if (
+            $collectionsStore["MODULES"][moduleId].collection === collectionName
+          ) {
+            $collectionsStore["MODULES"][moduleId].collection =
+              newCollectionName;
+          }
+        }
+        // rename the collectionName key in $collectionsStore["COLLECTIONS"] to newCollectionName
+        $collectionsStore["COLLECTIONS"][newCollectionName] =
+          $collectionsStore["COLLECTIONS"][collectionName];
+        delete $collectionsStore["COLLECTIONS"][collectionName];
+        $configStore["needToSaveCollections"] = true;
       }
-    }
-    // rename the collectionName key in $collectionsStore["COLLECTIONS"] to newCollectionName
-    $collectionsStore["COLLECTIONS"][newCollectionName] =
-      $collectionsStore["COLLECTIONS"][collectionName];
-    delete $collectionsStore["COLLECTIONS"][collectionName];
-    $configStore["needToSaveCollections"] = true;
+    });
   }
 
   /**
@@ -296,8 +285,7 @@ does not exist.
     updateController.execute();
   }
 
-  function updateOutputPageCompleted(updateController) {
-  }
+  function updateOutputPageCompleted(updateController) {}
 
   const HELP = {
     configName: {

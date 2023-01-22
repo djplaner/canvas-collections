@@ -5,6 +5,8 @@
     configStore,
   } from "../../stores";
 
+  import { toastAlert } from "../../lib/ui";
+
   let collectionName = "";
   let representation = "";
   let availableRepresentations = Object.getOwnPropertyNames(
@@ -29,12 +31,19 @@
    * - set needToSaveCollections to true
    */
   function addCollection() {
-    if (collectionName === "") {
-      alert("Please enter a name for the new collection");
-      return;
-    }
-    if (representation === "") {
-      alert("Please select a representation for the new collection");
+    if (collectionName === "" || representation === "") {
+      if (collectionName === "") {
+        toastAlert(
+          `<p>Please enter a name for the new collection</p>`,
+          "danger"
+        );
+      }
+      if (representation === "") {
+        toastAlert(
+          "<p>Please select a representation for the new collection</p>",
+          "danger"
+        );
+      }
       return;
     }
 
@@ -52,54 +61,54 @@
   }
 </script>
 
-  <a
-    href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
-    target="_blank"
-    rel="noreferrer"
-  >
-    <i class="icon-question cc-module-icon" />
-  </a>
-  <strong>Add a new Collection</strong>
+<a
+  href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
+  target="_blank"
+  rel="noreferrer"
+>
+  <i class="icon-question cc-module-icon" />
+</a>
+<strong>Add a new Collection</strong>
 
-  <div class="cc-config-collection border border-trbl">
-    <div class="ic-Form-control" style="margin-bottom: 0px">
-      <input
-        type="text"
-        id="cc-config-new-collection-name"
-        placeholder="Name for new collection"
-        bind:value={collectionName}
-      />
-    </div>
-
-    <div class="cc-collection-representation">
-      <a
-        href="https://djplaner.github.io/canvas-collections/reference/representations/overview/"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <i class="icon-question cc-module-icon" />
-      </a>
-
-      <label for="cc-config-new-collection-representation">Representation</label>
-      <select
-        id="cc-config-new-collection-representation"
-        class="cc-collection-representation"
-        bind:value={representation}
-      >
-        {#each availableRepresentations as representation}
-          <option value={representation}>{representation}</option>
-        {/each}
-      </select>
-    </div>
-
-    <fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
-      <button
-        class="btn btn-primary"
-        id="cc-config-new-collection-button"
-        on:click={addCollection}>Add</button
-      >
-    </fieldset>
+<div class="cc-config-collection border border-trbl">
+  <div class="ic-Form-control" style="margin-bottom: 0px">
+    <input
+      type="text"
+      id="cc-config-new-collection-name"
+      placeholder="Name for new collection"
+      bind:value={collectionName}
+    />
   </div>
+
+  <div class="cc-collection-representation">
+    <a
+      href="https://djplaner.github.io/canvas-collections/reference/representations/overview/"
+      target="_blank"
+      rel="noreferrer"
+    >
+      <i class="icon-question cc-module-icon" />
+    </a>
+
+    <label for="cc-config-new-collection-representation">Representation</label>
+    <select
+      id="cc-config-new-collection-representation"
+      class="cc-collection-representation"
+      bind:value={representation}
+    >
+      {#each availableRepresentations as representation}
+        <option value={representation}>{representation}</option>
+      {/each}
+    </select>
+  </div>
+
+  <fieldset class="ic-Fieldset ic-Fieldset--radio-checkbox">
+    <button
+      class="btn btn-primary"
+      id="cc-config-new-collection-button"
+      on:click={addCollection}>Add</button
+    >
+  </fieldset>
+</div>
 
 <style>
   .cc-collection-representation {
