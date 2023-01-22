@@ -72,9 +72,9 @@ export class CollectionsDetails {
   requestCollectionsPage() {
     wf_fetchData(
       `${this.baseApiUrl}/courses/${this.config.courseId}/pages/canvas-collections-configuration`
-    ).then((res) => {
-      if (res.status === 200) {
-        this.collectionsPageResponse = res.body;
+    ).then((msg) => {
+      if (msg.status === 200) {
+        this.collectionsPageResponse = msg.body;
         this.parseCollectionsPage();
       } else {
         this.finishedCallBack("no collections config");

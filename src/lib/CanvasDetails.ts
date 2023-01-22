@@ -55,9 +55,9 @@ export class CanvasDetails {
 
   requestCourseObject() {
     wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}`).then(
-      (res) => {
-        if (res.status === 200) {
-          this.courseObject = res.body;
+      (msg) => {
+        if (msg.status === 200) {
+          this.courseObject = msg.body;
           //this.generateSTRM();
           this.requestModuleInformation();
         }
@@ -162,9 +162,9 @@ export class CanvasDetails {
   requestModuleInformation() {
     wf_fetchData(
       `${this.baseApiUrl}/courses/${this.config.courseId}/modules?include=content_details&per_page=500`
-    ).then((res) => {
-      if (res.status === 200) {
-        this.courseModules = res.body;
+    ).then((msg) => {
+      if (msg.status === 200) {
+        this.courseModules = msg.body;
         this.finishedCallBack();
       }
     });

@@ -12948,9 +12948,9 @@ var app = (function () {
          *
          */
         requestCollectionsPage() {
-            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}/pages/canvas-collections-configuration`).then((res) => {
-                if (res.status === 200) {
-                    this.collectionsPageResponse = res.body;
+            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}/pages/canvas-collections-configuration`).then((msg) => {
+                if (msg.status === 200) {
+                    this.collectionsPageResponse = msg.body;
                     this.parseCollectionsPage();
                 }
                 else {
@@ -29928,9 +29928,9 @@ Do you wish to proceed?`)) {
          *
          */
         requestCourseObject() {
-            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}`).then((res) => {
-                if (res.status === 200) {
-                    this.courseObject = res.body;
+            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}`).then((msg) => {
+                if (msg.status === 200) {
+                    this.courseObject = msg.body;
                     //this.generateSTRM();
                     this.requestModuleInformation();
                 }
@@ -30013,9 +30013,9 @@ Do you wish to proceed?`)) {
             this.period = translate[this.period];
         }
         requestModuleInformation() {
-            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}/modules?include=content_details&per_page=500`).then((res) => {
-                if (res.status === 200) {
-                    this.courseModules = res.body;
+            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}/modules?include=content_details&per_page=500`).then((msg) => {
+                if (msg.status === 200) {
+                    this.courseModules = msg.body;
                     this.finishedCallBack();
                 }
             });
