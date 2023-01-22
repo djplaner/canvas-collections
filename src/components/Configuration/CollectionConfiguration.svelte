@@ -238,11 +238,11 @@
     includePageName[collectionName] = pageName;
 
     if (!pageObject) {
-      alert(`The include page called
-    ${pageName}
-for the collection
-    ${collectionName}
-does not exist.
+      toastAlert(`<p>The include page called</p>
+<p style="margin-left: 1em">${pageName}</p>
+<p>for the collection</p>
+<p style="margin-left: 1em">${collectionName}</p>
+<p>does not exist.</p>, "danger"
       `);
       includePageExists[collectionName] = false;
     } else {

@@ -19,7 +19,7 @@
 
   const CC_VERSION = "0.9.10";
   const TIME_BETWEEN_SAVES = 10000;
-  const AUTO_SAVE = false;
+  const AUTO_SAVE = true;
 
   export let courseId: number;
   export let editMode: boolean;

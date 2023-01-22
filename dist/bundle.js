@@ -26239,7 +26239,7 @@ Do you wish to proceed?`)) {
     			i = element("i");
     			attr_dev(i, "class", "icon-arrow-up cc-move-collection svelte-qjc48k");
     			attr_dev(i, "id", i_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-up");
-    			add_location(i, file$5, 284, 8, 14028);
+    			add_location(i, file$5, 284, 8, 14120);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -26288,7 +26288,7 @@ Do you wish to proceed?`)) {
     			i = element("i");
     			attr_dev(i, "class", "icon-arrow-down cc-move-collection svelte-qjc48k");
     			attr_dev(i, "id", i_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-down");
-    			add_location(i, file$5, 292, 8, 14288);
+    			add_location(i, file$5, 292, 8, 14380);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -26337,7 +26337,7 @@ Do you wish to proceed?`)) {
     			t = text(t_value);
     			option.__value = /*representation*/ ctx[41];
     			option.value = option.__value;
-    			add_location(option, file$5, 361, 10, 16464);
+    			add_location(option, file$5, 361, 10, 16556);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -26376,9 +26376,9 @@ Do you wish to proceed?`)) {
     			strong = element("strong");
     			t1 = text(t1_value);
     			t2 = text(" does not exist");
-    			add_location(strong, file$5, 504, 13, 21342);
+    			add_location(strong, file$5, 504, 13, 21434);
     			attr_dev(div, "class", "cc-collection-two-line-error svelte-qjc48k");
-    			add_location(div, file$5, 503, 6, 21285);
+    			add_location(div, file$5, 503, 6, 21377);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -26420,9 +26420,9 @@ Do you wish to proceed?`)) {
     			t0 = text("Will create a new page named ");
     			strong = element("strong");
     			t1 = text(t1_value);
-    			add_location(strong, file$5, 554, 37, 23108);
+    			add_location(strong, file$5, 554, 37, 23200);
     			attr_dev(div, "class", "cc-collection-two-line-warning svelte-qjc48k");
-    			add_location(div, file$5, 553, 6, 23025);
+    			add_location(div, file$5, 553, 6, 23117);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -26797,215 +26797,215 @@ Do you wish to proceed?`)) {
     			t62 = text("Apply");
     			attr_dev(i0, "class", "icon-trash cc-delete-collection svelte-qjc48k");
     			attr_dev(i0, "id", i0_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-delete");
-    			add_location(i0, file$5, 299, 6, 14514);
+    			add_location(i0, file$5, 299, 6, 14606);
     			attr_dev(span0, "class", "cc-collection-move svelte-qjc48k");
-    			add_location(span0, file$5, 282, 4, 13962);
+    			add_location(span0, file$5, 282, 4, 14054);
     			attr_dev(p, "class", "svelte-qjc48k");
-    			add_location(p, file$5, 279, 2, 13895);
+    			add_location(p, file$5, 279, 2, 13987);
     			attr_dev(label0, "for", label0_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-collectionName");
     			attr_dev(label0, "class", "svelte-qjc48k");
-    			add_location(label0, file$5, 314, 6, 14919);
+    			add_location(label0, file$5, 314, 6, 15011);
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file$5, 316, 8, 15020);
+    			add_location(div0, file$5, 316, 8, 15112);
     			attr_dev(i1, "class", "icon-question cc-module-icon svelte-qjc48k");
-    			add_location(i1, file$5, 318, 10, 15162);
+    			add_location(i1, file$5, 318, 10, 15254);
     			attr_dev(a0, "href", /*HELP*/ ctx[20].configName.url);
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "target", "_blank");
-    			add_location(a0, file$5, 317, 8, 15087);
+    			add_location(a0, file$5, 317, 8, 15179);
     			set_custom_element_data(sl_tooltip0, "class", "svelte-qjc48k");
-    			add_location(sl_tooltip0, file$5, 315, 6, 14998);
+    			add_location(sl_tooltip0, file$5, 315, 6, 15090);
     			attr_dev(span1, "class", "cc-collection-label svelte-qjc48k");
-    			add_location(span1, file$5, 313, 4, 14877);
+    			add_location(span1, file$5, 313, 4, 14969);
     			attr_dev(input0, "type", "text");
     			attr_dev(input0, "id", input0_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-collectionName");
     			input0.value = /*collectionName*/ ctx[0];
     			attr_dev(input0, "class", "svelte-qjc48k");
-    			add_location(input0, file$5, 323, 6, 15300);
+    			add_location(input0, file$5, 323, 6, 15392);
     			attr_dev(span2, "class", "cc-collection-input svelte-qjc48k");
-    			add_location(span2, file$5, 322, 4, 15258);
+    			add_location(span2, file$5, 322, 4, 15350);
     			attr_dev(div1, "class", "cc-collection-form svelte-qjc48k");
-    			add_location(div1, file$5, 312, 2, 14839);
+    			add_location(div1, file$5, 312, 2, 14931);
     			attr_dev(label1, "for", label1_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-representation");
     			attr_dev(label1, "class", "svelte-qjc48k");
-    			add_location(label1, file$5, 334, 6, 15580);
+    			add_location(label1, file$5, 334, 6, 15672);
     			attr_dev(div2, "slot", "content");
-    			add_location(div2, file$5, 338, 8, 15709);
+    			add_location(div2, file$5, 338, 8, 15801);
     			attr_dev(i2, "class", "icon-question cc-module-icon svelte-qjc48k");
-    			add_location(i2, file$5, 346, 10, 15936);
+    			add_location(i2, file$5, 346, 10, 16028);
     			attr_dev(a1, "href", /*HELP*/ ctx[20].configRepresentation.url);
     			attr_dev(a1, "rel", "noreferrer");
     			attr_dev(a1, "target", "_blank");
-    			add_location(a1, file$5, 341, 8, 15808);
+    			add_location(a1, file$5, 341, 8, 15900);
     			set_custom_element_data(sl_tooltip1, "class", "svelte-qjc48k");
-    			add_location(sl_tooltip1, file$5, 337, 6, 15687);
+    			add_location(sl_tooltip1, file$5, 337, 6, 15779);
     			attr_dev(span3, "class", "cc-collection-label svelte-qjc48k");
-    			add_location(span3, file$5, 333, 4, 15538);
+    			add_location(span3, file$5, 333, 4, 15630);
     			attr_dev(select, "id", select_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-representation");
     			attr_dev(select, "class", "cc-collection-representation svelte-qjc48k");
     			if (/*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]]["representation"] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[21].call(select));
-    			add_location(select, file$5, 351, 6, 16074);
+    			add_location(select, file$5, 351, 6, 16166);
     			attr_dev(span4, "class", "cc-collection-input svelte-qjc48k");
-    			add_location(span4, file$5, 350, 4, 16032);
+    			add_location(span4, file$5, 350, 4, 16124);
     			attr_dev(div3, "class", "cc-collection-form svelte-qjc48k");
-    			add_location(div3, file$5, 332, 2, 15500);
+    			add_location(div3, file$5, 332, 2, 15592);
     			attr_dev(label2, "for", label2_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-default");
     			attr_dev(label2, "class", "svelte-qjc48k");
-    			add_location(label2, file$5, 369, 6, 16636);
+    			add_location(label2, file$5, 369, 6, 16728);
     			attr_dev(div4, "slot", "content");
-    			add_location(div4, file$5, 373, 8, 16758);
+    			add_location(div4, file$5, 373, 8, 16850);
     			attr_dev(i3, "class", "icon-question cc-module-icon svelte-qjc48k");
-    			add_location(i3, file$5, 377, 10, 16928);
+    			add_location(i3, file$5, 377, 10, 17020);
     			attr_dev(a2, "href", /*HELP*/ ctx[20].configDefault.url);
     			attr_dev(a2, "target", "_blank");
     			attr_dev(a2, "rel", "noreferrer");
-    			add_location(a2, file$5, 376, 8, 16850);
+    			add_location(a2, file$5, 376, 8, 16942);
     			set_custom_element_data(sl_tooltip2, "class", "svelte-qjc48k");
-    			add_location(sl_tooltip2, file$5, 372, 6, 16736);
+    			add_location(sl_tooltip2, file$5, 372, 6, 16828);
     			attr_dev(input1, "type", "checkbox");
     			attr_dev(input1, "id", input1_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-default");
     			input1.checked = input1_checked_value = /*$collectionsStore*/ ctx[8]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0];
     			attr_dev(input1, "class", "svelte-qjc48k");
-    			add_location(input1, file$5, 380, 6, 17013);
-    			add_location(div5, file$5, 368, 4, 16623);
+    			add_location(input1, file$5, 380, 6, 17105);
+    			add_location(div5, file$5, 368, 4, 16715);
     			attr_dev(label3, "for", label3_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide");
     			attr_dev(label3, "class", "svelte-qjc48k");
-    			add_location(label3, file$5, 389, 6, 17321);
+    			add_location(label3, file$5, 389, 6, 17413);
     			attr_dev(div6, "slot", "content");
-    			add_location(div6, file$5, 391, 8, 17421);
+    			add_location(div6, file$5, 391, 8, 17513);
     			attr_dev(i4, "class", "icon-question cc-module-icon svelte-qjc48k");
-    			add_location(i4, file$5, 395, 10, 17585);
+    			add_location(i4, file$5, 395, 10, 17677);
     			attr_dev(a3, "target", "_blank");
     			attr_dev(a3, "href", /*HELP*/ ctx[20].configHide.url);
     			attr_dev(a3, "rel", "noreferrer");
-    			add_location(a3, file$5, 394, 8, 17510);
+    			add_location(a3, file$5, 394, 8, 17602);
     			set_custom_element_data(sl_tooltip3, "class", "svelte-qjc48k");
-    			add_location(sl_tooltip3, file$5, 390, 6, 17399);
+    			add_location(sl_tooltip3, file$5, 390, 6, 17491);
     			attr_dev(input2, "type", "checkbox");
     			attr_dev(input2, "id", input2_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide");
     			attr_dev(input2, "class", "cc-config-collection-hide svelte-qjc48k");
     			input2.disabled = input2_disabled_value = /*$collectionsStore*/ ctx[8]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0];
-    			add_location(input2, file$5, 398, 6, 17670);
+    			add_location(input2, file$5, 398, 6, 17762);
     			attr_dev(div7, "class", "cc-collection-double-center svelte-qjc48k");
-    			add_location(div7, file$5, 388, 4, 17272);
+    			add_location(div7, file$5, 388, 4, 17364);
     			attr_dev(label4, "for", label4_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated");
     			attr_dev(label4, "class", "svelte-qjc48k");
-    			add_location(label4, file$5, 409, 6, 18094);
+    			add_location(label4, file$5, 409, 6, 18186);
     			attr_dev(div8, "slot", "content");
-    			add_location(div8, file$5, 413, 8, 18228);
+    			add_location(div8, file$5, 413, 8, 18320);
     			attr_dev(i5, "class", "icon-question cc-module-icon svelte-qjc48k");
-    			add_location(i5, file$5, 417, 10, 18406);
+    			add_location(i5, file$5, 417, 10, 18498);
     			attr_dev(a4, "href", /*HELP*/ ctx[20].configUnallocated.url);
     			attr_dev(a4, "target", "_blank");
     			attr_dev(a4, "rel", "noreferrer");
-    			add_location(a4, file$5, 416, 8, 18324);
+    			add_location(a4, file$5, 416, 8, 18416);
     			set_custom_element_data(sl_tooltip4, "class", "svelte-qjc48k");
-    			add_location(sl_tooltip4, file$5, 412, 6, 18206);
+    			add_location(sl_tooltip4, file$5, 412, 6, 18298);
     			attr_dev(input3, "type", "checkbox");
     			attr_dev(input3, "id", input3_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated");
     			attr_dev(input3, "class", "svelte-qjc48k");
-    			add_location(input3, file$5, 420, 6, 18491);
-    			add_location(div9, file$5, 408, 4, 18081);
+    			add_location(input3, file$5, 420, 6, 18583);
+    			add_location(div9, file$5, 408, 4, 18173);
     			attr_dev(div10, "class", "cc-collection-double svelte-qjc48k");
-    			add_location(div10, file$5, 367, 2, 16583);
+    			add_location(div10, file$5, 367, 2, 16675);
     			attr_dev(label5, "for", label5_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page");
     			attr_dev(label5, "class", "svelte-qjc48k");
-    			add_location(label5, file$5, 441, 6, 19103);
+    			add_location(label5, file$5, 441, 6, 19195);
     			attr_dev(div11, "slot", "content");
-    			add_location(div11, file$5, 445, 8, 19228);
+    			add_location(div11, file$5, 445, 8, 19320);
     			attr_dev(i6, "class", "icon-question cc-module-icon svelte-qjc48k");
-    			add_location(i6, file$5, 453, 11, 19477);
+    			add_location(i6, file$5, 453, 11, 19569);
     			attr_dev(a5, "id", "cc-about-include-page");
     			attr_dev(a5, "rel", "noreferrer");
     			attr_dev(a5, "target", "_blank");
     			attr_dev(a5, "href", /*HELP*/ ctx[20].configIncludePage.url);
-    			add_location(a5, file$5, 448, 8, 19324);
+    			add_location(a5, file$5, 448, 8, 19416);
     			set_custom_element_data(sl_tooltip5, "class", "svelte-qjc48k");
-    			add_location(sl_tooltip5, file$5, 444, 6, 19206);
+    			add_location(sl_tooltip5, file$5, 444, 6, 19298);
     			attr_dev(div12, "class", "cc-collection-two-line-header svelte-qjc48k");
-    			add_location(div12, file$5, 440, 4, 19052);
-    			add_location(div13, file$5, 457, 4, 19572);
+    			add_location(div12, file$5, 440, 4, 19144);
+    			add_location(div13, file$5, 457, 4, 19664);
     			attr_dev(input4, "id", input4_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page");
     			attr_dev(input4, "class", "cc-existing-collection svelte-qjc48k");
-    			add_location(input4, file$5, 459, 6, 19644);
+    			add_location(input4, file$5, 459, 6, 19736);
     			attr_dev(label6, "for", label6_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after");
     			attr_dev(label6, "class", "svelte-qjc48k");
-    			add_location(label6, file$5, 475, 8, 20269);
+    			add_location(label6, file$5, 475, 8, 20361);
     			attr_dev(div14, "slot", "content");
-    			add_location(div14, file$5, 479, 10, 20404);
+    			add_location(div14, file$5, 479, 10, 20496);
     			attr_dev(i7, "class", "icon-question cc-module-icon svelte-qjc48k");
-    			add_location(i7, file$5, 488, 12, 20692);
+    			add_location(i7, file$5, 488, 12, 20784);
     			attr_dev(a6, "id", "cc-about-include-after");
     			attr_dev(a6, "href", /*HELP*/ ctx[20].configIncludePageAfter.url);
     			attr_dev(a6, "target", "_blank");
     			attr_dev(a6, "rel", "noreferrer");
-    			add_location(a6, file$5, 482, 10, 20511);
+    			add_location(a6, file$5, 482, 10, 20603);
     			set_custom_element_data(sl_tooltip6, "class", "svelte-qjc48k");
-    			add_location(sl_tooltip6, file$5, 478, 8, 20380);
+    			add_location(sl_tooltip6, file$5, 478, 8, 20472);
     			attr_dev(input5, "type", "checkbox");
     			attr_dev(input5, "id", input5_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after");
     			attr_dev(input5, "class", "cc-config-collection-include-after svelte-qjc48k");
-    			add_location(input5, file$5, 491, 8, 20783);
+    			add_location(input5, file$5, 491, 8, 20875);
     			attr_dev(span5, "class", "cc-collection-label svelte-qjc48k");
-    			add_location(span5, file$5, 474, 6, 20225);
+    			add_location(span5, file$5, 474, 6, 20317);
     			attr_dev(div15, "class", "cc-collection-two-line-body svelte-qjc48k");
-    			add_location(div15, file$5, 458, 4, 19595);
+    			add_location(div15, file$5, 458, 4, 19687);
     			attr_dev(div16, "class", "cc-collection-two-line svelte-qjc48k");
-    			add_location(div16, file$5, 439, 2, 19010);
+    			add_location(div16, file$5, 439, 2, 19102);
     			attr_dev(label7, "for", label7_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page");
     			attr_dev(label7, "class", "svelte-qjc48k");
-    			add_location(label7, file$5, 511, 6, 21563);
+    			add_location(label7, file$5, 511, 6, 21655);
     			attr_dev(div17, "slot", "content");
-    			add_location(div17, file$5, 515, 8, 21686);
+    			add_location(div17, file$5, 515, 8, 21778);
     			attr_dev(i8, "class", "icon-question cc-module-icon svelte-qjc48k");
-    			add_location(i8, file$5, 524, 10, 21949);
+    			add_location(i8, file$5, 524, 10, 22041);
     			attr_dev(a7, "id", "cc-about-update-output-page");
     			attr_dev(a7, "target", "_blank");
     			attr_dev(a7, "href", /*HELP*/ ctx[20].configOutputPage.url);
     			attr_dev(a7, "rel", "noreferrer");
-    			add_location(a7, file$5, 518, 8, 21781);
+    			add_location(a7, file$5, 518, 8, 21873);
     			set_custom_element_data(sl_tooltip7, "class", "svelte-qjc48k");
-    			add_location(sl_tooltip7, file$5, 514, 6, 21664);
+    			add_location(sl_tooltip7, file$5, 514, 6, 21756);
     			attr_dev(div18, "class", "cc-collection-two-line-header svelte-qjc48k");
-    			add_location(div18, file$5, 510, 4, 21512);
-    			add_location(div19, file$5, 528, 4, 22044);
+    			add_location(div18, file$5, 510, 4, 21604);
+    			add_location(div19, file$5, 528, 4, 22136);
     			attr_dev(input6, "id", input6_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page");
     			attr_dev(input6, "class", "cc-existing-collection svelte-qjc48k");
-    			add_location(input6, file$5, 530, 6, 22116);
+    			add_location(input6, file$5, 530, 6, 22208);
     			attr_dev(button0, "id", button0_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page-update");
     			attr_dev(button0, "class", "btn cc-existing-collection svelte-qjc48k");
     			button0.disabled = button0_disabled_value = /*outputPageName*/ ctx[6][/*collectionName*/ ctx[0]] === "";
-    			add_location(button0, file$5, 543, 6, 22679);
+    			add_location(button0, file$5, 543, 6, 22771);
     			attr_dev(div20, "class", "cc-collection-two-line-body svelte-qjc48k");
-    			add_location(div20, file$5, 529, 4, 22067);
+    			add_location(div20, file$5, 529, 4, 22159);
     			attr_dev(div21, "class", "cc-collection-two-line svelte-qjc48k");
-    			add_location(div21, file$5, 509, 2, 21470);
+    			add_location(div21, file$5, 509, 2, 21562);
     			attr_dev(label8, "for", label8_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-apply-module-labels");
     			attr_dev(label8, "class", "svelte-qjc48k");
-    			add_location(label8, file$5, 563, 6, 23316);
+    			add_location(label8, file$5, 563, 6, 23408);
     			attr_dev(div22, "slot", "content");
-    			add_location(div22, file$5, 567, 8, 23497);
+    			add_location(div22, file$5, 567, 8, 23589);
     			attr_dev(i9, "class", "icon-question cc-module-icon svelte-qjc48k");
-    			add_location(i9, file$5, 576, 10, 23763);
+    			add_location(i9, file$5, 576, 10, 23855);
     			attr_dev(a8, "id", "cc-about-apply-module-labels");
     			attr_dev(a8, "target", "_blank");
     			attr_dev(a8, "href", /*HELP*/ ctx[20].configApplyLabels.url);
     			attr_dev(a8, "rel", "noreferrer");
-    			add_location(a8, file$5, 570, 8, 23593);
+    			add_location(a8, file$5, 570, 8, 23685);
     			set_custom_element_data(sl_tooltip8, "class", "cc-about-apply-module-labels svelte-qjc48k");
-    			add_location(sl_tooltip8, file$5, 566, 6, 23438);
+    			add_location(sl_tooltip8, file$5, 566, 6, 23530);
     			attr_dev(span6, "class", "cc-collection-input-reverse svelte-qjc48k");
-    			add_location(span6, file$5, 562, 4, 23266);
+    			add_location(span6, file$5, 562, 4, 23358);
     			attr_dev(button1, "id", button1_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-apply-module-labels");
     			attr_dev(button1, "class", "btn cc-existing-collection svelte-qjc48k");
-    			add_location(button1, file$5, 582, 6, 23962);
+    			add_location(button1, file$5, 582, 6, 24054);
     			attr_dev(span7, "class", "cc-collection-label-reverse svelte-qjc48k");
-    			add_location(span7, file$5, 580, 4, 23859);
+    			add_location(span7, file$5, 580, 4, 23951);
     			attr_dev(div23, "class", "cc-collection-form-reverse svelte-qjc48k");
-    			add_location(div23, file$5, 561, 2, 23220);
+    			add_location(div23, file$5, 561, 2, 23312);
     			attr_dev(div24, "class", "cc-existing-collection border border-trbl svelte-qjc48k");
     			attr_dev(div24, "id", div24_id_value = "cc-collection-" + /*collectionName*/ ctx[0]);
-    			add_location(div24, file$5, 275, 0, 13792);
+    			add_location(div24, file$5, 275, 0, 13884);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -27644,11 +27644,11 @@ Do you wish to proceed?`)) {
     		$$invalidate(5, includePageName[collectionName] = pageName, includePageName);
 
     		if (!pageObject) {
-    			alert(`The include page called
-    ${pageName}
-for the collection
-    ${collectionName}
-does not exist.
+    			toastAlert(`<p>The include page called</p>
+<p style="margin-left: 1em">${pageName}</p>
+<p>for the collection</p>
+<p style="margin-left: 1em">${collectionName}</p>
+<p>does not exist.</p>, "danger"
       `);
 
     			$$invalidate(3, includePageExists[collectionName] = false, includePageExists);
@@ -29120,22 +29120,22 @@ does not exist.
     			t9 = space();
     			if (if_block3) if_block3.c();
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 243, 8, 9832);
+    			add_location(div0, file, 243, 8, 9831);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 245, 11, 9970);
+    			add_location(i, file, 245, 11, 9969);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "href", /*HELP*/ ctx[13].switchTitle.url);
-    			add_location(a, file, 244, 8, 9894);
+    			add_location(a, file, 244, 8, 9893);
     			set_custom_element_data(sl_tooltip, "class", "svelte-1bq7e82");
-    			add_location(sl_tooltip, file, 242, 6, 9810);
-    			add_location(small, file, 258, 6, 10384);
+    			add_location(sl_tooltip, file, 242, 6, 9809);
+    			add_location(small, file, 258, 6, 10383);
     			set_style(span, "font-size", "50%");
-    			add_location(span, file, 259, 6, 10425);
+    			add_location(span, file, 259, 6, 10424);
     			attr_dev(div1, "class", "cc-switch-title svelte-1bq7e82");
-    			add_location(div1, file, 241, 4, 9773);
+    			add_location(div1, file, 241, 4, 9772);
     			attr_dev(div2, "class", "cc-switch-container svelte-1bq7e82");
-    			add_location(div2, file, 240, 2, 9734);
+    			add_location(div2, file, 240, 2, 9733);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -29265,7 +29265,7 @@ does not exist.
     			? 'icon-mini-arrow-down'
     			: 'icon-mini-arrow-right') + " cc-module-icon"));
 
-    			add_location(i, file, 249, 8, 10112);
+    			add_location(i, file, 249, 8, 10111);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -29327,19 +29327,19 @@ does not exist.
     			set_custom_element_data(sl_switch, "checked", /*checked*/ ctx[7]);
     			set_custom_element_data(sl_switch, "id", "cc-switch");
     			set_custom_element_data(sl_switch, "class", "svelte-1bq7e82");
-    			add_location(sl_switch, file, 264, 8, 10598);
+    			add_location(sl_switch, file, 264, 8, 10597);
     			attr_dev(label, "class", "cc-switch svelte-1bq7e82");
     			attr_dev(label, "for", "cc-switch");
-    			add_location(label, file, 263, 6, 10547);
+    			add_location(label, file, 263, 6, 10546);
 
     			attr_dev(button, "class", button_class_value = "" + (null_to_empty(/*$configStore*/ ctx[6]["needToSaveCollections"]
     			? "cc-active-save-button"
     			: "cc-save-button") + " svelte-1bq7e82"));
 
     			attr_dev(button, "id", "cc-save-button");
-    			add_location(button, file, 271, 8, 10772);
+    			add_location(button, file, 271, 8, 10771);
     			attr_dev(div, "class", "cc-save svelte-1bq7e82");
-    			add_location(div, file, 270, 6, 10741);
+    			add_location(div, file, 270, 6, 10740);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, label, anchor);
@@ -29426,27 +29426,27 @@ does not exist.
     			sl_button = element("sl-button");
     			sl_button.textContent = "unpublished";
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 287, 12, 11328);
+    			add_location(div0, file, 287, 12, 11327);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 293, 15, 11566);
+    			add_location(i, file, 293, 15, 11565);
     			attr_dev(a0, "id", "cc-about-unpublished");
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "href", /*HELP*/ ctx[13].unpublished.url);
-    			add_location(a0, file, 288, 12, 11400);
+    			add_location(a0, file, 288, 12, 11399);
     			set_custom_element_data(sl_tooltip, "trigger", "hover focus");
     			set_custom_element_data(sl_tooltip, "class", "svelte-1bq7e82");
-    			add_location(sl_tooltip, file, 286, 8, 11280);
+    			add_location(sl_tooltip, file, 286, 8, 11279);
     			set_custom_element_data(sl_button, "pill", "");
     			set_custom_element_data(sl_button, "size", "small");
     			set_custom_element_data(sl_button, "variant", "warning");
-    			add_location(sl_button, file, 297, 8, 11737);
+    			add_location(sl_button, file, 297, 8, 11736);
     			attr_dev(a1, "href", /*collectionsConfigUrl*/ ctx[9]);
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noreferrer");
-    			add_location(a1, file, 296, 8, 11661);
+    			add_location(a1, file, 296, 8, 11660);
     			attr_dev(div1, "class", "cc-unpublished svelte-1bq7e82");
-    			add_location(div1, file, 285, 6, 11242);
+    			add_location(div1, file, 285, 6, 11241);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -29490,7 +29490,7 @@ does not exist.
     			create_component(collectionsconfiguration.$$.fragment);
     			attr_dev(div, "id", "cc-config");
     			attr_dev(div, "class", "border border-trbl svelte-1bq7e82");
-    			add_location(div, file, 302, 6, 11877);
+    			add_location(div, file, 302, 6, 11876);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -29543,10 +29543,10 @@ does not exist.
     			if_block_anchor = empty();
     			attr_dev(link, "rel", "stylesheet");
     			attr_dev(link, "href", "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/themes/light.css");
-    			add_location(link, file, 229, 2, 9406);
+    			add_location(link, file, 229, 2, 9405);
     			attr_dev(script, "type", "module");
     			if (!src_url_equal(script.src, script_src_value = "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/shoelace.js")) attr_dev(script, "src", script_src_value);
-    			add_location(script, file, 233, 2, 9545);
+    			add_location(script, file, 233, 2, 9544);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -29621,7 +29621,7 @@ does not exist.
 
     const CC_VERSION = "0.9.10";
     const TIME_BETWEEN_SAVES = 10000;
-    const AUTO_SAVE = false;
+    const AUTO_SAVE = true;
 
     function instance($$self, $$props, $$invalidate) {
     	let $configStore;
