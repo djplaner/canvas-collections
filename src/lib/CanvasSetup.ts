@@ -12,7 +12,7 @@ const DEBUG = true;
  * page, identify the courseId and if we're in edit mode
  */
 
-export function checkContext() : object {
+export function checkContext(): object {
   const location = window.location.href;
 
   let context = {
@@ -21,7 +21,7 @@ export function checkContext() : object {
     modulesPage: false,
     csrfToken: null,
     currentCollection: 0,
-    showConfig: false
+    showConfig: false,
   };
 
   // replace # at end of string
@@ -30,7 +30,7 @@ export function checkContext() : object {
   // check if there's a cc-collection-\d+ in the hash
   // this is the case for internal navigation within collections
   // i.e. we're on a modules page
-/*  let hash = url.hash;
+  /*  let hash = url.hash;
   if (hash) {
     let checkNum = hash.match(/cc-collection-(\d+)/);
     if (checkNum) {
@@ -38,7 +38,7 @@ export function checkContext() : object {
       context.currentCollection = parseInt(checkNum[1]) ;
     }
   } */
-  url.hash = ""; 
+  url.hash = "";
   const documentUrl = url.href;
   //documentUrl = documentUrl.replace(/#$/, '');
 
@@ -85,30 +85,30 @@ export function checkContext() : object {
   // the course object later
   context.editMode = document.getElementById("easy_student_view") !== null;
 
-  context.csrfToken = setCsrfToken()
+  context.csrfToken = setCsrfToken();
 
   return context;
 }
 
-	/**
-   * @function setCsrfToken
-   * @returns {String} csrfToken
-	 * Following adapted from https://github.com/msdlt/canvas-where-am-I
-	 * Function which returns csrf_token from cookie see: 
-	 * https://community.canvaslms.com/thread/22500-mobile-javascript-development
-	 */
-function	setCsrfToken() : string {
-		let csrfRegex = new RegExp('^_csrf_token=(.*)$');
-		let cookies = document.cookie.split(';');
-		for (let i = 0; i < cookies.length; i++) {
-			let cookie = cookies[i].trim();
-			let match = csrfRegex.exec(cookie);
-			if (match) {
-				return decodeURIComponent(match[1]);
-			}
-		}
-    return null;
-	}
+/**
+ * @function setCsrfToken
+ * @returns {String} csrfToken
+ * Following adapted from https://github.com/msdlt/canvas-where-am-I
+ * Function which returns csrf_token from cookie see:
+ * https://community.canvaslms.com/thread/22500-mobile-javascript-development
+ */
+function setCsrfToken(): string {
+  let csrfRegex = new RegExp("^_csrf_token=(.*)$");
+  let cookies = document.cookie.split(";");
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i].trim();
+    let match = csrfRegex.exec(cookie);
+    if (match) {
+      return decodeURIComponent(match[1]);
+    }
+  }
+  return null;
+}
 
 /**
  * @function requestCourseObject
@@ -153,82 +153,98 @@ export async function requestCourseObject(courseId: number, csrfToken: string) {
   }
 }
 
-
 /**
  * Fetch function for retrieving information from a single endpoint request
  * @param {String} reqUrl Endpoint URL to query the Canvas API
  * @returns Response Object
  */
 export const wf_fetchData = async (reqUrl) => {
-	const url = reqUrl;
-	try {
-		const res = await fetch(url);
-		if (res.status === 404) // Endpoint not found
-			return null;
-		if (res.status === 401) // User not authorized
-			return null;
-		const json = await res.json();
-		return json;
-	} catch (e) {
-		console.error(`Could not fetch requested information: ${e}`);
-	}
+  const url = reqUrl;
+  try {
+    const res = await fetch(url);
+    if (res.status === 404)
+      // Endpoint not found
+      return null;
+    if (res.status === 401)
+      // User not authorized
+      return null;
+    const body = await res.json();
+    const msg = {
+      status: res.status,
+      res: res,
+      body: body,
+    };
+    return msg;
+  } catch (e) {
+    console.error(`Could not fetch requested information: ${e}`);
+  }
 };
 
 export const wf_deleteData = async (reqUrl, csrf) => {
-	const url = reqUrl;
-	try {
-		const res = await fetch(url, {
-			method: 'DELETE', credentials: 'include',
-			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json",
-				"X-CSRF-Token": csrf
-			}
-		});
-		if (res.status === 404) // Endpoint not found
-			return null;
-		if (res.status === 401) // User not authorized
-			return null;
-		const json = await res.json();
-		return json;
-	} catch (e) {
-		console.error(`Could not delete requested information: ${e}`);
-	}
-}
-
+  const url = reqUrl;
+  try {
+    const res = await fetch(url, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": csrf,
+      },
+    });
+    if (res.status === 404)
+      // Endpoint not found
+      return null;
+    if (res.status === 401)
+      // User not authorized
+      return null;
+    const json = await res.json();
+    return json;
+  } catch (e) {
+    console.error(`Could not delete requested information: ${e}`);
+  }
+};
 
 /**
  * @function wf_postData
- * @param reqUrl 
- * @param data 
- * @param csrf 
+ * @param reqUrl
+ * @param data
+ * @param csrf
  * @param post - POST or PUT
  * @returns json response (if successful), null otherwise
- * 
+ *
  */
 
-export const wf_postData = async (reqUrl:string, data:string, csrf:string, post="POST") => {
-	const url = reqUrl;
-	try {
-		const res = await fetch(reqUrl, {
-			method: post, credentials: 'include',
-			headers: {
-				"Content-Type": "application/json; charset=UTF-8",
-				"Accept": "application/json; charset=UTF-8",
-				"X-CSRF-Token": csrf
-			},
-			body: data,
-		});
-		if (res.status === 404) // Endpoint not found
-			return null;
-		if (res.status === 401) // User not authorized
-			return null;
-		const json = await res.json();
-		return json;
-	} catch (e) {
-		console.error(`Could not post requested information: ${e}`);
-	}
-}
+export const wf_postData = async (
+  reqUrl: string,
+  data: string,
+  csrf: string,
+  post = "POST"
+) => {
+  const url = reqUrl;
+  try {
+    const res = await fetch(reqUrl, {
+      method: post,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+        Accept: "application/json; charset=UTF-8",
+        "X-CSRF-Token": csrf,
+      },
+      body: data,
+    });
+    if (res.status === 404)
+      // Endpoint not found
+      return null;
+    if (res.status === 401)
+      // User not authorized
+      return null;
+    const json = await res.json();
+    return json;
+  } catch (e) {
+    console.error(`Could not post requested information: ${e}`);
+  }
+};
 
 /**
  * Fetch function for retrieving information from multiple endpoint requests
@@ -236,19 +252,23 @@ export const wf_postData = async (reqUrl:string, data:string, csrf:string, post=
  * @returns Array of Response Objects
  */
 export const wf_fetchDataMulti = async (reqData) => {
-	return Promise.all(reqData.map(async (data) => {
-		try {
-			const res = await fetch(data);
-			if (res.status === 404) // Endpoint not found
-				return null;
-			if (res.status === 401) // User not authorized
-				return null;
-			const json = await res.json();
-			return json;
-		} catch (e) {
-			console.error(`Could not fetch requested information: ${e}`);
-		}
-	}));
+  return Promise.all(
+    reqData.map(async (data) => {
+      try {
+        const res = await fetch(data);
+        if (res.status === 404)
+          // Endpoint not found
+          return null;
+        if (res.status === 401)
+          // User not authorized
+          return null;
+        const json = await res.json();
+        return json;
+      } catch (e) {
+        console.error(`Could not fetch requested information: ${e}`);
+      }
+    })
+  );
 };
 
 /**
@@ -258,28 +278,28 @@ export const wf_fetchDataMulti = async (reqData) => {
  */
 
 export function addCollectionsRepresentation() {
-  debug("::::::::::::: addCollectionsRepresentation ::::::::::::::")
+  debug("::::::::::::: addCollectionsRepresentation ::::::::::::::");
 
-   // check that there isn't already a div#canvas-collections-representation
-    // if there is, do nothing
-    const representation = document.querySelector(
-      "div#canvas-collections-representation"
-    );
-    if (representation) {
-      return null;
-    }
+  // check that there isn't already a div#canvas-collections-representation
+  // if there is, do nothing
+  const representation = document.querySelector(
+    "div#canvas-collections-representation"
+  );
+  if (representation) {
+    return null;
+  }
 
-    // get the div#context-modules
-    const contextModules = document.querySelector("div#context_modules");
-    if (!contextModules) {
-      return null;
-    }
-    // add a div#canvas-collections-representation as first child of div#context-modules
-    let canvasCollectionsRepresentation = document.createElement("div");
-    canvasCollectionsRepresentation.id = "canvas-collections-representation";
-    contextModules.prepend(canvasCollectionsRepresentation);
+  // get the div#context-modules
+  const contextModules = document.querySelector("div#context_modules");
+  if (!contextModules) {
+    return null;
+  }
+  // add a div#canvas-collections-representation as first child of div#context-modules
+  let canvasCollectionsRepresentation = document.createElement("div");
+  canvasCollectionsRepresentation.id = "canvas-collections-representation";
+  contextModules.prepend(canvasCollectionsRepresentation);
 
-    return canvasCollectionsRepresentation;
+  return canvasCollectionsRepresentation;
 }
 
 /**
@@ -288,7 +308,7 @@ export function addCollectionsRepresentation() {
  */
 
 export function removeCollectionsRepresentation() {
-  debug(":::::::::::::: removeCollectionsRepresentation ::::::::::::::")
+  debug(":::::::::::::: removeCollectionsRepresentation ::::::::::::::");
   const representation = document.querySelector(
     "div#canvas-collections-representation"
   );
@@ -298,7 +318,7 @@ export function removeCollectionsRepresentation() {
 }
 
 /**
- * @function removeModuleConfiguration 
+ * @function removeModuleConfiguration
  * @param {Object} modules - hash of module objects keyed on moduleId
  * @description loop through all the modules and remove div#cc-module-config-<moduleId>
  */
@@ -325,31 +345,39 @@ export function removeModuleConfiguration(modules: any) {
  * @param {String} pageName - name of the page
  * @param {String} courseId - id of the course
  * @param {Function} callBack - function to call when the page name is found (or not)
- * @description Given the visible name of a page (e.g. "Canvas Collections Configuration") 
+ * @description Given the visible name of a page (e.g. "Canvas Collections Configuration")
  * - Slugify the name (e.g. "canvas-collections-configuration")
  * - use the Canvas API to get the page Object
  * - return the pageName and the results (positive or not) to the callBack function
  * - The pageObject will be null if page not found
  */
 
-export function getPageName(pageName: string, courseId: string, callBack: Function)  {
-
-  debug(`-------------------- getPageName -- ${pageName} ---------------------`)
+export function getPageName(
+  pageName: string,
+  courseId: string,
+  callBack: Function
+) {
+  debug(
+    `-------------------- getPageName -- ${pageName} ---------------------`
+  );
   String.prototype.slugify = function (separator = "-") {
-    return this
-				.toString()
-				.normalize('NFD')                   // split an accented letter in the base letter and the acent
-				.replace(/[\u0300-\u036f]/g, '')   // remove all previously split accents
-				.toLowerCase()
-				.trim()
- 		    .replace('@','at')
-				.replace(/[^a-z0-9 ]/g, '')   // remove all chars not letters, numbers and spaces (to be replaced)
-				.replace(/\s+/g, separator);
-		};
-		const slugifiedPageName = pageName.slugify();
-    const apiUrl = `https://${document.location.hostname}/api/v1/courses/${courseId}/pages/${slugifiedPageName}`;
+    return this.toString()
+      .normalize("NFD") // split an accented letter in the base letter and the acent
+      .replace(/[\u0300-\u036f]/g, "") // remove all previously split accents
+      .toLowerCase()
+      .trim()
+      .replace("@", "at")
+      .replace(/[^a-z0-9 ]/g, "") // remove all chars not letters, numbers and spaces (to be replaced)
+      .replace(/\s+/g, separator);
+  };
+  const slugifiedPageName = pageName.slugify();
+  const apiUrl = `https://${document.location.hostname}/api/v1/courses/${courseId}/pages/${slugifiedPageName}`;
 
-    debug(`apiUrl: ${apiUrl}`)
+  debug(`apiUrl: ${apiUrl}`);
 
-    wf_fetchData( apiUrl).then((data) => { callBack(pageName,data); });
+  wf_fetchData(apiUrl).then((res) => {
+    if (res.status === 200) {
+      callBack(pageName, res.body);
+    }
+  });
 }

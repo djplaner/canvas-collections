@@ -13,12 +13,12 @@ export class CanvasDetails {
   public studyPeriod: string;
 
   private config: object;
-//  private csrfToken: string;
+  //  private csrfToken: string;
   private currentHostName: string;
   private baseApiUrl: string;
-//  private courseId: number;
+  //  private courseId: number;
   private finishedCallBack: Function;
-//  private calendar: UniversityDateCalendar;
+  //  private calendar: UniversityDateCalendar;
 
   private strm: string;
   private year: string;
@@ -33,15 +33,17 @@ export class CanvasDetails {
   constructor(finishedCallBack, config) {
     this.finishedCallBack = finishedCallBack;
     this.config = config;
-//    this.csrfToken = this.CONFIG.csrfToken;
-//    this.courseId = this.CONFIG.courseId;
+    //    this.csrfToken = this.CONFIG.csrfToken;
+    //    this.courseId = this.CONFIG.courseId;
 
     this.currentHostName = document.location.hostname;
     this.baseApiUrl = `https://${this.currentHostName}/api/v1`;
     // convert courseId to integer
-    this['config']['courseId'] = parseInt(this['config']['courseId']);
+    this["config"]["courseId"] = parseInt(this["config"]["courseId"]);
 
-    console.log(`XXXXX canvasDetails: constructor: ${this['config']['courseId']}`);
+    console.log(
+      `XXXXX canvasDetails: constructor: ${this["config"]["courseId"]}`
+    );
 
     this.requestCourseObject();
   }
@@ -52,13 +54,15 @@ export class CanvasDetails {
    */
 
   requestCourseObject() {
-    wf_fetchData(
-      `${this.baseApiUrl}/courses/${this.config.courseId}`
-    ).then((data) => {
-      this.courseObject = data;
-      //this.generateSTRM();
-      this.requestModuleInformation();
-    });
+    wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}`).then(
+      (res) => {
+        if (res.status === 200) {
+          this.courseObject = res.body;
+          //this.generateSTRM();
+          this.requestModuleInformation();
+        }
+      }
+    );
   }
 
   /**
@@ -82,7 +86,7 @@ export class CanvasDetails {
   generateSTRM() {
     if (!this.hasOwnProperty("calendar")) {
       this.calendar = new UniversityDateCalendar();
-    } 
+    }
 
     // TODO this is where we might check if there is an existing default
     // study period already set and thus bypass getCurrentPeriod
@@ -155,13 +159,14 @@ export class CanvasDetails {
     this.period = translate[this.period];
   }
 
-
   requestModuleInformation() {
     wf_fetchData(
       `${this.baseApiUrl}/courses/${this.config.courseId}/modules?include=content_details&per_page=500`
-    ).then((data) => {
-      this.courseModules = data;
-	  this.finishedCallBack();
+    ).then((res) => {
+      if (res.status === 200) {
+        this.courseModules = res.body;
+        this.finishedCallBack();
+      }
     });
   }
 }

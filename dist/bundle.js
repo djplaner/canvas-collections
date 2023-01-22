@@ -3030,7 +3030,7 @@ var app = (function () {
             modulesPage: false,
             csrfToken: null,
             currentCollection: 0,
-            showConfig: false
+            showConfig: false,
         };
         // replace # at end of string
         let url = new URL(window.location.href);
@@ -3038,13 +3038,13 @@ var app = (function () {
         // this is the case for internal navigation within collections
         // i.e. we're on a modules page
         /*  let hash = url.hash;
-          if (hash) {
-            let checkNum = hash.match(/cc-collection-(\d+)/);
-            if (checkNum) {
-              // will set this to a number now, for later translation to collectionName
-              context.currentCollection = parseInt(checkNum[1]) ;
-            }
-          } */
+        if (hash) {
+          let checkNum = hash.match(/cc-collection-(\d+)/);
+          if (checkNum) {
+            // will set this to a number now, for later translation to collectionName
+            context.currentCollection = parseInt(checkNum[1]) ;
+          }
+        } */
         url.hash = "";
         const documentUrl = url.href;
         //documentUrl = documentUrl.replace(/#$/, '');
@@ -3090,15 +3090,15 @@ var app = (function () {
         return context;
     }
     /**
-    * @function setCsrfToken
-    * @returns {String} csrfToken
+     * @function setCsrfToken
+     * @returns {String} csrfToken
      * Following adapted from https://github.com/msdlt/canvas-where-am-I
      * Function which returns csrf_token from cookie see:
      * https://community.canvaslms.com/thread/22500-mobile-javascript-development
      */
     function setCsrfToken() {
-        let csrfRegex = new RegExp('^_csrf_token=(.*)$');
-        let cookies = document.cookie.split(';');
+        let csrfRegex = new RegExp("^_csrf_token=(.*)$");
+        let cookies = document.cookie.split(";");
         for (let i = 0; i < cookies.length; i++) {
             let cookie = cookies[i].trim();
             let match = csrfRegex.exec(cookie);
@@ -3117,12 +3117,19 @@ var app = (function () {
         const url = reqUrl;
         try {
             const res = await fetch(url);
-            if (res.status === 404) // Endpoint not found
+            if (res.status === 404)
+                // Endpoint not found
                 return null;
-            if (res.status === 401) // User not authorized
+            if (res.status === 401)
+                // User not authorized
                 return null;
-            const json = await res.json();
-            return json;
+            const body = await res.json();
+            const msg = {
+                status: res.status,
+                res: res,
+                body: body,
+            };
+            return msg;
         }
         catch (e) {
             console.error(`Could not fetch requested information: ${e}`);
@@ -3140,17 +3147,20 @@ var app = (function () {
     const wf_postData = async (reqUrl, data, csrf, post = "POST") => {
         try {
             const res = await fetch(reqUrl, {
-                method: post, credentials: 'include',
+                method: post,
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json; charset=UTF-8",
-                    "Accept": "application/json; charset=UTF-8",
-                    "X-CSRF-Token": csrf
+                    Accept: "application/json; charset=UTF-8",
+                    "X-CSRF-Token": csrf,
                 },
                 body: data,
             });
-            if (res.status === 404) // Endpoint not found
+            if (res.status === 404)
+                // Endpoint not found
                 return null;
-            if (res.status === 401) // User not authorized
+            if (res.status === 401)
+                // User not authorized
                 return null;
             const json = await res.json();
             return json;
@@ -3227,20 +3237,23 @@ var app = (function () {
     function getPageName(pageName, courseId, callBack) {
         debug(`-------------------- getPageName -- ${pageName} ---------------------`);
         String.prototype.slugify = function (separator = "-") {
-            return this
-                .toString()
-                .normalize('NFD') // split an accented letter in the base letter and the acent
-                .replace(/[\u0300-\u036f]/g, '') // remove all previously split accents
+            return this.toString()
+                .normalize("NFD") // split an accented letter in the base letter and the acent
+                .replace(/[\u0300-\u036f]/g, "") // remove all previously split accents
                 .toLowerCase()
                 .trim()
-                .replace('@', 'at')
-                .replace(/[^a-z0-9 ]/g, '') // remove all chars not letters, numbers and spaces (to be replaced)
+                .replace("@", "at")
+                .replace(/[^a-z0-9 ]/g, "") // remove all chars not letters, numbers and spaces (to be replaced)
                 .replace(/\s+/g, separator);
         };
         const slugifiedPageName = pageName.slugify();
         const apiUrl = `https://${document.location.hostname}/api/v1/courses/${courseId}/pages/${slugifiedPageName}`;
         debug(`apiUrl: ${apiUrl}`);
-        wf_fetchData(apiUrl).then((data) => { callBack(pageName, data); });
+        wf_fetchData(apiUrl).then((res) => {
+            if (res.status === 200) {
+                callBack(pageName, res.body);
+            }
+        });
     }
 
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -12934,9 +12947,14 @@ var app = (function () {
          *
          */
         requestCollectionsPage() {
-            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}/pages/canvas-collections-configuration`).then((data) => {
-                this.collectionsPageResponse = data;
-                this.parseCollectionsPage();
+            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}/pages/canvas-collections-configuration`).then((res) => {
+                if (res.status === 200) {
+                    this.collectionsPageResponse = res.body;
+                    this.parseCollectionsPage();
+                }
+                else {
+                    this.finishedCallBack("no collections config");
+                }
             });
         }
         /**
@@ -13430,6 +13448,9 @@ var app = (function () {
                     }
                 }
             }
+        }
+        initialiseConfigPage(canvasDetails) {
+            alert("Time to initialise config page");
         }
     }
     /**
@@ -28968,8 +28989,8 @@ Do you wish to proceed?`)) {
             this.currentHostName = document.location.hostname;
             this.baseApiUrl = `https://${this.currentHostName}/api/v1`;
             // convert courseId to integer
-            this['config']['courseId'] = parseInt(this['config']['courseId']);
-            console.log(`XXXXX canvasDetails: constructor: ${this['config']['courseId']}`);
+            this["config"]["courseId"] = parseInt(this["config"]["courseId"]);
+            console.log(`XXXXX canvasDetails: constructor: ${this["config"]["courseId"]}`);
             this.requestCourseObject();
         }
         /**
@@ -28977,10 +28998,12 @@ Do you wish to proceed?`)) {
          *
          */
         requestCourseObject() {
-            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}`).then((data) => {
-                this.courseObject = data;
-                //this.generateSTRM();
-                this.requestModuleInformation();
+            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}`).then((res) => {
+                if (res.status === 200) {
+                    this.courseObject = res.body;
+                    //this.generateSTRM();
+                    this.requestModuleInformation();
+                }
             });
         }
         /**
@@ -29060,9 +29083,11 @@ Do you wish to proceed?`)) {
             this.period = translate[this.period];
         }
         requestModuleInformation() {
-            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}/modules?include=content_details&per_page=500`).then((data) => {
-                this.courseModules = data;
-                this.finishedCallBack();
+            wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}/modules?include=content_details&per_page=500`).then((res) => {
+                if (res.status === 200) {
+                    this.courseModules = res.body;
+                    this.finishedCallBack();
+                }
             });
         }
     }
@@ -29072,7 +29097,7 @@ Do you wish to proceed?`)) {
     const { console: console_1 } = globals;
     const file = "src\\CanvasCollections.svelte";
 
-    // (240:0) {#if editMode && modulesPage}
+    // (242:0) {#if editMode && modulesPage}
     function create_if_block(ctx) {
     	let div2;
     	let div1;
@@ -29120,22 +29145,22 @@ Do you wish to proceed?`)) {
     			t9 = space();
     			if (if_block3) if_block3.c();
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 243, 8, 9831);
+    			add_location(div0, file, 245, 8, 9846);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 245, 11, 9969);
+    			add_location(i, file, 247, 11, 9984);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "href", /*HELP*/ ctx[13].switchTitle.url);
-    			add_location(a, file, 244, 8, 9893);
+    			add_location(a, file, 246, 8, 9908);
     			set_custom_element_data(sl_tooltip, "class", "svelte-1bq7e82");
-    			add_location(sl_tooltip, file, 242, 6, 9809);
-    			add_location(small, file, 258, 6, 10383);
+    			add_location(sl_tooltip, file, 244, 6, 9824);
+    			add_location(small, file, 260, 6, 10398);
     			set_style(span, "font-size", "50%");
-    			add_location(span, file, 259, 6, 10424);
+    			add_location(span, file, 261, 6, 10439);
     			attr_dev(div1, "class", "cc-switch-title svelte-1bq7e82");
-    			add_location(div1, file, 241, 4, 9772);
+    			add_location(div1, file, 243, 4, 9787);
     			attr_dev(div2, "class", "cc-switch-container svelte-1bq7e82");
-    			add_location(div2, file, 240, 2, 9733);
+    			add_location(div2, file, 242, 2, 9748);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -29242,14 +29267,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(240:0) {#if editMode && modulesPage}",
+    		source: "(242:0) {#if editMode && modulesPage}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (249:6) {#if canvasDataLoaded && collectionsDataLoaded}
+    // (251:6) {#if canvasDataLoaded && collectionsDataLoaded}
     function create_if_block_4(ctx) {
     	let i;
     	let i_class_value;
@@ -29265,7 +29290,7 @@ Do you wish to proceed?`)) {
     			? 'icon-mini-arrow-down'
     			: 'icon-mini-arrow-right') + " cc-module-icon"));
 
-    			add_location(i, file, 249, 8, 10111);
+    			add_location(i, file, 251, 8, 10126);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -29297,14 +29322,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(249:6) {#if canvasDataLoaded && collectionsDataLoaded}",
+    		source: "(251:6) {#if canvasDataLoaded && collectionsDataLoaded}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (263:4) {#if canvasDataLoaded && collectionsDataLoaded}
+    // (265:4) {#if canvasDataLoaded && collectionsDataLoaded}
     function create_if_block_3(ctx) {
     	let label;
     	let sl_switch;
@@ -29327,19 +29352,19 @@ Do you wish to proceed?`)) {
     			set_custom_element_data(sl_switch, "checked", /*checked*/ ctx[7]);
     			set_custom_element_data(sl_switch, "id", "cc-switch");
     			set_custom_element_data(sl_switch, "class", "svelte-1bq7e82");
-    			add_location(sl_switch, file, 264, 8, 10597);
+    			add_location(sl_switch, file, 266, 8, 10612);
     			attr_dev(label, "class", "cc-switch svelte-1bq7e82");
     			attr_dev(label, "for", "cc-switch");
-    			add_location(label, file, 263, 6, 10546);
+    			add_location(label, file, 265, 6, 10561);
 
     			attr_dev(button, "class", button_class_value = "" + (null_to_empty(/*$configStore*/ ctx[6]["needToSaveCollections"]
     			? "cc-active-save-button"
     			: "cc-save-button") + " svelte-1bq7e82"));
 
     			attr_dev(button, "id", "cc-save-button");
-    			add_location(button, file, 271, 8, 10771);
+    			add_location(button, file, 273, 8, 10786);
     			attr_dev(div, "class", "cc-save svelte-1bq7e82");
-    			add_location(div, file, 270, 6, 10740);
+    			add_location(div, file, 272, 6, 10755);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, label, anchor);
@@ -29393,14 +29418,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(263:4) {#if canvasDataLoaded && collectionsDataLoaded}",
+    		source: "(265:4) {#if canvasDataLoaded && collectionsDataLoaded}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (285:4) {#if !ccPublished}
+    // (287:4) {#if !ccPublished}
     function create_if_block_2(ctx) {
     	let div1;
     	let sl_tooltip;
@@ -29426,27 +29451,27 @@ Do you wish to proceed?`)) {
     			sl_button = element("sl-button");
     			sl_button.textContent = "unpublished";
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 287, 12, 11327);
+    			add_location(div0, file, 289, 10, 11340);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 293, 15, 11565);
+    			add_location(i, file, 295, 13, 11566);
     			attr_dev(a0, "id", "cc-about-unpublished");
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "href", /*HELP*/ ctx[13].unpublished.url);
-    			add_location(a0, file, 288, 12, 11399);
+    			add_location(a0, file, 290, 10, 11410);
     			set_custom_element_data(sl_tooltip, "trigger", "hover focus");
     			set_custom_element_data(sl_tooltip, "class", "svelte-1bq7e82");
-    			add_location(sl_tooltip, file, 286, 8, 11279);
+    			add_location(sl_tooltip, file, 288, 8, 11294);
     			set_custom_element_data(sl_button, "pill", "");
     			set_custom_element_data(sl_button, "size", "small");
     			set_custom_element_data(sl_button, "variant", "warning");
-    			add_location(sl_button, file, 297, 8, 11736);
+    			add_location(sl_button, file, 299, 10, 11733);
     			attr_dev(a1, "href", /*collectionsConfigUrl*/ ctx[9]);
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noreferrer");
-    			add_location(a1, file, 296, 8, 11660);
+    			add_location(a1, file, 298, 8, 11657);
     			attr_dev(div1, "class", "cc-unpublished svelte-1bq7e82");
-    			add_location(div1, file, 285, 6, 11241);
+    			add_location(div1, file, 287, 6, 11256);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -29470,14 +29495,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(285:4) {#if !ccPublished}",
+    		source: "(287:4) {#if !ccPublished}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (302:4) {#if showConfig}
+    // (304:4) {#if showConfig}
     function create_if_block_1(ctx) {
     	let div;
     	let collectionsconfiguration;
@@ -29490,7 +29515,7 @@ Do you wish to proceed?`)) {
     			create_component(collectionsconfiguration.$$.fragment);
     			attr_dev(div, "id", "cc-config");
     			attr_dev(div, "class", "border border-trbl svelte-1bq7e82");
-    			add_location(div, file, 302, 6, 11876);
+    			add_location(div, file, 304, 6, 11872);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -29516,7 +29541,7 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(302:4) {#if showConfig}",
+    		source: "(304:4) {#if showConfig}",
     		ctx
     	});
 
@@ -29543,10 +29568,10 @@ Do you wish to proceed?`)) {
     			if_block_anchor = empty();
     			attr_dev(link, "rel", "stylesheet");
     			attr_dev(link, "href", "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/themes/light.css");
-    			add_location(link, file, 229, 2, 9405);
+    			add_location(link, file, 231, 2, 9420);
     			attr_dev(script, "type", "module");
     			if (!src_url_equal(script.src, script_src_value = "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/shoelace.js")) attr_dev(script, "src", script_src_value);
-    			add_location(script, file, 233, 2, 9544);
+    			add_location(script, file, 235, 2, 9559);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -29619,7 +29644,7 @@ Do you wish to proceed?`)) {
     	return block;
     }
 
-    const CC_VERSION = "0.9.10";
+    const CC_VERSION = "1.0.0a";
     const TIME_BETWEEN_SAVES = 10000;
     const AUTO_SAVE = true;
 
@@ -29694,7 +29719,7 @@ Do you wish to proceed?`)) {
     		$configStore
     	);
 
-    	let collectionsConfigUrl = `/courses/${$configStore['courseId']}/pages/canvas-collections-configuration`;
+    	let collectionsConfigUrl = `/courses/${$configStore["courseId"]}/pages/canvas-collections-configuration`;
 
     	// whether or data canvas and collections data loaded
     	let canvasDataLoaded = false;
@@ -29727,37 +29752,35 @@ Do you wish to proceed?`)) {
     	}
 
     	/**
-     * Callback function for when collectionsDetails is loaded
+     * @function gotCollectionsDetails
+     * @param {string} status - undefined if working, others a label for an error
+     * @description Called by CollectionsDetails when the collections data
+     * has been retrieved or if there were problems
      */
-    	function gotCollectionsDetails() {
+    	function gotCollectionsDetails(status = "") {
     		console.log("YYYYYYYY gotCollectionsDetails");
     		console.log(collectionsDetails);
 
-    		//----- Range of updates to local data based on the now retrieved collections JSON
-    		//ccOn = collectionsDetails.ccOn;
-    		set_store_value(configStore, $configStore["ccOn"] = collectionsDetails.ccOn, $configStore);
+    		if (status === "") {
+    			//----- Range of updates to local data based on the now retrieved collections JSON
+    			//ccOn = collectionsDetails.ccOn;
+    			set_store_value(configStore, $configStore["ccOn"] = collectionsDetails.ccOn, $configStore);
 
-    		$$invalidate(8, ccPublished = collectionsDetails.ccPublished);
-    		set_store_value(configStore, $configStore["currentCollection"] = collectionsDetails.getCurrentCollection(), $configStore);
+    			$$invalidate(8, ccPublished = collectionsDetails.ccPublished);
+    			set_store_value(configStore, $configStore["currentCollection"] = collectionsDetails.getCurrentCollection(), $configStore);
 
-    		// if a student is viewing and no collections, then limit what is done
-    		if (!(!$configStore["ccOn"] && !$configStore["editMode"])) {
-    			// figure out what should be the current collection
-    			// if currentCollection is a number, then the URL include #cc-collection-<num>
-    			// Need to set current collection to the name matching that collection
-    			/*if (
-      typeof currentCollection === "number" &&
-      currentCollection <
-        collectionsDetails.collections.COLLECTIONS_ORDER.length &&
-      currentCollection >= 0
-    ) {
-      $configStore["currentCollection"] =
-        collectionsDetails.collections.COLLECTIONS_ORDER[currentCollection];
-    } */
-    			//----- Indicate we've loaded the data and check if ready for next step
-    			$$invalidate(4, collectionsDataLoaded = true);
-
-    			checkAllDataLoaded();
+    			// if a student is viewing and no collections, then limit what is done
+    			if (!(!$configStore["ccOn"] && !$configStore["editMode"])) {
+    				$$invalidate(4, collectionsDataLoaded = true);
+    				checkAllDataLoaded();
+    			}
+    		} else if (status === "no collections config") {
+    			// if collectionsDetails has errors and ccOn and editMode are true
+    			// errors are assumed, because we got !ok
+    			// call CollectionsDetails::initialiseConfigPage
+    			if ($configStore["ccOn"] && $configStore["editMode"] && canvasDataLoaded) {
+    				collectionsDetails.initialiseConfigPage();
+    			}
     		}
     	}
 

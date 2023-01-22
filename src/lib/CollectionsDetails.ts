@@ -72,9 +72,13 @@ export class CollectionsDetails {
   requestCollectionsPage() {
     wf_fetchData(
       `${this.baseApiUrl}/courses/${this.config.courseId}/pages/canvas-collections-configuration`
-    ).then((data) => {
-      this.collectionsPageResponse = data;
-      this.parseCollectionsPage();
+    ).then((res) => {
+      if (res.status === 200) {
+        this.collectionsPageResponse = res.body;
+        this.parseCollectionsPage();
+      } else {
+        this.finishedCallBack("no collections config");
+      }
     });
   }
 
@@ -648,6 +652,10 @@ export class CollectionsDetails {
         }
       }
     }
+  }
+
+  initialiseConfigPage(canvasDetails) {
+    alert("Time to initialise config page");
   }
 }
 

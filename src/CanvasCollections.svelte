@@ -17,7 +17,7 @@
   import { debug } from "./lib/debug";
   debug("______________ CanvasCollections.svelte _______________");
 
-  const CC_VERSION = "0.9.10";
+  const CC_VERSION = "1.0.0a";
   const TIME_BETWEEN_SAVES = 10000;
   const AUTO_SAVE = true;
 
@@ -28,7 +28,6 @@
   // this may need to come back?
   //  export let currentCollection: number;
   export let showConfig: boolean;
-
 
   let checked = false;
 
@@ -42,7 +41,7 @@
     ccOn: false,
   };
 
-  let collectionsConfigUrl = `/courses/${$configStore['courseId']}/pages/canvas-collections-configuration`;
+  let collectionsConfigUrl = `/courses/${$configStore["courseId"]}/pages/canvas-collections-configuration`;
 
   // whether or data canvas and collections data loaded
   let canvasDataLoaded = false;
@@ -80,38 +79,40 @@
   }
 
   /**
-   * Callback function for when collectionsDetails is loaded
+   * @function gotCollectionsDetails
+   * @param {string} status - undefined if working, others a label for an error
+   * @description Called by CollectionsDetails when the collections data
+   * has been retrieved or if there were problems
    */
-  function gotCollectionsDetails() {
+  function gotCollectionsDetails(status: string = "") {
     console.log("YYYYYYYY gotCollectionsDetails");
     console.log(collectionsDetails);
-    //----- Range of updates to local data based on the now retrieved collections JSON
-    //ccOn = collectionsDetails.ccOn;
-    $configStore["ccOn"] = collectionsDetails.ccOn;
-    ccPublished = collectionsDetails.ccPublished;
 
-    $configStore["currentCollection"] =
-      collectionsDetails.getCurrentCollection();
+    if (status === "") {
+      //----- Range of updates to local data based on the now retrieved collections JSON
+      //ccOn = collectionsDetails.ccOn;
+      $configStore["ccOn"] = collectionsDetails.ccOn;
+      ccPublished = collectionsDetails.ccPublished;
 
-    // if a student is viewing and no collections, then limit what is done
-    if (!(!$configStore["ccOn"] && !$configStore["editMode"])) {
-      // figure out what should be the current collection
+      $configStore["currentCollection"] =
+        collectionsDetails.getCurrentCollection();
 
-      // if currentCollection is a number, then the URL include #cc-collection-<num>
-      // Need to set current collection to the name matching that collection
-      /*if (
-        typeof currentCollection === "number" &&
-        currentCollection <
-          collectionsDetails.collections.COLLECTIONS_ORDER.length &&
-        currentCollection >= 0
+      // if a student is viewing and no collections, then limit what is done
+      if (!(!$configStore["ccOn"] && !$configStore["editMode"])) {
+        collectionsDataLoaded = true;
+        checkAllDataLoaded();
+      }
+    } else if (status === "no collections config") {
+      // if collectionsDetails has errors and ccOn and editMode are true
+      // errors are assumed, because we got !ok
+      // call CollectionsDetails::initialiseConfigPage
+      if (
+        $configStore["ccOn"] &&
+        $configStore["editMode"] &&
+        canvasDataLoaded
       ) {
-        $configStore["currentCollection"] =
-          collectionsDetails.collections.COLLECTIONS_ORDER[currentCollection];
-      } */
-
-      //----- Indicate we've loaded the data and check if ready for next step
-      collectionsDataLoaded = true;
-      checkAllDataLoaded();
+        collectionsDetails.initialiseConfigPage();
+      }
     }
   }
 
@@ -324,19 +325,19 @@
     {#if !ccPublished}
       <div class="cc-unpublished">
         <sl-tooltip trigger="hover focus">
-            <div slot="content">{@html HELP.unpublished.tooltip}</div>
-            <a
-              id="cc-about-unpublished"
-              target="_blank"
-              rel="noreferrer"
-              href={HELP.unpublished.url}
-              ><i class="icon-question cc-module-icon" /></a
-            >
-          </sl-tooltip>
-        <a href="{collectionsConfigUrl}" target="_blank" rel="noreferrer">
-        <sl-button pill size="small" variant="warning">unpublished</sl-button>
+          <div slot="content">{@html HELP.unpublished.tooltip}</div>
+          <a
+            id="cc-about-unpublished"
+            target="_blank"
+            rel="noreferrer"
+            href={HELP.unpublished.url}
+            ><i class="icon-question cc-module-icon" /></a
+          >
+        </sl-tooltip>
+        <a href={collectionsConfigUrl} target="_blank" rel="noreferrer">
+          <sl-button pill size="small" variant="warning">unpublished</sl-button>
         </a>
-      </div> 
+      </div>
     {/if}
     {#if showConfig}
       <div id="cc-config" class="border border-trbl">
