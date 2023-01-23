@@ -22,6 +22,7 @@ import sanitizeHtml from "sanitize-html";
 import { debug } from "./debug";
 import { configStore } from "../stores";
 import { get } from "svelte/store";
+import ModuleDateConfiguration from "../components/Configuration/ModuleDateConfiguration.svelte";
 
 export class CollectionsDetails {
   // parsed collections JSON
@@ -622,51 +623,54 @@ export class CollectionsDetails {
    * @method addCanvasModuleData
    * @param canvasData - array of objects containing module data from Canvas
    * @param editMode - boolean
-   * @description Add a sub set of the Canvas module data to the relevant collections
-   * module data
+   * @description Perform numerous steps to bring the Canvas and Collections
+   * information about modules into alignment
+   * - add some canvas data to the collections
+   * - if modules exist in Canvas, but not Collections, add them
+   * - if module name (and...?) has changed in Canvas, update Collections
+   * - for students, set all Collections modules to published to ensure
+   *   Collections represents them correctly
    */
-  addCanvasModuleData(canvasData: [], editMode) {
-    let modules = this["collections"]["MODULES"];
+  addCanvasModuleData(canvasModules: [], editMode) {
+    let collectionsModules = this["collections"]["MODULES"];
 
     // setting published this way will work in editMode
-    const fieldsToAdd = ["published"];
+    const fieldsToUpdate = ["published", "name"];
 
     // loop through the canvas data
-    for (let i = 0; i < canvasData.length; i++) {
-      // for each fieldsToAdd, add the data to the module
-      for (let j = 0; j < fieldsToAdd.length; j++) {
-        const field = fieldsToAdd[j];
-        if (canvasData[i].hasOwnProperty(field)) {
-          const moduleId = canvasData[i].id;
-          // convert moduleId to int
-          if (modules.hasOwnProperty(moduleId)) {
-            modules[moduleId][field] = canvasData[i][field];
-          } else {
-            // the module doesn't exist
-            modules[moduleId] = this.addNewModule(canvasData[i]);
-            console.log(modules[moduleId])
-          }
-        }
+    for (let i = 0; i < canvasModules.length; i++) {
+      // add the canvasModule to collections if it doesn't exist
+      const moduleId = canvasModules[i]["id"];
+      if (!collectionsModules.hasOwnProperty(moduleId)) {
+        collectionsModules[moduleId] = this.addNewModule(canvasModules[i]);
       }
 
-      // if we're not in edit mode, add published==true to all modules
-      // - this is because students only ever can see published modules
-
-      // extract the ids from the canvasData
-      let canvasModuleIds = canvasData.map((module) => module.id);
-      if (!editMode) {
-        // loop through all the modules
-        for (let moduleId in modules) {
-          // if moduleId is in canvasModulesIds, set published to true
-          if (canvasModuleIds.includes(parseInt(moduleId))) {
-            modules[moduleId].published = true;
+      //for (let j = 0; j < fieldsToAdd.length; j++) {
+      fieldsToUpdate.forEach((field) => {
+        if (canvasModules[i].hasOwnProperty(field)) {
+          if (collectionsModules.hasOwnProperty(moduleId)) {
+            collectionsModules[moduleId][field] = canvasModules[i][field];
           }
         }
-      }
+      });
+    }
+
+    // if we're not in edit mode, add published==true to all modules
+    // - this is because students only ever can see published modules
+    // extract the ids from the canvasData
+    if (!editMode) {
+      const canvasModuleIds = canvasModules.map((module) => module.id);
+      // loop through all the Collections modules
+      collectionsModules.forEach(moduleId=> {
+        // if moduleId is in canvasModulesIds, set published to true
+        if (canvasModuleIds.includes(parseInt(moduleId))) {
+          collectionsModules[moduleId].published = true;
+        }
+      });
     }
   }
 
-  private addNewModule(canvasModule) : object {
+  private addNewModule(canvasModule): object {
     return {
       name: canvasModule.name,
       id: canvasModule.id,
@@ -693,6 +697,8 @@ export class CollectionsDetails {
       banner: "image",
       image: "",
       imageSize: "",
+      includePage: "",
+      outputPage: "",
       iframe: "",
       bannerColour: "#ffffff",
       engage: true,

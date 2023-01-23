@@ -20,8 +20,14 @@
 import { get } from "svelte/store";
 import { configStore, collectionsStore } from "../stores";
 
-export default class moduleLabelApplicator {
+import { getCollectionCanvasModules } from "../components/Representations/representationSupport";
+
+export class moduleLabelApplicator {
   private collectionName: string;
+  private newNames: any[];
+
+  private configStore: object;
+  private collectionsStore: object;
 
   /**
    * @param {String} collection  - name of Collection to update
@@ -29,35 +35,18 @@ export default class moduleLabelApplicator {
 
   constructor(collectionName) {
     this.collectionName = collectionName;
+
+    this.configStore = get(configStore);
+    this.collectionsStore = get(collectionsStore);
   }
 
   execute() {
-    // update the module details using the controller, but get it pass
-    // along to the calculateNewModuleNames method
-    this.parentController.requestModuleInformation(
-      this.checkModulesUpdated.bind(this)
-    );
-  }
-
-  /**
-   * @method checkModulesUpdated
-   * @description Called once Canvas module details update is been attempted.
-   * Figure out if it worked and act accordingly
-   * @param {Boolean} ok - was the module update successful?
-   */
-
-  checkModulesUpdated(ok) {
-    if (!ok) {
-      alert(`moduleLabelApplicator: module update failed`);
-      return;
-    }
-
-    // merge the module details to ensure all up to date
-    // - this is also where the num is auto calculated
-    this.parentController.mergeModuleDetails();
+    // might be a question here whether or not to refresh Canvas details
 
     // calculate the new module names
     this.calculateNewModuleNames();
+
+//    this.updateNewModuleNames();
   }
 
   /**
@@ -71,19 +60,22 @@ export default class moduleLabelApplicator {
     // reinitialise
     this.newNames = [];
 
-    const modulesCollections = this.getModulesCollections();
-    for (let module of modulesCollections) {
-      if (module.collection !== this.collectionName) {
+    const collectionsCanvasModules = getCollectionCanvasModules(this.collectionName)
+    console.log("--------- calculateNewModuleNames")
+    console.log(collectionsCanvasModules);
+    for (let module of collectionsCanvasModules) {
+      if (module["collection"] !== this.collectionName) {
+        alert("calculateNewModuleNames - should not be required")
         continue;
       }
 
-      const oldName = module.name;
+      const oldName = module["name"];
       let prepend = "";
-      if (module.label) {
-        prepend = module.label;
+      if (module["label"]) {
+        prepend = module["label"];
       }
-      if (module.actualNum) {
-        prepend += ` ${module.actualNum}`;
+      if (module["actualNum"]) {
+        prepend += ` ${module["actualNum"]}`;
         // remove first char from CARD_LABEL if it is a space
         if (prepend.charAt(0) === " ") {
           prepend = prepend.substring(1);
@@ -99,7 +91,7 @@ export default class moduleLabelApplicator {
       // TODO - need to identify old prepends
 
       if (newName !== oldName) {
-        this.newNames.push({ id: module.id, newName: newName });
+        this.newNames.push({ id: module["id"], newName: newName });
         console.log(
           `------------- moduleLabelApplicator: ${oldName} -> ${prepend}: ${oldName}`
         );
@@ -108,7 +100,8 @@ export default class moduleLabelApplicator {
       }
     }
 
-    this.updateNewModuleNames();
+    console.log('------------ end of calculateNewModuleNames')
+    console.log(this.newNames)
   }
 
   /**

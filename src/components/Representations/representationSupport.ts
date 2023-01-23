@@ -14,14 +14,29 @@ import { debug } from "../../lib/debug";
 export function getCollectionCanvasModules(collection) {
   let modules = [];
 
+  // collection store is not the Canvas modules (collections modules)
   const cStore = get(collectionsStore);
   const collectionsModules = cStore["MODULES"];
+  const canvasModules = get(modulesStore);
 
-  for (const module in collectionsModules) {
-    if (collectionsModules[module].collection === collection) {
-      modules.push(collectionsModules[module]);
+  canvasModules.forEach(module => {
+    // for each canvas module
+    const moduleId = module.id
+    if (collectionsModules[moduleId].collection === collection) {
+      // if the module belongs to the selected collection
+      // push the canvas module onto the array
+      modules.push(module);
     }
-  }
+  });
+
+  /*for (const moduleId in collectionsModules) {
+    // loop through each of the Canvas Collections modules
+    if (collectionsModules[moduleId].collection === collection) {
+      // if the module belongs to the selected collection
+      // push the canvas module onto the array
+      modules.push(canvasModules[moduleId]);
+    }
+  } */
   return modules;
 }
 
@@ -155,7 +170,7 @@ export function modifyCanvasModulesList(collection, showUnallocated) {
   const config = get(configStore);
   const editMode = config["editMode"];
 
-  const modules = getCollectionCanvasModules(collection, allModules);
+  const modules = getCollectionCanvasModules(collection);
   // create array moduleIds that contains the module.ids from modules
   const moduleIds = modules.map((module) => {
     return parseInt(module.id, 10);

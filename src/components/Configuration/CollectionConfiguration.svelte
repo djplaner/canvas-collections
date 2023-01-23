@@ -9,6 +9,7 @@
     representationsStore,
   } from "../../stores";
   import { updatePageController } from "../../lib/updatePageController";
+  import { moduleLabelApplicator}  from "../../lib/moduleLabelApplicator";
   import { getCollectionCanvasModules } from "../Representations/representationSupport";
   import { getPageName } from "../../lib/CanvasSetup";
   import { toastAlert, ccConfirm } from "../../lib/ui";
@@ -32,6 +33,17 @@
   Object.keys($collectionsStore["COLLECTIONS"]).forEach((collectionName) => {
     includePageExists[collectionName] = true;
     outputPageExists[collectionName] = true;
+
+    ["includePage", "outputPage"].forEach((pageType) => {
+      if (
+        !$collectionsStore["COLLECTIONS"][collectionName].hasOwnProperty(
+          pageType
+        )
+      ) {
+        $collectionsStore["COLLECTIONS"][collectionName][pageType] = "";
+      }
+    });
+
     includePageName[collectionName] =
       $collectionsStore["COLLECTIONS"][collectionName].includePage;
     outputPageName[collectionName] =
@@ -49,10 +61,7 @@
     doesOutputPageExist
   );
 
-  const modules = getCollectionCanvasModules(
-    collectionName,
-    $collectionsStore["MODULES"]
-  );
+  const modules = getCollectionCanvasModules(collectionName);
   let moduleCount = modules.length;
   let moduleName = moduleCount === 1 ? "module" : "modules";
 
@@ -235,8 +244,6 @@
    */
   function doesIncludePageExist(pageName, msg) {
     const pageObject = msg.body;
-    debug(`---------- doesIncludePageExist --${pageName}--------`);
-    debug(pageObject);
 
     includePageName[collectionName] = pageName;
 
@@ -280,18 +287,25 @@
    * @param collectionName
    * @description Should update the specified Canvas page with the representation
    * of a specific collection
-   * VERY EXPERIMENTAL and incomplete
    */
   function updateOutputPage(collectionName) {
     const updateController = new updatePageController(
-      collectionName,
-      updateOutputPageCompleted
+      collectionName
     );
 
     updateController.execute();
   }
 
-  function updateOutputPageCompleted(updateController) {}
+  /**
+   * @function applyModuleLabels
+   * @param collectionName
+   * @description Call the moduleLabelApplicator to update the names for
+   * all Canvas modules in the collection based on their labels
+   */
+  function applyModuleLabels(collectionName : string) {
+    const labelApplicator = new moduleLabelApplicator(collectionName);
+    labelApplicator.execute();
+  }
 
   const HELP = {
     configName: {
@@ -574,7 +588,7 @@
         />
       </span>
     </div>
-    {#if !includePageExists[collectionName]}
+    {#if !includePageExists[collectionName] && includePageName[collectionName]}
       <div class="cc-collection-two-line-error">
         Page <strong>{includePageName[collectionName]}</strong> does not exist
       </div>
@@ -626,7 +640,7 @@
         }}>Update</button
       >
     </div>
-    {#if !outputPageExists[collectionName]}
+    {#if !outputPageExists[collectionName] && outputPageName[collectionName]}
       <div class="cc-collection-two-line-warning">
         Will create a new page named <strong
           >{outputPageName[collectionName]}</strong
@@ -657,6 +671,9 @@
     <span class="cc-collection-label-reverse">
       <!-- TODO onclick for apply module labels -->
       <button
+        on:click={() => {
+          applyModuleLabels(collectionName);
+        }}
         id="cc-collection-{collectionName}-apply-module-labels"
         class="btn cc-existing-collection">Apply</button
       >

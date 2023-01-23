@@ -13428,44 +13428,46 @@ var app = (function () {
          * @method addCanvasModuleData
          * @param canvasData - array of objects containing module data from Canvas
          * @param editMode - boolean
-         * @description Add a sub set of the Canvas module data to the relevant collections
-         * module data
+         * @description Perform numerous steps to bring the Canvas and Collections
+         * information about modules into alignment
+         * - add some canvas data to the collections
+         * - if modules exist in Canvas, but not Collections, add them
+         * - if module name (and...?) has changed in Canvas, update Collections
+         * - for students, set all Collections modules to published to ensure
+         *   Collections represents them correctly
          */
-        addCanvasModuleData(canvasData, editMode) {
-            let modules = this["collections"]["MODULES"];
+        addCanvasModuleData(canvasModules, editMode) {
+            let collectionsModules = this["collections"]["MODULES"];
             // setting published this way will work in editMode
-            const fieldsToAdd = ["published"];
+            const fieldsToUpdate = ["published", "name"];
             // loop through the canvas data
-            for (let i = 0; i < canvasData.length; i++) {
-                // for each fieldsToAdd, add the data to the module
-                for (let j = 0; j < fieldsToAdd.length; j++) {
-                    const field = fieldsToAdd[j];
-                    if (canvasData[i].hasOwnProperty(field)) {
-                        const moduleId = canvasData[i].id;
-                        // convert moduleId to int
-                        if (modules.hasOwnProperty(moduleId)) {
-                            modules[moduleId][field] = canvasData[i][field];
-                        }
-                        else {
-                            // the module doesn't exist
-                            modules[moduleId] = this.addNewModule(canvasData[i]);
-                            console.log(modules[moduleId]);
+            for (let i = 0; i < canvasModules.length; i++) {
+                // add the canvasModule to collections if it doesn't exist
+                const moduleId = canvasModules[i]["id"];
+                if (!collectionsModules.hasOwnProperty(moduleId)) {
+                    collectionsModules[moduleId] = this.addNewModule(canvasModules[i]);
+                }
+                //for (let j = 0; j < fieldsToAdd.length; j++) {
+                fieldsToUpdate.forEach((field) => {
+                    if (canvasModules[i].hasOwnProperty(field)) {
+                        if (collectionsModules.hasOwnProperty(moduleId)) {
+                            collectionsModules[moduleId][field] = canvasModules[i][field];
                         }
                     }
-                }
-                // if we're not in edit mode, add published==true to all modules
-                // - this is because students only ever can see published modules
-                // extract the ids from the canvasData
-                let canvasModuleIds = canvasData.map((module) => module.id);
-                if (!editMode) {
-                    // loop through all the modules
-                    for (let moduleId in modules) {
-                        // if moduleId is in canvasModulesIds, set published to true
-                        if (canvasModuleIds.includes(parseInt(moduleId))) {
-                            modules[moduleId].published = true;
-                        }
+                });
+            }
+            // if we're not in edit mode, add published==true to all modules
+            // - this is because students only ever can see published modules
+            // extract the ids from the canvasData
+            if (!editMode) {
+                const canvasModuleIds = canvasModules.map((module) => module.id);
+                // loop through all the Collections modules
+                collectionsModules.forEach(moduleId => {
+                    // if moduleId is in canvasModulesIds, set published to true
+                    if (canvasModuleIds.includes(parseInt(moduleId))) {
+                        collectionsModules[moduleId].published = true;
                     }
-                }
+                });
             }
         }
         addNewModule(canvasModule) {
@@ -13495,6 +13497,8 @@ var app = (function () {
                 banner: "image",
                 image: "",
                 imageSize: "",
+                includePage: "",
+                outputPage: "",
                 iframe: "",
                 bannerColour: "#ffffff",
                 engage: true,
@@ -19265,13 +19269,27 @@ Do you wish to proceed?`)) {
      */
     function getCollectionCanvasModules(collection) {
         let modules = [];
+        // collection store is not the Canvas modules (collections modules)
         const cStore = get_store_value(collectionsStore);
         const collectionsModules = cStore["MODULES"];
-        for (const module in collectionsModules) {
-            if (collectionsModules[module].collection === collection) {
-                modules.push(collectionsModules[module]);
+        const canvasModules = get_store_value(modulesStore);
+        canvasModules.forEach(module => {
+            // for each canvas module
+            const moduleId = module.id;
+            if (collectionsModules[moduleId].collection === collection) {
+                // if the module belongs to the selected collection
+                // push the canvas module onto the array
+                modules.push(module);
             }
-        }
+        });
+        /*for (const moduleId in collectionsModules) {
+          // loop through each of the Canvas Collections modules
+          if (collectionsModules[moduleId].collection === collection) {
+            // if the module belongs to the selected collection
+            // push the canvas module onto the array
+            modules.push(canvasModules[moduleId]);
+          }
+        } */
         return modules;
     }
     /**
@@ -21767,7 +21785,7 @@ Do you wish to proceed?`)) {
     			}
 
     			attr_dev(div, "class", "cc-card-interface cc-representation svelte-1oao3hv");
-    			add_location(div, file$a, 214, 2, 8496);
+    			add_location(div, file$a, 214, 2, 8502);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -21973,9 +21991,9 @@ Do you wish to proceed?`)) {
     			span = element("span");
     			if_block.c();
     			attr_dev(span, "class", "cc-fyi-text");
-    			add_location(span, file$a, 243, 18, 9725);
+    			add_location(span, file$a, 243, 18, 9731);
     			attr_dev(div, "class", "cc-card-fyi svelte-1oao3hv");
-    			add_location(div, file$a, 242, 16, 9680);
+    			add_location(div, file$a, 242, 16, 9686);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -22085,7 +22103,7 @@ Do you wish to proceed?`)) {
     			t = space();
     			if (if_block1) if_block1.c();
     			attr_dev(div, "class", "cc-card-published svelte-1oao3hv");
-    			add_location(div, file$a, 254, 16, 10278);
+    			add_location(div, file$a, 254, 16, 10284);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -22209,11 +22227,11 @@ Do you wish to proceed?`)) {
     			t2 = text(t2_value);
     			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
     			attr_dev(a, "class", "gu-engage svelte-1oao3hv");
-    			add_location(a, file$a, 289, 20, 11952);
+    			add_location(a, file$a, 289, 20, 11958);
     			attr_dev(div0, "class", "cc-card-engage-button svelte-1oao3hv");
-    			add_location(div0, file$a, 288, 18, 11895);
+    			add_location(div0, file$a, 288, 18, 11901);
     			attr_dev(div1, "class", "cc-card-engage svelte-1oao3hv");
-    			add_location(div1, file$a, 287, 16, 11847);
+    			add_location(div1, file$a, 287, 16, 11853);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -22353,43 +22371,43 @@ Do you wish to proceed?`)) {
     			attr_dev(a, "class", "cc-card-link svelte-1oao3hv");
     			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
     			attr_dev(a, "style", "");
-    			add_location(a, file$a, 227, 14, 9039);
+    			add_location(a, file$a, 227, 14, 9045);
     			attr_dev(div0, "class", "cc-card-banner-container svelte-1oao3hv");
     			attr_dev(div0, "data-moduleid", div0_data_moduleid_value = /*theModule*/ ctx[9].id);
-    			add_location(div0, file$a, 226, 12, 8956);
+    			add_location(div0, file$a, 226, 12, 8962);
     			attr_dev(span, "class", "cc-card-label svelte-1oao3hv");
-    			add_location(span, file$a, 272, 18, 11078);
+    			add_location(span, file$a, 272, 18, 11084);
     			attr_dev(h3, "class", "cc-card-title svelte-1oao3hv");
     			attr_dev(h3, "data-moduleid", h3_data_moduleid_value = /*theModule*/ ctx[9].id);
-    			add_location(h3, file$a, 276, 18, 11301);
+    			add_location(h3, file$a, 276, 18, 11307);
     			attr_dev(div1, "class", "cc-card-label svelte-1oao3hv");
-    			add_location(div1, file$a, 271, 16, 11031);
+    			add_location(div1, file$a, 271, 16, 11037);
     			attr_dev(div2, "class", "cc-card-description svelte-1oao3hv");
-    			add_location(div2, file$a, 280, 16, 11484);
+    			add_location(div2, file$a, 280, 16, 11490);
 
     			attr_dev(div3, "class", div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi
     			? "cc-card-content"
     			: "cc-unclickable-card-content") + " svelte-1oao3hv"));
 
-    			add_location(div3, file$a, 266, 14, 10830);
+    			add_location(div3, file$a, 266, 14, 10836);
     			attr_dev(div4, "class", "cc-card-content-height svelte-1oao3hv");
-    			add_location(div4, file$a, 264, 12, 10719);
+    			add_location(div4, file$a, 264, 12, 10725);
     			attr_dev(div5, "class", "cc-progress svelte-1oao3hv");
-    			add_location(div5, file$a, 296, 14, 12227);
+    			add_location(div5, file$a, 296, 14, 12233);
     			attr_dev(div6, "class", "cc-card-footer svelte-1oao3hv");
-    			add_location(div6, file$a, 285, 12, 11679);
+    			add_location(div6, file$a, 285, 12, 11685);
     			attr_dev(div7, "class", "cc-card-flex svelte-1oao3hv");
-    			add_location(div7, file$a, 225, 10, 8916);
+    			add_location(div7, file$a, 225, 10, 8922);
     			attr_dev(div8, "id", div8_id_value = "cc_module_" + /*theModule*/ ctx[9].id);
     			attr_dev(div8, "class", "cc-card svelte-1oao3hv");
-    			add_location(div8, file$a, 224, 8, 8853);
+    			add_location(div8, file$a, 224, 8, 8859);
     			attr_dev(div9, "id", div9_id_value = "cc_module_" + /*theModule*/ ctx[9].id);
 
     			attr_dev(div9, "class", div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi
     			? "cc-unclickable-card"
     			: "cc-clickable-card") + " svelte-1oao3hv"));
 
-    			add_location(div9, file$a, 216, 6, 8587);
+    			add_location(div9, file$a, 216, 6, 8593);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div9, anchor);
@@ -22721,13 +22739,13 @@ Do you wish to proceed?`)) {
     			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
     			attr_dev(a, "class", "gu-engage svelte-1oao3hv");
     			set_style(a, "text-decoration", "none");
-    			add_location(a, file$a, 197, 20, 8040);
+    			add_location(a, file$a, 197, 20, 8046);
     			attr_dev(div0, "class", "cc-card-engage-button svelte-1oao3hv");
     			attr_dev(div0, "style", "flot:right;color:rgba(30,58,138,1);border-radius:0.25rem;padding0.5rem 1rem 0.5rem 1rem;border:1px solid rgba(30,58,138,1)");
-    			add_location(div0, file$a, 193, 18, 7790);
+    			add_location(div0, file$a, 193, 18, 7796);
     			attr_dev(div1, "class", "cc-card-engage svelte-1oao3hv");
     			set_style(div1, "padding-right", "1rem");
-    			add_location(div1, file$a, 192, 16, 7713);
+    			add_location(div1, file$a, 192, 16, 7719);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -22790,18 +22808,17 @@ Do you wish to proceed?`)) {
     	let t10;
     	let h3;
     	let a2;
-    	let t11_value = /*deLabelModuleName*/ ctx[7](/*theModule*/ ctx[9].id) + "";
-    	let t11;
+    	let raw0_value = /*deLabelModuleName*/ ctx[7](/*theModule*/ ctx[9].id) + "";
     	let a2_href_value;
     	let h3_data_moduleid_value;
-    	let t12;
+    	let t11;
     	let div2;
-    	let raw_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].description + "";
+    	let raw1_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].description + "";
     	let div3_class_value;
-    	let t13;
+    	let t12;
     	let div5;
     	let div7_id_value;
-    	let t14;
+    	let t13;
     	let div8_id_value;
     	let current;
     	var switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].banner];
@@ -22859,13 +22876,12 @@ Do you wish to proceed?`)) {
     			t10 = space();
     			h3 = element("h3");
     			a2 = element("a");
-    			t11 = text(t11_value);
-    			t12 = space();
+    			t11 = space();
     			div2 = element("div");
-    			t13 = space();
+    			t12 = space();
     			div5 = element("div");
     			if (if_block1) if_block1.c();
-    			t14 = space();
+    			t13 = space();
     			attr_dev(a0, "class", "cc-card-link svelte-1oao3hv");
     			attr_dev(a0, "href", a0_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
     			attr_dev(a0, "style", "position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;");
@@ -22895,7 +22911,7 @@ Do you wish to proceed?`)) {
     			add_location(div1, file$a, 166, 16, 6428);
     			attr_dev(div2, "class", "cc-card-description svelte-1oao3hv");
     			set_style(div2, "font-size", "0.75rem");
-    			add_location(div2, file$a, 185, 16, 7284);
+    			add_location(div2, file$a, 185, 16, 7290);
 
     			attr_dev(div3, "class", div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi
     			? "cc-card-content"
@@ -22914,7 +22930,7 @@ Do you wish to proceed?`)) {
     			attr_dev(div5, "class", "cc-card-footer svelte-1oao3hv");
     			set_style(div5, "height", "4rem");
     			set_style(div5, "position", "relative");
-    			add_location(div5, file$a, 190, 12, 7506);
+    			add_location(div5, file$a, 190, 12, 7512);
     			attr_dev(div6, "class", "cc-card-flex svelte-1oao3hv");
     			set_style(div6, "overflow", "hidden");
     			set_style(div6, "flex-direction", "column");
@@ -22964,14 +22980,14 @@ Do you wish to proceed?`)) {
     			append_dev(div1, t10);
     			append_dev(div1, h3);
     			append_dev(h3, a2);
-    			append_dev(a2, t11);
-    			append_dev(div3, t12);
+    			a2.innerHTML = raw0_value;
+    			append_dev(div3, t11);
     			append_dev(div3, div2);
-    			div2.innerHTML = raw_value;
-    			append_dev(div6, t13);
+    			div2.innerHTML = raw1_value;
+    			append_dev(div6, t12);
     			append_dev(div6, div5);
     			if (if_block1) if_block1.m(div5, null);
-    			append_dev(div8, t14);
+    			append_dev(div8, t13);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
@@ -23035,8 +23051,7 @@ Do you wish to proceed?`)) {
 
     			if ((!current || dirty & /*$collectionsStore, modules*/ 24) && t7_value !== (t7_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].label + "")) set_data_dev(t7, t7_value);
     			if ((!current || dirty & /*$collectionsStore, modules*/ 24) && t9_value !== (t9_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].actualNum + "")) set_data_dev(t9, t9_value);
-    			if ((!current || dirty & /*modules*/ 16) && t11_value !== (t11_value = /*deLabelModuleName*/ ctx[7](/*theModule*/ ctx[9].id) + "")) set_data_dev(t11, t11_value);
-
+    			if ((!current || dirty & /*modules*/ 16) && raw0_value !== (raw0_value = /*deLabelModuleName*/ ctx[7](/*theModule*/ ctx[9].id) + "")) a2.innerHTML = raw0_value;
     			if (!current || dirty & /*modules*/ 16 && a2_href_value !== (a2_href_value = getModuleUrl(/*theModule*/ ctx[9].id))) {
     				attr_dev(a2, "href", a2_href_value);
     			}
@@ -23045,7 +23060,7 @@ Do you wish to proceed?`)) {
     				attr_dev(h3, "data-moduleid", h3_data_moduleid_value);
     			}
 
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 24) && raw_value !== (raw_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].description + "")) div2.innerHTML = raw_value;
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 24) && raw1_value !== (raw1_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].description + "")) div2.innerHTML = raw1_value;
     			if (!current || dirty & /*$collectionsStore, modules*/ 24 && div3_class_value !== (div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[9].id].fyi
     			? "cc-card-content"
     			: "cc-unclickable-card-content") + " svelte-1oao3hv"))) {
@@ -24575,7 +24590,7 @@ Do you wish to proceed?`)) {
     	return child_ctx;
     }
 
-    // (86:6) {#if collectionName !== "unallocated"}
+    // (87:6) {#if collectionName !== "unallocated"}
     function create_if_block_3$2(ctx) {
     	let t0;
     	let a;
@@ -24592,11 +24607,11 @@ Do you wish to proceed?`)) {
     			t0 = text(" ");
     			a = element("a");
     			t1 = text(t1_value);
-    			t2 = text("  \r\n        ");
+    			t2 = text(" \r\n        ");
     			if (if_block) if_block.c();
     			if_block_anchor = empty();
     			attr_dev(a, "href", a_href_value = "#collection-" + /*collectionName*/ ctx[9]);
-    			add_location(a, file$8, 86, 14, 3349);
+    			add_location(a, file$8, 87, 14, 3317);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t0, anchor);
@@ -24639,14 +24654,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_3$2.name,
     		type: "if",
-    		source: "(86:6) {#if collectionName !== \\\"unallocated\\\"}",
+    		source: "(87:6) {#if collectionName !== \\\"unallocated\\\"}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (88:8) {#if !(collectionsOrder.length - 1 === collectionsOrder.indexOf(collectionName))}
+    // (89:8) {#if !(collectionsOrder.length - 1 === collectionsOrder.indexOf(collectionName))}
     function create_if_block_4$1(ctx) {
     	let t;
 
@@ -24666,14 +24681,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_4$1.name,
     		type: "if",
-    		source: "(88:8) {#if !(collectionsOrder.length - 1 === collectionsOrder.indexOf(collectionName))}",
+    		source: "(89:8) {#if !(collectionsOrder.length - 1 === collectionsOrder.indexOf(collectionName))}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (85:4) {#each collectionsOrder as collectionName}
+    // (86:4) {#each collectionsOrder as collectionName}
     function create_each_block_2(ctx) {
     	let if_block_anchor;
     	let if_block = /*collectionName*/ ctx[9] !== "unallocated" && create_if_block_3$2(ctx);
@@ -24711,14 +24726,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_each_block_2.name,
     		type: "each",
-    		source: "(85:4) {#each collectionsOrder as collectionName}",
+    		source: "(86:4) {#each collectionsOrder as collectionName}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (123:8) {#if collectionName !== "unallocated"}
+    // (124:8) {#if collectionName !== "unallocated"}
     function create_if_block_2$3(ctx) {
     	let tr;
     	let td;
@@ -24734,13 +24749,13 @@ Do you wish to proceed?`)) {
     			h3 = element("h3");
     			t = text(t_value);
     			attr_dev(h3, "id", h3_id_value = "collection-" + /*collectionName*/ ctx[9]);
-    			add_location(h3, file$8, 129, 14, 4647);
+    			add_location(h3, file$8, 130, 14, 4614);
     			set_style(td, "vertical-align", "top: padding:0.5rem");
     			attr_dev(td, "role", "cell");
     			attr_dev(td, "colspan", "3");
-    			add_location(td, file$8, 124, 12, 4499);
+    			add_location(td, file$8, 125, 12, 4466);
     			set_style(tr, "background", "white");
-    			add_location(tr, file$8, 123, 10, 4455);
+    			add_location(tr, file$8, 124, 10, 4422);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -24764,14 +24779,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_2$3.name,
     		type: "if",
-    		source: "(123:8) {#if collectionName !== \\\"unallocated\\\"}",
+    		source: "(124:8) {#if collectionName !== \\\"unallocated\\\"}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (153:16) {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
+    // (154:16) {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
     function create_if_block_1$4(ctx) {
     	let div;
 
@@ -24780,7 +24795,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			div.textContent = "Unpublished";
     			attr_dev(div, "class", "cc-published svelte-zkzf4g");
-    			add_location(div, file$8, 153, 18, 5645);
+    			add_location(div, file$8, 154, 18, 5612);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -24794,14 +24809,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_1$4.name,
     		type: "if",
-    		source: "(153:16) {#if $configStore[\\\"editMode\\\"] && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
+    		source: "(154:16) {#if $configStore[\\\"editMode\\\"] && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (156:16) {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection !== collectionName}
+    // (157:16) {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection !== collectionName}
     function create_if_block$5(ctx) {
     	let div;
 
@@ -24810,7 +24825,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			div.textContent = "No collection allocated";
     			attr_dev(div, "class", "cc-unallocated svelte-zkzf4g");
-    			add_location(div, file$8, 156, 18, 5852);
+    			add_location(div, file$8, 157, 18, 5819);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -24824,14 +24839,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block$5.name,
     		type: "if",
-    		source: "(156:16) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collectionName}",
+    		source: "(157:16) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collectionName}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (135:8) {#each modulesObj[collectionName] as module}
+    // (136:8) {#each modulesObj[collectionName] as module}
     function create_each_block_1(ctx) {
     	let tr;
     	let td0;
@@ -24878,30 +24893,30 @@ Do you wish to proceed?`)) {
     			t4 = space();
     			p2 = element("p");
     			t5 = space();
-    			add_location(p0, file$8, 138, 16, 4960);
+    			add_location(p0, file$8, 139, 16, 4927);
     			set_style(div0, "margin", "0");
-    			add_location(div0, file$8, 137, 14, 4919);
+    			add_location(div0, file$8, 138, 14, 4886);
     			attr_dev(td0, "role", "cell");
     			set_style(td0, "vertical-align", "top");
     			set_style(td0, "padding", "0.5rem");
-    			add_location(td0, file$8, 136, 12, 4842);
+    			add_location(td0, file$8, 137, 12, 4809);
     			attr_dev(a, "href", a_href_value = getModuleUrl(/*module*/ ctx[12].id));
-    			add_location(a, file$8, 144, 18, 5214);
-    			add_location(p1, file$8, 143, 16, 5191);
+    			add_location(a, file$8, 145, 18, 5181);
+    			add_location(p1, file$8, 144, 16, 5158);
     			set_style(div1, "margin", "0");
-    			add_location(div1, file$8, 142, 14, 5150);
+    			add_location(div1, file$8, 143, 14, 5117);
     			attr_dev(td1, "role", "cell");
     			set_style(td1, "vertical-align", "top");
     			set_style(td1, "padding", "0.5rem");
-    			add_location(td1, file$8, 141, 12, 5073);
-    			add_location(p2, file$8, 158, 16, 5950);
+    			add_location(td1, file$8, 142, 12, 5040);
+    			add_location(p2, file$8, 159, 16, 5917);
     			set_style(div2, "margin", "0");
-    			add_location(div2, file$8, 151, 14, 5500);
+    			add_location(div2, file$8, 152, 14, 5467);
     			attr_dev(td2, "role", "cell");
     			set_style(td2, "vertical-align", "top");
     			set_style(td2, "padding", "0.5rem");
-    			add_location(td2, file$8, 150, 12, 5423);
-    			add_location(tr, file$8, 135, 10, 4824);
+    			add_location(td2, file$8, 151, 12, 5390);
+    			add_location(tr, file$8, 136, 10, 4791);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -24967,14 +24982,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(135:8) {#each modulesObj[collectionName] as module}",
+    		source: "(136:8) {#each modulesObj[collectionName] as module}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (122:6) {#each collectionsOrder as collectionName}
+    // (123:6) {#each collectionsOrder as collectionName}
     function create_each_block$4(ctx) {
     	let t;
     	let each_1_anchor;
@@ -25058,7 +25073,7 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_each_block$4.name,
     		type: "each",
-    		source: "(122:6) {#each collectionsOrder as collectionName}",
+    		source: "(123:6) {#each collectionsOrder as collectionName}",
     		ctx
     	});
 
@@ -25138,35 +25153,35 @@ Do you wish to proceed?`)) {
     			set_style(div0, "width", "100%");
     			set_style(div0, "text-align", "center");
     			set_style(div0, "padding", "1em");
-    			add_location(div0, file$8, 82, 2, 3145);
+    			add_location(div0, file$8, 80, 2, 3099);
     			set_style(span0, "color", "#ffffff");
-    			add_location(span0, file$8, 102, 10, 3824);
+    			add_location(span0, file$8, 103, 10, 3791);
     			attr_dev(th0, "role", "columnheader");
     			attr_dev(th0, "scope", "col");
     			set_style(th0, "width", "10%");
     			set_style(th0, "background-color", "#c02123");
-    			add_location(th0, file$8, 97, 8, 3686);
+    			add_location(th0, file$8, 98, 8, 3653);
     			set_style(span1, "color", "#ffffff");
-    			add_location(span1, file$8, 109, 10, 4037);
+    			add_location(span1, file$8, 110, 10, 4004);
     			attr_dev(th1, "role", "columnheader");
     			attr_dev(th1, "scope", "col");
     			set_style(th1, "width", "40%");
     			set_style(th1, "background-color", "#c02123");
-    			add_location(th1, file$8, 104, 8, 3899);
+    			add_location(th1, file$8, 105, 8, 3866);
     			set_style(span2, "color", "#ffffff");
-    			add_location(span2, file$8, 116, 10, 4242);
+    			add_location(span2, file$8, 117, 10, 4209);
     			attr_dev(th2, "role", "columnheader");
     			attr_dev(th2, "scope", "col");
     			set_style(th2, "width", "50%");
     			set_style(th2, "background-color", "#c02123");
-    			add_location(th2, file$8, 111, 8, 4104);
-    			add_location(tr, file$8, 96, 6, 3672);
-    			add_location(thead, file$8, 95, 4, 3657);
-    			add_location(tbody, file$8, 120, 4, 4338);
+    			add_location(th2, file$8, 112, 8, 4071);
+    			add_location(tr, file$8, 97, 6, 3639);
+    			add_location(thead, file$8, 96, 4, 3624);
+    			add_location(tbody, file$8, 121, 4, 4305);
     			attr_dev(table, "class", "ic-Table--hover-row ic-Table ic-Table--striped -ic-Table--condensed");
-    			add_location(table, file$8, 92, 2, 3559);
+    			add_location(table, file$8, 93, 2, 3526);
     			attr_dev(div1, "id", "cc-collections-table");
-    			add_location(div1, file$8, 81, 0, 3110);
+    			add_location(div1, file$8, 79, 0, 3064);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -25299,7 +25314,7 @@ Do you wish to proceed?`)) {
     	/**
      * @function getMostUsedLabel
      * @description Return the label that is used the most by the modules
-    */
+     */
     	function getMostUsedLabel() {
     		let labelCounts = {};
 
@@ -25338,7 +25353,7 @@ Do you wish to proceed?`)) {
     		// - create an attribute for that collection
     		// - add all the modules for that collection
     		$collectionsStore["COLLECTIONS_ORDER"].forEach(collectionName => {
-    			modulesObj[collectionName] = getCollectionCanvasModules(collectionName, $collectionsStore["MODULES"]);
+    			modulesObj[collectionName] = getCollectionCanvasModules(collectionName);
     		});
 
     		return modulesObj;
@@ -27240,6 +27255,152 @@ Do you wish to proceed?`)) {
         }
     }
 
+    /**
+     * @class moduleLabelApplicator
+     * @classDesc Update names of all modules that belong to a collection by pre-pending
+     * appropriate module label/nums to the name.
+     *
+     * Constructor takes the name of the collection and the parentController object
+     * and does the following
+     * - Update the data on the course modules and update all appropriate value
+     *   To ensure we have the latest names
+     * - calculateNewModuleNames
+     *   - extract the names of the existing modules
+     *   - go thru each and develop what the new name will be
+     *     TODO may show those names for approval
+     * - updateAllModules
+     *   - iterate through each module and use updateModule
+     *     do it all in one
+     *
+     */
+    class moduleLabelApplicator {
+        /**
+         * @param {String} collection  - name of Collection to update
+         */
+        constructor(collectionName) {
+            this.collectionName = collectionName;
+            this.configStore = get_store_value(configStore);
+            this.collectionsStore = get_store_value(collectionsStore);
+        }
+        execute() {
+            // might be a question here whether or not to refresh Canvas details
+            // calculate the new module names
+            this.calculateNewModuleNames();
+            //    this.updateNewModuleNames();
+        }
+        /**
+         * @method calculateNewModuleNames
+         * @description Go through the modules for this collection. Calculate the new names
+         * and store them in this.newNames hash keyed on module Id and containing the new name
+         * - but only put them in if there is a difference
+         *
+         */
+        calculateNewModuleNames() {
+            // reinitialise
+            this.newNames = [];
+            const collectionsCanvasModules = getCollectionCanvasModules(this.collectionName);
+            console.log("--------- calculateNewModuleNames");
+            console.log(collectionsCanvasModules);
+            for (let module of collectionsCanvasModules) {
+                if (module["collection"] !== this.collectionName) {
+                    alert("calculateNewModuleNames - should not be required");
+                    continue;
+                }
+                const oldName = module["name"];
+                let prepend = "";
+                if (module["label"]) {
+                    prepend = module["label"];
+                }
+                if (module["actualNum"]) {
+                    prepend += ` ${module["actualNum"]}`;
+                    // remove first char from CARD_LABEL if it is a space
+                    if (prepend.charAt(0) === " ") {
+                        prepend = prepend.substring(1);
+                    }
+                }
+                // if oldName already starts with prepend, then continue
+                // also picks up if prepend is empty
+                if (oldName.startsWith(prepend)) {
+                    continue;
+                }
+                const newName = `${prepend}: ${oldName}`;
+                // TODO - need to identify old prepends
+                if (newName !== oldName) {
+                    this.newNames.push({ id: module["id"], newName: newName });
+                    console.log(`------------- moduleLabelApplicator: ${oldName} -> ${prepend}: ${oldName}`);
+                    console.log(module);
+                    console.log(`-------------`);
+                }
+            }
+            console.log('------------ end of calculateNewModuleNames');
+            console.log(this.newNames);
+        }
+        /**
+         * Update all the new module names - one by one
+         * 1. Are there any new names to update?
+         * 2. Yes, then update the first one - async
+         * 3. Once complete, was it successful?
+         *    - update the numUpdatedNames
+         */
+        async updateNewModuleNames() {
+            if (this.newNames.length === 0) {
+                alert(`moduleLabelApplicator: no new names to update`);
+                return;
+            }
+            const updateModule = this.newNames[0];
+            let callUrl = `/api/v1/courses/${this.parentController.courseId}/modules/${updateModule.id}`;
+            DEBUG &&
+                console.log(`moduleLabelApplicator: updateNewModuleNames: callUrl = ${callUrl}`);
+            let _body = {
+                module: {
+                    name: updateModule.newName,
+                },
+            };
+            let method = "put";
+            const bodyString = JSON.stringify(_body);
+            const response = await fetch(callUrl, {
+                method: method,
+                credentials: "include",
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    Accept: "application/json; charset=UTF-8",
+                    "X-CSRF-Token": this.parentController.csrf,
+                },
+                body: bodyString,
+            });
+            if (!response.ok) {
+                alert(`Problem creating config ${response.status} - `);
+                return;
+            }
+            alert(`moduleLabelApplicator: updated ${updateModule.newName}`);
+            // remove the one we've just successfully added and do the next
+            this.newNames.shift();
+            this.updateNewModuleNames();
+        }
+        /**
+         * Kludge duplication of a method in CollectionsModel that will provide a list of
+         * modules ordered by position
+         * @param {*} collectionName
+         * @returns
+         */
+        getModulesCollections(collectionName = null) {
+            // mergedDetails is a hash of all modules keyed on id
+            const mergedDetails = this.parentController.mergedModuleDetails;
+            if (collectionName === null) {
+                let values = Object.values(mergedDetails);
+                // sort the objects in the values array by their "position" numeric attribute
+                values.sort((a, b) => a.position - b.position);
+                // if no collectionName, convert hash of dicts mergedDetails into an array of dicts
+                return values;
+            }
+            // filter modulesCollections array to those that have an attribute collection==collectionName
+            //const collectionModules = this.modulesCollections.filter(module => module.collection === collectionName); */
+            // create array of dicts from mergedDetails where the collection is collectionName
+            const collectionModules = Object.keys(mergedDetails).filter((key) => mergedDetails[key].collection === collectionName);
+            return collectionModules;
+        }
+    }
+
     /* src\components\Configuration\CollectionConfiguration.svelte generated by Svelte v3.55.0 */
 
     const { Object: Object_1$1 } = globals;
@@ -27247,11 +27408,11 @@ Do you wish to proceed?`)) {
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[41] = list[i];
+    	child_ctx[43] = list[i];
     	return child_ctx;
     }
 
-    // (286:6) {#if order > 0}
+    // (298:6) {#if order > 0}
     function create_if_block_3$1(ctx) {
     	let i;
     	let i_id_value;
@@ -27263,7 +27424,7 @@ Do you wish to proceed?`)) {
     			i = element("i");
     			attr_dev(i, "class", "icon-arrow-up cc-move-collection svelte-blpe83");
     			attr_dev(i, "id", i_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-up");
-    			add_location(i, file$5, 286, 8, 14224);
+    			add_location(i, file$5, 298, 8, 14657);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -27293,14 +27454,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_3$1.name,
     		type: "if",
-    		source: "(286:6) {#if order > 0}",
+    		source: "(298:6) {#if order > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (294:6) {#if order < numCollections - 1}
+    // (306:6) {#if order < numCollections - 1}
     function create_if_block_2$1(ctx) {
     	let i;
     	let i_id_value;
@@ -27312,7 +27473,7 @@ Do you wish to proceed?`)) {
     			i = element("i");
     			attr_dev(i, "class", "icon-arrow-down cc-move-collection svelte-blpe83");
     			attr_dev(i, "id", i_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-down");
-    			add_location(i, file$5, 294, 8, 14484);
+    			add_location(i, file$5, 306, 8, 14917);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -27342,26 +27503,26 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_2$1.name,
     		type: "if",
-    		source: "(294:6) {#if order < numCollections - 1}",
+    		source: "(306:6) {#if order < numCollections - 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (363:8) {#each availableRepresentations as representation}
+    // (375:8) {#each availableRepresentations as representation}
     function create_each_block$2(ctx) {
     	let option;
-    	let t_value = /*representation*/ ctx[41] + "";
+    	let t_value = /*representation*/ ctx[43] + "";
     	let t;
 
     	const block = {
     		c: function create() {
     			option = element("option");
     			t = text(t_value);
-    			option.__value = /*representation*/ ctx[41];
+    			option.__value = /*representation*/ ctx[43];
     			option.value = option.__value;
-    			add_location(option, file$5, 363, 10, 16660);
+    			add_location(option, file$5, 375, 10, 17093);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -27377,14 +27538,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_each_block$2.name,
     		type: "each",
-    		source: "(363:8) {#each availableRepresentations as representation}",
+    		source: "(375:8) {#each availableRepresentations as representation}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (507:4) {#if !includePageExists[collectionName]}
+    // (519:4) {#if !includePageExists[collectionName] && includePageName[collectionName]}
     function create_if_block_1$1(ctx) {
     	let div;
     	let t0;
@@ -27400,9 +27561,9 @@ Do you wish to proceed?`)) {
     			strong = element("strong");
     			t1 = text(t1_value);
     			t2 = text(" does not exist");
-    			add_location(strong, file$5, 508, 13, 21605);
+    			add_location(strong, file$5, 520, 13, 22073);
     			attr_dev(div, "class", "cc-collection-two-line-error svelte-blpe83");
-    			add_location(div, file$5, 507, 6, 21548);
+    			add_location(div, file$5, 519, 6, 22016);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -27423,14 +27584,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(507:4) {#if !includePageExists[collectionName]}",
+    		source: "(519:4) {#if !includePageExists[collectionName] && includePageName[collectionName]}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (559:4) {#if !outputPageExists[collectionName]}
+    // (571:4) {#if !outputPageExists[collectionName] && outputPageName[collectionName]}
     function create_if_block$2(ctx) {
     	let div;
     	let t0;
@@ -27444,9 +27605,9 @@ Do you wish to proceed?`)) {
     			t0 = text("Will create a new page named ");
     			strong = element("strong");
     			t1 = text(t1_value);
-    			add_location(strong, file$5, 560, 37, 23437);
+    			add_location(strong, file$5, 572, 37, 23939);
     			attr_dev(div, "class", "cc-collection-two-line-warning svelte-blpe83");
-    			add_location(div, file$5, 559, 6, 23354);
+    			add_location(div, file$5, 571, 6, 23856);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -27466,7 +27627,7 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block$2.name,
     		type: "if",
-    		source: "(559:4) {#if !outputPageExists[collectionName]}",
+    		source: "(571:4) {#if !outputPageExists[collectionName] && outputPageName[collectionName]}",
     		ctx
     	});
 
@@ -27496,7 +27657,7 @@ Do you wish to proceed?`)) {
     	let t10;
     	let sl_tooltip0;
     	let div0;
-    	let raw0_value = /*HELP*/ ctx[20].configName.tooltip + "";
+    	let raw0_value = /*HELP*/ ctx[21].configName.tooltip + "";
     	let t11;
     	let a0;
     	let i1;
@@ -27513,7 +27674,7 @@ Do you wish to proceed?`)) {
     	let t15;
     	let sl_tooltip1;
     	let div2;
-    	let raw1_value = /*HELP*/ ctx[20].configRepresentation.tooltip + "";
+    	let raw1_value = /*HELP*/ ctx[21].configRepresentation.tooltip + "";
     	let t16;
     	let a1;
     	let i2;
@@ -27531,7 +27692,7 @@ Do you wish to proceed?`)) {
     	let t21;
     	let sl_tooltip2;
     	let div4;
-    	let raw2_value = /*HELP*/ ctx[20].configDefault.tooltip + "";
+    	let raw2_value = /*HELP*/ ctx[21].configDefault.tooltip + "";
     	let t22;
     	let a2;
     	let i3;
@@ -27547,7 +27708,7 @@ Do you wish to proceed?`)) {
     	let t26;
     	let sl_tooltip3;
     	let div6;
-    	let raw3_value = /*HELP*/ ctx[20].configHide.tooltip + "";
+    	let raw3_value = /*HELP*/ ctx[21].configHide.tooltip + "";
     	let t27;
     	let a3;
     	let i4;
@@ -27563,7 +27724,7 @@ Do you wish to proceed?`)) {
     	let t31;
     	let sl_tooltip4;
     	let div8;
-    	let raw4_value = /*HELP*/ ctx[20].configUnallocated.tooltip + "";
+    	let raw4_value = /*HELP*/ ctx[21].configUnallocated.tooltip + "";
     	let t32;
     	let a4;
     	let i5;
@@ -27579,7 +27740,7 @@ Do you wish to proceed?`)) {
     	let t36;
     	let sl_tooltip5;
     	let div11;
-    	let raw5_value = /*HELP*/ ctx[20].configIncludePage.tooltip + "";
+    	let raw5_value = /*HELP*/ ctx[21].configIncludePage.tooltip + "";
     	let t37;
     	let a5;
     	let i6;
@@ -27597,7 +27758,7 @@ Do you wish to proceed?`)) {
     	let t43;
     	let sl_tooltip6;
     	let div14;
-    	let raw6_value = /*HELP*/ ctx[20].configIncludePageAfter.tooltip + "";
+    	let raw6_value = /*HELP*/ ctx[21].configIncludePageAfter.tooltip + "";
     	let t44;
     	let a6;
     	let i7;
@@ -27614,7 +27775,7 @@ Do you wish to proceed?`)) {
     	let t49;
     	let sl_tooltip7;
     	let div17;
-    	let raw7_value = /*HELP*/ ctx[20].configOutputPage.tooltip + "";
+    	let raw7_value = /*HELP*/ ctx[21].configOutputPage.tooltip + "";
     	let t50;
     	let a7;
     	let i8;
@@ -27639,7 +27800,7 @@ Do you wish to proceed?`)) {
     	let t59;
     	let sl_tooltip8;
     	let div22;
-    	let raw8_value = /*HELP*/ ctx[20].configApplyLabels.tooltip + "";
+    	let raw8_value = /*HELP*/ ctx[21].configApplyLabels.tooltip + "";
     	let t60;
     	let a8;
     	let i9;
@@ -27661,8 +27822,8 @@ Do you wish to proceed?`)) {
     		each_blocks[i] = create_each_block$2(get_each_context$2(ctx, each_value, i));
     	}
 
-    	let if_block2 = !/*includePageExists*/ ctx[3][/*collectionName*/ ctx[0]] && create_if_block_1$1(ctx);
-    	let if_block3 = !/*outputPageExists*/ ctx[4][/*collectionName*/ ctx[0]] && create_if_block$2(ctx);
+    	let if_block2 = !/*includePageExists*/ ctx[3][/*collectionName*/ ctx[0]] && /*includePageName*/ ctx[5][/*collectionName*/ ctx[0]] && create_if_block_1$1(ctx);
+    	let if_block3 = !/*outputPageExists*/ ctx[4][/*collectionName*/ ctx[0]] && /*outputPageName*/ ctx[6][/*collectionName*/ ctx[0]] && create_if_block$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -27821,215 +27982,215 @@ Do you wish to proceed?`)) {
     			t62 = text("Apply");
     			attr_dev(i0, "class", "icon-trash cc-delete-collection svelte-blpe83");
     			attr_dev(i0, "id", i0_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-delete");
-    			add_location(i0, file$5, 301, 6, 14710);
+    			add_location(i0, file$5, 313, 6, 15143);
     			attr_dev(span0, "class", "cc-collection-move svelte-blpe83");
-    			add_location(span0, file$5, 284, 4, 14158);
+    			add_location(span0, file$5, 296, 4, 14591);
     			attr_dev(p, "class", "svelte-blpe83");
-    			add_location(p, file$5, 281, 2, 14091);
+    			add_location(p, file$5, 293, 2, 14524);
     			attr_dev(label0, "for", label0_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-collectionName");
     			attr_dev(label0, "class", "svelte-blpe83");
-    			add_location(label0, file$5, 316, 6, 15115);
+    			add_location(label0, file$5, 328, 6, 15548);
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file$5, 318, 8, 15216);
+    			add_location(div0, file$5, 330, 8, 15649);
     			attr_dev(i1, "class", "icon-question cc-module-icon svelte-blpe83");
-    			add_location(i1, file$5, 320, 10, 15358);
-    			attr_dev(a0, "href", /*HELP*/ ctx[20].configName.url);
+    			add_location(i1, file$5, 332, 10, 15791);
+    			attr_dev(a0, "href", /*HELP*/ ctx[21].configName.url);
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "target", "_blank");
-    			add_location(a0, file$5, 319, 8, 15283);
+    			add_location(a0, file$5, 331, 8, 15716);
     			set_custom_element_data(sl_tooltip0, "class", "svelte-blpe83");
-    			add_location(sl_tooltip0, file$5, 317, 6, 15194);
+    			add_location(sl_tooltip0, file$5, 329, 6, 15627);
     			attr_dev(span1, "class", "cc-collection-label svelte-blpe83");
-    			add_location(span1, file$5, 315, 4, 15073);
+    			add_location(span1, file$5, 327, 4, 15506);
     			attr_dev(input0, "type", "text");
     			attr_dev(input0, "id", input0_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-collectionName");
     			input0.value = /*collectionName*/ ctx[0];
     			attr_dev(input0, "class", "svelte-blpe83");
-    			add_location(input0, file$5, 325, 6, 15496);
+    			add_location(input0, file$5, 337, 6, 15929);
     			attr_dev(span2, "class", "cc-collection-input svelte-blpe83");
-    			add_location(span2, file$5, 324, 4, 15454);
+    			add_location(span2, file$5, 336, 4, 15887);
     			attr_dev(div1, "class", "cc-collection-form svelte-blpe83");
-    			add_location(div1, file$5, 314, 2, 15035);
+    			add_location(div1, file$5, 326, 2, 15468);
     			attr_dev(label1, "for", label1_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-representation");
     			attr_dev(label1, "class", "svelte-blpe83");
-    			add_location(label1, file$5, 336, 6, 15776);
+    			add_location(label1, file$5, 348, 6, 16209);
     			attr_dev(div2, "slot", "content");
-    			add_location(div2, file$5, 340, 8, 15905);
+    			add_location(div2, file$5, 352, 8, 16338);
     			attr_dev(i2, "class", "icon-question cc-module-icon svelte-blpe83");
-    			add_location(i2, file$5, 348, 10, 16132);
-    			attr_dev(a1, "href", /*HELP*/ ctx[20].configRepresentation.url);
+    			add_location(i2, file$5, 360, 10, 16565);
+    			attr_dev(a1, "href", /*HELP*/ ctx[21].configRepresentation.url);
     			attr_dev(a1, "rel", "noreferrer");
     			attr_dev(a1, "target", "_blank");
-    			add_location(a1, file$5, 343, 8, 16004);
+    			add_location(a1, file$5, 355, 8, 16437);
     			set_custom_element_data(sl_tooltip1, "class", "svelte-blpe83");
-    			add_location(sl_tooltip1, file$5, 339, 6, 15883);
+    			add_location(sl_tooltip1, file$5, 351, 6, 16316);
     			attr_dev(span3, "class", "cc-collection-label svelte-blpe83");
-    			add_location(span3, file$5, 335, 4, 15734);
+    			add_location(span3, file$5, 347, 4, 16167);
     			attr_dev(select, "id", select_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-representation");
     			attr_dev(select, "class", "cc-collection-representation svelte-blpe83");
-    			if (/*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]]["representation"] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[21].call(select));
-    			add_location(select, file$5, 353, 6, 16270);
+    			if (/*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]]["representation"] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[22].call(select));
+    			add_location(select, file$5, 365, 6, 16703);
     			attr_dev(span4, "class", "cc-collection-input svelte-blpe83");
-    			add_location(span4, file$5, 352, 4, 16228);
+    			add_location(span4, file$5, 364, 4, 16661);
     			attr_dev(div3, "class", "cc-collection-form svelte-blpe83");
-    			add_location(div3, file$5, 334, 2, 15696);
+    			add_location(div3, file$5, 346, 2, 16129);
     			attr_dev(label2, "for", label2_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-default");
     			attr_dev(label2, "class", "svelte-blpe83");
-    			add_location(label2, file$5, 371, 6, 16832);
+    			add_location(label2, file$5, 383, 6, 17265);
     			attr_dev(div4, "slot", "content");
-    			add_location(div4, file$5, 375, 8, 16954);
+    			add_location(div4, file$5, 387, 8, 17387);
     			attr_dev(i3, "class", "icon-question cc-module-icon svelte-blpe83");
-    			add_location(i3, file$5, 379, 10, 17124);
-    			attr_dev(a2, "href", /*HELP*/ ctx[20].configDefault.url);
+    			add_location(i3, file$5, 391, 10, 17557);
+    			attr_dev(a2, "href", /*HELP*/ ctx[21].configDefault.url);
     			attr_dev(a2, "target", "_blank");
     			attr_dev(a2, "rel", "noreferrer");
-    			add_location(a2, file$5, 378, 8, 17046);
+    			add_location(a2, file$5, 390, 8, 17479);
     			set_custom_element_data(sl_tooltip2, "class", "svelte-blpe83");
-    			add_location(sl_tooltip2, file$5, 374, 6, 16932);
+    			add_location(sl_tooltip2, file$5, 386, 6, 17365);
     			attr_dev(input1, "type", "checkbox");
     			attr_dev(input1, "id", input1_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-default");
     			input1.checked = input1_checked_value = /*$collectionsStore*/ ctx[8]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0];
     			attr_dev(input1, "class", "svelte-blpe83");
-    			add_location(input1, file$5, 382, 6, 17209);
-    			add_location(div5, file$5, 370, 4, 16819);
+    			add_location(input1, file$5, 394, 6, 17642);
+    			add_location(div5, file$5, 382, 4, 17252);
     			attr_dev(label3, "for", label3_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide");
     			attr_dev(label3, "class", "svelte-blpe83");
-    			add_location(label3, file$5, 391, 6, 17517);
+    			add_location(label3, file$5, 403, 6, 17950);
     			attr_dev(div6, "slot", "content");
-    			add_location(div6, file$5, 393, 8, 17617);
+    			add_location(div6, file$5, 405, 8, 18050);
     			attr_dev(i4, "class", "icon-question cc-module-icon svelte-blpe83");
-    			add_location(i4, file$5, 397, 10, 17781);
+    			add_location(i4, file$5, 409, 10, 18214);
     			attr_dev(a3, "target", "_blank");
-    			attr_dev(a3, "href", /*HELP*/ ctx[20].configHide.url);
+    			attr_dev(a3, "href", /*HELP*/ ctx[21].configHide.url);
     			attr_dev(a3, "rel", "noreferrer");
-    			add_location(a3, file$5, 396, 8, 17706);
+    			add_location(a3, file$5, 408, 8, 18139);
     			set_custom_element_data(sl_tooltip3, "class", "svelte-blpe83");
-    			add_location(sl_tooltip3, file$5, 392, 6, 17595);
+    			add_location(sl_tooltip3, file$5, 404, 6, 18028);
     			attr_dev(input2, "type", "checkbox");
     			attr_dev(input2, "id", input2_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide");
     			attr_dev(input2, "class", "cc-config-collection-hide svelte-blpe83");
     			input2.disabled = input2_disabled_value = /*$collectionsStore*/ ctx[8]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0];
-    			add_location(input2, file$5, 400, 6, 17866);
+    			add_location(input2, file$5, 412, 6, 18299);
     			attr_dev(div7, "class", "cc-collection-double-center svelte-blpe83");
-    			add_location(div7, file$5, 390, 4, 17468);
+    			add_location(div7, file$5, 402, 4, 17901);
     			attr_dev(label4, "for", label4_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated");
     			attr_dev(label4, "class", "svelte-blpe83");
-    			add_location(label4, file$5, 411, 6, 18290);
+    			add_location(label4, file$5, 423, 6, 18723);
     			attr_dev(div8, "slot", "content");
-    			add_location(div8, file$5, 415, 8, 18424);
+    			add_location(div8, file$5, 427, 8, 18857);
     			attr_dev(i5, "class", "icon-question cc-module-icon svelte-blpe83");
-    			add_location(i5, file$5, 419, 10, 18602);
-    			attr_dev(a4, "href", /*HELP*/ ctx[20].configUnallocated.url);
+    			add_location(i5, file$5, 431, 10, 19035);
+    			attr_dev(a4, "href", /*HELP*/ ctx[21].configUnallocated.url);
     			attr_dev(a4, "target", "_blank");
     			attr_dev(a4, "rel", "noreferrer");
-    			add_location(a4, file$5, 418, 8, 18520);
+    			add_location(a4, file$5, 430, 8, 18953);
     			set_custom_element_data(sl_tooltip4, "class", "svelte-blpe83");
-    			add_location(sl_tooltip4, file$5, 414, 6, 18402);
+    			add_location(sl_tooltip4, file$5, 426, 6, 18835);
     			attr_dev(input3, "type", "checkbox");
     			attr_dev(input3, "id", input3_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated");
     			attr_dev(input3, "class", "svelte-blpe83");
-    			add_location(input3, file$5, 422, 6, 18687);
-    			add_location(div9, file$5, 410, 4, 18277);
+    			add_location(input3, file$5, 434, 6, 19120);
+    			add_location(div9, file$5, 422, 4, 18710);
     			attr_dev(div10, "class", "cc-collection-double svelte-blpe83");
-    			add_location(div10, file$5, 369, 2, 16779);
+    			add_location(div10, file$5, 381, 2, 17212);
     			attr_dev(label5, "for", label5_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page");
     			attr_dev(label5, "class", "svelte-blpe83");
-    			add_location(label5, file$5, 443, 6, 19299);
+    			add_location(label5, file$5, 455, 6, 19732);
     			attr_dev(div11, "slot", "content");
-    			add_location(div11, file$5, 447, 8, 19424);
+    			add_location(div11, file$5, 459, 8, 19857);
     			attr_dev(i6, "class", "icon-question cc-module-icon svelte-blpe83");
-    			add_location(i6, file$5, 455, 11, 19673);
+    			add_location(i6, file$5, 467, 11, 20106);
     			attr_dev(a5, "id", "cc-about-include-page");
     			attr_dev(a5, "rel", "noreferrer");
     			attr_dev(a5, "target", "_blank");
-    			attr_dev(a5, "href", /*HELP*/ ctx[20].configIncludePage.url);
-    			add_location(a5, file$5, 450, 8, 19520);
+    			attr_dev(a5, "href", /*HELP*/ ctx[21].configIncludePage.url);
+    			add_location(a5, file$5, 462, 8, 19953);
     			set_custom_element_data(sl_tooltip5, "class", "svelte-blpe83");
-    			add_location(sl_tooltip5, file$5, 446, 6, 19402);
+    			add_location(sl_tooltip5, file$5, 458, 6, 19835);
     			attr_dev(div12, "class", "cc-collection-two-line-header svelte-blpe83");
-    			add_location(div12, file$5, 442, 4, 19248);
-    			add_location(div13, file$5, 459, 4, 19768);
+    			add_location(div12, file$5, 454, 4, 19681);
+    			add_location(div13, file$5, 471, 4, 20201);
     			attr_dev(input4, "id", input4_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page");
     			attr_dev(input4, "class", "cc-existing-collection svelte-blpe83");
-    			add_location(input4, file$5, 461, 6, 19840);
+    			add_location(input4, file$5, 473, 6, 20273);
     			attr_dev(label6, "for", label6_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after");
     			attr_dev(label6, "class", "svelte-blpe83");
-    			add_location(label6, file$5, 479, 8, 20532);
+    			add_location(label6, file$5, 491, 8, 20965);
     			attr_dev(div14, "slot", "content");
-    			add_location(div14, file$5, 483, 10, 20667);
+    			add_location(div14, file$5, 495, 10, 21100);
     			attr_dev(i7, "class", "icon-question cc-module-icon svelte-blpe83");
-    			add_location(i7, file$5, 492, 12, 20955);
+    			add_location(i7, file$5, 504, 12, 21388);
     			attr_dev(a6, "id", "cc-about-include-after");
-    			attr_dev(a6, "href", /*HELP*/ ctx[20].configIncludePageAfter.url);
+    			attr_dev(a6, "href", /*HELP*/ ctx[21].configIncludePageAfter.url);
     			attr_dev(a6, "target", "_blank");
     			attr_dev(a6, "rel", "noreferrer");
-    			add_location(a6, file$5, 486, 10, 20774);
+    			add_location(a6, file$5, 498, 10, 21207);
     			set_custom_element_data(sl_tooltip6, "class", "svelte-blpe83");
-    			add_location(sl_tooltip6, file$5, 482, 8, 20643);
+    			add_location(sl_tooltip6, file$5, 494, 8, 21076);
     			attr_dev(input5, "type", "checkbox");
     			attr_dev(input5, "id", input5_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after");
     			attr_dev(input5, "class", "cc-config-collection-include-after svelte-blpe83");
-    			add_location(input5, file$5, 495, 8, 21046);
+    			add_location(input5, file$5, 507, 8, 21479);
     			attr_dev(span5, "class", "cc-collection-label svelte-blpe83");
-    			add_location(span5, file$5, 478, 6, 20488);
+    			add_location(span5, file$5, 490, 6, 20921);
     			attr_dev(div15, "class", "cc-collection-two-line-body svelte-blpe83");
-    			add_location(div15, file$5, 460, 4, 19791);
+    			add_location(div15, file$5, 472, 4, 20224);
     			attr_dev(div16, "class", "cc-collection-two-line svelte-blpe83");
-    			add_location(div16, file$5, 441, 2, 19206);
+    			add_location(div16, file$5, 453, 2, 19639);
     			attr_dev(label7, "for", label7_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page");
     			attr_dev(label7, "class", "svelte-blpe83");
-    			add_location(label7, file$5, 515, 6, 21826);
+    			add_location(label7, file$5, 527, 6, 22294);
     			attr_dev(div17, "slot", "content");
-    			add_location(div17, file$5, 519, 8, 21949);
+    			add_location(div17, file$5, 531, 8, 22417);
     			attr_dev(i8, "class", "icon-question cc-module-icon svelte-blpe83");
-    			add_location(i8, file$5, 528, 10, 22212);
+    			add_location(i8, file$5, 540, 10, 22680);
     			attr_dev(a7, "id", "cc-about-update-output-page");
     			attr_dev(a7, "target", "_blank");
-    			attr_dev(a7, "href", /*HELP*/ ctx[20].configOutputPage.url);
+    			attr_dev(a7, "href", /*HELP*/ ctx[21].configOutputPage.url);
     			attr_dev(a7, "rel", "noreferrer");
-    			add_location(a7, file$5, 522, 8, 22044);
+    			add_location(a7, file$5, 534, 8, 22512);
     			set_custom_element_data(sl_tooltip7, "class", "svelte-blpe83");
-    			add_location(sl_tooltip7, file$5, 518, 6, 21927);
+    			add_location(sl_tooltip7, file$5, 530, 6, 22395);
     			attr_dev(div18, "class", "cc-collection-two-line-header svelte-blpe83");
-    			add_location(div18, file$5, 514, 4, 21775);
-    			add_location(div19, file$5, 532, 4, 22307);
+    			add_location(div18, file$5, 526, 4, 22243);
+    			add_location(div19, file$5, 544, 4, 22775);
     			attr_dev(input6, "id", input6_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page");
     			attr_dev(input6, "class", "cc-existing-collection svelte-blpe83");
-    			add_location(input6, file$5, 534, 6, 22379);
+    			add_location(input6, file$5, 546, 6, 22847);
     			attr_dev(button0, "id", button0_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page-update");
     			attr_dev(button0, "class", "btn cc-existing-collection svelte-blpe83");
     			button0.disabled = button0_disabled_value = /*outputPageName*/ ctx[6][/*collectionName*/ ctx[0]] === "";
-    			add_location(button0, file$5, 549, 6, 23008);
+    			add_location(button0, file$5, 561, 6, 23476);
     			attr_dev(div20, "class", "cc-collection-two-line-body svelte-blpe83");
-    			add_location(div20, file$5, 533, 4, 22330);
+    			add_location(div20, file$5, 545, 4, 22798);
     			attr_dev(div21, "class", "cc-collection-two-line svelte-blpe83");
-    			add_location(div21, file$5, 513, 2, 21733);
+    			add_location(div21, file$5, 525, 2, 22201);
     			attr_dev(label8, "for", label8_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-apply-module-labels");
     			attr_dev(label8, "class", "svelte-blpe83");
-    			add_location(label8, file$5, 569, 6, 23645);
+    			add_location(label8, file$5, 581, 6, 24147);
     			attr_dev(div22, "slot", "content");
-    			add_location(div22, file$5, 573, 8, 23826);
+    			add_location(div22, file$5, 585, 8, 24328);
     			attr_dev(i9, "class", "icon-question cc-module-icon svelte-blpe83");
-    			add_location(i9, file$5, 582, 10, 24092);
+    			add_location(i9, file$5, 594, 10, 24594);
     			attr_dev(a8, "id", "cc-about-apply-module-labels");
     			attr_dev(a8, "target", "_blank");
-    			attr_dev(a8, "href", /*HELP*/ ctx[20].configApplyLabels.url);
+    			attr_dev(a8, "href", /*HELP*/ ctx[21].configApplyLabels.url);
     			attr_dev(a8, "rel", "noreferrer");
-    			add_location(a8, file$5, 576, 8, 23922);
+    			add_location(a8, file$5, 588, 8, 24424);
     			set_custom_element_data(sl_tooltip8, "class", "cc-about-apply-module-labels svelte-blpe83");
-    			add_location(sl_tooltip8, file$5, 572, 6, 23767);
+    			add_location(sl_tooltip8, file$5, 584, 6, 24269);
     			attr_dev(span6, "class", "cc-collection-input-reverse svelte-blpe83");
-    			add_location(span6, file$5, 568, 4, 23595);
+    			add_location(span6, file$5, 580, 4, 24097);
     			attr_dev(button1, "id", button1_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-apply-module-labels");
     			attr_dev(button1, "class", "btn cc-existing-collection svelte-blpe83");
-    			add_location(button1, file$5, 588, 6, 24291);
+    			add_location(button1, file$5, 600, 6, 24793);
     			attr_dev(span7, "class", "cc-collection-label-reverse svelte-blpe83");
-    			add_location(span7, file$5, 586, 4, 24188);
+    			add_location(span7, file$5, 598, 4, 24690);
     			attr_dev(div23, "class", "cc-collection-form-reverse svelte-blpe83");
-    			add_location(div23, file$5, 567, 2, 23549);
+    			add_location(div23, file$5, 579, 2, 24051);
     			attr_dev(div24, "class", "cc-existing-collection border border-trbl svelte-blpe83");
     			attr_dev(div24, "id", div24_id_value = "cc-collection-" + /*collectionName*/ ctx[0]);
-    			add_location(div24, file$5, 277, 0, 13988);
+    			add_location(div24, file$5, 289, 0, 14421);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -28207,25 +28368,26 @@ Do you wish to proceed?`)) {
     					listen_dev(i0, "click", /*deleteCollection*/ ctx[15], false, false, false),
     					listen_dev(i0, "keydown", /*deleteCollection*/ ctx[15], false, false, false),
     					listen_dev(input0, "change", /*changeCollectionName*/ ctx[16], false, false, false),
-    					listen_dev(select, "change", /*select_change_handler*/ ctx[21]),
-    					listen_dev(select, "change", /*change_handler*/ ctx[22], false, false, false),
+    					listen_dev(select, "change", /*select_change_handler*/ ctx[22]),
+    					listen_dev(select, "change", /*change_handler*/ ctx[23], false, false, false),
     					listen_dev(input1, "click", /*changeDefaultCollection*/ ctx[12], false, false, false),
-    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[23]),
-    					listen_dev(input2, "change", /*change_handler_1*/ ctx[24], false, false, false),
-    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[25]),
-    					listen_dev(input3, "change", /*change_handler_2*/ ctx[26], false, false, false),
-    					listen_dev(input4, "input", /*input4_input_handler*/ ctx[27]),
-    					listen_dev(input4, "click", /*click_handler*/ ctx[28], false, false, false),
-    					listen_dev(input4, "keydown", /*keydown_handler*/ ctx[29], false, false, false),
-    					listen_dev(input4, "focusout", /*focusout_handler*/ ctx[30], false, false, false),
-    					listen_dev(input5, "click", /*click_handler_1*/ ctx[31], false, false, false),
-    					listen_dev(input5, "keydown", /*keydown_handler_1*/ ctx[32], false, false, false),
-    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[33]),
-    					listen_dev(input6, "input", /*input6_input_handler*/ ctx[34]),
-    					listen_dev(input6, "click", /*click_handler_2*/ ctx[35], false, false, false),
-    					listen_dev(input6, "keydown", /*keydown_handler_2*/ ctx[36], false, false, false),
-    					listen_dev(input6, "focusout", /*focusout_handler_1*/ ctx[37], false, false, false),
-    					listen_dev(button0, "click", /*click_handler_3*/ ctx[38], false, false, false)
+    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[24]),
+    					listen_dev(input2, "change", /*change_handler_1*/ ctx[25], false, false, false),
+    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[26]),
+    					listen_dev(input3, "change", /*change_handler_2*/ ctx[27], false, false, false),
+    					listen_dev(input4, "input", /*input4_input_handler*/ ctx[28]),
+    					listen_dev(input4, "click", /*click_handler*/ ctx[29], false, false, false),
+    					listen_dev(input4, "keydown", /*keydown_handler*/ ctx[30], false, false, false),
+    					listen_dev(input4, "focusout", /*focusout_handler*/ ctx[31], false, false, false),
+    					listen_dev(input5, "click", /*click_handler_1*/ ctx[32], false, false, false),
+    					listen_dev(input5, "keydown", /*keydown_handler_1*/ ctx[33], false, false, false),
+    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[34]),
+    					listen_dev(input6, "input", /*input6_input_handler*/ ctx[35]),
+    					listen_dev(input6, "click", /*click_handler_2*/ ctx[36], false, false, false),
+    					listen_dev(input6, "keydown", /*keydown_handler_2*/ ctx[37], false, false, false),
+    					listen_dev(input6, "focusout", /*focusout_handler_1*/ ctx[38], false, false, false),
+    					listen_dev(button0, "click", /*click_handler_3*/ ctx[39], false, false, false),
+    					listen_dev(button1, "click", /*click_handler_4*/ ctx[40], false, false, false)
     				];
 
     				mounted = true;
@@ -28376,7 +28538,7 @@ Do you wish to proceed?`)) {
     				input5.checked = /*$collectionsStore*/ ctx[8]["COLLECTIONS"][/*collectionName*/ ctx[0]].includeAfter;
     			}
 
-    			if (!/*includePageExists*/ ctx[3][/*collectionName*/ ctx[0]]) {
+    			if (!/*includePageExists*/ ctx[3][/*collectionName*/ ctx[0]] && /*includePageName*/ ctx[5][/*collectionName*/ ctx[0]]) {
     				if (if_block2) {
     					if_block2.p(ctx, dirty);
     				} else {
@@ -28409,7 +28571,7 @@ Do you wish to proceed?`)) {
     				prop_dev(button0, "disabled", button0_disabled_value);
     			}
 
-    			if (!/*outputPageExists*/ ctx[4][/*collectionName*/ ctx[0]]) {
+    			if (!/*outputPageExists*/ ctx[4][/*collectionName*/ ctx[0]] && /*outputPageName*/ ctx[6][/*collectionName*/ ctx[0]]) {
     				if (if_block3) {
     					if_block3.p(ctx, dirty);
     				} else {
@@ -28459,10 +28621,6 @@ Do you wish to proceed?`)) {
     	return block;
     }
 
-    function updateOutputPageCompleted(updateController) {
-    	
-    }
-
     function instance$5($$self, $$props, $$invalidate) {
     	let $configStore;
     	let $collectionsStore;
@@ -28472,7 +28630,7 @@ Do you wish to proceed?`)) {
     	validate_store(collectionsStore, 'collectionsStore');
     	component_subscribe($$self, collectionsStore, $$value => $$invalidate(8, $collectionsStore = $$value));
     	validate_store(representationsStore, 'representationsStore');
-    	component_subscribe($$self, representationsStore, $$value => $$invalidate(39, $representationsStore = $$value));
+    	component_subscribe($$self, representationsStore, $$value => $$invalidate(41, $representationsStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('CollectionConfiguration', slots, []);
     	let { collectionName } = $$props;
@@ -28489,13 +28647,20 @@ Do you wish to proceed?`)) {
     	Object.keys($collectionsStore["COLLECTIONS"]).forEach(collectionName => {
     		$$invalidate(3, includePageExists[collectionName] = true, includePageExists);
     		$$invalidate(4, outputPageExists[collectionName] = true, outputPageExists);
+
+    		["includePage", "outputPage"].forEach(pageType => {
+    			if (!$collectionsStore["COLLECTIONS"][collectionName].hasOwnProperty(pageType)) {
+    				set_store_value(collectionsStore, $collectionsStore["COLLECTIONS"][collectionName][pageType] = "", $collectionsStore);
+    			}
+    		});
+
     		$$invalidate(5, includePageName[collectionName] = $collectionsStore["COLLECTIONS"][collectionName].includePage, includePageName);
     		$$invalidate(6, outputPageName[collectionName] = $collectionsStore["COLLECTIONS"][collectionName].outputPage, outputPageName);
     	});
 
     	getPageName($collectionsStore["COLLECTIONS"][collectionName].includePage, $configStore["courseId"], doesIncludePageExist);
     	getPageName($collectionsStore["COLLECTIONS"][collectionName].outputPage, $configStore["courseId"], doesOutputPageExist);
-    	const modules = getCollectionCanvasModules(collectionName, $collectionsStore["MODULES"]);
+    	const modules = getCollectionCanvasModules(collectionName);
     	let moduleCount = modules.length;
     	let moduleName = moduleCount === 1 ? "module" : "modules";
     	debug($representationsStore);
@@ -28666,8 +28831,6 @@ Do you wish to proceed?`)) {
      */
     	function doesIncludePageExist(pageName, msg) {
     		const pageObject = msg.body;
-    		debug(`---------- doesIncludePageExist --${pageName}--------`);
-    		debug(pageObject);
     		$$invalidate(5, includePageName[collectionName] = pageName, includePageName);
 
     		if (!pageObject) {
@@ -28712,11 +28875,21 @@ Do you wish to proceed?`)) {
      * @param collectionName
      * @description Should update the specified Canvas page with the representation
      * of a specific collection
-     * VERY EXPERIMENTAL and incomplete
      */
     	function updateOutputPage(collectionName) {
-    		const updateController = new updatePageController(collectionName, updateOutputPageCompleted);
+    		const updateController = new updatePageController(collectionName);
     		updateController.execute();
+    	}
+
+    	/**
+     * @function applyModuleLabels
+     * @param collectionName
+     * @description Call the moduleLabelApplicator to update the names for
+     * all Canvas modules in the collection based on their labels
+     */
+    	function applyModuleLabels(collectionName) {
+    		const labelApplicator = new moduleLabelApplicator(collectionName);
+    		labelApplicator.execute();
     	}
 
     	const HELP = {
@@ -28854,6 +29027,10 @@ Do you wish to proceed?`)) {
     		updateOutputPage(collectionName);
     	};
 
+    	const click_handler_4 = () => {
+    		applyModuleLabels(collectionName);
+    	};
+
     	$$self.$$set = $$props => {
     		if ('collectionName' in $$props) $$invalidate(0, collectionName = $$props.collectionName);
     		if ('order' in $$props) $$invalidate(1, order = $$props.order);
@@ -28865,6 +29042,7 @@ Do you wish to proceed?`)) {
     		configStore,
     		representationsStore,
     		updatePageController,
+    		moduleLabelApplicator,
     		getCollectionCanvasModules,
     		getPageName,
     		toastAlert,
@@ -28889,7 +29067,7 @@ Do you wish to proceed?`)) {
     		doesIncludePageExist,
     		doesOutputPageExist,
     		updateOutputPage,
-    		updateOutputPageCompleted,
+    		applyModuleLabels,
     		HELP,
     		$configStore,
     		$collectionsStore,
@@ -28934,6 +29112,7 @@ Do you wish to proceed?`)) {
     		doesIncludePageExist,
     		doesOutputPageExist,
     		updateOutputPage,
+    		applyModuleLabels,
     		HELP,
     		select_change_handler,
     		change_handler,
@@ -28952,7 +29131,8 @@ Do you wish to proceed?`)) {
     		click_handler_2,
     		keydown_handler_2,
     		focusout_handler_1,
-    		click_handler_3
+    		click_handler_3,
+    		click_handler_4
     	];
     }
 

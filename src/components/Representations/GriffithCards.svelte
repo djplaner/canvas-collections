@@ -204,7 +204,7 @@
                       href={getModuleUrl(theModule.id)}
                       style="text-decoration:none;"
                     >
-                      {deLabelModuleName(theModule.id)}
+                      {@html deLabelModuleName(theModule.id)}
                     </a>
                   </h3>
                 </div>

@@ -38,9 +38,7 @@
   $: {
     // todo get all the modules, probably change way this function works
     modulesObj = getCollectionsTableModules();
-    collectionsOrder = [
-      "unallocated",
-    ]
+    collectionsOrder = ["unallocated"];
     // add all the unhidden collections to the order
     $collectionsStore["COLLECTIONS_ORDER"].forEach((collectionName) => {
       if (!$collectionsStore["COLLECTIONS"][collectionName].hide) {
@@ -48,32 +46,33 @@
       }
     });
 
-    labelHeader = getMostUsedLabel()
+    labelHeader = getMostUsedLabel();
   }
 
   /**
    * @function getMostUsedLabel
    * @description Return the label that is used the most by the modules
-  */
+   */
 
   function getMostUsedLabel() {
-    let labelCounts = {
-    };
+    let labelCounts = {};
 
     // loop through all of the modules
     // - count the number of times each label is used
-    console.log($collectionsStore["MODULES"])
+    console.log($collectionsStore["MODULES"]);
 
     for (const key in $collectionsStore["MODULES"]) {
-      if (!labelCounts.hasOwnProperty($collectionsStore["MODULES"][key].label)) {
+      if (
+        !labelCounts.hasOwnProperty($collectionsStore["MODULES"][key].label)
+      ) {
         labelCounts[$collectionsStore["MODULES"][key].label] = 0;
       }
       labelCounts[$collectionsStore["MODULES"][key].label] += 1;
     }
 
-//    $collectionsStore["MODULES"].forEach((module) => {
+    //    $collectionsStore["MODULES"].forEach((module) => {
 
- //   });
+    //   });
 
     // return the label that is used the most
     return Object.keys(labelCounts).reduce((a, b) =>
@@ -101,10 +100,7 @@
     // - create an attribute for that collection
     // - add all the modules for that collection
     $collectionsStore["COLLECTIONS_ORDER"].forEach((collectionName) => {
-      modulesObj[collectionName] = getCollectionCanvasModules(
-        collectionName,
-        $collectionsStore["MODULES"]
-      );
+      modulesObj[collectionName] = getCollectionCanvasModules(collectionName);
     });
 
     return modulesObj;
@@ -112,11 +108,14 @@
 </script>
 
 <div id="cc-collections-table">
-  <div id="cc-collections-table-nav" style="width:100%; text-align:center; padding:1em;">
+  <div
+    id="cc-collections-table-nav"
+    style="width:100%; text-align:center; padding:1em;"
+  >
     [
     {#each collectionsOrder as collectionName}
       {#if collectionName !== "unallocated"}
-        &nbsp;<a href="#collection-{collectionName}">{collectionName}</a>&nbsp; 
+        &nbsp;<a href="#collection-{collectionName}">{collectionName}</a>&nbsp;
         {#if !(collectionsOrder.length - 1 === collectionsOrder.indexOf(collectionName))}|{/if}
       {/if}
     {/each}
