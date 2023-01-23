@@ -135,26 +135,28 @@
               data-moduleid={theModule.id}
               style="position:relative;"
             >
-              <a
-                class="cc-card-link"
-                href={getModuleUrl(theModule.id)}
-                style="position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;"
-                >&nbsp;</a>
+              {#if !$collectionsStore["MODULES"][theModule.id].fyi}
+                <a
+                  class="cc-card-link"
+                  href={getModuleUrl(theModule.id)}
+                  style="position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;"
+                  >&nbsp;</a
+                >
+              {/if}
               <!-- TODO add in CLAYTONS-->
               <svelte:component
                 this={BANNER_TRANSLATION[
                   $collectionsStore["MODULES"][theModule.id].banner
                 ]}
                 moduleId={theModule.id}
-                claytons={claytons}
+                {claytons}
               />
               <DateWidget
                 date={$collectionsStore["MODULES"][theModule.id].date}
                 {calendar}
               />
               <!--               $**DATE_WIDGET** -->
-              {#if $collectionsStore["MODULES"][theModule.id].fyi &&
-              $collectionsStore["MODULES"][theModule.id].fyiText!==""}
+              {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
                 <div
                   class="cc-card-fyi"
                   style="position:absolute;background:rgba(0,0,0,0.75);color:white;width:100%;padding: 0.25rem;font-size:x-small;text-align:center;"
@@ -173,12 +175,14 @@
               class="cc-card-content-height"
               style="height:12rem;overflow:auto;position:relative;"
             >
-              <a
-                class="cc-card-link"
-                href={getModuleUrl(theModule.id)}
-                style="position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;"
-                >&nbsp;</a
-              >
+              {#if !$collectionsStore["MODULES"][theModule.id].fyi}
+                <a
+                  class="cc-card-link"
+                  href={getModuleUrl(theModule.id)}
+                  style="position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;"
+                  >&nbsp;</a
+                >
+              {/if}
               <!-- this needs to be $cardContentClass -->
               <!-- handling cc-card-content and cc-unclickable-card-content  -->
               <div
@@ -197,13 +201,17 @@
                     data-moduleid={theModule.id}
                     style="font-size: 1rem; font-weight:strong;"
                   >
-                    <a
-                      class="cc-card-link"
-                      href={getModuleUrl(theModule.id)}
-                      style="text-decoration:none;"
-                    >
+                    {#if !$collectionsStore["MODULES"][theModule.id].fyi}
+                      <a
+                        class="cc-card-link"
+                        href={getModuleUrl(theModule.id)}
+                        style="text-decoration:none;"
+                      >
+                        {@html deLabelModuleName(theModule.id)}
+                      </a>
+                    {:else}
                       {@html deLabelModuleName(theModule.id)}
-                    </a>
+                    {/if}
                   </h3>
                 </div>
                 <div class="cc-card-description" style="font-size:0.75rem;">
@@ -248,9 +256,11 @@
         <div id="cc_module_{theModule.id}" class="cc-card">
           <div class="cc-card-flex">
             <div class="cc-card-banner-container" data-moduleid={theModule.id}>
+              {#if !$collectionsStore["MODULES"][theModule.id].fyi}
               <a class="cc-card-link" href={getModuleUrl(theModule.id)} style=""
                 >&nbsp;</a
               >
+              {/if}
               <svelte:component
                 this={BANNER_TRANSLATION[
                   $collectionsStore["MODULES"][theModule.id].banner
@@ -261,8 +271,7 @@
                 date={$collectionsStore["MODULES"][theModule.id].date}
                 {calendar}
               />
-              {#if $collectionsStore["MODULES"][theModule.id].fyi &&
-               $collectionsStore["MODULES"][theModule.id].fyiText!==""}
+              {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
                 <div class="cc-card-fyi">
                   <span class="cc-fyi-text">
                     {#if $collectionsStore["MODULES"][theModule.id].fyiText}
@@ -273,8 +282,7 @@
                   </span>
                 </div>
               {/if}
-              {#if !$collectionsStore["MODULES"][theModule.id].published ||
-                  ( $configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection)}
+              {#if !$collectionsStore["MODULES"][theModule.id].published || ($configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection)}
                 <div class="cc-card-published">
                   {#if !$collectionsStore["MODULES"][theModule.id].published}
                     Unpublished.
