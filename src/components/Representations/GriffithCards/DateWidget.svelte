@@ -19,8 +19,8 @@
    * }
    */
 
-  import UniversityDateCalendar from "../../../lib/university-date-calendar";
-  import { modifyCanvasModulesList } from "../representationSupport";
+//  import UniversityDateCalendar from "../../../lib/university-date-calendar";
+//  import { modifyCanvasModulesList } from "../representationSupport";
 
   export let date: Object;
   export let calendar: UniversityDateCalendar;

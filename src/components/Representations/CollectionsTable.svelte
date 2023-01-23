@@ -15,6 +15,7 @@
 
   import { collectionsStore, configStore } from "../../stores";
   import {
+    deLabelModuleName,
     addUnallocatedModules,
     getModuleUrl,
     getCollectionCanvasModules,
@@ -91,7 +92,6 @@
   function getCollectionsTableModules(): object {
     let modulesObj = {
       unallocated: addUnallocatedModules(
-        $collectionsStore["MODULES"],
         $configStore["editMode"]
       ),
     };
@@ -101,7 +101,7 @@
     // - add all the modules for that collection
     $collectionsStore["COLLECTIONS_ORDER"].forEach((collectionName) => {
       modulesObj[collectionName] = getCollectionCanvasModules(collectionName);
-    });
+    })
 
     return modulesObj;
   }
@@ -174,7 +174,7 @@
               <div style="margin:0;">
                 <p>
                   <a href={getModuleUrl(module.id)}>
-                    {@html $collectionsStore["MODULES"][module.id].name}
+                    {@html deLabelModuleName($collectionsStore["MODULES"][module.id])}
                   </a>
                 </p>
               </div>

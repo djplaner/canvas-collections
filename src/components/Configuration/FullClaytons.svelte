@@ -1,6 +1,6 @@
 <script lang="ts">
   import { updatePageController } from "../../lib/updatePageController";
-  import { toastAlert } from "../../lib/ui"
+  import { toastAlert } from "../../lib/ui";
 
   /**
    * @function updateOutputPage
@@ -19,29 +19,47 @@
   }
 
   function fullClaytonsCompleted(pageController) {
-    let outcomes = pageController.generateOutcomesString( "Full Claytons update");
+    let outcomes = pageController.generateOutcomesString(
+      "Full Claytons update"
+    );
 
-    if ( ! pageController.singleCollection ) {
+    if (!pageController.singleCollection) {
       const numErrors = pageController.getNumErrors();
-      if ( numErrors > 0 ) {
-        toastAlert(outcomes, "danger")
+      if (numErrors > 0) {
+        toastAlert(outcomes, "danger");
       } else {
-        toastAlert(outcomes, "success")
+        toastAlert(outcomes, "success");
       }
     }
   }
+
+  const HELP = {
+    fullClaytons: {
+      tooltip: "<p>Update all the specified output pages with static representations of each collection using the selected navigation options.</p>",
+      url: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview",
+    },
+    navBarOptions: {
+      tooltip: `<p>There are three navigation bar options:</p>
+		<ol>
+		  <li> None - no navigation between pages/collections. </li>
+		  <li> Pages - collections on separate pages with navigation between. </li>
+		  <li> Tabs - multiple collections on a page with tab navigation. </li>
+      <li> 🚧 Table - multiple collections joined into a single table. </li>
+		</ol>`, 
+      url: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview/#navigation-bar-options",
+    },
+  };
 </script>
 
 <div style="margin-top:0.5em">
   <div>
-    <a
-      id="cc-about-full-claytons"
-      target="_blank"
-      href="https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview"
-      rel="noreferrer"
-    >
-      <i class="icon-question cc-module-icon" /></a
-    >
+    <sl-tooltip>
+      <div slot="content">{@html HELP.fullClaytons.tooltip}</div>
+      <a target="_blank" rel="noreferrer" href={HELP.fullClaytons.url}
+        ><i class="icon-question cc-module-icon" /></a
+      >
+    </sl-tooltip>
+
     <strong>Full "Claytons"</strong>
   </div>
   <div class="border border-trbl" style="padding:0.5em">
@@ -64,6 +82,9 @@
       >
       <button class="btn" on:click={() => startFullClaytons("tabs")}
         >Tabs</button
+      >
+      <button class="btn" on:click={() => startFullClaytons("table")}
+        >Table</button
       >
     </div>
   </div>

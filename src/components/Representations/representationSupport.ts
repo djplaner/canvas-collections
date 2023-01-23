@@ -286,3 +286,40 @@ export function getModuleUrl(moduleId: Number) {
 
   return docUrl.toString();
 }
+
+  /**
+   * @function deLabelModuleName
+   * @param module - module object
+   * @return string Module name without label and number
+   * @description Remove the label and number from the name
+   */
+export  function deLabelModuleName(module) {
+//    const module = $collectionsStore["MODULES"][moduleId];
+    const existingName = module.name;
+
+    let prepend = "";
+    if (module.label) {
+      prepend = module.label;
+    }
+
+    let regex = new RegExp(`^${prepend}\\s*[:-]\\s*`);
+
+    if (module.actualNum) {
+      regex = new RegExp(`^${prepend}\\s*${module.actualNum}\\s*[:-]\\s*`);
+      prepend += ` ${module.actualNum}`;
+      // remove first char from CARD_LABEL if it is a space
+      if (prepend.charAt(0) === " ") {
+        prepend = prepend.substring(1);
+      }
+    }
+    prepend = `${prepend}: `;
+    let newName = existingName;
+    if (prepend !== ": ") {
+      // if we've not empty label and number
+      // modify existingName to remove prepend and any subsequent whitespace
+      //	newName = existingName.replace(prepend, '').trim();
+      newName = existingName.replace(regex, "").trim();
+    }
+
+    return newName;
+  }

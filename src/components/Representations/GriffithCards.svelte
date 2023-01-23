@@ -5,7 +5,7 @@
    */
 
   import { collectionsStore, modulesStore, configStore } from "../../stores";
-  import { getModuleUrl } from "./representationSupport";
+  import { getModuleUrl, deLabelModuleName } from "./representationSupport";
   import BannerIframe from "./GriffithCards/BannerIframe.svelte";
   import BannerColour from "./GriffithCards/BannerColour.svelte";
   import BannerImage from "./GriffithCards/BannerImage.svelte";
@@ -74,42 +74,6 @@
     }
   }
 
-  /**
-   * @function deLabelModuleName
-   * @param moduleId
-   * @return string Module name without label and number
-   * @description Remove the label and number from the name
-   */
-  function deLabelModuleName(moduleId) {
-    const module = $collectionsStore["MODULES"][moduleId];
-    const existingName = module.name;
-
-    let prepend = "";
-    if (module.label) {
-      prepend = module.label;
-    }
-
-    let regex = new RegExp(`^${prepend}\\s*[:-]\\s*`);
-
-    if (module.actualNum) {
-      regex = new RegExp(`^${prepend}\\s*${module.actualNum}\\s*[:-]\\s*`);
-      prepend += ` ${module.actualNum}`;
-      // remove first char from CARD_LABEL if it is a space
-      if (prepend.charAt(0) === " ") {
-        prepend = prepend.substring(1);
-      }
-    }
-    prepend = `${prepend}: `;
-    let newName = existingName;
-    if (prepend !== ": ") {
-      // if we've not empty label and number
-      // modify existingName to remove prepend and any subsequent whitespace
-      //	newName = existingName.replace(prepend, '').trim();
-      newName = existingName.replace(regex, "").trim();
-    }
-
-    return newName;
-  }
 </script>
 
 {#if claytons}
@@ -207,10 +171,10 @@
                         href={getModuleUrl(theModule.id)}
                         style="text-decoration:none;"
                       >
-                        {@html deLabelModuleName(theModule.id)}
+                        {@html deLabelModuleName($collectionsStore["MODULES"][theModule.id])}
                       </a>
                     {:else}
-                      {@html deLabelModuleName(theModule.id)}
+                      {@html deLabelModuleName($collectionsStore["MODULES"][theModule.id])}
                     {/if}
                   </h3>
                 </div>
@@ -306,7 +270,7 @@
                     {$collectionsStore["MODULES"][theModule.id].actualNum}
                   </span>
                   <h3 class="cc-card-title" data-moduleid={theModule.id}>
-                    {@html deLabelModuleName(theModule.id)}
+                        {@html deLabelModuleName($collectionsStore["MODULES"][theModule.id])}
                   </h3>
                 </div>
                 <div class="cc-card-description">
