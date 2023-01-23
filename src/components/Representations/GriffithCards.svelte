@@ -157,7 +157,8 @@
                 {calendar}
               />
               <!--               $**DATE_WIDGET** -->
-              {#if $collectionsStore["MODULES"][theModule.id].fyi}
+              {#if $collectionsStore["MODULES"][theModule.id].fyi &&
+              $collectionsStore["MODULES"][theModule.id].fyiText!==""}
                 <div
                   class="cc-card-fyi"
                   style="position:absolute;background:rgba(0,0,0,0.75);color:white;width:100%;padding: 0.25rem;font-size:x-small;text-align:center;"
@@ -265,7 +266,8 @@
                 {calendar}
               />
               <!--               $**DATE_WIDGET** -->
-              {#if $collectionsStore["MODULES"][theModule.id].fyi}
+              {#if $collectionsStore["MODULES"][theModule.id].fyi &&
+               $collectionsStore["MODULES"][theModule.id].fyiText!==""}
                 <div class="cc-card-fyi">
                   <span class="cc-fyi-text">
                     {#if $collectionsStore["MODULES"][theModule.id].fyiText}
