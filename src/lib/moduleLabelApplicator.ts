@@ -46,7 +46,7 @@ export class moduleLabelApplicator {
     // calculate the new module names
     this.calculateNewModuleNames();
 
-//    this.updateNewModuleNames();
+    //    this.updateNewModuleNames();
   }
 
   /**
@@ -60,22 +60,50 @@ export class moduleLabelApplicator {
     // reinitialise
     this.newNames = [];
 
-    const collectionsCanvasModules = getCollectionCanvasModules(this.collectionName)
-    console.log("--------- calculateNewModuleNames")
+    const collectionsCanvasModules = getCollectionCanvasModules(
+      this.collectionName
+    );
+    let allCollectionsModules = this.collectionsStore["MODULES"];
+
+    console.log("--------- calculateNewModuleNames");
     console.log(collectionsCanvasModules);
-    for (let module of collectionsCanvasModules) {
-      if (module["collection"] !== this.collectionName) {
-        alert("calculateNewModuleNames - should not be required")
+    for (let canvasModule of collectionsCanvasModules) {
+      if (!allCollectionsModules[canvasModule["id"]]) {
+        alert("calculateNewModuleNames - should not be required - missing module id");
         continue;
       }
 
-      const oldName = module["name"];
-      let prepend = "";
-      if (module["label"]) {
-        prepend = module["label"];
+      // get the collection module matching this canvas module
+      const collectionModule = allCollectionsModules[canvasModule["id"]];
+      // ensure it belongs to the collection
+      if (collectionModule["collection"] !== this.collectionName) {
+        alert("calculateNewModuleNames - should not be required");
+        continue;
       }
-      if (module["actualNum"]) {
-        prepend += ` ${module["actualNum"]}`;
+
+      // Cases to consider
+      // - someone has changed the module name
+      //   TODO should always be update to date because we'll refresh before starting
+      // - prepend has changed - can't cover all possibilities ATM
+      //   - changes in canvas modules etc mean the numbering is off
+      //   - someone has changed the labels
+      //   - there is no prepend
+      // Aim is to ensure that the canvas module name matches what the
+      // prepend from collections should be
+      // - calculate what the prepend should be
+      // - separate both canvas and collection module names into 
+      //   pre-pend and name
+      // - 
+
+
+      // the assumption here is that 
+      const oldName = canvasModule["name"];
+      let prepend = "";
+      if (collectionModule["label"]) {
+        prepend = collectionModule["label"];
+      }
+      if (collectionModule["actualNum"]) {
+        prepend += ` ${collectionModule["actualNum"]}`;
         // remove first char from CARD_LABEL if it is a space
         if (prepend.charAt(0) === " ") {
           prepend = prepend.substring(1);
@@ -91,17 +119,17 @@ export class moduleLabelApplicator {
       // TODO - need to identify old prepends
 
       if (newName !== oldName) {
-        this.newNames.push({ id: module["id"], newName: newName });
+        this.newNames.push({ id: canvasModule["id"], newName: newName });
         console.log(
           `------------- moduleLabelApplicator: ${oldName} -> ${prepend}: ${oldName}`
         );
-        console.log(module);
+        console.log(canvasModule);
         console.log(`-------------`);
       }
     }
 
-    console.log('------------ end of calculateNewModuleNames')
-    console.log(this.newNames)
+    console.log("------------ end of calculateNewModuleNames");
+    console.log(this.newNames);
   }
 
   /**

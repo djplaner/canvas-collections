@@ -9,7 +9,7 @@
     representationsStore,
   } from "../../stores";
   import { updatePageController } from "../../lib/updatePageController";
-  import { moduleLabelApplicator}  from "../../lib/moduleLabelApplicator";
+//  import { moduleLabelApplicator}  from "../../lib/moduleLabelApplicator";
   import { getCollectionCanvasModules } from "../Representations/representationSupport";
   import { getPageName } from "../../lib/CanvasSetup";
   import { toastAlert, ccConfirm } from "../../lib/ui";
@@ -301,11 +301,14 @@
    * @param collectionName
    * @description Call the moduleLabelApplicator to update the names for
    * all Canvas modules in the collection based on their labels
+   * 
+   * TODO on hold for version 1 for revision about if/how it might be more
+   * useful
    */
-  function applyModuleLabels(collectionName : string) {
+/*  function applyModuleLabels(collectionName : string) {
     const labelApplicator = new moduleLabelApplicator(collectionName);
     labelApplicator.execute();
-  }
+  } */
 
   const HELP = {
     configName: {
@@ -557,7 +560,6 @@
             doesIncludePageExist
           );
         }}
-        class="cc-existing-collection"
       />
 
       <span class="cc-collection-label">
@@ -629,11 +631,10 @@
             doesOutputPageExist
           );
         }}
-        class="cc-existing-collection"
       />
       <button
         id="cc-collection-{collectionName}-output-page-update"
-        class="btn cc-existing-collection"
+        class="btn"
         disabled={outputPageName[collectionName] === ""}
         on:click={() => {
           updateOutputPage(collectionName);
@@ -649,7 +650,7 @@
     {/if}
   </div>
 
-  <div class="cc-collection-form-reverse">
+<!--  <div class="cc-collection-form-reverse">
     <span class="cc-collection-input-reverse">
       <label for="cc-collection-{collectionName}-apply-module-labels">
         🧪Apply module labels ☠️
@@ -669,7 +670,6 @@
       </sl-tooltip>
     </span>
     <span class="cc-collection-label-reverse">
-      <!-- TODO onclick for apply module labels -->
       <button
         on:click={() => {
           applyModuleLabels(collectionName);
@@ -678,7 +678,7 @@
         class="btn cc-existing-collection">Apply</button
       >
     </span>
-  </div>
+  </div> -->
 </div>
 
 <style>
@@ -686,6 +686,7 @@
     font-size: 0.8em;
     font-weight: normal;
     padding-left: 0.5em;
+    padding-bottom: 0.5em;
   }
 
   .cc-collection-move {
@@ -722,7 +723,7 @@
     padding-bottom: 0em;
   }
 
-  button.cc-existing-collection {
+  button {
     font-size: 0.8em;
     padding: 0.2em;
   }
