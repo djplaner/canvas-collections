@@ -48,8 +48,6 @@
   $: {
     modules = getRepresentationModules(
       collection,
-      $collectionsStore["MODULES"],
-      $configStore["editMode"],
       claytons,
       $collectionsStore["COLLECTIONS"][collection]["unallocated"]
     );
@@ -265,7 +263,6 @@
                 date={$collectionsStore["MODULES"][theModule.id].date}
                 {calendar}
               />
-              <!--               $**DATE_WIDGET** -->
               {#if $collectionsStore["MODULES"][theModule.id].fyi &&
                $collectionsStore["MODULES"][theModule.id].fyiText!==""}
                 <div class="cc-card-fyi">
@@ -278,9 +275,12 @@
                   </span>
                 </div>
               {/if}
-              {#if !$collectionsStore["MODULES"][theModule.id].published}
+              {#if !$collectionsStore["MODULES"][theModule.id].published ||
+                  ( $configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection)}
                 <div class="cc-card-published">
-                  Unpublished.
+                  {#if !$collectionsStore["MODULES"][theModule.id].published}
+                    Unpublished.
+                  {/if}
                   {#if $configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection}
                     No collection allocated.
                   {/if}

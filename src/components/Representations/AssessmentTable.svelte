@@ -39,8 +39,7 @@
   $: {
     modules = getRepresentationModules(
       collection,
-      $collectionsStore["MODULES"],
-      $configStore["editMode"], claytons,
+      claytons,
       $collectionsStore["COLLECTIONS"][collection]["unallocated"]
     );
   }

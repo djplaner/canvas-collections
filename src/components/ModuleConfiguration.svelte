@@ -15,7 +15,9 @@
 
   export let module: Number;
 
-  $: allocated = $collectionsStore["MODULES"][module].collection !== null;
+  $: allocated =
+    $collectionsStore["MODULES"][module].collection !== null &&
+    $collectionsStore["MODULES"][module].collection !== "";
 
   debug(
     `______________ ModuleConfiguration.svelte - module ${module} allocated ${allocated} _______________`
@@ -77,9 +79,9 @@
   <span>
     <i
       id="cc-module-config-{module}-switch"
-      class="{$collectionsStore['MODULES'][module].configVisible
-        ? 'icon-mini-arrow-down'
-        : 'icon-mini-arrow-right'}"
+      class={$collectionsStore["MODULES"][module].configVisible
+        ? "icon-mini-arrow-down"
+        : "icon-mini-arrow-right"}
       on:click={toggleModuleConfigShow}
       on:keydown={toggleModuleConfigShow}
     />
@@ -185,7 +187,6 @@
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
-
 
   sl-tab {
     font-size: var(--sl-font-size-small);
