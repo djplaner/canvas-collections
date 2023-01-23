@@ -67,7 +67,7 @@
 
     let dateString = dateJsonToString(dateInfo);
 
-    if (dateInfo.hasOwnProperty("to")) {
+    if (dateInfo.hasOwnProperty("to") && dateInfo.to.week !== "") {
       // date range
       dateString = `${dateString} to ${dateJsonToString(dateInfo.to)}`;
     }
