@@ -1,63 +1,52 @@
 import ModuleConfiguration from "../ModuleConfiguration.svelte";
+import { get } from "svelte/store";
+
+import { collectionsStore, configStore, modulesStore } from "../../stores";
 
 import { debug } from "../../lib/debug";
 
 /**
  * @function getCollectionCanvasModules
  * @param collection - Collection name
- * @param modules - Array of all the modules
  * @returns {module[]} - Array of modules
  * @description - Returns an array of module belonging to a given collection
  */
-export function getCollectionCanvasModules(collection, allModules) {
+export function getCollectionCanvasModules(collection) {
   let modules = [];
 
-  for (const module in allModules) {
-    if (allModules[module].collection === collection) {
-      modules.push(allModules[module]);
+  const cStore = get(collectionsStore);
+  const collectionsModules = cStore["MODULES"];
+
+  for (const module in collectionsModules) {
+    if (collectionsModules[module].collection === collection) {
+      modules.push(collectionsModules[module]);
     }
   }
   return modules;
-
-  /*  const moduleIds = Object.keys(modules).filter((module) => {
-    return (
-      /*(
-				! allModules[module].published &&
-				$configStore['editMode']
-			) && 
-      // the module belongs to the collection
-      modules[module].collection === collection
-    );
-  }); */
-  // convert all the moduleIds to numbers
-  /*  return moduleIds.map((moduleId) => {
-    return parseInt(moduleId, 10);
-  }); */
 }
 
 /**
  * @function addUnallocatedModules
  * @param collectionName
- * @param allModules
  * @param editMode
  * @returns [] - Array of modules
  * @description Return an array of all the modules that do not have a collection
  * i.e. collection===null
  */
 
-export function addUnallocatedModules(
-  allModules: any[],
-  editMode: boolean
-): any[] {
+export function addUnallocatedModules(editMode: boolean): any[] {
   let modules = [];
 
-  for (const module in allModules) {
+  const cStore = get(collectionsStore);
+  const collectionsModules = cStore["MODULES"];
+
+  for (const module in collectionsModules) {
     if (
-      allModules[module]["collection"] === null ||
-      allModules[module]["collection"] === ""
+      collectionsModules[module]["collection"] === null ||
+      collectionsModules[module]["collection"] === ""
     ) {
-      if (editMode || allModules[module]["published"]) {
-        modules.push(allModules[module]);
+      if (editMode || collectionsModules[module]["published"]) {
+        modules.push(collectionsModules[module]);
       }
     }
   }
@@ -67,8 +56,6 @@ export function addUnallocatedModules(
 /**
  * @function getRepresentationModules
  * @param String collectionName - name of "current" collection
- * @param [] allModules - all current info about modules
- * @param boolean editMode
  * @param boolean unallocated
  * @returns [] - Array of modules
  * @description Given a collection, get all the modules that a representation
@@ -79,25 +66,28 @@ export function addUnallocatedModules(
  */
 export function getRepresentationModules(
   collectionName: string,
-  allModules: any[],
-  editMode: boolean,
+  /* allModules: any[],
+  editMode: boolean, */
   claytons: boolean,
   unallocated: boolean
 ): any[] {
   let modules = [];
 
-  modules = getCollectionCanvasModules(collectionName, allModules);
+  const config = get(configStore);
+  const editMode = config["editMode"];
+
+  modules = getCollectionCanvasModules(collectionName);
   // add unallocated modules if,
-  if ( !editMode ) {
+  if (editMode) {
     // student only if unallocated for this collection is true
     if (unallocated) {
-      modules = modules.concat(addUnallocatedModules(allModules, editMode));
+      modules = modules.concat(addUnallocatedModules(editMode));
     }
-  } else if ( ( claytons && unallocated ) || !claytons) {
+  } else if ((claytons && unallocated) || !claytons) {
     // staff add if
     // - claytons mode and unallocated is true
     // - ! claytons
-    modules = modules.concat(addUnallocatedModules(allModules, editMode));
+    modules = modules.concat(addUnallocatedModules(editMode));
   }
 
   return modules;
@@ -114,14 +104,19 @@ export function getRepresentationModules(
  * - an empty string if it does not exist and we're not in editMode
  */
 
-export function checkModuleMetaData(module, metaDataValue, editMode, claytons = false) {
+export function checkModuleMetaData(
+  module,
+  metaDataValue,
+  editMode,
+  claytons = false
+) {
   if (
     module.hasOwnProperty("metadata") &&
     module["metadata"].hasOwnProperty(metaDataValue)
   ) {
     return module["metadata"][metaDataValue];
   }
-  if (editMode && ! claytons) {
+  if (editMode && !claytons) {
     return `{${metaDataValue}}`;
   }
   return "";
@@ -147,7 +142,6 @@ export function generateModuleDate(module) {
 /**
  * @function modifyCanvasModulesList
  * @param collection  - string for current collection
- * @param modules - array of Canvas module objects
  * @param editMode - whether we're in editMode or not
  * @param showUnallocated - whether to show unallocated modules or not
  * @description Modify Canvas's display of modules in three possible ways
@@ -155,15 +149,11 @@ export function generateModuleDate(module) {
  * 2. Ensure all modules in collection are showing
  * 3. If editMode add ModuleConfiguration components to the module
  */
-export function modifyCanvasModulesList(
-  collection,
-  allModules,
-  editMode,
-  showUnallocated
-) {
-  debug(
-    `_________________________________ modifyCanvasModulesList moduleIds ${collection} editMode ${editMode} _________________`
-  );
+export function modifyCanvasModulesList(collection, showUnallocated) {
+  const collections = get(collectionsStore);
+  const allModules = collections["MODULES"];
+  const config = get(configStore);
+  const editMode = config["editMode"];
 
   const modules = getCollectionCanvasModules(collection, allModules);
   // create array moduleIds that contains the module.ids from modules
@@ -185,7 +175,10 @@ export function modifyCanvasModulesList(
   otherModuleIds.forEach((moduleId) => {
     const module = document.getElementById(`context_module_${moduleId}`);
     if (module) {
-      if (allModules[moduleId].collection !== null) {
+      if (
+        allModules[moduleId].collection !== null &&
+        allModules[moduleId].collection !== ""
+      ) {
         // hide any Canvas module elements that have a collection defined but
         // are not the current collection
         module.style.display = "none";

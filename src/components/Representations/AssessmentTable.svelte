@@ -97,8 +97,7 @@
               <div style="margin:0; font-size:0.8rem">
                 <p>
                   <a href={getModuleUrl(module.id)}>
-                    <!-- {$modulesStore[module.id].name} -->
-                    {$collectionsStore["MODULES"][module.id].name}
+                    {@html $collectionsStore["MODULES"][module.id].name}
                   </a>
                 </p>
               </div>

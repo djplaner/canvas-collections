@@ -40,8 +40,13 @@
     modulesObj = getCollectionsTableModules();
     collectionsOrder = [
       "unallocated",
-      ...$collectionsStore["COLLECTIONS_ORDER"],
     ]
+    // add all the unhidden collections to the order
+    $collectionsStore["COLLECTIONS_ORDER"].forEach((collectionName) => {
+      if (!$collectionsStore["COLLECTIONS"][collectionName].hide) {
+        collectionsOrder.push(collectionName);
+      }
+    });
 
     labelHeader = getMostUsedLabel()
   }
@@ -170,7 +175,7 @@
               <div style="margin:0;">
                 <p>
                   <a href={getModuleUrl(module.id)}>
-                    {$collectionsStore["MODULES"][module.id].name}
+                    {@html $collectionsStore["MODULES"][module.id].name}
                   </a>
                 </p>
               </div>

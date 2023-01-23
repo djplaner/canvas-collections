@@ -54,7 +54,7 @@ export class CollectionsDetails {
     this.currentHostName = document.location.hostname;
     this.baseApiUrl = `https://${this.currentHostName}/api/v1`;
     // convert courseId to integer - probably unnecessary at this stage
-    this["config"]["courseId"] = parseInt(this.config.courseId);
+    this["config"]["courseId"] = parseInt(this.config["courseId"]);
 
     debug(
       `YYYYY collectionsDetails: constructor: ${this["config"]["courseId"]} `
@@ -71,7 +71,7 @@ export class CollectionsDetails {
 
   requestCollectionsPage() {
     wf_fetchData(
-      `${this.baseApiUrl}/courses/${this.config.courseId}/pages/canvas-collections-configuration`
+      `${this.baseApiUrl}/courses/${this.config["courseId"]}/pages/canvas-collections-configuration`
     ).then((msg) => {
       if (msg.status === 200) {
         this.collectionsPageResponse = msg.body;
@@ -228,9 +228,11 @@ export class CollectionsDetails {
         if (!collection.hasOwnProperty("unallocated")) {
           collection.unallocated = false;
         }
-        if (!collection.hasOwnProperty("includePage")) {
-          collection.includePage = "";
-        }
+        ["includePage", "outputPage"].forEach((field) => {
+          if (!collection.hasOwnProperty(field)) {
+            collection[field] = "";
+          }
+        });
       }
     }
     // Focus on updates to modules
@@ -247,6 +249,9 @@ export class CollectionsDetails {
         }
         if (!module.hasOwnProperty("actualNum")) {
           module.actualNum = "";
+        }
+        if (!module.hasOwnProperty("label")) {
+          module.label = "";
         }
         if (!module.hasOwnProperty("metadata")) {
           module.metadata = {};
@@ -636,6 +641,10 @@ export class CollectionsDetails {
           // convert moduleId to int
           if (modules.hasOwnProperty(moduleId)) {
             modules[moduleId][field] = canvasData[i][field];
+          } else {
+            // the module doesn't exist
+            modules[moduleId] = this.addNewModule(canvasData[i]);
+            console.log(modules[moduleId])
           }
         }
       }
@@ -655,6 +664,42 @@ export class CollectionsDetails {
         }
       }
     }
+  }
+
+  private addNewModule(canvasModule) : object {
+    return {
+      name: canvasModule.name,
+      id: canvasModule.id,
+      published: canvasModule.published,
+      description: "",
+      collection: "",
+      label: "",
+      autonum: false,
+      actualNum: "",
+      configVisible: false,
+      num: "",
+      metadata: {},
+      date: {
+        label: "",
+        day: "",
+        week: "",
+        time: "",
+        to: {
+          day: "",
+          week: "",
+          time: "",
+        },
+      },
+      banner: "image",
+      image: "",
+      imageSize: "",
+      iframe: "",
+      bannerColour: "#ffffff",
+      engage: true,
+      engageText: "Engage",
+      fyi: false,
+      fyiText: "",
+    };
   }
 
   initialiseConfigPage(canvasDetails) {

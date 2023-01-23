@@ -361,6 +361,12 @@ export function getPageName(
     `-------------------- getPageName -- ${pageName} ---------------------`
   );
 
+  if (pageName === undefined ) {
+    console.trace()
+    alert("getPageName: pageName is undefined")
+    return
+  }
+
   if (pageName!=="") {
     // only do this if we've a valid page name
     String.prototype.slugify = function (separator = "-") {

@@ -298,7 +298,7 @@
                     {$collectionsStore["MODULES"][theModule.id].actualNum}
                   </span>
                   <h3 class="cc-card-title" data-moduleid={theModule.id}>
-                    {deLabelModuleName(theModule.id)}
+                    {@html deLabelModuleName(theModule.id)}
                   </h3>
                 </div>
                 <div class="cc-card-description">

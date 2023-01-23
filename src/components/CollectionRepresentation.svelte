@@ -15,6 +15,7 @@
   import {
     collectionsStore,
     configStore,
+    modulesStore,
     representationsStore,
   } from "../stores";
 
@@ -36,11 +37,15 @@
   debug(
     `_______________ CollectionRepresentation.svelte __collection ${collection} __ Claytons ${claytons}___________`
   );
+  console.log("----------- configStore");
   debug($configStore);
+  console.log("----------- modulesStore");
+  debug($modulesStore);
 
   let representationComponent: any;
   $: {
-    const localRep = $collectionsStore["COLLECTIONS"][collection]["representation"]
+    const localRep =
+      $collectionsStore["COLLECTIONS"][collection]["representation"];
     if (!$representationsStore.hasOwnProperty(localRep)) {
       alert(
         `CollectionRepresentation component requires a valid representation prop. ${localRep} is not valid`
@@ -48,15 +53,17 @@
     }
     representationComponent = $representationsStore[localRep];
 
-    // don't modify canvas modules if 
+    // don't modify canvas modules if
     // - collections is one
     // - the current collection's representation is CollectionsTable
-    if ($configStore["ccOn"] && 
-    $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]]["representation"] !== "CollectionsTable") {
+    if (
+      $configStore["ccOn"] &&
+      $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
+        "representation"
+      ] !== "CollectionsTable"
+    ) {
       modifyCanvasModulesList(
         $configStore["currentCollection"],
-        $collectionsStore["MODULES"],
-        $configStore["editMode"],
         $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
           "unallocated"
         ]
