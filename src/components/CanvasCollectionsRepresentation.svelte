@@ -14,29 +14,46 @@
   import IncludePage from "./IncludePage.svelte";
 
   import { debug } from "../lib/debug";
+  import { toastAlert } from "../lib/ui";
 
   debug(
     `______________ CanvasCollectionsRepresentation.svelte _currentCollection ${$configStore["currentCollections"]}______________`
   );
-  debug("---- collectionsStore")
-  debug($collectionsStore)
+  debug("---- collectionsStore");
+  debug($collectionsStore);
 
+  if (!$configStore["currentCollection"]) {
+    // if no current collection, set it to the first element in COLLECTIONS_ORDER
+    // if it exists
+    if ($collectionsStore["COLLECTIONS_ORDER"].length > 0) {
+      $configStore["currentCollection"] =
+        $collectionsStore["COLLECTIONS_ORDER"][0];
+    } else {
+      // TODO replace with dialog error
+      toastAlert(
+        `<p>There are no collections defined. Please add a collection.</p>`,
+        "danger"
+      );
+    }
+  }
 </script>
 
 {#if $collectionsStore["COLLECTIONS_ORDER"].length > 0}
   <CollectionsNavigation bind:collection={$configStore["currentCollection"]} />
-  {#if ( 
-    $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includePage!=="" &&
-    $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter===false
-  )}
-     <IncludePage pageName={$collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includePage} />
+  {#if $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includePage !== "" && $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter === false}
+    <IncludePage
+      pageName={$collectionsStore["COLLECTIONS"][
+        $configStore["currentCollection"]
+      ].includePage}
+    />
   {/if}
   <CollectionRepresentation collection={$configStore["currentCollection"]} />
-  {#if ( 
-    $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includePage!=="" &&
-    $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter===true
-  )}
-     <IncludePage pageName={$collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includePage} />
+  {#if $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includePage !== "" && $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter === true}
+    <IncludePage
+      pageName={$collectionsStore["COLLECTIONS"][
+        $configStore["currentCollection"]
+      ].includePage}
+    />
   {/if}
 {/if}
 
