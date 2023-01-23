@@ -113,8 +113,6 @@
 </script>
 
 {#if claytons}
-  <h1>Claytons Canvas Collections - the cards</h1>
-
   <!-- <div class="cc-card-interface cc-representation">-->
   <div style="flex-wrap: wrap; display:flex; margin-top: 0.5em">
     {#each modules as theModule}
@@ -163,7 +161,7 @@
                 >
                   <span class="cc-fyi-text">
                     {#if $collectionsStore["MODULES"][theModule.id].fyiText}
-                      {$collectionsStore["MODULES"][theModule.id].fyiText}
+                      {@html $collectionsStore["MODULES"][theModule.id].fyiText}
                     {:else}
                       &nbsp;
                     {/if}
@@ -191,7 +189,7 @@
               >
                 <div class="cc-card-label" style="font-size: 0.9rem">
                   <span class="cc-card-label" style="font-size: 0.9rem">
-                    {$collectionsStore["MODULES"][theModule.id].label}
+                    {@html $collectionsStore["MODULES"][theModule.id].label}
                     {$collectionsStore["MODULES"][theModule.id].actualNum}
                   </span>
                   <h3
@@ -218,7 +216,7 @@
                 <div class="cc-card-engage" style="padding-right: 1rem;">
                   <div
                     class="cc-card-engage-button"
-                    style="flot:right;color:rgba(30,58,138,1);border-radius:0.25rem;padding0.5rem 1rem 0.5rem 1rem;border:1px solid rgba(30,58,138,1)"
+                    style="float:right;color:rgba(30,58,138,1);border-radius:0.25rem;padding0.5rem 1rem 0.5rem 1rem;border:1px solid rgba(30,58,138,1)"
                   >
                     <a
                       href={getModuleUrl(theModule.id)}
@@ -268,7 +266,7 @@
                 <div class="cc-card-fyi">
                   <span class="cc-fyi-text">
                     {#if $collectionsStore["MODULES"][theModule.id].fyiText}
-                      {$collectionsStore["MODULES"][theModule.id].fyiText}
+                      {@html $collectionsStore["MODULES"][theModule.id].fyiText}
                     {:else}
                       &nbsp;
                     {/if}
@@ -296,7 +294,7 @@
               >
                 <div class="cc-card-label">
                   <span class="cc-card-label">
-                    {$collectionsStore["MODULES"][theModule.id].label}
+                    {@html $collectionsStore["MODULES"][theModule.id].label}
                     {$collectionsStore["MODULES"][theModule.id].actualNum}
                   </span>
                   <h3 class="cc-card-title" data-moduleid={theModule.id}>
