@@ -22,7 +22,8 @@
     let outcomes = pageController.generateOutcomesString( "Full Claytons update");
 
     if ( ! pageController.singleCollection ) {
-      if ( pageController.errors.length > 0 ) {
+      const numErrors = pageController.getNumErrors();
+      if ( numErrors > 0 ) {
         toastAlert(outcomes, "danger")
       } else {
         toastAlert(outcomes, "success")
