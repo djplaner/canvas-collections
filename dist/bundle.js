@@ -29831,39 +29831,41 @@ Do you wish to proceed?`)) {
     const file$2 = "src\\components\\Configuration\\FullClaytons.svelte";
 
     function create_fragment$2(ctx) {
-    	let div4;
+    	let div5;
     	let div1;
-    	let sl_tooltip;
+    	let sl_tooltip0;
     	let div0;
-    	let raw_value = /*HELP*/ ctx[1].fullClaytons.tooltip + "";
+    	let raw0_value = /*HELP*/ ctx[1].fullClaytons.tooltip + "";
     	let t0;
     	let a0;
     	let i0;
     	let t1;
     	let strong;
     	let t3;
-    	let div3;
+    	let div4;
+    	let sl_tooltip1;
+    	let div2;
+    	let raw1_value = /*HELP*/ ctx[1].navBarOptions.tooltip + "";
+    	let t4;
     	let a1;
     	let i1;
-    	let t4;
+    	let t5;
     	let label;
-    	let t6;
-    	let div2;
+    	let t7;
+    	let div3;
     	let button0;
-    	let t8;
+    	let t9;
     	let button1;
-    	let t10;
+    	let t11;
     	let button2;
-    	let t12;
-    	let button3;
     	let mounted;
     	let dispose;
 
     	const block = {
     		c: function create() {
-    			div4 = element("div");
+    			div5 = element("div");
     			div1 = element("div");
-    			sl_tooltip = element("sl-tooltip");
+    			sl_tooltip0 = element("sl-tooltip");
     			div0 = element("div");
     			t0 = space();
     			a0 = element("a");
@@ -29872,97 +29874,98 @@ Do you wish to proceed?`)) {
     			strong = element("strong");
     			strong.textContent = "Full \"Claytons\"";
     			t3 = space();
-    			div3 = element("div");
+    			div4 = element("div");
+    			sl_tooltip1 = element("sl-tooltip");
+    			div2 = element("div");
+    			t4 = space();
     			a1 = element("a");
     			i1 = element("i");
-    			t4 = space();
+    			t5 = space();
     			label = element("label");
     			label.textContent = "Navigation Bar Options";
-    			t6 = space();
-    			div2 = element("div");
+    			t7 = space();
+    			div3 = element("div");
     			button0 = element("button");
     			button0.textContent = "None";
-    			t8 = space();
+    			t9 = space();
     			button1 = element("button");
     			button1.textContent = "Pages";
-    			t10 = space();
+    			t11 = space();
     			button2 = element("button");
     			button2.textContent = "Tabs";
-    			t12 = space();
-    			button3 = element("button");
-    			button3.textContent = "Table";
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file$2, 45, 6, 1875);
+    			add_location(div0, file$2, 45, 6, 1896);
     			attr_dev(i0, "class", "icon-question cc-module-icon");
-    			add_location(i0, file$2, 47, 9, 2017);
+    			add_location(i0, file$2, 47, 9, 2038);
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "href", /*HELP*/ ctx[1].fullClaytons.url);
-    			add_location(a0, file$2, 46, 6, 1942);
-    			add_location(sl_tooltip, file$2, 44, 4, 1855);
-    			add_location(strong, file$2, 51, 4, 2098);
-    			add_location(div1, file$2, 43, 2, 1844);
+    			add_location(a0, file$2, 46, 6, 1963);
+    			add_location(sl_tooltip0, file$2, 44, 4, 1876);
+    			add_location(strong, file$2, 51, 4, 2119);
+    			add_location(div1, file$2, 43, 2, 1865);
+    			attr_dev(div2, "slot", "content");
+    			add_location(div2, file$2, 55, 6, 2245);
     			attr_dev(i1, "class", "icon-question cc-module-icon");
-    			add_location(i1, file$2, 59, 7, 2443);
-    			attr_dev(a1, "id", "cc-about-full-claytons-navigation-option");
-    			attr_dev(a1, "rel", "noreferrer");
+    			add_location(i1, file$2, 57, 9, 2389);
     			attr_dev(a1, "target", "_blank");
-    			attr_dev(a1, "href", "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview/#navigation-bar-options");
-    			add_location(a1, file$2, 54, 4, 2204);
+    			attr_dev(a1, "rel", "noreferrer");
+    			attr_dev(a1, "href", /*HELP*/ ctx[1].navBarOptions.url);
+    			add_location(a1, file$2, 56, 6, 2313);
+    			add_location(sl_tooltip1, file$2, 54, 4, 2225);
     			attr_dev(label, "for", "cc-config-full-claytons-navigation-option");
-    			add_location(label, file$2, 61, 4, 2501);
+    			add_location(label, file$2, 60, 4, 2468);
     			attr_dev(button0, "class", "btn svelte-dui1vd");
-    			add_location(button0, file$2, 65, 6, 2669);
+    			add_location(button0, file$2, 64, 6, 2636);
     			attr_dev(button1, "class", "btn svelte-dui1vd");
-    			add_location(button1, file$2, 68, 6, 2771);
+    			add_location(button1, file$2, 67, 6, 2738);
     			attr_dev(button2, "class", "btn svelte-dui1vd");
-    			add_location(button2, file$2, 71, 6, 2875);
-    			attr_dev(button3, "class", "btn svelte-dui1vd");
-    			add_location(button3, file$2, 74, 6, 2977);
-    			attr_dev(div2, "class", "cc-config-full-claytons-navigation-option svelte-dui1vd");
-    			add_location(div2, file$2, 64, 4, 2606);
-    			attr_dev(div3, "class", "border border-trbl");
-    			set_style(div3, "padding", "0.5em");
-    			add_location(div3, file$2, 53, 2, 2144);
-    			set_style(div4, "margin-top", "0.5em");
-    			add_location(div4, file$2, 42, 0, 1810);
+    			add_location(button2, file$2, 70, 6, 2842);
+    			attr_dev(div3, "class", "cc-config-full-claytons-navigation-option svelte-dui1vd");
+    			add_location(div3, file$2, 63, 4, 2573);
+    			attr_dev(div4, "class", "border border-trbl");
+    			set_style(div4, "padding", "0.5em");
+    			add_location(div4, file$2, 53, 2, 2165);
+    			set_style(div5, "margin-top", "0.5em");
+    			add_location(div5, file$2, 42, 0, 1831);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div4, anchor);
-    			append_dev(div4, div1);
-    			append_dev(div1, sl_tooltip);
-    			append_dev(sl_tooltip, div0);
-    			div0.innerHTML = raw_value;
-    			append_dev(sl_tooltip, t0);
-    			append_dev(sl_tooltip, a0);
+    			insert_dev(target, div5, anchor);
+    			append_dev(div5, div1);
+    			append_dev(div1, sl_tooltip0);
+    			append_dev(sl_tooltip0, div0);
+    			div0.innerHTML = raw0_value;
+    			append_dev(sl_tooltip0, t0);
+    			append_dev(sl_tooltip0, a0);
     			append_dev(a0, i0);
     			append_dev(div1, t1);
     			append_dev(div1, strong);
-    			append_dev(div4, t3);
-    			append_dev(div4, div3);
-    			append_dev(div3, a1);
+    			append_dev(div5, t3);
+    			append_dev(div5, div4);
+    			append_dev(div4, sl_tooltip1);
+    			append_dev(sl_tooltip1, div2);
+    			div2.innerHTML = raw1_value;
+    			append_dev(sl_tooltip1, t4);
+    			append_dev(sl_tooltip1, a1);
     			append_dev(a1, i1);
-    			append_dev(div3, t4);
-    			append_dev(div3, label);
-    			append_dev(div3, t6);
-    			append_dev(div3, div2);
-    			append_dev(div2, button0);
-    			append_dev(div2, t8);
-    			append_dev(div2, button1);
-    			append_dev(div2, t10);
-    			append_dev(div2, button2);
-    			append_dev(div2, t12);
-    			append_dev(div2, button3);
+    			append_dev(div4, t5);
+    			append_dev(div4, label);
+    			append_dev(div4, t7);
+    			append_dev(div4, div3);
+    			append_dev(div3, button0);
+    			append_dev(div3, t9);
+    			append_dev(div3, button1);
+    			append_dev(div3, t11);
+    			append_dev(div3, button2);
 
     			if (!mounted) {
     				dispose = [
     					listen_dev(button0, "click", /*click_handler*/ ctx[2], false, false, false),
     					listen_dev(button1, "click", /*click_handler_1*/ ctx[3], false, false, false),
-    					listen_dev(button2, "click", /*click_handler_2*/ ctx[4], false, false, false),
-    					listen_dev(button3, "click", /*click_handler_3*/ ctx[5], false, false, false)
+    					listen_dev(button2, "click", /*click_handler_2*/ ctx[4], false, false, false)
     				];
 
     				mounted = true;
@@ -29972,7 +29975,7 @@ Do you wish to proceed?`)) {
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div4);
+    			if (detaching) detach_dev(div5);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -29994,7 +29997,7 @@ Do you wish to proceed?`)) {
     	validate_slots('FullClaytons', slots, []);
 
     	function startFullClaytons(navOption) {
-    		const convertNavOption = ["none", "pages", "tabs"].indexOf(navOption) + 1;
+    		const convertNavOption = ["none", "pages", "tabs"].indexOf(navOption) + 1; /*, "table"*/
     		const updateController = new updatePageController(undefined, fullClaytonsCompleted, convertNavOption);
     		updateController.execute();
     	}
@@ -30024,8 +30027,8 @@ Do you wish to proceed?`)) {
 		  <li> None - no navigation between pages/collections. </li>
 		  <li> Pages - collections on separate pages with navigation between. </li>
 		  <li> Tabs - multiple collections on a page with tab navigation. </li>
-      <li> 🚧 Table - multiple collections joined into a single table. </li>
 		</ol>`,
+    			/*<li> 🚧 Table - multiple collections joined into a single table. </li> */
     			url: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview/#navigation-bar-options"
     		}
     	};
@@ -30039,7 +30042,6 @@ Do you wish to proceed?`)) {
     	const click_handler = () => startFullClaytons("none");
     	const click_handler_1 = () => startFullClaytons("pages");
     	const click_handler_2 = () => startFullClaytons("tabs");
-    	const click_handler_3 = () => startFullClaytons("table");
 
     	$$self.$capture_state = () => ({
     		updatePageController,
@@ -30049,14 +30051,7 @@ Do you wish to proceed?`)) {
     		HELP
     	});
 
-    	return [
-    		startFullClaytons,
-    		HELP,
-    		click_handler,
-    		click_handler_1,
-    		click_handler_2,
-    		click_handler_3
-    	];
+    	return [startFullClaytons, HELP, click_handler, click_handler_1, click_handler_2];
     }
 
     class FullClaytons extends SvelteComponentDev {

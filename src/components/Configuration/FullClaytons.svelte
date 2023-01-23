@@ -8,7 +8,7 @@
    * @description  Implement full claytons using the provided nav option
    */
   function startFullClaytons(navOption: string) {
-    const convertNavOption = ["none", "pages", "tabs"].indexOf(navOption) + 1;
+    const convertNavOption = ["none", "pages", "tabs"/*, "table"*/].indexOf(navOption) + 1;
     const updateController = new updatePageController(
       undefined,
       fullClaytonsCompleted,
@@ -44,8 +44,8 @@
 		  <li> None - no navigation between pages/collections. </li>
 		  <li> Pages - collections on separate pages with navigation between. </li>
 		  <li> Tabs - multiple collections on a page with tab navigation. </li>
-      <li> 🚧 Table - multiple collections joined into a single table. </li>
 		</ol>`, 
+      /*<li> 🚧 Table - multiple collections joined into a single table. </li> */
       url: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview/#navigation-bar-options",
     },
   };
@@ -63,13 +63,12 @@
     <strong>Full "Claytons"</strong>
   </div>
   <div class="border border-trbl" style="padding:0.5em">
-    <a
-      id="cc-about-full-claytons-navigation-option"
-      rel="noreferrer"
-      target="_blank"
-      href="https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview/#navigation-bar-options"
-      ><i class="icon-question cc-module-icon" /></a
-    >
+    <sl-tooltip>
+      <div slot="content">{@html HELP.navBarOptions.tooltip}</div>
+      <a target="_blank" rel="noreferrer" href={HELP.navBarOptions.url}
+        ><i class="icon-question cc-module-icon" /></a
+      >
+    </sl-tooltip>
     <label for="cc-config-full-claytons-navigation-option"
       >Navigation Bar Options</label
     >
@@ -83,9 +82,9 @@
       <button class="btn" on:click={() => startFullClaytons("tabs")}
         >Tabs</button
       >
-      <button class="btn" on:click={() => startFullClaytons("table")}
+<!--      <button class="btn" on:click={() => startFullClaytons("table")}
         >Table</button
-      >
+      > -->
     </div>
   </div>
 </div>
