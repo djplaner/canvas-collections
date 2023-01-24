@@ -95,7 +95,7 @@ export function getRepresentationModules(
   // add unallocated modules if,
   if (editMode) {
     // student only if unallocated for this collection is true
-    if (unallocated || !claytons) {
+    if (unallocated && !claytons) {
       modules = modules.concat(addUnallocatedModules(editMode));
     }
   } else if ((claytons && unallocated) || !claytons) {

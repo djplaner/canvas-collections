@@ -12936,6 +12936,7 @@ var app = (function () {
         constructor(finishedCallBack, config) {
             this.finishedCallBack = finishedCallBack;
             this.config = config;
+            this.configStore = get_store_value(configStore);
             this.collectionsPageResponse = null;
             this.collections = null;
             this.ccOn = false;
@@ -13265,9 +13266,7 @@ var app = (function () {
                     // successful
                     debug(`saveCollections response = `);
                     debug(data);
-                    let localConfig = get_store_value(configStore);
-                    localConfig["needToSaveCollections"] = false;
-                    configStore.set(localConfig);
+                    this.configStore["needToSaveCollections"] = false;
                 });
             }
         }
@@ -13435,6 +13434,7 @@ var app = (function () {
          * - if module name (and...?) has changed in Canvas, update Collections
          * - for students, set all Collections modules to published to ensure
          *   Collections represents them correctly
+         * - remove modules from collection if the Canvas no canvas module with that id
          */
         addCanvasModuleData(canvasModules, editMode) {
             let collectionsModules = this["collections"]["MODULES"];
@@ -13456,18 +13456,26 @@ var app = (function () {
                     }
                 });
             }
-            // if we're not in edit mode, add published==true to all modules
-            // - this is because students only ever can see published modules
-            // extract the ids from the canvasData
-            if (!editMode) {
-                const canvasModuleIds = canvasModules.map((module) => module.id);
-                // loop through all the Collections modules
-                Object.keys(collectionsModules).forEach(moduleId => {
-                    // if moduleId is in canvasModulesIds, set published to true
+            // Loop through all the collections modules checking against canvas module id
+            // - if in !editMode set canvas published to true if canvas module exists
+            // - otherwise if canvas module doesn't exist, remove that entry from collections
+            const canvasModuleIds = canvasModules.map((module) => module.id);
+            let changeMade = false;
+            for (const moduleId in collectionsModules) {
+                if (!editMode) {
                     if (canvasModuleIds.includes(parseInt(moduleId))) {
                         collectionsModules[moduleId].published = true;
                     }
-                });
+                }
+                else {
+                    if (!canvasModuleIds.includes(parseInt(moduleId))) {
+                        delete collectionsModules[moduleId];
+                        changeMade = true;
+                    }
+                }
+            }
+            if (changeMade) {
+                this.configStore["needToSaveCollections"] = true;
             }
         }
         addNewModule(canvasModule) {
@@ -19336,7 +19344,7 @@ Do you wish to proceed?`)) {
         // add unallocated modules if,
         if (editMode) {
             // student only if unallocated for this collection is true
-            if (unallocated || !claytons) {
+            if (unallocated && !claytons) {
                 modules = modules.concat(addUnallocatedModules(editMode));
             }
         }
@@ -23751,37 +23759,37 @@ Do you wish to proceed?`)) {
     				each_blocks[i].c();
     			}
 
-    			attr_dev(span0, "class", "cc-table-header-text svelte-1fdxa15");
+    			attr_dev(span0, "class", "cc-table-header-text svelte-102b4gf");
     			add_location(span0, file$9, 169, 13, 6177);
     			attr_dev(th0, "role", "columnheader");
     			attr_dev(th0, "scope", "col");
-    			attr_dev(th0, "class", "svelte-1fdxa15");
+    			attr_dev(th0, "class", "svelte-102b4gf");
     			add_location(th0, file$9, 168, 10, 6127);
-    			attr_dev(span1, "class", "cc-table-header-text svelte-1fdxa15");
+    			attr_dev(span1, "class", "cc-table-header-text svelte-102b4gf");
     			add_location(span1, file$9, 172, 13, 6303);
     			attr_dev(th1, "role", "columnheader");
     			attr_dev(th1, "scope", "col");
-    			attr_dev(th1, "class", "svelte-1fdxa15");
+    			attr_dev(th1, "class", "svelte-102b4gf");
     			add_location(th1, file$9, 171, 10, 6253);
-    			attr_dev(span2, "class", "cc-table-header-text svelte-1fdxa15");
+    			attr_dev(span2, "class", "cc-table-header-text svelte-102b4gf");
     			add_location(span2, file$9, 180, 13, 6646);
     			attr_dev(th2, "role", "columnheader");
     			attr_dev(th2, "scope", "col");
-    			attr_dev(th2, "class", "svelte-1fdxa15");
+    			attr_dev(th2, "class", "svelte-102b4gf");
     			add_location(th2, file$9, 179, 10, 6596);
     			attr_dev(tr, "role", "row");
-    			attr_dev(tr, "class", "svelte-1fdxa15");
+    			attr_dev(tr, "class", "svelte-102b4gf");
     			add_location(tr, file$9, 167, 8, 6100);
     			attr_dev(thead, "role", "rowgroup");
-    			attr_dev(thead, "class", "svelte-1fdxa15");
+    			attr_dev(thead, "class", "svelte-102b4gf");
     			add_location(thead, file$9, 166, 6, 6067);
-    			attr_dev(tbody, "class", "svelte-1fdxa15");
+    			attr_dev(tbody, "class", "svelte-102b4gf");
     			add_location(tbody, file$9, 189, 6, 6978);
-    			attr_dev(table, "class", "cc-responsive-table svelte-1fdxa15");
+    			attr_dev(table, "class", "cc-responsive-table svelte-102b4gf");
     			attr_dev(table, "role", "table");
     			add_location(table, file$9, 164, 4, 5975);
     			attr_dev(div, "id", "cc-assessment-table");
-    			attr_dev(div, "class", "cc-assessment-container cc-representation svelte-1fdxa15");
+    			attr_dev(div, "class", "cc-assessment-container cc-representation svelte-102b4gf");
     			add_location(div, file$9, 160, 2, 5875);
     		},
     		m: function mount(target, anchor) {
@@ -23934,29 +23942,29 @@ Do you wish to proceed?`)) {
     			add_location(span0, file$9, 58, 12, 2316);
     			attr_dev(th0, "role", "columnheader");
     			attr_dev(th0, "scope", "col");
-    			set_style(th0, "background-color", "#e03e2d");
+    			set_style(th0, "background-color", "#c02123");
     			add_location(th0, file$9, 53, 10, 2180);
     			set_style(span1, "color", "#ffffff");
     			add_location(span1, file$9, 65, 12, 2537);
     			attr_dev(th1, "role", "columnheader");
     			attr_dev(th1, "scope", "col");
-    			set_style(th1, "background-color", "#e03e2d");
+    			set_style(th1, "background-color", "#c02123");
     			set_style(th1, "width", "20rem");
     			add_location(th1, file$9, 60, 10, 2387);
     			set_style(span2, "color", "#ffffff");
     			add_location(span2, file$9, 81, 12, 3027);
     			attr_dev(th2, "role", "columnheader");
     			attr_dev(th2, "scope", "col");
-    			set_style(th2, "background-color", "#e03e2d");
+    			set_style(th2, "background-color", "#c02123");
     			add_location(th2, file$9, 76, 10, 2891);
     			add_location(tr, file$9, 52, 8, 2164);
     			add_location(thead, file$9, 51, 6, 2147);
-    			attr_dev(tbody, "class", "svelte-1fdxa15");
+    			attr_dev(tbody, "class", "svelte-102b4gf");
     			add_location(tbody, file$9, 94, 6, 3416);
     			attr_dev(table, "class", "ic-Table--hover-row ic-Table ic-Table--striped -ic-Table-condensed");
     			add_location(table, file$9, 48, 4, 2044);
     			attr_dev(div, "id", "cc-assessment-table");
-    			attr_dev(div, "class", "svelte-1fdxa15");
+    			attr_dev(div, "class", "svelte-102b4gf");
     			add_location(div, file$9, 47, 2, 2008);
     		},
     		m: function mount(target, anchor) {
@@ -24059,11 +24067,11 @@ Do you wish to proceed?`)) {
     			th = element("th");
     			span = element("span");
     			span.textContent = "Weighting";
-    			attr_dev(span, "class", "cc-table-header-text svelte-1fdxa15");
+    			attr_dev(span, "class", "cc-table-header-text svelte-102b4gf");
     			add_location(span, file$9, 176, 13, 6499);
     			attr_dev(th, "role", "columnheader");
     			attr_dev(th, "scope", "col");
-    			attr_dev(th, "class", "svelte-1fdxa15");
+    			attr_dev(th, "class", "svelte-102b4gf");
     			add_location(th, file$9, 175, 10, 6449);
     		},
     		m: function mount(target, anchor) {
@@ -24096,11 +24104,11 @@ Do you wish to proceed?`)) {
     			th = element("th");
     			span = element("span");
     			span.textContent = "Learning Outcomes";
-    			attr_dev(span, "class", "cc-table-header-text svelte-1fdxa15");
+    			attr_dev(span, "class", "cc-table-header-text svelte-102b4gf");
     			add_location(span, file$9, 184, 13, 6846);
     			attr_dev(th, "role", "columnheader");
     			attr_dev(th, "scope", "col");
-    			attr_dev(th, "class", "svelte-1fdxa15");
+    			attr_dev(th, "class", "svelte-102b4gf");
     			add_location(th, file$9, 183, 10, 6796);
     		},
     		m: function mount(target, anchor) {
@@ -24131,7 +24139,7 @@ Do you wish to proceed?`)) {
     		c: function create() {
     			div = element("div");
     			div.textContent = "Unpublished";
-    			attr_dev(div, "class", "cc-published svelte-1fdxa15");
+    			attr_dev(div, "class", "cc-published svelte-102b4gf");
     			add_location(div, file$9, 210, 16, 7843);
     		},
     		m: function mount(target, anchor) {
@@ -24161,7 +24169,7 @@ Do you wish to proceed?`)) {
     		c: function create() {
     			div = element("div");
     			div.textContent = "No collection allocated";
-    			attr_dev(div, "class", "cc-unallocated svelte-1fdxa15");
+    			attr_dev(div, "class", "cc-unallocated svelte-102b4gf");
     			add_location(div, file$9, 213, 16, 8040);
     		},
     		m: function mount(target, anchor) {
@@ -24202,15 +24210,15 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			p = element("p");
     			t2 = text(t2_value);
-    			attr_dev(span, "class", "cc-responsive-table__heading svelte-1fdxa15");
+    			attr_dev(span, "class", "cc-responsive-table__heading svelte-102b4gf");
     			attr_dev(span, "aria-hidden", "true");
     			add_location(span, file$9, 223, 14, 8440);
-    			attr_dev(p, "class", "svelte-1fdxa15");
+    			attr_dev(p, "class", "svelte-102b4gf");
     			add_location(p, file$9, 227, 16, 8618);
-    			attr_dev(div, "class", "cc-table-cell-text svelte-1fdxa15");
+    			attr_dev(div, "class", "cc-table-cell-text svelte-102b4gf");
     			add_location(div, file$9, 226, 14, 8568);
     			attr_dev(td, "role", "cell");
-    			attr_dev(td, "class", "svelte-1fdxa15");
+    			attr_dev(td, "class", "svelte-102b4gf");
     			add_location(td, file$9, 222, 12, 8408);
     		},
     		m: function mount(target, anchor) {
@@ -24259,15 +24267,15 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			p = element("p");
     			t2 = text(t2_value);
-    			attr_dev(span, "class", "cc-responsive-table__heading svelte-1fdxa15");
+    			attr_dev(span, "class", "cc-responsive-table__heading svelte-102b4gf");
     			attr_dev(span, "aria-hidden", "true");
     			add_location(span, file$9, 249, 14, 9395);
-    			attr_dev(p, "class", "svelte-1fdxa15");
+    			attr_dev(p, "class", "svelte-102b4gf");
     			add_location(p, file$9, 253, 16, 9581);
-    			attr_dev(div, "class", "cc-table-cell-text svelte-1fdxa15");
+    			attr_dev(div, "class", "cc-table-cell-text svelte-102b4gf");
     			add_location(div, file$9, 252, 14, 9531);
     			attr_dev(td, "role", "cell");
-    			attr_dev(td, "class", "svelte-1fdxa15");
+    			attr_dev(td, "class", "svelte-102b4gf");
     			add_location(td, file$9, 248, 12, 9363);
     		},
     		m: function mount(target, anchor) {
@@ -24369,40 +24377,40 @@ Do you wish to proceed?`)) {
     			t13 = space();
     			if (if_block3) if_block3.c();
     			t14 = space();
-    			attr_dev(span0, "class", "cc-responsive-table__heading svelte-1fdxa15");
+    			attr_dev(span0, "class", "cc-responsive-table__heading svelte-102b4gf");
     			attr_dev(span0, "aria-hidden", "true");
     			add_location(span0, file$9, 193, 14, 7093);
     			attr_dev(a, "href", a_href_value = getModuleUrl(/*module*/ ctx[7].id));
     			add_location(a, file$9, 198, 18, 7290);
-    			attr_dev(p0, "class", "svelte-1fdxa15");
+    			attr_dev(p0, "class", "svelte-102b4gf");
     			add_location(p0, file$9, 197, 16, 7267);
-    			attr_dev(div0, "class", "cc-table-cell-text svelte-1fdxa15");
+    			attr_dev(div0, "class", "cc-table-cell-text svelte-102b4gf");
     			add_location(div0, file$9, 196, 14, 7217);
     			attr_dev(td0, "role", "cell");
-    			attr_dev(td0, "class", "svelte-1fdxa15");
+    			attr_dev(td0, "class", "svelte-102b4gf");
     			add_location(td0, file$9, 192, 12, 7061);
-    			attr_dev(span1, "class", "cc-responsive-table__heading svelte-1fdxa15");
+    			attr_dev(span1, "class", "cc-responsive-table__heading svelte-102b4gf");
     			attr_dev(span1, "aria-hidden", "true");
     			add_location(span1, file$9, 206, 14, 7611);
-    			attr_dev(p1, "class", "svelte-1fdxa15");
+    			attr_dev(p1, "class", "svelte-102b4gf");
     			add_location(p1, file$9, 216, 16, 8184);
-    			attr_dev(div1, "class", "cc-table-cell-text svelte-1fdxa15");
+    			attr_dev(div1, "class", "cc-table-cell-text svelte-102b4gf");
     			add_location(div1, file$9, 215, 14, 8134);
     			attr_dev(td1, "role", "cell");
-    			attr_dev(td1, "class", "descriptionCell svelte-1fdxa15");
+    			attr_dev(td1, "class", "descriptionCell svelte-102b4gf");
     			add_location(td1, file$9, 205, 12, 7555);
-    			attr_dev(span2, "class", "cc-responsive-table__heading svelte-1fdxa15");
+    			attr_dev(span2, "class", "cc-responsive-table__heading svelte-102b4gf");
     			attr_dev(span2, "aria-hidden", "true");
     			add_location(span2, file$9, 238, 14, 8954);
-    			attr_dev(p2, "class", "svelte-1fdxa15");
+    			attr_dev(p2, "class", "svelte-102b4gf");
     			add_location(p2, file$9, 242, 16, 9131);
-    			attr_dev(div2, "class", "cc-table-cell-text svelte-1fdxa15");
+    			attr_dev(div2, "class", "cc-table-cell-text svelte-102b4gf");
     			add_location(div2, file$9, 241, 14, 9081);
     			attr_dev(td2, "role", "cell");
-    			attr_dev(td2, "class", "svelte-1fdxa15");
+    			attr_dev(td2, "class", "svelte-102b4gf");
     			add_location(td2, file$9, 237, 12, 8922);
     			attr_dev(tr, "role", "row");
-    			attr_dev(tr, "class", "svelte-1fdxa15");
+    			attr_dev(tr, "class", "svelte-102b4gf");
     			add_location(tr, file$9, 191, 10, 7032);
     		},
     		m: function mount(target, anchor) {
@@ -24530,7 +24538,7 @@ Do you wish to proceed?`)) {
     			add_location(span, file$9, 73, 14, 2797);
     			attr_dev(th, "role", "columnheader");
     			attr_dev(th, "scope", "col");
-    			set_style(th, "background-color", "#e03e2d");
+    			set_style(th, "background-color", "#c02123");
     			add_location(th, file$9, 68, 12, 2651);
     		},
     		m: function mount(target, anchor) {
@@ -24567,7 +24575,7 @@ Do you wish to proceed?`)) {
     			add_location(span, file$9, 89, 14, 3287);
     			attr_dev(th, "role", "columnheader");
     			attr_dev(th, "scope", "col");
-    			set_style(th, "background-color", "#e03e2d");
+    			set_style(th, "background-color", "#c02123");
     			add_location(th, file$9, 84, 12, 3141);
     		},
     		m: function mount(target, anchor) {
@@ -24598,7 +24606,7 @@ Do you wish to proceed?`)) {
     		c: function create() {
     			div = element("div");
     			div.textContent = "Unpublished";
-    			attr_dev(div, "class", "cc-published svelte-1fdxa15");
+    			attr_dev(div, "class", "cc-published svelte-102b4gf");
     			add_location(div, file$9, 108, 16, 4048);
     		},
     		m: function mount(target, anchor) {
@@ -24628,7 +24636,7 @@ Do you wish to proceed?`)) {
     		c: function create() {
     			div = element("div");
     			div.textContent = "No collection allocated";
-    			attr_dev(div, "class", "cc-unallocated svelte-1fdxa15");
+    			attr_dev(div, "class", "cc-unallocated svelte-102b4gf");
     			add_location(div, file$9, 111, 16, 4258);
     		},
     		m: function mount(target, anchor) {
@@ -24669,7 +24677,7 @@ Do you wish to proceed?`)) {
     			set_style(div, "font-size", "0.8rem");
     			add_location(div, file$9, 121, 16, 4642);
     			attr_dev(td, "role", "cell");
-    			attr_dev(td, "class", "svelte-1fdxa15");
+    			attr_dev(td, "class", "svelte-102b4gf");
     			add_location(td, file$9, 120, 14, 4608);
     		},
     		m: function mount(target, anchor) {
@@ -24716,7 +24724,7 @@ Do you wish to proceed?`)) {
     			set_style(div, "font-size", "0.8rem");
     			add_location(div, file$9, 142, 16, 5381);
     			attr_dev(td, "role", "cell");
-    			attr_dev(td, "class", "svelte-1fdxa15");
+    			attr_dev(td, "class", "svelte-102b4gf");
     			add_location(td, file$9, 141, 14, 5347);
     		},
     		m: function mount(target, anchor) {
@@ -24808,7 +24816,7 @@ Do you wish to proceed?`)) {
     			attr_dev(td0, "role", "cell");
     			set_style(td0, "display", "table-cell");
     			set_style(td0, "text-align", "left");
-    			attr_dev(td0, "class", "svelte-1fdxa15");
+    			attr_dev(td0, "class", "svelte-102b4gf");
     			add_location(td0, file$9, 97, 12, 3488);
     			add_location(p1, file$9, 114, 16, 4410);
     			set_style(div1, "margin", "0");
@@ -24817,16 +24825,16 @@ Do you wish to proceed?`)) {
     			attr_dev(td1, "role", "cell");
     			set_style(td1, "display", "table-cell");
     			set_style(td1, "text-align", "left");
-    			attr_dev(td1, "class", "svelte-1fdxa15");
+    			attr_dev(td1, "class", "svelte-102b4gf");
     			add_location(td1, file$9, 106, 12, 3856);
     			add_location(p2, file$9, 135, 16, 5145);
     			set_style(div2, "margin", "0");
     			set_style(div2, "font-size", "0.8rem");
     			add_location(div2, file$9, 134, 14, 5087);
     			attr_dev(td2, "role", "cell");
-    			attr_dev(td2, "class", "svelte-1fdxa15");
+    			attr_dev(td2, "class", "svelte-102b4gf");
     			add_location(td2, file$9, 133, 12, 5055);
-    			attr_dev(tr, "class", "svelte-1fdxa15");
+    			attr_dev(tr, "class", "svelte-102b4gf");
     			add_location(tr, file$9, 96, 10, 3470);
     		},
     		m: function mount(target, anchor) {
@@ -25157,7 +25165,7 @@ Do you wish to proceed?`)) {
     	let t1;
     	let a_href_value;
     	let t2;
-    	let show_if = !(/*collectionsOrder*/ ctx[0].length - 1 === /*collectionsOrder*/ ctx[0].indexOf(/*collectionName*/ ctx[9]));
+    	let show_if = !(/*collectionsOrder*/ ctx[1].length - 1 === /*collectionsOrder*/ ctx[1].indexOf(/*collectionName*/ ctx[9]));
     	let if_block_anchor;
     	let if_block = show_if && create_if_block_4$1(ctx);
 
@@ -25170,7 +25178,7 @@ Do you wish to proceed?`)) {
     			if (if_block) if_block.c();
     			if_block_anchor = empty();
     			attr_dev(a, "href", a_href_value = "#collection-" + /*collectionName*/ ctx[9]);
-    			add_location(a, file$8, 87, 14, 3306);
+    			add_location(a, file$8, 87, 14, 3314);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t0, anchor);
@@ -25181,13 +25189,13 @@ Do you wish to proceed?`)) {
     			insert_dev(target, if_block_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*collectionsOrder*/ 1 && t1_value !== (t1_value = /*collectionName*/ ctx[9] + "")) set_data_dev(t1, t1_value);
+    			if (dirty & /*collectionsOrder*/ 2 && t1_value !== (t1_value = /*collectionName*/ ctx[9] + "")) set_data_dev(t1, t1_value);
 
-    			if (dirty & /*collectionsOrder*/ 1 && a_href_value !== (a_href_value = "#collection-" + /*collectionName*/ ctx[9])) {
+    			if (dirty & /*collectionsOrder*/ 2 && a_href_value !== (a_href_value = "#collection-" + /*collectionName*/ ctx[9])) {
     				attr_dev(a, "href", a_href_value);
     			}
 
-    			if (dirty & /*collectionsOrder*/ 1) show_if = !(/*collectionsOrder*/ ctx[0].length - 1 === /*collectionsOrder*/ ctx[0].indexOf(/*collectionName*/ ctx[9]));
+    			if (dirty & /*collectionsOrder*/ 2) show_if = !(/*collectionsOrder*/ ctx[1].length - 1 === /*collectionsOrder*/ ctx[1].indexOf(/*collectionName*/ ctx[9]));
 
     			if (show_if) {
     				if (if_block) ; else {
@@ -25308,13 +25316,13 @@ Do you wish to proceed?`)) {
     			h3 = element("h3");
     			t = text(t_value);
     			attr_dev(h3, "id", h3_id_value = "collection-" + /*collectionName*/ ctx[9]);
-    			add_location(h3, file$8, 130, 14, 4603);
+    			add_location(h3, file$8, 130, 14, 4611);
     			set_style(td, "vertical-align", "top: padding:0.5rem");
     			attr_dev(td, "role", "cell");
     			attr_dev(td, "colspan", "3");
-    			add_location(td, file$8, 125, 12, 4455);
+    			add_location(td, file$8, 125, 12, 4463);
     			set_style(tr, "background", "white");
-    			add_location(tr, file$8, 124, 10, 4411);
+    			add_location(tr, file$8, 124, 10, 4419);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -25323,9 +25331,9 @@ Do you wish to proceed?`)) {
     			append_dev(h3, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*collectionsOrder*/ 1 && t_value !== (t_value = /*collectionName*/ ctx[9] + "")) set_data_dev(t, t_value);
+    			if (dirty & /*collectionsOrder*/ 2 && t_value !== (t_value = /*collectionName*/ ctx[9] + "")) set_data_dev(t, t_value);
 
-    			if (dirty & /*collectionsOrder*/ 1 && h3_id_value !== (h3_id_value = "collection-" + /*collectionName*/ ctx[9])) {
+    			if (dirty & /*collectionsOrder*/ 2 && h3_id_value !== (h3_id_value = "collection-" + /*collectionName*/ ctx[9])) {
     				attr_dev(h3, "id", h3_id_value);
     			}
     		},
@@ -25345,7 +25353,7 @@ Do you wish to proceed?`)) {
     	return block;
     }
 
-    // (154:16) {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
+    // (154:16) {#if !claytons && $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
     function create_if_block_1$4(ctx) {
     	let div;
 
@@ -25354,7 +25362,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			div.textContent = "Unpublished";
     			attr_dev(div, "class", "cc-published svelte-zkzf4g");
-    			add_location(div, file$8, 154, 18, 5615);
+    			add_location(div, file$8, 154, 18, 5636);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -25368,14 +25376,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_1$4.name,
     		type: "if",
-    		source: "(154:16) {#if $configStore[\\\"editMode\\\"] && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
+    		source: "(154:16) {#if !claytons && $configStore[\\\"editMode\\\"] && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (157:16) {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection !== collectionName}
+    // (157:16) {#if !claytons && $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection !== collectionName}
     function create_if_block$5(ctx) {
     	let div;
 
@@ -25384,7 +25392,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			div.textContent = "No collection allocated";
     			attr_dev(div, "class", "cc-unallocated svelte-zkzf4g");
-    			add_location(div, file$8, 157, 18, 5822);
+    			add_location(div, file$8, 157, 18, 5856);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -25398,7 +25406,7 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block$5.name,
     		type: "if",
-    		source: "(157:16) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collectionName}",
+    		source: "(157:16) {#if !claytons && $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collectionName}",
     		ctx
     	});
 
@@ -25411,14 +25419,14 @@ Do you wish to proceed?`)) {
     	let td0;
     	let div0;
     	let p0;
-    	let t0_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[12].id].actualNum + "";
+    	let t0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[12].id].actualNum + "";
     	let t0;
     	let t1;
     	let td1;
     	let div1;
     	let p1;
     	let a;
-    	let raw0_value = deLabelModuleName(/*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[12].id]) + "";
+    	let raw0_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[12].id]) + "";
     	let a_href_value;
     	let t2;
     	let td2;
@@ -25426,10 +25434,10 @@ Do you wish to proceed?`)) {
     	let t3;
     	let t4;
     	let p2;
-    	let raw1_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[12].id].description + "";
+    	let raw1_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[12].id].description + "";
     	let t5;
-    	let if_block0 = /*$configStore*/ ctx[4]["editMode"] && !/*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[12].id].published && create_if_block_1$4(ctx);
-    	let if_block1 = /*$configStore*/ ctx[4]["editMode"] && /*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[12].id].collection !== /*collectionName*/ ctx[9] && create_if_block$5(ctx);
+    	let if_block0 = !/*claytons*/ ctx[0] && /*$configStore*/ ctx[5]["editMode"] && !/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[12].id].published && create_if_block_1$4(ctx);
+    	let if_block1 = !/*claytons*/ ctx[0] && /*$configStore*/ ctx[5]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[12].id].collection !== /*collectionName*/ ctx[9] && create_if_block$5(ctx);
 
     	const block = {
     		c: function create() {
@@ -25452,30 +25460,30 @@ Do you wish to proceed?`)) {
     			t4 = space();
     			p2 = element("p");
     			t5 = space();
-    			add_location(p0, file$8, 139, 16, 4916);
+    			add_location(p0, file$8, 139, 16, 4924);
     			set_style(div0, "margin", "0");
-    			add_location(div0, file$8, 138, 14, 4875);
+    			add_location(div0, file$8, 138, 14, 4883);
     			attr_dev(td0, "role", "cell");
     			set_style(td0, "vertical-align", "top");
     			set_style(td0, "padding", "0.5rem");
-    			add_location(td0, file$8, 137, 12, 4798);
+    			add_location(td0, file$8, 137, 12, 4806);
     			attr_dev(a, "href", a_href_value = getModuleUrl(/*module*/ ctx[12].id));
-    			add_location(a, file$8, 145, 18, 5170);
-    			add_location(p1, file$8, 144, 16, 5147);
+    			add_location(a, file$8, 145, 18, 5178);
+    			add_location(p1, file$8, 144, 16, 5155);
     			set_style(div1, "margin", "0");
-    			add_location(div1, file$8, 143, 14, 5106);
+    			add_location(div1, file$8, 143, 14, 5114);
     			attr_dev(td1, "role", "cell");
     			set_style(td1, "vertical-align", "top");
     			set_style(td1, "padding", "0.5rem");
-    			add_location(td1, file$8, 142, 12, 5029);
-    			add_location(p2, file$8, 159, 16, 5920);
+    			add_location(td1, file$8, 142, 12, 5037);
+    			add_location(p2, file$8, 159, 16, 5954);
     			set_style(div2, "margin", "0");
-    			add_location(div2, file$8, 152, 14, 5470);
+    			add_location(div2, file$8, 152, 14, 5478);
     			attr_dev(td2, "role", "cell");
     			set_style(td2, "vertical-align", "top");
     			set_style(td2, "padding", "0.5rem");
-    			add_location(td2, file$8, 151, 12, 5393);
-    			add_location(tr, file$8, 136, 10, 4780);
+    			add_location(td2, file$8, 151, 12, 5401);
+    			add_location(tr, file$8, 136, 10, 4788);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -25501,13 +25509,13 @@ Do you wish to proceed?`)) {
     			append_dev(tr, t5);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modulesObj, collectionsOrder*/ 11 && t0_value !== (t0_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[12].id].actualNum + "")) set_data_dev(t0, t0_value);
-    			if (dirty & /*$collectionsStore, modulesObj, collectionsOrder*/ 11 && raw0_value !== (raw0_value = deLabelModuleName(/*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[12].id]) + "")) a.innerHTML = raw0_value;
-    			if (dirty & /*modulesObj, collectionsOrder*/ 9 && a_href_value !== (a_href_value = getModuleUrl(/*module*/ ctx[12].id))) {
+    			if (dirty & /*$collectionsStore, modulesObj, collectionsOrder*/ 22 && t0_value !== (t0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[12].id].actualNum + "")) set_data_dev(t0, t0_value);
+    			if (dirty & /*$collectionsStore, modulesObj, collectionsOrder*/ 22 && raw0_value !== (raw0_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[12].id]) + "")) a.innerHTML = raw0_value;
+    			if (dirty & /*modulesObj, collectionsOrder*/ 18 && a_href_value !== (a_href_value = getModuleUrl(/*module*/ ctx[12].id))) {
     				attr_dev(a, "href", a_href_value);
     			}
 
-    			if (/*$configStore*/ ctx[4]["editMode"] && !/*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[12].id].published) {
+    			if (!/*claytons*/ ctx[0] && /*$configStore*/ ctx[5]["editMode"] && !/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[12].id].published) {
     				if (if_block0) ; else {
     					if_block0 = create_if_block_1$4(ctx);
     					if_block0.c();
@@ -25518,7 +25526,7 @@ Do you wish to proceed?`)) {
     				if_block0 = null;
     			}
 
-    			if (/*$configStore*/ ctx[4]["editMode"] && /*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[12].id].collection !== /*collectionName*/ ctx[9]) {
+    			if (!/*claytons*/ ctx[0] && /*$configStore*/ ctx[5]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[12].id].collection !== /*collectionName*/ ctx[9]) {
     				if (if_block1) ; else {
     					if_block1 = create_if_block$5(ctx);
     					if_block1.c();
@@ -25529,7 +25537,7 @@ Do you wish to proceed?`)) {
     				if_block1 = null;
     			}
 
-    			if (dirty & /*$collectionsStore, modulesObj, collectionsOrder*/ 11 && raw1_value !== (raw1_value = /*$collectionsStore*/ ctx[1]["MODULES"][/*module*/ ctx[12].id].description + "")) p2.innerHTML = raw1_value;		},
+    			if (dirty & /*$collectionsStore, modulesObj, collectionsOrder*/ 22 && raw1_value !== (raw1_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[12].id].description + "")) p2.innerHTML = raw1_value;		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(tr);
     			if (if_block0) if_block0.d();
@@ -25553,7 +25561,7 @@ Do you wish to proceed?`)) {
     	let t;
     	let each_1_anchor;
     	let if_block = /*collectionName*/ ctx[9] !== "unallocated" && create_if_block_2$3(ctx);
-    	let each_value_1 = /*modulesObj*/ ctx[3][/*collectionName*/ ctx[9]];
+    	let each_value_1 = /*modulesObj*/ ctx[4][/*collectionName*/ ctx[9]];
     	validate_each_argument(each_value_1);
     	let each_blocks = [];
 
@@ -25596,8 +25604,8 @@ Do you wish to proceed?`)) {
     				if_block = null;
     			}
 
-    			if (dirty & /*$collectionsStore, modulesObj, collectionsOrder, $configStore, getModuleUrl, deLabelModuleName*/ 27) {
-    				each_value_1 = /*modulesObj*/ ctx[3][/*collectionName*/ ctx[9]];
+    			if (dirty & /*$collectionsStore, modulesObj, collectionsOrder, claytons, $configStore, getModuleUrl, deLabelModuleName*/ 55) {
+    				each_value_1 = /*modulesObj*/ ctx[4][/*collectionName*/ ctx[9]];
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -25659,7 +25667,7 @@ Do you wish to proceed?`)) {
     	let span2;
     	let t8;
     	let tbody;
-    	let each_value_2 = /*collectionsOrder*/ ctx[0];
+    	let each_value_2 = /*collectionsOrder*/ ctx[1];
     	validate_each_argument(each_value_2);
     	let each_blocks_1 = [];
 
@@ -25667,7 +25675,7 @@ Do you wish to proceed?`)) {
     		each_blocks_1[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
     	}
 
-    	let each_value = /*collectionsOrder*/ ctx[0];
+    	let each_value = /*collectionsOrder*/ ctx[1];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -25692,7 +25700,7 @@ Do you wish to proceed?`)) {
     			tr = element("tr");
     			th0 = element("th");
     			span0 = element("span");
-    			t3 = text(/*labelHeader*/ ctx[2]);
+    			t3 = text(/*labelHeader*/ ctx[3]);
     			t4 = space();
     			th1 = element("th");
     			span1 = element("span");
@@ -25712,35 +25720,35 @@ Do you wish to proceed?`)) {
     			set_style(div0, "width", "100%");
     			set_style(div0, "text-align", "center");
     			set_style(div0, "padding", "1em");
-    			add_location(div0, file$8, 80, 2, 3088);
+    			add_location(div0, file$8, 80, 2, 3096);
     			set_style(span0, "color", "#ffffff");
-    			add_location(span0, file$8, 103, 10, 3780);
+    			add_location(span0, file$8, 103, 10, 3788);
     			attr_dev(th0, "role", "columnheader");
     			attr_dev(th0, "scope", "col");
     			set_style(th0, "width", "10%");
     			set_style(th0, "background-color", "#c02123");
-    			add_location(th0, file$8, 98, 8, 3642);
+    			add_location(th0, file$8, 98, 8, 3650);
     			set_style(span1, "color", "#ffffff");
-    			add_location(span1, file$8, 110, 10, 3993);
+    			add_location(span1, file$8, 110, 10, 4001);
     			attr_dev(th1, "role", "columnheader");
     			attr_dev(th1, "scope", "col");
     			set_style(th1, "width", "40%");
     			set_style(th1, "background-color", "#c02123");
-    			add_location(th1, file$8, 105, 8, 3855);
+    			add_location(th1, file$8, 105, 8, 3863);
     			set_style(span2, "color", "#ffffff");
-    			add_location(span2, file$8, 117, 10, 4198);
+    			add_location(span2, file$8, 117, 10, 4206);
     			attr_dev(th2, "role", "columnheader");
     			attr_dev(th2, "scope", "col");
     			set_style(th2, "width", "50%");
     			set_style(th2, "background-color", "#c02123");
-    			add_location(th2, file$8, 112, 8, 4060);
-    			add_location(tr, file$8, 97, 6, 3628);
-    			add_location(thead, file$8, 96, 4, 3613);
-    			add_location(tbody, file$8, 121, 4, 4294);
+    			add_location(th2, file$8, 112, 8, 4068);
+    			add_location(tr, file$8, 97, 6, 3636);
+    			add_location(thead, file$8, 96, 4, 3621);
+    			add_location(tbody, file$8, 121, 4, 4302);
     			attr_dev(table, "class", "ic-Table--hover-row ic-Table ic-Table--striped -ic-Table--condensed");
-    			add_location(table, file$8, 93, 2, 3515);
+    			add_location(table, file$8, 93, 2, 3523);
     			attr_dev(div1, "id", "cc-collections-table");
-    			add_location(div1, file$8, 79, 0, 3053);
+    			add_location(div1, file$8, 79, 0, 3061);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -25776,8 +25784,8 @@ Do you wish to proceed?`)) {
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*collectionsOrder*/ 1) {
-    				each_value_2 = /*collectionsOrder*/ ctx[0];
+    			if (dirty & /*collectionsOrder*/ 2) {
+    				each_value_2 = /*collectionsOrder*/ ctx[1];
     				validate_each_argument(each_value_2);
     				let i;
 
@@ -25800,10 +25808,10 @@ Do you wish to proceed?`)) {
     				each_blocks_1.length = each_value_2.length;
     			}
 
-    			if (dirty & /*labelHeader*/ 4) set_data_dev(t3, /*labelHeader*/ ctx[2]);
+    			if (dirty & /*labelHeader*/ 8) set_data_dev(t3, /*labelHeader*/ ctx[3]);
 
-    			if (dirty & /*modulesObj, collectionsOrder, $collectionsStore, $configStore, getModuleUrl, deLabelModuleName*/ 27) {
-    				each_value = /*collectionsOrder*/ ctx[0];
+    			if (dirty & /*modulesObj, collectionsOrder, $collectionsStore, claytons, $configStore, getModuleUrl, deLabelModuleName*/ 55) {
+    				each_value = /*collectionsOrder*/ ctx[1];
     				validate_each_argument(each_value);
     				let i;
 
@@ -25850,9 +25858,9 @@ Do you wish to proceed?`)) {
     	let $collectionsStore;
     	let $configStore;
     	validate_store(collectionsStore, 'collectionsStore');
-    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(1, $collectionsStore = $$value));
+    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(2, $collectionsStore = $$value));
     	validate_store(configStore, 'configStore');
-    	component_subscribe($$self, configStore, $$value => $$invalidate(4, $configStore = $$value));
+    	component_subscribe($$self, configStore, $$value => $$invalidate(5, $configStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('CollectionsTable', slots, []);
     	let { collection } = $$props;
@@ -25900,7 +25908,7 @@ Do you wish to proceed?`)) {
      * @description Return an object that contains all modules organised into
      * the following attributes
      * - unallocated - all modules not allocated to a collection
-     * - <collectionName> - one attribute for each collection with all the modules for that collection
+     * - <collectionNam/No ce> - one attribute for each collection with all the modules for that collection
      *
      */
     	function getCollectionsTableModules() {
@@ -25936,7 +25944,7 @@ Do you wish to proceed?`)) {
 
     	$$self.$$set = $$props => {
     		if ('collection' in $$props) $$invalidate(6, collection = $$props.collection);
-    		if ('claytons' in $$props) $$invalidate(5, claytons = $$props.claytons);
+    		if ('claytons' in $$props) $$invalidate(0, claytons = $$props.claytons);
     	};
 
     	$$self.$capture_state = () => ({
@@ -25959,10 +25967,10 @@ Do you wish to proceed?`)) {
 
     	$$self.$inject_state = $$props => {
     		if ('collection' in $$props) $$invalidate(6, collection = $$props.collection);
-    		if ('claytons' in $$props) $$invalidate(5, claytons = $$props.claytons);
-    		if ('labelHeader' in $$props) $$invalidate(2, labelHeader = $$props.labelHeader);
-    		if ('modulesObj' in $$props) $$invalidate(3, modulesObj = $$props.modulesObj);
-    		if ('collectionsOrder' in $$props) $$invalidate(0, collectionsOrder = $$props.collectionsOrder);
+    		if ('claytons' in $$props) $$invalidate(0, claytons = $$props.claytons);
+    		if ('labelHeader' in $$props) $$invalidate(3, labelHeader = $$props.labelHeader);
+    		if ('modulesObj' in $$props) $$invalidate(4, modulesObj = $$props.modulesObj);
+    		if ('collectionsOrder' in $$props) $$invalidate(1, collectionsOrder = $$props.collectionsOrder);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -25970,12 +25978,12 @@ Do you wish to proceed?`)) {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*$collectionsStore, collectionsOrder*/ 3) {
+    		if ($$self.$$.dirty & /*$collectionsStore, collectionsOrder*/ 6) {
     			{
-    				// todo get all the modules, probably change way this function works
-    				$$invalidate(3, modulesObj = getCollectionsTableModules());
+    				// get object attributes set to collection names, including unallocated
+    				$$invalidate(4, modulesObj = getCollectionsTableModules());
 
-    				$$invalidate(0, collectionsOrder = ["unallocated"]);
+    				$$invalidate(1, collectionsOrder = ["unallocated"]);
 
     				// add all the unhidden collections to the order
     				$collectionsStore["COLLECTIONS_ORDER"].forEach(collectionName => {
@@ -25984,18 +25992,18 @@ Do you wish to proceed?`)) {
     					}
     				});
 
-    				$$invalidate(2, labelHeader = getMostUsedLabel());
+    				$$invalidate(3, labelHeader = getMostUsedLabel());
     			}
     		}
     	};
 
     	return [
+    		claytons,
     		collectionsOrder,
     		$collectionsStore,
     		labelHeader,
     		modulesObj,
     		$configStore,
-    		claytons,
     		collection
     	];
     }
@@ -26003,7 +26011,7 @@ Do you wish to proceed?`)) {
     class CollectionsTable extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$a, create_fragment$a, safe_not_equal, { collection: 6, claytons: 5 });
+    		init(this, options, instance$a, create_fragment$a, safe_not_equal, { collection: 6, claytons: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,

@@ -37,7 +37,7 @@
   let collectionsOrder = [];
 
   $: {
-    // todo get all the modules, probably change way this function works
+    // get object attributes set to collection names, including unallocated
     modulesObj = getCollectionsTableModules();
     collectionsOrder = ["unallocated"];
     // add all the unhidden collections to the order
@@ -86,7 +86,7 @@
    * @description Return an object that contains all modules organised into
    * the following attributes
    * - unallocated - all modules not allocated to a collection
-   * - <collectionName> - one attribute for each collection with all the modules for that collection
+   * - <collectionNam/No ce> - one attribute for each collection with all the modules for that collection
    *
    */
   function getCollectionsTableModules(): object {
@@ -181,10 +181,10 @@
             </td>
             <td role="cell" style="vertical-align:top; padding: 0.5rem;">
               <div style="margin:0;">
-                {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
+                {#if !claytons && $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
                   <div class="cc-published">Unpublished</div>
                 {/if}
-                {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection !== collectionName}
+                {#if !claytons && $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection !== collectionName}
                   <div class="cc-unallocated">No collection allocated</div>
                 {/if}
                 <p>

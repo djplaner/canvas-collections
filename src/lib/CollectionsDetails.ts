@@ -43,9 +43,12 @@ export class CollectionsDetails {
   private baseApiUrl: string;
   private finishedCallBack: Function;
 
+  private configStore: any;
+
   constructor(finishedCallBack: Function, config: object) {
     this.finishedCallBack = finishedCallBack;
     this.config = config;
+    this.configStore = get(configStore);
 
     this.collectionsPageResponse = null;
     this.collections = null;
@@ -424,9 +427,7 @@ export class CollectionsDetails {
         // successful
         debug(`saveCollections response = `);
         debug(data);
-        let localConfig = get(configStore);
-        localConfig["needToSaveCollections"] = false;
-        configStore.set(localConfig);
+        this.configStore["needToSaveCollections"] = false;
       });
     }
   }
@@ -630,6 +631,7 @@ export class CollectionsDetails {
    * - if module name (and...?) has changed in Canvas, update Collections
    * - for students, set all Collections modules to published to ensure
    *   Collections represents them correctly
+   * - remove modules from collection if the Canvas no canvas module with that id
    */
   addCanvasModuleData(canvasModules: [], editMode) {
     let collectionsModules = this["collections"]["MODULES"];
@@ -655,18 +657,26 @@ export class CollectionsDetails {
       });
     }
 
-    // if we're not in edit mode, add published==true to all modules
-    // - this is because students only ever can see published modules
-    // extract the ids from the canvasData
-    if (!editMode) {
-      const canvasModuleIds = canvasModules.map((module) => module.id);
-      // loop through all the Collections modules
-      Object.keys(collectionsModules).forEach(moduleId=> {
-        // if moduleId is in canvasModulesIds, set published to true
+    // Loop through all the collections modules checking against canvas module id
+    // - if in !editMode set canvas published to true if canvas module exists
+    // - otherwise if canvas module doesn't exist, remove that entry from collections
+
+    const canvasModuleIds = canvasModules.map((module) => module.id);
+    let changeMade = false;
+    for (const moduleId in collectionsModules) {
+      if (!editMode) {
         if (canvasModuleIds.includes(parseInt(moduleId))) {
           collectionsModules[moduleId].published = true;
         }
-      });
+      } else {
+        if (!canvasModuleIds.includes(parseInt(moduleId))) {
+          delete collectionsModules[moduleId];
+          changeMade = true;
+        }
+      }
+    }
+    if (changeMade) {
+      this.configStore["needToSaveCollections"] = true;
     }
   }
 

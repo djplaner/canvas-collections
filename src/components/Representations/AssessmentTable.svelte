@@ -82,14 +82,14 @@
           <th
             role="columnheader"
             scope="col"
-            style="background-color: #e03e2d;"
+            style="background-color: #c02123;"
           >
             <span style="color: #ffffff;">Title</span></th
           >
           <th
             role="columnheader"
             scope="col"
-            style="background-color: #e03e2d; width: 20rem;"
+            style="background-color: #c02123; width: 20rem;"
           >
             <span style="color: #ffffff;">Description</span></th
           >
@@ -97,7 +97,7 @@
             <th
               role="columnheader"
               scope="col"
-              style="background-color: #e03e2d;"
+              style="background-color: #c02123;"
             >
               <span style="color: #ffffff;">Weighting</span></th
             >
@@ -105,7 +105,7 @@
           <th
             role="columnheader"
             scope="col"
-            style="background-color: #e03e2d;"
+            style="background-color: #c02123;"
           >
             <span style="color: #ffffff;">Due Date</span></th
           >
@@ -113,7 +113,7 @@
             <th
               role="columnheader"
               scope="col"
-              style="background-color: #e03e2d;"
+              style="background-color: #c02123;"
             >
               <span style="color: #ffffff;">Learning Outcomes</span></th
             >
@@ -469,7 +469,7 @@
   }
 
   .cc-unallocated {
-    background-color: #e03e2d;
+    background-color: #c02123;
     color: white;
     font-size: x-small;
     font-weight: bold;
