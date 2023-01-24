@@ -13462,7 +13462,7 @@ var app = (function () {
             if (!editMode) {
                 const canvasModuleIds = canvasModules.map((module) => module.id);
                 // loop through all the Collections modules
-                collectionsModules.forEach(moduleId => {
+                Object.keys(collectionsModules).forEach(moduleId => {
                     // if moduleId is in canvasModulesIds, set published to true
                     if (canvasModuleIds.includes(parseInt(moduleId))) {
                         collectionsModules[moduleId].published = true;
@@ -20475,9 +20475,9 @@ Do you wish to proceed?`)) {
     	let t4;
     	let if_block0 = /*date*/ ctx[0]["label"] && create_if_block_17(ctx);
     	let if_block1 = (/*date*/ ctx[0]["week"] || /*date*/ ctx[0]["to"]["week"]) && create_if_block_14(ctx);
-    	let if_block2 = (/*date*/ ctx[0]["time"] || /*date*/ ctx[0]["to"]["time"]) && create_if_block_11$1(ctx);
-    	let if_block3 = (/*date*/ ctx[0]["day"] || /*date*/ ctx[0]["to"]["day"]) && create_if_block_8$1(ctx);
-    	let if_block4 = (/*date*/ ctx[0]["month"] || /*date*/ ctx[0]["to"]["month"]) && create_if_block_5$1(ctx);
+    	let if_block2 = (/*date*/ ctx[0]["time"] || /*date*/ ctx[0]["to"]["time"]) && create_if_block_11$2(ctx);
+    	let if_block3 = (/*date*/ ctx[0]["day"] || /*date*/ ctx[0]["to"]["day"]) && create_if_block_8$2(ctx);
+    	let if_block4 = (/*date*/ ctx[0]["month"] || /*date*/ ctx[0]["to"]["month"]) && create_if_block_5$2(ctx);
     	let if_block5 = (/*date*/ ctx[0]["date"] || /*date*/ ctx[0]["to"]["date"]) && create_if_block_2$6(ctx);
 
     	const block = {
@@ -20542,7 +20542,7 @@ Do you wish to proceed?`)) {
     				if (if_block2) {
     					if_block2.p(ctx, dirty);
     				} else {
-    					if_block2 = create_if_block_11$1(ctx);
+    					if_block2 = create_if_block_11$2(ctx);
     					if_block2.c();
     					if_block2.m(div, t2);
     				}
@@ -20555,7 +20555,7 @@ Do you wish to proceed?`)) {
     				if (if_block3) {
     					if_block3.p(ctx, dirty);
     				} else {
-    					if_block3 = create_if_block_8$1(ctx);
+    					if_block3 = create_if_block_8$2(ctx);
     					if_block3.c();
     					if_block3.m(div, t3);
     				}
@@ -20568,7 +20568,7 @@ Do you wish to proceed?`)) {
     				if (if_block4) {
     					if_block4.p(ctx, dirty);
     				} else {
-    					if_block4 = create_if_block_5$1(ctx);
+    					if_block4 = create_if_block_5$2(ctx);
     					if_block4.c();
     					if_block4.m(div, t4);
     				}
@@ -21037,13 +21037,13 @@ Do you wish to proceed?`)) {
     }
 
     // (99:6) {#if date["time"] || date["to"]["time"]}
-    function create_if_block_11$1(ctx) {
+    function create_if_block_11$2(ctx) {
     	let div2;
     	let div0;
     	let t;
     	let div1;
     	let if_block0 = /*date*/ ctx[0]["time"] && create_if_block_13$1(ctx);
-    	let if_block1 = /*date*/ ctx[0]["to"]["time"] && create_if_block_12$1(ctx);
+    	let if_block1 = /*date*/ ctx[0]["to"]["time"] && create_if_block_12$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -21086,7 +21086,7 @@ Do you wish to proceed?`)) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
-    					if_block1 = create_if_block_12$1(ctx);
+    					if_block1 = create_if_block_12$2(ctx);
     					if_block1.c();
     					if_block1.m(div1, null);
     				}
@@ -21104,7 +21104,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_11$1.name,
+    		id: create_if_block_11$2.name,
     		type: "if",
     		source: "(99:6) {#if date[\\\"time\\\"] || date[\\\"to\\\"][\\\"time\\\"]}",
     		ctx
@@ -21145,7 +21145,7 @@ Do you wish to proceed?`)) {
     }
 
     // (107:12) {#if date["to"]["time"]}
-    function create_if_block_12$1(ctx) {
+    function create_if_block_12$2(ctx) {
     	let t_value = /*date*/ ctx[0]["to"]["time"] + "";
     	let t;
 
@@ -21166,7 +21166,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_12$1.name,
+    		id: create_if_block_12$2.name,
     		type: "if",
     		source: "(107:12) {#if date[\\\"to\\\"][\\\"time\\\"]}",
     		ctx
@@ -21176,13 +21176,13 @@ Do you wish to proceed?`)) {
     }
 
     // (113:6) {#if date["day"] || date["to"]["day"]}
-    function create_if_block_8$1(ctx) {
+    function create_if_block_8$2(ctx) {
     	let div2;
     	let div0;
     	let t;
     	let div1;
-    	let if_block0 = /*date*/ ctx[0]["day"] && create_if_block_10$1(ctx);
-    	let if_block1 = /*date*/ ctx[0]["to"]["day"] && create_if_block_9$1(ctx);
+    	let if_block0 = /*date*/ ctx[0]["day"] && create_if_block_10$2(ctx);
+    	let if_block1 = /*date*/ ctx[0]["to"]["day"] && create_if_block_9$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -21212,7 +21212,7 @@ Do you wish to proceed?`)) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
-    					if_block0 = create_if_block_10$1(ctx);
+    					if_block0 = create_if_block_10$2(ctx);
     					if_block0.c();
     					if_block0.m(div0, null);
     				}
@@ -21225,7 +21225,7 @@ Do you wish to proceed?`)) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
-    					if_block1 = create_if_block_9$1(ctx);
+    					if_block1 = create_if_block_9$2(ctx);
     					if_block1.c();
     					if_block1.m(div1, null);
     				}
@@ -21243,7 +21243,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_8$1.name,
+    		id: create_if_block_8$2.name,
     		type: "if",
     		source: "(113:6) {#if date[\\\"day\\\"] || date[\\\"to\\\"][\\\"day\\\"]}",
     		ctx
@@ -21253,7 +21253,7 @@ Do you wish to proceed?`)) {
     }
 
     // (116:12) {#if date["day"]}
-    function create_if_block_10$1(ctx) {
+    function create_if_block_10$2(ctx) {
     	let t_value = /*date*/ ctx[0]["day"].substring(0, 3) + "";
     	let t;
 
@@ -21274,7 +21274,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_10$1.name,
+    		id: create_if_block_10$2.name,
     		type: "if",
     		source: "(116:12) {#if date[\\\"day\\\"]}",
     		ctx
@@ -21284,7 +21284,7 @@ Do you wish to proceed?`)) {
     }
 
     // (121:12) {#if date["to"]["day"]}
-    function create_if_block_9$1(ctx) {
+    function create_if_block_9$2(ctx) {
     	let t_value = /*date*/ ctx[0]["to"]["day"].substring(0, 3) + "";
     	let t;
 
@@ -21305,7 +21305,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_9$1.name,
+    		id: create_if_block_9$2.name,
     		type: "if",
     		source: "(121:12) {#if date[\\\"to\\\"][\\\"day\\\"]}",
     		ctx
@@ -21315,13 +21315,13 @@ Do you wish to proceed?`)) {
     }
 
     // (127:6) {#if date["month"] || date["to"]["month"]}
-    function create_if_block_5$1(ctx) {
+    function create_if_block_5$2(ctx) {
     	let div2;
     	let div0;
     	let t;
     	let div1;
-    	let if_block0 = /*date*/ ctx[0]["month"] && create_if_block_7$1(ctx);
-    	let if_block1 = /*date*/ ctx[0]["to"]["month"] && create_if_block_6$1(ctx);
+    	let if_block0 = /*date*/ ctx[0]["month"] && create_if_block_7$2(ctx);
+    	let if_block1 = /*date*/ ctx[0]["to"]["month"] && create_if_block_6$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -21351,7 +21351,7 @@ Do you wish to proceed?`)) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
-    					if_block0 = create_if_block_7$1(ctx);
+    					if_block0 = create_if_block_7$2(ctx);
     					if_block0.c();
     					if_block0.m(div0, null);
     				}
@@ -21364,7 +21364,7 @@ Do you wish to proceed?`)) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
-    					if_block1 = create_if_block_6$1(ctx);
+    					if_block1 = create_if_block_6$2(ctx);
     					if_block1.c();
     					if_block1.m(div1, null);
     				}
@@ -21382,7 +21382,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_5$1.name,
+    		id: create_if_block_5$2.name,
     		type: "if",
     		source: "(127:6) {#if date[\\\"month\\\"] || date[\\\"to\\\"][\\\"month\\\"]}",
     		ctx
@@ -21392,7 +21392,7 @@ Do you wish to proceed?`)) {
     }
 
     // (130:12) {#if date["month"]}
-    function create_if_block_7$1(ctx) {
+    function create_if_block_7$2(ctx) {
     	let t_value = /*date*/ ctx[0]["month"] + "";
     	let t;
 
@@ -21413,7 +21413,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_7$1.name,
+    		id: create_if_block_7$2.name,
     		type: "if",
     		source: "(130:12) {#if date[\\\"month\\\"]}",
     		ctx
@@ -21423,7 +21423,7 @@ Do you wish to proceed?`)) {
     }
 
     // (135:12) {#if date["to"]["month"]}
-    function create_if_block_6$1(ctx) {
+    function create_if_block_6$2(ctx) {
     	let t_value = /*date*/ ctx[0]["to"]["month"] + "";
     	let t;
 
@@ -21444,7 +21444,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_6$1.name,
+    		id: create_if_block_6$2.name,
     		type: "if",
     		source: "(135:12) {#if date[\\\"to\\\"][\\\"month\\\"]}",
     		ctx
@@ -22034,12 +22034,12 @@ Do you wish to proceed?`)) {
     }
 
     // (217:14) {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
-    function create_if_block_11(ctx) {
+    function create_if_block_11$1(ctx) {
     	let div;
     	let span;
 
     	function select_block_type_3(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyiText) return create_if_block_12;
+    		if (/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyiText) return create_if_block_12$1;
     		return create_else_block_3;
     	}
 
@@ -22082,7 +22082,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_11.name,
+    		id: create_if_block_11$1.name,
     		type: "if",
     		source: "(217:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyi && $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText !== \\\"\\\"}",
     		ctx
@@ -22120,7 +22120,7 @@ Do you wish to proceed?`)) {
     }
 
     // (220:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
-    function create_if_block_12(ctx) {
+    function create_if_block_12$1(ctx) {
     	let html_tag;
     	let raw_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "";
     	let html_anchor;
@@ -22146,7 +22146,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_12.name,
+    		id: create_if_block_12$1.name,
     		type: "if",
     		source: "(220:20) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText}",
     		ctx
@@ -22156,11 +22156,11 @@ Do you wish to proceed?`)) {
     }
 
     // (228:14) {#if !$collectionsStore["MODULES"][theModule.id].published || ($configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection)}
-    function create_if_block_8(ctx) {
+    function create_if_block_8$1(ctx) {
     	let div;
     	let t;
-    	let if_block0 = !/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].published && create_if_block_10(ctx);
-    	let if_block1 = /*$configStore*/ ctx[5]["editMode"] && /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].collection !== /*collection*/ ctx[1] && create_if_block_9(ctx);
+    	let if_block0 = !/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].published && create_if_block_10$1(ctx);
+    	let if_block1 = /*$configStore*/ ctx[5]["editMode"] && /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].collection !== /*collection*/ ctx[1] && create_if_block_9$1(ctx);
 
     	const block = {
     		c: function create() {
@@ -22180,7 +22180,7 @@ Do you wish to proceed?`)) {
     		p: function update(ctx, dirty) {
     			if (!/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].published) {
     				if (if_block0) ; else {
-    					if_block0 = create_if_block_10(ctx);
+    					if_block0 = create_if_block_10$1(ctx);
     					if_block0.c();
     					if_block0.m(div, t);
     				}
@@ -22191,7 +22191,7 @@ Do you wish to proceed?`)) {
 
     			if (/*$configStore*/ ctx[5]["editMode"] && /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].collection !== /*collection*/ ctx[1]) {
     				if (if_block1) ; else {
-    					if_block1 = create_if_block_9(ctx);
+    					if_block1 = create_if_block_9$1(ctx);
     					if_block1.c();
     					if_block1.m(div, null);
     				}
@@ -22209,7 +22209,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_8.name,
+    		id: create_if_block_8$1.name,
     		type: "if",
     		source: "(228:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].published || ($configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][theModule.id].collection !== collection)}",
     		ctx
@@ -22219,7 +22219,7 @@ Do you wish to proceed?`)) {
     }
 
     // (230:18) {#if !$collectionsStore["MODULES"][theModule.id].published}
-    function create_if_block_10(ctx) {
+    function create_if_block_10$1(ctx) {
     	let t;
 
     	const block = {
@@ -22236,7 +22236,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_10.name,
+    		id: create_if_block_10$1.name,
     		type: "if",
     		source: "(230:18) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].published}",
     		ctx
@@ -22246,7 +22246,7 @@ Do you wish to proceed?`)) {
     }
 
     // (233:18) {#if $configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection}
-    function create_if_block_9(ctx) {
+    function create_if_block_9$1(ctx) {
     	let t;
 
     	const block = {
@@ -22263,7 +22263,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_9.name,
+    		id: create_if_block_9$1.name,
     		type: "if",
     		source: "(233:18) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][theModule.id].collection !== collection}",
     		ctx
@@ -22273,7 +22273,7 @@ Do you wish to proceed?`)) {
     }
 
     // (261:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
-    function create_if_block_7(ctx) {
+    function create_if_block_7$1(ctx) {
     	let div1;
     	let div0;
     	let a;
@@ -22321,7 +22321,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_7.name,
+    		id: create_if_block_7$1.name,
     		type: "if",
     		source: "(261:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
@@ -22394,9 +22394,9 @@ Do you wish to proceed?`)) {
     			$$inline: true
     		});
 
-    	let if_block1 = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyi && /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyiText !== "" && create_if_block_11(ctx);
-    	let if_block2 = (!/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].published || /*$configStore*/ ctx[5]["editMode"] && /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].collection !== /*collection*/ ctx[1]) && create_if_block_8(ctx);
-    	let if_block3 = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_7(ctx);
+    	let if_block1 = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyi && /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyiText !== "" && create_if_block_11$1(ctx);
+    	let if_block2 = (!/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].published || /*$configStore*/ ctx[5]["editMode"] && /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].collection !== /*collection*/ ctx[1]) && create_if_block_8$1(ctx);
+    	let if_block3 = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_7$1(ctx);
 
     	const block = {
     		c: function create() {
@@ -22564,7 +22564,7 @@ Do you wish to proceed?`)) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
-    					if_block1 = create_if_block_11(ctx);
+    					if_block1 = create_if_block_11$1(ctx);
     					if_block1.c();
     					if_block1.m(div0, t3);
     				}
@@ -22577,7 +22577,7 @@ Do you wish to proceed?`)) {
     				if (if_block2) {
     					if_block2.p(ctx, dirty);
     				} else {
-    					if_block2 = create_if_block_8(ctx);
+    					if_block2 = create_if_block_8$1(ctx);
     					if_block2.c();
     					if_block2.m(div0, null);
     				}
@@ -22608,7 +22608,7 @@ Do you wish to proceed?`)) {
     				if (if_block3) {
     					if_block3.p(ctx, dirty);
     				} else {
-    					if_block3 = create_if_block_7(ctx);
+    					if_block3 = create_if_block_7$1(ctx);
     					if_block3.c();
     					if_block3.m(div6, t10);
     				}
@@ -22667,7 +22667,7 @@ Do you wish to proceed?`)) {
     }
 
     // (81:14) {#if !$collectionsStore["MODULES"][theModule.id].fyi}
-    function create_if_block_6(ctx) {
+    function create_if_block_6$1(ctx) {
     	let a;
     	let t;
     	let a_href_value;
@@ -22697,7 +22697,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_6.name,
+    		id: create_if_block_6$1.name,
     		type: "if",
     		source: "(81:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
@@ -22712,7 +22712,7 @@ Do you wish to proceed?`)) {
     	let span;
 
     	function select_block_type_1(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyiText) return create_if_block_5;
+    		if (/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyiText) return create_if_block_5$1;
     		return create_else_block_1;
     	}
 
@@ -22800,7 +22800,7 @@ Do you wish to proceed?`)) {
     }
 
     // (108:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
-    function create_if_block_5(ctx) {
+    function create_if_block_5$1(ctx) {
     	let html_tag;
     	let raw_value = /*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "";
     	let html_anchor;
@@ -22826,7 +22826,7 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_5.name,
+    		id: create_if_block_5$1.name,
     		type: "if",
     		source: "(108:20) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText}",
     		ctx
@@ -23042,7 +23042,7 @@ Do you wish to proceed?`)) {
     	let t10;
     	let div8_id_value;
     	let current;
-    	let if_block0 = !/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_6(ctx);
+    	let if_block0 = !/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_6$1(ctx);
     	var switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[3]["MODULES"][/*theModule*/ ctx[8].id].banner];
 
     	function switch_props(ctx) {
@@ -23210,7 +23210,7 @@ Do you wish to proceed?`)) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
-    					if_block0 = create_if_block_6(ctx);
+    					if_block0 = create_if_block_6$1(ctx);
     					if_block0.c();
     					if_block0.m(div0, t0);
     				}
@@ -23685,17 +23685,17 @@ Do you wish to proceed?`)) {
 
     function get_each_context_1$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[5] = list[i];
+    	child_ctx[7] = list[i];
     	return child_ctx;
     }
 
     function get_each_context$5(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[5] = list[i];
+    	child_ctx[7] = list[i];
     	return child_ctx;
     }
 
-    // (137:0) {:else}
+    // (160:0) {:else}
     function create_else_block(ctx) {
     	let div;
     	let table;
@@ -23707,17 +23707,15 @@ Do you wish to proceed?`)) {
     	let th1;
     	let span1;
     	let t3;
+    	let t4;
     	let th2;
     	let span2;
-    	let t5;
-    	let th3;
-    	let span3;
+    	let t6;
     	let t7;
-    	let th4;
-    	let span4;
-    	let t9;
     	let tbody;
-    	let each_value_1 = /*modules*/ ctx[3];
+    	let if_block0 = /*numWeighting*/ ctx[2] > 0 && !/*$configStore*/ ctx[6]["editMode"] && create_if_block_12(ctx);
+    	let if_block1 = /*numLearningOutcomes*/ ctx[3] > 0 && !/*$configStore*/ ctx[6]["editMode"] && create_if_block_11(ctx);
+    	let each_value_1 = /*modules*/ ctx[4];
     	validate_each_argument(each_value_1);
     	let each_blocks = [];
 
@@ -23739,18 +23737,14 @@ Do you wish to proceed?`)) {
     			span1 = element("span");
     			span1.textContent = "Description";
     			t3 = space();
+    			if (if_block0) if_block0.c();
+    			t4 = space();
     			th2 = element("th");
     			span2 = element("span");
-    			span2.textContent = "Weighting";
-    			t5 = space();
-    			th3 = element("th");
-    			span3 = element("span");
-    			span3.textContent = "Due Date";
+    			span2.textContent = "Due Date";
+    			t6 = space();
+    			if (if_block1) if_block1.c();
     			t7 = space();
-    			th4 = element("th");
-    			span4 = element("span");
-    			span4.textContent = "Learning Outcomes";
-    			t9 = space();
     			tbody = element("tbody");
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -23758,49 +23752,37 @@ Do you wish to proceed?`)) {
     			}
 
     			attr_dev(span0, "class", "cc-table-header-text svelte-1fdxa15");
-    			add_location(span0, file$9, 146, 13, 5070);
+    			add_location(span0, file$9, 169, 13, 6177);
     			attr_dev(th0, "role", "columnheader");
     			attr_dev(th0, "scope", "col");
     			attr_dev(th0, "class", "svelte-1fdxa15");
-    			add_location(th0, file$9, 145, 10, 5020);
+    			add_location(th0, file$9, 168, 10, 6127);
     			attr_dev(span1, "class", "cc-table-header-text svelte-1fdxa15");
-    			add_location(span1, file$9, 149, 13, 5196);
+    			add_location(span1, file$9, 172, 13, 6303);
     			attr_dev(th1, "role", "columnheader");
     			attr_dev(th1, "scope", "col");
     			attr_dev(th1, "class", "svelte-1fdxa15");
-    			add_location(th1, file$9, 148, 10, 5146);
+    			add_location(th1, file$9, 171, 10, 6253);
     			attr_dev(span2, "class", "cc-table-header-text svelte-1fdxa15");
-    			add_location(span2, file$9, 152, 13, 5328);
+    			add_location(span2, file$9, 180, 13, 6646);
     			attr_dev(th2, "role", "columnheader");
     			attr_dev(th2, "scope", "col");
     			attr_dev(th2, "class", "svelte-1fdxa15");
-    			add_location(th2, file$9, 151, 10, 5278);
-    			attr_dev(span3, "class", "cc-table-header-text svelte-1fdxa15");
-    			add_location(span3, file$9, 155, 13, 5458);
-    			attr_dev(th3, "role", "columnheader");
-    			attr_dev(th3, "scope", "col");
-    			attr_dev(th3, "class", "svelte-1fdxa15");
-    			add_location(th3, file$9, 154, 10, 5408);
-    			attr_dev(span4, "class", "cc-table-header-text svelte-1fdxa15");
-    			add_location(span4, file$9, 158, 13, 5587);
-    			attr_dev(th4, "role", "columnheader");
-    			attr_dev(th4, "scope", "col");
-    			attr_dev(th4, "class", "svelte-1fdxa15");
-    			add_location(th4, file$9, 157, 10, 5537);
+    			add_location(th2, file$9, 179, 10, 6596);
     			attr_dev(tr, "role", "row");
     			attr_dev(tr, "class", "svelte-1fdxa15");
-    			add_location(tr, file$9, 144, 8, 4993);
+    			add_location(tr, file$9, 167, 8, 6100);
     			attr_dev(thead, "role", "rowgroup");
     			attr_dev(thead, "class", "svelte-1fdxa15");
-    			add_location(thead, file$9, 143, 6, 4960);
+    			add_location(thead, file$9, 166, 6, 6067);
     			attr_dev(tbody, "class", "svelte-1fdxa15");
-    			add_location(tbody, file$9, 162, 6, 5702);
+    			add_location(tbody, file$9, 189, 6, 6978);
     			attr_dev(table, "class", "cc-responsive-table svelte-1fdxa15");
     			attr_dev(table, "role", "table");
-    			add_location(table, file$9, 141, 4, 4868);
+    			add_location(table, file$9, 164, 4, 5975);
     			attr_dev(div, "id", "cc-assessment-table");
     			attr_dev(div, "class", "cc-assessment-container cc-representation svelte-1fdxa15");
-    			add_location(div, file$9, 137, 2, 4768);
+    			add_location(div, file$9, 160, 2, 5875);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -23813,15 +23795,13 @@ Do you wish to proceed?`)) {
     			append_dev(tr, th1);
     			append_dev(th1, span1);
     			append_dev(tr, t3);
+    			if (if_block0) if_block0.m(tr, null);
+    			append_dev(tr, t4);
     			append_dev(tr, th2);
     			append_dev(th2, span2);
-    			append_dev(tr, t5);
-    			append_dev(tr, th3);
-    			append_dev(th3, span3);
-    			append_dev(tr, t7);
-    			append_dev(tr, th4);
-    			append_dev(th4, span4);
-    			append_dev(table, t9);
+    			append_dev(tr, t6);
+    			if (if_block1) if_block1.m(tr, null);
+    			append_dev(table, t7);
     			append_dev(table, tbody);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -23829,8 +23809,30 @@ Do you wish to proceed?`)) {
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*checkModuleMetaData, $collectionsStore, modules, $configStore, generateModuleDate, collection, getModuleUrl*/ 30) {
-    				each_value_1 = /*modules*/ ctx[3];
+    			if (/*numWeighting*/ ctx[2] > 0 && !/*$configStore*/ ctx[6]["editMode"]) {
+    				if (if_block0) ; else {
+    					if_block0 = create_if_block_12(ctx);
+    					if_block0.c();
+    					if_block0.m(tr, t4);
+    				}
+    			} else if (if_block0) {
+    				if_block0.d(1);
+    				if_block0 = null;
+    			}
+
+    			if (/*numLearningOutcomes*/ ctx[3] > 0 && !/*$configStore*/ ctx[6]["editMode"]) {
+    				if (if_block1) ; else {
+    					if_block1 = create_if_block_11(ctx);
+    					if_block1.c();
+    					if_block1.m(tr, null);
+    				}
+    			} else if (if_block1) {
+    				if_block1.d(1);
+    				if_block1 = null;
+    			}
+
+    			if (dirty & /*checkModuleMetaData, $collectionsStore, modules, $configStore, numLearningOutcomes, generateModuleDate, numWeighting, collection, getModuleUrl*/ 126) {
+    				each_value_1 = /*modules*/ ctx[4];
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -23855,6 +23857,8 @@ Do you wish to proceed?`)) {
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			if (if_block0) if_block0.d();
+    			if (if_block1) if_block1.d();
     			destroy_each(each_blocks, detaching);
     		}
     	};
@@ -23863,14 +23867,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(137:0) {:else}",
+    		source: "(160:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (32:0) {#if claytons}
+    // (47:0) {#if claytons}
     function create_if_block$6(ctx) {
     	let div;
     	let table;
@@ -23882,17 +23886,15 @@ Do you wish to proceed?`)) {
     	let th1;
     	let span1;
     	let t3;
+    	let t4;
     	let th2;
     	let span2;
-    	let t5;
-    	let th3;
-    	let span3;
+    	let t6;
     	let t7;
-    	let th4;
-    	let span4;
-    	let t9;
     	let tbody;
-    	let each_value = /*modules*/ ctx[3];
+    	let if_block0 = /*numWeighting*/ ctx[2] > 0 && create_if_block_6(ctx);
+    	let if_block1 = /*numLearningOutcomes*/ ctx[3] && create_if_block_5(ctx);
+    	let each_value = /*modules*/ ctx[4];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -23914,18 +23916,14 @@ Do you wish to proceed?`)) {
     			span1 = element("span");
     			span1.textContent = "Description";
     			t3 = space();
+    			if (if_block0) if_block0.c();
+    			t4 = space();
     			th2 = element("th");
     			span2 = element("span");
-    			span2.textContent = "Weighting";
-    			t5 = space();
-    			th3 = element("th");
-    			span3 = element("span");
-    			span3.textContent = "Due Date";
+    			span2.textContent = "Due Date";
+    			t6 = space();
+    			if (if_block1) if_block1.c();
     			t7 = space();
-    			th4 = element("th");
-    			span4 = element("span");
-    			span4.textContent = "Learning Outcomes";
-    			t9 = space();
     			tbody = element("tbody");
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -23933,45 +23931,33 @@ Do you wish to proceed?`)) {
     			}
 
     			set_style(span0, "color", "#ffffff");
-    			add_location(span0, file$9, 43, 12, 1504);
+    			add_location(span0, file$9, 58, 12, 2316);
     			attr_dev(th0, "role", "columnheader");
     			attr_dev(th0, "scope", "col");
     			set_style(th0, "background-color", "#e03e2d");
-    			add_location(th0, file$9, 38, 10, 1368);
+    			add_location(th0, file$9, 53, 10, 2180);
     			set_style(span1, "color", "#ffffff");
-    			add_location(span1, file$9, 50, 12, 1725);
+    			add_location(span1, file$9, 65, 12, 2537);
     			attr_dev(th1, "role", "columnheader");
     			attr_dev(th1, "scope", "col");
     			set_style(th1, "background-color", "#e03e2d");
     			set_style(th1, "width", "20rem");
-    			add_location(th1, file$9, 45, 10, 1575);
+    			add_location(th1, file$9, 60, 10, 2387);
     			set_style(span2, "color", "#ffffff");
-    			add_location(span2, file$9, 57, 12, 1938);
+    			add_location(span2, file$9, 81, 12, 3027);
     			attr_dev(th2, "role", "columnheader");
     			attr_dev(th2, "scope", "col");
     			set_style(th2, "background-color", "#e03e2d");
-    			add_location(th2, file$9, 52, 10, 1802);
-    			set_style(span3, "color", "#ffffff");
-    			add_location(span3, file$9, 64, 12, 2149);
-    			attr_dev(th3, "role", "columnheader");
-    			attr_dev(th3, "scope", "col");
-    			set_style(th3, "background-color", "#e03e2d");
-    			add_location(th3, file$9, 59, 10, 2013);
-    			set_style(span4, "color", "#ffffff");
-    			add_location(span4, file$9, 71, 12, 2359);
-    			attr_dev(th4, "role", "columnheader");
-    			attr_dev(th4, "scope", "col");
-    			set_style(th4, "background-color", "#e03e2d");
-    			add_location(th4, file$9, 66, 10, 2223);
-    			add_location(tr, file$9, 37, 8, 1352);
-    			add_location(thead, file$9, 36, 6, 1335);
+    			add_location(th2, file$9, 76, 10, 2891);
+    			add_location(tr, file$9, 52, 8, 2164);
+    			add_location(thead, file$9, 51, 6, 2147);
     			attr_dev(tbody, "class", "svelte-1fdxa15");
-    			add_location(tbody, file$9, 75, 6, 2469);
+    			add_location(tbody, file$9, 94, 6, 3416);
     			attr_dev(table, "class", "ic-Table--hover-row ic-Table ic-Table--striped -ic-Table-condensed");
-    			add_location(table, file$9, 33, 4, 1232);
+    			add_location(table, file$9, 48, 4, 2044);
     			attr_dev(div, "id", "cc-assessment-table");
     			attr_dev(div, "class", "svelte-1fdxa15");
-    			add_location(div, file$9, 32, 2, 1196);
+    			add_location(div, file$9, 47, 2, 2008);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -23984,15 +23970,13 @@ Do you wish to proceed?`)) {
     			append_dev(tr, th1);
     			append_dev(th1, span1);
     			append_dev(tr, t3);
+    			if (if_block0) if_block0.m(tr, null);
+    			append_dev(tr, t4);
     			append_dev(tr, th2);
     			append_dev(th2, span2);
-    			append_dev(tr, t5);
-    			append_dev(tr, th3);
-    			append_dev(th3, span3);
-    			append_dev(tr, t7);
-    			append_dev(tr, th4);
-    			append_dev(th4, span4);
-    			append_dev(table, t9);
+    			append_dev(tr, t6);
+    			if (if_block1) if_block1.m(tr, null);
+    			append_dev(table, t7);
     			append_dev(table, tbody);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -24000,8 +23984,30 @@ Do you wish to proceed?`)) {
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*checkModuleMetaData, $collectionsStore, modules, $configStore, claytons, generateModuleDate, collection, getModuleUrl*/ 31) {
-    				each_value = /*modules*/ ctx[3];
+    			if (/*numWeighting*/ ctx[2] > 0) {
+    				if (if_block0) ; else {
+    					if_block0 = create_if_block_6(ctx);
+    					if_block0.c();
+    					if_block0.m(tr, t4);
+    				}
+    			} else if (if_block0) {
+    				if_block0.d(1);
+    				if_block0 = null;
+    			}
+
+    			if (/*numLearningOutcomes*/ ctx[3]) {
+    				if (if_block1) ; else {
+    					if_block1 = create_if_block_5(ctx);
+    					if_block1.c();
+    					if_block1.m(tr, null);
+    				}
+    			} else if (if_block1) {
+    				if_block1.d(1);
+    				if_block1 = null;
+    			}
+
+    			if (dirty & /*checkModuleMetaData, $collectionsStore, modules, $configStore, claytons, numLearningOutcomes, generateModuleDate, numWeighting, collection, getModuleUrl*/ 127) {
+    				each_value = /*modules*/ ctx[4];
     				validate_each_argument(each_value);
     				let i;
 
@@ -24026,6 +24032,8 @@ Do you wish to proceed?`)) {
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			if (if_block0) if_block0.d();
+    			if (if_block1) if_block1.d();
     			destroy_each(each_blocks, detaching);
     		}
     	};
@@ -24034,15 +24042,89 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block$6.name,
     		type: "if",
-    		source: "(32:0) {#if claytons}",
+    		source: "(47:0) {#if claytons}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (183:14) {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
-    function create_if_block_4$2(ctx) {
+    // (175:10) {#if numWeighting > 0 && !$configStore["editMode"] }
+    function create_if_block_12(ctx) {
+    	let th;
+    	let span;
+
+    	const block = {
+    		c: function create() {
+    			th = element("th");
+    			span = element("span");
+    			span.textContent = "Weighting";
+    			attr_dev(span, "class", "cc-table-header-text svelte-1fdxa15");
+    			add_location(span, file$9, 176, 13, 6499);
+    			attr_dev(th, "role", "columnheader");
+    			attr_dev(th, "scope", "col");
+    			attr_dev(th, "class", "svelte-1fdxa15");
+    			add_location(th, file$9, 175, 10, 6449);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, th, anchor);
+    			append_dev(th, span);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(th);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_12.name,
+    		type: "if",
+    		source: "(175:10) {#if numWeighting > 0 && !$configStore[\\\"editMode\\\"] }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (183:10) {#if numLearningOutcomes > 0 && !$configStore["editMode"] }
+    function create_if_block_11(ctx) {
+    	let th;
+    	let span;
+
+    	const block = {
+    		c: function create() {
+    			th = element("th");
+    			span = element("span");
+    			span.textContent = "Learning Outcomes";
+    			attr_dev(span, "class", "cc-table-header-text svelte-1fdxa15");
+    			add_location(span, file$9, 184, 13, 6846);
+    			attr_dev(th, "role", "columnheader");
+    			attr_dev(th, "scope", "col");
+    			attr_dev(th, "class", "svelte-1fdxa15");
+    			add_location(th, file$9, 183, 10, 6796);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, th, anchor);
+    			append_dev(th, span);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(th);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_11.name,
+    		type: "if",
+    		source: "(183:10) {#if numLearningOutcomes > 0 && !$configStore[\\\"editMode\\\"] }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (210:14) {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
+    function create_if_block_10(ctx) {
     	let div;
 
     	const block = {
@@ -24050,7 +24132,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			div.textContent = "Unpublished";
     			attr_dev(div, "class", "cc-published svelte-1fdxa15");
-    			add_location(div, file$9, 183, 16, 6567);
+    			add_location(div, file$9, 210, 16, 7843);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -24062,17 +24144,17 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_4$2.name,
+    		id: create_if_block_10.name,
     		type: "if",
-    		source: "(183:14) {#if $configStore[\\\"editMode\\\"] && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
+    		source: "(210:14) {#if $configStore[\\\"editMode\\\"] && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (186:14) {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection !== collection}
-    function create_if_block_3$3(ctx) {
+    // (213:14) {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection !== collection}
+    function create_if_block_9(ctx) {
     	let div;
 
     	const block = {
@@ -24080,7 +24162,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			div.textContent = "No collection allocated";
     			attr_dev(div, "class", "cc-unallocated svelte-1fdxa15");
-    			add_location(div, file$9, 186, 16, 6764);
+    			add_location(div, file$9, 213, 16, 8040);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -24092,16 +24174,130 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_3$3.name,
+    		id: create_if_block_9.name,
     		type: "if",
-    		source: "(186:14) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collection}",
+    		source: "(213:14) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collection}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (164:8) {#each modules as module}
+    // (222:10) {#if numWeighting > 0 && ! $configStore["editMode"] }
+    function create_if_block_8(ctx) {
+    	let td;
+    	let span;
+    	let t1;
+    	let div;
+    	let p;
+    	let t2_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "weighting", /*$configStore*/ ctx[6]["editMode"]) + "";
+    	let t2;
+
+    	const block = {
+    		c: function create() {
+    			td = element("td");
+    			span = element("span");
+    			span.textContent = "Weighting";
+    			t1 = space();
+    			div = element("div");
+    			p = element("p");
+    			t2 = text(t2_value);
+    			attr_dev(span, "class", "cc-responsive-table__heading svelte-1fdxa15");
+    			attr_dev(span, "aria-hidden", "true");
+    			add_location(span, file$9, 223, 14, 8440);
+    			attr_dev(p, "class", "svelte-1fdxa15");
+    			add_location(p, file$9, 227, 16, 8618);
+    			attr_dev(div, "class", "cc-table-cell-text svelte-1fdxa15");
+    			add_location(div, file$9, 226, 14, 8568);
+    			attr_dev(td, "role", "cell");
+    			attr_dev(td, "class", "svelte-1fdxa15");
+    			add_location(td, file$9, 222, 12, 8408);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, td, anchor);
+    			append_dev(td, span);
+    			append_dev(td, t1);
+    			append_dev(td, div);
+    			append_dev(div, p);
+    			append_dev(p, t2);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$collectionsStore, modules, $configStore*/ 112 && t2_value !== (t2_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "weighting", /*$configStore*/ ctx[6]["editMode"]) + "")) set_data_dev(t2, t2_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(td);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_8.name,
+    		type: "if",
+    		source: "(222:10) {#if numWeighting > 0 && ! $configStore[\\\"editMode\\\"] }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (248:10) {#if numLearningOutcomes > 0 && !$configStore["editMode"] }
+    function create_if_block_7(ctx) {
+    	let td;
+    	let span;
+    	let t1;
+    	let div;
+    	let p;
+    	let t2_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "learning outcomes", /*$configStore*/ ctx[6]["editMode"]) + "";
+    	let t2;
+
+    	const block = {
+    		c: function create() {
+    			td = element("td");
+    			span = element("span");
+    			span.textContent = "Learning Outcomes";
+    			t1 = space();
+    			div = element("div");
+    			p = element("p");
+    			t2 = text(t2_value);
+    			attr_dev(span, "class", "cc-responsive-table__heading svelte-1fdxa15");
+    			attr_dev(span, "aria-hidden", "true");
+    			add_location(span, file$9, 249, 14, 9395);
+    			attr_dev(p, "class", "svelte-1fdxa15");
+    			add_location(p, file$9, 253, 16, 9581);
+    			attr_dev(div, "class", "cc-table-cell-text svelte-1fdxa15");
+    			add_location(div, file$9, 252, 14, 9531);
+    			attr_dev(td, "role", "cell");
+    			attr_dev(td, "class", "svelte-1fdxa15");
+    			add_location(td, file$9, 248, 12, 9363);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, td, anchor);
+    			append_dev(td, span);
+    			append_dev(td, t1);
+    			append_dev(td, div);
+    			append_dev(div, p);
+    			append_dev(p, t2);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$collectionsStore, modules, $configStore*/ 112 && t2_value !== (t2_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "learning outcomes", /*$configStore*/ ctx[6]["editMode"]) + "")) set_data_dev(t2, t2_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(td);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_7.name,
+    		type: "if",
+    		source: "(248:10) {#if numLearningOutcomes > 0 && !$configStore[\\\"editMode\\\"] }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (191:8) {#each modules as module}
     function create_each_block_1$1(ctx) {
     	let tr;
     	let td0;
@@ -24110,7 +24306,7 @@ Do you wish to proceed?`)) {
     	let div0;
     	let p0;
     	let a;
-    	let t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].name + "";
+    	let t2_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].name + "";
     	let t2;
     	let a_href_value;
     	let t3;
@@ -24121,34 +24317,22 @@ Do you wish to proceed?`)) {
     	let t7;
     	let div1;
     	let p1;
-    	let raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].description + "";
+    	let raw_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].description + "";
     	let t8;
+    	let t9;
     	let td2;
     	let span2;
-    	let t10;
+    	let t11;
     	let div2;
     	let p2;
-    	let t11_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "weighting", /*$configStore*/ ctx[4]["editMode"]) + "";
-    	let t11;
+    	let t12_value = generateModuleDate(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id]) + "";
     	let t12;
-    	let td3;
-    	let span3;
+    	let t13;
     	let t14;
-    	let div3;
-    	let p3;
-    	let t15_value = generateModuleDate(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id]) + "";
-    	let t15;
-    	let t16;
-    	let td4;
-    	let span4;
-    	let t18;
-    	let div4;
-    	let p4;
-    	let t19_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "learning outcomes", /*$configStore*/ ctx[4]["editMode"]) + "";
-    	let t19;
-    	let t20;
-    	let if_block0 = /*$configStore*/ ctx[4]["editMode"] && !/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].published && create_if_block_4$2(ctx);
-    	let if_block1 = /*$configStore*/ ctx[4]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].collection !== /*collection*/ ctx[1] && create_if_block_3$3(ctx);
+    	let if_block0 = /*$configStore*/ ctx[6]["editMode"] && !/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].published && create_if_block_10(ctx);
+    	let if_block1 = /*$configStore*/ ctx[6]["editMode"] && /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].collection !== /*collection*/ ctx[1] && create_if_block_9(ctx);
+    	let if_block2 = /*numWeighting*/ ctx[2] > 0 && !/*$configStore*/ ctx[6]["editMode"] && create_if_block_8(ctx);
+    	let if_block3 = /*numLearningOutcomes*/ ctx[3] > 0 && !/*$configStore*/ ctx[6]["editMode"] && create_if_block_7(ctx);
 
     	const block = {
     		c: function create() {
@@ -24173,85 +24357,53 @@ Do you wish to proceed?`)) {
     			div1 = element("div");
     			p1 = element("p");
     			t8 = space();
+    			if (if_block2) if_block2.c();
+    			t9 = space();
     			td2 = element("td");
     			span2 = element("span");
-    			span2.textContent = "Weighting";
-    			t10 = space();
+    			span2.textContent = "Due Date";
+    			t11 = space();
     			div2 = element("div");
     			p2 = element("p");
-    			t11 = text(t11_value);
-    			t12 = space();
-    			td3 = element("td");
-    			span3 = element("span");
-    			span3.textContent = "Due Date";
+    			t12 = text(t12_value);
+    			t13 = space();
+    			if (if_block3) if_block3.c();
     			t14 = space();
-    			div3 = element("div");
-    			p3 = element("p");
-    			t15 = text(t15_value);
-    			t16 = space();
-    			td4 = element("td");
-    			span4 = element("span");
-    			span4.textContent = "Learning Outcomes";
-    			t18 = space();
-    			div4 = element("div");
-    			p4 = element("p");
-    			t19 = text(t19_value);
-    			t20 = space();
     			attr_dev(span0, "class", "cc-responsive-table__heading svelte-1fdxa15");
     			attr_dev(span0, "aria-hidden", "true");
-    			add_location(span0, file$9, 166, 14, 5817);
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*module*/ ctx[5].id));
-    			add_location(a, file$9, 171, 18, 6014);
+    			add_location(span0, file$9, 193, 14, 7093);
+    			attr_dev(a, "href", a_href_value = getModuleUrl(/*module*/ ctx[7].id));
+    			add_location(a, file$9, 198, 18, 7290);
     			attr_dev(p0, "class", "svelte-1fdxa15");
-    			add_location(p0, file$9, 170, 16, 5991);
+    			add_location(p0, file$9, 197, 16, 7267);
     			attr_dev(div0, "class", "cc-table-cell-text svelte-1fdxa15");
-    			add_location(div0, file$9, 169, 14, 5941);
+    			add_location(div0, file$9, 196, 14, 7217);
     			attr_dev(td0, "role", "cell");
     			attr_dev(td0, "class", "svelte-1fdxa15");
-    			add_location(td0, file$9, 165, 12, 5785);
+    			add_location(td0, file$9, 192, 12, 7061);
     			attr_dev(span1, "class", "cc-responsive-table__heading svelte-1fdxa15");
     			attr_dev(span1, "aria-hidden", "true");
-    			add_location(span1, file$9, 179, 14, 6335);
+    			add_location(span1, file$9, 206, 14, 7611);
     			attr_dev(p1, "class", "svelte-1fdxa15");
-    			add_location(p1, file$9, 189, 16, 6908);
+    			add_location(p1, file$9, 216, 16, 8184);
     			attr_dev(div1, "class", "cc-table-cell-text svelte-1fdxa15");
-    			add_location(div1, file$9, 188, 14, 6858);
+    			add_location(div1, file$9, 215, 14, 8134);
     			attr_dev(td1, "role", "cell");
     			attr_dev(td1, "class", "descriptionCell svelte-1fdxa15");
-    			add_location(td1, file$9, 178, 12, 6279);
+    			add_location(td1, file$9, 205, 12, 7555);
     			attr_dev(span2, "class", "cc-responsive-table__heading svelte-1fdxa15");
     			attr_dev(span2, "aria-hidden", "true");
-    			add_location(span2, file$9, 195, 14, 7099);
+    			add_location(span2, file$9, 238, 14, 8954);
     			attr_dev(p2, "class", "svelte-1fdxa15");
-    			add_location(p2, file$9, 199, 16, 7277);
+    			add_location(p2, file$9, 242, 16, 9131);
     			attr_dev(div2, "class", "cc-table-cell-text svelte-1fdxa15");
-    			add_location(div2, file$9, 198, 14, 7227);
+    			add_location(div2, file$9, 241, 14, 9081);
     			attr_dev(td2, "role", "cell");
     			attr_dev(td2, "class", "svelte-1fdxa15");
-    			add_location(td2, file$9, 194, 12, 7067);
-    			attr_dev(span3, "class", "cc-responsive-table__heading svelte-1fdxa15");
-    			attr_dev(span3, "aria-hidden", "true");
-    			add_location(span3, file$9, 209, 14, 7594);
-    			attr_dev(p3, "class", "svelte-1fdxa15");
-    			add_location(p3, file$9, 213, 16, 7771);
-    			attr_dev(div3, "class", "cc-table-cell-text svelte-1fdxa15");
-    			add_location(div3, file$9, 212, 14, 7721);
-    			attr_dev(td3, "role", "cell");
-    			attr_dev(td3, "class", "svelte-1fdxa15");
-    			add_location(td3, file$9, 208, 12, 7562);
-    			attr_dev(span4, "class", "cc-responsive-table__heading svelte-1fdxa15");
-    			attr_dev(span4, "aria-hidden", "true");
-    			add_location(span4, file$9, 219, 14, 7964);
-    			attr_dev(p4, "class", "svelte-1fdxa15");
-    			add_location(p4, file$9, 223, 16, 8150);
-    			attr_dev(div4, "class", "cc-table-cell-text svelte-1fdxa15");
-    			add_location(div4, file$9, 222, 14, 8100);
-    			attr_dev(td4, "role", "cell");
-    			attr_dev(td4, "class", "svelte-1fdxa15");
-    			add_location(td4, file$9, 218, 12, 7932);
+    			add_location(td2, file$9, 237, 12, 8922);
     			attr_dev(tr, "role", "row");
     			attr_dev(tr, "class", "svelte-1fdxa15");
-    			add_location(tr, file$9, 164, 10, 5756);
+    			add_location(tr, file$9, 191, 10, 7032);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -24274,38 +24426,28 @@ Do you wish to proceed?`)) {
     			append_dev(div1, p1);
     			p1.innerHTML = raw_value;
     			append_dev(tr, t8);
+    			if (if_block2) if_block2.m(tr, null);
+    			append_dev(tr, t9);
     			append_dev(tr, td2);
     			append_dev(td2, span2);
-    			append_dev(td2, t10);
+    			append_dev(td2, t11);
     			append_dev(td2, div2);
     			append_dev(div2, p2);
-    			append_dev(p2, t11);
-    			append_dev(tr, t12);
-    			append_dev(tr, td3);
-    			append_dev(td3, span3);
-    			append_dev(td3, t14);
-    			append_dev(td3, div3);
-    			append_dev(div3, p3);
-    			append_dev(p3, t15);
-    			append_dev(tr, t16);
-    			append_dev(tr, td4);
-    			append_dev(td4, span4);
-    			append_dev(td4, t18);
-    			append_dev(td4, div4);
-    			append_dev(div4, p4);
-    			append_dev(p4, t19);
-    			append_dev(tr, t20);
+    			append_dev(p2, t12);
+    			append_dev(tr, t13);
+    			if (if_block3) if_block3.m(tr, null);
+    			append_dev(tr, t14);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 12 && t2_value !== (t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].name + "")) set_data_dev(t2, t2_value);
+    			if (dirty & /*$collectionsStore, modules*/ 48 && t2_value !== (t2_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].name + "")) set_data_dev(t2, t2_value);
 
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*module*/ ctx[5].id))) {
+    			if (dirty & /*modules*/ 16 && a_href_value !== (a_href_value = getModuleUrl(/*module*/ ctx[7].id))) {
     				attr_dev(a, "href", a_href_value);
     			}
 
-    			if (/*$configStore*/ ctx[4]["editMode"] && !/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].published) {
+    			if (/*$configStore*/ ctx[6]["editMode"] && !/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].published) {
     				if (if_block0) ; else {
-    					if_block0 = create_if_block_4$2(ctx);
+    					if_block0 = create_if_block_10(ctx);
     					if_block0.c();
     					if_block0.m(td1, t6);
     				}
@@ -24314,9 +24456,9 @@ Do you wish to proceed?`)) {
     				if_block0 = null;
     			}
 
-    			if (/*$configStore*/ ctx[4]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].collection !== /*collection*/ ctx[1]) {
+    			if (/*$configStore*/ ctx[6]["editMode"] && /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].collection !== /*collection*/ ctx[1]) {
     				if (if_block1) ; else {
-    					if_block1 = create_if_block_3$3(ctx);
+    					if_block1 = create_if_block_9(ctx);
     					if_block1.c();
     					if_block1.m(td1, t7);
     				}
@@ -24325,14 +24467,41 @@ Do you wish to proceed?`)) {
     				if_block1 = null;
     			}
 
-    			if (dirty & /*$collectionsStore, modules*/ 12 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].description + "")) p1.innerHTML = raw_value;			if (dirty & /*$collectionsStore, modules, $configStore*/ 28 && t11_value !== (t11_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "weighting", /*$configStore*/ ctx[4]["editMode"]) + "")) set_data_dev(t11, t11_value);
-    			if (dirty & /*$collectionsStore, modules*/ 12 && t15_value !== (t15_value = generateModuleDate(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id]) + "")) set_data_dev(t15, t15_value);
-    			if (dirty & /*$collectionsStore, modules, $configStore*/ 28 && t19_value !== (t19_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "learning outcomes", /*$configStore*/ ctx[4]["editMode"]) + "")) set_data_dev(t19, t19_value);
+    			if (dirty & /*$collectionsStore, modules*/ 48 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].description + "")) p1.innerHTML = raw_value;
+    			if (/*numWeighting*/ ctx[2] > 0 && !/*$configStore*/ ctx[6]["editMode"]) {
+    				if (if_block2) {
+    					if_block2.p(ctx, dirty);
+    				} else {
+    					if_block2 = create_if_block_8(ctx);
+    					if_block2.c();
+    					if_block2.m(tr, t9);
+    				}
+    			} else if (if_block2) {
+    				if_block2.d(1);
+    				if_block2 = null;
+    			}
+
+    			if (dirty & /*$collectionsStore, modules*/ 48 && t12_value !== (t12_value = generateModuleDate(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id]) + "")) set_data_dev(t12, t12_value);
+
+    			if (/*numLearningOutcomes*/ ctx[3] > 0 && !/*$configStore*/ ctx[6]["editMode"]) {
+    				if (if_block3) {
+    					if_block3.p(ctx, dirty);
+    				} else {
+    					if_block3 = create_if_block_7(ctx);
+    					if_block3.c();
+    					if_block3.m(tr, t14);
+    				}
+    			} else if (if_block3) {
+    				if_block3.d(1);
+    				if_block3 = null;
+    			}
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(tr);
     			if (if_block0) if_block0.d();
     			if (if_block1) if_block1.d();
+    			if (if_block2) if_block2.d();
+    			if (if_block3) if_block3.d();
     		}
     	};
 
@@ -24340,15 +24509,89 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_each_block_1$1.name,
     		type: "each",
-    		source: "(164:8) {#each modules as module}",
+    		source: "(191:8) {#each modules as module}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (89:14) {#if $configStore["editMode"] && ! claytons && !$collectionsStore["MODULES"][module.id].published}
-    function create_if_block_2$4(ctx) {
+    // (68:10) {#if numWeighting > 0 }
+    function create_if_block_6(ctx) {
+    	let th;
+    	let span;
+
+    	const block = {
+    		c: function create() {
+    			th = element("th");
+    			span = element("span");
+    			span.textContent = "Weighting";
+    			set_style(span, "color", "#ffffff");
+    			add_location(span, file$9, 73, 14, 2797);
+    			attr_dev(th, "role", "columnheader");
+    			attr_dev(th, "scope", "col");
+    			set_style(th, "background-color", "#e03e2d");
+    			add_location(th, file$9, 68, 12, 2651);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, th, anchor);
+    			append_dev(th, span);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(th);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_6.name,
+    		type: "if",
+    		source: "(68:10) {#if numWeighting > 0 }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (84:10) {#if numLearningOutcomes }
+    function create_if_block_5(ctx) {
+    	let th;
+    	let span;
+
+    	const block = {
+    		c: function create() {
+    			th = element("th");
+    			span = element("span");
+    			span.textContent = "Learning Outcomes";
+    			set_style(span, "color", "#ffffff");
+    			add_location(span, file$9, 89, 14, 3287);
+    			attr_dev(th, "role", "columnheader");
+    			attr_dev(th, "scope", "col");
+    			set_style(th, "background-color", "#e03e2d");
+    			add_location(th, file$9, 84, 12, 3141);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, th, anchor);
+    			append_dev(th, span);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(th);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_5.name,
+    		type: "if",
+    		source: "(84:10) {#if numLearningOutcomes }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (108:14) {#if $configStore["editMode"] && !claytons && !$collectionsStore["MODULES"][module.id].published}
+    function create_if_block_4$2(ctx) {
     	let div;
 
     	const block = {
@@ -24356,7 +24599,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			div.textContent = "Unpublished";
     			attr_dev(div, "class", "cc-published svelte-1fdxa15");
-    			add_location(div, file$9, 89, 16, 3102);
+    			add_location(div, file$9, 108, 16, 4048);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -24368,17 +24611,17 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$4.name,
+    		id: create_if_block_4$2.name,
     		type: "if",
-    		source: "(89:14) {#if $configStore[\\\"editMode\\\"] && ! claytons && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
+    		source: "(108:14) {#if $configStore[\\\"editMode\\\"] && !claytons && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (92:14) {#if $configStore["editMode"] && ! claytons && $collectionsStore["MODULES"][module.id].collection !== collection}
-    function create_if_block_1$5(ctx) {
+    // (111:14) {#if $configStore["editMode"] && !claytons && $collectionsStore["MODULES"][module.id].collection !== collection}
+    function create_if_block_3$3(ctx) {
     	let div;
 
     	const block = {
@@ -24386,7 +24629,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			div.textContent = "No collection allocated";
     			attr_dev(div, "class", "cc-unallocated svelte-1fdxa15");
-    			add_location(div, file$9, 92, 16, 3313);
+    			add_location(div, file$9, 111, 16, 4258);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -24398,23 +24641,117 @@ Do you wish to proceed?`)) {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$5.name,
+    		id: create_if_block_3$3.name,
     		type: "if",
-    		source: "(92:14) {#if $configStore[\\\"editMode\\\"] && ! claytons && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collection}",
+    		source: "(111:14) {#if $configStore[\\\"editMode\\\"] && !claytons && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collection}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (77:8) {#each modules as module}
+    // (120:12) {#if numWeighting > 0 }
+    function create_if_block_2$4(ctx) {
+    	let td;
+    	let div;
+    	let p;
+    	let t_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "weighting", /*$configStore*/ ctx[6]["editMode"], /*claytons*/ ctx[0]) + "";
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			td = element("td");
+    			div = element("div");
+    			p = element("p");
+    			t = text(t_value);
+    			add_location(p, file$9, 122, 18, 4702);
+    			set_style(div, "margin", "0");
+    			set_style(div, "font-size", "0.8rem");
+    			add_location(div, file$9, 121, 16, 4642);
+    			attr_dev(td, "role", "cell");
+    			attr_dev(td, "class", "svelte-1fdxa15");
+    			add_location(td, file$9, 120, 14, 4608);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, td, anchor);
+    			append_dev(td, div);
+    			append_dev(div, p);
+    			append_dev(p, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$collectionsStore, modules, $configStore, claytons*/ 113 && t_value !== (t_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "weighting", /*$configStore*/ ctx[6]["editMode"], /*claytons*/ ctx[0]) + "")) set_data_dev(t, t_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(td);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2$4.name,
+    		type: "if",
+    		source: "(120:12) {#if numWeighting > 0 }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (141:12) {#if numLearningOutcomes}
+    function create_if_block_1$5(ctx) {
+    	let td;
+    	let div;
+    	let p;
+    	let t_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "learning outcomes", /*$configStore*/ ctx[6]["editMode"], /*claytons*/ ctx[0]) + "";
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			td = element("td");
+    			div = element("div");
+    			p = element("p");
+    			t = text(t_value);
+    			add_location(p, file$9, 143, 18, 5441);
+    			set_style(div, "margin", "0");
+    			set_style(div, "font-size", "0.8rem");
+    			add_location(div, file$9, 142, 16, 5381);
+    			attr_dev(td, "role", "cell");
+    			attr_dev(td, "class", "svelte-1fdxa15");
+    			add_location(td, file$9, 141, 14, 5347);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, td, anchor);
+    			append_dev(td, div);
+    			append_dev(div, p);
+    			append_dev(p, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$collectionsStore, modules, $configStore, claytons*/ 113 && t_value !== (t_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "learning outcomes", /*$configStore*/ ctx[6]["editMode"], /*claytons*/ ctx[0]) + "")) set_data_dev(t, t_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(td);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$5.name,
+    		type: "if",
+    		source: "(141:12) {#if numLearningOutcomes}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (96:8) {#each modules as module}
     function create_each_block$5(ctx) {
     	let tr;
     	let td0;
     	let div0;
     	let p0;
     	let a;
-    	let raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].name + "";
+    	let raw0_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].name + "";
     	let a_href_value;
     	let t0;
     	let td1;
@@ -24422,28 +24759,20 @@ Do you wish to proceed?`)) {
     	let t2;
     	let div1;
     	let p1;
-    	let raw1_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].description + "";
+    	let raw1_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].description + "";
     	let t3;
+    	let t4;
     	let td2;
     	let div2;
     	let p2;
-    	let t4_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "weighting", /*$configStore*/ ctx[4]["editMode"], /*claytons*/ ctx[0]) + "";
-    	let t4;
+    	let t5_value = generateModuleDate(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id]) + "";
     	let t5;
-    	let td3;
-    	let div3;
-    	let p3;
-    	let t6_value = generateModuleDate(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id]) + "";
     	let t6;
     	let t7;
-    	let td4;
-    	let div4;
-    	let p4;
-    	let t8_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "learning outcomes", /*$configStore*/ ctx[4]["editMode"], /*claytons*/ ctx[0]) + "";
-    	let t8;
-    	let t9;
-    	let if_block0 = /*$configStore*/ ctx[4]["editMode"] && !/*claytons*/ ctx[0] && !/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].published && create_if_block_2$4(ctx);
-    	let if_block1 = /*$configStore*/ ctx[4]["editMode"] && !/*claytons*/ ctx[0] && /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].collection !== /*collection*/ ctx[1] && create_if_block_1$5(ctx);
+    	let if_block0 = /*$configStore*/ ctx[6]["editMode"] && !/*claytons*/ ctx[0] && !/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].published && create_if_block_4$2(ctx);
+    	let if_block1 = /*$configStore*/ ctx[6]["editMode"] && !/*claytons*/ ctx[0] && /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].collection !== /*collection*/ ctx[1] && create_if_block_3$3(ctx);
+    	let if_block2 = /*numWeighting*/ ctx[2] > 0 && create_if_block_2$4(ctx);
+    	let if_block3 = /*numLearningOutcomes*/ ctx[3] && create_if_block_1$5(ctx);
 
     	const block = {
     		c: function create() {
@@ -24461,64 +24790,44 @@ Do you wish to proceed?`)) {
     			div1 = element("div");
     			p1 = element("p");
     			t3 = space();
+    			if (if_block2) if_block2.c();
+    			t4 = space();
     			td2 = element("td");
     			div2 = element("div");
     			p2 = element("p");
-    			t4 = text(t4_value);
-    			t5 = space();
-    			td3 = element("td");
-    			div3 = element("div");
-    			p3 = element("p");
-    			t6 = text(t6_value);
+    			t5 = text(t5_value);
+    			t6 = space();
+    			if (if_block3) if_block3.c();
     			t7 = space();
-    			td4 = element("td");
-    			div4 = element("div");
-    			p4 = element("p");
-    			t8 = text(t8_value);
-    			t9 = space();
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*module*/ ctx[5].id));
-    			add_location(a, file$9, 81, 18, 2700);
-    			add_location(p0, file$9, 80, 16, 2677);
+    			attr_dev(a, "href", a_href_value = getModuleUrl(/*module*/ ctx[7].id));
+    			add_location(a, file$9, 100, 18, 3647);
+    			add_location(p0, file$9, 99, 16, 3624);
     			set_style(div0, "margin", "0");
     			set_style(div0, "font-size", "0.8rem");
-    			add_location(div0, file$9, 79, 14, 2619);
+    			add_location(div0, file$9, 98, 14, 3566);
     			attr_dev(td0, "role", "cell");
     			set_style(td0, "display", "table-cell");
     			set_style(td0, "text-align", "left");
     			attr_dev(td0, "class", "svelte-1fdxa15");
-    			add_location(td0, file$9, 78, 12, 2541);
-    			add_location(p1, file$9, 95, 16, 3465);
+    			add_location(td0, file$9, 97, 12, 3488);
+    			add_location(p1, file$9, 114, 16, 4410);
     			set_style(div1, "margin", "0");
     			set_style(div1, "font-size", "0.8rem");
-    			add_location(div1, file$9, 94, 14, 3407);
+    			add_location(div1, file$9, 113, 14, 4352);
     			attr_dev(td1, "role", "cell");
     			set_style(td1, "display", "table-cell");
     			set_style(td1, "text-align", "left");
     			attr_dev(td1, "class", "svelte-1fdxa15");
-    			add_location(td1, file$9, 87, 12, 2909);
-    			add_location(p2, file$9, 102, 16, 3714);
+    			add_location(td1, file$9, 106, 12, 3856);
+    			add_location(p2, file$9, 135, 16, 5145);
     			set_style(div2, "margin", "0");
     			set_style(div2, "font-size", "0.8rem");
-    			add_location(div2, file$9, 101, 14, 3656);
+    			add_location(div2, file$9, 134, 14, 5087);
     			attr_dev(td2, "role", "cell");
     			attr_dev(td2, "class", "svelte-1fdxa15");
-    			add_location(td2, file$9, 100, 12, 3624);
-    			add_location(p3, file$9, 114, 16, 4120);
-    			set_style(div3, "margin", "0");
-    			set_style(div3, "font-size", "0.8rem");
-    			add_location(div3, file$9, 113, 14, 4062);
-    			attr_dev(td3, "role", "cell");
-    			attr_dev(td3, "class", "svelte-1fdxa15");
-    			add_location(td3, file$9, 112, 12, 4030);
-    			add_location(p4, file$9, 121, 16, 4371);
-    			set_style(div4, "margin", "0");
-    			set_style(div4, "font-size", "0.8rem");
-    			add_location(div4, file$9, 120, 14, 4313);
-    			attr_dev(td4, "role", "cell");
-    			attr_dev(td4, "class", "svelte-1fdxa15");
-    			add_location(td4, file$9, 119, 12, 4281);
+    			add_location(td2, file$9, 133, 12, 5055);
     			attr_dev(tr, "class", "svelte-1fdxa15");
-    			add_location(tr, file$9, 77, 10, 2523);
+    			add_location(tr, file$9, 96, 10, 3470);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -24537,31 +24846,25 @@ Do you wish to proceed?`)) {
     			append_dev(div1, p1);
     			p1.innerHTML = raw1_value;
     			append_dev(tr, t3);
+    			if (if_block2) if_block2.m(tr, null);
+    			append_dev(tr, t4);
     			append_dev(tr, td2);
     			append_dev(td2, div2);
     			append_dev(div2, p2);
-    			append_dev(p2, t4);
-    			append_dev(tr, t5);
-    			append_dev(tr, td3);
-    			append_dev(td3, div3);
-    			append_dev(div3, p3);
-    			append_dev(p3, t6);
+    			append_dev(p2, t5);
+    			append_dev(tr, t6);
+    			if (if_block3) if_block3.m(tr, null);
     			append_dev(tr, t7);
-    			append_dev(tr, td4);
-    			append_dev(td4, div4);
-    			append_dev(div4, p4);
-    			append_dev(p4, t8);
-    			append_dev(tr, t9);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 12 && raw0_value !== (raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].name + "")) a.innerHTML = raw0_value;
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*module*/ ctx[5].id))) {
+    			if (dirty & /*$collectionsStore, modules*/ 48 && raw0_value !== (raw0_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].name + "")) a.innerHTML = raw0_value;
+    			if (dirty & /*modules*/ 16 && a_href_value !== (a_href_value = getModuleUrl(/*module*/ ctx[7].id))) {
     				attr_dev(a, "href", a_href_value);
     			}
 
-    			if (/*$configStore*/ ctx[4]["editMode"] && !/*claytons*/ ctx[0] && !/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].published) {
+    			if (/*$configStore*/ ctx[6]["editMode"] && !/*claytons*/ ctx[0] && !/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].published) {
     				if (if_block0) ; else {
-    					if_block0 = create_if_block_2$4(ctx);
+    					if_block0 = create_if_block_4$2(ctx);
     					if_block0.c();
     					if_block0.m(td1, t1);
     				}
@@ -24570,9 +24873,9 @@ Do you wish to proceed?`)) {
     				if_block0 = null;
     			}
 
-    			if (/*$configStore*/ ctx[4]["editMode"] && !/*claytons*/ ctx[0] && /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].collection !== /*collection*/ ctx[1]) {
+    			if (/*$configStore*/ ctx[6]["editMode"] && !/*claytons*/ ctx[0] && /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].collection !== /*collection*/ ctx[1]) {
     				if (if_block1) ; else {
-    					if_block1 = create_if_block_1$5(ctx);
+    					if_block1 = create_if_block_3$3(ctx);
     					if_block1.c();
     					if_block1.m(td1, t2);
     				}
@@ -24581,14 +24884,41 @@ Do you wish to proceed?`)) {
     				if_block1 = null;
     			}
 
-    			if (dirty & /*$collectionsStore, modules*/ 12 && raw1_value !== (raw1_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id].description + "")) p1.innerHTML = raw1_value;			if (dirty & /*$collectionsStore, modules, $configStore, claytons*/ 29 && t4_value !== (t4_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "weighting", /*$configStore*/ ctx[4]["editMode"], /*claytons*/ ctx[0]) + "")) set_data_dev(t4, t4_value);
-    			if (dirty & /*$collectionsStore, modules*/ 12 && t6_value !== (t6_value = generateModuleDate(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id]) + "")) set_data_dev(t6, t6_value);
-    			if (dirty & /*$collectionsStore, modules, $configStore, claytons*/ 29 && t8_value !== (t8_value = checkModuleMetaData(/*$collectionsStore*/ ctx[2]["MODULES"][/*module*/ ctx[5].id], "learning outcomes", /*$configStore*/ ctx[4]["editMode"], /*claytons*/ ctx[0]) + "")) set_data_dev(t8, t8_value);
+    			if (dirty & /*$collectionsStore, modules*/ 48 && raw1_value !== (raw1_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].description + "")) p1.innerHTML = raw1_value;
+    			if (/*numWeighting*/ ctx[2] > 0) {
+    				if (if_block2) {
+    					if_block2.p(ctx, dirty);
+    				} else {
+    					if_block2 = create_if_block_2$4(ctx);
+    					if_block2.c();
+    					if_block2.m(tr, t4);
+    				}
+    			} else if (if_block2) {
+    				if_block2.d(1);
+    				if_block2 = null;
+    			}
+
+    			if (dirty & /*$collectionsStore, modules*/ 48 && t5_value !== (t5_value = generateModuleDate(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id]) + "")) set_data_dev(t5, t5_value);
+
+    			if (/*numLearningOutcomes*/ ctx[3]) {
+    				if (if_block3) {
+    					if_block3.p(ctx, dirty);
+    				} else {
+    					if_block3 = create_if_block_1$5(ctx);
+    					if_block3.c();
+    					if_block3.m(tr, t7);
+    				}
+    			} else if (if_block3) {
+    				if_block3.d(1);
+    				if_block3 = null;
+    			}
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(tr);
     			if (if_block0) if_block0.d();
     			if (if_block1) if_block1.d();
+    			if (if_block2) if_block2.d();
+    			if (if_block3) if_block3.d();
     		}
     	};
 
@@ -24596,7 +24926,7 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_each_block$5.name,
     		type: "each",
-    		source: "(77:8) {#each modules as module}",
+    		source: "(96:8) {#each modules as module}",
     		ctx
     	});
 
@@ -24662,9 +24992,9 @@ Do you wish to proceed?`)) {
     	let $collectionsStore;
     	let $configStore;
     	validate_store(collectionsStore, 'collectionsStore');
-    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(2, $collectionsStore = $$value));
+    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(5, $collectionsStore = $$value));
     	validate_store(configStore, 'configStore');
-    	component_subscribe($$self, configStore, $$value => $$invalidate(4, $configStore = $$value));
+    	component_subscribe($$self, configStore, $$value => $$invalidate(6, $configStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('AssessmentTable', slots, []);
     	let { collection } = $$props;
@@ -24673,6 +25003,9 @@ Do you wish to proceed?`)) {
     	if (!claytons) {
     		claytons = false;
     	}
+
+    	let numWeighting = 0;
+    	let numLearningOutcomes = 0;
 
     	// kludge to test reactive nature
     	// set collection to currentCollection
@@ -24713,6 +25046,8 @@ Do you wish to proceed?`)) {
     		checkModuleMetaData,
     		collection,
     		claytons,
+    		numWeighting,
+    		numLearningOutcomes,
     		modules,
     		$collectionsStore,
     		$configStore
@@ -24721,7 +25056,9 @@ Do you wish to proceed?`)) {
     	$$self.$inject_state = $$props => {
     		if ('collection' in $$props) $$invalidate(1, collection = $$props.collection);
     		if ('claytons' in $$props) $$invalidate(0, claytons = $$props.claytons);
-    		if ('modules' in $$props) $$invalidate(3, modules = $$props.modules);
+    		if ('numWeighting' in $$props) $$invalidate(2, numWeighting = $$props.numWeighting);
+    		if ('numLearningOutcomes' in $$props) $$invalidate(3, numLearningOutcomes = $$props.numLearningOutcomes);
+    		if ('modules' in $$props) $$invalidate(4, modules = $$props.modules);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -24729,14 +25066,33 @@ Do you wish to proceed?`)) {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*collection, claytons, $collectionsStore*/ 7) {
+    		if ($$self.$$.dirty & /*collection, claytons, $collectionsStore, modules, numWeighting, numLearningOutcomes*/ 63) {
     			{
-    				$$invalidate(3, modules = getRepresentationModules(collection, claytons, $collectionsStore["COLLECTIONS"][collection]["unallocated"]));
+    				$$invalidate(4, modules = getRepresentationModules(collection, claytons, $collectionsStore["COLLECTIONS"][collection]["unallocated"]));
+
+    				// count the number of modules that have weighting and learning outcomes
+    				modules.forEach(module => {
+    					if ($collectionsStore["MODULES"][module.id].hasOwnProperty("metadata") && $collectionsStore["MODULES"][module.id]["metadata"].hasOwnProperty("weighting") && $collectionsStore["MODULES"][module.id]["metadata"]["weighting"] !== "") {
+    						$$invalidate(2, numWeighting++, numWeighting);
+    					}
+
+    					if ($collectionsStore["MODULES"][module.id].hasOwnProperty("metadata") && $collectionsStore["MODULES"][module.id]["metadata"].hasOwnProperty("learning outcomes") && $collectionsStore["MODULES"][module.id]["metadata"]["learning outcomes"] !== "") {
+    						$$invalidate(3, numLearningOutcomes++, numLearningOutcomes);
+    					}
+    				});
     			}
     		}
     	};
 
-    	return [claytons, collection, $collectionsStore, modules, $configStore];
+    	return [
+    		claytons,
+    		collection,
+    		numWeighting,
+    		numLearningOutcomes,
+    		modules,
+    		$collectionsStore,
+    		$configStore
+    	];
     }
 
     class AssessmentTable extends SvelteComponentDev {
@@ -27631,7 +27987,7 @@ Do you wish to proceed?`)) {
     	return block;
     }
 
-    // (520:4) {#if !includePageExists[collectionName] && includePageName[collectionName]}
+    // (519:4) {#if !includePageExists[collectionName] && includePageName[collectionName]}
     function create_if_block_1$1(ctx) {
     	let div;
     	let t0;
@@ -27647,9 +28003,9 @@ Do you wish to proceed?`)) {
     			strong = element("strong");
     			t1 = text(t1_value);
     			t2 = text(" does not exist");
-    			add_location(strong, file$5, 521, 13, 22066);
+    			add_location(strong, file$5, 520, 13, 22009);
     			attr_dev(div, "class", "cc-collection-two-line-error svelte-15ntxpt");
-    			add_location(div, file$5, 520, 6, 22009);
+    			add_location(div, file$5, 519, 6, 21952);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -27670,14 +28026,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(520:4) {#if !includePageExists[collectionName] && includePageName[collectionName]}",
+    		source: "(519:4) {#if !includePageExists[collectionName] && includePageName[collectionName]}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (571:4) {#if !outputPageExists[collectionName] && outputPageName[collectionName]}
+    // (570:4) {#if !outputPageExists[collectionName] && outputPageName[collectionName]}
     function create_if_block$2(ctx) {
     	let div;
     	let t0;
@@ -27691,9 +28047,9 @@ Do you wish to proceed?`)) {
     			t0 = text("Will create a new page named ");
     			strong = element("strong");
     			t1 = text(t1_value);
-    			add_location(strong, file$5, 572, 37, 23869);
+    			add_location(strong, file$5, 571, 37, 23812);
     			attr_dev(div, "class", "cc-collection-two-line-warning svelte-15ntxpt");
-    			add_location(div, file$5, 571, 6, 23786);
+    			add_location(div, file$5, 570, 6, 23729);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -27713,7 +28069,7 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block$2.name,
     		type: "if",
-    		source: "(571:4) {#if !outputPageExists[collectionName] && outputPageName[collectionName]}",
+    		source: "(570:4) {#if !outputPageExists[collectionName] && outputPageName[collectionName]}",
     		ctx
     	});
 
@@ -27800,7 +28156,6 @@ Do you wish to proceed?`)) {
     	let i4;
     	let t28;
     	let input2;
-    	let input2_id_value;
     	let input2_disabled_value;
     	let t29;
     	let div9;
@@ -28120,7 +28475,6 @@ Do you wish to proceed?`)) {
     			set_custom_element_data(sl_tooltip3, "class", "svelte-15ntxpt");
     			add_location(sl_tooltip3, file$5, 406, 6, 18061);
     			attr_dev(input2, "type", "checkbox");
-    			attr_dev(input2, "id", input2_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide");
     			attr_dev(input2, "class", "cc-config-collection-hide svelte-15ntxpt");
     			input2.disabled = input2_disabled_value = /*$collectionsStore*/ ctx[8]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0];
     			add_location(input2, file$5, 414, 6, 18332);
@@ -28128,96 +28482,96 @@ Do you wish to proceed?`)) {
     			add_location(div7, file$5, 404, 4, 17934);
     			attr_dev(label4, "for", label4_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated");
     			attr_dev(label4, "class", "svelte-15ntxpt");
-    			add_location(label4, file$5, 425, 6, 18756);
+    			add_location(label4, file$5, 424, 6, 18699);
     			attr_dev(div8, "slot", "content");
-    			add_location(div8, file$5, 429, 8, 18890);
+    			add_location(div8, file$5, 428, 8, 18833);
     			attr_dev(i5, "class", "icon-question cc-module-icon svelte-15ntxpt");
-    			add_location(i5, file$5, 433, 10, 19068);
+    			add_location(i5, file$5, 432, 10, 19011);
     			attr_dev(a4, "href", /*HELP*/ ctx[20].configUnallocated.url);
     			attr_dev(a4, "target", "_blank");
     			attr_dev(a4, "rel", "noreferrer");
-    			add_location(a4, file$5, 432, 8, 18986);
+    			add_location(a4, file$5, 431, 8, 18929);
     			set_custom_element_data(sl_tooltip4, "class", "svelte-15ntxpt");
-    			add_location(sl_tooltip4, file$5, 428, 6, 18868);
+    			add_location(sl_tooltip4, file$5, 427, 6, 18811);
     			attr_dev(input3, "type", "checkbox");
     			attr_dev(input3, "id", input3_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated");
     			attr_dev(input3, "class", "svelte-15ntxpt");
-    			add_location(input3, file$5, 436, 6, 19153);
-    			add_location(div9, file$5, 424, 4, 18743);
+    			add_location(input3, file$5, 435, 6, 19096);
+    			add_location(div9, file$5, 423, 4, 18686);
     			attr_dev(div10, "class", "cc-collection-double svelte-15ntxpt");
     			add_location(div10, file$5, 383, 2, 17245);
     			attr_dev(label5, "for", label5_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page");
     			attr_dev(label5, "class", "svelte-15ntxpt");
-    			add_location(label5, file$5, 457, 6, 19765);
+    			add_location(label5, file$5, 456, 6, 19708);
     			attr_dev(div11, "slot", "content");
-    			add_location(div11, file$5, 461, 8, 19890);
+    			add_location(div11, file$5, 460, 8, 19833);
     			attr_dev(i6, "class", "icon-question cc-module-icon svelte-15ntxpt");
-    			add_location(i6, file$5, 469, 11, 20139);
+    			add_location(i6, file$5, 468, 11, 20082);
     			attr_dev(a5, "id", "cc-about-include-page");
     			attr_dev(a5, "rel", "noreferrer");
     			attr_dev(a5, "target", "_blank");
     			attr_dev(a5, "href", /*HELP*/ ctx[20].configIncludePage.url);
-    			add_location(a5, file$5, 464, 8, 19986);
+    			add_location(a5, file$5, 463, 8, 19929);
     			set_custom_element_data(sl_tooltip5, "class", "svelte-15ntxpt");
-    			add_location(sl_tooltip5, file$5, 460, 6, 19868);
+    			add_location(sl_tooltip5, file$5, 459, 6, 19811);
     			attr_dev(div12, "class", "cc-collection-two-line-header svelte-15ntxpt");
-    			add_location(div12, file$5, 456, 4, 19714);
-    			add_location(div13, file$5, 473, 4, 20234);
+    			add_location(div12, file$5, 455, 4, 19657);
+    			add_location(div13, file$5, 472, 4, 20177);
     			attr_dev(input4, "id", input4_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page");
     			attr_dev(input4, "class", "svelte-15ntxpt");
-    			add_location(input4, file$5, 475, 6, 20306);
+    			add_location(input4, file$5, 474, 6, 20249);
     			attr_dev(label6, "for", label6_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after");
     			attr_dev(label6, "class", "svelte-15ntxpt");
-    			add_location(label6, file$5, 492, 8, 20958);
+    			add_location(label6, file$5, 491, 8, 20901);
     			attr_dev(div14, "slot", "content");
-    			add_location(div14, file$5, 496, 10, 21093);
+    			add_location(div14, file$5, 495, 10, 21036);
     			attr_dev(i7, "class", "icon-question cc-module-icon svelte-15ntxpt");
-    			add_location(i7, file$5, 505, 12, 21381);
+    			add_location(i7, file$5, 504, 12, 21324);
     			attr_dev(a6, "id", "cc-about-include-after");
     			attr_dev(a6, "href", /*HELP*/ ctx[20].configIncludePageAfter.url);
     			attr_dev(a6, "target", "_blank");
     			attr_dev(a6, "rel", "noreferrer");
-    			add_location(a6, file$5, 499, 10, 21200);
+    			add_location(a6, file$5, 498, 10, 21143);
     			set_custom_element_data(sl_tooltip6, "class", "svelte-15ntxpt");
-    			add_location(sl_tooltip6, file$5, 495, 8, 21069);
+    			add_location(sl_tooltip6, file$5, 494, 8, 21012);
     			attr_dev(input5, "type", "checkbox");
     			attr_dev(input5, "id", input5_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after");
     			attr_dev(input5, "class", "cc-config-collection-include-after svelte-15ntxpt");
-    			add_location(input5, file$5, 508, 8, 21472);
+    			add_location(input5, file$5, 507, 8, 21415);
     			attr_dev(span5, "class", "cc-collection-label svelte-15ntxpt");
-    			add_location(span5, file$5, 491, 6, 20914);
+    			add_location(span5, file$5, 490, 6, 20857);
     			attr_dev(div15, "class", "cc-collection-two-line-body svelte-15ntxpt");
-    			add_location(div15, file$5, 474, 4, 20257);
+    			add_location(div15, file$5, 473, 4, 20200);
     			attr_dev(div16, "class", "cc-collection-two-line svelte-15ntxpt");
-    			add_location(div16, file$5, 455, 2, 19672);
+    			add_location(div16, file$5, 454, 2, 19615);
     			attr_dev(label7, "for", label7_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page");
     			attr_dev(label7, "class", "svelte-15ntxpt");
-    			add_location(label7, file$5, 528, 6, 22287);
+    			add_location(label7, file$5, 527, 6, 22230);
     			attr_dev(div17, "slot", "content");
-    			add_location(div17, file$5, 532, 8, 22410);
+    			add_location(div17, file$5, 531, 8, 22353);
     			attr_dev(i8, "class", "icon-question cc-module-icon svelte-15ntxpt");
-    			add_location(i8, file$5, 541, 10, 22673);
+    			add_location(i8, file$5, 540, 10, 22616);
     			attr_dev(a7, "id", "cc-about-update-output-page");
     			attr_dev(a7, "target", "_blank");
     			attr_dev(a7, "href", /*HELP*/ ctx[20].configOutputPage.url);
     			attr_dev(a7, "rel", "noreferrer");
-    			add_location(a7, file$5, 535, 8, 22505);
+    			add_location(a7, file$5, 534, 8, 22448);
     			set_custom_element_data(sl_tooltip7, "class", "svelte-15ntxpt");
-    			add_location(sl_tooltip7, file$5, 531, 6, 22388);
+    			add_location(sl_tooltip7, file$5, 530, 6, 22331);
     			attr_dev(div18, "class", "cc-collection-two-line-header svelte-15ntxpt");
-    			add_location(div18, file$5, 527, 4, 22236);
-    			add_location(div19, file$5, 545, 4, 22768);
+    			add_location(div18, file$5, 526, 4, 22179);
+    			add_location(div19, file$5, 544, 4, 22711);
     			attr_dev(input6, "id", input6_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page");
     			attr_dev(input6, "class", "svelte-15ntxpt");
-    			add_location(input6, file$5, 547, 6, 22840);
+    			add_location(input6, file$5, 546, 6, 22783);
     			attr_dev(button, "id", button_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page-update");
     			attr_dev(button, "class", "btn svelte-15ntxpt");
     			button.disabled = button_disabled_value = /*outputPageName*/ ctx[6][/*collectionName*/ ctx[0]] === "";
-    			add_location(button, file$5, 561, 6, 23429);
+    			add_location(button, file$5, 560, 6, 23372);
     			attr_dev(div20, "class", "cc-collection-two-line-body svelte-15ntxpt");
-    			add_location(div20, file$5, 546, 4, 22791);
+    			add_location(div20, file$5, 545, 4, 22734);
     			attr_dev(div21, "class", "cc-collection-two-line svelte-15ntxpt");
-    			add_location(div21, file$5, 526, 2, 22194);
+    			add_location(div21, file$5, 525, 2, 22137);
     			attr_dev(div22, "class", "cc-existing-collection border border-trbl svelte-15ntxpt");
     			attr_dev(div22, "id", div22_id_value = "cc-collection-" + /*collectionName*/ ctx[0]);
     			add_location(div22, file$5, 291, 0, 14454);
@@ -28501,10 +28855,6 @@ Do you wish to proceed?`)) {
 
     			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && label3_for_value !== (label3_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide")) {
     				attr_dev(label3, "for", label3_for_value);
-    			}
-
-    			if (dirty[0] & /*collectionName, availableRepresentations*/ 2049 && input2_id_value !== (input2_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide")) {
-    				attr_dev(input2, "id", input2_id_value);
     			}
 
     			if (dirty[0] & /*$collectionsStore, collectionName, availableRepresentations*/ 2305 && input2_disabled_value !== (input2_disabled_value = /*$collectionsStore*/ ctx[8]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0])) {

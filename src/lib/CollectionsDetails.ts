@@ -661,7 +661,7 @@ export class CollectionsDetails {
     if (!editMode) {
       const canvasModuleIds = canvasModules.map((module) => module.id);
       // loop through all the Collections modules
-      collectionsModules.forEach(moduleId=> {
+      Object.keys(collectionsModules).forEach(moduleId=> {
         // if moduleId is in canvasModulesIds, set published to true
         if (canvasModuleIds.includes(parseInt(moduleId))) {
           collectionsModules[moduleId].published = true;

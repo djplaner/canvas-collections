@@ -30,6 +30,9 @@
     claytons = false;
   }
 
+  let numWeighting = 0;
+  let numLearningOutcomes = 0;
+
   // kludge to test reactive nature
   // set collection to currentCollection
   // TODO - this isn't right, the prop isn't being dynamically updated
@@ -42,6 +45,30 @@
       claytons,
       $collectionsStore["COLLECTIONS"][collection]["unallocated"]
     );
+
+    // count the number of modules that have weighting and learning outcomes
+    modules.forEach((module) => {
+      if (
+        $collectionsStore["MODULES"][module.id].hasOwnProperty("metadata") &&
+        $collectionsStore["MODULES"][module.id]["metadata"].hasOwnProperty(
+          "weighting"
+        ) &&
+        $collectionsStore["MODULES"][module.id]["metadata"]["weighting"] !== ""
+      ) {
+        numWeighting++;
+      }
+      if (
+        $collectionsStore["MODULES"][module.id].hasOwnProperty("metadata") &&
+        $collectionsStore["MODULES"][module.id]["metadata"].hasOwnProperty(
+          "learning outcomes"
+        ) &&
+        $collectionsStore["MODULES"][module.id]["metadata"][
+          "learning outcomes"
+        ] !== ""
+      ) {
+        numLearningOutcomes++;
+      }
+    });
   }
 </script>
 
@@ -66,13 +93,15 @@
           >
             <span style="color: #ffffff;">Description</span></th
           >
-          <th
-            role="columnheader"
-            scope="col"
-            style="background-color: #e03e2d;"
-          >
-            <span style="color: #ffffff;">Weighting</span></th
-          >
+          {#if numWeighting > 0 }
+            <th
+              role="columnheader"
+              scope="col"
+              style="background-color: #e03e2d;"
+            >
+              <span style="color: #ffffff;">Weighting</span></th
+            >
+          {/if}
           <th
             role="columnheader"
             scope="col"
@@ -80,13 +109,15 @@
           >
             <span style="color: #ffffff;">Due Date</span></th
           >
-          <th
-            role="columnheader"
-            scope="col"
-            style="background-color: #e03e2d;"
-          >
-            <span style="color: #ffffff;">Learning Outcomes</span></th
-          >
+          {#if numLearningOutcomes }
+            <th
+              role="columnheader"
+              scope="col"
+              style="background-color: #e03e2d;"
+            >
+              <span style="color: #ffffff;">Learning Outcomes</span></th
+            >
+          {/if}
         </tr>
       </thead>
       <tbody>
@@ -102,10 +133,10 @@
               </div>
             </td>
             <td role="cell" style="display:table-cell; text-align:left;">
-              {#if $configStore["editMode"] && ! claytons && !$collectionsStore["MODULES"][module.id].published}
+              {#if $configStore["editMode"] && !claytons && !$collectionsStore["MODULES"][module.id].published}
                 <div class="cc-published">Unpublished</div>
               {/if}
-              {#if $configStore["editMode"] && ! claytons && $collectionsStore["MODULES"][module.id].collection !== collection}
+              {#if $configStore["editMode"] && !claytons && $collectionsStore["MODULES"][module.id].collection !== collection}
                 <div class="cc-unallocated">No collection allocated</div>
               {/if}
               <div style="margin:0; font-size:0.8rem">
@@ -114,18 +145,20 @@
                 </p>
               </div>
             </td>
-            <td role="cell">
-              <div style="margin:0; font-size:0.8rem">
-                <p>
-                  {checkModuleMetaData(
-                    $collectionsStore["MODULES"][module.id],
-                    "weighting",
-                    $configStore["editMode"],
-                    claytons
-                  )}
-                </p>
-              </div>
-            </td>
+            {#if numWeighting > 0 }
+              <td role="cell">
+                <div style="margin:0; font-size:0.8rem">
+                  <p>
+                    {checkModuleMetaData(
+                      $collectionsStore["MODULES"][module.id],
+                      "weighting",
+                      $configStore["editMode"],
+                      claytons
+                    )}
+                  </p>
+                </div>
+              </td>
+            {/if}
             <td role="cell">
               <div style="margin:0; font-size:0.8rem">
                 <p>
@@ -133,18 +166,20 @@
                 </p>
               </div>
             </td>
-            <td role="cell">
-              <div style="margin:0; font-size:0.8rem">
-                <p>
-                  {checkModuleMetaData(
-                    $collectionsStore["MODULES"][module.id],
-                    "learning outcomes",
-                    $configStore["editMode"],
-                    claytons
-                  )}
-                </p>
-              </div>
-            </td>
+            {#if numLearningOutcomes}
+              <td role="cell">
+                <div style="margin:0; font-size:0.8rem">
+                  <p>
+                    {checkModuleMetaData(
+                      $collectionsStore["MODULES"][module.id],
+                      "learning outcomes",
+                      $configStore["editMode"],
+                      claytons
+                    )}
+                  </p>
+                </div>
+              </td>
+            {/if}
           </tr>
         {/each}
       </tbody>
@@ -165,15 +200,19 @@
           <th role="columnheader" scope="col"
             ><span class="cc-table-header-text">Description</span></th
           >
+          {#if numWeighting > 0 && !$configStore["editMode"] }
           <th role="columnheader" scope="col"
             ><span class="cc-table-header-text">Weighting</span></th
           >
+          {/if}
           <th role="columnheader" scope="col"
             ><span class="cc-table-header-text">Due Date</span></th
           >
+          {#if numLearningOutcomes > 0 && !$configStore["editMode"] }
           <th role="columnheader" scope="col"
             ><span class="cc-table-header-text">Learning Outcomes</span></th
           >
+          {/if}
         </tr>
       </thead>
       <tbody>
@@ -208,6 +247,7 @@
                 </p>
               </div>
             </td>
+          {#if numWeighting > 0 && ! $configStore["editMode"] }
             <td role="cell">
               <span class="cc-responsive-table__heading" aria-hidden="true"
                 >Weighting</span
@@ -222,6 +262,7 @@
                 </p>
               </div>
             </td>
+            {/if}
             <td role="cell">
               <span class="cc-responsive-table__heading" aria-hidden="true"
                 >Due Date</span
@@ -232,6 +273,7 @@
                 </p>
               </div>
             </td>
+          {#if numLearningOutcomes > 0 && !$configStore["editMode"] }
             <td role="cell">
               <span class="cc-responsive-table__heading" aria-hidden="true"
                 >Learning Outcomes</span
@@ -246,6 +288,7 @@
                 </p>
               </div>
             </td>
+            {/if}
           </tr>
         {/each}
       </tbody>

@@ -487,7 +487,6 @@
       </sl-tooltip>
       <input
         type="checkbox"
-        id="cc-config-collection-{collectionName}-hide"
         class="cc-config-collection-hide"
         bind:checked={$collectionsStore["COLLECTIONS"][collectionName]["hide"]}
         disabled={$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] ===
