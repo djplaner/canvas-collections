@@ -16,6 +16,7 @@
 
   import { debug } from "./lib/debug";
   debug("______________ CanvasCollections.svelte _______________");
+  debug("hello")
 
   const CC_VERSION = "1.0.0a";
   const TIME_BETWEEN_SAVES = 10000;

@@ -31,7 +31,7 @@ export default {
 		}),
 
 		css({
-			output: 'bundle.css'
+			output: 'canvas-collections.css'
 		}),
 		
 		// rollup-plugin-tampermonkey-css
@@ -71,7 +71,7 @@ export default {
 		// instead of npm run dev), minify
 		production && terser(),
 
-		metablock({ file: './meta.js' }),
+		//metablock({ file: './meta.js' }),
 	],
 	watch: {
 		clearScreen: false
