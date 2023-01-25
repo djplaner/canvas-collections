@@ -10,70 +10,142 @@ import MagicString from 'magic-string';
 
 const production = !process.env.ROLLUP_WATCH;
 
-export default {
-	input: 'src/main.ts',
-	output: {
-		sourcemap: false,
-		format: 'iife',
-		name: 'app',
-		file: 'dist/canvas-collections.js'
-	},
-	plugins: [
+export default [
+	{
+		// live user script
+		input: 'src/main.ts',
+		output: {
+			sourcemap: false,
+			format: 'iife',
+			name: 'app',
+			file: 'dist/canvas-collections.js'
+		},
+		plugins: [
 
-		svelte({
-			preprocess: sveltePreprocess({
-				sourceMap: !production,
-				preserve: ['module']
-			}),
-			compilerOptions: {
-				dev: !production
-			}
-		}),
-
-		css({
-			output: 'bundle.css'
-		}),
-		
-		// rollup-plugin-tampermonkey-css
-		((options = {}) => ({
-			name: 'rollup-plugin-tampermonkey-css',
-			renderChunk: (code, renderedChunk, outputOptions) => {
-				let magicString = new MagicString(code);
-				magicString.prepend(`GM_addStyle(GM_getResourceText('css'));\n`)
-				const result = { code: magicString.toString() }
-				if(outputOptions.sourceMap !== false) {
-					result.map = magicString.generateMap({hires: true})
+			svelte({
+				preprocess: sveltePreprocess({
+					sourceMap: !production,
+					preserve: ['module']
+				}),
+				compilerOptions: {
+					dev: !production
 				}
-				return result
-			}
-		}))(), 
+			}),
 
-		// If you have external dependencies installed from
-		// npm, you'll most likely need these plugins. In
-		// some cases you'll need additional configuration -
-		// consult the documentation for details:
-		// https://github.com/rollup/plugins/tree/master/packages/commonjs
-		resolve({
-			browser: true,
-			dedupe: ['svelte']
-		}),
-		commonjs({
-			include: 'node_modules/**',
-			esmExternals: true
-		}),
+			css({
+				output: 'canvas-collections.css'
+			}),
 
-		typescript({
-			sourceMap: !production,
-			inlineSources: !production
-		}),
+			// rollup-plugin-tampermonkey-css
+			((options = {}) => ({
+				name: 'rollup-plugin-tampermonkey-css',
+				renderChunk: (code, renderedChunk, outputOptions) => {
+					let magicString = new MagicString(code);
+					magicString.prepend(`GM_addStyle(GM_getResourceText('css'));\n`)
+					const result = { code: magicString.toString() }
+					if (outputOptions.sourceMap !== false) {
+						result.map = magicString.generateMap({ hires: true })
+					}
+					return result
+				}
+			}))(),
 
-		// If we're building for production (npm run build
-		// instead of npm run dev), minify
-		production && terser(),
+			// If you have external dependencies installed from
+			// npm, you'll most likely need these plugins. In
+			// some cases you'll need additional configuration -
+			// consult the documentation for details:
+			// https://github.com/rollup/plugins/tree/master/packages/commonjs
+			resolve({
+				browser: true,
+				dedupe: ['svelte']
+			}),
+			commonjs({
+				include: 'node_modules/**',
+				esmExternals: true
+			}),
 
-		metablock({ file: './meta.js' }),
-	],
-	watch: {
-		clearScreen: false
+			typescript({
+				sourceMap: !production,
+				inlineSources: !production
+			}),
+
+			// If we're building for production (npm run build
+			// instead of npm run dev), minify
+			production && terser(),
+
+//			metablock({ file: './meta.js' }),
+		],
+		watch: {
+			clearScreen: false
+		}
+	},
+		{
+		// userscript
+		input: 'src/main.ts',
+		output: {
+			sourcemap: false,
+			format: 'iife',
+			name: 'app',
+			file: 'dist/canvas-collections.user.js'
+		},
+		plugins: [
+
+			svelte({
+				preprocess: sveltePreprocess({
+					sourceMap: !production,
+					preserve: ['module']
+				}),
+				compilerOptions: {
+					dev: !production
+				}
+			}),
+
+			css({
+				output: 'canvas-collections.css'
+			}), 
+
+			// rollup-plugin-tampermonkey-css
+			((options = {}) => ({
+				name: 'rollup-plugin-tampermonkey-css',
+				renderChunk: (code, renderedChunk, outputOptions) => {
+					let magicString = new MagicString(code);
+					magicString.prepend(`GM_addStyle(GM_getResourceText('css'));\n`)
+					const result = { code: magicString.toString() }
+					if (outputOptions.sourceMap !== false) {
+						result.map = magicString.generateMap({ hires: true })
+					}
+					return result
+				}
+			}))(),
+
+			// If you have external dependencies installed from
+			// npm, you'll most likely need these plugins. In
+			// some cases you'll need additional configuration -
+			// consult the documentation for details:
+			// https://github.com/rollup/plugins/tree/master/packages/commonjs
+			resolve({
+				browser: true,
+				dedupe: ['svelte']
+			}),
+			commonjs({
+				include: 'node_modules/**',
+				esmExternals: true
+			}),
+
+			typescript({
+				sourceMap: !production,
+				inlineSources: !production
+			}),
+
+			// If we're building for production (npm run build
+			// instead of npm run dev), minify
+			production && terser(),
+
+			metablock({ file: './meta.js' }),
+		],
+		watch: {
+			clearScreen: false
+		}
 	}
-};
+
+];

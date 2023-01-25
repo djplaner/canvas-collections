@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Define TamperMonkey meta data for producing the production 
+ * userscript
+ */
 const path = require('path');
 const { pathToFileURL } = require('url');
 const pkg = require('./package.json');
@@ -15,8 +19,12 @@ let meta = {
 	"homepage": pkg.homepage,
 	"author": pkg.author,
     "namespace": "https://djon.es/",
+    "updateURL": "https://github.com/djplaner/canvas-collections/raw/main/dist/canvas-collections.user.js",
+    "downloadURL": "https://github.com/djplaner/canvas-collections/raw/main/dist/canvas-collections.user.js",
+    "supportURL": "https://github.com/djplaner/canvas-collections/issues",
     "resource": {
-		css: pathToFileURL(path.join(baseUrl, 'bundle.css'))
+		//css: pathToFileURL(path.join(baseUrl, 'bundle.css'))
+		css: "https://rawcdn.githack.com/djplaner/canvas-collections/???/dist/canvas-collections.css"
 	},
     "match": [
         "https://*/courses/*"
@@ -30,7 +38,7 @@ let meta = {
     "run-at": "document-idle"
 }
 
-if(!production){
+/*if(!production){
 	meta.require= [
         pathToFileURL(path.join(baseUrl, 'bundle.js'))
     ];
@@ -39,6 +47,6 @@ if(!production){
 if(production) {
 	meta.downloadURL = pathToFileURL(path.join(baseUrl, 'bundle.js'));
 	meta.updateURL = pathToFileURL(path.join(baseUrl, 'bundle.js'));
-}
+} */
 
 module.exports = meta;
