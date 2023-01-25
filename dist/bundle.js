@@ -20329,12 +20329,13 @@ Do you wish to proceed?`)) {
     // (156:2) {:else}
     function create_else_block_1$1(ctx) {
     	let div;
+    	let show_if = isNotEmptyDate(/*date*/ ctx[0]) && /*date*/ ctx[0]["label"];
     	let t0;
     	let t1;
     	let t2;
     	let t3;
     	let t4;
-    	let if_block0 = /*date*/ ctx[0]["label"] && create_if_block_23(ctx);
+    	let if_block0 = show_if && create_if_block_23(ctx);
     	let if_block1 = /*date*/ ctx[0]["week"] && create_if_block_22(ctx);
     	let if_block2 = /*date*/ ctx[0]["time"] && create_if_block_21(ctx);
     	let if_block3 = /*date*/ ctx[0]["day"] && create_if_block_20(ctx);
@@ -20356,7 +20357,7 @@ Do you wish to proceed?`)) {
     			t4 = space();
     			if (if_block5) if_block5.c();
     			attr_dev(div, "class", "cc-card-date svelte-ymwt67");
-    			add_location(div, file$b, 156, 4, 5251);
+    			add_location(div, file$b, 156, 4, 5299);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20373,7 +20374,9 @@ Do you wish to proceed?`)) {
     			if (if_block5) if_block5.m(div, null);
     		},
     		p: function update(ctx, dirty) {
-    			if (/*date*/ ctx[0]["label"]) {
+    			if (dirty & /*date*/ 1) show_if = isNotEmptyDate(/*date*/ ctx[0]) && /*date*/ ctx[0]["label"];
+
+    			if (show_if) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
@@ -20476,13 +20479,14 @@ Do you wish to proceed?`)) {
     // (79:2) {#if date["to"] && isNotEmptyDate(date["to"])}
     function create_if_block_1$7(ctx) {
     	let div;
+    	let show_if = !isNotEmptyDate(/*date*/ ctx[0]) && /*date*/ ctx[0]["label"];
     	let t0;
     	let t1;
     	let t2;
     	let t3;
     	let t4;
-    	let if_block0 = /*date*/ ctx[0]["label"] && create_if_block_17(ctx);
-    	let if_block1 = (/*date*/ ctx[0]["week"] || /*date*/ ctx[0]["to"]["week"]) && create_if_block_14(ctx);
+    	let if_block0 = show_if && create_if_block_17(ctx);
+    	let if_block1 = (/*date*/ ctx[0]["week"] && /*date*/ ctx[0]["week"] !== "" || /*date*/ ctx[0]["to"]["week"]) && create_if_block_14(ctx);
     	let if_block2 = (/*date*/ ctx[0]["time"] || /*date*/ ctx[0]["to"]["time"]) && create_if_block_11$2(ctx);
     	let if_block3 = (/*date*/ ctx[0]["day"] || /*date*/ ctx[0]["to"]["day"]) && create_if_block_8$2(ctx);
     	let if_block4 = (/*date*/ ctx[0]["month"] || /*date*/ ctx[0]["to"]["month"]) && create_if_block_5$2(ctx);
@@ -20520,7 +20524,9 @@ Do you wish to proceed?`)) {
     			if (if_block5) if_block5.m(div, null);
     		},
     		p: function update(ctx, dirty) {
-    			if (/*date*/ ctx[0]["label"]) {
+    			if (dirty & /*date*/ 1) show_if = !isNotEmptyDate(/*date*/ ctx[0]) && /*date*/ ctx[0]["label"];
+
+    			if (show_if) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
@@ -20533,7 +20539,7 @@ Do you wish to proceed?`)) {
     				if_block0 = null;
     			}
 
-    			if (/*date*/ ctx[0]["week"] || /*date*/ ctx[0]["to"]["week"]) {
+    			if (/*date*/ ctx[0]["week"] && /*date*/ ctx[0]["week"] !== "" || /*date*/ ctx[0]["to"]["week"]) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
@@ -20620,7 +20626,7 @@ Do you wish to proceed?`)) {
     	return block;
     }
 
-    // (158:6) {#if date["label"]}
+    // (158:6) {#if isNotEmptyDate(date) && date["label"]}
     function create_if_block_23(ctx) {
     	let div;
     	let t_value = /*date*/ ctx[0]["label"] + "";
@@ -20631,7 +20637,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			t = text(t_value);
     			attr_dev(div, "class", "cc-card-date-label svelte-ymwt67");
-    			add_location(div, file$b, 158, 8, 5314);
+    			add_location(div, file$b, 158, 8, 5386);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20649,7 +20655,7 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_23.name,
     		type: "if",
-    		source: "(158:6) {#if date[\\\"label\\\"]}",
+    		source: "(158:6) {#if isNotEmptyDate(date) && date[\\\"label\\\"]}",
     		ctx
     	});
 
@@ -20669,7 +20675,7 @@ Do you wish to proceed?`)) {
     			t0 = text("Week ");
     			t1 = text(t1_value);
     			attr_dev(div, "class", "cc-card-date-week svelte-ymwt67");
-    			add_location(div, file$b, 163, 8, 5438);
+    			add_location(div, file$b, 163, 8, 5510);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20706,7 +20712,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			t = text(t_value);
     			attr_dev(div, "class", "cc-card-date-time svelte-ymwt67");
-    			add_location(div, file$b, 168, 8, 5565);
+    			add_location(div, file$b, 168, 8, 5637);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20742,7 +20748,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			t = text(t_value);
     			attr_dev(div, "class", "cc-card-date-day svelte-ymwt67");
-    			add_location(div, file$b, 173, 8, 5686);
+    			add_location(div, file$b, 173, 8, 5758);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20778,7 +20784,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			t = text(t_value);
     			attr_dev(div, "class", "cc-card-date-month svelte-ymwt67");
-    			add_location(div, file$b, 178, 8, 5807);
+    			add_location(div, file$b, 178, 8, 5879);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20814,7 +20820,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			t = text(t_value);
     			attr_dev(div, "class", "cc-card-date-date svelte-ymwt67");
-    			add_location(div, file$b, 183, 8, 5931);
+    			add_location(div, file$b, 183, 8, 6003);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20839,7 +20845,7 @@ Do you wish to proceed?`)) {
     	return block;
     }
 
-    // (81:6) {#if date["label"]}
+    // (81:6) {#if ! isNotEmptyDate(date) && date["label"]}
     function create_if_block_17(ctx) {
     	let div;
     	let t_value = /*date*/ ctx[0]["label"] + "";
@@ -20850,7 +20856,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			t = text(t_value);
     			attr_dev(div, "class", "cc-card-date-label svelte-ymwt67");
-    			add_location(div, file$b, 81, 8, 2942);
+    			add_location(div, file$b, 81, 8, 2969);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20868,14 +20874,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_17.name,
     		type: "if",
-    		source: "(81:6) {#if date[\\\"label\\\"]}",
+    		source: "(81:6) {#if ! isNotEmptyDate(date) && date[\\\"label\\\"]}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (86:6) {#if date["week"] || date["to"]["week"]}
+    // (86:6) {#if date["week"] && date["week"]!=="" || date["to"]["week"]}
     function create_if_block_14(ctx) {
     	let div;
     	let t0;
@@ -20901,7 +20907,7 @@ Do you wish to proceed?`)) {
     			t2 = space();
     			if (if_block1) if_block1.c();
     			attr_dev(div, "class", "cc-card-date-week svelte-ymwt67");
-    			add_location(div, file$b, 86, 8, 3088);
+    			add_location(div, file$b, 86, 8, 3136);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20948,7 +20954,7 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_14.name,
     		type: "if",
-    		source: "(86:6) {#if date[\\\"week\\\"] || date[\\\"to\\\"][\\\"week\\\"]}",
+    		source: "(86:6) {#if date[\\\"week\\\"] && date[\\\"week\\\"]!==\\\"\\\" || date[\\\"to\\\"][\\\"week\\\"]}",
     		ctx
     	});
 
@@ -21062,11 +21068,11 @@ Do you wish to proceed?`)) {
     			div1 = element("div");
     			if (if_block1) if_block1.c();
     			attr_dev(div0, "class", "cc-card-date-time-from svelte-ymwt67");
-    			add_location(div0, file$b, 100, 10, 3588);
+    			add_location(div0, file$b, 100, 10, 3636);
     			attr_dev(div1, "class", "cc-card-date-time-to svelte-ymwt67");
-    			add_location(div1, file$b, 105, 10, 3735);
+    			add_location(div1, file$b, 105, 10, 3783);
     			attr_dev(div2, "class", "cc-card-date-dual-time svelte-ymwt67");
-    			add_location(div2, file$b, 99, 8, 3540);
+    			add_location(div2, file$b, 99, 8, 3588);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -21201,11 +21207,11 @@ Do you wish to proceed?`)) {
     			div1 = element("div");
     			if (if_block1) if_block1.c();
     			attr_dev(div0, "class", "cc-card-date-day-from svelte-ymwt67");
-    			add_location(div0, file$b, 114, 10, 4012);
+    			add_location(div0, file$b, 114, 10, 4060);
     			attr_dev(div1, "class", "cc-card-date-day-to svelte-ymwt67");
-    			add_location(div1, file$b, 119, 10, 4172);
+    			add_location(div1, file$b, 119, 10, 4220);
     			attr_dev(div2, "class", "cc-card-date-dual-day svelte-ymwt67");
-    			add_location(div2, file$b, 113, 8, 3965);
+    			add_location(div2, file$b, 113, 8, 4013);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -21340,11 +21346,11 @@ Do you wish to proceed?`)) {
     			div1 = element("div");
     			if (if_block1) if_block1.c();
     			attr_dev(div0, "class", "cc-card-date-month-from svelte-ymwt67");
-    			add_location(div0, file$b, 128, 10, 4468);
+    			add_location(div0, file$b, 128, 10, 4516);
     			attr_dev(div1, "class", "cc-card-date-month-to svelte-ymwt67");
-    			add_location(div1, file$b, 133, 10, 4618);
+    			add_location(div1, file$b, 133, 10, 4666);
     			attr_dev(div2, "class", "cc-card-date-dual-month svelte-ymwt67");
-    			add_location(div2, file$b, 127, 8, 4419);
+    			add_location(div2, file$b, 127, 8, 4467);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -21479,11 +21485,11 @@ Do you wish to proceed?`)) {
     			div1 = element("div");
     			if (if_block1) if_block1.c();
     			attr_dev(div0, "class", "cc-card-date-date-from svelte-ymwt67");
-    			add_location(div0, file$b, 142, 10, 4901);
+    			add_location(div0, file$b, 142, 10, 4949);
     			attr_dev(div1, "class", "cc-card-date-date-to svelte-ymwt67");
-    			add_location(div1, file$b, 147, 10, 5048);
+    			add_location(div1, file$b, 147, 10, 5096);
     			attr_dev(div2, "class", "cc-card-date-dual-date svelte-ymwt67");
-    			add_location(div2, file$b, 141, 8, 4853);
+    			add_location(div2, file$b, 141, 8, 4901);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);

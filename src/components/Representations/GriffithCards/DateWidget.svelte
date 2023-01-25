@@ -87,12 +87,12 @@
 {#if date}
   {#if date["to"] && isNotEmptyDate(date["to"])}
     <div class="cc-card-date">
-      {#if date["label"]}
+      {#if ! isNotEmptyDate(date) && date["label"]} 
         <div class="cc-card-date-label">
           {date["label"]}
         </div>
       {/if}
-      {#if date["week"] || date["to"]["week"]}
+      {#if date["week"] && date["week"]!=="" || date["to"]["week"]}
         <div class="cc-card-date-week">
           {#if date["week"] && date["to"]["week"] && date["week"] !== date["to"]["week"]}
             Weeks
@@ -164,7 +164,7 @@
     </div>
   {:else}
     <div class="cc-card-date">
-      {#if date["label"]}
+      {#if isNotEmptyDate(date) && date["label"]}
         <div class="cc-card-date-label">
           {date["label"]}
         </div>
