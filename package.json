@@ -1,6 +1,6 @@
 {
   "name": "canvas-collections",
-  "version": "0.9.10",
+  "version": "1.0.0a",
   "description": "Modify Canvas LMS' modules view to support collections of modules and alternate representations",
   "author": "David Jones",
   "homepage": "https://github.com/djplaner/canvas-collections#readme",
@@ -8,7 +8,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c rollup.build.config.js",
     "dev": "rollup -c -w",
     "live": "rollup -c rollup.live.config.js",
     "check": "svelte-check --tsconfig ./tsconfig.json"

@@ -16,7 +16,7 @@ export default {
 		sourcemap: false,
 		format: 'iife',
 		name: 'app',
-		file: 'dist/bundle.js'
+		file: 'dev/canvas-collections.js'
 	},
 	plugins: [
 
