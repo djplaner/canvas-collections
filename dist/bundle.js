@@ -13242,18 +13242,15 @@ var app = (function () {
         }
         /**
          * @function saveCollections(editMode,needToSave)
-         * @param editMode - boolean, true if in edit mode
-         * @param needToSave - boolean, true if need to save
-         * @description if editMode && needToSave save the colelctions config page
+         * @param {boolean} editMode true if in edit mode
+         * @param {boolean} needToSave true if need to save
+         * @param {Function} callBack set needToSave store to false depending on result
+         * @description if editMode && needToSave save the collections config page
+         * and run callBack with result
          */
-        saveCollections(editMode, needToSave) {
+        saveCollections(editMode, needToSave, callBack) {
             if (editMode && needToSave) {
-                // TODO add in and call saveConfigPage
                 let callUrl = `/api/v1/courses/${this["config"]["courseId"]}/pages/canvas-collections-configuration`;
-                debug(`saveCollections callUrl = ${callUrl}`);
-                debug("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                debug(this.collections);
-                debug("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
                 const content = this.generateConfigPageContent();
                 let _body = {
                     wiki_page: {
@@ -13261,13 +13258,9 @@ var app = (function () {
                     },
                 };
                 let method = "put";
-                // if we're creating, change the URL and add the title
                 const bodyString = JSON.stringify(_body);
                 wf_postData(callUrl, bodyString, this["config"]["csrfToken"], method).then((data) => {
-                    // successful
-                    debug(`saveCollections response = `);
-                    debug(data);
-                    this.configStore["needToSaveCollections"] = false;
+                    callBack(data !== null);
                 });
             }
         }
@@ -30710,7 +30703,7 @@ Do you wish to proceed?`)) {
     const { console: console_1 } = globals;
     const file = "src\\CanvasCollections.svelte";
 
-    // (242:0) {#if editMode && modulesPage}
+    // (247:0) {#if editMode && modulesPage}
     function create_if_block(ctx) {
     	let div2;
     	let div1;
@@ -30739,7 +30732,7 @@ Do you wish to proceed?`)) {
     			div1 = element("div");
     			sl_tooltip = element("sl-tooltip");
     			div0 = element("div");
-    			div0.textContent = `${/*HELP*/ ctx[13].switchTitle.tooltip}`;
+    			div0.textContent = `${/*HELP*/ ctx[14].switchTitle.tooltip}`;
     			t1 = space();
     			a = element("a");
     			i = element("i");
@@ -30758,22 +30751,22 @@ Do you wish to proceed?`)) {
     			t9 = space();
     			if (if_block3) if_block3.c();
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 245, 8, 9846);
+    			add_location(div0, file, 250, 8, 10025);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 247, 11, 9984);
+    			add_location(i, file, 252, 11, 10163);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
-    			attr_dev(a, "href", /*HELP*/ ctx[13].switchTitle.url);
-    			add_location(a, file, 246, 8, 9908);
-    			set_custom_element_data(sl_tooltip, "class", "svelte-1bq7e82");
-    			add_location(sl_tooltip, file, 244, 6, 9824);
-    			add_location(small, file, 260, 6, 10398);
+    			attr_dev(a, "href", /*HELP*/ ctx[14].switchTitle.url);
+    			add_location(a, file, 251, 8, 10087);
+    			set_custom_element_data(sl_tooltip, "class", "svelte-jgf4cx");
+    			add_location(sl_tooltip, file, 249, 6, 10003);
+    			add_location(small, file, 265, 6, 10577);
     			set_style(span, "font-size", "50%");
-    			add_location(span, file, 261, 6, 10439);
-    			attr_dev(div1, "class", "cc-switch-title svelte-1bq7e82");
-    			add_location(div1, file, 243, 4, 9787);
-    			attr_dev(div2, "class", "cc-switch-container svelte-1bq7e82");
-    			add_location(div2, file, 242, 2, 9748);
+    			add_location(span, file, 266, 6, 10618);
+    			attr_dev(div1, "class", "cc-switch-title svelte-jgf4cx");
+    			add_location(div1, file, 248, 4, 9966);
+    			attr_dev(div2, "class", "cc-switch-container svelte-jgf4cx");
+    			add_location(div2, file, 247, 2, 9927);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -30880,14 +30873,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(242:0) {#if editMode && modulesPage}",
+    		source: "(247:0) {#if editMode && modulesPage}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (251:6) {#if canvasDataLoaded && collectionsDataLoaded}
+    // (256:6) {#if canvasDataLoaded && collectionsDataLoaded}
     function create_if_block_4(ctx) {
     	let i;
     	let i_class_value;
@@ -30903,15 +30896,15 @@ Do you wish to proceed?`)) {
     			? 'icon-mini-arrow-down'
     			: 'icon-mini-arrow-right') + " cc-module-icon"));
 
-    			add_location(i, file, 251, 8, 10126);
+    			add_location(i, file, 256, 8, 10305);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(i, "click", /*toggleConfigShow*/ ctx[11], false, false, false),
-    					listen_dev(i, "keydown", /*toggleConfigShow*/ ctx[11], false, false, false)
+    					listen_dev(i, "click", /*toggleConfigShow*/ ctx[12], false, false, false),
+    					listen_dev(i, "keydown", /*toggleConfigShow*/ ctx[12], false, false, false)
     				];
 
     				mounted = true;
@@ -30935,14 +30928,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(251:6) {#if canvasDataLoaded && collectionsDataLoaded}",
+    		source: "(256:6) {#if canvasDataLoaded && collectionsDataLoaded}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (265:4) {#if canvasDataLoaded && collectionsDataLoaded}
+    // (270:4) {#if canvasDataLoaded && collectionsDataLoaded}
     function create_if_block_3(ctx) {
     	let label;
     	let sl_switch;
@@ -30951,6 +30944,7 @@ Do you wish to proceed?`)) {
     	let button;
     	let t1;
     	let button_class_value;
+    	let button_disabled_value;
     	let mounted;
     	let dispose;
 
@@ -30964,20 +30958,21 @@ Do you wish to proceed?`)) {
     			t1 = text("Save");
     			set_custom_element_data(sl_switch, "checked", /*checked*/ ctx[7]);
     			set_custom_element_data(sl_switch, "id", "cc-switch");
-    			set_custom_element_data(sl_switch, "class", "svelte-1bq7e82");
-    			add_location(sl_switch, file, 266, 8, 10612);
-    			attr_dev(label, "class", "cc-switch svelte-1bq7e82");
+    			set_custom_element_data(sl_switch, "class", "svelte-jgf4cx");
+    			add_location(sl_switch, file, 271, 8, 10791);
+    			attr_dev(label, "class", "cc-switch svelte-jgf4cx");
     			attr_dev(label, "for", "cc-switch");
-    			add_location(label, file, 265, 6, 10561);
+    			add_location(label, file, 270, 6, 10740);
 
     			attr_dev(button, "class", button_class_value = "" + (null_to_empty(/*$configStore*/ ctx[6]["needToSaveCollections"]
     			? "cc-active-save-button"
-    			: "cc-save-button") + " svelte-1bq7e82"));
+    			: "cc-save-button") + " svelte-jgf4cx"));
 
     			attr_dev(button, "id", "cc-save-button");
-    			add_location(button, file, 273, 8, 10786);
-    			attr_dev(div, "class", "cc-save svelte-1bq7e82");
-    			add_location(div, file, 272, 6, 10755);
+    			button.disabled = button_disabled_value = !/*$configStore*/ ctx[6]["needToSaveCollections"];
+    			add_location(button, file, 278, 8, 10965);
+    			attr_dev(div, "class", "cc-save svelte-jgf4cx");
+    			add_location(div, file, 277, 6, 10934);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, label, anchor);
@@ -30989,12 +30984,12 @@ Do you wish to proceed?`)) {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(sl_switch, "sl-change", /*toggleCollectionsSwitch*/ ctx[10], false, false, false),
+    					listen_dev(sl_switch, "sl-change", /*toggleCollectionsSwitch*/ ctx[11], false, false, false),
     					listen_dev(
     						button,
     						"click",
     						function () {
-    							if (is_function(/*collectionsDetails*/ ctx[5].saveCollections(/*$configStore*/ ctx[6]["editMode"], /*$configStore*/ ctx[6]["needToSaveCollections"]))) /*collectionsDetails*/ ctx[5].saveCollections(/*$configStore*/ ctx[6]["editMode"], /*$configStore*/ ctx[6]["needToSaveCollections"]).apply(this, arguments);
+    							if (is_function(/*collectionsDetails*/ ctx[5].saveCollections(/*$configStore*/ ctx[6]["editMode"], /*$configStore*/ ctx[6]["needToSaveCollections"], /*completeSaveCollections*/ ctx[10]))) /*collectionsDetails*/ ctx[5].saveCollections(/*$configStore*/ ctx[6]["editMode"], /*$configStore*/ ctx[6]["needToSaveCollections"], /*completeSaveCollections*/ ctx[10]).apply(this, arguments);
     						},
     						false,
     						false,
@@ -31014,8 +31009,12 @@ Do you wish to proceed?`)) {
 
     			if (dirty & /*$configStore*/ 64 && button_class_value !== (button_class_value = "" + (null_to_empty(/*$configStore*/ ctx[6]["needToSaveCollections"]
     			? "cc-active-save-button"
-    			: "cc-save-button") + " svelte-1bq7e82"))) {
+    			: "cc-save-button") + " svelte-jgf4cx"))) {
     				attr_dev(button, "class", button_class_value);
+    			}
+
+    			if (dirty & /*$configStore*/ 64 && button_disabled_value !== (button_disabled_value = !/*$configStore*/ ctx[6]["needToSaveCollections"])) {
+    				prop_dev(button, "disabled", button_disabled_value);
     			}
     		},
     		d: function destroy(detaching) {
@@ -31031,19 +31030,19 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(265:4) {#if canvasDataLoaded && collectionsDataLoaded}",
+    		source: "(270:4) {#if canvasDataLoaded && collectionsDataLoaded}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (287:4) {#if !ccPublished}
+    // (293:4) {#if !ccPublished}
     function create_if_block_2(ctx) {
     	let div1;
     	let sl_tooltip;
     	let div0;
-    	let raw_value = /*HELP*/ ctx[13].unpublished.tooltip + "";
+    	let raw_value = /*HELP*/ ctx[14].unpublished.tooltip + "";
     	let t0;
     	let a0;
     	let i;
@@ -31064,27 +31063,27 @@ Do you wish to proceed?`)) {
     			sl_button = element("sl-button");
     			sl_button.textContent = "unpublished";
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 289, 10, 11340);
+    			add_location(div0, file, 295, 10, 11605);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 295, 13, 11566);
+    			add_location(i, file, 301, 13, 11831);
     			attr_dev(a0, "id", "cc-about-unpublished");
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
-    			attr_dev(a0, "href", /*HELP*/ ctx[13].unpublished.url);
-    			add_location(a0, file, 290, 10, 11410);
+    			attr_dev(a0, "href", /*HELP*/ ctx[14].unpublished.url);
+    			add_location(a0, file, 296, 10, 11675);
     			set_custom_element_data(sl_tooltip, "trigger", "hover focus");
-    			set_custom_element_data(sl_tooltip, "class", "svelte-1bq7e82");
-    			add_location(sl_tooltip, file, 288, 8, 11294);
+    			set_custom_element_data(sl_tooltip, "class", "svelte-jgf4cx");
+    			add_location(sl_tooltip, file, 294, 8, 11559);
     			set_custom_element_data(sl_button, "pill", "");
     			set_custom_element_data(sl_button, "size", "small");
     			set_custom_element_data(sl_button, "variant", "warning");
-    			add_location(sl_button, file, 299, 10, 11733);
+    			add_location(sl_button, file, 305, 10, 11998);
     			attr_dev(a1, "href", /*collectionsConfigUrl*/ ctx[9]);
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noreferrer");
-    			add_location(a1, file, 298, 8, 11657);
-    			attr_dev(div1, "class", "cc-unpublished svelte-1bq7e82");
-    			add_location(div1, file, 287, 6, 11256);
+    			add_location(a1, file, 304, 8, 11922);
+    			attr_dev(div1, "class", "cc-unpublished svelte-jgf4cx");
+    			add_location(div1, file, 293, 6, 11521);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -31108,14 +31107,14 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(287:4) {#if !ccPublished}",
+    		source: "(293:4) {#if !ccPublished}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (304:4) {#if showConfig}
+    // (310:4) {#if showConfig}
     function create_if_block_1(ctx) {
     	let div;
     	let collectionsconfiguration;
@@ -31127,8 +31126,8 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			create_component(collectionsconfiguration.$$.fragment);
     			attr_dev(div, "id", "cc-config");
-    			attr_dev(div, "class", "border border-trbl svelte-1bq7e82");
-    			add_location(div, file, 304, 6, 11872);
+    			attr_dev(div, "class", "border border-trbl svelte-jgf4cx");
+    			add_location(div, file, 310, 6, 12137);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -31154,7 +31153,7 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(304:4) {#if showConfig}",
+    		source: "(310:4) {#if showConfig}",
     		ctx
     	});
 
@@ -31181,10 +31180,10 @@ Do you wish to proceed?`)) {
     			if_block_anchor = empty();
     			attr_dev(link, "rel", "stylesheet");
     			attr_dev(link, "href", "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/themes/light.css");
-    			add_location(link, file, 231, 2, 9420);
+    			add_location(link, file, 236, 2, 9599);
     			attr_dev(script, "type", "module");
     			if (!src_url_equal(script.src, script_src_value = "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.88/dist/shoelace.js")) attr_dev(script, "src", script_src_value);
-    			add_location(script, file, 235, 2, 9559);
+    			add_location(script, file, 240, 2, 9738);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -31198,7 +31197,7 @@ Do you wish to proceed?`)) {
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(window, "beforeunload", /*beforeUnload*/ ctx[12], false, false, false);
+    				dispose = listen_dev(window, "beforeunload", /*beforeUnload*/ ctx[13], false, false, false);
     				mounted = true;
     			}
     		},
@@ -31268,9 +31267,9 @@ Do you wish to proceed?`)) {
     	validate_store(configStore, 'configStore');
     	component_subscribe($$self, configStore, $$value => $$invalidate(6, $configStore = $$value));
     	validate_store(collectionsStore, 'collectionsStore');
-    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(18, $collectionsStore = $$value));
+    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(19, $collectionsStore = $$value));
     	validate_store(modulesStore, 'modulesStore');
-    	component_subscribe($$self, modulesStore, $$value => $$invalidate(19, $modulesStore = $$value));
+    	component_subscribe($$self, modulesStore, $$value => $$invalidate(20, $modulesStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('CanvasCollections', slots, []);
 
@@ -31419,12 +31418,18 @@ Do you wish to proceed?`)) {
     				if ($configStore["editMode"] && AUTO_SAVE) {
     					saveInterval = setInterval(
     						() => {
-    							collectionsDetails.saveCollections($configStore["editMode"], $configStore["needToSaveCollections"]);
+    							collectionsDetails.saveCollections($configStore["editMode"], $configStore["needToSaveCollections"], completeSaveCollections);
     						},
     						TIME_BETWEEN_SAVES
     					);
     				}
     			}
+    		}
+    	}
+
+    	function completeSaveCollections(status) {
+    		if (status) {
+    			set_store_value(configStore, $configStore["needToSaveCollections"] = false, $configStore);
     		}
     	}
 
@@ -31511,7 +31516,7 @@ Do you wish to proceed?`)) {
      */
     	function beforeUnload(event) {
     		event.preventDefault();
-    		collectionsDetails.saveCollections($configStore["editMode"], $configStore["needToSaveCollections"]);
+    		collectionsDetails.saveCollections($configStore["editMode"], $configStore["needToSaveCollections"], completeSaveCollections);
     		console.log("fred");
     	}
 
@@ -31559,9 +31564,9 @@ Do you wish to proceed?`)) {
     	});
 
     	$$self.$$set = $$props => {
-    		if ('courseId' in $$props) $$invalidate(14, courseId = $$props.courseId);
+    		if ('courseId' in $$props) $$invalidate(15, courseId = $$props.courseId);
     		if ('editMode' in $$props) $$invalidate(1, editMode = $$props.editMode);
-    		if ('csrfToken' in $$props) $$invalidate(15, csrfToken = $$props.csrfToken);
+    		if ('csrfToken' in $$props) $$invalidate(16, csrfToken = $$props.csrfToken);
     		if ('modulesPage' in $$props) $$invalidate(2, modulesPage = $$props.modulesPage);
     		if ('showConfig' in $$props) $$invalidate(0, showConfig = $$props.showConfig);
     	};
@@ -31601,6 +31606,7 @@ Do you wish to proceed?`)) {
     		gotCanvasDetails,
     		gotCollectionsDetails,
     		checkAllDataLoaded,
+    		completeSaveCollections,
     		toggleCollectionsSwitch,
     		toggleConfigShow,
     		addCollectionsDisplay,
@@ -31614,9 +31620,9 @@ Do you wish to proceed?`)) {
 
     	$$self.$inject_state = $$props => {
     		if ('__awaiter' in $$props) __awaiter = $$props.__awaiter;
-    		if ('courseId' in $$props) $$invalidate(14, courseId = $$props.courseId);
+    		if ('courseId' in $$props) $$invalidate(15, courseId = $$props.courseId);
     		if ('editMode' in $$props) $$invalidate(1, editMode = $$props.editMode);
-    		if ('csrfToken' in $$props) $$invalidate(15, csrfToken = $$props.csrfToken);
+    		if ('csrfToken' in $$props) $$invalidate(16, csrfToken = $$props.csrfToken);
     		if ('modulesPage' in $$props) $$invalidate(2, modulesPage = $$props.modulesPage);
     		if ('showConfig' in $$props) $$invalidate(0, showConfig = $$props.showConfig);
     		if ('checked' in $$props) $$invalidate(7, checked = $$props.checked);
@@ -31658,6 +31664,7 @@ Do you wish to proceed?`)) {
     		checked,
     		ccPublished,
     		collectionsConfigUrl,
+    		completeSaveCollections,
     		toggleCollectionsSwitch,
     		toggleConfigShow,
     		beforeUnload,
@@ -31672,9 +31679,9 @@ Do you wish to proceed?`)) {
     		super(options);
 
     		init(this, options, instance, create_fragment, safe_not_equal, {
-    			courseId: 14,
+    			courseId: 15,
     			editMode: 1,
-    			csrfToken: 15,
+    			csrfToken: 16,
     			modulesPage: 2,
     			showConfig: 0
     		});

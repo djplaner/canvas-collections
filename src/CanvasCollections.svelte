@@ -143,11 +143,18 @@
           saveInterval = setInterval(() => {
             collectionsDetails.saveCollections(
               $configStore["editMode"],
-              $configStore["needToSaveCollections"]
+              $configStore["needToSaveCollections"],
+              completeSaveCollections
             );
           }, TIME_BETWEEN_SAVES);
         }
       }
+    }
+  }
+
+  function completeSaveCollections( status ) {
+    if (status) {
+      $configStore["needToSaveCollections"] = false;
     }
   }
 
@@ -243,7 +250,8 @@
     event.preventDefault();
     collectionsDetails.saveCollections(
       $configStore["editMode"],
-      $configStore["needToSaveCollections"]
+      $configStore["needToSaveCollections"],
+      completeSaveCollections
     );
     console.log("fred");
   }
@@ -314,9 +322,10 @@
             ? "cc-active-save-button"
             : "cc-save-button"}
           id="cc-save-button"
+          disabled={!$configStore["needToSaveCollections"]}
           on:click={collectionsDetails.saveCollections(
             $configStore["editMode"],
-            $configStore["needToSaveCollections"]
+            $configStore["needToSaveCollections"], completeSaveCollections
           )}>Save</button
         >
         <!--  saveButtonClass = "cc-active-save-button"; -->
@@ -398,7 +407,6 @@
     padding-right: 0.25rem;
     text-align: center;
     vertical-align: middle;
-    cursor: pointer;
     font-size: 65%;
     transition: background-color 0.2s ease-in-out;
   }
@@ -409,18 +417,22 @@
     border: 1px solid;
     border-color: #c7cdd1;
     border-radius: 2px;
+    cursor: auto;
     display: inline-block;
     position: relative;
     padding-left: 0.25rem;
     padding-right: 0.25rem;
     text-align: center;
     vertical-align: middle;
-    cursor: pointer;
     font-size: 65%;
     transition: background-color 0.2s ease-in-out;
   }
 
-  .cc-save-button:hover {
+  .cc-save-button:enabled {
+    cursor: pointer;
+  }
+
+  .cc-save-button:hover:enabled {
     background: #cccccc;
   }
 

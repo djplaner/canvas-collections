@@ -388,22 +388,16 @@ export class CollectionsDetails {
 
   /**
    * @function saveCollections(editMode,needToSave)
-   * @param editMode - boolean, true if in edit mode
-   * @param needToSave - boolean, true if need to save
-   * @description if editMode && needToSave save the colelctions config page
+   * @param {boolean} editMode true if in edit mode
+   * @param {boolean} needToSave true if need to save
+   * @param {Function} callBack set needToSave store to false depending on result
+   * @description if editMode && needToSave save the collections config page
+   * and run callBack with result
    */
 
-  saveCollections(editMode: boolean, needToSave: boolean) {
+  saveCollections(editMode: boolean, needToSave: boolean, callBack: Function) {
     if (editMode && needToSave) {
-      // TODO add in and call saveConfigPage
-
       let callUrl = `/api/v1/courses/${this["config"]["courseId"]}/pages/canvas-collections-configuration`;
-
-      debug(`saveCollections callUrl = ${callUrl}`);
-
-      debug("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-      debug(this.collections);
-      debug("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
 
       const content = this.generateConfigPageContent();
 
@@ -414,7 +408,6 @@ export class CollectionsDetails {
       };
 
       let method = "put";
-      // if we're creating, change the URL and add the title
 
       const bodyString = JSON.stringify(_body);
 
@@ -424,10 +417,7 @@ export class CollectionsDetails {
         this["config"]["csrfToken"],
         method
       ).then((data) => {
-        // successful
-        debug(`saveCollections response = `);
-        debug(data);
-        this.configStore["needToSaveCollections"] = false;
+        callBack(data !== null);
       });
     }
   }
