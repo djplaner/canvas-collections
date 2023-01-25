@@ -8,7 +8,7 @@
 // @updateURL   https://github.com/djplaner/canvas-collections/raw/main/dist/canvas-collections.user.js
 // @downloadURL https://github.com/djplaner/canvas-collections/raw/main/dist/canvas-collections.user.js
 // @supportURL  https://github.com/djplaner/canvas-collections/issues
-// @resource    css https://rawcdn.githack.com/djplaner/canvas-collections/???/dist/canvas-collections.css
+// @resource    css https://raw.githack.com/djplaner/canvas-collections/svelte/dist/canvas-collections.css
 // @match       https://*/courses/*
 // @run-at      document-idle
 // @grant       GM_addStyle
