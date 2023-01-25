@@ -15,8 +15,8 @@ theme:
   plugins:
     - social
   palette:
-    - scheme: default
-      primary: red
+    - scheme: youtube
+#      primary: red
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
@@ -66,6 +66,8 @@ nav:
       - Modules: getting-started/configure/modules.md
     - 3. Use: 
       - Types of Use: getting-started/use/types.md
+    - 4. Development: 
+      - Local development: getting-started/development/local-development.md
   - 'Walk throughs': 
     - Available walk throughs: walk-throughs/available.md
     - New course:
