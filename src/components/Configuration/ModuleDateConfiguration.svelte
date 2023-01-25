@@ -107,7 +107,7 @@
   function updateDate() {
     // also need to recalculate the date and month
     modifyDate();
-    calculatedDate = calculateDate($collectionsStore["MODULES"][moduleId].date);
+    //calculatedDate = calculateDate($collectionsStore["MODULES"][moduleId].date);
     $configStore["needToSaveCollections"] = true;
   }
 
@@ -212,7 +212,7 @@
         <i class="icon-question cc-module-icon" />
       </a>
     </sl-tooltip>
-    {calculatedDate}
+    {calculateDate($collectionsStore["MODULES"][moduleId].date)}
   </p>
 </div>
 

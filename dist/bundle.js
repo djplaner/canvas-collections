@@ -1635,13 +1635,13 @@ var app = (function () {
     			set_style(input, "width", "10rem");
     			input.value = "";
     			attr_dev(input, "class", "svelte-16hsjiw");
-    			add_location(input, file$m, 212, 10, 7811);
+    			add_location(input, file$m, 212, 10, 7857);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, input, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-label")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-label")) {
     				attr_dev(input, "id", input_id_value);
     			}
     		},
@@ -1675,11 +1675,11 @@ var app = (function () {
     			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-label");
     			set_style(input, "width", "10rem");
     			attr_dev(input, "class", "svelte-16hsjiw");
-    			add_location(input, file$m, 205, 10, 7565);
+    			add_location(input, file$m, 205, 10, 7611);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, input, anchor);
-    			set_input_value(input, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["label"]);
+    			set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["label"]);
 
     			if (!mounted) {
     				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[8]);
@@ -1687,12 +1687,12 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-label")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && input_id_value !== (input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-label")) {
     				attr_dev(input, "id", input_id_value);
     			}
 
-    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 21 && input.value !== /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["label"]) {
-    				set_input_value(input, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["label"]);
+    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 11 && input.value !== /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["label"]) {
+    				set_input_value(input, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["label"]);
     			}
     		},
     		d: function destroy(detaching) {
@@ -1725,7 +1725,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = /*day*/ ctx[24];
     			option.value = option.__value;
-    			add_location(option, file$m, 233, 12, 8496);
+    			add_location(option, file$m, 233, 12, 8542);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -1760,7 +1760,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = /*week*/ ctx[21].toString();
     			option.value = option.__value;
-    			add_location(option, file$m, 250, 12, 9079);
+    			add_location(option, file$m, 250, 12, 9125);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -1795,7 +1795,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = /*day*/ ctx[24];
     			option.value = option.__value;
-    			add_location(option, file$m, 303, 12, 10845);
+    			add_location(option, file$m, 303, 12, 10891);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -1830,7 +1830,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = /*week*/ ctx[21].toString();
     			option.value = option.__value;
-    			add_location(option, file$m, 322, 12, 11466);
+    			add_location(option, file$m, 322, 12, 11512);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -1878,6 +1878,7 @@ var app = (function () {
     	let a1;
     	let i1;
     	let t9;
+    	let t10_value = /*calculateDate*/ ctx[5](/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].date) + "";
     	let t10;
     	let t11;
     	let div18;
@@ -1987,15 +1988,15 @@ var app = (function () {
     	let dispose;
 
     	function select_block_type(ctx, dirty) {
-    		if (dirty & /*$collectionsStore, moduleId*/ 5) show_if = null;
-    		if (show_if == null) show_if = !!(/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].hasOwnProperty("date") && /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].date.hasOwnProperty("label"));
+    		if (dirty & /*$collectionsStore, moduleId*/ 3) show_if = null;
+    		if (show_if == null) show_if = !!(/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].hasOwnProperty("date") && /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].date.hasOwnProperty("label"));
     		if (show_if) return create_if_block$e;
     		return create_else_block$6;
     	}
 
     	let current_block_type = select_block_type(ctx, -1);
     	let if_block = current_block_type(ctx);
-    	let each_value_3 = /*daysOfWeek*/ ctx[4];
+    	let each_value_3 = /*daysOfWeek*/ ctx[3];
     	validate_each_argument(each_value_3);
     	let each_blocks_3 = [];
 
@@ -2003,7 +2004,7 @@ var app = (function () {
     		each_blocks_3[i] = create_each_block_3(get_each_context_3(ctx, each_value_3, i));
     	}
 
-    	let each_value_2 = /*weeksOfTerm*/ ctx[5];
+    	let each_value_2 = /*weeksOfTerm*/ ctx[4];
     	validate_each_argument(each_value_2);
     	let each_blocks_2 = [];
 
@@ -2011,7 +2012,7 @@ var app = (function () {
     		each_blocks_2[i] = create_each_block_2$1(get_each_context_2$1(ctx, each_value_2, i));
     	}
 
-    	let each_value_1 = /*daysOfWeek*/ ctx[4];
+    	let each_value_1 = /*daysOfWeek*/ ctx[3];
     	validate_each_argument(each_value_1);
     	let each_blocks_1 = [];
 
@@ -2019,7 +2020,7 @@ var app = (function () {
     		each_blocks_1[i] = create_each_block_1$3(get_each_context_1$3(ctx, each_value_1, i));
     	}
 
-    	let each_value = /*weeksOfTerm*/ ctx[5];
+    	let each_value = /*weeksOfTerm*/ ctx[4];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -2040,7 +2041,7 @@ var app = (function () {
     			a0 = element("a");
     			i0 = element("i");
     			t3 = space();
-    			t4 = text(/*currentStudyPeriod*/ ctx[3]);
+    			t4 = text(/*currentStudyPeriod*/ ctx[2]);
     			t5 = space();
     			div3 = element("div");
     			p1 = element("p");
@@ -2053,7 +2054,7 @@ var app = (function () {
     			a1 = element("a");
     			i1 = element("i");
     			t9 = space();
-    			t10 = text(/*calculatedDate*/ ctx[1]);
+    			t10 = text(t10_value);
     			t11 = space();
     			div18 = element("div");
     			div10 = element("div");
@@ -2167,171 +2168,171 @@ var app = (function () {
     			t46 = space();
     			aeon_datepicker1 = element("aeon-datepicker");
     			input1 = element("input");
-    			add_location(strong0, file$m, 164, 4, 6042);
+    			add_location(strong0, file$m, 164, 4, 6044);
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file$m, 166, 6, 6134);
+    			add_location(div0, file$m, 166, 6, 6136);
     			attr_dev(i0, "class", "icon-question cc-module-icon");
-    			add_location(i0, file$m, 168, 9, 6275);
+    			add_location(i0, file$m, 168, 9, 6277);
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "href", /*HELP*/ ctx[7].studyPeriod.href);
-    			add_location(a0, file$m, 167, 6, 6200);
+    			add_location(a0, file$m, 167, 6, 6202);
     			set_custom_element_data(sl_tooltip0, "class", "cc-about-module-studyPeriod svelte-16hsjiw");
-    			add_location(sl_tooltip0, file$m, 165, 4, 6078);
-    			add_location(p0, file$m, 163, 2, 6033);
+    			add_location(sl_tooltip0, file$m, 165, 4, 6080);
+    			add_location(p0, file$m, 163, 2, 6035);
     			attr_dev(div1, "class", "cc-current-studyPeriod svelte-16hsjiw");
-    			add_location(div1, file$m, 162, 0, 5993);
-    			add_location(strong1, file$m, 177, 4, 6439);
+    			add_location(div1, file$m, 162, 0, 5995);
+    			add_location(strong1, file$m, 177, 4, 6441);
     			attr_dev(div2, "slot", "content");
-    			add_location(div2, file$m, 179, 6, 6495);
+    			add_location(div2, file$m, 179, 6, 6497);
     			attr_dev(i1, "class", "icon-question cc-module-icon");
-    			add_location(i1, file$m, 181, 8, 6642);
+    			add_location(i1, file$m, 181, 8, 6644);
     			attr_dev(a1, "href", /*HELP*/ ctx[7].calculatedDate.href);
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noreferrer");
-    			add_location(a1, file$m, 180, 6, 6564);
+    			add_location(a1, file$m, 180, 6, 6566);
     			set_custom_element_data(sl_tooltip1, "class", "svelte-16hsjiw");
-    			add_location(sl_tooltip1, file$m, 178, 4, 6475);
-    			add_location(p1, file$m, 176, 2, 6430);
+    			add_location(sl_tooltip1, file$m, 178, 4, 6477);
+    			add_location(p1, file$m, 176, 2, 6432);
     			attr_dev(div3, "class", "cc-calculated-date svelte-16hsjiw");
-    			add_location(div3, file$m, 175, 0, 6394);
+    			add_location(div3, file$m, 175, 0, 6396);
     			attr_dev(div4, "slot", "content");
-    			add_location(div4, file$m, 193, 8, 6970);
+    			add_location(div4, file$m, 193, 8, 7016);
     			attr_dev(i2, "class", "icon-question cc-module-icon");
-    			add_location(i2, file$m, 195, 11, 7111);
+    			add_location(i2, file$m, 195, 11, 7157);
     			attr_dev(a2, "target", "_blank");
     			attr_dev(a2, "rel", "noreferrer");
     			attr_dev(a2, "href", /*HELP*/ ctx[7].dateStart.href);
-    			add_location(a2, file$m, 194, 8, 7036);
+    			add_location(a2, file$m, 194, 8, 7082);
     			set_custom_element_data(sl_tooltip2, "id", "cc-about-module-date-start");
     			set_custom_element_data(sl_tooltip2, "class", "svelte-16hsjiw");
-    			add_location(sl_tooltip2, file$m, 192, 6, 6916);
+    			add_location(sl_tooltip2, file$m, 192, 6, 6962);
     			attr_dev(div5, "class", "cc-date-heading svelte-16hsjiw");
-    			add_location(div5, file$m, 190, 4, 6861);
+    			add_location(div5, file$m, 190, 4, 6907);
     			attr_dev(label0, "for", label0_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-label");
-    			add_location(label0, file$m, 201, 8, 7282);
+    			add_location(label0, file$m, 201, 8, 7328);
     			attr_dev(span0, "class", "cc-module-label svelte-16hsjiw");
-    			add_location(span0, file$m, 200, 6, 7242);
+    			add_location(span0, file$m, 200, 6, 7288);
     			attr_dev(span1, "class", "cc-module-input svelte-16hsjiw");
-    			add_location(span1, file$m, 203, 6, 7375);
+    			add_location(span1, file$m, 203, 6, 7421);
     			attr_dev(div6, "class", "cc-module-form svelte-16hsjiw");
-    			add_location(div6, file$m, 199, 4, 7206);
+    			add_location(div6, file$m, 199, 4, 7252);
     			attr_dev(label1, "for", label1_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day");
-    			add_location(label1, file$m, 223, 8, 8092);
+    			add_location(label1, file$m, 223, 8, 8138);
     			attr_dev(span2, "class", "cc-module-label svelte-16hsjiw");
-    			add_location(span2, file$m, 222, 6, 8052);
+    			add_location(span2, file$m, 222, 6, 8098);
     			option0.__value = "";
     			option0.value = option0.__value;
-    			add_location(option0, file$m, 231, 10, 8409);
+    			add_location(option0, file$m, 231, 10, 8455);
     			attr_dev(select0, "id", select0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day");
     			attr_dev(select0, "class", "svelte-16hsjiw");
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["day"] === void 0) add_render_callback(() => /*select0_change_handler*/ ctx[9].call(select0));
-    			add_location(select0, file$m, 226, 8, 8219);
+    			if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["day"] === void 0) add_render_callback(() => /*select0_change_handler*/ ctx[9].call(select0));
+    			add_location(select0, file$m, 226, 8, 8265);
     			attr_dev(span3, "class", "cc-module-input svelte-16hsjiw");
-    			add_location(span3, file$m, 225, 6, 8179);
+    			add_location(span3, file$m, 225, 6, 8225);
     			attr_dev(div7, "class", "cc-module-form svelte-16hsjiw");
-    			add_location(div7, file$m, 221, 4, 8016);
+    			add_location(div7, file$m, 221, 4, 8062);
     			attr_dev(label2, "for", label2_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week");
-    			add_location(label2, file$m, 240, 8, 8677);
+    			add_location(label2, file$m, 240, 8, 8723);
     			attr_dev(span4, "class", "cc-module-label svelte-16hsjiw");
-    			add_location(span4, file$m, 239, 6, 8637);
+    			add_location(span4, file$m, 239, 6, 8683);
     			option1.__value = "";
     			option1.value = option1.__value;
-    			add_location(option1, file$m, 248, 10, 8990);
+    			add_location(option1, file$m, 248, 10, 9036);
     			attr_dev(select1, "id", select1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week");
     			attr_dev(select1, "class", "svelte-16hsjiw");
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["week"] === void 0) add_render_callback(() => /*select1_change_handler*/ ctx[10].call(select1));
-    			add_location(select1, file$m, 243, 8, 8798);
+    			if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["week"] === void 0) add_render_callback(() => /*select1_change_handler*/ ctx[10].call(select1));
+    			add_location(select1, file$m, 243, 8, 8844);
     			attr_dev(span5, "class", "cc-module-input svelte-16hsjiw");
-    			add_location(span5, file$m, 242, 6, 8758);
+    			add_location(span5, file$m, 242, 6, 8804);
     			attr_dev(div8, "class", "cc-module-form svelte-16hsjiw");
-    			add_location(div8, file$m, 238, 4, 8601);
+    			add_location(div8, file$m, 238, 4, 8647);
     			attr_dev(label3, "for", label3_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time");
-    			add_location(label3, file$m, 257, 8, 9273);
+    			add_location(label3, file$m, 257, 8, 9319);
     			attr_dev(span6, "class", "cc-module-label svelte-16hsjiw");
-    			add_location(span6, file$m, 256, 6, 9233);
-    			add_location(style0, file$m, 260, 8, 9394);
+    			add_location(span6, file$m, 256, 6, 9279);
+    			add_location(style0, file$m, 260, 8, 9440);
     			attr_dev(input0, "type", "time");
     			attr_dev(input0, "id", input0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time");
     			attr_dev(input0, "name", "time");
     			attr_dev(input0, "class", "svelte-16hsjiw");
-    			add_location(input0, file$m, 267, 10, 9544);
+    			add_location(input0, file$m, 267, 10, 9590);
     			set_custom_element_data(aeon_datepicker0, "local", "en-au");
-    			add_location(aeon_datepicker0, file$m, 266, 8, 9501);
+    			add_location(aeon_datepicker0, file$m, 266, 8, 9547);
     			attr_dev(span7, "class", "cc-module-input svelte-16hsjiw");
-    			add_location(span7, file$m, 259, 6, 9354);
+    			add_location(span7, file$m, 259, 6, 9400);
     			attr_dev(div9, "class", "cc-module-form svelte-16hsjiw");
-    			add_location(div9, file$m, 255, 4, 9197);
+    			add_location(div9, file$m, 255, 4, 9243);
     			attr_dev(div10, "class", "cc-date-col svelte-16hsjiw");
     			attr_dev(div10, "id", div10_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-start");
-    			add_location(div10, file$m, 189, 2, 6786);
+    			add_location(div10, file$m, 189, 2, 6832);
     			attr_dev(div11, "slot", "content");
-    			add_location(div11, file$m, 282, 8, 10032);
+    			add_location(div11, file$m, 282, 8, 10078);
     			attr_dev(i3, "class", "icon-question cc-module-icon");
-    			add_location(i3, file$m, 284, 11, 10171);
+    			add_location(i3, file$m, 284, 11, 10217);
     			attr_dev(a3, "target", "_blank");
     			attr_dev(a3, "rel", "noreferrer");
     			attr_dev(a3, "href", /*HELP*/ ctx[7].stopDate.href);
-    			add_location(a3, file$m, 283, 8, 10097);
+    			add_location(a3, file$m, 283, 8, 10143);
     			set_custom_element_data(sl_tooltip3, "id", "cc-about-module-date-stop");
     			set_custom_element_data(sl_tooltip3, "class", "svelte-16hsjiw");
-    			add_location(sl_tooltip3, file$m, 281, 6, 9979);
+    			add_location(sl_tooltip3, file$m, 281, 6, 10025);
     			attr_dev(div12, "class", "cc-date-heading svelte-16hsjiw");
-    			add_location(div12, file$m, 279, 4, 9925);
+    			add_location(div12, file$m, 279, 4, 9971);
     			attr_dev(div13, "class", "cc-module-form svelte-16hsjiw");
     			set_style(div13, "height", "2.375rem");
-    			add_location(div13, file$m, 288, 4, 10266);
+    			add_location(div13, file$m, 288, 4, 10312);
     			attr_dev(label4, "for", label4_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day-to");
-    			add_location(label4, file$m, 291, 8, 10403);
+    			add_location(label4, file$m, 291, 8, 10449);
     			attr_dev(span8, "class", "cc-module-label svelte-16hsjiw");
-    			add_location(span8, file$m, 290, 6, 10363);
+    			add_location(span8, file$m, 290, 6, 10409);
     			option2.__value = "";
     			option2.value = option2.__value;
-    			add_location(option2, file$m, 301, 10, 10758);
+    			add_location(option2, file$m, 301, 10, 10804);
     			attr_dev(select2, "id", select2_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day-to");
     			attr_dev(select2, "class", "svelte-16hsjiw");
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["day"] === void 0) add_render_callback(() => /*select2_change_handler*/ ctx[12].call(select2));
-    			add_location(select2, file$m, 294, 8, 10533);
+    			if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["day"] === void 0) add_render_callback(() => /*select2_change_handler*/ ctx[12].call(select2));
+    			add_location(select2, file$m, 294, 8, 10579);
     			attr_dev(span9, "class", "cc-module-input svelte-16hsjiw");
-    			add_location(span9, file$m, 293, 6, 10493);
+    			add_location(span9, file$m, 293, 6, 10539);
     			attr_dev(div14, "class", "cc-module-form svelte-16hsjiw");
-    			add_location(div14, file$m, 289, 4, 10327);
+    			add_location(div14, file$m, 289, 4, 10373);
     			attr_dev(label5, "for", label5_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week-to");
-    			add_location(label5, file$m, 310, 8, 11026);
+    			add_location(label5, file$m, 310, 8, 11072);
     			attr_dev(span10, "class", "cc-module-label svelte-16hsjiw");
-    			add_location(span10, file$m, 309, 6, 10986);
+    			add_location(span10, file$m, 309, 6, 11032);
     			option3.__value = "";
     			option3.value = option3.__value;
-    			add_location(option3, file$m, 320, 10, 11377);
+    			add_location(option3, file$m, 320, 10, 11423);
     			attr_dev(select3, "id", select3_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week-to");
     			attr_dev(select3, "class", "svelte-16hsjiw");
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["week"] === void 0) add_render_callback(() => /*select3_change_handler*/ ctx[13].call(select3));
-    			add_location(select3, file$m, 313, 8, 11150);
+    			if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["week"] === void 0) add_render_callback(() => /*select3_change_handler*/ ctx[13].call(select3));
+    			add_location(select3, file$m, 313, 8, 11196);
     			attr_dev(span11, "class", "cc-module-input svelte-16hsjiw");
-    			add_location(span11, file$m, 312, 6, 11110);
+    			add_location(span11, file$m, 312, 6, 11156);
     			attr_dev(div15, "class", "cc-module-form svelte-16hsjiw");
-    			add_location(div15, file$m, 308, 4, 10950);
+    			add_location(div15, file$m, 308, 4, 10996);
     			attr_dev(label6, "for", label6_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time-to");
-    			add_location(label6, file$m, 329, 8, 11660);
+    			add_location(label6, file$m, 329, 8, 11706);
     			attr_dev(span12, "class", "cc-module-label svelte-16hsjiw");
-    			add_location(span12, file$m, 328, 6, 11620);
-    			add_location(style1, file$m, 332, 8, 11784);
+    			add_location(span12, file$m, 328, 6, 11666);
+    			add_location(style1, file$m, 332, 8, 11830);
     			attr_dev(input1, "type", "time");
     			attr_dev(input1, "id", input1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time-to");
     			attr_dev(input1, "name", "time");
     			attr_dev(input1, "class", "svelte-16hsjiw");
-    			add_location(input1, file$m, 339, 10, 11934);
+    			add_location(input1, file$m, 339, 10, 11980);
     			set_custom_element_data(aeon_datepicker1, "local", "en-au");
-    			add_location(aeon_datepicker1, file$m, 338, 8, 11891);
+    			add_location(aeon_datepicker1, file$m, 338, 8, 11937);
     			attr_dev(span13, "class", "cc-module-input svelte-16hsjiw");
-    			add_location(span13, file$m, 331, 6, 11744);
+    			add_location(span13, file$m, 331, 6, 11790);
     			attr_dev(div16, "class", "cc-module-form svelte-16hsjiw");
-    			add_location(div16, file$m, 327, 4, 11584);
+    			add_location(div16, file$m, 327, 4, 11630);
     			attr_dev(div17, "class", "cc-date-col svelte-16hsjiw");
     			attr_dev(div17, "id", div17_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-stop");
-    			add_location(div17, file$m, 278, 2, 9851);
+    			add_location(div17, file$m, 278, 2, 9897);
     			attr_dev(div18, "class", "cc-date-row svelte-16hsjiw");
-    			add_location(div18, file$m, 188, 0, 6757);
+    			add_location(div18, file$m, 188, 0, 6803);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2395,7 +2396,7 @@ var app = (function () {
     				each_blocks_3[i].m(select0, null);
     			}
 
-    			select_option(select0, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["day"]);
+    			select_option(select0, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["day"]);
     			append_dev(div10, t21);
     			append_dev(div10, div8);
     			append_dev(div8, span4);
@@ -2410,7 +2411,7 @@ var app = (function () {
     				each_blocks_2[i].m(select1, null);
     			}
 
-    			select_option(select1, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["week"]);
+    			select_option(select1, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["week"]);
     			append_dev(div10, t25);
     			append_dev(div10, div9);
     			append_dev(div9, span6);
@@ -2422,7 +2423,7 @@ var app = (function () {
     			append_dev(span7, t29);
     			append_dev(span7, aeon_datepicker0);
     			append_dev(aeon_datepicker0, input0);
-    			set_input_value(input0, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["time"]);
+    			set_input_value(input0, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["time"]);
     			append_dev(div18, t30);
     			append_dev(div18, div17);
     			append_dev(div17, div12);
@@ -2449,7 +2450,7 @@ var app = (function () {
     				each_blocks_1[i].m(select2, null);
     			}
 
-    			select_option(select2, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["day"]);
+    			select_option(select2, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["day"]);
     			append_dev(div17, t38);
     			append_dev(div17, div15);
     			append_dev(div15, span10);
@@ -2464,7 +2465,7 @@ var app = (function () {
     				each_blocks[i].m(select3, null);
     			}
 
-    			select_option(select3, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["week"]);
+    			select_option(select3, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["week"]);
     			append_dev(div17, t42);
     			append_dev(div17, div16);
     			append_dev(div16, span12);
@@ -2476,7 +2477,7 @@ var app = (function () {
     			append_dev(span13, t46);
     			append_dev(span13, aeon_datepicker1);
     			append_dev(aeon_datepicker1, input1);
-    			set_input_value(input1, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["time"]);
+    			set_input_value(input1, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["time"]);
 
     			if (!mounted) {
     				dispose = [
@@ -2498,9 +2499,9 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*calculatedDate*/ 2) set_data_dev(t10, /*calculatedDate*/ ctx[1]);
+    			if (dirty & /*$collectionsStore, moduleId*/ 3 && t10_value !== (t10_value = /*calculateDate*/ ctx[5](/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]].date) + "")) set_data_dev(t10, t10_value);
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && label0_for_value !== (label0_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-label")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && label0_for_value !== (label0_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-label")) {
     				attr_dev(label0, "for", label0_for_value);
     			}
 
@@ -2516,12 +2517,12 @@ var app = (function () {
     				}
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && label1_for_value !== (label1_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && label1_for_value !== (label1_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day")) {
     				attr_dev(label1, "for", label1_for_value);
     			}
 
-    			if (dirty & /*daysOfWeek*/ 16) {
-    				each_value_3 = /*daysOfWeek*/ ctx[4];
+    			if (dirty & /*daysOfWeek*/ 8) {
+    				each_value_3 = /*daysOfWeek*/ ctx[3];
     				validate_each_argument(each_value_3);
     				let i;
 
@@ -2544,20 +2545,20 @@ var app = (function () {
     				each_blocks_3.length = each_value_3.length;
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && select0_id_value !== (select0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && select0_id_value !== (select0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day")) {
     				attr_dev(select0, "id", select0_id_value);
     			}
 
-    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 21) {
-    				select_option(select0, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["day"]);
+    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 11) {
+    				select_option(select0, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["day"]);
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && label2_for_value !== (label2_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && label2_for_value !== (label2_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week")) {
     				attr_dev(label2, "for", label2_for_value);
     			}
 
-    			if (dirty & /*weeksOfTerm*/ 32) {
-    				each_value_2 = /*weeksOfTerm*/ ctx[5];
+    			if (dirty & /*weeksOfTerm*/ 16) {
+    				each_value_2 = /*weeksOfTerm*/ ctx[4];
     				validate_each_argument(each_value_2);
     				let i;
 
@@ -2580,36 +2581,36 @@ var app = (function () {
     				each_blocks_2.length = each_value_2.length;
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && select1_id_value !== (select1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && select1_id_value !== (select1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week")) {
     				attr_dev(select1, "id", select1_id_value);
     			}
 
-    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 21) {
-    				select_option(select1, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["week"]);
+    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 11) {
+    				select_option(select1, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["week"]);
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && label3_for_value !== (label3_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && label3_for_value !== (label3_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time")) {
     				attr_dev(label3, "for", label3_for_value);
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && input0_id_value !== (input0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && input0_id_value !== (input0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time")) {
     				attr_dev(input0, "id", input0_id_value);
     			}
 
-    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 21) {
-    				set_input_value(input0, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["time"]);
+    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 11) {
+    				set_input_value(input0, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["time"]);
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && div10_id_value !== (div10_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-start")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && div10_id_value !== (div10_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-start")) {
     				attr_dev(div10, "id", div10_id_value);
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && label4_for_value !== (label4_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day-to")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && label4_for_value !== (label4_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day-to")) {
     				attr_dev(label4, "for", label4_for_value);
     			}
 
-    			if (dirty & /*daysOfWeek*/ 16) {
-    				each_value_1 = /*daysOfWeek*/ ctx[4];
+    			if (dirty & /*daysOfWeek*/ 8) {
+    				each_value_1 = /*daysOfWeek*/ ctx[3];
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -2632,20 +2633,20 @@ var app = (function () {
     				each_blocks_1.length = each_value_1.length;
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && select2_id_value !== (select2_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day-to")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && select2_id_value !== (select2_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day-to")) {
     				attr_dev(select2, "id", select2_id_value);
     			}
 
-    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 21) {
-    				select_option(select2, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["day"]);
+    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 11) {
+    				select_option(select2, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["day"]);
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && label5_for_value !== (label5_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week-to")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && label5_for_value !== (label5_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week-to")) {
     				attr_dev(label5, "for", label5_for_value);
     			}
 
-    			if (dirty & /*weeksOfTerm*/ 32) {
-    				each_value = /*weeksOfTerm*/ ctx[5];
+    			if (dirty & /*weeksOfTerm*/ 16) {
+    				each_value = /*weeksOfTerm*/ ctx[4];
     				validate_each_argument(each_value);
     				let i;
 
@@ -2668,27 +2669,27 @@ var app = (function () {
     				each_blocks.length = each_value.length;
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && select3_id_value !== (select3_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week-to")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && select3_id_value !== (select3_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week-to")) {
     				attr_dev(select3, "id", select3_id_value);
     			}
 
-    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 21) {
-    				select_option(select3, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["week"]);
+    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 11) {
+    				select_option(select3, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["week"]);
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && label6_for_value !== (label6_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time-to")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && label6_for_value !== (label6_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time-to")) {
     				attr_dev(label6, "for", label6_for_value);
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && input1_id_value !== (input1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time-to")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && input1_id_value !== (input1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time-to")) {
     				attr_dev(input1, "id", input1_id_value);
     			}
 
-    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 21) {
-    				set_input_value(input1, /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["time"]);
+    			if (dirty & /*$collectionsStore, moduleId, daysOfWeek*/ 11) {
+    				set_input_value(input1, /*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["time"]);
     			}
 
-    			if (dirty & /*moduleId, daysOfWeek*/ 17 && div17_id_value !== (div17_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-stop")) {
+    			if (dirty & /*moduleId, daysOfWeek*/ 9 && div17_id_value !== (div17_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-stop")) {
     				attr_dev(div17, "id", div17_id_value);
     			}
     		},
@@ -2725,7 +2726,7 @@ var app = (function () {
     	let $collectionsStore;
     	let $configStore;
     	validate_store(collectionsStore, 'collectionsStore');
-    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(2, $collectionsStore = $$value));
+    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(1, $collectionsStore = $$value));
     	validate_store(configStore, 'configStore');
     	component_subscribe($$self, configStore, $$value => $$invalidate(15, $configStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
@@ -2810,7 +2811,7 @@ var app = (function () {
     		// also need to recalculate the date and month
     		modifyDate();
 
-    		$$invalidate(1, calculatedDate = calculateDate($collectionsStore["MODULES"][moduleId].date));
+    		//calculatedDate = calculateDate($collectionsStore["MODULES"][moduleId].date);
     		set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
     	}
 
@@ -2897,43 +2898,43 @@ var app = (function () {
     	function input_input_handler() {
     		$collectionsStore["MODULES"][moduleId]["date"]["label"] = this.value;
     		collectionsStore.set($collectionsStore);
-    		$$invalidate(4, daysOfWeek);
+    		$$invalidate(3, daysOfWeek);
     	}
 
     	function select0_change_handler() {
     		$collectionsStore["MODULES"][moduleId]["date"]["day"] = select_value(this);
     		collectionsStore.set($collectionsStore);
-    		$$invalidate(4, daysOfWeek);
+    		$$invalidate(3, daysOfWeek);
     	}
 
     	function select1_change_handler() {
     		$collectionsStore["MODULES"][moduleId]["date"]["week"] = select_value(this);
     		collectionsStore.set($collectionsStore);
-    		$$invalidate(4, daysOfWeek);
+    		$$invalidate(3, daysOfWeek);
     	}
 
     	function input0_input_handler() {
     		$collectionsStore["MODULES"][moduleId]["date"]["time"] = this.value;
     		collectionsStore.set($collectionsStore);
-    		$$invalidate(4, daysOfWeek);
+    		$$invalidate(3, daysOfWeek);
     	}
 
     	function select2_change_handler() {
     		$collectionsStore["MODULES"][moduleId]["date"]["to"]["day"] = select_value(this);
     		collectionsStore.set($collectionsStore);
-    		$$invalidate(4, daysOfWeek);
+    		$$invalidate(3, daysOfWeek);
     	}
 
     	function select3_change_handler() {
     		$collectionsStore["MODULES"][moduleId]["date"]["to"]["week"] = select_value(this);
     		collectionsStore.set($collectionsStore);
-    		$$invalidate(4, daysOfWeek);
+    		$$invalidate(3, daysOfWeek);
     	}
 
     	function input1_input_handler() {
     		$collectionsStore["MODULES"][moduleId]["date"]["to"]["time"] = this.value;
     		collectionsStore.set($collectionsStore);
-    		$$invalidate(4, daysOfWeek);
+    		$$invalidate(3, daysOfWeek);
     	}
 
     	$$self.$$set = $$props => {
@@ -2964,8 +2965,8 @@ var app = (function () {
     	$$self.$inject_state = $$props => {
     		if ('moduleId' in $$props) $$invalidate(0, moduleId = $$props.moduleId);
     		if ('calendar' in $$props) calendar = $$props.calendar;
-    		if ('currentStudyPeriod' in $$props) $$invalidate(3, currentStudyPeriod = $$props.currentStudyPeriod);
-    		if ('calculatedDate' in $$props) $$invalidate(1, calculatedDate = $$props.calculatedDate);
+    		if ('currentStudyPeriod' in $$props) $$invalidate(2, currentStudyPeriod = $$props.currentStudyPeriod);
+    		if ('calculatedDate' in $$props) calculatedDate = $$props.calculatedDate;
     		if ('originalDate' in $$props) originalDate = $$props.originalDate;
     	};
 
@@ -2975,11 +2976,11 @@ var app = (function () {
 
     	return [
     		moduleId,
-    		calculatedDate,
     		$collectionsStore,
     		currentStudyPeriod,
     		daysOfWeek,
     		weeksOfTerm,
+    		calculateDate,
     		updateDate,
     		HELP,
     		input_input_handler,
@@ -20357,7 +20358,7 @@ Do you wish to proceed?`)) {
     			t4 = space();
     			if (if_block5) if_block5.c();
     			attr_dev(div, "class", "cc-card-date svelte-ymwt67");
-    			add_location(div, file$b, 156, 4, 5299);
+    			add_location(div, file$b, 156, 4, 5297);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20479,7 +20480,7 @@ Do you wish to proceed?`)) {
     // (79:2) {#if date["to"] && isNotEmptyDate(date["to"])}
     function create_if_block_1$7(ctx) {
     	let div;
-    	let show_if = !isNotEmptyDate(/*date*/ ctx[0]) && /*date*/ ctx[0]["label"];
+    	let show_if = isNotEmptyDate(/*date*/ ctx[0]) && /*date*/ ctx[0]["label"];
     	let t0;
     	let t1;
     	let t2;
@@ -20524,7 +20525,7 @@ Do you wish to proceed?`)) {
     			if (if_block5) if_block5.m(div, null);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*date*/ 1) show_if = !isNotEmptyDate(/*date*/ ctx[0]) && /*date*/ ctx[0]["label"];
+    			if (dirty & /*date*/ 1) show_if = isNotEmptyDate(/*date*/ ctx[0]) && /*date*/ ctx[0]["label"];
 
     			if (show_if) {
     				if (if_block0) {
@@ -20637,7 +20638,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			t = text(t_value);
     			attr_dev(div, "class", "cc-card-date-label svelte-ymwt67");
-    			add_location(div, file$b, 158, 8, 5386);
+    			add_location(div, file$b, 158, 8, 5384);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20675,7 +20676,7 @@ Do you wish to proceed?`)) {
     			t0 = text("Week ");
     			t1 = text(t1_value);
     			attr_dev(div, "class", "cc-card-date-week svelte-ymwt67");
-    			add_location(div, file$b, 163, 8, 5510);
+    			add_location(div, file$b, 163, 8, 5508);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20712,7 +20713,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			t = text(t_value);
     			attr_dev(div, "class", "cc-card-date-time svelte-ymwt67");
-    			add_location(div, file$b, 168, 8, 5637);
+    			add_location(div, file$b, 168, 8, 5635);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20748,7 +20749,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			t = text(t_value);
     			attr_dev(div, "class", "cc-card-date-day svelte-ymwt67");
-    			add_location(div, file$b, 173, 8, 5758);
+    			add_location(div, file$b, 173, 8, 5756);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20784,7 +20785,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			t = text(t_value);
     			attr_dev(div, "class", "cc-card-date-month svelte-ymwt67");
-    			add_location(div, file$b, 178, 8, 5879);
+    			add_location(div, file$b, 178, 8, 5877);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20820,7 +20821,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			t = text(t_value);
     			attr_dev(div, "class", "cc-card-date-date svelte-ymwt67");
-    			add_location(div, file$b, 183, 8, 6003);
+    			add_location(div, file$b, 183, 8, 6001);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20845,7 +20846,7 @@ Do you wish to proceed?`)) {
     	return block;
     }
 
-    // (81:6) {#if ! isNotEmptyDate(date) && date["label"]}
+    // (81:6) {#if isNotEmptyDate(date) && date["label"]}
     function create_if_block_17(ctx) {
     	let div;
     	let t_value = /*date*/ ctx[0]["label"] + "";
@@ -20856,7 +20857,7 @@ Do you wish to proceed?`)) {
     			div = element("div");
     			t = text(t_value);
     			attr_dev(div, "class", "cc-card-date-label svelte-ymwt67");
-    			add_location(div, file$b, 81, 8, 2969);
+    			add_location(div, file$b, 81, 8, 2967);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20874,7 +20875,7 @@ Do you wish to proceed?`)) {
     		block,
     		id: create_if_block_17.name,
     		type: "if",
-    		source: "(81:6) {#if ! isNotEmptyDate(date) && date[\\\"label\\\"]}",
+    		source: "(81:6) {#if isNotEmptyDate(date) && date[\\\"label\\\"]}",
     		ctx
     	});
 
@@ -20907,7 +20908,7 @@ Do you wish to proceed?`)) {
     			t2 = space();
     			if (if_block1) if_block1.c();
     			attr_dev(div, "class", "cc-card-date-week svelte-ymwt67");
-    			add_location(div, file$b, 86, 8, 3136);
+    			add_location(div, file$b, 86, 8, 3134);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -21068,11 +21069,11 @@ Do you wish to proceed?`)) {
     			div1 = element("div");
     			if (if_block1) if_block1.c();
     			attr_dev(div0, "class", "cc-card-date-time-from svelte-ymwt67");
-    			add_location(div0, file$b, 100, 10, 3636);
+    			add_location(div0, file$b, 100, 10, 3634);
     			attr_dev(div1, "class", "cc-card-date-time-to svelte-ymwt67");
-    			add_location(div1, file$b, 105, 10, 3783);
+    			add_location(div1, file$b, 105, 10, 3781);
     			attr_dev(div2, "class", "cc-card-date-dual-time svelte-ymwt67");
-    			add_location(div2, file$b, 99, 8, 3588);
+    			add_location(div2, file$b, 99, 8, 3586);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -21207,11 +21208,11 @@ Do you wish to proceed?`)) {
     			div1 = element("div");
     			if (if_block1) if_block1.c();
     			attr_dev(div0, "class", "cc-card-date-day-from svelte-ymwt67");
-    			add_location(div0, file$b, 114, 10, 4060);
+    			add_location(div0, file$b, 114, 10, 4058);
     			attr_dev(div1, "class", "cc-card-date-day-to svelte-ymwt67");
-    			add_location(div1, file$b, 119, 10, 4220);
+    			add_location(div1, file$b, 119, 10, 4218);
     			attr_dev(div2, "class", "cc-card-date-dual-day svelte-ymwt67");
-    			add_location(div2, file$b, 113, 8, 4013);
+    			add_location(div2, file$b, 113, 8, 4011);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -21346,11 +21347,11 @@ Do you wish to proceed?`)) {
     			div1 = element("div");
     			if (if_block1) if_block1.c();
     			attr_dev(div0, "class", "cc-card-date-month-from svelte-ymwt67");
-    			add_location(div0, file$b, 128, 10, 4516);
+    			add_location(div0, file$b, 128, 10, 4514);
     			attr_dev(div1, "class", "cc-card-date-month-to svelte-ymwt67");
-    			add_location(div1, file$b, 133, 10, 4666);
+    			add_location(div1, file$b, 133, 10, 4664);
     			attr_dev(div2, "class", "cc-card-date-dual-month svelte-ymwt67");
-    			add_location(div2, file$b, 127, 8, 4467);
+    			add_location(div2, file$b, 127, 8, 4465);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -21485,11 +21486,11 @@ Do you wish to proceed?`)) {
     			div1 = element("div");
     			if (if_block1) if_block1.c();
     			attr_dev(div0, "class", "cc-card-date-date-from svelte-ymwt67");
-    			add_location(div0, file$b, 142, 10, 4949);
+    			add_location(div0, file$b, 142, 10, 4947);
     			attr_dev(div1, "class", "cc-card-date-date-to svelte-ymwt67");
-    			add_location(div1, file$b, 147, 10, 5096);
+    			add_location(div1, file$b, 147, 10, 5094);
     			attr_dev(div2, "class", "cc-card-date-dual-date svelte-ymwt67");
-    			add_location(div2, file$b, 141, 8, 4901);
+    			add_location(div2, file$b, 141, 8, 4899);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);

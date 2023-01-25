@@ -87,7 +87,7 @@
 {#if date}
   {#if date["to"] && isNotEmptyDate(date["to"])}
     <div class="cc-card-date">
-      {#if ! isNotEmptyDate(date) && date["label"]} 
+      {#if isNotEmptyDate(date) && date["label"]} 
         <div class="cc-card-date-label">
           {date["label"]}
         </div>
