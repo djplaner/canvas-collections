@@ -49,6 +49,15 @@ export class CanvasDetails {
   }
 
   /**
+   * @method refreshCanvasDetails
+   * @param {Function} callBack 
+   */
+  refreshCanvasDetails(callBack : Function) {
+    this.finishedCallBack = callBack;
+    this.requestCourseObject();
+  }
+
+  /**
    * @function requestCourseObject
    *
    */

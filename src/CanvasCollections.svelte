@@ -15,11 +15,12 @@
   } from "./lib/CollectionsDetails";
 
   import { debug } from "./lib/debug";
+  import { toastAlert } from "./lib/ui";
   debug("______________ CanvasCollections.svelte _______________");
-  debug("hello")
 
   const CC_VERSION = "1.0.0a";
   const TIME_BETWEEN_SAVES = 10000;
+  const TIME_BETWEEN_CANVAS_REFRESH = 15000;
   const AUTO_SAVE = true;
 
   export let courseId: number;
@@ -44,6 +45,10 @@
 
   let collectionsConfigUrl = `/courses/${$configStore["courseId"]}/pages/canvas-collections-configuration`;
 
+  // track whether the intervals have been set
+  // Making sure we don't get multiple intervals running
+  let saveIntervalOn = false;
+  let refreshIntervalOn = false;
   // whether or data canvas and collections data loaded
   let canvasDataLoaded = false;
   let collectionsDataLoaded = false;
@@ -51,6 +56,7 @@
   let canvasDetails = null;
   let collectionsDetails = null;
   let saveInterval = null;
+  let refreshCanvasDetails = null;
 
   let ccPublished = true;
 
@@ -140,7 +146,10 @@
       checked = $configStore["ccOn"];
       if ($configStore["ccOn"]) {
         addCollectionsDisplay();
-        if ($configStore["editMode"] && AUTO_SAVE) {
+        // set up auto save for collections config
+        if ($configStore["editMode"] && AUTO_SAVE && !saveIntervalOn) {
+          saveIntervalOn=true;
+          // only if we're in editMode and auto save is on
           saveInterval = setInterval(() => {
             collectionsDetails.saveCollections(
               $configStore["editMode"],
@@ -149,11 +158,18 @@
             );
           }, TIME_BETWEEN_SAVES);
         }
+        if (!refreshIntervalOn) {
+          refreshIntervalOn = true;
+          // set up auto refresh of canvasDetails
+          refreshCanvasDetails = setInterval(() => {
+            canvasDetails.refreshCanvasDetails(gotCanvasDetails);
+          }, TIME_BETWEEN_CANVAS_REFRESH);
+        }
       }
     }
   }
 
-  function completeSaveCollections( status ) {
+  function completeSaveCollections(status) {
     if (status) {
       $configStore["needToSaveCollections"] = false;
     }
@@ -200,7 +216,11 @@
     // add the representation div
     const div = addCollectionsRepresentation();
 
-    const representation = new CanvasCollectionsRepresentation({ target: div });
+    if (div) {
+      const representation = new CanvasCollectionsRepresentation({
+        target: div,
+      });
+    }
   }
 
   /**
@@ -238,6 +258,9 @@
   onDestroy(() => {
     if (saveInterval) {
       clearInterval(saveInterval);
+    }
+    if (refreshCanvasDetails) {
+      clearInterval(refreshCanvasDetails);
     }
   });
 
@@ -326,7 +349,8 @@
           disabled={!$configStore["needToSaveCollections"]}
           on:click={collectionsDetails.saveCollections(
             $configStore["editMode"],
-            $configStore["needToSaveCollections"], completeSaveCollections
+            $configStore["needToSaveCollections"],
+            completeSaveCollections
           )}>Save</button
         >
         <!--  saveButtonClass = "cc-active-save-button"; -->
