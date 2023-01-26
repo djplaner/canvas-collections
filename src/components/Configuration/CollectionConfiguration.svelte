@@ -9,57 +9,42 @@
     representationsStore,
   } from "../../stores";
   import { updatePageController } from "../../lib/updatePageController";
-//  import { moduleLabelApplicator}  from "../../lib/moduleLabelApplicator";
+  //  import { moduleLabelApplicator}  from "../../lib/moduleLabelApplicator";
   import { getCollectionCanvasModules } from "../Representations/representationSupport";
   import { getPageName } from "../../lib/CanvasSetup";
   import { toastAlert, ccConfirm } from "../../lib/ui";
 
+  import { createEventDispatcher } from "svelte";
+
   export let collectionName: string;
+  export let includePageExists: boolean;
+  export let outputPageExists: boolean;
+  //  export let pageNamesCollections: any;
   export let order: Number;
   export let numCollections: Number;
 
   import { debug } from "../../lib/debug";
 
+  const dispatch = createEventDispatcher();
   debug(
     `__________________ CollectionConfiguration.svelte __collection ${collectionName} order ${order} numCollections ${numCollections}_______________`
   );
+  debug("includePageExists");
+  debug(includePageExists);
+  debug("outputPageExists");
+  debug(outputPageExists);
 
-  // Assume inclduePage and outputPage exist
-  let includePageExists = {},
-    outputPageExists = {};
-  let includePageName = {},
-    outputPageName = {};
-  // loop through each collection
-  Object.keys($collectionsStore["COLLECTIONS"]).forEach((collectionName) => {
-    includePageExists[collectionName] = true;
-    outputPageExists[collectionName] = true;
+  // Assume includePage and outputPage exist
+  /*  export let 
+    outputPageExists = true; */
 
-    ["includePage", "outputPage"].forEach((pageType) => {
-      if (
-        !$collectionsStore["COLLECTIONS"][collectionName].hasOwnProperty(
-          pageType
-        )
-      ) {
-        $collectionsStore["COLLECTIONS"][collectionName][pageType] = "";
-      }
-    });
-
-    includePageName[collectionName] =
-      $collectionsStore["COLLECTIONS"][collectionName].includePage;
-    outputPageName[collectionName] =
-      $collectionsStore["COLLECTIONS"][collectionName].outputPage;
+  ["includePage", "outputPage"].forEach((pageType) => {
+    if (
+      !$collectionsStore["COLLECTIONS"][collectionName].hasOwnProperty(pageType)
+    ) {
+      $collectionsStore["COLLECTIONS"][collectionName][pageType] = "";
+    }
   });
-
-  getPageName(
-    $collectionsStore["COLLECTIONS"][collectionName].includePage,
-    $configStore["courseId"],
-    doesIncludePageExist
-  );
-  getPageName(
-    $collectionsStore["COLLECTIONS"][collectionName].outputPage,
-    $configStore["courseId"],
-    doesOutputPageExist
-  );
 
   const modules = getCollectionCanvasModules(collectionName);
   let moduleCount = modules.length;
@@ -71,10 +56,43 @@
     $representationsStore
   );
 
-  debug($collectionsStore["COLLECTIONS"]);
-
   //  let defaultCollection = false
   //  $: defaultCollection = $collectionsStore["DEFAULT_COLLECTION"] === collectionName
+
+  /**
+   * @function updateIncludePageName
+   * @param e
+   * @description Called when user focuses out of the include page name input
+   * element. Updates the value and the needToSave
+   * The change in includePage should reactively set off checks for if the page
+   * exists
+   */
+  function updatePageName(e) {
+    // get the value of event.target.value
+    const value = e.target.value;
+    let id = e.target.id;
+    // id of the form cc-.*-<pageType> get pageType
+    let pageType = id.split("-")[3];
+
+    const oldValue =
+      $collectionsStore["COLLECTIONS"][collectionName][pageType] || "";
+
+    if (["includePage", "outputPage"].includes(pageType)) {
+      if (value !== oldValue) {
+        //   $collectionsStore["COLLECTIONS"][collectionName]["includePage"] = value;
+        //   $configStore["needToSaveCollections"] = true;
+
+        dispatch("message", {
+          msgType: "changeName",
+          pageType: pageType,
+          collectionName: collectionName,
+          pageName: value,
+        });
+      }
+    } else {
+      toastAlert(`Unknown page type ${pageType}`, "error");
+    }
+  }
 
   function changeDefaultCollection(event) {
     // TODO
@@ -242,7 +260,7 @@
    * page
    * If not turn give an alert
    */
-  function doesIncludePageExist(pageName, msg) {
+  /*  function doesIncludePageExist(pageName, msg) {
     const pageObject = msg.body;
 
     includePageName[collectionName] = pageName;
@@ -260,7 +278,7 @@
     } else {
       includePageExists[collectionName] = true;
     }
-  }
+  } */
 
   /**
    * @function doesOutputPageExists
@@ -271,7 +289,7 @@
    * No alerts for this (unlike include page) because if the output page
    * doesn't exist it will be created
    */
-  function doesOutputPageExist(pageName, msg) {
+  /*  function doesOutputPageExist(pageName, msg) {
     const pageObject = msg.body;
     outputPageName[collectionName] = pageName;
     if (!pageObject) {
@@ -279,7 +297,7 @@
     } else {
       outputPageExists[collectionName] = true;
     }
-  }
+  } */
 
   /**
    * @function updateOutputPage
@@ -290,10 +308,38 @@
    */
   function updateOutputPage(collectionName) {
     const updateController = new updatePageController(
-      collectionName
+      collectionName,
+      checkOutputPageExists
     );
 
     updateController.execute();
+  }
+
+  /**
+   * @function checkOutputPageExists
+   * @param updateController
+   * @description Need to dispatch a updatePage msg
+   * for every page updated
+   */
+  function checkOutputPageExists(updateController) {
+    // get the name of the collection modified (will only be one)
+    //const collectionNames = updateController.getCollectionNamesUpdated();
+    const pageNames = updateController.getPageNamesUpdated();
+
+    pageNames.forEach((pageName) => {
+      dispatch("message", {
+        msgType: "updatePage",
+        pageType: "outputPage",
+        pageName: pageName,
+      });
+    });
+
+    toastAlert(
+      `<p>Updating the following pages</p>
+      ${pageNames
+        .map((pageName) => `<p style="margin-left: 1em">${pageName}</p>`)
+        .join("")}`
+    );
   }
 
   /**
@@ -301,11 +347,11 @@
    * @param collectionName
    * @description Call the moduleLabelApplicator to update the names for
    * all Canvas modules in the collection based on their labels
-   * 
+   *
    * TODO on hold for version 1 for revision about if/how it might be more
    * useful
    */
-/*  function applyModuleLabels(collectionName : string) {
+  /*  function applyModuleLabels(collectionName : string) {
     const labelApplicator = new moduleLabelApplicator(collectionName);
     labelApplicator.execute();
   } */
@@ -546,19 +592,9 @@
     <div>&nbsp;</div>
     <div class="cc-collection-two-line-body">
       <input
-        id="cc-collection-{collectionName}-include-page"
-        bind:value={$collectionsStore["COLLECTIONS"][collectionName]
-          .includePage}
-        on:click={() => ($configStore["needToSaveCollections"] = true)}
-        on:keydown={() => ($configStore["needToSaveCollections"] = true)}
-        on:focusout={() => {
-          includePageExists[collectionName] = true;
-          getPageName(
-            $collectionsStore["COLLECTIONS"][collectionName].includePage,
-            $configStore["courseId"],
-            doesIncludePageExist
-          );
-        }}
+        id="cc-collection-{collectionName}-includePage"
+        value={$collectionsStore["COLLECTIONS"][collectionName].includePage}
+        on:focusout={updatePageName}
       />
 
       <span class="cc-collection-label">
@@ -589,9 +625,12 @@
         />
       </span>
     </div>
-    {#if !includePageExists[collectionName] && includePageName[collectionName]}
+    {#if !includePageExists && $collectionsStore["COLLECTIONS"][collectionName].includePage}
       <div class="cc-collection-two-line-error">
-        Page <strong>{includePageName[collectionName]}</strong> does not exist
+        Page <strong
+          >{$collectionsStore["COLLECTIONS"][collectionName]
+            .includePage}</strong
+        > does not exist
       </div>
     {/if}
   </div>
@@ -618,38 +657,30 @@
     <div>&nbsp;</div>
     <div class="cc-collection-two-line-body">
       <input
-        id="cc-collection-{collectionName}-output-page"
-        bind:value={$collectionsStore["COLLECTIONS"][collectionName].outputPage}
-        on:click={() => ($configStore["needToSaveCollections"] = true)}
-        on:keydown={() => ($configStore["needToSaveCollections"] = true)}
-        on:focusout={() => {
-          outputPageExists[collectionName] = true;
-          getPageName(
-            $collectionsStore["COLLECTIONS"][collectionName].outputPage,
-            $configStore["courseId"],
-            doesOutputPageExist
-          );
-        }}
+        id="cc-collection-{collectionName}-outputPage"
+        value={$collectionsStore["COLLECTIONS"][collectionName].outputPage}
+        on:focusout={updatePageName}
       />
       <button
         id="cc-collection-{collectionName}-output-page-update"
         class="btn"
-        disabled={outputPageName[collectionName] === ""}
+        disabled={$collectionsStore["COLLECTIONS"][collectionName]
+          .outputPage === ""}
         on:click={() => {
           updateOutputPage(collectionName);
         }}>Update</button
       >
     </div>
-    {#if !outputPageExists[collectionName] && outputPageName[collectionName]}
+    {#if !outputPageExists && $collectionsStore["COLLECTIONS"][collectionName].outputPage !== ""}
       <div class="cc-collection-two-line-warning">
         Will create a new page named <strong
-          >{outputPageName[collectionName]}</strong
+          >{$collectionsStore["COLLECTIONS"][collectionName].outputPage}</strong
         >
       </div>
     {/if}
   </div>
 
-<!--  <div class="cc-collection-form-reverse">
+  <!--  <div class="cc-collection-form-reverse">
     <span class="cc-collection-input-reverse">
       <label for="cc-collection-{collectionName}-apply-module-labels">
         🧪Apply module labels ☠️

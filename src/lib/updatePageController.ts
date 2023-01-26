@@ -101,6 +101,37 @@ export class updatePageController {
   }
 
   /**
+   * @method getCollectionNamesUpdates
+   * @returns {Array} - array of collection names that were modified
+   * @description Called to get summary of completed tasks where collections
+   * were updated
+   */
+  getCollectionNamesUpdated() {
+    let collectionNames = [];
+    for (let task of this.completedTasks) {
+      if (task.collection) {
+        collectionNames.push(task.collection);
+      }
+    }
+    return collectionNames;
+  }
+
+  /**
+   * @method getPageNamesUpdated
+   * @returns {Array} - array of page names that were modified
+   * @description Called to get summary of complete updated page
+   */
+  getPageNamesUpdated() {
+    let pageNames ={}; 
+    for (let task of this.completedTasks) {
+      if (task.outputPage) {
+        pageNames[task.outputPage] = task.outputPage;
+      }
+    }
+    return Object.keys(pageNames);
+  }
+
+  /**
    * @method createTaskLists
    * @description Populates the tasks array with an initial set of tasks
    * for the controller's pipeline
@@ -115,7 +146,7 @@ export class updatePageController {
         this.collectionsStore["COLLECTIONS"][this.singleCollectionName];
       const outputPageName = theCollection.outputPage;
       const representationName = theCollection.representation;
-      const outputPageURL = outputPageName.toLowerCase().replace(/ /g, "-");
+      const outputPageUrl = outputPageName.toLowerCase().replace(/ /g, "-");
 
       // set the nav option to the "None" choice
       this.navOption = 1;
@@ -123,7 +154,7 @@ export class updatePageController {
       this.tasks.push({
         collection: this.singleCollectionName,
         outputPage: outputPageName,
-        outputPageURL: outputPageURL,
+        outputPageUrl: outputPageUrl,
         representation: representationName,
         pageObject: null,
         completed: false,
@@ -137,7 +168,7 @@ export class updatePageController {
     /* Standard task list - update each collection's output page */
     // for each collection, create task Object
     // - collection
-    // - outputPage and outputPageURL
+    // - outputPage and outputPageUrl
     // - representation
     // - completed/error/errors
     const collections = this.collectionsStore["COLLECTIONS_ORDER"].filter(
@@ -157,12 +188,12 @@ export class updatePageController {
       const collectionConfig = this.collectionsStore["COLLECTIONS"][collection];
       const outputPageName = collectionConfig.outputPage;
       const representationName = collectionConfig.representation;
-      const outputPageURL = outputPageName.toLowerCase().replace(/ /g, "-");
+      const outputPageUrl = outputPageName.toLowerCase().replace(/ /g, "-");
 
       this.tasks.push({
         collection: collection,
         outputPage: outputPageName,
-        outputPageURL: outputPageURL,
+        outputPageUrl: outputPageUrl,
         representation: representationName,
         completed: false,
         error: false,
@@ -179,7 +210,7 @@ export class updatePageController {
     // One task for each page with multiple collections
     // For each page, create task object
     // - collections **this is the check in updateContent**
-    // - outputPage and outputPageURL
+    // - outputPage and outputPageUrl
     // - representation
     // - completed/error/errors
 
@@ -187,12 +218,12 @@ export class updatePageController {
     // loop through dictionary of pages with multiple collections
     for (let pageName in pagesWithMultipleCollections) {
       const collections = pagesWithMultipleCollections[pageName];
-      const outputPageURL = pageName.toLowerCase().replace(/ /g, "-");
+      const outputPageUrl = pageName.toLowerCase().replace(/ /g, "-");
 
       this.tasks.push({
         collections: collections,
         outputPage: pageName,
-        outputPageURL: outputPageURL,
+        outputPageUrl: outputPageUrl,
         completed: false,
         error: false,
         errors: [],
@@ -342,7 +373,7 @@ export class updatePageController {
     for (let task of this.completedTasks) {
       if (task.error) {
         summary += `<li> ${task.collection} - ${
-          task.outputPageURL
+          task.outputPageUrl
         } - errors - ${task.errors.join("\n     ")} </li>`;
       } else if (task.completed) {
         if (task.hasOwnProperty("collection")) {
@@ -429,9 +460,9 @@ export class updatePageController {
   private async getOutputPage() {
     // check if there's an object in this.tasks
     const courseId = this.configStore["courseId"];
-    const outputPageURL = this.tasks[0].outputPageURL;
+    const outputPageUrl = this.tasks[0].outputPageUrl;
 
-    let callUrl = `/api/v1/courses/${courseId}/pages/${outputPageURL}`;
+    let callUrl = `/api/v1/courses/${courseId}/pages/${outputPageUrl}`;
 
     let response = await fetch(callUrl, {
       method: "GET",
@@ -444,7 +475,7 @@ export class updatePageController {
     });
 
     /*    if (!response.ok) {
-      this.errorFirstTask(`Unable to get page ${outputPageURL} from Canvas`);
+      this.errorFirstTask(`Unable to get page ${outputPageUrl} from Canvas`);
       if (response.status === 404) {
         // page doesn't exist, so create it
         // actually, this should make mods to task[0] indicating an empty page
@@ -497,7 +528,7 @@ export class updatePageController {
     // updating a tabbed page
 
     if (!this.tasks[0].hasOwnProperty("pageObject")) {
-      this.errorFirstTask(`No pageObject for ${this.tasks[0].outputPageURL}`);
+      this.errorFirstTask(`No pageObject for ${this.tasks[0].outputPageUrl}`);
       return;
     }
     const pageObject = this.tasks[0].pageObject;
@@ -591,7 +622,7 @@ export class updatePageController {
 
   private updateOutputContent() {
     if (!this.tasks[0].hasOwnProperty("pageObject")) {
-      this.errorFirstTask(`No pageObject for ${this.tasks[0].outputPageURL}`);
+      this.errorFirstTask(`No pageObject for ${this.tasks[0].outputPageUrl}`);
       return;
     }
 
@@ -747,14 +778,14 @@ export class updatePageController {
 
   async writeOutputPage() {
     if (!this.tasks[0].hasOwnProperty("newContent")) {
-      this.errorFirstTask(`No newContent for ${this.tasks[0].outputPageURL}`);
+      this.errorFirstTask(`No newContent for ${this.tasks[0].outputPageUrl}`);
       return;
     }
 
     let newContent = this.tasks[0].newContent;
 
     const courseId = this.configStore["courseId"];
-    const outputPageURL = this.tasks[0].outputPageURL;
+    const outputPageUrl = this.tasks[0].outputPageUrl;
 
     // need this to be an id or empty
     // for an existing page, the pageObject should have the id and can use the URL
@@ -768,7 +799,7 @@ export class updatePageController {
       // this is an existing page
       callUrl = `${callUrl}/${this.tasks[0].pageObject.page_id}`;
     } else {
-      callUrl = `${callUrl}/${this.tasks[0].outputPageURL}`;
+      callUrl = `${callUrl}/${this.tasks[0].outputPageUrl}`;
     }
 
     // add in the CIDI labs custom CSS requirement
@@ -806,20 +837,20 @@ export class updatePageController {
     });
 
     if (!response.ok) {
-      this.errorFirstTask(`Unable to update page ${outputPageURL} in Canvas`);
+      this.errorFirstTask(`Unable to update page ${outputPageUrl} in Canvas`);
       return;
     }
 
     let data = await response.json();
 
     if (data.length === 0) {
-      this.errorFirstTask(`No data provided for page ${outputPageURL}`);
+      this.errorFirstTask(`No data provided for page ${outputPageUrl}`);
       return;
     } else {
       if (this.tasks[0].hasOwnProperty("collection")) {
         // we're updating a single page for a collection
         const updateMsg = `<p>Updated 
-		<a href="/courses/${this.configStore["courseId"]}/pages/${outputPageURL}" target="_blank" rel="noreferrer">
+		<a href="/courses/${this.configStore["courseId"]}/pages/${outputPageUrl}" target="_blank" rel="noreferrer">
 		<em>${this.tasks[0].outputPage}</em></a>
 		for the collection <em>${this.tasks[0].collection}</em></p>`;
         toastAlert(updateMsg, "success");
@@ -829,7 +860,7 @@ export class updatePageController {
       ) {
         // we've been adding a tab interface
         const updateMsg = `<p>Added tab navigation to 
-		<a href="/courses/${this.configStore["courseId"]}/pages/${outputPageURL}" target="_blank" rel="noreferrer">
+		<a href="/courses/${this.configStore["courseId"]}/pages/${outputPageUrl}" target="_blank" rel="noreferrer">
 		<em>${this.tasks[0].outputPage}</em></a></p>`;
         toastAlert(updateMsg, "success");
       }

@@ -7,7 +7,20 @@
   import CollectionConfiguration from "./CollectionConfiguration.svelte";
 
   import { debug } from "../../lib/debug";
+
+  export let includePageExists = {};
+  export let outputPageExists = {};
+  export let pageNamesCollections = {};
+
+
   debug("______________ ExistingCollections.svelte _______________");
+
+  debug("includePageExists");
+  debug(includePageExists);
+  debug("outputPageExists");
+  debug(outputPageExists);
+  debug("pageNamesCollections");
+  debug(pageNamesCollections);
 
   debug("------------------------- ExistingCollections");
   debug($collectionsStore);
@@ -30,7 +43,10 @@
   {/if}
   {#each $collectionsStore["COLLECTIONS_ORDER"] as collectionName, i}
     <CollectionConfiguration
+      on:message
       {collectionName}
+      bind:includePageExists={includePageExists[collectionName]}
+      bind:outputPageExists={outputPageExists[collectionName]}
       order={i}
       numCollections={$collectionsStore["COLLECTIONS_ORDER"].length}
     />
