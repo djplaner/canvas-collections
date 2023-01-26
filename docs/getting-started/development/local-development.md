@@ -19,6 +19,10 @@
 4. Modify the `@require` in `dist/canvas-collections.dev.user.js` to point to your repo's file structure
 
 
+### Custom tweaks
+
+Implement [this modification](https://github.com/nenadpnc/cl-editor/issues/25#issuecomment-1402631276) on the `cl-editor` package to ensure changes in the HTML view of the editor are not lost due to Canvas' use of senty.io
+
 
 ## Development
 

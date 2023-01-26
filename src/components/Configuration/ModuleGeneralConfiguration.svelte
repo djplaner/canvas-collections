@@ -20,14 +20,23 @@
 
   let html = $collectionsStore["MODULES"][moduleId].description;
 
-  console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
-  console.log($modulesStore);
-
   onMount(() => {
     const editorId = `cc-module-config-${moduleId}-description-editor`;
     let editorElem = document.getElementById(editorId);
     if (editorElem) {
-      editorElem.onkeydown = (e) => e.stopPropagation();
+      editorElem.onkeydown = (e) => {
+        e.stopPropagation();
+      };
+      // stop propagation on the HTML view editor (the text areas)
+      // TODO this attempt to pass along doesn't work
+      // Canvas sentry.io causes problem
+      // TODO fix this more #180
+      let textareaElem = editorElem.nextElementSibling;
+      if (textareaElem) {
+        textareaElem.onkeydown = (e) => {
+          e.stopPropagation();
+        } 
+      } 
     }
   });
 
@@ -123,7 +132,6 @@
             <option value={collectionName}>{collectionName}</option>
           {/each}
         </select>
-
       </span>
     </div>
   </div>

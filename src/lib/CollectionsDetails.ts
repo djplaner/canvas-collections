@@ -528,9 +528,6 @@ export class CollectionsDetails {
 
     //<div class="cc-card-images" id="cc-course{{COURSE_ID}}" style="display:none"></div>
 
-    debug("----------------- saveConfigPageContent() -----------------");
-    debug(content);
-
     return content;
   }
 

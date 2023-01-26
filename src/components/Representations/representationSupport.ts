@@ -217,7 +217,6 @@ export function modifyCanvasModulesList(collection, showUnallocated) {
 
   // ensure all the moduleIds are displayed
   moduleIds.forEach((moduleId) => {
-    debug(` ---------- working on module ${moduleId} ------------`);
     // make sure that these are displayed
 
     if (editMode) {
@@ -243,9 +242,7 @@ export function modifyCanvasModulesList(collection, showUnallocated) {
  * matching Canvas module element
  */
 function addModuleConfiguration(moduleId: Number) {
-  debug(`XXXXX addModuleConfiguration ${moduleId} `);
   // get type of moduleId
-  debug(`type of moduleId ${typeof moduleId}`);
   const module = document.getElementById(`context_module_${moduleId}`);
   if (module) {
     module.style.display = "block";
