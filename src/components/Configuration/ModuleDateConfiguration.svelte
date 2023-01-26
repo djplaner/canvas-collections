@@ -235,6 +235,7 @@
         {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("label")}
           <input
             type="text"
+            on:keydown|stopPropagation
             id="cc-module-config-{moduleId}-date-label"
             style="width:10rem"
             bind:value={$collectionsStore["MODULES"][moduleId]["date"]["label"]}
