@@ -19,7 +19,6 @@
   import { handle_promise } from "svelte/internal";
   debug("______________ CollectionsConfiguration.svelte _______________");
 
-
   const visibilityOptions = ["no-one", "students", "teachers", "all"];
 
   /**
@@ -167,7 +166,7 @@
     </div>
     <div id="cc-config-new-collection">
       <NewCollection />
-      <FullClaytons />
+      <FullClaytons on:message={handleMessage} />
     </div>
   </div>
 </div>

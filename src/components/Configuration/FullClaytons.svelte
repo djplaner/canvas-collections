@@ -1,6 +1,17 @@
 <script lang="ts">
+  /**
+   * @file FullClaytons.svelte 
+   * @description  Implement full claytons component for collections configuratio
+   * - display basic help and then each of the buttons for navigation option
+   * - pressing a button will call the updateController to do the work
+   * - on completion a call back will send a message to the CollectionsConfiguration component
+   *   in case any new pages were created
+  */
   import { updatePageController } from "../../lib/updatePageController";
   import { toastAlert } from "../../lib/ui";
+
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
 
   /**
    * @function updateOutputPage
@@ -18,11 +29,30 @@
     updateController.execute();
   }
 
+  /**
+   * @function fullClaytonsCompleted
+   * @param pageController
+   * @description called to perform any necessary steps after claytons completion
+   * - display outcome alerts to the user
+   * - dispatch messages with details of the pages that were created
+   */
   function fullClaytonsCompleted(pageController) {
     let outcomes = pageController.generateOutcomesString(
       "Full Claytons update"
     );
 
+    // send message to collections configuration component
+    const pageNames = pageController.getPageNamesUpdated();
+
+    pageNames.forEach((pageName) => {
+      dispatch("message", {
+        msgType: "updatePage",
+        pageType: "outputPage",
+        pageName: pageName,
+      });
+    });
+
+    // provide details
     if (!pageController.singleCollection) {
       const numErrors = pageController.getNumErrors();
       if (numErrors > 0) {
