@@ -35,8 +35,8 @@
       if (textareaElem) {
         textareaElem.onkeydown = (e) => {
           e.stopPropagation();
-        } 
-      } 
+        };
+      }
     }
   });
 
@@ -153,6 +153,7 @@
         <span class="cc-config-autonum">
           <input
             type="checkbox"
+            on:keydown|stopPropagation
             id="cc-module-config-{moduleId}-fyi"
             bind:checked={$collectionsStore["MODULES"][moduleId].fyi}
             style="position:relative; top:-0.25rem; "
@@ -224,8 +225,9 @@
           >auto:
           <input
             type="checkbox"
-            on:change={switchAutoNum}
+            on:change|stopPropagation={switchAutoNum}
             checked={$collectionsStore["MODULES"][moduleId].autonum}
+            on:keydown|stopPropagation
             id="cc-module-config-{moduleId}-autonum"
             style="position:relative; top:-0.25rem; "
           />
@@ -280,6 +282,7 @@
           <input
             type="checkbox"
             id="cc-module-config-{moduleId}-engage"
+            on:keydown|stopPropagation
             bind:checked={$collectionsStore["MODULES"][moduleId].engage}
             style="position:relative; top:-0.25rem; "
             on:click={() => ($configStore["needToSaveCollections"] = true)}

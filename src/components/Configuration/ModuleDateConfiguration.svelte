@@ -264,6 +264,7 @@
         <sl-tooltip id="cc-about-module-date-stop">
           <div slot="content">{@html HELP.hideDate.tooltip}</div>
           <input
+            on:keydown|stopPropagation
             type="checkbox"
             bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
               "day"
@@ -294,6 +295,7 @@
           <div slot="content">{@html HELP.hideDate.tooltip}</div>
           <input
             type="checkbox"
+            on:keydown|stopPropagation
             bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
               "week"
             ]}
@@ -319,10 +321,11 @@
     <div class="cc-module-form">
       <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-time">Time</label>
-                <sl-tooltip id="cc-about-module-date-stop">
+        <sl-tooltip id="cc-about-module-date-stop">
           <div slot="content">{@html HELP.hideDate.tooltip}</div>
           <input
             type="checkbox"
+            on:keydown|stopPropagation
             bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
               "time"
             ]}
@@ -331,7 +334,6 @@
             }}
           />
         </sl-tooltip>
-
       </span>
       <span class="cc-module-input">
         <style>
@@ -357,6 +359,7 @@
           <div slot="content">{@html HELP.hideDate.tooltip}</div>
           <input
             type="checkbox"
+            on:keydown|stopPropagation
             bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
               "calendarDate"
             ]}

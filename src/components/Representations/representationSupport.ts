@@ -313,10 +313,10 @@ export  function deLabelModuleName(module) {
       prepend = module.label;
     }
 
-    let regex = new RegExp(`^${prepend}\\s*[:-]\\s*`);
+    let regex = new RegExp(`^${prepend}\\s*[:->]\\s*`);
 
     if (module.actualNum) {
-      regex = new RegExp(`^${prepend}\\s*${module.actualNum}\\s*[:-]\\s*`);
+      regex = new RegExp(`^${prepend}\\s*${module.actualNum}\\s*[:>-]\\s*`);
       prepend += ` ${module.actualNum}`;
       // remove first char from CARD_LABEL if it is a space
       if (prepend.charAt(0) === " ") {

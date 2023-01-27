@@ -794,9 +794,15 @@ export function calculateActualNum(canvasModules, collectionsModules) {
 
     if (collectionsModule) {
       // does it have a hard coded num
-      if (collectionsModule.hasOwnProperty("num")) {
+      if (
+        collectionsModule.hasOwnProperty("num") &&
+        collectionsModule.num !== ""
+      ) {
         collectionsModule.actualNum = collectionsModule.num;
-      } else {
+      } else if (
+        collectionsModule.hasOwnProperty("label") &&
+        collectionsModule.label !== ""
+      ) {
         // if not, then calculate auto num based on the label and the
         // order so far
         const collectionName = collectionsModule.collection;
