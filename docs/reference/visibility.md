@@ -1,16 +1,24 @@
-# On, off, and unpublished
+# Visibility
 
-Whether Canvas Collections is _on_, _off_, and/or _unpublished_ influence who is able to configure and interact with Collections will change. This is also dependent on whether its [_live_](../getting-started/use/types.md#live-collections) or [_Claytons_](../getting-started/use/types.md#claytons-collections) collections.
+For whom Canvas Collection differs for 
+
+1. [Claytons Collections](#claytons-collections) - you've used Collections to create Canvas pages containing representations.
+2. [Live Collections - via userscript](#live-collections---via-userscript) - you're using Collections as a [userscript in your browser](../getting-started/install/individual.md).
+2. [Live Collections - in production](#live-collections) - your [institution has installed](../getting-started/install/institutional.md) Collections into Canvas.
 
 ## Claytons Collections
 
-Claytons Collections generates static Canvas pages containing representations of collections. Once these pages are created, viewing them does not use Canvas Collections. Consequently, the _on_, _off_, and _unpublished_ settings do not influence Claytons Collections.
+Claytons Collections generates static Canvas pages containing representations of collections. Once the pages are created, viewing them does not use Canvas Collections. The visibility of Claytons Collections is dependent on the visibility of those Canvas pages. As per standard Canvas practice, [unpublished pages are invisible to students](https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-publish-or-unpublish-a-page-as-an-instructor/ta-p/592)
 
-Instead, the question is whether the Canvas pages containing the collection representations have been published. As per standard Canvas practice, [unpublished pages are invisible to students](https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-publish-or-unpublish-a-page-as-an-instructor/ta-p/592)
+## Live Collections - via userscript
 
-## Live Collections
+Using Collections via a userscript will emulate the live Claytons Collections experience. Much of what's described below about visibility in Live Collections applies. However, the major difference is that - if Collections is not in production - only you can see what is happening.
 
-Live Collections is when you are interacting "live" with the Canvas Collections code. The code is installed either [individually](../getting-started/install/individual.md) or [institutionally](../getting-started/install/institutional.md). Canvas Collections provides two sets of interaction functionality:
+## Live Collections - in production
+
+!!! warning "Under construction"
+
+     This section is under construction. It will be completed in the next few days.
 
 1. Configure - teacher/designer roles are potentially able to modify how Canvas Collections is configure.
 2. Interact - all roles are potentially able to use Canvas Collections to navigate a modified view of the Canvas course's modules.

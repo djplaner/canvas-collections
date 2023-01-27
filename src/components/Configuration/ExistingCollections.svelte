@@ -26,17 +26,29 @@
   debug($collectionsStore);
   debug("EEEEEEEEEEEE COLLECTIONS_ORDER");
   debug($collectionsStore["COLLECTIONS_ORDER"]);
+
+  const HELP = {
+    existing: {
+      url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#existing-collections",
+      tooltip: "<p>The collections already defined for this course.</p>",
+    }
+  }
 </script>
 
 <!-- div id="cc-config-existing-collections"> -->
-  <a
-    href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#existing-collections"
-    target="_blank"
-    rel="noreferrer"
-  >
-    <i class="icon-question cc-module-icon" />
-  </a>
   <strong>Existing Collections</strong>
+       <sl-tooltip>
+        <div slot="content">
+          {@html HELP.existing.tooltip}
+        </div>
+        <a
+          href={HELP.existing.url}
+          rel="noreferrer"
+          target="_blank"
+        >
+          <i class="icon-question cc-module-icon" /></a
+        >
+      </sl-tooltip>
 
   {#if $collectionsStore["COLLECTIONS_ORDER"].length === 0}
     <p>No collections have been defined</p>

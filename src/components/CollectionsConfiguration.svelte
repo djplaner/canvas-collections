@@ -16,7 +16,13 @@
 
   import { debug } from "../lib/debug";
   import { toastAlert } from "../lib/ui";
+  import { handle_promise } from "svelte/internal";
   debug("______________ CollectionsConfiguration.svelte _______________");
+
+
+  export let visibility : string = "no-one";
+
+  const visibilityOptions = ["no-one", "students", "staff", "all"];
 
   /**
    * Declare and populate variables to track whether includePage and outputPage
@@ -117,10 +123,38 @@
       }
     });
   }
+
+  const HELP = {
+    visibility: {
+      tooltip:
+        "<p>Who can see Collections modification of the modules page.</p>",
+      url: "https://djplaner.github.io/canvas-collections/reference/visibility/",
+    },
+  };
 </script>
 
-<div class="cc-box-header">
-  <p>Configure Canvas Collections</p>
+<div class="cc-header-grid">
+  <div class="cc-header cc-collections-label">
+    <p>Configure Canvas Collections</p>
+  </div>
+  <div class="cc-collections-input">
+    <small>Visibility</small>
+    <sl-tooltip>
+      <div slot="content">{@html HELP.visibility.tooltip}</div>
+      <a target="_blank" rel="noreferrer" href={HELP.visibility.url}
+        ><i class="icon-question cc-module-icon" /></a
+      >
+    </sl-tooltip>
+    <select
+      id="cc-collection-visibility"
+      class="cc-collection-representation"
+      bind:value={visibility}
+    >
+      {#each visibilityOptions as visibilityOption}
+        <option value={visibilityOption}>{visibilityOption}</option>
+      {/each}
+    </select>
+  </div>
 </div>
 <div class="cc-box-body">
   <div id="cc-config-body">
@@ -144,11 +178,6 @@
     padding-left: 0.5em;
   }
 
-  .cc-box-header p {
-    font-size: 1.1em;
-    font-weight: bold;
-  }
-
   .cc-box-body {
     width: 35em;
     padding-left: 0.5em;
@@ -169,5 +198,36 @@
   #cc-config-body p {
     font-size: 0.9em;
     /*font-weight: bold; */
+  }
+
+  .cc-header p {
+    font-size: 1.1em;
+    font-weight: bold;
+  }
+  .cc-header-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1em;
+    padding-bottom: 0.25em;
+    align-items: center;
+  }
+
+  .cc-collection-label {
+    grid-column: 1/ 2;
+    text-align: right;
+  }
+
+  .cc-collection-input {
+    grid-column: 2/ 3;
+    font-size: 0.8rem;
+  }
+
+  select {
+    margin-bottom: 0;
+    font-size: 0.8rem;
+    width: 5rem;
+    height: 2em;
+    line-height: 2rem;
+    padding: 0;
   }
 </style>

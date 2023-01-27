@@ -53,6 +53,7 @@
 
 <div style="margin-top:0.5em">
   <div>
+    <strong>Full "Claytons"</strong>
     <sl-tooltip>
       <div slot="content">{@html HELP.fullClaytons.tooltip}</div>
       <a target="_blank" rel="noreferrer" href={HELP.fullClaytons.url}
@@ -60,18 +61,17 @@
       >
     </sl-tooltip>
 
-    <strong>Full "Claytons"</strong>
   </div>
   <div class="border border-trbl" style="padding:0.5em">
+    <label for="cc-config-full-claytons-navigation-option"
+      >Navigation Bar Options</label
+    >
     <sl-tooltip>
       <div slot="content">{@html HELP.navBarOptions.tooltip}</div>
       <a target="_blank" rel="noreferrer" href={HELP.navBarOptions.url}
         ><i class="icon-question cc-module-icon" /></a
       >
     </sl-tooltip>
-    <label for="cc-config-full-claytons-navigation-option"
-      >Navigation Bar Options</label
-    >
     <div class="cc-config-full-claytons-navigation-option">
       <button class="btn" on:click={() => startFullClaytons("none")}
         >None</button

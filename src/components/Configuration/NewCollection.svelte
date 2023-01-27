@@ -63,16 +63,26 @@
     // set needToSaveCollections to true
     $configStore["needToSaveCollections"] = true;
   }
+
+  const HELP = {
+    newCollection: {
+      url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection",
+      tooltip: "<p>Create a new collection</p>",
+    },
+    representation: {
+      url: "https://djplaner.github.io/canvas-collections/reference/representations/overview/",
+      tooltip: "<p>Choose an initial representation. Can be changed later.</p>"
+    }
+  };
 </script>
 
-<a
-  href="https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection"
-  target="_blank"
-  rel="noreferrer"
->
-  <i class="icon-question cc-module-icon" />
-</a>
 <strong>Add a new Collection</strong>
+<sl-tooltip>
+  <div slot="content">{@html HELP.newCollection.tooltip}</div>
+  <a href={HELP.newCollection.url} target="_blank" rel="noreferrer">
+    <i class="icon-question cc-module-icon" />
+  </a>
+</sl-tooltip>
 
 <div class="cc-config-collection border border-trbl">
   <div class="ic-Form-control" style="margin-bottom: 0px">
@@ -85,15 +95,18 @@
   </div>
 
   <div class="cc-collection-representation">
+    <label for="cc-config-new-collection-representation">Representation</label>
+    <sl-tooltip>
+    <div slot="content">{@html HELP.representation.tooltip}</div>
     <a
-      href="https://djplaner.github.io/canvas-collections/reference/representations/overview/"
+      href={HELP.representation.url}
       target="_blank"
       rel="noreferrer"
     >
       <i class="icon-question cc-module-icon" />
     </a>
+    </sl-tooltip>
 
-    <label for="cc-config-new-collection-representation">Representation</label>
     <select
       id="cc-config-new-collection-representation"
       class="cc-collection-representation"
@@ -119,7 +132,7 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    margin:0.5em;
+    margin: 0.5em;
   }
 
   .cc-config-collection {
@@ -157,5 +170,4 @@
     transform: translateX(-50%);
     font-size: 0.8em;
   }
-
 </style>

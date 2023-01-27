@@ -33,6 +33,10 @@
 
   let checked = false;
 
+  const visibilityOptions = ["no-one", "students", "staff", "all"];
+
+  let visibility = visibilityOptions[0];
+
   $configStore = {
     courseId: courseId,
     editMode: editMode,
@@ -112,13 +116,11 @@
     } else if (status === "no collections config") {
       // if collectionsDetails has errors and editMode are true
       // call CollectionsDetails::initialiseConfigPage
-      if (
-        $configStore["editMode"]
-      ) {
+      if ($configStore["editMode"]) {
         collectionsDetails.initialiseConfigPage();
       }
     } else {
-      toastAlert(`some error get collection details ${status}`, "error")
+      toastAlert(`some error get collection details ${status}`, "error");
     }
   }
 
@@ -147,7 +149,7 @@
         addCollectionsDisplay();
         // set up auto save for collections config
         if ($configStore["editMode"] && AUTO_SAVE && !saveIntervalOn) {
-          saveIntervalOn=true;
+          saveIntervalOn = true;
           // only if we're in editMode and auto save is on
           saveInterval = setInterval(() => {
             collectionsDetails.saveCollections(
@@ -290,7 +292,7 @@
         <p>Meaning live Collections will <strong>not</strong> be visible in 
           "Student View" or for students.</p> 
           <p>Any Claytons Collections will be visible, if the relevant pages are published.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/on-off-unpublished/",
+      url: "https://djplaner.github.io/canvas-collections/reference/visibility/",
     },
   };
 </script>
@@ -317,6 +319,7 @@
           ><i class="icon-question cc-module-icon" /></a
         >
       </sl-tooltip>
+      <!--{#if canvasDataLoaded && collectionsDataLoaded && $configStore["ccOn"]}-->
       {#if canvasDataLoaded && collectionsDataLoaded}
         <i
           id="configShowSwitch"
@@ -332,7 +335,20 @@
     </div>
 
     {#if canvasDataLoaded && collectionsDataLoaded}
-      <label class="cc-switch" for="cc-switch">
+      <!-- bind:value={$collectionsStore["COLLECTIONS"][collectionName][ "representation" ]}
+        on:change={() => ($configStore["needToSaveCollections"] = true)} -->
+
+      <!--      <select
+        id="cc-collection-visibility"
+        class="cc-collection-representation"
+        bind:value={visibility}
+      >
+        {#each visibilityOptions as visibilityOption}
+          <option value={visibilityOption}>{visibilityOption}</option>
+        {/each}
+      </select> -->
+
+      <!-- <label class="cc-switch" for="cc-switch">
         <sl-switch
           {checked}
           id="cc-switch"
@@ -352,8 +368,7 @@
             completeSaveCollections
           )}>Save</button
         >
-        <!--  saveButtonClass = "cc-active-save-button"; -->
-      </div>
+      </div> -->
     {/if}
     {#if !ccPublished}
       <div class="cc-unpublished">
@@ -374,7 +389,7 @@
     {/if}
     {#if showConfig}
       <div id="cc-config" class="border border-trbl">
-        <CollectionsConfiguration />
+        <CollectionsConfiguration bind:visibility />
       </div>
     {/if}
   </div>
