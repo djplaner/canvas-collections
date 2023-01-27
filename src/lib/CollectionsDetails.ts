@@ -134,7 +134,7 @@ export class CollectionsDetails {
     //this.configConverted = this.checkConvertOldConfiguration();
 
     // initialise the controller etc
-    this.ccOn = this.collections.STATUS === "on";
+    //this.ccOn = this.collections.STATUS === "on";
     this.ccPublished = this.collectionsPageResponse.published;
 
     this.finishedCallBack();
@@ -225,7 +225,16 @@ export class CollectionsDetails {
    */
 
   updateCollections() {
-    // modify collections settings
+    // modify Collections settings
+    if (this.collections.hasOwnProperty("STATUS")) {
+      this.collections["VISIBILITY"] = "no-one";
+      if (this.collections["STATUS"] === "on") {
+        this.collections["VISIBILITY"] = "all";
+      }
+      delete this.collections["STATUS"];
+    }
+
+    // modify settings for each collection
     if (this.collections.hasOwnProperty("COLLECTIONS")) {
       for (let collectionName in this.collections["COLLECTIONS"]) {
         const collection = this.collections["COLLECTIONS"][collectionName];

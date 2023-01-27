@@ -33,10 +33,6 @@
 
   let checked = false;
 
-  const visibilityOptions = ["no-one", "students", "staff", "all"];
-
-  let visibility = visibilityOptions[0];
-
   $configStore = {
     courseId: courseId,
     editMode: editMode,
@@ -73,6 +69,21 @@
     }
   }
 
+  // Update ccOn when visibility/editmode change
+  $: {
+    if (canvasDataLoaded && collectionsDataLoaded) {
+      $configStore["ccOn"] = isCollectionsOn(
+        $configStore["editMode"],
+        $collectionsStore["VISIBILITY"]
+      );
+      if ($configStore["ccOn"]) {
+        addCollectionsDisplay();
+      } else {
+        removeCollectionsDisplay();
+      }
+    }
+  }
+
   /**
    * Callback function for when canvasDetails is loaded
    */
@@ -102,7 +113,11 @@
     if (status === "") {
       //----- Range of updates to local data based on the now retrieved collections JSON
       //ccOn = collectionsDetails.ccOn;
-      $configStore["ccOn"] = collectionsDetails.ccOn;
+      //$configStore["ccOn"] = collectionsDetails.ccOn;
+      $configStore["ccOn"] = isCollectionsOn(
+        $configStore["editMode"],
+        collectionsDetails.collections["VISIBILITY"]
+      );
       ccPublished = collectionsDetails.ccPublished;
 
       $configStore["currentCollection"] =
@@ -170,27 +185,39 @@
     }
   }
 
+  /**
+   * @function isCollectionsOn
+   * @param {boolean} editMode  - based on canvas environment
+   * @param {string} visibility - collections configuration:
+   *      no-one, students, teachers, all
+   * @returns {boolean} - true if based on the combination of editMode and visibility
+   * @description Conditions
+   * - if !editMode (i.e. students)
+   *   - false/true === visibility not in ["students","all"]
+   * - if editMode (i.e. teacher)
+   *   - false if visibility in ["no-one","students"]
+   *   - true otherwise
+   */
+
+  function isCollectionsOn(editMode: boolean, visibility: string): boolean {
+    if (visibility === "no-one") {
+      return false;
+    }
+
+    if (!editMode) {
+      // return true if visibility is either 'student' or 'all'
+      return visibility === "students" || visibility === "all";
+    } else {
+      // return true if visibility is either 'teacher' or 'all'
+      return visibility === "teachers" || visibility === "all";
+    }
+    // default to false
+    return false;
+  }
+
   function completeSaveCollections(status) {
     if (status) {
       $configStore["needToSaveCollections"] = false;
-    }
-  }
-
-  /**
-   * Called when the collections on/off switch is clicked
-   * Turn collections on or off and indicate a need to save
-   */
-
-  function toggleCollectionsSwitch() {
-    $configStore["ccOn"] = !$configStore["ccOn"];
-    checked = $configStore["ccOn"];
-    $collectionsStore["STATUS"] = $configStore["ccOn"] ? "on" : "off";
-    $configStore["needToSaveCollections"] = true;
-    // modify the display accordingly
-    if ($configStore["ccOn"]) {
-      addCollectionsDisplay();
-    } else {
-      removeCollectionsDisplay();
     }
   }
 
@@ -278,7 +305,6 @@
       $configStore["needToSaveCollections"],
       completeSaveCollections
     );
-    console.log("fred");
   }
 
   const HELP = {
@@ -319,7 +345,6 @@
           ><i class="icon-question cc-module-icon" /></a
         >
       </sl-tooltip>
-      <!--{#if canvasDataLoaded && collectionsDataLoaded && $configStore["ccOn"]}-->
       {#if canvasDataLoaded && collectionsDataLoaded}
         <i
           id="configShowSwitch"
@@ -334,27 +359,14 @@
       <span style="font-size:50%">{CC_VERSION}</span>
     </div>
 
-    {#if canvasDataLoaded && collectionsDataLoaded}
-      <!-- bind:value={$collectionsStore["COLLECTIONS"][collectionName][ "representation" ]}
-        on:change={() => ($configStore["needToSaveCollections"] = true)} -->
-
-      <!--      <select
-        id="cc-collection-visibility"
-        class="cc-collection-representation"
-        bind:value={visibility}
-      >
-        {#each visibilityOptions as visibilityOption}
-          <option value={visibilityOption}>{visibilityOption}</option>
-        {/each}
-      </select> -->
-
+    {#if canvasDataLoaded && collectionsDataLoaded && $configStore["ccOn"]}
       <!-- <label class="cc-switch" for="cc-switch">
         <sl-switch
           {checked}
           id="cc-switch"
           on:sl-change={toggleCollectionsSwitch}
         />
-      </label>
+      </label> -->
       <div class="cc-save">
         <button
           class={$configStore["needToSaveCollections"]
@@ -368,7 +380,7 @@
             completeSaveCollections
           )}>Save</button
         >
-      </div> -->
+      </div>
     {/if}
     {#if !ccPublished}
       <div class="cc-unpublished">
@@ -389,7 +401,7 @@
     {/if}
     {#if showConfig}
       <div id="cc-config" class="border border-trbl">
-        <CollectionsConfiguration bind:visibility />
+        <CollectionsConfiguration />
       </div>
     {/if}
   </div>

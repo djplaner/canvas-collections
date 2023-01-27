@@ -18,7 +18,7 @@ Eventually, the Canvas Collections configuration interface will allow appropriat
 
 The configuration file defines a number of attributes which control how Canvas Collections behaves. Currently the top level attributes include:
 
-- `STATUS` - Is Canvas Collections turned on or off?
+- `VISIBILITY` - Who can see Collection: no-one, students, staff, all
 - `DEFAULT_ACTIVE_COLLECTION` - Which collection is shown initially for each user?
 - `COLLECTIONS` - What collections are modules grouped into? How are they represented?
 - `MODULES` - How are each of the modules to be represented?
@@ -27,11 +27,8 @@ The following sections explain the configuration for each of these attributes
 
 -- link to a complete example JSON file that includes the following
 
-## `STATUS`
+## `VISIBILITY`
 
-```json
-"STATUS": "on",
-```
 
 ## `DEFAULT_ACTIVE_COLLECTION`
 

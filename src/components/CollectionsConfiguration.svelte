@@ -20,9 +20,7 @@
   debug("______________ CollectionsConfiguration.svelte _______________");
 
 
-  export let visibility : string = "no-one";
-
-  const visibilityOptions = ["no-one", "students", "staff", "all"];
+  const visibilityOptions = ["no-one", "students", "teachers", "all"];
 
   /**
    * Declare and populate variables to track whether includePage and outputPage
@@ -148,7 +146,8 @@
     <select
       id="cc-collection-visibility"
       class="cc-collection-representation"
-      bind:value={visibility}
+      bind:value={$collectionsStore["VISIBILITY"]}
+      on:change={() => ($configStore["needToSaveCollections"] = true)}
     >
       {#each visibilityOptions as visibilityOption}
         <option value={visibilityOption}>{visibilityOption}</option>
@@ -203,6 +202,7 @@
   .cc-header p {
     font-size: 1.1em;
     font-weight: bold;
+    margin-left: 0.5em;
   }
   .cc-header-grid {
     display: grid;

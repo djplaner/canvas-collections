@@ -11,7 +11,7 @@ import CollectionsTable from "./components/Representations/CollectionsTable.svel
 // - COLLECTIONS_ORDER - array of collection names in order to display
 // - DEFAULT_ACTIVE_COLLECTION
 // - MODULES - dict of dicts, keyed on module id
-// - STATUS - string "on" or "off"
+// - VISIBILITY - string: no-one, students, staff, all
 export const collectionsStore = writable({});
 
 // Array of Canvas module information in order of display
