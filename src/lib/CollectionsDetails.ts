@@ -237,6 +237,9 @@ export class CollectionsDetails {
             collection[field] = "";
           }
         });
+        if (collection.hasOwnProperty("dateHide")) {
+          delete collection.dateHide;
+        }
       }
     }
     // Focus on updates to modules
@@ -311,6 +314,21 @@ export class CollectionsDetails {
    */
 
   handleModuleDate(module) {
+    if (!module.hasOwnProperty("dateHide")) {
+      module.dateHide = {
+        day: false,
+        week: false,
+        time: false,
+        calendarDate: false,
+      };
+    } else {
+      ["date", "month"].forEach((field) => {
+        if (module.dateHide.hasOwnProperty(field)) {
+          delete module.dateHide[field];
+          module.dateHide.calendarDate = false;
+        }
+      });
+    }
     if (!module.hasOwnProperty("date")) {
       module.date = {
         label: "",
@@ -691,10 +709,18 @@ export class CollectionsDetails {
           time: "",
         },
       },
+      dateHide: {
+        day: false,
+        week: false,
+        time: false,
+        month: false,
+        date: false,
+      },
       banner: "image",
       image: "",
       imageSize: "",
       includePage: "",
+      includePageAfter: false,
       outputPage: "",
       iframe: "",
       bannerColour: "#ffffff",

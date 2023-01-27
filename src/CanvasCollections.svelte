@@ -110,16 +110,15 @@
         checkAllDataLoaded();
       }
     } else if (status === "no collections config") {
-      // if collectionsDetails has errors and ccOn and editMode are true
-      // errors are assumed, because we got !ok
+      // if collectionsDetails has errors and editMode are true
       // call CollectionsDetails::initialiseConfigPage
       if (
-        $configStore["ccOn"] &&
-        $configStore["editMode"] &&
-        canvasDataLoaded
+        $configStore["editMode"]
       ) {
         collectionsDetails.initialiseConfigPage();
       }
+    } else {
+      toastAlert(`some error get collection details ${status}`, "error")
     }
   }
 

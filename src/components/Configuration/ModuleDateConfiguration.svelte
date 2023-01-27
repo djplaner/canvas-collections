@@ -187,6 +187,13 @@
       tooltip: `Representation of the date as configured by <em>Start Date</em> and possible <em>Stop Date</em>.`,
       href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#start-date",
     },
+    hideDate: {
+      tooltip: `Select to hide this portion of the date in the representation.`,
+    },
+    calendarDate: {
+      tooltip: `<p>Calculated automatically based on the academic calendar and the current term.<p>
+        <p>Use the above to change.</p>`,
+    },
   };
 </script>
 
@@ -253,6 +260,19 @@
     <div class="cc-module-form">
       <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-day">Day of week</label>
+
+        <sl-tooltip id="cc-about-module-date-stop">
+          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <input
+            type="checkbox"
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+              "day"
+            ]}
+            on:click={() => {
+              $configStore["needToSaveCollections"] = true;
+            }}
+          />
+        </sl-tooltip>
       </span>
       <span class="cc-module-input">
         <select
@@ -270,6 +290,18 @@
     <div class="cc-module-form">
       <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-week">Week</label>
+        <sl-tooltip id="cc-about-module-date-stop">
+          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <input
+            type="checkbox"
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+              "week"
+            ]}
+            on:click={() => {
+              $configStore["needToSaveCollections"] = true;
+            }}
+          />
+        </sl-tooltip>
       </span>
       <span class="cc-module-input">
         <select
@@ -287,6 +319,19 @@
     <div class="cc-module-form">
       <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-time">Time</label>
+                <sl-tooltip id="cc-about-module-date-stop">
+          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <input
+            type="checkbox"
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+              "time"
+            ]}
+            on:click={() => {
+              $configStore["needToSaveCollections"] = true;
+            }}
+          />
+        </sl-tooltip>
+
       </span>
       <span class="cc-module-input">
         <style>
@@ -303,6 +348,37 @@
             on:change={updateDate}
           />
         </aeon-datepicker>
+      </span>
+    </div>
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label for="cc-module-config-{moduleId}-calendar-date">Date</label>
+        <sl-tooltip id="cc-about-module-date-stop">
+          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <input
+            type="checkbox"
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+              "calendarDate"
+            ]}
+            on:click={() => {
+              $configStore["needToSaveCollections"] = true;
+            }}
+          />
+        </sl-tooltip>
+      </span>
+      <span class="cc-module-input">
+        <sl-tooltip class="cc-about-module-studyPeriod">
+          <div slot="content">{@html HELP.calendarDate.tooltip}</div>
+
+          <input
+            id="cc-module-config-{moduleId}-calendar-date"
+            type="text"
+            disabled
+            value="{$collectionsStore['MODULES'][moduleId]['date'][
+              'date'
+            ]} {$collectionsStore['MODULES'][moduleId]['date']['month']}"
+          />
+        </sl-tooltip>
       </span>
     </div>
   </div>
@@ -376,6 +452,24 @@
             on:change={updateDate}
           />
         </aeon-datepicker>
+      </span>
+    </div>
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label for="cc-module-config-{moduleId}-calendar-date-to">Date</label>
+      </span>
+      <span class="cc-module-input">
+        <sl-tooltip class="cc-about-module-studyPeriod">
+          <div slot="content">{@html HELP.calendarDate.tooltip}</div>
+          <input
+            id="cc-module-config-{moduleId}-calendar-date-to"
+            type="text"
+            disabled
+            value="{$collectionsStore['MODULES'][moduleId]['date']['to'][
+              'date'
+            ]} {$collectionsStore['MODULES'][moduleId]['date']['to']['month']}"
+          />
+        </sl-tooltip>
       </span>
     </div>
   </div>
