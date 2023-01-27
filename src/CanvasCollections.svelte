@@ -20,7 +20,7 @@
 
   const CC_VERSION = "1.0.0a";
   const TIME_BETWEEN_SAVES = 10000;
-  const TIME_BETWEEN_CANVAS_REFRESH = 1500000;
+  const TIME_BETWEEN_CANVAS_REFRESH = 15000;
   const AUTO_SAVE = true;
 
   export let courseId: number;

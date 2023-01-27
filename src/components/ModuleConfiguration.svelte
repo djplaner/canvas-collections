@@ -87,7 +87,7 @@
     />
 
     Configure Collections for
-    <em>{$collectionsStore["MODULES"][module].name}</em>
+    <em>{@html $collectionsStore["MODULES"][module].name}</em>
     <sl-tooltip>
       <div slot="content">
         {HELP.moduleConfiguration.tooltip}

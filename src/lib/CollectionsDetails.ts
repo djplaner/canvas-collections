@@ -793,30 +793,33 @@ export function calculateActualNum(canvasModules, collectionsModules) {
     const collectionsModule = collectionsModules[moduleId];
 
     if (collectionsModule) {
-      // does it have a hard coded num
-      if (
-        collectionsModule.hasOwnProperty("num") &&
-        collectionsModule.num !== ""
-      ) {
-        collectionsModule.actualNum = collectionsModule.num;
-      } else if (
-        collectionsModule.hasOwnProperty("label") &&
-        collectionsModule.label !== ""
-      ) {
-        // if not, then calculate auto num based on the label and the
-        // order so far
-        const collectionName = collectionsModule.collection;
-        const label = collectionsModule.label;
-        if (!numCalculator.hasOwnProperty(collectionName)) {
-          numCalculator[collectionName] = {};
+      if (!collectionsModule.autonum) {
+        // if autoNum is not on, set actualNum to the value of num
+        if (collectionsModule.hasOwnProperty("num")) {
+          collectionsModule.actualNum = collectionsModule.num;
         }
-        if (!numCalculator[collectionName].hasOwnProperty(label)) {
-          numCalculator[collectionName][label] = 0;
+      } else {
+        // autoNum is on
+
+        if (
+          collectionsModule.hasOwnProperty("label") &&
+          collectionsModule.label !== ""
+        ) {
+          // there is a valid label that isn't empty
+          const collectionName = collectionsModule.collection;
+          const label = collectionsModule.label;
+          // initialise
+          if (!numCalculator.hasOwnProperty(collectionName)) {
+            numCalculator[collectionName] = {};
+          }
+          if (!numCalculator[collectionName].hasOwnProperty(label)) {
+            numCalculator[collectionName][label] = 0;
+          }
+          numCalculator[collectionName][label] = ++numCalculator[
+            collectionName
+          ][label];
+          collectionsModule.actualNum = numCalculator[collectionName][label];
         }
-        numCalculator[collectionName][label] = ++numCalculator[collectionName][
-          label
-        ];
-        collectionsModule.actualNum = numCalculator[collectionName][label];
       }
     }
   });

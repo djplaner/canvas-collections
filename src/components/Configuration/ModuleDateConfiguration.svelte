@@ -522,6 +522,8 @@
   .cc-date-heading {
     padding: 0.5rem;
     text-align: center;
+    font-size: 0.9em;
+    font-weight: bold;
   }
 
   sl-tooltip {
