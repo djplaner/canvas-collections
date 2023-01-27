@@ -73,7 +73,6 @@
       }
     }
   }
-
 </script>
 
 {#if claytons}
@@ -117,6 +116,7 @@
               />
               <DateWidget
                 date={$collectionsStore["MODULES"][theModule.id].date}
+                dateHide={$collectionsStore["MODULES"][theModule.id].dateHide}
                 {calendar}
               />
               <!--               $**DATE_WIDGET** -->
@@ -171,10 +171,14 @@
                         href={getModuleUrl(theModule.id)}
                         style="text-decoration:none;"
                       >
-                        {@html deLabelModuleName($collectionsStore["MODULES"][theModule.id])}
+                        {@html deLabelModuleName(
+                          $collectionsStore["MODULES"][theModule.id]
+                        )}
                       </a>
                     {:else}
-                      {@html deLabelModuleName($collectionsStore["MODULES"][theModule.id])}
+                      {@html deLabelModuleName(
+                        $collectionsStore["MODULES"][theModule.id]
+                      )}
                     {/if}
                   </h3>
                 </div>
@@ -221,9 +225,11 @@
           <div class="cc-card-flex">
             <div class="cc-card-banner-container" data-moduleid={theModule.id}>
               {#if !$collectionsStore["MODULES"][theModule.id].fyi}
-              <a class="cc-card-link" href={getModuleUrl(theModule.id)} style=""
-                >&nbsp;</a
-              >
+                <a
+                  class="cc-card-link"
+                  href={getModuleUrl(theModule.id)}
+                  style="">&nbsp;</a
+                >
               {/if}
               <svelte:component
                 this={BANNER_TRANSLATION[
@@ -233,6 +239,7 @@
               />
               <DateWidget
                 date={$collectionsStore["MODULES"][theModule.id].date}
+                dateHide={$collectionsStore["MODULES"][theModule.id].dateHide}
                 {calendar}
               />
               {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
@@ -270,7 +277,9 @@
                     {$collectionsStore["MODULES"][theModule.id].actualNum}
                   </span>
                   <h3 class="cc-card-title" data-moduleid={theModule.id}>
-                        {@html deLabelModuleName($collectionsStore["MODULES"][theModule.id])}
+                    {@html deLabelModuleName(
+                      $collectionsStore["MODULES"][theModule.id]
+                    )}
                   </h3>
                 </div>
                 <div class="cc-card-description">

@@ -148,10 +148,24 @@ export function generateModuleDate(module) {
   // TODO need generateCalendarDate properly
 
   if (!module.hasOwnProperty("date")) {
-    return "🚧 no date";
+    return "🚧 no date"
   }
-  const date = module.date;
-  return `🚧 ${date.label} ${date.day} Week ${date.week}`;
+  let dateStr = module.date.label
+
+  if (!module.dateHide["day"]) {
+    dateStr += ` ${module.date.day}`
+  }
+  if (!module.dateHide["week"]) {
+    dateStr += ` Week ${module.date.week}`
+  }
+  if (!module.dateHide["calendarDate"]) {
+    dateStr += ` (${module.date.date} ${module.date.month})`
+  }
+  if (!module.dateHide["time"] && module.date.time !== "") {
+    dateStr += ` ${module.date.time}`
+  }
+
+  return dateStr;
 }
 
 /**

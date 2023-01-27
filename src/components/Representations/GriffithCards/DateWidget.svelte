@@ -23,6 +23,7 @@
 //  import { modifyCanvasModulesList } from "../representationSupport";
 
   export let date: Object;
+  export let dateHide: Object;
   export let calendar: UniversityDateCalendar;
 
   if (date) {
@@ -92,7 +93,7 @@
           {date["label"]}
         </div>
       {/if}
-      {#if date["week"] && date["week"]!=="" || date["to"]["week"]}
+      {#if !dateHide["week"] && date["week"] && date["week"]!=="" || date["to"]["week"]}
         <div class="cc-card-date-week">
           {#if date["week"] && date["to"]["week"] && date["week"] !== date["to"]["week"]}
             Weeks
@@ -105,7 +106,7 @@
           {/if}
         </div>
       {/if}
-      {#if date["time"] || date["to"]["time"]}
+      {#if !dateHide["time"] && date["time"] || date["to"]["time"]}
         <div class="cc-card-date-dual-time">
           <div class="cc-card-date-time-from">
             {#if date["time"]}
@@ -169,27 +170,27 @@
           {date["label"]}
         </div>
       {/if}
-      {#if date["week"]}
+      {#if !dateHide["week"] && date["week"] && !dateHide["week"]}
         <div class="cc-card-date-week">
           Week {date["week"]}
         </div>
       {/if}
-      {#if date["time"]}
+      {#if !dateHide["time"] && date["time"]}
         <div class="cc-card-date-time">
           {date["time"]}
         </div>
       {/if}
-      {#if date["day"]}
+      {#if !dateHide["day"] && date["day"]}
         <div class="cc-card-date-day">
           {date["day"]}
         </div>
       {/if}
-      {#if date["month"]}
+      {#if !dateHide["calendarDate"] && date["month"]}
         <div class="cc-card-date-month">
           {date["month"]}
         </div>
       {/if}
-      {#if date["date"]}
+      {#if !dateHide["calendarDate"] && date["date"]}
         <div class="cc-card-date-date">
           {date["date"]}
         </div>
