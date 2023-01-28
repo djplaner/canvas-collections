@@ -168,6 +168,7 @@
           // only if we're in editMode and auto save is on
           saveInterval = setInterval(() => {
             collectionsDetails.saveCollections(
+              $collectionsStore,
               $configStore["editMode"],
               $configStore["needToSaveCollections"],
               completeSaveCollections
@@ -301,6 +302,7 @@
   function beforeUnload(event) {
     event.preventDefault();
     collectionsDetails.saveCollections(
+      $collectionsStore,
       $configStore["editMode"],
       $configStore["needToSaveCollections"],
       completeSaveCollections

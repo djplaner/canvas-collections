@@ -7,6 +7,15 @@
   }
 </script>
 
+{#if claytons}
+<div
+  class="claytons-banner-colour"
+  style="width: 100%; height: 10rem; background-color:{$collectionsStore['MODULES'][moduleId]
+    .bannerColour}"
+>
+  &nbsp;
+</div>
+{:else}
 <div
   class="cc-banner-colour"
   style="background-color:{$collectionsStore['MODULES'][moduleId]
@@ -14,6 +23,7 @@
 >
   &nbsp;
 </div>
+{/if}
 
 <style>
 	.cc-banner-colour {

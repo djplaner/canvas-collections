@@ -12,6 +12,8 @@
 
   import { debug } from "../../lib/debug";
 
+  import { ccConfirm } from "../../lib/ui";
+
   import sanitizeHtml from "sanitize-html";
 
   export let moduleId: Number;
@@ -83,28 +85,38 @@
     sanitisedValue = sanitisedValue.replace(/.*(<iframe.*<\/iframe>).*/, "$1");
 
     if (iframeValue !== sanitisedValue) {
-      if (
-        !window.confirm(
-          `The iframe value you provided appears to contain unnecessary, perhaps forbidden characters. 
+      // convert iframeValue to xmp but wrap at 40 characters
+      let displayIframeValue = encodeHTML(iframeValue);
+      let displaySanitisedValue = encodeHTML(sanitisedValue);
 
-NOTE: width and height will be removed to ensure the iframe is responsive.
+      ccConfirm(
+        `The iframe value you provided appears to contain unnecessary, perhaps forbidden characters.  (NOTE: width and height will be removed to ensure the iframe is responsive.)
 
 You provided
-    ${iframeValue}
+    <p style="font-family: monospace; font-size:small">${displayIframeValue}</p>
 only the following is allowed
-    ${sanitisedValue}
+    <p style="font-family: monospace; font-size:small">${displaySanitisedValue}</p>
     
 Do you wish to proceed?`
-        )
-      ) {
-        return;
-      } else {
-        iframe.value = sanitisedValue;
-      }
+      ).then((ok) => {
+        if (ok) {
+          iframe.value = sanitisedValue;
+          $collectionsStore["MODULES"][moduleId].iframe = sanitisedValue;
+          $configStore["needToSaveCollections"] = true;
+        }
+      });
+    } else {
+      $collectionsStore["MODULES"][moduleId].iframe = sanitisedValue;
+      $configStore["needToSaveCollections"] = true;
     }
     // if confirmed update the iframe attribute for the current module
-    $collectionsStore["MODULES"][moduleId].iframe = sanitisedValue;
-    $configStore["needToSaveCollections"] = true;
+  }
+
+  function encodeHTML(html: string, json = true) {
+    let txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    let value = txt.innerHTML;
+    return value;
   }
 
   /**
@@ -119,13 +131,7 @@ Do you wish to proceed?`
     let allowedAttributes = {};
     //allowedTags = allowedTags.concat("iframe");
     allowedAttributes = {
-      iframe: [
-        "src",
-        "frameborder",
-        "allowfullscreen",
-        "allow",
-        "title",
-      ],
+      iframe: ["src", "frameborder", "allowfullscreen", "allow", "title"],
     };
 
     return sanitizeHtml(value, {
@@ -157,8 +163,7 @@ Do you wish to proceed?`
       href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-url",
     },
     moduleIframe: {
-      tooltip:
-        `<p>Provide an iframe (embed HTML) to place in a card's banner section.</p> <p>Notes:</p>
+      tooltip: `<p>Provide an iframe (embed HTML) to place in a card's banner section.</p> <p>Notes:</p>
         <ol>
             <li> <em>height</em> and <em>width</em> will be removed to fit the available space</li>
             <li> any change will only take effect after you click outside the iframe box</li>

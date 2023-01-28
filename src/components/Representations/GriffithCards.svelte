@@ -76,31 +76,31 @@
 </script>
 
 {#if claytons}
-  <!-- <div class="cc-card-interface cc-representation">-->
+  <!-- <div class="claytons-card-interface claytons-representation">-->
   <div style="flex-wrap: wrap; display:flex; margin-top: 0.5em">
     {#each modules as theModule}
-      <!-- TODO need to handle styles for cc-unclickable-card -->
+      <!-- TODO need to handle styles for claytons-unclickable-card -->
       <div
         id="cc_module_{theModule.id}"
         style="padding: 0.75rem; flex-direction: column; display:flex;width:30%"
       >
         <div
           id="cc_module_{theModule.id}"
-          class="cc-card"
+          class="claytons-card"
           style="background-color: #fff; border-radius: 1em;"
         >
           <div
-            class="cc-card-flex"
+            class="claytons-card-flex"
             style="overflow:hidden;flex-direction:column; flex: 1 1 0%; display:flex;position:relative;border-style:outset;border-radius:1em;"
           >
             <div
-              class="cc-card-banner-container"
+              class="claytons-card-banner-container"
               data-moduleid={theModule.id}
               style="position:relative;"
             >
               {#if !$collectionsStore["MODULES"][theModule.id].fyi}
                 <a
-                  class="cc-card-link"
+                  class="claytons-card-link"
                   href={getModuleUrl(theModule.id)}
                   style="position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;"
                   >&nbsp;</a
@@ -122,10 +122,10 @@
               <!--               $**DATE_WIDGET** -->
               {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
                 <div
-                  class="cc-card-fyi"
+                  class="claytons-card-fyi"
                   style="position:absolute;background:rgba(0,0,0,0.75);color:white;width:100%;padding: 0.25rem;font-size:x-small;text-align:center;"
                 >
-                  <span class="cc-fyi-text">
+                  <span class="claytons-fyi-text">
                     {#if $collectionsStore["MODULES"][theModule.id].fyiText}
                       {@html $collectionsStore["MODULES"][theModule.id].fyiText}
                     {:else}
@@ -136,38 +136,38 @@
               {/if}
             </div>
             <div
-              class="cc-card-content-height"
+              class="claytons-card-content-height"
               style="height:12rem;overflow:auto;position:relative;"
             >
               {#if !$collectionsStore["MODULES"][theModule.id].fyi}
                 <a
-                  class="cc-card-link"
+                  class="claytons-card-link"
                   href={getModuleUrl(theModule.id)}
                   style="position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;"
                   >&nbsp;</a
                 >
               {/if}
               <!-- this needs to be $cardContentClass -->
-              <!-- handling cc-card-content and cc-unclickable-card-content  -->
+              <!-- handling claytons-card-content and claytons-unclickable-card-content  -->
               <div
                 class={$collectionsStore["MODULES"][theModule.id].fyi
-                  ? "cc-card-content"
-                  : "cc-unclickable-card-content"}
+                  ? "claytons-card-content"
+                  : "claytons-unclickable-card-content"}
                 style="padding:0.5rem;flex: 1 1 0%; display:flex;flex-direction:column"
               >
-                <div class="cc-card-label" style="font-size: 0.9rem">
-                  <span class="cc-card-label" style="font-size: 0.9rem">
+                <div class="claytons-card-label" style="font-size: 0.9rem">
+                  <span class="claytons-card-label" style="font-size: 0.9rem">
                     {@html $collectionsStore["MODULES"][theModule.id].label}
                     {$collectionsStore["MODULES"][theModule.id].actualNum}
                   </span>
                   <h3
-                    class="cc-card-title"
+                    class="claytons-card-title"
                     data-moduleid={theModule.id}
                     style="font-size: 1rem; font-weight:strong;"
                   >
                     {#if !$collectionsStore["MODULES"][theModule.id].fyi}
                       <a
-                        class="cc-card-link"
+                        class="claytons-card-link"
                         href={getModuleUrl(theModule.id)}
                         style="text-decoration:none;"
                       >
@@ -182,16 +182,16 @@
                     {/if}
                   </h3>
                 </div>
-                <div class="cc-card-description" style="font-size:0.75rem;">
+                <div class="claytons-card-description" style="font-size:0.75rem;">
                   {@html $collectionsStore["MODULES"][theModule.id].description}
                 </div>
               </div>
             </div>
-            <div class="cc-card-footer" style="height:4rem;position:relative;">
+            <div class="claytons-card-footer" style="height:4rem;position:relative;">
               {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
-                <div class="cc-card-engage" style="padding-right: 1rem;">
+                <div class="claytons-card-engage" style="padding-right: 1rem;">
                   <div
-                    class="cc-card-engage-button"
+                    class="claytons-card-engage-button"
                     style="float:right;color:rgba(30,58,138,1);border-radius:0.25rem;padding0.5rem 1rem 0.5rem 1rem;border:1px solid rgba(30,58,138,1)"
                   >
                     <a

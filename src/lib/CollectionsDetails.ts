@@ -415,6 +415,7 @@ export class CollectionsDetails {
 
   /**
    * @function saveCollections(editMode,needToSave)
+   * @param {Object} collectionsStore latest detail from collections in memory
    * @param {boolean} editMode true if in edit mode
    * @param {boolean} needToSave true if need to save
    * @param {Function} callBack set needToSave store to false depending on result
@@ -422,11 +423,11 @@ export class CollectionsDetails {
    * and run callBack with result
    */
 
-  saveCollections(editMode: boolean, needToSave: boolean, callBack: Function) {
+  saveCollections(collectionsStore: {}, editMode: boolean, needToSave: boolean, callBack: Function) {
     if (editMode && needToSave) {
       let callUrl = `/api/v1/courses/${this["config"]["courseId"]}/pages/canvas-collections-configuration`;
 
-      const content = this.generateConfigPageContent();
+      const content = this.generateConfigPageContent( collectionsStore );
 
       let _body = {
         wiki_page: {
@@ -450,6 +451,10 @@ export class CollectionsDetails {
   }
 
   /**
+   * @function generateConfigPageContent
+   * @param {Object} collectionsStore latest detail from collections in memory
+   * @returns {string} HTML content for the Canvas Collections Configuration page
+   * @description Using the latest copy of collections passed in
    * Generate and return the HTML to be added into the Canvas Collections Configuration page
    * including
    * - div.cc-config-explanation
@@ -463,7 +468,7 @@ export class CollectionsDetails {
    *   will update these URLs which Collections will then handle)
    */
 
-  generateConfigPageContent() {
+  generateConfigPageContent(collectionsStore: {}) : string {
     // construct the new content for the page
     // - boiler plate description HTML to start
     let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
@@ -485,8 +490,10 @@ export class CollectionsDetails {
     // - if it has an image, add an img element to the div.cc-card-images
     //   with the image URL
     let images = "";
-    for (let moduleId in this["collections"]["MODULES"]) {
-      const module = this["collections"]["MODULES"][moduleId];
+    const modules = collectionsStore["MODULES"]
+
+    for (let moduleId in modules) {
+      const module = modules[moduleId];
 
       if (!module.image) {
         continue;
@@ -513,11 +520,11 @@ export class CollectionsDetails {
     // - div.json containing
     //   - JSON stringify of this.parentController.cc_configuration
     //   - however, each module needs to have it's description encoded as HTML
-    for (let key in this["collections"]["MODULES"]) {
-      const module = this["collections"]["MODULES"][key];
+    for (let key in modules) {
+      const module = modules[key];
       module.description = this.encodeHTML(module.description);
       module.collection = this.encodeHTML(module.collection);
-      if (module.hasOwnProperty("iframe")) {
+      if (module.hasOwnProperty("iframe") && module.iframe!=="") {
         module.iframe = this.encodeHTML(module.iframe);
       }
       module.name = this.encodeHTML(module.name);
@@ -533,13 +540,13 @@ export class CollectionsDetails {
 
     // need to de-encode the description for the page so that
     // it continues to work normally for live operation
-    for (let key in this["collections"]["MODULES"]) {
-      const module = this["collections"]["MODULES"][key];
-      module.description = this.decodeHTML(module.description);
+    for (let key in modules) {
+      const module = modules[key];
+      module.description = this.decodeHTML(module.description,true);
       module.collection = this.decodeHTML(module.collection);
       module.name = this.decodeHTML(module.name);
-      if (module.hasOwnProperty("iframe")) {
-        module.iframe = this.decodeHTML(module.iframe);
+      if (module.hasOwnProperty("iframe") && module.iframe!=="") {
+        module.iframe = this.decodeHTML(module.iframe, true);
       }
       for (let metaKey in module.metadata) {
         module.metadata[metaKey] = this.decodeHTML(module.metadata[metaKey]);
