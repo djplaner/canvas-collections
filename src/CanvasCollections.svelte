@@ -45,6 +45,8 @@
 
   let collectionsConfigUrl = `/courses/${$configStore["courseId"]}/pages/canvas-collections-configuration`;
 
+  let noCollections = true;
+
   // track whether the intervals have been set
   // Making sure we don't get multiple intervals running
   let saveIntervalOn = false;
@@ -61,6 +63,17 @@
 
   let ccPublished = true;
 
+  $: {
+    // recatively update the tooltip for the switch title depending on whether
+    // collections is on or off
+    if (noCollections) {
+      HELP.switchTitle.tooltip = `${HELP.ABOUT.tooltip} <p>Click on the</p>
+      <ul> <li> question mark to learn more.</li>
+          <li> switch to turn Collections on.</li></ul>`;
+    } else {
+      HELP.switchTitle.tooltip = HELP.ABOUT.tooltip
+    }
+  }
   // Whenever currentCollection is changed, save the last collection viewed
   // into local storage
   $: {
@@ -111,6 +124,7 @@
     console.log("YYYYYYYY gotCollectionsDetails");
     console.log(collectionsDetails);
 
+    /*
     if (status === "no collections config") {
       // if collectionsDetails has errors and editMode are true
       // call CollectionsDetails::initialiseConfigPage
@@ -120,9 +134,10 @@
       // reset status to empty string, since we've emulated loading config
       // we can proceed as normal
       status = "";
-    }
+    } */
 
     if (status === "") {
+      noCollections = false;
       //----- Range of updates to local data based on the now retrieved collections JSON
       //ccOn = collectionsDetails.ccOn;
       //$configStore["ccOn"] = collectionsDetails.ccOn;
@@ -141,7 +156,7 @@
         checkAllDataLoaded();
       }
     } else {
-      toastAlert(`some error get collection details ${status}`, "error");
+      console.log(`gotCollectionsDetails - error ${status}`);
     }
   }
 
@@ -154,41 +169,47 @@
    */
   function checkAllDataLoaded() {
     if (canvasDataLoaded && collectionsDataLoaded) {
-      // add in some Canvas module data to the collections module data
-      collectionsDetails.addCanvasModuleData(
-        canvasDetails.courseModules,
-        $configStore["editMode"]
-      );
+      if (!noCollections) {
+        // Only do all this if able to load collections configuration, otherwise
+        // leave the interface and set up as basic until user hits the switch
 
-      $collectionsStore = collectionsDetails.collections;
-      calculateActualNum(
-        canvasDetails.courseModules,
-        $collectionsStore["MODULES"]
-      );
-      checked = $configStore["ccOn"];
-      if ($configStore["ccOn"]) {
-        addCollectionsDisplay();
-        // set up auto save for collections config
-        if ($configStore["editMode"] && AUTO_SAVE && !saveIntervalOn) {
-          saveIntervalOn = true;
-          // only if we're in editMode and auto save is on
-          saveInterval = setInterval(() => {
-            collectionsDetails.saveCollections(
-              $collectionsStore,
-              $configStore["editMode"],
-              $configStore["needToSaveCollections"],
-              completeSaveCollections
-            );
-          }, TIME_BETWEEN_SAVES);
-        }
-        if (!refreshIntervalOn) {
-          refreshIntervalOn = true;
-          // set up auto refresh of canvasDetails
-          refreshCanvasDetails = setInterval(() => {
-            canvasDetails.refreshCanvasDetails(gotCanvasDetails);
-          }, TIME_BETWEEN_CANVAS_REFRESH);
+        // add in some Canvas module data to the collections module data
+        collectionsDetails.addCanvasModuleData(
+          canvasDetails.courseModules,
+          $configStore["editMode"]
+        );
+
+        $collectionsStore = collectionsDetails.collections;
+        calculateActualNum(
+          canvasDetails.courseModules,
+          $collectionsStore["MODULES"]
+        );
+        checked = $configStore["ccOn"];
+        if ($configStore["ccOn"]) {
+          addCollectionsDisplay();
+          // set up auto save for collections config
+          if ($configStore["editMode"] && AUTO_SAVE && !saveIntervalOn) {
+            saveIntervalOn = true;
+            // only if we're in editMode and auto save is on
+            saveInterval = setInterval(() => {
+              collectionsDetails.saveCollections(
+                $collectionsStore,
+                $configStore["editMode"],
+                $configStore["needToSaveCollections"],
+                completeSaveCollections
+              );
+            }, TIME_BETWEEN_SAVES);
+          }
+          if (!refreshIntervalOn) {
+            refreshIntervalOn = true;
+            // set up auto refresh of canvasDetails
+            refreshCanvasDetails = setInterval(() => {
+              canvasDetails.refreshCanvasDetails(gotCanvasDetails);
+            }, TIME_BETWEEN_CANVAS_REFRESH);
+          }
         }
       }
+      // all data is essentially loaded, however, there may be noCollections
       allDataLoaded = true;
     }
   }
@@ -239,6 +260,57 @@
     showConfig = !showConfig;
     console.log(`toggleConfigShow new ${showConfig}`);
     console.log(e);
+  }
+
+  /**
+   * @function initialiseCollections
+   * @description Called when there was previous noCollections configuration and
+   * the user has turned the switch to on
+   * - initialise the config page
+   * - update the internal data
+   * From this stage everything else should proceed as normal
+   */
+
+  function initialiseCollections() {
+    // set up an empty collections configuration
+    collectionsDetails.initialiseCollectionsConfig();
+    // we now have collections
+    noCollections = false;
+    // and we can do the set up again
+    gotCollectionsDetails("");
+
+    collectionsDetails.saveCollections(
+      $collectionsStore,
+      true,
+      true,
+      completeInitialiseConfigPage
+    );
+  }
+
+  /**
+   * @function completeInitialiseConfigPage
+   * @param status - boolean
+   * @description Called after an attempt to save the new config page
+   * Inform the user of the outcome
+   */
+  function completeInitialiseConfigPage(status) {
+    if (status) {
+      toastAlert(
+        `<p>Canvas Collections is now on.</p>
+        <p>A new <a target="_blank" rel="noreferrer" 
+      href="/courses/${courseId}/pages/canvas-collections-configuration">
+      Canvas Collections Configuration page</a> created. It will be used to store
+      Collections data. </p>
+      <p>The page needs to be published before students can see Collections.
+      <p>Removing this page will turn collections off.</p>`,
+        "success"
+      );
+    } else {
+      toastAlert(
+        `<p>Failed to create new Canvas Collections Configuration page</p>`,
+        "danger"
+      );
+    }
   }
 
   /**
@@ -316,9 +388,19 @@
     );
   }
 
-  const HELP = {
+  let HELP = {
+    ABOUT: {
+      tooltip: `<p>Use Canvas Collections to customise the modules page to better
+          fit your design, by:</p>
+          <ol>
+             <li> Grouping modules into different collections. </li>
+             <li> Using different representations for each collection. </li>
+             <li> Adding more contextual information about each module. </li>
+          </ol>`,
+    },
+
     switchTitle: {
-      tooltip: `Collections helps you group modules into collections and customising their representation.`,
+      tooltip: "",
       url: "https://djplaner.github.io/canvas-collections/",
     },
     unpublished: {
@@ -345,16 +427,16 @@
   ></script>
 </svelte:head>
 
-{#if editMode && modulesPage}
+{#if editMode && modulesPage && canvasDataLoaded}
   <div class="cc-switch-container">
     <div class="cc-switch-title">
       <sl-tooltip>
-        <div slot="content">{HELP.switchTitle.tooltip}</div>
+        <div slot="content">{@html HELP.switchTitle.tooltip}</div>
         <a target="_blank" rel="noreferrer" href={HELP.switchTitle.url}
           ><i class="icon-question cc-module-icon" /></a
         >
       </sl-tooltip>
-      {#if allDataLoaded}
+      {#if allDataLoaded && !noCollections}
         <i
           id="configShowSwitch"
           class="{showConfig
@@ -368,14 +450,12 @@
       <span style="font-size:50%">{CC_VERSION}</span>
     </div>
 
+    {#if noCollections}
+      <label class="cc-switch" for="cc-switch">
+        <sl-switch id="cc-switch" on:sl-change={initialiseCollections} />
+      </label>
+    {/if}
     {#if allDataLoaded && $configStore["ccOn"]}
-      <!-- <label class="cc-switch" for="cc-switch">
-        <sl-switch
-          {checked}
-          id="cc-switch"
-          on:sl-change={toggleCollectionsSwitch}
-        />
-      </label> -->
       <div class="cc-save">
         <button
           class={$configStore["needToSaveCollections"]
@@ -392,7 +472,7 @@
         >
       </div>
     {/if}
-    {#if !ccPublished}
+    {#if !ccPublished && !noCollections}
       <div class="cc-unpublished">
         <sl-tooltip trigger="hover focus">
           <div slot="content">{@html HELP.unpublished.tooltip}</div>
@@ -504,5 +584,9 @@
   sl-tooltip {
     text-align: left;
     white-space: normal;
+  }
+
+  .cc-hide {
+    display: none;
   }
 </style>

@@ -755,7 +755,7 @@ export class CollectionsDetails {
   }
 
   /**
-   * @function initialiseConfigPage
+   * @function initialiseCollectionsConfig
    * @description Called during initialisation when it's found that there is no
    * existing Collections configuration page. At this stage, we may not have the
    * Canvas module information yet. That will be handled with in CanvasCollections
@@ -763,20 +763,32 @@ export class CollectionsDetails {
    * - async save the new config page with that information
    */
 
-  initialiseConfigPage() {
-    alert("Time to initialise config page");
-
+  initialiseCollectionsConfig() {
     // get the default collections config
     this.collections = DEFAULT_CONFIGURATION_TEMPLATE;
+    // by default, the new config page is not published
+    this.ccPublished = false;
     // not needed this is done in saveConfigPage
     //const configStr = JSON.stringify(config);
 
     // create the new config page
-    this.saveCollections(this.collections, true, true, this.completeInitialiseConfigPage.bind(this));
+    //this.saveCollections(this.collections, true, true, this.completeInitialiseConfigPage.bind(this));
   }
 
+  /**
+   * @function completeInitialiseConfigPage
+   * @param status - boolean
+   * @description Called after an attempt to save the new config page
+   * Inform the user of the outcome
+   */
   private completeInitialiseConfigPage(status) {
-    toastAlert(`Initialised config page: ${status}`);
+    if (status) {
+      toastAlert(`New <a target="_blank" rel="noreferrer" 
+      href="/courses/${this.config.courseId}/pages/canvas-collections-configuration">
+      Canvas Collections Configuration page</a> created`, "success");
+    } else {
+      toastAlert(`Failed to create new Canvas Collections Configuration page`, "danger");
+    }
   }
 
 }
