@@ -22,30 +22,38 @@
   debug("---- collectionsStore");
   debug($collectionsStore);
 
-  if (!$configStore["currentCollection"]) {
-    // if no current collection, set it to the first element in COLLECTIONS_ORDER
-    // if it exists
-    if ($collectionsStore["COLLECTIONS_ORDER"].length > 0) {
-      $configStore["currentCollection"] =
-        $collectionsStore["COLLECTIONS_ORDER"][0];
-    } else {
-      // TODO replace with dialog error
-      toastAlert(
-        `<p>There are no collections defined. Please add a collection.</p>`,
-        "danger"
-      );
+  $: {
+    if (!$configStore["currentCollection"] ) {
+      // if no current collection, set it to the first element in COLLECTIONS_ORDER
+      // if it exists
+      if ($collectionsStore["COLLECTIONS_ORDER"].length > 0) {
+        $configStore["currentCollection"] =
+          $collectionsStore["COLLECTIONS_ORDER"][0];
+      } else {
+        // TODO replace with dialog error
+        toastAlert(
+          `<p>There are no collections defined. Please add a collection.</p>`,
+          "danger"
+        );
+      }
     }
   }
 </script>
 
 {#if $collectionsStore["COLLECTIONS_ORDER"].length > 0}
   <CollectionsNavigation bind:collection={$configStore["currentCollection"]} />
-    <IncludePage collectionName={$configStore["currentCollection"]} isAfter={false} />
+  <IncludePage
+    collectionName={$configStore["currentCollection"]}
+    isAfter={false}
+  />
   <CollectionRepresentation
     collection={$configStore["currentCollection"]}
     claytons={false}
   />
-    <IncludePage collectionName={$configStore["currentCollection"]} isAfter={true} />
+  <IncludePage
+    collectionName={$configStore["currentCollection"]}
+    isAfter={true}
+  />
 {/if}
 
 <style>

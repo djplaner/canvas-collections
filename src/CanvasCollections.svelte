@@ -20,7 +20,7 @@
 
   const CC_VERSION = "1.0.0a";
   const TIME_BETWEEN_SAVES = 10000;
-  const TIME_BETWEEN_CANVAS_REFRESH = 15000;
+  const TIME_BETWEEN_CANVAS_REFRESH = 1500000;
   const AUTO_SAVE = true;
 
   export let courseId: number;
@@ -38,7 +38,7 @@
     editMode: editMode,
     csrfToken: csrfToken,
     modulesPage: modulesPage,
-    currentCollection: null,
+    currentCollection: "",
     needToSaveCollections: false,
     ccOn: false,
   };
@@ -52,6 +52,7 @@
   // whether or data canvas and collections data loaded
   let canvasDataLoaded = false;
   let collectionsDataLoaded = false;
+  let allDataLoaded = false;
   // the actual data objects for canvas and collections data
   let canvasDetails = null;
   let collectionsDetails = null;
@@ -64,14 +65,14 @@
   // into local storage
   $: {
     let lastViewedCollection = $configStore["currentCollection"];
-    if (canvasDataLoaded && collectionsDataLoaded) {
+    if (allDataLoaded) {
       collectionsDetails.saveLastCollectionViewed(lastViewedCollection);
     }
   }
 
   // Update ccOn when visibility/editmode change
   $: {
-    if (canvasDataLoaded && collectionsDataLoaded) {
+    if (allDataLoaded) {
       $configStore["ccOn"] = isCollectionsOn(
         $configStore["editMode"],
         $collectionsStore["VISIBILITY"]
@@ -183,6 +184,7 @@
           }, TIME_BETWEEN_CANVAS_REFRESH);
         }
       }
+      allDataLoaded= true
     }
   }
 
@@ -347,7 +349,7 @@
           ><i class="icon-question cc-module-icon" /></a
         >
       </sl-tooltip>
-      {#if canvasDataLoaded && collectionsDataLoaded}
+      {#if allDataLoaded}
         <i
           id="configShowSwitch"
           class="{showConfig
@@ -361,7 +363,7 @@
       <span style="font-size:50%">{CC_VERSION}</span>
     </div>
 
-    {#if canvasDataLoaded && collectionsDataLoaded && $configStore["ccOn"]}
+    {#if allDataLoaded && $configStore["ccOn"]}
       <!-- <label class="cc-switch" for="cc-switch">
         <sl-switch
           {checked}

@@ -33,11 +33,11 @@
    * @param collectionName
    * @description navigate to a new collection
    */
-  function navigateCollections(collectionName: string) {
+  function navigateCollections(clickedCollectionName: string) {
     activeCollection[$configStore["currentCollection"]] = "";
-    $configStore["currentCollection"] = collectionName;
-    activeCollection[collectionName] = "cc-active";
-    collection = collectionName;
+    $configStore["currentCollection"] = clickedCollectionName;
+    activeCollection[clickedCollectionName] = "cc-active";
+    collection = clickedCollectionName;
   }
 </script>
 
