@@ -22,8 +22,10 @@
   debug("---- collectionsStore");
   debug($collectionsStore);
 
+  //let localCollectionName : string = "";
+
   $: {
-    if (!$configStore["currentCollection"] ) {
+    if (!$configStore["currentCollection"]) {
       // if no current collection, set it to the first element in COLLECTIONS_ORDER
       // if it exists
       if ($collectionsStore["COLLECTIONS_ORDER"].length > 0) {
@@ -42,18 +44,16 @@
 
 {#if $collectionsStore["COLLECTIONS_ORDER"].length > 0}
   <CollectionsNavigation bind:collection={$configStore["currentCollection"]} />
-  <IncludePage
-    collectionName={$configStore["currentCollection"]}
-    isAfter={false}
-  />
+  {#if !$collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter}
+    <IncludePage collectionName={$configStore["currentCollection"]} />
+  {/if}
   <CollectionRepresentation
-    collection={$configStore["currentCollection"]}
+    bind:collectionName={$configStore["currentCollection"]}
     claytons={false}
   />
-  <IncludePage
-    collectionName={$configStore["currentCollection"]}
-    isAfter={true}
-  />
+  {#if $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter}
+    <IncludePage collectionName={$configStore["currentCollection"]} />
+  {/if}
 {/if}
 
 <style>

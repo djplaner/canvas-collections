@@ -11,32 +11,22 @@
    */
 
   import { getPageName } from "../lib/CanvasSetup";
+  import { toastAlert } from "../lib/ui";
   import { collectionsStore, configStore } from "../stores";
 
-  export let collectionName: string = "";
-  export let isAfter: boolean = false;
+  //export let collectionName: string = ""
+  export let collectionName: string = ""
 
-  let pageContent: string = "";
-  let pageName: string = "";
-  // each one has a unique class
-  let divId: string = "cc-include-page-before";
-  if (isAfter) {
-    divId = "cc-include-page-after";
-  }
+  let pageName : string = ""
+  let pageContent: string = ""
 
+  // reactively update the page as the collection's includePage changes
   $: {
-    // Reactively update changes based on the collections includeAfter and includePage
-    if (
-      isAfter === $collectionsStore["COLLECTIONS"][collectionName].includeAfter
-    ) {
-      pageName = $collectionsStore["COLLECTIONS"][collectionName].includePage;
-      if (pageName !== "") {
-        getPageName(pageName, $configStore["courseId"], addIncludePage);
-      } else {
-        pageContent = "";
-      }
+    pageName = $collectionsStore["COLLECTIONS"][collectionName].includePage
+    if (pageName!=="") {
+      getPageName(pageName, $configStore["courseId"], addIncludePage)
     } else {
-      pageContent = "";
+      pageContent=""
     }
   }
 
@@ -54,9 +44,10 @@
       pageContent = "";
     }
   }
+
 </script>
 
-<div class="cc-include-page" id={divId}>
+<div class="cc-include-page" id="cc-include-page">
   {@html pageContent}
 </div>
 

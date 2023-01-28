@@ -75,7 +75,7 @@
 
     if (["includePage", "outputPage"].includes(pageType)) {
       if (value !== oldValue) {
-        $collectionsStore["COLLECTIONS"][collectionName][pageType] = value;
+        //$collectionsStore["COLLECTIONS"][collectionName][pageType] = value;
         //   $configStore["needToSaveCollections"] = true;
 
         dispatch("message", {

@@ -27,7 +27,7 @@
 
   import { debug } from "../lib/debug";
 
-  export let collection: string;
+  export let collectionName: string;
   export let claytons: boolean;
 
   if (!claytons) {
@@ -35,7 +35,7 @@
   }
 
   debug(
-    `_______________ CollectionRepresentation.svelte __collection ${collection} __ Claytons ${claytons}___________`
+    `_______________ CollectionRepresentation.svelte __collection ${collectionName} __ Claytons ${claytons}___________`
   );
   console.log("----------- configStore");
   debug($configStore);
@@ -45,7 +45,7 @@
   let representationComponent: any;
   $: {
     const localRep =
-      $collectionsStore["COLLECTIONS"][collection]["representation"];
+      $collectionsStore["COLLECTIONS"][collectionName]["representation"];
     if (!$representationsStore.hasOwnProperty(localRep)) {
       alert(
         `CollectionRepresentation component requires a valid representation prop. ${localRep} is not valid`
@@ -71,7 +71,7 @@
     }
   }
 
-  if (!collection) {
+  if (!collectionName) {
     // TODO better error handling
     throw new Error(
       "CollectionRepresentation component requires a collection prop"
@@ -81,7 +81,7 @@
 
 <svelte:component
   this={representationComponent}
-  bind:collection
+  bind:collection={$configStore["currentCollection"]}
   {calendar}
   {claytons}
 />

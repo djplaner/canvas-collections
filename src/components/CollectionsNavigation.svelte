@@ -6,7 +6,7 @@
   import { collectionsStore, configStore } from "../stores";
   import { debug } from "../lib/debug";
 
-  export let collection;
+  export let collection : string;
 
   debug(
     `______________ CollectionsNavigation.svelte _currentCollection ${collection}______________`

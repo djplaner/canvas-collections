@@ -96,5 +96,7 @@ nav:
         - Claytons: reference/representations/claytons/overview.md
       - Objects (Modules):
         - Objects: reference/objects/overview.md
+      - Development:
+        - Component Structure: reference/development/component-structure.md
   - 'Related Work': related-work.md
   - 'Latest Version': latest-version.md
