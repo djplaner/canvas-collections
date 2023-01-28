@@ -377,6 +377,7 @@
           id="cc-save-button"
           disabled={!$configStore["needToSaveCollections"]}
           on:click={collectionsDetails.saveCollections(
+            $collectionsStore,
             $configStore["editMode"],
             $configStore["needToSaveCollections"],
             completeSaveCollections
