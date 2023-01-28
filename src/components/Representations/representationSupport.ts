@@ -19,9 +19,9 @@ export function getCollectionCanvasModules(collection) {
   const collectionsModules = cStore["MODULES"];
   const canvasModules = get(modulesStore);
 
-  canvasModules.forEach(module => {
+  canvasModules.forEach((module) => {
     // for each canvas module
-    const moduleId = module.id
+    const moduleId = module.id;
     if (collectionsModules[moduleId].collection === collection) {
       // if the module belongs to the selected collection
       // push the canvas module onto the array
@@ -148,21 +148,21 @@ export function generateModuleDate(module) {
   // TODO need generateCalendarDate properly
 
   if (!module.hasOwnProperty("date")) {
-    return "🚧 no date"
+    return "🚧 no date";
   }
-  let dateStr = module.date.label
+  let dateStr = module.date.label;
 
   if (!module.dateHide["day"]) {
-    dateStr += ` ${module.date.day}`
+    dateStr += ` ${module.date.day}`;
   }
   if (!module.dateHide["week"]) {
-    dateStr += ` Week ${module.date.week}`
+    dateStr += ` Week ${module.date.week}`;
   }
   if (!module.dateHide["calendarDate"]) {
-    dateStr += ` (${module.date.date} ${module.date.month})`
+    dateStr += ` (${module.date.date} ${module.date.month})`;
   }
   if (!module.dateHide["time"] && module.date.time !== "") {
-    dateStr += ` ${module.date.time}`
+    dateStr += ` ${module.date.time}`;
   }
 
   return dateStr;
@@ -298,39 +298,61 @@ export function getModuleUrl(moduleId: Number) {
   return docUrl.toString();
 }
 
-  /**
-   * @function deLabelModuleName
-   * @param module - module object
-   * @return string Module name without label and number
-   * @description Remove the label and number from the name
-   */
-export  function deLabelModuleName(module) {
-//    const module = $collectionsStore["MODULES"][moduleId];
-    const existingName = module.name;
+/**
+ * @function deLabelModuleName
+ * @param module - module object
+ * @return string Module name without label and number
+ * @description Remove the label and number from the name
+ */
+export function deLabelModuleName(module) {
+  //    const module = $collectionsStore["MODULES"][moduleId];
+  const existingName = module.name;
 
-    let prepend = "";
-    if (module.label) {
-      prepend = module.label;
+  let prepend = "";
+  if (module.label) {
+    prepend = module.label;
+  }
+
+  let regex = new RegExp(`^${prepend}\\s*[:->]\\s*`);
+
+  if (module.actualNum) {
+    regex = new RegExp(`^${prepend}\\s*${module.actualNum}\\s*[:>-]\\s*`);
+    prepend += ` ${module.actualNum}`;
+    // remove first char from CARD_LABEL if it is a space
+    if (prepend.charAt(0) === " ") {
+      prepend = prepend.substring(1);
     }
+  }
+  prepend = `${prepend}: `;
+  let newName = existingName;
+  if (prepend !== ": ") {
+    // if we've not empty label and number
+    // modify existingName to remove prepend and any subsequent whitespace
+    //	newName = existingName.replace(prepend, '').trim();
+    newName = existingName.replace(regex, "").trim();
+  }
 
-    let regex = new RegExp(`^${prepend}\\s*[:->]\\s*`);
+  return newName;
+}
 
-    if (module.actualNum) {
-      regex = new RegExp(`^${prepend}\\s*${module.actualNum}\\s*[:>-]\\s*`);
-      prepend += ` ${module.actualNum}`;
-      // remove first char from CARD_LABEL if it is a space
-      if (prepend.charAt(0) === " ") {
-        prepend = prepend.substring(1);
+/**
+ * @function checkModuleScrollTo()
+ * @description Called the first time the collection's representation is displayed
+ * - check to see if the url hash === module_<moduleId>
+ * - if so, scroll to the module
+ */
+export function checkModuleScrollTo() {
+  // check to see if url.hash === module_<moduleId>
+  const hash = window.location.hash;
+  const regex = /^#module_(\d+)$/;
+  const match = hash.match(regex);
+  if (match) {
+    const module = document.getElementById(hash);
+    if (module) {
+      // check to see if the module is visible (e.g. collection is visible)
+      if (module.style.display !== "none") {
+        module.scrollIntoView();
       }
     }
-    prepend = `${prepend}: `;
-    let newName = existingName;
-    if (prepend !== ": ") {
-      // if we've not empty label and number
-      // modify existingName to remove prepend and any subsequent whitespace
-      //	newName = existingName.replace(prepend, '').trim();
-      newName = existingName.replace(regex, "").trim();
-    }
-
-    return newName;
   }
+}
