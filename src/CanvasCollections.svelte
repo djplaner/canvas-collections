@@ -90,7 +90,7 @@
         $configStore["editMode"],
         $collectionsStore["VISIBILITY"]
       );
-      if ($configStore["ccOn"]) {
+      if ($configStore["ccOn"] && allDataLoaded && $collectionsStore["COLLECTIONS_ORDER"].length > 0) {
         addCollectionsDisplay();
       } else {
         removeCollectionsDisplay();
@@ -186,7 +186,7 @@
         );
         checked = $configStore["ccOn"];
         if ($configStore["ccOn"]) {
-          addCollectionsDisplay();
+          //addCollectionsDisplay();
           // set up auto save for collections config
           if ($configStore["editMode"] && AUTO_SAVE && !saveIntervalOn) {
             saveIntervalOn = true;

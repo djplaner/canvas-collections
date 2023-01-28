@@ -56,6 +56,9 @@
     $collectionsStore["COLLECTIONS"][collectionName] = newCollection;
 
     // add collectionName to COLLECTIONS_ORDER (at the end)
+    if ($collectionsStore["DEFAULT_ACTIVE_COLLECTION"]==="") {
+      $collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = collectionName;
+    }
     $collectionsStore["COLLECTIONS_ORDER"].push(collectionName);
 
     // reset the value of the input/select

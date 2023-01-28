@@ -15,6 +15,7 @@
 
   import { debug } from "../lib/debug";
   import { toastAlert } from "../lib/ui";
+  import AssessmentTable from "./Representations/AssessmentTable.svelte";
 
   debug(
     `______________ CanvasCollectionsRepresentation.svelte _currentCollection ${$configStore["currentCollections"]}______________`
@@ -31,19 +32,15 @@
       if ($collectionsStore["COLLECTIONS_ORDER"].length > 0) {
         $configStore["currentCollection"] =
           $collectionsStore["COLLECTIONS_ORDER"][0];
-      } else {
-        // TODO replace with dialog error
-        toastAlert(
-          `<p>There are no collections defined. Please add a collection.</p>`,
-          "danger"
-        );
       }
     }
   }
 </script>
 
 {#if $collectionsStore["COLLECTIONS_ORDER"].length > 0}
-  <CollectionsNavigation bind:collection={$configStore["currentCollection"]} />
+  <CollectionsNavigation
+    activeCollectionName={$configStore["currentCollection"]}
+  />
   {#if !$collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter}
     <IncludePage collectionName={$configStore["currentCollection"]} />
   {/if}

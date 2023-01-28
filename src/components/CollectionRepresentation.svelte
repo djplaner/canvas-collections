@@ -132,7 +132,7 @@
 
 <svelte:component
   this={representationComponent}
-  bind:collection={$configStore["currentCollection"]}
+  collection={$configStore["currentCollection"]}
   {calendar}
   {claytons}
 />

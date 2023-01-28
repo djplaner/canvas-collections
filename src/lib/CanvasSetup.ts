@@ -278,7 +278,6 @@ export const wf_fetchDataMulti = async (reqData) => {
  */
 
 export function addCollectionsRepresentation() {
-  debug("::::::::::::: addCollectionsRepresentation ::::::::::::::");
 
   // check that there isn't already a div#canvas-collections-representation
   // if there is, do nothing
@@ -286,7 +285,8 @@ export function addCollectionsRepresentation() {
     "div#canvas-collections-representation"
   );
   if (representation) {
-    return null;
+    // if it's already there, empty it
+    return null
   }
 
   // get the div#context-modules

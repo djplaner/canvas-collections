@@ -147,8 +147,8 @@ export function checkModuleMetaData(
 export function generateModuleDate(module) {
   // TODO need generateCalendarDate properly
 
-  if (!module.hasOwnProperty("date")) {
-    return "🚧 no date";
+  if (!module.hasOwnProperty("date") || !isNotEmptyDate(module.date)) {
+    return "";
   }
   let dateStr = module.date.label;
 
@@ -167,6 +167,16 @@ export function generateModuleDate(module) {
 
   return dateStr;
 }
+
+  function isNotEmptyDate(date: object): boolean {
+    return (
+      (date.hasOwnProperty("week") && date["week"] !== "") ||
+      (date.hasOwnProperty("month") && date["month"] !== "") ||
+      (date.hasOwnProperty("date") && date["date"] !== "") ||
+      (date.hasOwnProperty("day") && date["day"] !== "") ||
+      (date.hasOwnProperty("time") && date["time"] !== "")
+    );
+  }
 
 /**
  * @function modifyCanvasModulesList

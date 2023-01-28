@@ -6,10 +6,10 @@
   import { collectionsStore, configStore } from "../stores";
   import { debug } from "../lib/debug";
 
-  export let collection : string;
+  export let activeCollectionName : string;
 
   debug(
-    `______________ CollectionsNavigation.svelte _currentCollection ${collection}______________`
+    `______________ CollectionsNavigation.svelte _currentCollection ${activeCollectionName}______________`
   );
 
   let collectionNames = [];
@@ -19,9 +19,9 @@
     collectionNames = $collectionsStore["COLLECTIONS_ORDER"];
     collectionNames.forEach((collectionName) => {
       activeCollection[collectionName] =
-        collectionName === collection ? "cc-active" : "";
+        collectionName === activeCollectionName ? "cc-active" : "";
     });
-    activeCollection = activeCollection
+    activeCollectionName = activeCollectionName
   }
 
   // create activeCollection dict keyed on collection name
@@ -34,10 +34,11 @@
    * @description navigate to a new collection
    */
   function navigateCollections(clickedCollectionName: string) {
-    activeCollection[$configStore["currentCollection"]] = "";
+    //activeCollection[$configStore["currentCollection"]] = "";
+    activeCollection[activeCollectionName] = "";
     $configStore["currentCollection"] = clickedCollectionName;
     activeCollection[clickedCollectionName] = "cc-active";
-    collection = clickedCollectionName;
+    activeCollectionName = clickedCollectionName;
   }
 </script>
 
@@ -45,17 +46,10 @@
   <ul>
     {#each collectionNames as collectionName, i}
       {#if !($collectionsStore["COLLECTIONS"][collectionName].hide && !$configStore["editMode"])}
-        <!-- <li class="cc-nav {isCurrentCollection(collectionName)}"> -->
-        <!-- class="cc-nav {$configStore['currentCollection'] === collectionName -->
-        <!-- <li
-          class="cc-nav {collection === collectionName
-            ? 'cc-active'
-            : ''}"
-        > -->
         <li class="cc-nav {activeCollection[collectionName]}">
           <a
             href="#cc-collection-{i}"
-            on:click|stopPropagation={navigateCollections(collectionName)}
+            on:click|stopPropagation={() => navigateCollections(collectionName)}
             >{collectionName}</a
           >
           {#if $collectionsStore["COLLECTIONS"][collectionName].hide}

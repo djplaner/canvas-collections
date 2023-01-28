@@ -779,7 +779,7 @@ export class CollectionsDetails {
 }
 
 const DEFAULT_CONFIGURATION_TEMPLATE = {
-  VISIBILITY: "no-one",
+  VISIBILITY: "teachers",
   DEFAULT_ACTIVE_COLLECTION: "",
   COLLECTIONS: {},
   COLLECTIONS_ORDER: [],
