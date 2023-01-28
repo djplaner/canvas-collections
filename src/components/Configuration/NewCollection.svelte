@@ -47,14 +47,16 @@
       return;
     }
 
-    // add collectionName to COLLECTIONS_ORDER (at the end)
-    $collectionsStore["COLLECTIONS_ORDER"].push(collectionName);
 
     // create new collection in COLLECTIONS
-    let newCollection = DEFAULT_NEW_COLLECTION;
+    //let newCollection = createNewCollection()
+    let newCollection = { ...DEFAULT_NEW_COLLECTION }
     newCollection.name = collectionName;
     newCollection.representation = representation;
     $collectionsStore["COLLECTIONS"][collectionName] = newCollection;
+
+    // add collectionName to COLLECTIONS_ORDER (at the end)
+    $collectionsStore["COLLECTIONS_ORDER"].push(collectionName);
 
     // reset the value of the input/select
     collectionName = "";
@@ -62,6 +64,12 @@
 
     // set needToSaveCollections to true
     $configStore["needToSaveCollections"] = true;
+  }
+
+  function createNewCollection() {
+    let newCollection = {}
+
+    // loop through all fields in DEFAULT_NEW_COLLECTION and 
   }
 
   const HELP = {

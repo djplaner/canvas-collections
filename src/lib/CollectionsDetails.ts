@@ -775,21 +775,6 @@ export class CollectionsDetails {
     //this.saveCollections(this.collections, true, true, this.completeInitialiseConfigPage.bind(this));
   }
 
-  /**
-   * @function completeInitialiseConfigPage
-   * @param status - boolean
-   * @description Called after an attempt to save the new config page
-   * Inform the user of the outcome
-   */
-  private completeInitialiseConfigPage(status) {
-    if (status) {
-      toastAlert(`New <a target="_blank" rel="noreferrer" 
-      href="/courses/${this.config.courseId}/pages/canvas-collections-configuration">
-      Canvas Collections Configuration page</a> created`, "success");
-    } else {
-      toastAlert(`Failed to create new Canvas Collections Configuration page`, "danger");
-    }
-  }
 
 }
 
