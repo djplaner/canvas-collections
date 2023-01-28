@@ -23,6 +23,7 @@ import { debug } from "./debug";
 import { configStore } from "../stores";
 import { get } from "svelte/store";
 import ModuleDateConfiguration from "../components/Configuration/ModuleDateConfiguration.svelte";
+import { toastAlert } from "./ui";
 
 export class CollectionsDetails {
   // parsed collections JSON
@@ -423,14 +424,20 @@ export class CollectionsDetails {
    * and run callBack with result
    */
 
-  saveCollections(collectionsStore: {}, editMode: boolean, needToSave: boolean, callBack: Function) {
+  saveCollections(
+    collectionsStore: {},
+    editMode: boolean,
+    needToSave: boolean,
+    callBack: Function
+  ) {
     if (editMode && needToSave) {
       let callUrl = `/api/v1/courses/${this["config"]["courseId"]}/pages/canvas-collections-configuration`;
 
-      const content = this.generateConfigPageContent( collectionsStore );
+      const content = this.generateConfigPageContent(collectionsStore);
 
       let _body = {
         wiki_page: {
+          title: "Canvas Collections Configuration",
           body: content,
         },
       };
@@ -468,7 +475,7 @@ export class CollectionsDetails {
    *   will update these URLs which Collections will then handle)
    */
 
-  generateConfigPageContent(collectionsStore: {}) : string {
+  generateConfigPageContent(collectionsStore: {}): string {
     // construct the new content for the page
     // - boiler plate description HTML to start
     let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
@@ -490,7 +497,7 @@ export class CollectionsDetails {
     // - if it has an image, add an img element to the div.cc-card-images
     //   with the image URL
     let images = "";
-    const modules = collectionsStore["MODULES"]
+    const modules = collectionsStore["MODULES"];
 
     for (let moduleId in modules) {
       const module = modules[moduleId];
@@ -524,7 +531,7 @@ export class CollectionsDetails {
       const module = modules[key];
       module.description = this.encodeHTML(module.description);
       module.collection = this.encodeHTML(module.collection);
-      if (module.hasOwnProperty("iframe") && module.iframe!=="") {
+      if (module.hasOwnProperty("iframe") && module.iframe !== "") {
         module.iframe = this.encodeHTML(module.iframe);
       }
       module.name = this.encodeHTML(module.name);
@@ -542,10 +549,10 @@ export class CollectionsDetails {
     // it continues to work normally for live operation
     for (let key in modules) {
       const module = modules[key];
-      module.description = this.decodeHTML(module.description,true);
+      module.description = this.decodeHTML(module.description, true);
       module.collection = this.decodeHTML(module.collection);
       module.name = this.decodeHTML(module.name);
-      if (module.hasOwnProperty("iframe") && module.iframe!=="") {
+      if (module.hasOwnProperty("iframe") && module.iframe !== "") {
         module.iframe = this.decodeHTML(module.iframe, true);
       }
       for (let metaKey in module.metadata) {
@@ -747,10 +754,40 @@ export class CollectionsDetails {
     };
   }
 
-  initialiseConfigPage(canvasDetails) {
+  /**
+   * @function initialiseConfigPage
+   * @description Called during initialisation when it's found that there is no
+   * existing Collections configuration page. At this stage, we may not have the
+   * Canvas module information yet. That will be handled with in CanvasCollections
+   * - initialise collections details to emulate as if an empty page was loaded
+   * - async save the new config page with that information
+   */
+
+  initialiseConfigPage() {
     alert("Time to initialise config page");
+
+    // get the default collections config
+    this.collections = DEFAULT_CONFIGURATION_TEMPLATE;
+    // not needed this is done in saveConfigPage
+    //const configStr = JSON.stringify(config);
+
+    // create the new config page
+    this.saveCollections(this.collections, true, true, this.completeInitialiseConfigPage.bind(this));
   }
+
+  private completeInitialiseConfigPage(status) {
+    toastAlert(`Initialised config page: ${status}`);
+  }
+
 }
+
+const DEFAULT_CONFIGURATION_TEMPLATE = {
+  VISIBILITY: "no-one",
+  DEFAULT_ACTIVE_COLLECTION: "",
+  COLLECTIONS: {},
+  COLLECTIONS_ORDER: [],
+  MODULES: {},
+};
 
 /**
  * Templates used in the above

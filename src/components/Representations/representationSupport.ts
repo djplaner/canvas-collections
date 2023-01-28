@@ -334,25 +334,3 @@ export function deLabelModuleName(module) {
 
   return newName;
 }
-
-/**
- * @function checkModuleScrollTo()
- * @description Called the first time the collection's representation is displayed
- * - check to see if the url hash === module_<moduleId>
- * - if so, scroll to the module
- */
-export function checkModuleScrollTo() {
-  // check to see if url.hash === module_<moduleId>
-  const hash = window.location.hash;
-  const regex = /^#module_(\d+)$/;
-  const match = hash.match(regex);
-  if (match) {
-    const module = document.getElementById(hash);
-    if (module) {
-      // check to see if the module is visible (e.g. collection is visible)
-      if (module.style.display !== "none") {
-        module.scrollIntoView();
-      }
-    }
-  }
-}

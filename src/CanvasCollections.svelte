@@ -111,6 +111,17 @@
     console.log("YYYYYYYY gotCollectionsDetails");
     console.log(collectionsDetails);
 
+    if (status === "no collections config") {
+      // if collectionsDetails has errors and editMode are true
+      // call CollectionsDetails::initialiseConfigPage
+      if ($configStore["editMode"]) {
+        collectionsDetails.initialiseConfigPage();
+      }
+      // reset status to empty string, since we've emulated loading config
+      // we can proceed as normal
+      status = "";
+    }
+
     if (status === "") {
       //----- Range of updates to local data based on the now retrieved collections JSON
       //ccOn = collectionsDetails.ccOn;
@@ -128,12 +139,6 @@
       if (!(!$configStore["ccOn"] && !$configStore["editMode"])) {
         collectionsDataLoaded = true;
         checkAllDataLoaded();
-      }
-    } else if (status === "no collections config") {
-      // if collectionsDetails has errors and editMode are true
-      // call CollectionsDetails::initialiseConfigPage
-      if ($configStore["editMode"]) {
-        collectionsDetails.initialiseConfigPage();
       }
     } else {
       toastAlert(`some error get collection details ${status}`, "error");
@@ -184,7 +189,7 @@
           }, TIME_BETWEEN_CANVAS_REFRESH);
         }
       }
-      allDataLoaded= true
+      allDataLoaded = true;
     }
   }
 
