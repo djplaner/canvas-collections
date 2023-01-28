@@ -29,10 +29,6 @@
   debug(
     `__________________ CollectionConfiguration.svelte __collection ${collectionName} order ${order} numCollections ${numCollections}_______________`
   );
-  debug("includePageExists");
-  debug(includePageExists);
-  debug("outputPageExists");
-  debug(outputPageExists);
 
   // Assume includePage and outputPage exist
   /*  export let 
@@ -79,7 +75,7 @@
 
     if (["includePage", "outputPage"].includes(pageType)) {
       if (value !== oldValue) {
-        //   $collectionsStore["COLLECTIONS"][collectionName]["includePage"] = value;
+        $collectionsStore["COLLECTIONS"][collectionName][pageType] = value;
         //   $configStore["needToSaveCollections"] = true;
 
         dispatch("message", {

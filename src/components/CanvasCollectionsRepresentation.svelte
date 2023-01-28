@@ -40,21 +40,12 @@
 
 {#if $collectionsStore["COLLECTIONS_ORDER"].length > 0}
   <CollectionsNavigation bind:collection={$configStore["currentCollection"]} />
-  {#if $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includePage !== "" && $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter === false}
-    <IncludePage
-      pageName={$collectionsStore["COLLECTIONS"][
-        $configStore["currentCollection"]
-      ].includePage}
-    />
-  {/if}
-  <CollectionRepresentation collection={$configStore["currentCollection"]} />
-  {#if $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includePage !== "" && $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter === true}
-    <IncludePage
-      pageName={$collectionsStore["COLLECTIONS"][
-        $configStore["currentCollection"]
-      ].includePage}
-    />
-  {/if}
+    <IncludePage collectionName={$configStore["currentCollection"]} isAfter={false} />
+  <CollectionRepresentation
+    collection={$configStore["currentCollection"]}
+    claytons={false}
+  />
+    <IncludePage collectionName={$configStore["currentCollection"]} isAfter={true} />
 {/if}
 
 <style>
