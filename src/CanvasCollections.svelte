@@ -1,4 +1,6 @@
 <script lang="ts">
+
+  import ProcessImportedCollections from "./components/ProcessImportedCollections.svelte";
   import { collectionsStore, modulesStore, configStore } from "./stores";
   import CanvasCollectionsRepresentation from "./components/CanvasCollectionsRepresentation.svelte";
   import CollectionsConfiguration from "./components/CollectionsConfiguration.svelte";
@@ -22,6 +24,7 @@
   const TIME_BETWEEN_SAVES = 10000;
   const TIME_BETWEEN_CANVAS_REFRESH = 1500000;
   const AUTO_SAVE = false;
+  const EXIT_SAVE = false;
 
   export let courseId: number;
   export let editMode: boolean;
@@ -49,12 +52,13 @@
 
   // track whether the intervals have been set
   // Making sure we don't get multiple intervals running
-  let saveIntervalOn = false;
-  let refreshIntervalOn = false;
+  let saveIntervalOn : boolean = false;
+  let refreshIntervalOn : boolean = false;
   // whether or data canvas and collections data loaded
-  let canvasDataLoaded = false;
-  let collectionsDataLoaded = false;
-  let allDataLoaded = false;
+  let canvasDataLoaded : boolean = false;
+  let collectionsDataLoaded : boolean = false;
+  let allDataLoaded : boolean = false;
+  let importedCollections : boolean = false;
   // the actual data objects for canvas and collections data
   let canvasDetails = null;
   let collectionsDetails = null;
@@ -71,26 +75,30 @@
       <ul> <li> question mark to learn more.</li>
           <li> switch to turn Collections on.</li></ul>`;
     } else {
-      HELP.switchTitle.tooltip = HELP.ABOUT.tooltip
+      HELP.switchTitle.tooltip = HELP.ABOUT.tooltip;
     }
   }
   // Whenever currentCollection is changed, save the last collection viewed
   // into local storage
   $: {
     let lastViewedCollection = $configStore["currentCollection"];
-    if (allDataLoaded) {
+    if (allDataLoaded && !importedCollections) {
       collectionsDetails.saveLastCollectionViewed(lastViewedCollection);
     }
   }
 
   // Update ccOn when visibility/editmode change
   $: {
-    if (allDataLoaded) {
+    if (allDataLoaded && !importedCollections) {
       $configStore["ccOn"] = isCollectionsOn(
         $configStore["editMode"],
         $collectionsStore["VISIBILITY"]
       );
-      if ($configStore["ccOn"] && allDataLoaded && $collectionsStore["COLLECTIONS_ORDER"].length > 0) {
+      if (
+        $configStore["ccOn"] &&
+        allDataLoaded &&
+        $collectionsStore["COLLECTIONS_ORDER"].length > 0
+      ) {
         addCollectionsDisplay();
       } else {
         removeCollectionsDisplay();
@@ -150,6 +158,18 @@
       $configStore["currentCollection"] =
         collectionsDetails.getCurrentCollection();
 
+      if (collectionsDetails.isImportedCollection()) {
+        importedCollections = true;
+/*        toastAlert(
+          `<p>Collection's 
+          <a href="/courses/${courseId}}/pages/canvas-collections-configuration" target="_blank" rel="noreferrer">
+            configuration page</a> has been imported from
+          another course.</p>
+          <p>The next step will be to review and update the information for this course.</p>`,
+          "warning"
+        ); */
+      }
+
       // if a student is viewing and no collections, then limit what is done
       if (!(!$configStore["ccOn"] && !$configStore["editMode"])) {
         collectionsDataLoaded = true;
@@ -169,7 +189,13 @@
    */
   function checkAllDataLoaded() {
     if (canvasDataLoaded && collectionsDataLoaded) {
-      if (!noCollections) {
+      // if we've imported collections, we need to handle that first
+      // - depending on what we find, it might be better to move this
+      // to after the initial processing
+      // - but we do probably want to wait until both canvas and collections data is loaded
+      if (collectionsDetails.isImportedCollection()) {
+        addProcessImportedCollections();
+      } else if (!noCollections) {
         // Only do all this if able to load collections configuration, otherwise
         // leave the interface and set up as basic until user hits the switch
 
@@ -200,7 +226,7 @@
               );
             }, TIME_BETWEEN_SAVES);
           }
-          if (!refreshIntervalOn) {
+          if (!refreshIntervalOn && EXIT_SAVE) {
             refreshIntervalOn = true;
             // set up auto refresh of canvasDetails
             refreshCanvasDetails = setInterval(() => {
@@ -212,6 +238,29 @@
       // all data is essentially loaded, however, there may be noCollections
       allDataLoaded = true;
     }
+  }
+
+  /**
+   * @function addProcessImportedCollections
+   * @description Detected an imported collections configuration, need to
+   * - stop allDataLoaded and the normal collections configuration commencing
+   * - add the ProcessImportedCollections component to div#context_modules
+   * - let it do its thing
+   * - figure out someway to get started again
+  */
+  function addProcessImportedCollections() {
+    // find div#context_modules
+    const contextModules = document.getElementById("context_modules");
+    if (contextModules) {
+      // add the ProcessImportedCollections component
+      const processImportedCollections = new ProcessImportedCollections({
+        target: contextModules
+    });
+
+    } else {
+      alert("Unable to find div#context_modules");
+    }
+
   }
 
   /**
@@ -380,12 +429,14 @@
    */
   function beforeUnload(event) {
     event.preventDefault();
-    collectionsDetails.saveCollections(
-      $collectionsStore,
-      $configStore["editMode"],
-      $configStore["needToSaveCollections"],
-      completeSaveCollections
-    );
+    if (EXIT_SAVE) {
+      collectionsDetails.saveCollections(
+        $collectionsStore,
+        $configStore["editMode"],
+        $configStore["needToSaveCollections"],
+        completeSaveCollections
+      );
+    }
   }
 
   let HELP = {
@@ -427,7 +478,7 @@
   ></script>
 </svelte:head>
 
-{#if editMode && modulesPage && canvasDataLoaded}
+{#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
   <div class="cc-switch-container">
     <div class="cc-switch-title">
       <sl-tooltip>

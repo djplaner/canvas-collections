@@ -36,15 +36,20 @@ export class CollectionsDetails {
 
   //-------- private data members
   // Canvas API response to requesting Canvas Collections Configuration page
-  private collectionsPageResponse: object;
+  private collectionsPageResponse: object
 
   // configuration information about the canvas course
-  private config: object;
-  private currentHostName: string;
-  private baseApiUrl: string;
-  private finishedCallBack: Function;
+  private config: object
+  private currentHostName: string
+  private baseApiUrl: string
+  private finishedCallBack: Function
 
-  private configStore: any;
+  private configStore: any
+
+  // used to indicate an imported course
+  // courseImages is DOM element of that section of collections config
+  private courseImages: any
+  private importedCourseId: number = null
 
   constructor(finishedCallBack: Function, config: object) {
     this.finishedCallBack = finishedCallBack;
@@ -186,8 +191,9 @@ export class CollectionsDetails {
    * @function checkForImportedCollections
    * @param {??} courseImages - DOM element from collections configuration containing ...
    * @description Check courseImages for suggestion that this collections config was imported
-   * from another course.
-   * If so, create the ImportCollections component
+   * from another course. If found it defines the courseImages and importedCourseId settings
+   * which are used by CanvasCollections to identify a problem
+   * The rest of the loading of collections will proceed
    */
   checkForImportedCollections(courseImages) {
     console.log(courseImages);
@@ -195,12 +201,19 @@ export class CollectionsDetails {
     const imagesCourseId = parseInt(courseImages.id.replace("cc-course-", ""));
 
     if (this.config.courseId !== imagesCourseId) {
-      alert(
-        `This collections configuration was imported from course ${imagesCourseId}`
-      );
+      this.courseImages = courseImages
+      this.importedCourseId = imagesCourseId
     }
 
-    alert("What now?");
+  }
+
+  /**
+   * @method isImportedCollection
+   * @returns {boolean} true if this is an imported collection
+   */
+
+  isImportedCollection() : boolean {
+    return this.importedCourseId !== null;
   }
 
   /**
