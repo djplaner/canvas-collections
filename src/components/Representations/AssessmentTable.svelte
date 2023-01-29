@@ -162,7 +162,7 @@
             <td role="cell">
               <div style="margin:0; font-size:0.8rem">
                 <p>
-                  {generateModuleDate($collectionsStore["MODULES"][module.id])}
+                  {@html generateModuleDate($collectionsStore["MODULES"][module.id])}
                 </p>
               </div>
             </td>

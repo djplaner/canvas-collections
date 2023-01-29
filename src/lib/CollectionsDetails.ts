@@ -131,8 +131,8 @@ export class CollectionsDetails {
     // misc. updates to handle old style collections configuration
     this.updateCollections();
 
-    // double check and possibly convert an old configuration
-    //this.configConverted = this.checkConvertOldConfiguration();
+    const courseImages = parsed.querySelector("div.cc-card-images");
+    this.checkForImportedCollections(courseImages);
 
     // initialise the controller etc
     //this.ccOn = this.collections.STATUS === "on";
@@ -180,6 +180,27 @@ export class CollectionsDetails {
 		this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION = this.decodeHTML(
 			this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
     */
+  }
+
+  /**
+   * @function checkForImportedCollections
+   * @param {??} courseImages - DOM element from collections configuration containing ...
+   * @description Check courseImages for suggestion that this collections config was imported
+   * from another course.
+   * If so, create the ImportCollections component
+   */
+  checkForImportedCollections(courseImages) {
+    console.log(courseImages);
+
+    const imagesCourseId = parseInt(courseImages.id.replace("cc-course-", ""));
+
+    if (this.config.courseId !== imagesCourseId) {
+      alert(
+        `This collections configuration was imported from course ${imagesCourseId}`
+      );
+    }
+
+    alert("What now?");
   }
 
   /**
@@ -774,8 +795,6 @@ export class CollectionsDetails {
     // create the new config page
     //this.saveCollections(this.collections, true, true, this.completeInitialiseConfigPage.bind(this));
   }
-
-
 }
 
 const DEFAULT_CONFIGURATION_TEMPLATE = {
