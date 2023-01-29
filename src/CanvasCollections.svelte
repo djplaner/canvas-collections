@@ -1,5 +1,4 @@
 <script lang="ts">
-
   import ProcessImportedCollections from "./components/ProcessImportedCollections.svelte";
   import { collectionsStore, modulesStore, configStore } from "./stores";
   import CanvasCollectionsRepresentation from "./components/CanvasCollectionsRepresentation.svelte";
@@ -52,13 +51,13 @@
 
   // track whether the intervals have been set
   // Making sure we don't get multiple intervals running
-  let saveIntervalOn : boolean = false;
-  let refreshIntervalOn : boolean = false;
+  let saveIntervalOn: boolean = false;
+  let refreshIntervalOn: boolean = false;
   // whether or data canvas and collections data loaded
-  let canvasDataLoaded : boolean = false;
-  let collectionsDataLoaded : boolean = false;
-  let allDataLoaded : boolean = false;
-  let importedCollections : boolean = false;
+  let canvasDataLoaded: boolean = false;
+  let collectionsDataLoaded: boolean = false;
+  let allDataLoaded: boolean = false;
+  let importedCollections: boolean = false;
   // the actual data objects for canvas and collections data
   let canvasDetails = null;
   let collectionsDetails = null;
@@ -68,6 +67,9 @@
   let ccPublished = true;
 
   $: {
+    if ($configStore.hasOwnProperty("migrationOutcome")) {
+      alert(`Migration status: ${$configStore["migrationOutcome"]}`);
+    }
     // recatively update the tooltip for the switch title depending on whether
     // collections is on or off
     if (noCollections) {
@@ -160,7 +162,7 @@
 
       if (collectionsDetails.isImportedCollection()) {
         importedCollections = true;
-/*        toastAlert(
+        /*        toastAlert(
           `<p>Collection's 
           <a href="/courses/${courseId}}/pages/canvas-collections-configuration" target="_blank" rel="noreferrer">
             configuration page</a> has been imported from
@@ -247,7 +249,7 @@
    * - add the ProcessImportedCollections component to div#context_modules
    * - let it do its thing
    * - figure out someway to get started again
-  */
+   */
   function addProcessImportedCollections() {
     // find div#context_modules
     const contextModules = document.getElementById("context_modules");
@@ -256,14 +258,12 @@
       const processImportedCollections = new ProcessImportedCollections({
         target: contextModules,
         props: {
-          collectionsDetails: collectionsDetails
-        }
-    });
-
+          collectionsDetails: collectionsDetails,
+        },
+      });
     } else {
       alert("Unable to find div#context_modules");
     }
-
   }
 
   /**
@@ -481,6 +481,7 @@
   ></script>
 </svelte:head>
 
+<p>Status {$configStore["migrationOutcome"]}</p>
 {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
   <div class="cc-switch-container">
     <div class="cc-switch-title">

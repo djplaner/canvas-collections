@@ -20,9 +20,10 @@
 
   import { modulesStore } from "../../stores";
 
-  export let currentCourseId;
-  export let importCourseId;
-  export let collectionsDetails;
+  export let modulesCompleteStatus = false
+  export let currentCourseId = null
+  export let importCourseId = null
+  export let collectionsDetails = null
 
   // create hash currentModules keyed on moduleIds with value from modulesStore
   let currentModules = {};
@@ -40,6 +41,8 @@
   let numImportModules = Object.keys(importModuleDetails).length;
 
   matchModuleNames();
+
+
 
   // calculate numImportsMatched as number of importModuleDetails where matched is true
   let numImportsMatched = Object.keys(importModuleDetails).reduce(
@@ -70,6 +73,16 @@
     numImportModules - numImportsMatched === 0 ? "disabled" : "";
   let disabledCurrentNotMatched =
     numCurrentMatched === numCurrentModules ? "disabled" : "";
+
+    /**
+     * Figure out the moduleCompleteStatus
+     * - ok - if all imports matched and there no imports not matched and no current not matched
+     * - importProblem - if there are some imports not matched`
+    */
+  if (!disabledImportsMatched && disabledImportNotMatched && disableCurrentNotMatched ) {
+    modulesCompleteStatus = true
+  }
+    modulesCompleteStatus = true
 
   /**
    * @function initialiseModules
@@ -220,7 +233,7 @@
 
 <style>
   .cc-import-table {
-    font-size: 0.8em;
+    font-size: 0.9em;
   }
 
   .cc-import-table > tr:nth-child(even) {
