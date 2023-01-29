@@ -80,6 +80,8 @@ nav:
       - Add a collection: walk-throughs/changes/add-a-collection.md
       - Delete a collection: walk-throughs/changes/delete-a-collection.md
       - Add a module: walk-throughs/changes/add-a-module.md
+    - Course copy:
+      - Course copy process: walk-throughs/course-copy/process.md
     - ⚗️ Advanced:
       - Multi-collection, one page Claytons: walk-throughs/advanced/multi-collection-one-page.md
       - Fix Claytons Card CSS: walk-throughs/advanced/fix-claytons-card-css.md

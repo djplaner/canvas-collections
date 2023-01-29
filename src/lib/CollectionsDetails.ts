@@ -210,6 +210,10 @@ export class CollectionsDetails {
     return this.importedCourseId;
   }
 
+  getCourseImages() : any {
+    return this.courseImages;
+  }
+
   /**
    * @method isImportedCollection
    * @returns {boolean} true if this is an imported collection
