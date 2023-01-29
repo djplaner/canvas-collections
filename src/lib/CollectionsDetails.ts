@@ -204,7 +204,10 @@ export class CollectionsDetails {
       this.courseImages = courseImages
       this.importedCourseId = imagesCourseId
     }
+  }
 
+  getImportedCourseId() : number {
+    return this.importedCourseId;
   }
 
   /**

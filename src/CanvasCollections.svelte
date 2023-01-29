@@ -254,7 +254,10 @@
     if (contextModules) {
       // add the ProcessImportedCollections component
       const processImportedCollections = new ProcessImportedCollections({
-        target: contextModules
+        target: contextModules,
+        props: {
+          collectionsDetails: collectionsDetails
+        }
     });
 
     } else {
