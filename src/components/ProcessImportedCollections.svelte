@@ -91,7 +91,7 @@
 <sl-dialog
   class="cc-dialog"
   style="--width: 75vw"
-  label="Processing imported Collections configuration"
+  label="How to proceed with import of Canvas Collections configuration?"
   open
 >
   <div class="cc-process-import">

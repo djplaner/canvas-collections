@@ -68,7 +68,7 @@
 
   $: {
     if ($configStore.hasOwnProperty("migrationOutcome")) {
-      alert(`Migration status: ${$configStore["migrationOutcome"]}`);
+      completeMigration()
     }
     // recatively update the tooltip for the switch title depending on whether
     // collections is on or off
@@ -264,6 +264,38 @@
     } else {
       alert("Unable to find div#context_modules");
     }
+  }
+
+  /**
+   * @function completeMigration
+   * @description Called once the ProcessImportedCollection component has
+   * been closed by the user with them making one of three choices
+   * - proceed - update the collections configuration and set up collections
+   * - cancel - do nothing
+   * - refresh - empty out the collections configuration and set up collections
+  */
+  function completeMigration() {
+    // save the outcome and remove it from configStore so this is only called once
+    const outcome = $configStore["migrationOutcome"];
+    $configStore["lastMigrationOutcome"]=outcome;
+    delete $configStore["migrationOutcome"]
+
+    if (outcome==="cancel") {
+      alert("Ok not doing anthing")
+      return
+    }
+
+    if (outcome==="refresh") {
+      // TODO probably with the dialog not closing
+      importedCollections = false;
+      alert("Going to refresh to nothing")
+      initialiseCollections();
+      // TODO need to do something to refresh the page - show collections
+    }
+
+    // TODO
+
+
   }
 
   /**
@@ -481,7 +513,6 @@
   ></script>
 </svelte:head>
 
-<p>Status {$configStore["migrationOutcome"]}</p>
 {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
   <div class="cc-switch-container">
     <div class="cc-switch-title">
