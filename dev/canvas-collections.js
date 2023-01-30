@@ -20060,8 +20060,9 @@ Do you wish to proceed?`).then(ok => {
             if (unallocated && !claytons) {
                 modules = modules.concat(addUnallocatedModules(editMode));
             }
+            //} else if ((claytons && unallocated) || !claytons) {
         }
-        else if ((claytons && unallocated) || !claytons) {
+        else if (unallocated) {
             // staff add if
             // - claytons mode and unallocated is true
             // - ! claytons
