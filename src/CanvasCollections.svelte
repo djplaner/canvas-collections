@@ -287,6 +287,7 @@
       // TODO probably with the dialog not closing
       importedCollections = false;
       alert("Going to refresh to nothing")
+      collectionsDetails.resetImport()
       initialiseCollections();
       // TODO need to do something to refresh the page - show collections
     } else if ( outcome==="proceed") {

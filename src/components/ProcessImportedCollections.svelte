@@ -49,7 +49,7 @@
    */
   function proceedChoice(choice) {
     const dialog = document.querySelector(".cc-dialog");
-    dialog.hide();
+    dialog.remove();
     $configStore["migrationOutcome"] = choice;
   }
 
@@ -152,7 +152,7 @@
                 {importCourseDetails.course_code} - {importCourseDetails.name}
               </a>
               )
-            {/if}. Check the status and details below and choose whether to
+            {/if}. Check the status and details here and choose whether to
           </p>
           <ul class="cc-horizontal-list">
             <li>
