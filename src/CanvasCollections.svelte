@@ -496,8 +496,8 @@
    * save them
    */
   function beforeUnload(event) {
-    event.preventDefault();
-    if (EXIT_SAVE) {
+    if (EXIT_SAVE && $configStore["needToSaveCollections"]) {
+      event.preventDefault();
       collectionsDetails.saveCollections(
         $collectionsStore,
         $configStore["editMode"],
