@@ -36,20 +36,27 @@ export class CollectionsDetails {
 
   //-------- private data members
   // Canvas API response to requesting Canvas Collections Configuration page
-  private collectionsPageResponse: object
+  private collectionsPageResponse: object;
 
   // configuration information about the canvas course
-  private config: object
-  private currentHostName: string
-  private baseApiUrl: string
-  private finishedCallBack: Function
+  private config: object;
+  private currentHostName: string;
+  private baseApiUrl: string;
+  private finishedCallBack: Function;
 
-  private configStore: any
+  private configStore: any;
 
   // used to indicate an imported course
   // courseImages is DOM element of that section of collections config
-  private courseImages: any
-  private importedCourseId: number = null
+  private courseImages: any;
+  private importedCourseId: number = null;
+  private importedImages: any;
+  private importedModuleIds: any;
+  private currentModuleIds: any;
+  private importModuleDetails: {};
+  private currentModuleDetails: {};
+  private numCurrentMatched: number;
+  private numImportsMatched: number;
 
   constructor(finishedCallBack: Function, config: object) {
     this.finishedCallBack = finishedCallBack;
@@ -201,17 +208,187 @@ export class CollectionsDetails {
     const imagesCourseId = parseInt(courseImages.id.replace("cc-course-", ""));
 
     if (this.config.courseId !== imagesCourseId) {
-      this.courseImages = courseImages
-      this.importedCourseId = imagesCourseId
+      this.courseImages = courseImages;
+      this.importedCourseId = imagesCourseId;
+      this.convertCourseImagesDiv();
     }
   }
 
-  getImportedCourseId() : number {
+  /**
+   * @function convertCourseImagesDiv
+   * @description Convert the courseImages div into an array of objects
+   *  { moduleId:  the id of the imported module
+   *   src:  the img.src that has been updated in the course copy
+   *          to match for the current course
+   * }
+   */
+  convertCourseImagesDiv() {
+    this.importedImages = [];
+
+    const imgElements =
+      this.courseImages.querySelectorAll("img.cc-moduleImage");
+    console.log(imgElements);
+
+    imgElements.forEach((imgElement) => {
+      let moduleId = imgElement.id.replace("cc-moduleImage-", "");
+      let moduleName = "<em>not found</em>";
+      if (this.collections["MODULES"][parseInt(moduleId)]) {
+        moduleName = this.collections["MODULES"][parseInt(moduleId)].name;
+      }
+
+      this.importedImages.push({
+        moduleId: moduleId,
+        moduleName: moduleName,
+        src: imgElement.src,
+        details: false, // flag if have Canvas API data yet
+      });
+    });
+  }
+
+  /**
+   * @function initialiseModules
+   * @description Create the two module objects
+   * - currentModuleDetails - keyed on moduleIds in the current Canvas course
+   *     { matched: boolean,  importedModuleId: number ... }
+   * - importModuleDetails - keyed on moduleIds in the imported Canvas course
+   *         ???
+   */
+
+  initialiseModules(currentModules) {
+    this.importedModuleIds = Object.keys(this.collections["MODULES"]);
+    // set this.currentModuleIds to the id attributes of the currentModules objects
+    this.currentModuleIds = currentModules.map((module) => {
+      return module.id;
+    });
+
+    this.importModuleDetails = {};
+    this.currentModuleDetails = {};
+
+    // create importModuleDetails keyed on importedModuleIds
+    this.importedModuleIds.forEach((importedModuleId) => {
+      this.importModuleDetails[importedModuleId] = {
+        matched: false,
+        importedModuleId: parseInt(importedModuleId),
+        currentModuleId: null,
+      };
+    });
+
+    // create currentDetails keyed on moduleIds
+    this.currentModuleIds.forEach((moduleId) => {
+      this.currentModuleDetails[moduleId] = {
+        matched: false,
+        importedModuleId: null,
+        currentModuleId: parseInt(moduleId),
+      };
+    });
+  }
+
+  /**
+   * @function matchModuleNames
+   * @description loop thru each of the imported modules and try to match the name
+   * to a module in the current course
+   */
+
+  matchModuleNames(currentModulesList) {
+    // create a hash of currentModules keyed on moduleIds
+    const currentModules = {};
+    currentModulesList.forEach((module) => {
+      currentModules[module.id] = module;
+    });
+    // do the matching
+    this.importedModuleIds.forEach((importedModuleId) => {
+      let importedModuleName =
+        this.collections["MODULES"][importedModuleId].name;
+      this.currentModuleIds.forEach((currentModuleId) => {
+        let currentModuleName = currentModules[currentModuleId].name;
+        if (importedModuleName === currentModuleName) {
+          this.importModuleDetails[importedModuleId].matched = true;
+          this.importModuleDetails[importedModuleId].currentModuleId =
+            currentModuleId;
+          this.currentModuleDetails[currentModuleId].matched = true;
+          this.currentModuleDetails[currentModuleId].importedModuleId =
+            importedModuleId;
+        }
+      });
+    });
+    // calculate the results
+    this.numImportsMatched = Object.keys(this.importModuleDetails).reduce(
+      (acc, key) => {
+        if (this.importModuleDetails[key].matched) {
+          return acc + 1;
+        } else {
+          return acc;
+        }
+      },
+      0
+    );
+    // calculate numCurrentMatched as number of currentModuleDetails where matched is true
+    this.numCurrentMatched = Object.keys(this.currentModuleDetails).reduce(
+      (acc, key) => {
+        if (this.currentModuleDetails[key].matched) {
+          return acc + 1;
+        } else {
+          return acc;
+        }
+      },
+      0
+    );
+  }
+
+  /**
+   * @function migrateImportedCollectionsConfiguration
+   * @description User has chosen to "proceed" with the migration
+   */
+  migrateImportedCollectionsConfiguration() {
+    console.log("hello");
+  }
+
+  getImportedModuleIds() {
+    return this.importedModuleIds;
+  }
+
+  getImportModuleDetails() {
+    return this.importModuleDetails;
+  }
+
+  getCurrentModuleDetails() {
+    return this.currentModuleDetails;
+  }
+
+  getImportedCourseId(): number {
     return this.importedCourseId;
   }
 
-  getCourseImages() : any {
+  getNumCurrentModules(): number {
+    return this.currentModuleIds.length;
+  }
+
+  getNumCurrentMatched(): number {
+    return this.numCurrentMatched;
+  }
+
+  getNumCurrentNotMatched(): number {
+    return this.getNumCurrentModules() - this.numCurrentMatched;
+  }
+
+  getNumImportsMatched(): number {
+    return this.numImportsMatched;
+  }
+
+  getNumImportsNotMatched(): number {
+    return this.getNumImportedModules() - this.numImportsMatched;
+  }
+
+  getNumImportedModules(): number {
+    return this.importedModuleIds.length;
+  }
+
+  getCourseImages(): any {
     return this.courseImages;
+  }
+
+  getImportedImages(): [] {
+    return this.importedImages;
   }
 
   /**
@@ -219,7 +396,7 @@ export class CollectionsDetails {
    * @returns {boolean} true if this is an imported collection
    */
 
-  isImportedCollection() : boolean {
+  isImportedCollection(): boolean {
     return this.importedCourseId !== null;
   }
 

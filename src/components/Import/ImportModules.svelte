@@ -20,10 +20,10 @@
 
   import { modulesStore } from "../../stores";
 
-  export let modulesCompleteStatus = false
-  export let currentCourseId = null
-  export let importCourseId = null
-  export let collectionsDetails = null
+  export let modulesCompleteStatus = false;
+  export let currentCourseId = null;
+  export let importCourseId = null;
+  export let collectionsDetails = null;
 
   // create hash currentModules keyed on moduleIds with value from modulesStore
   let currentModules = {};
@@ -31,21 +31,24 @@
     currentModules[module.id] = module;
   });
   // get lists of both moduleIds
-  let importedModuleIds = Object.keys(collectionsDetails.collections.MODULES);
-  let currentModuleIds = Object.keys(currentModules);
-  let currentModuleDetails = {};
-  let importModuleDetails = {};
-  [currentModuleDetails, importModuleDetails] = initialiseModules();
+  //  let importedModuleIds = Object.keys(collectionsDetails.collections.MODULES);
+  //  let currentModuleIds = Object.keys(currentModules);
+  //  let currentModuleDetails = {};
+  //  let importModuleDetails = {};
+  //  [currentModuleDetails, importModuleDetails] = initialiseModules();
+  //collectionsDetails.initialiseModules($modulesStore)
 
-  let numCurrentModules = Object.keys(currentModuleDetails).length;
-  let numImportModules = Object.keys(importModuleDetails).length;
+  //matchModuleNames();
+  collectionsDetails.initialiseModules($modulesStore);
+  collectionsDetails.matchModuleNames($modulesStore);
 
-  matchModuleNames();
-
-
+  //let numCurrentModules = Object.keys(currentModuleDetails).length;
+  let numCurrentModules = collectionsDetails.getNumCurrentModules();
+  //let numImportModules = Object.keys(importModuleDetails).length;
+  let numImportModules = collectionsDetails.getNumImportedModules();
 
   // calculate numImportsMatched as number of importModuleDetails where matched is true
-  let numImportsMatched = Object.keys(importModuleDetails).reduce(
+  /*  let numImportsMatched = Object.keys(importModuleDetails).reduce(
     (acc, key) => {
       if (importModuleDetails[key].matched) {
         return acc + 1;
@@ -65,24 +68,51 @@
       }
     },
     0
-  );
+  ); */
+
+  let numImportsMatched = collectionsDetails.getNumImportsMatched();
+  let numCurrentMatched = collectionsDetails.getNumCurrentMatched();
+  const importedModuleIds = collectionsDetails.getImportedModuleIds();
+  const importModuleDetails = collectionsDetails.getImportModuleDetails();
+  const currentModuleDetails = collectionsDetails.getCurrentModuleDetails();
 
   let disabledImportsMatched =
-    numImportsMatched === numImportModules ? "disabled" : "";
+    numImportsMatched === collectionsDetails.getNumImportedModules()
+      ? "disabled"
+      : "";
+  //    numImportsMatched === numImportModules ? "disabled" : "";
   let disabledImportNotMatched =
-    numImportModules - numImportsMatched === 0 ? "disabled" : "";
+    collectionsDetails.getNumImportedModules() - numImportsMatched === 0
+      ? "disabled"
+      : "";
+  //    numImportModules - numImportsMatched === 0 ? "disabled" : "";
   let disabledCurrentNotMatched =
-    numCurrentMatched === numCurrentModules ? "disabled" : "";
+    numCurrentMatched - collectionsDetails.getNumCurrentMatched() === 0
+      ? "disabled"
+      : "";
+  //    numCurrentMatched === numCurrentModules ? "disabled" : "";
 
-    /**
-     * Figure out the moduleCompleteStatus
-     * - ok - if all imports matched and there no imports not matched and no current not matched
-     * - importProblem - if there are some imports not matched`
-    */
-  if (!disabledImportsMatched && disabledImportNotMatched && disableCurrentNotMatched ) {
-    modulesCompleteStatus = true
+  /**
+   * Figure out the moduleCompleteStatus
+   * - ok - if all imports matched and there no imports not matched and no current not matched
+   * - importProblem - if there are some imports not matched`
+   */
+  if (
+    !disabledImportsMatched &&
+    disabledImportNotMatched &&
+    disableCurrentNotMatched
+  ) {
+    modulesCompleteStatus = true;
   }
-    modulesCompleteStatus = true
+  modulesCompleteStatus = true;
+
+  importedModuleIds.forEach((importedModuleId) => {
+    if (importModuleDetails[importedModuleId].matched) {
+      console.log("EEEEEEEEEEEEEEEEEEE")
+      console.log(importModuleDetails[importedModuleId])
+      console.log(currentModules[importModuleDetails[importedModuleId].currentModuleId].name)
+    }
+  });
 
   /**
    * @function initialiseModules
@@ -93,7 +123,7 @@
    *         ???
    */
 
-  function initialiseModules() {
+  /*  function initialiseModules() {
     let importDetails = {};
     let currentDetails = {};
 
@@ -116,14 +146,14 @@
     });
 
     return [currentDetails, importDetails];
-  }
+  } */
 
   /**
    * @function matchModuleNames
    * @description loop thru each of the imported modules and try to match the name
    * to a module in the current course
    */
-
+  /*
   function matchModuleNames() {
     importedModuleIds.forEach((importedModuleId) => {
       let importedModuleName =
@@ -140,7 +170,7 @@
         }
       });
     });
-  }
+  } */
 </script>
 
 {#if numCurrentModules !== numImportModules}
@@ -203,11 +233,14 @@
                     .name}</a
                 >
               </td>
-              <a target="_blank" rel="noreferrer" 
-			  href="/courses/{currentCourseId}/modules/#module_{importModuleDetails[importedModuleId].currentModuleId}"
-                >{currentModules[
-                  importModuleDetails[importedModuleId].currentModuleId
-                ].name}</a
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href="/courses/{currentCourseId}/modules/#module_{importModuleDetails[
+                  importedModuleId
+                ].currentModuleId}"
+                >
+                {currentModules[importModuleDetails[importedModuleId].currentModuleId].name}</a
               >
             </tr>
           {/if}

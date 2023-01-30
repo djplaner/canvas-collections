@@ -19,8 +19,7 @@
   const currentHostName = document.location.hostname;
   const baseApiUrl = `https://${currentHostName}/api/v1`;
 
-  let courseImages = collectionsDetails.getCourseImages();
-  let images = convertCourseImages(courseImages);
+  let images = collectionsDetails.getImportedImages() //convertCourseImages(courseImages);
 
   checkImagesExist();
 
@@ -44,7 +43,7 @@
    * }
    * To be used later to modify collections configuration etc.
    */
-  function convertCourseImages(courseImages) {
+/*  function convertCourseImages(courseImages) {
     console.log(courseImages);
     const imgElements = courseImages.querySelectorAll("img.cc-moduleImage");
     console.log(imgElements);
@@ -67,7 +66,7 @@
       });
     });
     return images;
-  }
+  } */
 
   /**
    * @function checkImagesExist
