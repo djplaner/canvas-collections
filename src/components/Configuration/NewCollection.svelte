@@ -47,6 +47,15 @@
       return;
     }
 
+    // make sure collectionName doesn't match one of the existing collections
+    if ($collectionsStore["COLLECTIONS"][collectionName]) {
+      toastAlert(
+        `<p>Collection name <strong>${collectionName}</strong> already exists</p>`,
+        "danger"
+      );
+      return;
+    }
+
 
     // create new collection in COLLECTIONS
     //let newCollection = createNewCollection()
@@ -133,7 +142,7 @@
     <button
       class="btn btn-primary"
       id="cc-config-new-collection-button"
-      on:click={addCollection}>Add</button
+      on:click|stopPropagation={addCollection}>Add</button
     >
   </fieldset>
 </div>
