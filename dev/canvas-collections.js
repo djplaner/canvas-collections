@@ -44176,7 +44176,7 @@ Do you wish to proceed?`).then(ok => {
     			add_location(a, file, 483, 8, 20238);
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
     			add_location(sl_tooltip, file, 481, 6, 20148);
-    			add_location(small, file, 509, 6, 21154);
+    			add_location(small, file, 508, 6, 21142);
     			attr_dev(div1, "class", "cc-switch-title svelte-dfjd7v");
     			add_location(div1, file, 480, 4, 20111);
     			attr_dev(div2, "class", "cc-switch-container svelte-dfjd7v");
@@ -44384,7 +44384,7 @@ Do you wish to proceed?`).then(ok => {
     	return block;
     }
 
-    // (504:6) {:else}
+    // (503:6) {:else}
     function create_else_block(ctx) {
     	let sl_tooltip;
     	let div;
@@ -44399,11 +44399,11 @@ Do you wish to proceed?`).then(ok => {
     			t = space();
     			i = element("i");
     			attr_dev(div, "slot", "content");
-    			add_location(div, file, 505, 10, 21007);
+    			add_location(div, file, 504, 10, 20995);
     			attr_dev(i, "class", "icon-unpublish");
-    			add_location(i, file, 506, 10, 21082);
+    			add_location(i, file, 505, 10, 21070);
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 504, 8, 20983);
+    			add_location(sl_tooltip, file, 503, 8, 20971);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, sl_tooltip, anchor);
@@ -44423,7 +44423,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(504:6) {:else}",
+    		source: "(503:6) {:else}",
     		ctx
     	});
 
@@ -44476,7 +44476,7 @@ Do you wish to proceed?`).then(ok => {
     	return block;
     }
 
-    // (514:4) {#if noCollections}
+    // (512:4) {#if noCollections}
     function create_if_block_4(ctx) {
     	let label;
     	let sl_switch;
@@ -44489,10 +44489,10 @@ Do you wish to proceed?`).then(ok => {
     			sl_switch = element("sl-switch");
     			set_custom_element_data(sl_switch, "id", "cc-switch");
     			set_custom_element_data(sl_switch, "class", "svelte-dfjd7v");
-    			add_location(sl_switch, file, 515, 8, 21287);
+    			add_location(sl_switch, file, 513, 8, 21273);
     			attr_dev(label, "class", "cc-switch svelte-dfjd7v");
     			attr_dev(label, "for", "cc-switch");
-    			add_location(label, file, 514, 6, 21236);
+    			add_location(label, file, 512, 6, 21222);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, label, anchor);
@@ -44515,14 +44515,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(514:4) {#if noCollections}",
+    		source: "(512:4) {#if noCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (519:4) {#if allDataLoaded && $configStore["ccOn"]}
+    // (517:4) {#if allDataLoaded && $configStore["ccOn"]}
     function create_if_block_3(ctx) {
     	let div;
     	let button;
@@ -44544,9 +44544,9 @@ Do you wish to proceed?`).then(ok => {
 
     			attr_dev(button, "id", "cc-save-button");
     			button.disabled = button_disabled_value = !/*$configStore*/ ctx[8]["needToSaveCollections"];
-    			add_location(button, file, 520, 8, 21467);
+    			add_location(button, file, 518, 8, 21453);
     			attr_dev(div, "class", "cc-save svelte-dfjd7v");
-    			add_location(div, file, 519, 6, 21436);
+    			add_location(div, file, 517, 6, 21422);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -44592,14 +44592,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(519:4) {#if allDataLoaded && $configStore[\\\"ccOn\\\"]}",
+    		source: "(517:4) {#if allDataLoaded && $configStore[\\\"ccOn\\\"]}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (536:4) {#if !ccPublished && !noCollections}
+    // (534:4) {#if !ccPublished && !noCollections}
     function create_if_block_2(ctx) {
     	let div1;
     	let sl_tooltip;
@@ -44626,27 +44626,27 @@ Do you wish to proceed?`).then(ok => {
     			sl_button = element("sl-button");
     			sl_button.textContent = "unpublished";
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 538, 10, 22108);
+    			add_location(div0, file, 536, 10, 22094);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 544, 13, 22334);
+    			add_location(i, file, 542, 13, 22320);
     			attr_dev(a0, "id", "cc-about-unpublished");
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "href", a0_href_value = /*HELP*/ ctx[7].unpublished.url);
-    			add_location(a0, file, 539, 10, 22178);
+    			add_location(a0, file, 537, 10, 22164);
     			set_custom_element_data(sl_tooltip, "trigger", "hover focus");
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 537, 8, 22062);
+    			add_location(sl_tooltip, file, 535, 8, 22048);
     			set_custom_element_data(sl_button, "pill", "");
     			set_custom_element_data(sl_button, "size", "small");
     			set_custom_element_data(sl_button, "variant", "warning");
-    			add_location(sl_button, file, 548, 10, 22501);
+    			add_location(sl_button, file, 546, 10, 22487);
     			attr_dev(a1, "href", /*collectionsConfigUrl*/ ctx[12]);
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noreferrer");
-    			add_location(a1, file, 547, 8, 22425);
+    			add_location(a1, file, 545, 8, 22411);
     			attr_dev(div1, "class", "cc-unpublished svelte-dfjd7v");
-    			add_location(div1, file, 536, 6, 22024);
+    			add_location(div1, file, 534, 6, 22010);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -44675,14 +44675,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(536:4) {#if !ccPublished && !noCollections}",
+    		source: "(534:4) {#if !ccPublished && !noCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (553:4) {#if showConfig}
+    // (551:4) {#if showConfig}
     function create_if_block_1(ctx) {
     	let div;
     	let collectionsconfiguration;
@@ -44695,7 +44695,7 @@ Do you wish to proceed?`).then(ok => {
     			create_component(collectionsconfiguration.$$.fragment);
     			attr_dev(div, "id", "cc-config");
     			attr_dev(div, "class", "border border-trbl svelte-dfjd7v");
-    			add_location(div, file, 553, 6, 22640);
+    			add_location(div, file, 551, 6, 22626);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -44721,7 +44721,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(553:4) {#if showConfig}",
+    		source: "(551:4) {#if showConfig}",
     		ctx
     	});
 
@@ -44886,7 +44886,7 @@ Do you wish to proceed?`).then(ok => {
     			});
     	};
 
-    	setBasePath('../node_modules/@shoelace-style/shoelace/dist/');
+    	setBasePath("../node_modules/@shoelace-style/shoelace/dist/");
     	debug("______________ CanvasCollections.svelte _______________");
     	let { courseId } = $$props;
     	let { editMode } = $$props;
@@ -45570,23 +45570,28 @@ Do you wish to proceed?`).then(ok => {
      */
     // extract some useful context from the URL and the DOM
     const context = checkContext();
-    // insert the app as the first content of div.right-of-crumbs
-    const rightOfCrumbs = document.querySelector(".right-of-crumbs");
-    // TODO
-    // - should more checks be done here?
-    // - e.g. URL etc
-    if (!rightOfCrumbs) {
-        throw new Error("div.right-of-crumbs not found");
+    let app = null;
+    // Only do this on the modules page
+    if (context.modulesPage) {
+        // insert the app as the first content of div.right-of-crumbs
+        const rightOfCrumbs = document.querySelector(".right-of-crumbs");
+        // TODO
+        // - should more checks be done here?
+        // - e.g. URL etc
+        if (!rightOfCrumbs) {
+            throw new Error("div.right-of-crumbs not found");
+        }
+        const div = document.createElement("div");
+        div.className = "canvas-collections";
+        div.style.display = "flex";
+        rightOfCrumbs.appendChild(div);
+        app = new CanvasCollections({
+            target: div,
+            props: context,
+        });
     }
-    const div = document.createElement("div");
-    div.className = "canvas-collections";
-    div.style.display = "flex";
-    rightOfCrumbs.appendChild(div);
-    const app = new CanvasCollections({
-        target: div,
-        props: context
-    });
+    var app$1 = app;
 
-    return app;
+    return app$1;
 
 }());
