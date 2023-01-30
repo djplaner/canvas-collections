@@ -3,7 +3,7 @@
 		"https://raw.githack.com/djplaner/canvas-collections/svelte/dist/canvas-collections.js"
 	]
 	const cssIncludes = [
-		"https://raw.githack.com/djplaner/canvas-collections/svelte/dist/bundle.css"
+		"https://raw.githack.com/djplaner/canvas-collections/svelte/dist/canvas-collections.css"
 	]
 
 	jsIncludes.forEach(include => {

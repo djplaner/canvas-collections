@@ -20,7 +20,7 @@
   debug("______________ CollectionsConfiguration.svelte _______________");
 
   const visibilityOptions = ["no-one", "students", "teachers", "all"];
-  const CC_VERSION = "1.0.0a";
+  const CC_VERSION = "1.0.0b";
 
   /**
    * Declare and populate variables to track whether includePage and outputPage
