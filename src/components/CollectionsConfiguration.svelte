@@ -20,6 +20,7 @@
   debug("______________ CollectionsConfiguration.svelte _______________");
 
   const visibilityOptions = ["no-one", "students", "teachers", "all"];
+  const CC_VERSION = "1.0.0a";
 
   /**
    * Declare and populate variables to track whether includePage and outputPage
@@ -133,7 +134,9 @@
 
 <div class="cc-header-grid">
   <div class="cc-header cc-collections-label">
-    <p>Configure Canvas Collections</p>
+    <p>Configure Canvas Collections
+      <span class="cc-version">{CC_VERSION}</span>
+    </p>
   </div>
   <div class="cc-collections-input">
     <small>Visibility</small>
@@ -229,5 +232,9 @@
     height: 2em;
     line-height: 2rem;
     padding: 0;
+  }
+
+  .cc-version {
+    font-size: 50%
   }
 </style>

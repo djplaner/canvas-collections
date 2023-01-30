@@ -19,11 +19,10 @@
   import { toastAlert } from "./lib/ui";
   debug("______________ CanvasCollections.svelte _______________");
 
-  const CC_VERSION = "1.0.0a";
   const TIME_BETWEEN_SAVES = 10000;
   const TIME_BETWEEN_CANVAS_REFRESH = 1500000;
-  const AUTO_SAVE = false;
-  const EXIT_SAVE = false;
+  const AUTO_SAVE = true;
+  const EXIT_SAVE = true;
 
   export let courseId: number;
   export let editMode: boolean;
@@ -305,14 +304,14 @@
   }
 
   function completeImportCollections(status) {
-    if (status ) {
+    if (status) {
       toastAlert(
         `<p>The import of Collection's 
         <a href="/courses/${courseId}}/pages/canvas-collections-configuration" target="_blank" rel="noreferrer">
           configuration</a> has been successful.</p>`,
         "success"
       );
-    } 
+    }
   }
 
   /**
@@ -501,7 +500,16 @@
              <li> Adding more contextual information about each module. </li>
           </ol>`,
     },
-
+    studentVisible: {
+      tooltip: `<p>Students can see Collections.</p>
+      <p>To change, click the <i class="icon-mini-arrow-right"></i> icon to the right
+        and use the <em>visibility</em> dropdown to select <em>teachers</em> or <em>none</em>.</p>`,
+    },
+    studentInvisible: {
+      tooltip: `<p>Students <strong>cannot</strong> see Collections.</p>
+      <p>To change, click the <i class="icon-mini-arrow-right"></i> icon to the right
+        and use the <em>visibility</em> dropdown to select <em>students</em> or <em>all</em>.</p>`,
+    },
     switchTitle: {
       tooltip: "",
       url: "https://djplaner.github.io/canvas-collections/",
@@ -549,8 +557,20 @@
           on:keydown={toggleConfigShow}
         />
       {/if}
+      {#if isCollectionsOn(false, $collectionsStore["VISIBILITY"])}
+        <sl-tooltip>
+          <div slot="content">{@html HELP.studentVisible.tooltip}</div>
+          <i class="icon-Solid icon-publish" 
+          />
+        </sl-tooltip>
+      {:else}
+        <sl-tooltip>
+          <div slot="content">{@html HELP.studentInvisible.tooltip}</div>
+          <i class="icon-unpublish" />
+        </sl-tooltip>
+      {/if}
       <small>Canvas Collections</small>
-      <span style="font-size:50%">{CC_VERSION}</span>
+
     </div>
 
     {#if noCollections}
@@ -691,5 +711,9 @@
 
   .cc-hide {
     display: none;
+  }
+
+  i.icon-publish {
+    color: #0b874b;
   }
 </style>
