@@ -93,8 +93,8 @@ export default class CollectionsModel {
 		return this.currentCollection;
 	}
 
-	getCurrentCollectionDescription() {
-		return this.cc_configuration.COLLECTIONS[this.currentCollection].description;
+	getCurrentCollectionDescription( collectionName = this.currentCollection) {
+		return this.cc_configuration.COLLECTIONS[collectionName].description;
 	}
 
 	getCurrentCollectionRepresentation() {

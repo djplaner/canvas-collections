@@ -6245,7 +6245,7 @@ class AssessmentTableView extends cc_View {
     const editMode = this.model.getEditMode();
 
     // TODO update the messageHTML
-    const description = this.model.getCurrentCollectionDescription();
+    const description = this.model.getCurrentCollectionDescription(collectionName);
 
     // add a row for each module belonging to the collection
     //    const collectionsModules = this.model.getModulesCollections(this.model.getCurrentCollection());

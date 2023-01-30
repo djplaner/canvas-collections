@@ -79,7 +79,7 @@ export default class cc_ConfigurationModel {
 			this.controller.parentController.hasOwnProperty('studyPeriod') &&
 			this.controller.parentController.studyPeriod) {
 			return this.controller.parentController.studyPeriod;
-		} else if ( this.controller.parentController.hasOwnProperty('calendar') ){
+		} else if (this.controller.parentController.hasOwnProperty('calendar')) {
 			return `${this.controller.parentController.calendar.defaultPeriod} (default)`;
 		}
 		return "";
@@ -290,7 +290,7 @@ export default class cc_ConfigurationModel {
 
 	setCollectionAttribute(collectionName, attribute, value) {
 		DEBUG && console.log(`-------------- cc_ConfigurationModel.setCollectionAttribute()`);
-		if (this.controller.parentController.cc_configuration.COLLECTIONS[collectionName] ) {
+		if (this.controller.parentController.cc_configuration.COLLECTIONS[collectionName]) {
 			this.controller.parentController.cc_configuration.COLLECTIONS[collectionName][attribute] = value;
 			return true;
 		}
@@ -413,7 +413,7 @@ export default class cc_ConfigurationModel {
 		const module = this.findModuleById(moduleId);
 
 		// did we find a module and does it hae configDisplay
-		if (module ) {
+		if (module) {
 			if (!module.hasOwnProperty('configDisplay')) {
 				module.configDisplay = {
 					"accordions": {
@@ -425,7 +425,7 @@ export default class cc_ConfigurationModel {
 			}
 			const possibleAccordions = ['dates', 'banner', 'metadata'];
 			// one of the allowed accordions
-			if (possibleAccordions.includes(accordionName) ) {
+			if (possibleAccordions.includes(accordionName)) {
 				if (eventType === 'sl-show') {
 					module.configDisplay.accordions[accordionName] = 'open';
 				} else if (eventType === 'sl-hide') {
@@ -450,12 +450,12 @@ export default class cc_ConfigurationModel {
 
 
 			/** Handle date fields */
-			const dateFields = [ 
+			const dateFields = [
 				'day', 'week', 'time', 'date-label',
 				'day-to', 'week-to', 'time-to'
 			];
 
-			if ( dateFields.includes(fieldName) ) {
+			if (dateFields.includes(fieldName)) {
 				// does module contain a date field
 				if (!module.hasOwnProperty('date')) {
 					module.date = {
@@ -466,8 +466,8 @@ export default class cc_ConfigurationModel {
 				if (!module.date.hasOwnProperty('to')) {
 					module.date.to = { day: '', week: '', time: '' };
 				}
-				if (fieldName==='date-label') {
-					fieldName='label';
+				if (fieldName === 'date-label') {
+					fieldName = 'label';
 				}
 
 				if (fieldName.includes('-to')) {
@@ -478,7 +478,7 @@ export default class cc_ConfigurationModel {
 				}
 				// changed date field, finished
 				return true;
-			} 
+			}
 
 			// if autonum then
 			// - if checked then remove the module.num field
@@ -492,8 +492,8 @@ export default class cc_ConfigurationModel {
 			}
 
 			/** Handle engage checkbox */
-			if (fieldName ==='engage') {
-				if ( value ) {
+			if (fieldName === 'engage') {
+				if (value) {
 					// it was on, changing to off
 					module.engage = true;
 				} else {
@@ -502,7 +502,7 @@ export default class cc_ConfigurationModel {
 				return true;
 			}
 
-			if (fieldName === 'iframe' ) {
+			if (fieldName === 'iframe') {
 				let match = value.toLowerCase().match(/^.*(<iframe.*?src=".*?".*?<\/iframe>).*$/);
 				if (match) {
 					value = match[1];
@@ -529,7 +529,7 @@ export default class cc_ConfigurationModel {
 					alert(`The image url field must be either a valid URL or valid iframe. It appears to be neither.\nCurrent value is
 
 ${value}`);
-						return false;
+					return false;
 				}
 			}
 
@@ -645,7 +645,7 @@ ${value}`);
 		//let collectionsWithOutputPages = Object.keys(collections).filter( (collectionName) => {
 
 		// need to step through the collections keys in COLLECTIONS_ORDER
-		let collectionsWithOutputPages = cc_configuration.COLLECTIONS_ORDER.filter( (collectionName) => {
+		let collectionsWithOutputPages = cc_configuration.COLLECTIONS_ORDER.filter((collectionName) => {
 			if (collections[collectionName].outputPage &&
 				collections[collectionName].outputPage !== '') {
 				return collectionName;
@@ -664,7 +664,7 @@ ${value}`);
 		const collectionNames = this.controller.parentController.cc_configuration.COLLECTIONS_ORDER;
 		const collections = this.controller.parentController.cc_configuration.COLLECTIONS;
 		const pages = {};
-		collectionNames.forEach( (collectionName) => {
+		collectionNames.forEach((collectionName) => {
 			// if there's an output page
 			if (collections[collectionName].outputPage &&
 				collections[collectionName].outputPage !== '') {
@@ -679,7 +679,7 @@ ${value}`);
 			}
 		});
 
-		for ( let pageName in pages) {
+		for (let pageName in pages) {
 			if (pages[pageName].length < 2) {
 				delete pages[pageName];
 			}
