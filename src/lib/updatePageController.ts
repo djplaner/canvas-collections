@@ -122,7 +122,7 @@ export class updatePageController {
    * @description Called to get summary of complete updated page
    */
   getPageNamesUpdated() {
-    let pageNames ={}; 
+    let pageNames = {};
     for (let task of this.completedTasks) {
       if (task.outputPage) {
         pageNames[task.outputPage] = task.outputPage;
@@ -761,7 +761,7 @@ export class updatePageController {
     const app = new CollectionRepresentation({
       target: div,
       props: {
-        collection: collectionName,
+        collectionName: collectionName,
         claytons: true,
       },
     });

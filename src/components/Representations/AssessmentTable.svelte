@@ -123,7 +123,7 @@
       <tbody>
         {#each modules as module}
           <tr>
-            <td role="cell" style="display: table-cell; text-align:left;">
+            <td role="cell" style="display: table-cell; text-align:left; vertical-align:top;">
               <div style="margin:0; font-size:0.8rem">
                 <p>
                   <a href={getModuleUrl(module.id)}>
@@ -132,7 +132,7 @@
                 </p>
               </div>
             </td>
-            <td role="cell" style="display:table-cell; text-align:left;">
+            <td role="cell" style="display:table-cell; text-align:left; vertical-align:top;">
               {#if $configStore["editMode"] && !claytons && !$collectionsStore["MODULES"][module.id].published}
                 <div class="cc-published">Unpublished</div>
               {/if}
@@ -146,7 +146,7 @@
               </div>
             </td>
             {#if numWeighting > 0 }
-              <td role="cell">
+              <td role="cell" style="display:table-cell; text-align:left; vertical-align:top;">
                 <div style="margin:0; font-size:0.8rem">
                   <p>
                     {checkModuleMetaData(
@@ -159,7 +159,7 @@
                 </div>
               </td>
             {/if}
-            <td role="cell">
+            <td role="cell" style="display:table-cell; text-align: left; vertical-align:top">
               <div style="margin:0; font-size:0.8rem">
                 <p>
                   {@html generateModuleDate($collectionsStore["MODULES"][module.id])}
