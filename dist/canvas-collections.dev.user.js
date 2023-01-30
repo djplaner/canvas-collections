@@ -7,10 +7,10 @@
 // @updateURL	 https://raw.githubusercontent.com/djplaner/canvas-collections/main/dev/canvas-collections.dev.user.js
 // @downloadURL	 https://raw.githubusercontent.com/djplaner/canvas-collections/main/dev/canvas-collections.dev.user.js
 // @author      David Jones
-// @resource    css file:///C:/Users/s2986288/code/svelte/canvas-collections/dev/canvas-collections.css
+// @resource    css file:///C:/Users/djones/code/svelte/canvas-collections/dev/canvas-collections.css
 // @match       https://*/courses/*
 // @run-at      document-idle
-// @require     file:///C:/Users/s2986288/code/svelte/canvas-collections/dev/canvas-collections.js
+// @require     file:///C:/Users/djones/code/svelte/canvas-collections/dev/canvas-collections.js
 // @grant       GM_addStyle
 // @grant       GM_getResourceText
 // @grant       GM_xmlhttpRequest
@@ -21,6 +21,6 @@
  * - Will only work with the Chrome browser see
  *   https://www.tampermonkey.net/faq.php#Q204
  * - Modify the file paths for the css and Javascript from
- *       file:///C:/Users/s2986288/code/svelte/canvas-collections/dist/canvas-collections.js
+ *       file:///C:/Users/djones/code/svelte/canvas-collections/dist/canvas-collections.js
  *   to the path you've installed the Canvas Collections src code
  */

@@ -40,7 +40,18 @@ See the [Canvas Collections online help/documentation site](https://djplaner.git
 
 # For the developers
 
-The assumption is you are (or can quickly become) familiar with GitHub, npm, Svelte, userscripts/TamperMonkey and JavaScript development.
+Canvas Collections development is intended to produce both
+
+1. Userscript version for individual users; and,
+2. CDN version for institutions.
+
+Local development and testing currently takes place using a dev version of the userscript. Which requires that you have/are familiar with using
+
+- GitHub - to clone this code
+- `npm` - to install various dependencies
+- TamperMonkey and the idea of userscripts - for running dev versions of Collections
+- Chrome - live dev works best with Chrome
+- Svelte and JavaScript development in general
 
 ## Install your development environment
 
@@ -51,30 +62,36 @@ The assumption is you are (or can quickly become) familiar with GitHub, npm, Sve
 
 ### Pre-reqs
 
-Local development is done using a combination of the Chrome browser and Tampermonkey using an approach based on [this Tampermonkey Svelte Template](https://github.com/lpshanley/tampermonkey-svelte#readme) - see that repo for more details.
+1. Install [TamperMonkey](https://www.tampermonkey.net/) on your Chrome browser
 
-Next, you will also need to edit the [dev user script](dist/canvas-collections.dev.user.js) updating the `@require` and `@resource` lines to match your folder structure. The two files are the `canvas-collections.css` and `canvas-collections.js` files in the `dev` folder. For example:
+    Local development is done using a combination of the Chrome browser and Tampermonkey using an approach based on [this Tampermonkey Svelte Template](https://github.com/lpshanley/tampermonkey-svelte#readme) - see that repo for more details.
+
+2. Install the [dev user script](dist/canvas-collections.dev.user.js) using TamperMonkey 
+
+3. Edit the [dev user script](dist/canvas-collections.dev.user.js)
+
+    Modify the `@require` and `@resource` lines to match your folder structure. The two files are the `canvas-collections.css` and `canvas-collections.js` files in the `dev` folder. For example:
 
 ```js
-// @resource    css file:///C:/Users/s2986288/code/svelte/canvas-collections/dev/canvas-collections.css
-// @require     file:///C:/Users/s2986288/code/svelte/canvas-collections/dev/canvas-collections.js
+// @resource    css file:///C:/Users/djones/code/svelte/canvas-collections/dev/canvas-collections.css
+// @require     file:///C:/Users/djones/code/svelte/canvas-collections/dev/canvas-collections.js
 ```
 
-With that edit made you can now load the userscript into Tampermonkey and start developing.
+4. Start the development server
 
-### Live dev server
+### Starting the development server
 
-`npm run dev` will start a development server with hot reloading.
+1. `npm run dev` - will start a development server with hot reloading.
 
-### Production
+    It will produce `css` and `js` files in the `dev` folder. 
 
-To produce production code, two options
+2. Visit a Canvas course site with the Chrome browser
 
-- `npm run build` will build a "production" version of the userscript. **Not fully tested**
+### Building production code
 
-Outputs placed in the `dist` folder.
+`npm run build` will build two "production" versions of Canvas Collections in the `dist` folder, including
 
-- `bundle.css` - CSS for both versions
-- `bundle.js` - userscript for Tampermonkey (not a production version)
-- `canvas-collections.js` - live version of Collections
-- `live-canvas-collections.js` - Javascript that can be loaded into the Canvas themes editor and will load the live version of Collections using a CDN
+1. [`canvas-collections.user.js`](dist/canvas-collections.user.js) - production userscript that can be used by individual teachers/designers to experiment with Canvas Collections
+2. [`canvas-collections.js`](dist/canvas-collections.js) (and `canvas-collection.css`) - production version of Canvas Collections that can be loaded into the Canvas themes editor 
+
+[`live-canvas-collections.js`](dist/live-canvas-collections.js) can be loaded into the Canvas themes editor to install Canvas Collections.  It's one example and relies upon a CDN version of the production code.
