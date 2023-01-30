@@ -36,20 +36,6 @@ export default [
 				output: 'canvas-collections.css'
 			}),
 
-			// rollup-plugin-tampermonkey-css
-			((options = {}) => ({
-				name: 'rollup-plugin-tampermonkey-css',
-				renderChunk: (code, renderedChunk, outputOptions) => {
-					let magicString = new MagicString(code);
-					magicString.prepend(`GM_addStyle(GM_getResourceText('css'));\n`)
-					const result = { code: magicString.toString() }
-					if (outputOptions.sourceMap !== false) {
-						result.map = magicString.generateMap({ hires: true })
-					}
-					return result
-				}
-			}))(),
-
 			// If you have external dependencies installed from
 			// npm, you'll most likely need these plugins. In
 			// some cases you'll need additional configuration -

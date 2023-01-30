@@ -71,7 +71,6 @@ With that edit made you can now load the userscript into Tampermonkey and start 
 To produce production code, two options
 
 - `npm run build` will build a "production" version of the userscript. **Not fully tested**
-- `npm run live` will build a "production" version of collections for the live version.
 
 Outputs placed in the `dist` folder.
 
