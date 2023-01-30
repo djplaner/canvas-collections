@@ -1,4 +1,6 @@
 <script lang="ts">
+
+
   import ProcessImportedCollections from "./components/ProcessImportedCollections.svelte";
   import { collectionsStore, modulesStore, configStore } from "./stores";
   import CanvasCollectionsRepresentation from "./components/CanvasCollectionsRepresentation.svelte";
@@ -17,6 +19,26 @@
 
   import { debug } from "./lib/debug";
   import { toastAlert } from "./lib/ui";
+
+  // shoelace components
+  import '@shoelace-style/shoelace/dist/themes/light.css';
+  import '@shoelace-style/shoelace/dist/components/badge/badge.js';
+  import '@shoelace-style/shoelace/dist/components/button/button.js';
+  import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
+  import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
+  import '@shoelace-style/shoelace/dist/components/icon/icon.js';
+  import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
+  import '@shoelace-style/shoelace/dist/components/tab/tab.js';
+  import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
+  import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
+  import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
+  import '@shoelace-style/shoelace/dist/components/switch/switch.js';
+
+  import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js';
+  setBasePath('../node_modules/@shoelace-style/shoelace/dist/');
+
+
+
   debug("______________ CanvasCollections.svelte _______________");
 
   const TIME_BETWEEN_SAVES = 10000;
@@ -527,7 +549,7 @@
 
 <svelte:window on:beforeunload={beforeUnload} />
 
-<svelte:head>
+<!--<svelte:head>
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css"
@@ -536,7 +558,7 @@
     type="module"
     src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"
   ></script>
-</svelte:head>
+</svelte:head> -->
 
 {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
   <div class="cc-switch-container">
@@ -707,10 +729,6 @@
   sl-tooltip {
     text-align: left;
     white-space: normal;
-  }
-
-  .cc-hide {
-    display: none;
   }
 
   i.icon-publish {

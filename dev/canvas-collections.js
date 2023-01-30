@@ -354,7 +354,7 @@ var app = (function () {
                 const component = dirty_components[flushidx];
                 flushidx++;
                 set_current_component(component);
-                update(component.$$);
+                update$1(component.$$);
             }
             set_current_component(null);
             dirty_components.length = 0;
@@ -381,7 +381,7 @@ var app = (function () {
         seen_callbacks.clear();
         set_current_component(saved_component);
     }
-    function update($$) {
+    function update$1($$) {
         if ($$.fragment !== null) {
             $$.update();
             run_all($$.before_update);
@@ -8378,8 +8378,8 @@ var app = (function () {
     }));
     });
 
-    var x=String;
-    var create=function() {return {isColorSupported:false,reset:x,bold:x,dim:x,italic:x,underline:x,inverse:x,hidden:x,strikethrough:x,black:x,red:x,green:x,yellow:x,blue:x,magenta:x,cyan:x,white:x,gray:x,bgBlack:x,bgRed:x,bgGreen:x,bgYellow:x,bgBlue:x,bgMagenta:x,bgCyan:x,bgWhite:x}};
+    var x$2=String;
+    var create=function() {return {isColorSupported:false,reset:x$2,bold:x$2,dim:x$2,italic:x$2,underline:x$2,inverse:x$2,hidden:x$2,strikethrough:x$2,black:x$2,red:x$2,green:x$2,yellow:x$2,blue:x$2,magenta:x$2,cyan:x$2,white:x$2,gray:x$2,bgBlack:x$2,bgRed:x$2,bgGreen:x$2,bgYellow:x$2,bgBlue:x$2,bgMagenta:x$2,bgCyan:x$2,bgWhite:x$2}};
     var picocolors_browser=create();
     var createColors = create;
     picocolors_browser.createColors = createColors;
@@ -8889,7 +8889,7 @@ var app = (function () {
       return cloned
     }
 
-    class Node {
+    class Node$1 {
       constructor(defaults = {}) {
         this.raws = {};
         this[isClean$2] = false;
@@ -9232,8 +9232,8 @@ var app = (function () {
       }
     }
 
-    var node_1 = Node;
-    Node.default = Node;
+    var node_1 = Node$1;
+    Node$1.default = Node$1;
 
     class Declaration extends node_1 {
       constructor(defaults) {
@@ -10452,7 +10452,7 @@ var app = (function () {
 
     let LazyResult$2, Processor$2;
 
-    class Document extends container {
+    class Document$1 extends container {
       constructor(defaults) {
         // type needs to be passed to super, otherwise child roots won't be normalized correctly
         super({ type: 'document', ...defaults });
@@ -10469,16 +10469,16 @@ var app = (function () {
       }
     }
 
-    Document.registerLazyResult = dependant => {
+    Document$1.registerLazyResult = dependant => {
       LazyResult$2 = dependant;
     };
 
-    Document.registerProcessor = dependant => {
+    Document$1.registerProcessor = dependant => {
       Processor$2 = dependant;
     };
 
-    var document$1 = Document;
-    Document.default = Document;
+    var document$1 = Document$1;
+    Document$1.default = Document$1;
 
     /* eslint-disable no-console */
 
@@ -11586,13 +11586,13 @@ var app = (function () {
       }
     }
 
-    var parser = Parser;
+    var parser$1 = Parser;
 
     function parse(css, opts) {
       let input$1 = new input(css, opts);
-      let parser$1 = new parser(input$1);
+      let parser = new parser$1(input$1);
       try {
-        parser$1.parse();
+        parser.parse();
       } catch (e) {
         if (process.env.NODE_ENV !== 'production') {
           if (e.name === 'CssSyntaxError' && opts && opts.from) {
@@ -11617,7 +11617,7 @@ var app = (function () {
         throw e
       }
 
-      return parser$1.root
+      return parser.root
     }
 
     var parse_1 = parse;
@@ -14355,7 +14355,7 @@ var app = (function () {
         });
     }
 
-    let t = {};
+    let t$4 = {};
 
     const exec = (command, value = null) => {
       document.execCommand(command, false, value);
@@ -14389,24 +14389,24 @@ var app = (function () {
     const saveRange = (editor) => {
       const documentSelection = document.getSelection();
 
-      t.range = null;
+      t$4.range = null;
 
       if (documentSelection.rangeCount) {
-        let savedRange = t.range = documentSelection.getRangeAt(0);
+        let savedRange = t$4.range = documentSelection.getRangeAt(0);
         let range = document.createRange();
         let rangeStart;
         range.selectNodeContents(editor);
         range.setEnd(savedRange.startContainer, savedRange.startOffset);
         rangeStart = (range + '').length;
-        t.metaRange = {
+        t$4.metaRange = {
           start: rangeStart,
           end: rangeStart + (savedRange + '').length
         };
       }
     };
     const restoreRange = (editor) => {
-      let metaRange = t.metaRange;
-      let savedRange = t.range;
+      let metaRange = t$4.metaRange;
+      let savedRange = t$4.range;
       let documentSelection = document.getSelection();
       let range;
 
@@ -35008,12 +35008,9104 @@ Do you wish to proceed?`).then(ok => {
         }
     }
 
+    // node_modules/lit-html/directive.js
+    var t$3 = { ATTRIBUTE: 1, CHILD: 2, PROPERTY: 3, BOOLEAN_ATTRIBUTE: 4, EVENT: 5, ELEMENT: 6 };
+    var e$3 = (t2) => (...e2) => ({ _$litDirective$: t2, values: e2 });
+    var i$3 = class {
+      constructor(t2) {
+      }
+      get _$AU() {
+        return this._$AM._$AU;
+      }
+      _$AT(t2, e2, i2) {
+        this._$Ct = t2, this._$AM = e2, this._$Ci = i2;
+      }
+      _$AS(t2, e2) {
+        return this.update(t2, e2);
+      }
+      update(t2, e2) {
+        return this.render(...e2);
+      }
+    };
+    /*! Bundled license information:
+
+    lit-html/directive.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+    */
+
+    // node_modules/@lit/reactive-element/css-tag.js
+    var t$2 = window;
+    var e$2 = t$2.ShadowRoot && (void 0 === t$2.ShadyCSS || t$2.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype;
+    var s$3 = Symbol();
+    var n$3 = /* @__PURE__ */ new WeakMap();
+    var o$2 = class {
+      constructor(t3, e4, n5) {
+        if (this._$cssResult$ = true, n5 !== s$3)
+          throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+        this.cssText = t3, this.t = e4;
+      }
+      get styleSheet() {
+        let t3 = this.o;
+        const s5 = this.t;
+        if (e$2 && void 0 === t3) {
+          const e4 = void 0 !== s5 && 1 === s5.length;
+          e4 && (t3 = n$3.get(s5)), void 0 === t3 && ((this.o = t3 = new CSSStyleSheet()).replaceSync(this.cssText), e4 && n$3.set(s5, t3));
+        }
+        return t3;
+      }
+      toString() {
+        return this.cssText;
+      }
+    };
+    var r$1 = (t3) => new o$2("string" == typeof t3 ? t3 : t3 + "", void 0, s$3);
+    var i$2 = (t3, ...e4) => {
+      const n5 = 1 === t3.length ? t3[0] : e4.reduce((e5, s5, n6) => e5 + ((t4) => {
+        if (true === t4._$cssResult$)
+          return t4.cssText;
+        if ("number" == typeof t4)
+          return t4;
+        throw Error("Value passed to 'css' function must be a 'css' function result: " + t4 + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
+      })(s5) + t3[n6 + 1], t3[0]);
+      return new o$2(n5, t3, s$3);
+    };
+    var S$1 = (s5, n5) => {
+      e$2 ? s5.adoptedStyleSheets = n5.map((t3) => t3 instanceof CSSStyleSheet ? t3 : t3.styleSheet) : n5.forEach((e4) => {
+        const n6 = document.createElement("style"), o5 = t$2.litNonce;
+        void 0 !== o5 && n6.setAttribute("nonce", o5), n6.textContent = e4.cssText, s5.appendChild(n6);
+      });
+    };
+    var c$1 = e$2 ? (t3) => t3 : (t3) => t3 instanceof CSSStyleSheet ? ((t4) => {
+      let e4 = "";
+      for (const s5 of t4.cssRules)
+        e4 += s5.cssText;
+      return r$1(e4);
+    })(t3) : t3;
+
+    // node_modules/@lit/reactive-element/reactive-element.js
+    var s2$1;
+    var e2$2 = window;
+    var r2$1 = e2$2.trustedTypes;
+    var h$1 = r2$1 ? r2$1.emptyScript : "";
+    var o2$2 = e2$2.reactiveElementPolyfillSupport;
+    var n2$1 = { toAttribute(t3, i3) {
+      switch (i3) {
+        case Boolean:
+          t3 = t3 ? h$1 : null;
+          break;
+        case Object:
+        case Array:
+          t3 = null == t3 ? t3 : JSON.stringify(t3);
+      }
+      return t3;
+    }, fromAttribute(t3, i3) {
+      let s5 = t3;
+      switch (i3) {
+        case Boolean:
+          s5 = null !== t3;
+          break;
+        case Number:
+          s5 = null === t3 ? null : Number(t3);
+          break;
+        case Object:
+        case Array:
+          try {
+            s5 = JSON.parse(t3);
+          } catch (t4) {
+            s5 = null;
+          }
+      }
+      return s5;
+    } };
+    var a$2 = (t3, i3) => i3 !== t3 && (i3 == i3 || t3 == t3);
+    var l$3 = { attribute: true, type: String, converter: n2$1, reflect: false, hasChanged: a$2 };
+    var d = class extends HTMLElement {
+      constructor() {
+        super(), this._$Ei = /* @__PURE__ */ new Map(), this.isUpdatePending = false, this.hasUpdated = false, this._$El = null, this.u();
+      }
+      static addInitializer(t3) {
+        var i3;
+        this.finalize(), (null !== (i3 = this.h) && void 0 !== i3 ? i3 : this.h = []).push(t3);
+      }
+      static get observedAttributes() {
+        this.finalize();
+        const t3 = [];
+        return this.elementProperties.forEach((i3, s5) => {
+          const e4 = this._$Ep(s5, i3);
+          void 0 !== e4 && (this._$Ev.set(e4, s5), t3.push(e4));
+        }), t3;
+      }
+      static createProperty(t3, i3 = l$3) {
+        if (i3.state && (i3.attribute = false), this.finalize(), this.elementProperties.set(t3, i3), !i3.noAccessor && !this.prototype.hasOwnProperty(t3)) {
+          const s5 = "symbol" == typeof t3 ? Symbol() : "__" + t3, e4 = this.getPropertyDescriptor(t3, s5, i3);
+          void 0 !== e4 && Object.defineProperty(this.prototype, t3, e4);
+        }
+      }
+      static getPropertyDescriptor(t3, i3, s5) {
+        return { get() {
+          return this[i3];
+        }, set(e4) {
+          const r4 = this[t3];
+          this[i3] = e4, this.requestUpdate(t3, r4, s5);
+        }, configurable: true, enumerable: true };
+      }
+      static getPropertyOptions(t3) {
+        return this.elementProperties.get(t3) || l$3;
+      }
+      static finalize() {
+        if (this.hasOwnProperty("finalized"))
+          return false;
+        this.finalized = true;
+        const t3 = Object.getPrototypeOf(this);
+        if (t3.finalize(), void 0 !== t3.h && (this.h = [...t3.h]), this.elementProperties = new Map(t3.elementProperties), this._$Ev = /* @__PURE__ */ new Map(), this.hasOwnProperty("properties")) {
+          const t4 = this.properties, i3 = [...Object.getOwnPropertyNames(t4), ...Object.getOwnPropertySymbols(t4)];
+          for (const s5 of i3)
+            this.createProperty(s5, t4[s5]);
+        }
+        return this.elementStyles = this.finalizeStyles(this.styles), true;
+      }
+      static finalizeStyles(i3) {
+        const s5 = [];
+        if (Array.isArray(i3)) {
+          const e4 = new Set(i3.flat(1 / 0).reverse());
+          for (const i4 of e4)
+            s5.unshift(c$1(i4));
+        } else
+          void 0 !== i3 && s5.push(c$1(i3));
+        return s5;
+      }
+      static _$Ep(t3, i3) {
+        const s5 = i3.attribute;
+        return false === s5 ? void 0 : "string" == typeof s5 ? s5 : "string" == typeof t3 ? t3.toLowerCase() : void 0;
+      }
+      u() {
+        var t3;
+        this._$E_ = new Promise((t4) => this.enableUpdating = t4), this._$AL = /* @__PURE__ */ new Map(), this._$Eg(), this.requestUpdate(), null === (t3 = this.constructor.h) || void 0 === t3 || t3.forEach((t4) => t4(this));
+      }
+      addController(t3) {
+        var i3, s5;
+        (null !== (i3 = this._$ES) && void 0 !== i3 ? i3 : this._$ES = []).push(t3), void 0 !== this.renderRoot && this.isConnected && (null === (s5 = t3.hostConnected) || void 0 === s5 || s5.call(t3));
+      }
+      removeController(t3) {
+        var i3;
+        null === (i3 = this._$ES) || void 0 === i3 || i3.splice(this._$ES.indexOf(t3) >>> 0, 1);
+      }
+      _$Eg() {
+        this.constructor.elementProperties.forEach((t3, i3) => {
+          this.hasOwnProperty(i3) && (this._$Ei.set(i3, this[i3]), delete this[i3]);
+        });
+      }
+      createRenderRoot() {
+        var t3;
+        const s5 = null !== (t3 = this.shadowRoot) && void 0 !== t3 ? t3 : this.attachShadow(this.constructor.shadowRootOptions);
+        return S$1(s5, this.constructor.elementStyles), s5;
+      }
+      connectedCallback() {
+        var t3;
+        void 0 === this.renderRoot && (this.renderRoot = this.createRenderRoot()), this.enableUpdating(true), null === (t3 = this._$ES) || void 0 === t3 || t3.forEach((t4) => {
+          var i3;
+          return null === (i3 = t4.hostConnected) || void 0 === i3 ? void 0 : i3.call(t4);
+        });
+      }
+      enableUpdating(t3) {
+      }
+      disconnectedCallback() {
+        var t3;
+        null === (t3 = this._$ES) || void 0 === t3 || t3.forEach((t4) => {
+          var i3;
+          return null === (i3 = t4.hostDisconnected) || void 0 === i3 ? void 0 : i3.call(t4);
+        });
+      }
+      attributeChangedCallback(t3, i3, s5) {
+        this._$AK(t3, s5);
+      }
+      _$EO(t3, i3, s5 = l$3) {
+        var e4;
+        const r4 = this.constructor._$Ep(t3, s5);
+        if (void 0 !== r4 && true === s5.reflect) {
+          const h3 = (void 0 !== (null === (e4 = s5.converter) || void 0 === e4 ? void 0 : e4.toAttribute) ? s5.converter : n2$1).toAttribute(i3, s5.type);
+          this._$El = t3, null == h3 ? this.removeAttribute(r4) : this.setAttribute(r4, h3), this._$El = null;
+        }
+      }
+      _$AK(t3, i3) {
+        var s5;
+        const e4 = this.constructor, r4 = e4._$Ev.get(t3);
+        if (void 0 !== r4 && this._$El !== r4) {
+          const t4 = e4.getPropertyOptions(r4), h3 = "function" == typeof t4.converter ? { fromAttribute: t4.converter } : void 0 !== (null === (s5 = t4.converter) || void 0 === s5 ? void 0 : s5.fromAttribute) ? t4.converter : n2$1;
+          this._$El = r4, this[r4] = h3.fromAttribute(i3, t4.type), this._$El = null;
+        }
+      }
+      requestUpdate(t3, i3, s5) {
+        let e4 = true;
+        void 0 !== t3 && (((s5 = s5 || this.constructor.getPropertyOptions(t3)).hasChanged || a$2)(this[t3], i3) ? (this._$AL.has(t3) || this._$AL.set(t3, i3), true === s5.reflect && this._$El !== t3 && (void 0 === this._$EC && (this._$EC = /* @__PURE__ */ new Map()), this._$EC.set(t3, s5))) : e4 = false), !this.isUpdatePending && e4 && (this._$E_ = this._$Ej());
+      }
+      async _$Ej() {
+        this.isUpdatePending = true;
+        try {
+          await this._$E_;
+        } catch (t4) {
+          Promise.reject(t4);
+        }
+        const t3 = this.scheduleUpdate();
+        return null != t3 && await t3, !this.isUpdatePending;
+      }
+      scheduleUpdate() {
+        return this.performUpdate();
+      }
+      performUpdate() {
+        var t3;
+        if (!this.isUpdatePending)
+          return;
+        this.hasUpdated, this._$Ei && (this._$Ei.forEach((t4, i4) => this[i4] = t4), this._$Ei = void 0);
+        let i3 = false;
+        const s5 = this._$AL;
+        try {
+          i3 = this.shouldUpdate(s5), i3 ? (this.willUpdate(s5), null === (t3 = this._$ES) || void 0 === t3 || t3.forEach((t4) => {
+            var i4;
+            return null === (i4 = t4.hostUpdate) || void 0 === i4 ? void 0 : i4.call(t4);
+          }), this.update(s5)) : this._$Ek();
+        } catch (t4) {
+          throw i3 = false, this._$Ek(), t4;
+        }
+        i3 && this._$AE(s5);
+      }
+      willUpdate(t3) {
+      }
+      _$AE(t3) {
+        var i3;
+        null === (i3 = this._$ES) || void 0 === i3 || i3.forEach((t4) => {
+          var i4;
+          return null === (i4 = t4.hostUpdated) || void 0 === i4 ? void 0 : i4.call(t4);
+        }), this.hasUpdated || (this.hasUpdated = true, this.firstUpdated(t3)), this.updated(t3);
+      }
+      _$Ek() {
+        this._$AL = /* @__PURE__ */ new Map(), this.isUpdatePending = false;
+      }
+      get updateComplete() {
+        return this.getUpdateComplete();
+      }
+      getUpdateComplete() {
+        return this._$E_;
+      }
+      shouldUpdate(t3) {
+        return true;
+      }
+      update(t3) {
+        void 0 !== this._$EC && (this._$EC.forEach((t4, i3) => this._$EO(i3, this[i3], t4)), this._$EC = void 0), this._$Ek();
+      }
+      updated(t3) {
+      }
+      firstUpdated(t3) {
+      }
+    };
+    d.finalized = true, d.elementProperties = /* @__PURE__ */ new Map(), d.elementStyles = [], d.shadowRootOptions = { mode: "open" }, null == o2$2 || o2$2({ ReactiveElement: d }), (null !== (s2$1 = e2$2.reactiveElementVersions) && void 0 !== s2$1 ? s2$1 : e2$2.reactiveElementVersions = []).push("1.6.1");
+
+    // node_modules/lit-html/lit-html.js
+    var t2;
+    var i2$3 = window;
+    var s3 = i2$3.trustedTypes;
+    var e3$1 = s3 ? s3.createPolicy("lit-html", { createHTML: (t3) => t3 }) : void 0;
+    var o3$1 = `lit$${(Math.random() + "").slice(9)}$`;
+    var n3 = "?" + o3$1;
+    var l2$2 = `<${n3}>`;
+    var h2$1 = document;
+    var r3 = (t3 = "") => h2$1.createComment(t3);
+    var d2$1 = (t3) => null === t3 || "object" != typeof t3 && "function" != typeof t3;
+    var u$1 = Array.isArray;
+    var c2$1 = (t3) => u$1(t3) || "function" == typeof (null == t3 ? void 0 : t3[Symbol.iterator]);
+    var v = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g;
+    var a2$1 = /-->/g;
+    var f$2 = />/g;
+    var _ = RegExp(`>|[ 	
+\f\r](?:([^\\s"'>=/]+)([ 	
+\f\r]*=[ 	
+\f\r]*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`, "g");
+    var m$1 = /'/g;
+    var p$1 = /"/g;
+    var $ = /^(?:script|style|textarea|title)$/i;
+    var g$1 = (t3) => (i3, ...s5) => ({ _$litType$: t3, strings: i3, values: s5 });
+    var y = g$1(1);
+    var x$1 = Symbol.for("lit-noChange");
+    var b$1 = Symbol.for("lit-nothing");
+    var T = /* @__PURE__ */ new WeakMap();
+    var A$1 = h2$1.createTreeWalker(h2$1, 129, null, false);
+    var E$1 = (t3, i3) => {
+      const s5 = t3.length - 1, n5 = [];
+      let h3, r4 = 2 === i3 ? "<svg>" : "", d3 = v;
+      for (let i4 = 0; i4 < s5; i4++) {
+        const s6 = t3[i4];
+        let e4, u3, c3 = -1, g2 = 0;
+        for (; g2 < s6.length && (d3.lastIndex = g2, u3 = d3.exec(s6), null !== u3); )
+          g2 = d3.lastIndex, d3 === v ? "!--" === u3[1] ? d3 = a2$1 : void 0 !== u3[1] ? d3 = f$2 : void 0 !== u3[2] ? ($.test(u3[2]) && (h3 = RegExp("</" + u3[2], "g")), d3 = _) : void 0 !== u3[3] && (d3 = _) : d3 === _ ? ">" === u3[0] ? (d3 = null != h3 ? h3 : v, c3 = -1) : void 0 === u3[1] ? c3 = -2 : (c3 = d3.lastIndex - u3[2].length, e4 = u3[1], d3 = void 0 === u3[3] ? _ : '"' === u3[3] ? p$1 : m$1) : d3 === p$1 || d3 === m$1 ? d3 = _ : d3 === a2$1 || d3 === f$2 ? d3 = v : (d3 = _, h3 = void 0);
+        const y2 = d3 === _ && t3[i4 + 1].startsWith("/>") ? " " : "";
+        r4 += d3 === v ? s6 + l2$2 : c3 >= 0 ? (n5.push(e4), s6.slice(0, c3) + "$lit$" + s6.slice(c3) + o3$1 + y2) : s6 + o3$1 + (-2 === c3 ? (n5.push(void 0), i4) : y2);
+      }
+      const u2 = r4 + (t3[s5] || "<?>") + (2 === i3 ? "</svg>" : "");
+      if (!Array.isArray(t3) || !t3.hasOwnProperty("raw"))
+        throw Error("invalid template strings array");
+      return [void 0 !== e3$1 ? e3$1.createHTML(u2) : u2, n5];
+    };
+    var C$1 = class {
+      constructor({ strings: t3, _$litType$: i3 }, e4) {
+        let l4;
+        this.parts = [];
+        let h3 = 0, d3 = 0;
+        const u2 = t3.length - 1, c3 = this.parts, [v2, a3] = E$1(t3, i3);
+        if (this.el = C$1.createElement(v2, e4), A$1.currentNode = this.el.content, 2 === i3) {
+          const t4 = this.el.content, i4 = t4.firstChild;
+          i4.remove(), t4.append(...i4.childNodes);
+        }
+        for (; null !== (l4 = A$1.nextNode()) && c3.length < u2; ) {
+          if (1 === l4.nodeType) {
+            if (l4.hasAttributes()) {
+              const t4 = [];
+              for (const i4 of l4.getAttributeNames())
+                if (i4.endsWith("$lit$") || i4.startsWith(o3$1)) {
+                  const s5 = a3[d3++];
+                  if (t4.push(i4), void 0 !== s5) {
+                    const t5 = l4.getAttribute(s5.toLowerCase() + "$lit$").split(o3$1), i5 = /([.?@])?(.*)/.exec(s5);
+                    c3.push({ type: 1, index: h3, name: i5[2], strings: t5, ctor: "." === i5[1] ? M : "?" === i5[1] ? k$1 : "@" === i5[1] ? H$1 : S2 });
+                  } else
+                    c3.push({ type: 6, index: h3 });
+                }
+              for (const i4 of t4)
+                l4.removeAttribute(i4);
+            }
+            if ($.test(l4.tagName)) {
+              const t4 = l4.textContent.split(o3$1), i4 = t4.length - 1;
+              if (i4 > 0) {
+                l4.textContent = s3 ? s3.emptyScript : "";
+                for (let s5 = 0; s5 < i4; s5++)
+                  l4.append(t4[s5], r3()), A$1.nextNode(), c3.push({ type: 2, index: ++h3 });
+                l4.append(t4[i4], r3());
+              }
+            }
+          } else if (8 === l4.nodeType)
+            if (l4.data === n3)
+              c3.push({ type: 2, index: h3 });
+            else {
+              let t4 = -1;
+              for (; -1 !== (t4 = l4.data.indexOf(o3$1, t4 + 1)); )
+                c3.push({ type: 7, index: h3 }), t4 += o3$1.length - 1;
+            }
+          h3++;
+        }
+      }
+      static createElement(t3, i3) {
+        const s5 = h2$1.createElement("template");
+        return s5.innerHTML = t3, s5;
+      }
+    };
+    function P(t3, i3, s5 = t3, e4) {
+      var o5, n5, l4, h3;
+      if (i3 === x$1)
+        return i3;
+      let r4 = void 0 !== e4 ? null === (o5 = s5._$Co) || void 0 === o5 ? void 0 : o5[e4] : s5._$Cl;
+      const u2 = d2$1(i3) ? void 0 : i3._$litDirective$;
+      return (null == r4 ? void 0 : r4.constructor) !== u2 && (null === (n5 = null == r4 ? void 0 : r4._$AO) || void 0 === n5 || n5.call(r4, false), void 0 === u2 ? r4 = void 0 : (r4 = new u2(t3), r4._$AT(t3, s5, e4)), void 0 !== e4 ? (null !== (l4 = (h3 = s5)._$Co) && void 0 !== l4 ? l4 : h3._$Co = [])[e4] = r4 : s5._$Cl = r4), void 0 !== r4 && (i3 = P(t3, r4._$AS(t3, i3.values), r4, e4)), i3;
+    }
+    var V$1 = class {
+      constructor(t3, i3) {
+        this.u = [], this._$AN = void 0, this._$AD = t3, this._$AM = i3;
+      }
+      get parentNode() {
+        return this._$AM.parentNode;
+      }
+      get _$AU() {
+        return this._$AM._$AU;
+      }
+      v(t3) {
+        var i3;
+        const { el: { content: s5 }, parts: e4 } = this._$AD, o5 = (null !== (i3 = null == t3 ? void 0 : t3.creationScope) && void 0 !== i3 ? i3 : h2$1).importNode(s5, true);
+        A$1.currentNode = o5;
+        let n5 = A$1.nextNode(), l4 = 0, r4 = 0, d3 = e4[0];
+        for (; void 0 !== d3; ) {
+          if (l4 === d3.index) {
+            let i4;
+            2 === d3.type ? i4 = new N(n5, n5.nextSibling, this, t3) : 1 === d3.type ? i4 = new d3.ctor(n5, d3.name, d3.strings, this, t3) : 6 === d3.type && (i4 = new I(n5, this, t3)), this.u.push(i4), d3 = e4[++r4];
+          }
+          l4 !== (null == d3 ? void 0 : d3.index) && (n5 = A$1.nextNode(), l4++);
+        }
+        return o5;
+      }
+      p(t3) {
+        let i3 = 0;
+        for (const s5 of this.u)
+          void 0 !== s5 && (void 0 !== s5.strings ? (s5._$AI(t3, s5, i3), i3 += s5.strings.length - 2) : s5._$AI(t3[i3])), i3++;
+      }
+    };
+    var N = class {
+      constructor(t3, i3, s5, e4) {
+        var o5;
+        this.type = 2, this._$AH = b$1, this._$AN = void 0, this._$AA = t3, this._$AB = i3, this._$AM = s5, this.options = e4, this._$Cm = null === (o5 = null == e4 ? void 0 : e4.isConnected) || void 0 === o5 || o5;
+      }
+      get _$AU() {
+        var t3, i3;
+        return null !== (i3 = null === (t3 = this._$AM) || void 0 === t3 ? void 0 : t3._$AU) && void 0 !== i3 ? i3 : this._$Cm;
+      }
+      get parentNode() {
+        let t3 = this._$AA.parentNode;
+        const i3 = this._$AM;
+        return void 0 !== i3 && 11 === t3.nodeType && (t3 = i3.parentNode), t3;
+      }
+      get startNode() {
+        return this._$AA;
+      }
+      get endNode() {
+        return this._$AB;
+      }
+      _$AI(t3, i3 = this) {
+        t3 = P(this, t3, i3), d2$1(t3) ? t3 === b$1 || null == t3 || "" === t3 ? (this._$AH !== b$1 && this._$AR(), this._$AH = b$1) : t3 !== this._$AH && t3 !== x$1 && this.g(t3) : void 0 !== t3._$litType$ ? this.$(t3) : void 0 !== t3.nodeType ? this.T(t3) : c2$1(t3) ? this.k(t3) : this.g(t3);
+      }
+      O(t3, i3 = this._$AB) {
+        return this._$AA.parentNode.insertBefore(t3, i3);
+      }
+      T(t3) {
+        this._$AH !== t3 && (this._$AR(), this._$AH = this.O(t3));
+      }
+      g(t3) {
+        this._$AH !== b$1 && d2$1(this._$AH) ? this._$AA.nextSibling.data = t3 : this.T(h2$1.createTextNode(t3)), this._$AH = t3;
+      }
+      $(t3) {
+        var i3;
+        const { values: s5, _$litType$: e4 } = t3, o5 = "number" == typeof e4 ? this._$AC(t3) : (void 0 === e4.el && (e4.el = C$1.createElement(e4.h, this.options)), e4);
+        if ((null === (i3 = this._$AH) || void 0 === i3 ? void 0 : i3._$AD) === o5)
+          this._$AH.p(s5);
+        else {
+          const t4 = new V$1(o5, this), i4 = t4.v(this.options);
+          t4.p(s5), this.T(i4), this._$AH = t4;
+        }
+      }
+      _$AC(t3) {
+        let i3 = T.get(t3.strings);
+        return void 0 === i3 && T.set(t3.strings, i3 = new C$1(t3)), i3;
+      }
+      k(t3) {
+        u$1(this._$AH) || (this._$AH = [], this._$AR());
+        const i3 = this._$AH;
+        let s5, e4 = 0;
+        for (const o5 of t3)
+          e4 === i3.length ? i3.push(s5 = new N(this.O(r3()), this.O(r3()), this, this.options)) : s5 = i3[e4], s5._$AI(o5), e4++;
+        e4 < i3.length && (this._$AR(s5 && s5._$AB.nextSibling, e4), i3.length = e4);
+      }
+      _$AR(t3 = this._$AA.nextSibling, i3) {
+        var s5;
+        for (null === (s5 = this._$AP) || void 0 === s5 || s5.call(this, false, true, i3); t3 && t3 !== this._$AB; ) {
+          const i4 = t3.nextSibling;
+          t3.remove(), t3 = i4;
+        }
+      }
+      setConnected(t3) {
+        var i3;
+        void 0 === this._$AM && (this._$Cm = t3, null === (i3 = this._$AP) || void 0 === i3 || i3.call(this, t3));
+      }
+    };
+    var S2 = class {
+      constructor(t3, i3, s5, e4, o5) {
+        this.type = 1, this._$AH = b$1, this._$AN = void 0, this.element = t3, this.name = i3, this._$AM = e4, this.options = o5, s5.length > 2 || "" !== s5[0] || "" !== s5[1] ? (this._$AH = Array(s5.length - 1).fill(new String()), this.strings = s5) : this._$AH = b$1;
+      }
+      get tagName() {
+        return this.element.tagName;
+      }
+      get _$AU() {
+        return this._$AM._$AU;
+      }
+      _$AI(t3, i3 = this, s5, e4) {
+        const o5 = this.strings;
+        let n5 = false;
+        if (void 0 === o5)
+          t3 = P(this, t3, i3, 0), n5 = !d2$1(t3) || t3 !== this._$AH && t3 !== x$1, n5 && (this._$AH = t3);
+        else {
+          const e5 = t3;
+          let l4, h3;
+          for (t3 = o5[0], l4 = 0; l4 < o5.length - 1; l4++)
+            h3 = P(this, e5[s5 + l4], i3, l4), h3 === x$1 && (h3 = this._$AH[l4]), n5 || (n5 = !d2$1(h3) || h3 !== this._$AH[l4]), h3 === b$1 ? t3 = b$1 : t3 !== b$1 && (t3 += (null != h3 ? h3 : "") + o5[l4 + 1]), this._$AH[l4] = h3;
+        }
+        n5 && !e4 && this.j(t3);
+      }
+      j(t3) {
+        t3 === b$1 ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, null != t3 ? t3 : "");
+      }
+    };
+    var M = class extends S2 {
+      constructor() {
+        super(...arguments), this.type = 3;
+      }
+      j(t3) {
+        this.element[this.name] = t3 === b$1 ? void 0 : t3;
+      }
+    };
+    var R$1 = s3 ? s3.emptyScript : "";
+    var k$1 = class extends S2 {
+      constructor() {
+        super(...arguments), this.type = 4;
+      }
+      j(t3) {
+        t3 && t3 !== b$1 ? this.element.setAttribute(this.name, R$1) : this.element.removeAttribute(this.name);
+      }
+    };
+    var H$1 = class extends S2 {
+      constructor(t3, i3, s5, e4, o5) {
+        super(t3, i3, s5, e4, o5), this.type = 5;
+      }
+      _$AI(t3, i3 = this) {
+        var s5;
+        if ((t3 = null !== (s5 = P(this, t3, i3, 0)) && void 0 !== s5 ? s5 : b$1) === x$1)
+          return;
+        const e4 = this._$AH, o5 = t3 === b$1 && e4 !== b$1 || t3.capture !== e4.capture || t3.once !== e4.once || t3.passive !== e4.passive, n5 = t3 !== b$1 && (e4 === b$1 || o5);
+        o5 && this.element.removeEventListener(this.name, this, e4), n5 && this.element.addEventListener(this.name, this, t3), this._$AH = t3;
+      }
+      handleEvent(t3) {
+        var i3, s5;
+        "function" == typeof this._$AH ? this._$AH.call(null !== (s5 = null === (i3 = this.options) || void 0 === i3 ? void 0 : i3.host) && void 0 !== s5 ? s5 : this.element, t3) : this._$AH.handleEvent(t3);
+      }
+    };
+    var I = class {
+      constructor(t3, i3, s5) {
+        this.element = t3, this.type = 6, this._$AN = void 0, this._$AM = i3, this.options = s5;
+      }
+      get _$AU() {
+        return this._$AM._$AU;
+      }
+      _$AI(t3) {
+        P(this, t3);
+      }
+    };
+    var z$1 = i2$3.litHtmlPolyfillSupport;
+    null == z$1 || z$1(C$1, N), (null !== (t2 = i2$3.litHtmlVersions) && void 0 !== t2 ? t2 : i2$3.litHtmlVersions = []).push("2.6.1");
+    var Z = (t3, i3, s5) => {
+      var e4, o5;
+      const n5 = null !== (e4 = null == s5 ? void 0 : s5.renderBefore) && void 0 !== e4 ? e4 : i3;
+      let l4 = n5._$litPart$;
+      if (void 0 === l4) {
+        const t4 = null !== (o5 = null == s5 ? void 0 : s5.renderBefore) && void 0 !== o5 ? o5 : null;
+        n5._$litPart$ = l4 = new N(i3.insertBefore(r3(), t4), t4, void 0, null != s5 ? s5 : {});
+      }
+      return l4._$AI(t3), l4;
+    };
+
+    // node_modules/lit-element/lit-element.js
+    var l3;
+    var o4;
+    var s4 = class extends d {
+      constructor() {
+        super(...arguments), this.renderOptions = { host: this }, this._$Dt = void 0;
+      }
+      createRenderRoot() {
+        var t3, e4;
+        const i3 = super.createRenderRoot();
+        return null !== (t3 = (e4 = this.renderOptions).renderBefore) && void 0 !== t3 || (e4.renderBefore = i3.firstChild), i3;
+      }
+      update(t3) {
+        const i3 = this.render();
+        this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(t3), this._$Dt = Z(i3, this.renderRoot, this.renderOptions);
+      }
+      connectedCallback() {
+        var t3;
+        super.connectedCallback(), null === (t3 = this._$Dt) || void 0 === t3 || t3.setConnected(true);
+      }
+      disconnectedCallback() {
+        var t3;
+        super.disconnectedCallback(), null === (t3 = this._$Dt) || void 0 === t3 || t3.setConnected(false);
+      }
+      render() {
+        return x$1;
+      }
+    };
+    s4.finalized = true, s4._$litElement$ = true, null === (l3 = globalThis.litElementHydrateSupport) || void 0 === l3 || l3.call(globalThis, { LitElement: s4 });
+    var n4 = globalThis.litElementPolyfillSupport;
+    null == n4 || n4({ LitElement: s4 });
+    (null !== (o4 = globalThis.litElementVersions) && void 0 !== o4 ? o4 : globalThis.litElementVersions = []).push("3.2.0");
+    /*! Bundled license information:
+
+    @lit/reactive-element/css-tag.js:
+      (**
+       * @license
+       * Copyright 2019 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    @lit/reactive-element/reactive-element.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    lit-html/lit-html.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    lit-element/lit-element.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    lit-html/is-server.js:
+      (**
+       * @license
+       * Copyright 2022 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+    */
+
+    // node_modules/lit-html/directives/class-map.js
+    var o$1 = e$3(class extends i$3 {
+      constructor(t2) {
+        var i2;
+        if (super(t2), t2.type !== t$3.ATTRIBUTE || "class" !== t2.name || (null === (i2 = t2.strings) || void 0 === i2 ? void 0 : i2.length) > 2)
+          throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.");
+      }
+      render(t2) {
+        return " " + Object.keys(t2).filter((i2) => t2[i2]).join(" ") + " ";
+      }
+      update(i2, [s]) {
+        var r, o2;
+        if (void 0 === this.nt) {
+          this.nt = /* @__PURE__ */ new Set(), void 0 !== i2.strings && (this.st = new Set(i2.strings.join(" ").split(/\s/).filter((t2) => "" !== t2)));
+          for (const t2 in s)
+            s[t2] && !(null === (r = this.st) || void 0 === r ? void 0 : r.has(t2)) && this.nt.add(t2);
+          return this.render(s);
+        }
+        const e2 = i2.element.classList;
+        this.nt.forEach((t2) => {
+          t2 in s || (e2.remove(t2), this.nt.delete(t2));
+        });
+        for (const t2 in s) {
+          const i3 = !!s[t2];
+          i3 === this.nt.has(t2) || (null === (o2 = this.st) || void 0 === o2 ? void 0 : o2.has(t2)) || (i3 ? (e2.add(t2), this.nt.add(t2)) : (e2.remove(t2), this.nt.delete(t2)));
+        }
+        return x$1;
+      }
+    });
+    /*! Bundled license information:
+
+    lit-html/directives/class-map.js:
+      (**
+       * @license
+       * Copyright 2018 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+    */
+
+    var __defProp = Object.defineProperty;
+    var __defProps = Object.defineProperties;
+    var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+    var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+    var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+    var __hasOwnProp = Object.prototype.hasOwnProperty;
+    var __propIsEnum = Object.prototype.propertyIsEnumerable;
+    var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+    var __spreadValues = (a, b) => {
+      for (var prop in b || (b = {}))
+        if (__hasOwnProp.call(b, prop))
+          __defNormalProp(a, prop, b[prop]);
+      if (__getOwnPropSymbols)
+        for (var prop of __getOwnPropSymbols(b)) {
+          if (__propIsEnum.call(b, prop))
+            __defNormalProp(a, prop, b[prop]);
+        }
+      return a;
+    };
+    var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+    var __objRest = (source, exclude) => {
+      var target = {};
+      for (var prop in source)
+        if (__hasOwnProp.call(source, prop) && exclude.indexOf(prop) < 0)
+          target[prop] = source[prop];
+      if (source != null && __getOwnPropSymbols)
+        for (var prop of __getOwnPropSymbols(source)) {
+          if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source, prop))
+            target[prop] = source[prop];
+        }
+      return target;
+    };
+    var __decorateClass = (decorators, target, key, kind) => {
+      var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+      for (var i = decorators.length - 1, decorator; i >= 0; i--)
+        if (decorator = decorators[i])
+          result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+      if (kind && result)
+        __defProp(target, key, result);
+      return result;
+    };
+
+    // node_modules/@lit/reactive-element/decorators/custom-element.js
+    var e$1 = (e5) => (n2) => "function" == typeof n2 ? ((e6, n3) => (customElements.define(e6, n3), n3))(e5, n2) : ((e6, n3) => {
+      const { kind: t2, elements: s2 } = n3;
+      return { kind: t2, elements: s2, finisher(n4) {
+        customElements.define(e6, n4);
+      } };
+    })(e5, n2);
+
+    // node_modules/@lit/reactive-element/decorators/property.js
+    var i$1 = (i3, e5) => "method" === e5.kind && e5.descriptor && !("value" in e5.descriptor) ? __spreadProps(__spreadValues({}, e5), { finisher(n2) {
+      n2.createProperty(e5.key, i3);
+    } }) : { kind: "field", key: Symbol(), placement: "own", descriptor: {}, originalKey: e5.key, initializer() {
+      "function" == typeof e5.initializer && (this[e5.key] = e5.initializer.call(this));
+    }, finisher(n2) {
+      n2.createProperty(e5.key, i3);
+    } };
+    function e2$1(e5) {
+      return (n2, t2) => void 0 !== t2 ? ((i3, e6, n3) => {
+        e6.constructor.createProperty(n3, i3);
+      })(e5, n2, t2) : i$1(e5, n2);
+    }
+
+    // node_modules/@lit/reactive-element/decorators/state.js
+    function t$1(t2) {
+      return e2$1(__spreadProps(__spreadValues({}, t2), { state: true }));
+    }
+
+    // node_modules/@lit/reactive-element/decorators/base.js
+    var o = ({ finisher: e5, descriptor: t2 }) => (o2, n2) => {
+      var r;
+      if (void 0 === n2) {
+        const n3 = null !== (r = o2.originalKey) && void 0 !== r ? r : o2.key, i3 = null != t2 ? { kind: "method", placement: "prototype", key: n3, descriptor: t2(o2.key) } : __spreadProps(__spreadValues({}, o2), { key: n3 });
+        return null != e5 && (i3.finisher = function(t3) {
+          e5(t3, n3);
+        }), i3;
+      }
+      {
+        const r2 = o2.constructor;
+        void 0 !== t2 && Object.defineProperty(o2, n2, t2(n2)), null == e5 || e5(r2, n2);
+      }
+    };
+
+    // node_modules/@lit/reactive-element/decorators/query.js
+    function i2$2(i3, n2) {
+      return o({ descriptor: (o2) => {
+        const t2 = { get() {
+          var o3, n3;
+          return null !== (n3 = null === (o3 = this.renderRoot) || void 0 === o3 ? void 0 : o3.querySelector(i3)) && void 0 !== n3 ? n3 : null;
+        }, enumerable: true, configurable: true };
+        if (n2) {
+          const n3 = "symbol" == typeof o2 ? Symbol() : "__" + o2;
+          t2.get = function() {
+            var o3, t3;
+            return void 0 === this[n3] && (this[n3] = null !== (t3 = null === (o3 = this.renderRoot) || void 0 === o3 ? void 0 : o3.querySelector(i3)) && void 0 !== t3 ? t3 : null), this[n3];
+          };
+        }
+        return t2;
+      } });
+    }
+
+    // node_modules/@lit/reactive-element/decorators/query-assigned-elements.js
+    var n$2;
+    null != (null === (n$2 = window.HTMLSlotElement) || void 0 === n$2 ? void 0 : n$2.prototype.assignedElements) ? (o2, n2) => o2.assignedElements(n2) : (o2, n2) => o2.assignedNodes(n2).filter((o3) => o3.nodeType === Node.ELEMENT_NODE);
+
+    // src/internal/shoelace-element.ts
+    var ShoelaceElement = class extends s4 {
+      /** Emits a custom event with more convenient defaults. */
+      emit(name, options) {
+        const event = new CustomEvent(name, __spreadValues({
+          bubbles: true,
+          cancelable: false,
+          composed: true,
+          detail: {}
+        }, options));
+        this.dispatchEvent(event);
+        return event;
+      }
+    };
+    __decorateClass([
+      e2$1()
+    ], ShoelaceElement.prototype, "dir", 2);
+    __decorateClass([
+      e2$1()
+    ], ShoelaceElement.prototype, "lang", 2);
+    /*! Bundled license information:
+
+    @lit/reactive-element/decorators/custom-element.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    @lit/reactive-element/decorators/property.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    @lit/reactive-element/decorators/state.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    @lit/reactive-element/decorators/base.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    @lit/reactive-element/decorators/query.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    @lit/reactive-element/decorators/query-async.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    @lit/reactive-element/decorators/event-options.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    @lit/reactive-element/decorators/query-all.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    @lit/reactive-element/decorators/query-assigned-elements.js:
+      (**
+       * @license
+       * Copyright 2021 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    @lit/reactive-element/decorators/query-assigned-nodes.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+    */
+
+    // src/styles/component.styles.ts
+    var component_styles_default = i$2`
+  :host {
+    box-sizing: border-box;
+  }
+
+  :host *,
+  :host *::before,
+  :host *::after {
+    box-sizing: inherit;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+`;
+
+    // src/components/badge/badge.styles.ts
+    var badge_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    display: inline-flex;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: max(12px, 0.75em);
+    font-weight: var(--sl-font-weight-semibold);
+    letter-spacing: var(--sl-letter-spacing-normal);
+    line-height: 1;
+    border-radius: var(--sl-border-radius-small);
+    border: solid 1px var(--sl-color-neutral-0);
+    white-space: nowrap;
+    padding: 0.35em 0.6em;
+    user-select: none;
+    cursor: inherit;
+  }
+
+  /* Variant modifiers */
+  .badge--primary {
+    background-color: var(--sl-color-primary-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .badge--success {
+    background-color: var(--sl-color-success-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .badge--neutral {
+    background-color: var(--sl-color-neutral-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .badge--warning {
+    background-color: var(--sl-color-warning-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .badge--danger {
+    background-color: var(--sl-color-danger-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  /* Pill modifier */
+  .badge--pill {
+    border-radius: var(--sl-border-radius-pill);
+  }
+
+  /* Pulse modifier */
+  .badge--pulse {
+    animation: pulse 1.5s infinite;
+  }
+
+  .badge--pulse.badge--primary {
+    --pulse-color: var(--sl-color-primary-600);
+  }
+
+  .badge--pulse.badge--success {
+    --pulse-color: var(--sl-color-success-600);
+  }
+
+  .badge--pulse.badge--neutral {
+    --pulse-color: var(--sl-color-neutral-600);
+  }
+
+  .badge--pulse.badge--warning {
+    --pulse-color: var(--sl-color-warning-600);
+  }
+
+  .badge--pulse.badge--danger {
+    --pulse-color: var(--sl-color-danger-600);
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 var(--pulse-color);
+    }
+    70% {
+      box-shadow: 0 0 0 0.5rem transparent;
+    }
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
+  }
+`;
+
+    // src/components/badge/badge.ts
+    var SlBadge = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.variant = "primary";
+        this.pill = false;
+        this.pulse = false;
+      }
+      render() {
+        return y`
+      <slot
+        part="base"
+        class=${o$1({
+      badge: true,
+      "badge--primary": this.variant === "primary",
+      "badge--success": this.variant === "success",
+      "badge--neutral": this.variant === "neutral",
+      "badge--warning": this.variant === "warning",
+      "badge--danger": this.variant === "danger",
+      "badge--pill": this.pill,
+      "badge--pulse": this.pulse
+    })}
+        role="status"
+      ></slot>
+    `;
+      }
+    };
+    SlBadge.styles = badge_styles_default;
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlBadge.prototype, "variant", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlBadge.prototype, "pill", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlBadge.prototype, "pulse", 2);
+    SlBadge = __decorateClass([
+      e$1("sl-badge")
+    ], SlBadge);
+
+    // src/internal/form.ts
+    var formCollections = /* @__PURE__ */ new WeakMap();
+    var userInteractedControls = /* @__PURE__ */ new WeakMap();
+    var reportValidityOverloads = /* @__PURE__ */ new WeakMap();
+    var FormControlController = class {
+      constructor(host, options) {
+        (this.host = host).addController(this);
+        this.options = __spreadValues({
+          form: (input) => {
+            if (input.hasAttribute("form") && input.getAttribute("form") !== "") {
+              const root = input.getRootNode();
+              const formId = input.getAttribute("form");
+              if (formId) {
+                return root.getElementById(formId);
+              }
+            }
+            return input.closest("form");
+          },
+          name: (input) => input.name,
+          value: (input) => input.value,
+          defaultValue: (input) => input.defaultValue,
+          disabled: (input) => {
+            var _a;
+            return (_a = input.disabled) != null ? _a : false;
+          },
+          reportValidity: (input) => typeof input.reportValidity === "function" ? input.reportValidity() : true,
+          setValue: (input, value) => input.value = value
+        }, options);
+        this.handleFormData = this.handleFormData.bind(this);
+        this.handleFormSubmit = this.handleFormSubmit.bind(this);
+        this.handleFormReset = this.handleFormReset.bind(this);
+        this.reportFormValidity = this.reportFormValidity.bind(this);
+        this.handleUserInput = this.handleUserInput.bind(this);
+      }
+      hostConnected() {
+        const form = this.options.form(this.host);
+        if (form) {
+          this.attachForm(form);
+        }
+        this.host.addEventListener("sl-input", this.handleUserInput);
+      }
+      hostDisconnected() {
+        this.detachForm();
+        this.host.removeEventListener("sl-input", this.handleUserInput);
+      }
+      hostUpdated() {
+        const form = this.options.form(this.host);
+        if (!form) {
+          this.detachForm();
+        }
+        if (form && this.form !== form) {
+          this.detachForm();
+          this.attachForm(form);
+        }
+        if (this.host.hasUpdated) {
+          this.setValidity(this.host.checkValidity());
+        }
+      }
+      attachForm(form) {
+        if (form) {
+          this.form = form;
+          if (formCollections.has(this.form)) {
+            formCollections.get(this.form).add(this.host);
+          } else {
+            formCollections.set(this.form, /* @__PURE__ */ new Set([this.host]));
+          }
+          this.form.addEventListener("formdata", this.handleFormData);
+          this.form.addEventListener("submit", this.handleFormSubmit);
+          this.form.addEventListener("reset", this.handleFormReset);
+          if (!reportValidityOverloads.has(this.form)) {
+            reportValidityOverloads.set(this.form, this.form.reportValidity);
+            this.form.reportValidity = () => this.reportFormValidity();
+          }
+        } else {
+          this.form = void 0;
+        }
+      }
+      detachForm() {
+        var _a;
+        if (this.form) {
+          (_a = formCollections.get(this.form)) == null ? void 0 : _a.delete(this.host);
+          this.form.removeEventListener("formdata", this.handleFormData);
+          this.form.removeEventListener("submit", this.handleFormSubmit);
+          this.form.removeEventListener("reset", this.handleFormReset);
+          if (reportValidityOverloads.has(this.form)) {
+            this.form.reportValidity = reportValidityOverloads.get(this.form);
+            reportValidityOverloads.delete(this.form);
+          }
+        }
+        this.form = void 0;
+      }
+      handleFormData(event) {
+        const disabled = this.options.disabled(this.host);
+        const name = this.options.name(this.host);
+        const value = this.options.value(this.host);
+        const isButton = this.host.tagName.toLowerCase() === "sl-button";
+        if (!disabled && !isButton && typeof name === "string" && name.length > 0 && typeof value !== "undefined") {
+          if (Array.isArray(value)) {
+            value.forEach((val) => {
+              event.formData.append(name, val.toString());
+            });
+          } else {
+            event.formData.append(name, value.toString());
+          }
+        }
+      }
+      handleFormSubmit(event) {
+        var _a;
+        const disabled = this.options.disabled(this.host);
+        const reportValidity = this.options.reportValidity;
+        if (this.form && !this.form.noValidate) {
+          (_a = formCollections.get(this.form)) == null ? void 0 : _a.forEach((control) => {
+            this.setUserInteracted(control, true);
+          });
+        }
+        if (this.form && !this.form.noValidate && !disabled && !reportValidity(this.host)) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      }
+      handleFormReset() {
+        this.options.setValue(this.host, this.options.defaultValue(this.host));
+        this.setUserInteracted(this.host, false);
+      }
+      async handleUserInput() {
+        await this.host.updateComplete;
+        this.setUserInteracted(this.host, true);
+      }
+      reportFormValidity() {
+        if (this.form && !this.form.noValidate) {
+          const elements = this.form.querySelectorAll("*");
+          for (const element of elements) {
+            if (typeof element.reportValidity === "function") {
+              if (!element.reportValidity()) {
+                return false;
+              }
+            }
+          }
+        }
+        return true;
+      }
+      setUserInteracted(el, hasInteracted) {
+        userInteractedControls.set(el, hasInteracted);
+        el.requestUpdate();
+      }
+      doAction(type, invoker) {
+        if (this.form) {
+          const button = document.createElement("button");
+          button.type = type;
+          button.style.position = "absolute";
+          button.style.width = "0";
+          button.style.height = "0";
+          button.style.clipPath = "inset(50%)";
+          button.style.overflow = "hidden";
+          button.style.whiteSpace = "nowrap";
+          if (invoker) {
+            button.name = invoker.name;
+            button.value = invoker.value;
+            ["formaction", "formenctype", "formmethod", "formnovalidate", "formtarget"].forEach((attr) => {
+              if (invoker.hasAttribute(attr)) {
+                button.setAttribute(attr, invoker.getAttribute(attr));
+              }
+            });
+          }
+          this.form.append(button);
+          button.click();
+          button.remove();
+        }
+      }
+      /** Resets the form, restoring all the control to their default value */
+      reset(invoker) {
+        this.doAction("reset", invoker);
+      }
+      /** Submits the form, triggering validation and form data injection. */
+      submit(invoker) {
+        this.doAction("submit", invoker);
+      }
+      /**
+       * Synchronously sets the form control's validity. Call this when you know the future validity but need to update
+       * the host element immediately, i.e. before Lit updates the component in the next update.
+       */
+      setValidity(isValid) {
+        var _a;
+        const host = this.host;
+        const hasInteracted = Boolean(userInteractedControls.get(host));
+        const required = Boolean(host.required);
+        if ((_a = this.form) == null ? void 0 : _a.noValidate) {
+          host.removeAttribute("data-required");
+          host.removeAttribute("data-optional");
+          host.removeAttribute("data-invalid");
+          host.removeAttribute("data-valid");
+          host.removeAttribute("data-user-invalid");
+          host.removeAttribute("data-user-valid");
+        } else {
+          host.toggleAttribute("data-required", required);
+          host.toggleAttribute("data-optional", !required);
+          host.toggleAttribute("data-invalid", !isValid);
+          host.toggleAttribute("data-valid", isValid);
+          host.toggleAttribute("data-user-invalid", !isValid && hasInteracted);
+          host.toggleAttribute("data-user-valid", isValid && hasInteracted);
+        }
+      }
+      /**
+       * Updates the form control's validity based on the current value of `host.checkValidity()`. Call this when anything
+       * that affects constraint validation changes so the component receives the correct validity states.
+       */
+      updateValidity() {
+        const host = this.host;
+        this.setValidity(host.checkValidity());
+      }
+    };
+
+    // src/components/button/button.styles.ts
+    var button_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    display: inline-block;
+    position: relative;
+    width: auto;
+    cursor: pointer;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: stretch;
+    justify-content: center;
+    width: 100%;
+    border-style: solid;
+    border-width: var(--sl-input-border-width);
+    font-family: var(--sl-input-font-family);
+    font-weight: var(--sl-font-weight-semibold);
+    text-decoration: none;
+    user-select: none;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 0;
+    transition: var(--sl-transition-x-fast) background-color, var(--sl-transition-x-fast) color,
+      var(--sl-transition-x-fast) border, var(--sl-transition-x-fast) box-shadow;
+    cursor: inherit;
+  }
+
+  .button::-moz-focus-inner {
+    border: 0;
+  }
+
+  .button:focus {
+    outline: none;
+  }
+
+  .button:focus-visible {
+    outline: var(--sl-focus-ring);
+    outline-offset: var(--sl-focus-ring-offset);
+  }
+
+  .button--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* When disabled, prevent mouse events from bubbling up */
+  .button--disabled * {
+    pointer-events: none;
+  }
+
+  .button__prefix,
+  .button__suffix {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .button__label {
+    display: inline-block;
+  }
+
+  .button__label::slotted(sl-icon) {
+    vertical-align: -2px;
+  }
+
+  /*
+   * Standard buttons
+   */
+
+  /* Default */
+  .button--standard.button--default {
+    background-color: var(--sl-color-neutral-0);
+    border-color: var(--sl-color-neutral-300);
+    color: var(--sl-color-neutral-700);
+  }
+
+  .button--standard.button--default:hover:not(.button--disabled) {
+    background-color: var(--sl-color-primary-50);
+    border-color: var(--sl-color-primary-300);
+    color: var(--sl-color-primary-700);
+  }
+
+  .button--standard.button--default:active:not(.button--disabled) {
+    background-color: var(--sl-color-primary-100);
+    border-color: var(--sl-color-primary-400);
+    color: var(--sl-color-primary-700);
+  }
+
+  /* Primary */
+  .button--standard.button--primary {
+    background-color: var(--sl-color-primary-600);
+    border-color: var(--sl-color-primary-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--standard.button--primary:hover:not(.button--disabled) {
+    background-color: var(--sl-color-primary-500);
+    border-color: var(--sl-color-primary-500);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--standard.button--primary:active:not(.button--disabled) {
+    background-color: var(--sl-color-primary-600);
+    border-color: var(--sl-color-primary-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  /* Success */
+  .button--standard.button--success {
+    background-color: var(--sl-color-success-600);
+    border-color: var(--sl-color-success-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--standard.button--success:hover:not(.button--disabled) {
+    background-color: var(--sl-color-success-500);
+    border-color: var(--sl-color-success-500);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--standard.button--success:active:not(.button--disabled) {
+    background-color: var(--sl-color-success-600);
+    border-color: var(--sl-color-success-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  /* Neutral */
+  .button--standard.button--neutral {
+    background-color: var(--sl-color-neutral-600);
+    border-color: var(--sl-color-neutral-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--standard.button--neutral:hover:not(.button--disabled) {
+    background-color: var(--sl-color-neutral-500);
+    border-color: var(--sl-color-neutral-500);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--standard.button--neutral:active:not(.button--disabled) {
+    background-color: var(--sl-color-neutral-600);
+    border-color: var(--sl-color-neutral-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  /* Warning */
+  .button--standard.button--warning {
+    background-color: var(--sl-color-warning-600);
+    border-color: var(--sl-color-warning-600);
+    color: var(--sl-color-neutral-0);
+  }
+  .button--standard.button--warning:hover:not(.button--disabled) {
+    background-color: var(--sl-color-warning-500);
+    border-color: var(--sl-color-warning-500);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--standard.button--warning:active:not(.button--disabled) {
+    background-color: var(--sl-color-warning-600);
+    border-color: var(--sl-color-warning-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  /* Danger */
+  .button--standard.button--danger {
+    background-color: var(--sl-color-danger-600);
+    border-color: var(--sl-color-danger-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--standard.button--danger:hover:not(.button--disabled) {
+    background-color: var(--sl-color-danger-500);
+    border-color: var(--sl-color-danger-500);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--standard.button--danger:active:not(.button--disabled) {
+    background-color: var(--sl-color-danger-600);
+    border-color: var(--sl-color-danger-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  /*
+   * Outline buttons
+   */
+
+  .button--outline {
+    background: none;
+    border: solid 1px;
+  }
+
+  /* Default */
+  .button--outline.button--default {
+    border-color: var(--sl-color-neutral-300);
+    color: var(--sl-color-neutral-700);
+  }
+
+  .button--outline.button--default:hover:not(.button--disabled),
+  .button--outline.button--default.button--checked:not(.button--disabled) {
+    border-color: var(--sl-color-primary-600);
+    background-color: var(--sl-color-primary-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--outline.button--default:active:not(.button--disabled) {
+    border-color: var(--sl-color-primary-700);
+    background-color: var(--sl-color-primary-700);
+    color: var(--sl-color-neutral-0);
+  }
+
+  /* Primary */
+  .button--outline.button--primary {
+    border-color: var(--sl-color-primary-600);
+    color: var(--sl-color-primary-600);
+  }
+
+  .button--outline.button--primary:hover:not(.button--disabled),
+  .button--outline.button--primary.button--checked:not(.button--disabled) {
+    background-color: var(--sl-color-primary-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--outline.button--primary:active:not(.button--disabled) {
+    border-color: var(--sl-color-primary-700);
+    background-color: var(--sl-color-primary-700);
+    color: var(--sl-color-neutral-0);
+  }
+
+  /* Success */
+  .button--outline.button--success {
+    border-color: var(--sl-color-success-600);
+    color: var(--sl-color-success-600);
+  }
+
+  .button--outline.button--success:hover:not(.button--disabled),
+  .button--outline.button--success.button--checked:not(.button--disabled) {
+    background-color: var(--sl-color-success-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--outline.button--success:active:not(.button--disabled) {
+    border-color: var(--sl-color-success-700);
+    background-color: var(--sl-color-success-700);
+    color: var(--sl-color-neutral-0);
+  }
+
+  /* Neutral */
+  .button--outline.button--neutral {
+    border-color: var(--sl-color-neutral-600);
+    color: var(--sl-color-neutral-600);
+  }
+
+  .button--outline.button--neutral:hover:not(.button--disabled),
+  .button--outline.button--neutral.button--checked:not(.button--disabled) {
+    background-color: var(--sl-color-neutral-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--outline.button--neutral:active:not(.button--disabled) {
+    border-color: var(--sl-color-neutral-700);
+    background-color: var(--sl-color-neutral-700);
+    color: var(--sl-color-neutral-0);
+  }
+
+  /* Warning */
+  .button--outline.button--warning {
+    border-color: var(--sl-color-warning-600);
+    color: var(--sl-color-warning-600);
+  }
+
+  .button--outline.button--warning:hover:not(.button--disabled),
+  .button--outline.button--warning.button--checked:not(.button--disabled) {
+    background-color: var(--sl-color-warning-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--outline.button--warning:active:not(.button--disabled) {
+    border-color: var(--sl-color-warning-700);
+    background-color: var(--sl-color-warning-700);
+    color: var(--sl-color-neutral-0);
+  }
+
+  /* Danger */
+  .button--outline.button--danger {
+    border-color: var(--sl-color-danger-600);
+    color: var(--sl-color-danger-600);
+  }
+
+  .button--outline.button--danger:hover:not(.button--disabled),
+  .button--outline.button--danger.button--checked:not(.button--disabled) {
+    background-color: var(--sl-color-danger-600);
+    color: var(--sl-color-neutral-0);
+  }
+
+  .button--outline.button--danger:active:not(.button--disabled) {
+    border-color: var(--sl-color-danger-700);
+    background-color: var(--sl-color-danger-700);
+    color: var(--sl-color-neutral-0);
+  }
+
+  @media (forced-colors: active) {
+    .button.button--outline.button--checked:not(.button--disabled) {
+      outline: solid 2px transparent;
+    }
+  }
+
+  /*
+   * Text buttons
+   */
+
+  .button--text {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--sl-color-primary-600);
+  }
+
+  .button--text:hover:not(.button--disabled) {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--sl-color-primary-500);
+  }
+
+  .button--text:focus-visible:not(.button--disabled) {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--sl-color-primary-500);
+  }
+
+  .button--text:active:not(.button--disabled) {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--sl-color-primary-700);
+  }
+
+  /*
+   * Size modifiers
+   */
+
+  .button--small {
+    font-size: var(--sl-button-font-size-small);
+    height: var(--sl-input-height-small);
+    line-height: calc(var(--sl-input-height-small) - var(--sl-input-border-width) * 2);
+    border-radius: var(--sl-input-border-radius-small);
+  }
+
+  .button--medium {
+    font-size: var(--sl-button-font-size-medium);
+    height: var(--sl-input-height-medium);
+    line-height: calc(var(--sl-input-height-medium) - var(--sl-input-border-width) * 2);
+    border-radius: var(--sl-input-border-radius-medium);
+  }
+
+  .button--large {
+    font-size: var(--sl-button-font-size-large);
+    height: var(--sl-input-height-large);
+    line-height: calc(var(--sl-input-height-large) - var(--sl-input-border-width) * 2);
+    border-radius: var(--sl-input-border-radius-large);
+  }
+
+  /*
+   * Pill modifier
+   */
+
+  .button--pill.button--small {
+    border-radius: var(--sl-input-height-small);
+  }
+
+  .button--pill.button--medium {
+    border-radius: var(--sl-input-height-medium);
+  }
+
+  .button--pill.button--large {
+    border-radius: var(--sl-input-height-large);
+  }
+
+  /*
+   * Circle modifier
+   */
+
+  .button--circle {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .button--circle.button--small {
+    width: var(--sl-input-height-small);
+    border-radius: 50%;
+  }
+
+  .button--circle.button--medium {
+    width: var(--sl-input-height-medium);
+    border-radius: 50%;
+  }
+
+  .button--circle.button--large {
+    width: var(--sl-input-height-large);
+    border-radius: 50%;
+  }
+
+  .button--circle .button__prefix,
+  .button--circle .button__suffix,
+  .button--circle .button__caret {
+    display: none;
+  }
+
+  /*
+   * Caret modifier
+   */
+
+  .button--caret .button__suffix {
+    display: none;
+  }
+
+  .button--caret .button__caret {
+    height: auto;
+  }
+
+  /*
+   * Loading modifier
+   */
+
+  .button--loading {
+    position: relative;
+    cursor: wait;
+  }
+
+  .button--loading .button__prefix,
+  .button--loading .button__label,
+  .button--loading .button__suffix,
+  .button--loading .button__caret {
+    visibility: hidden;
+  }
+
+  .button--loading sl-spinner {
+    --indicator-color: currentColor;
+    position: absolute;
+    font-size: 1em;
+    height: 1em;
+    width: 1em;
+    top: calc(50% - 0.5em);
+    left: calc(50% - 0.5em);
+  }
+
+  /*
+   * Badges
+   */
+
+  .button ::slotted(sl-badge) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    translate: 50% -50%;
+    pointer-events: none;
+  }
+
+  .button--rtl ::slotted(sl-badge) {
+    right: auto;
+    left: 0;
+    translate: -50% -50%;
+  }
+
+  /*
+   * Button spacing
+   */
+
+  .button--has-label.button--small .button__label {
+    padding: 0 var(--sl-spacing-small);
+  }
+
+  .button--has-label.button--medium .button__label {
+    padding: 0 var(--sl-spacing-medium);
+  }
+
+  .button--has-label.button--large .button__label {
+    padding: 0 var(--sl-spacing-large);
+  }
+
+  .button--has-prefix.button--small {
+    padding-inline-start: var(--sl-spacing-x-small);
+  }
+
+  .button--has-prefix.button--small .button__label {
+    padding-inline-start: var(--sl-spacing-x-small);
+  }
+
+  .button--has-prefix.button--medium {
+    padding-inline-start: var(--sl-spacing-small);
+  }
+
+  .button--has-prefix.button--medium .button__label {
+    padding-inline-start: var(--sl-spacing-small);
+  }
+
+  .button--has-prefix.button--large {
+    padding-inline-start: var(--sl-spacing-small);
+  }
+
+  .button--has-prefix.button--large .button__label {
+    padding-inline-start: var(--sl-spacing-small);
+  }
+
+  .button--has-suffix.button--small,
+  .button--caret.button--small {
+    padding-inline-end: var(--sl-spacing-x-small);
+  }
+
+  .button--has-suffix.button--small .button__label,
+  .button--caret.button--small .button__label {
+    padding-inline-end: var(--sl-spacing-x-small);
+  }
+
+  .button--has-suffix.button--medium,
+  .button--caret.button--medium {
+    padding-inline-end: var(--sl-spacing-small);
+  }
+
+  .button--has-suffix.button--medium .button__label,
+  .button--caret.button--medium .button__label {
+    padding-inline-end: var(--sl-spacing-small);
+  }
+
+  .button--has-suffix.button--large,
+  .button--caret.button--large {
+    padding-inline-end: var(--sl-spacing-small);
+  }
+
+  .button--has-suffix.button--large .button__label,
+  .button--caret.button--large .button__label {
+    padding-inline-end: var(--sl-spacing-small);
+  }
+
+  /*
+   * Button groups support a variety of button types (e.g. buttons with tooltips, buttons as dropdown triggers, etc.).
+   * This means buttons aren't always direct descendants of the button group, thus we can't target them with the
+   * ::slotted selector. To work around this, the button group component does some magic to add these special classes to
+   * buttons and we style them here instead.
+   */
+
+  :host(.sl-button-group__button--first:not(.sl-button-group__button--last)) .button {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+
+  :host(.sl-button-group__button--inner) .button {
+    border-radius: 0;
+  }
+
+  :host(.sl-button-group__button--last:not(.sl-button-group__button--first)) .button {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+
+  /* All except the first */
+  :host(.sl-button-group__button:not(.sl-button-group__button--first)) {
+    margin-inline-start: calc(-1 * var(--sl-input-border-width));
+  }
+
+  /* Add a visual separator between solid buttons */
+  :host(
+      .sl-button-group__button:not(
+          .sl-button-group__button--first,
+          .sl-button-group__button--radio,
+          [variant='default']
+        ):not(:hover)
+    )
+    .button:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    inset-inline-start: 0;
+    bottom: 0;
+    border-left: solid 1px rgb(128 128 128 / 33%);
+    mix-blend-mode: multiply;
+  }
+
+  /* Bump hovered, focused, and checked buttons up so their focus ring isn't clipped */
+  :host(.sl-button-group__button--hover) {
+    z-index: 1;
+  }
+
+  /* Focus and checked are always on top */
+  :host(.sl-button-group__button--focus),
+  :host(.sl-button-group__button[checked]) {
+    z-index: 2;
+  }
+`;
+
+    // node_modules/lit-html/static.js
+    var e = Symbol.for("");
+    var l$2 = (t) => {
+      if ((null == t ? void 0 : t.r) === e)
+        return null == t ? void 0 : t._$litStatic$;
+    };
+    var i = (t, ...r) => ({ _$litStatic$: r.reduce((r2, e2, l2) => r2 + ((t2) => {
+      if (void 0 !== t2._$litStatic$)
+        return t2._$litStatic$;
+      throw Error(`Value passed to 'literal' function must be a 'literal' result: ${t2}. Use 'unsafeStatic' to pass non-literal values, but
+            take care to ensure page security.`);
+    })(e2) + t[l2 + 1], t[0]), r: e });
+    var s$2 = /* @__PURE__ */ new Map();
+    var a$1 = (t) => (r, ...e2) => {
+      const o = e2.length;
+      let i2, a2;
+      const n2 = [], u2 = [];
+      let c, $ = 0, f = false;
+      for (; $ < o; ) {
+        for (c = r[$]; $ < o && void 0 !== (a2 = e2[$], i2 = l$2(a2)); )
+          c += i2 + r[++$], f = true;
+        u2.push(a2), n2.push(c), $++;
+      }
+      if ($ === o && n2.push(r[o]), f) {
+        const t2 = n2.join("$$lit$$");
+        void 0 === (r = s$2.get(t2)) && (n2.raw = n2, s$2.set(t2, r = n2)), e2 = u2;
+      }
+      return t(r, ...e2);
+    };
+    var n$1 = a$1(y);
+    /*! Bundled license information:
+
+    lit-html/static.js:
+      (**
+       * @license
+       * Copyright 2020 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+    */
+
+    // node_modules/@shoelace-style/localize/dist/index.js
+    var connectedElements = /* @__PURE__ */ new Set();
+    var documentElementObserver = new MutationObserver(update);
+    var translations = /* @__PURE__ */ new Map();
+    var documentDirection = document.documentElement.dir || "ltr";
+    var documentLanguage = document.documentElement.lang || navigator.language;
+    var fallback;
+    documentElementObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["dir", "lang"]
+    });
+    function registerTranslation(...translation2) {
+      translation2.map((t) => {
+        const code = t.$code.toLowerCase();
+        if (translations.has(code)) {
+          translations.set(code, Object.assign(Object.assign({}, translations.get(code)), t));
+        } else {
+          translations.set(code, t);
+        }
+        if (!fallback) {
+          fallback = t;
+        }
+      });
+      update();
+    }
+    function update() {
+      documentDirection = document.documentElement.dir || "ltr";
+      documentLanguage = document.documentElement.lang || navigator.language;
+      [...connectedElements.keys()].map((el) => {
+        if (typeof el.requestUpdate === "function") {
+          el.requestUpdate();
+        }
+      });
+    }
+    var LocalizeController = class {
+      constructor(host) {
+        this.host = host;
+        this.host.addController(this);
+      }
+      hostConnected() {
+        connectedElements.add(this.host);
+      }
+      hostDisconnected() {
+        connectedElements.delete(this.host);
+      }
+      dir() {
+        return `${this.host.dir || documentDirection}`.toLowerCase();
+      }
+      lang() {
+        return `${this.host.lang || documentLanguage}`.toLowerCase();
+      }
+      term(key, ...args) {
+        var _a, _b;
+        const locale = new Intl.Locale(this.lang());
+        const language = locale === null || locale === void 0 ? void 0 : locale.language.toLowerCase();
+        const region = (_b = (_a = locale === null || locale === void 0 ? void 0 : locale.region) === null || _a === void 0 ? void 0 : _a.toLowerCase()) !== null && _b !== void 0 ? _b : "";
+        const primary = translations.get(`${language}-${region}`);
+        const secondary = translations.get(language);
+        let term;
+        if (primary && primary[key]) {
+          term = primary[key];
+        } else if (secondary && secondary[key]) {
+          term = secondary[key];
+        } else if (fallback && fallback[key]) {
+          term = fallback[key];
+        } else {
+          console.error(`No translation found for: ${String(key)}`);
+          return String(key);
+        }
+        if (typeof term === "function") {
+          return term(...args);
+        }
+        return term;
+      }
+      date(dateToFormat, options) {
+        dateToFormat = new Date(dateToFormat);
+        return new Intl.DateTimeFormat(this.lang(), options).format(dateToFormat);
+      }
+      number(numberToFormat, options) {
+        numberToFormat = Number(numberToFormat);
+        return isNaN(numberToFormat) ? "" : new Intl.NumberFormat(this.lang(), options).format(numberToFormat);
+      }
+      relativeTime(value, unit, options) {
+        return new Intl.RelativeTimeFormat(this.lang(), options).format(value, unit);
+      }
+    };
+
+    // src/utilities/localize.ts
+    var LocalizeController2 = class extends LocalizeController {
+    };
+
+    // src/translations/en.ts
+    var translation = {
+      $code: "en",
+      $name: "English",
+      $dir: "ltr",
+      clearEntry: "Clear entry",
+      close: "Close",
+      copy: "Copy",
+      numOptionsSelected: (num) => {
+        if (num === 0)
+          return "No options selected";
+        if (num === 1)
+          return "1 option selected";
+        return `${num} options selected`;
+      },
+      currentValue: "Current value",
+      hidePassword: "Hide password",
+      loading: "Loading",
+      progress: "Progress",
+      remove: "Remove",
+      resize: "Resize",
+      scrollToEnd: "Scroll to end",
+      scrollToStart: "Scroll to start",
+      selectAColorFromTheScreen: "Select a color from the screen",
+      showPassword: "Show password",
+      toggleColorFormat: "Toggle color format"
+    };
+    registerTranslation(translation);
+
+    // src/internal/slot.ts
+    var HasSlotController = class {
+      constructor(host, ...slotNames) {
+        this.slotNames = [];
+        (this.host = host).addController(this);
+        this.slotNames = slotNames;
+        this.handleSlotChange = this.handleSlotChange.bind(this);
+      }
+      hasDefaultSlot() {
+        return [...this.host.childNodes].some((node) => {
+          if (node.nodeType === node.TEXT_NODE && node.textContent.trim() !== "") {
+            return true;
+          }
+          if (node.nodeType === node.ELEMENT_NODE) {
+            const el = node;
+            const tagName = el.tagName.toLowerCase();
+            if (tagName === "sl-visually-hidden") {
+              return false;
+            }
+            if (!el.hasAttribute("slot")) {
+              return true;
+            }
+          }
+          return false;
+        });
+      }
+      hasNamedSlot(name) {
+        return this.host.querySelector(`:scope > [slot="${name}"]`) !== null;
+      }
+      test(slotName) {
+        return slotName === "[default]" ? this.hasDefaultSlot() : this.hasNamedSlot(slotName);
+      }
+      hostConnected() {
+        this.host.shadowRoot.addEventListener("slotchange", this.handleSlotChange);
+      }
+      hostDisconnected() {
+        this.host.shadowRoot.removeEventListener("slotchange", this.handleSlotChange);
+      }
+      handleSlotChange(event) {
+        const slot = event.target;
+        if (this.slotNames.includes("[default]") && !slot.name || slot.name && this.slotNames.includes(slot.name)) {
+          this.host.requestUpdate();
+        }
+      }
+    };
+
+    // node_modules/lit-html/directives/if-defined.js
+    var l$1 = (l2) => null != l2 ? l2 : b$1;
+    /*! Bundled license information:
+
+    lit-html/directives/if-defined.js:
+      (**
+       * @license
+       * Copyright 2018 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+    */
+
+    // src/internal/watch.ts
+    function watch(propertyName, options) {
+      const resolvedOptions = __spreadValues({
+        waitUntilFirstUpdate: false
+      }, options);
+      return (proto, decoratedFnName) => {
+        const { update } = proto;
+        const watchedProperties = Array.isArray(propertyName) ? propertyName : [propertyName];
+        proto.update = function(changedProps) {
+          watchedProperties.forEach((property) => {
+            const key = property;
+            if (changedProps.has(key)) {
+              const oldValue = changedProps.get(key);
+              const newValue = this[key];
+              if (oldValue !== newValue) {
+                if (!resolvedOptions.waitUntilFirstUpdate || this.hasUpdated) {
+                  this[decoratedFnName](oldValue, newValue);
+                }
+              }
+            }
+          });
+          update.call(this, changedProps);
+        };
+      };
+    }
+
+    // src/components/button/button.ts
+    var SlButton = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.formControlController = new FormControlController(this, {
+          form: (input) => {
+            if (input.hasAttribute("form")) {
+              const doc = input.getRootNode();
+              const formId = input.getAttribute("form");
+              return doc.getElementById(formId);
+            }
+            return input.closest("form");
+          }
+        });
+        this.hasSlotController = new HasSlotController(this, "[default]", "prefix", "suffix");
+        this.localize = new LocalizeController2(this);
+        this.hasFocus = false;
+        this.invalid = false;
+        this.title = "";
+        this.variant = "default";
+        this.size = "medium";
+        this.caret = false;
+        this.disabled = false;
+        this.loading = false;
+        this.outline = false;
+        this.pill = false;
+        this.circle = false;
+        this.type = "button";
+        this.name = "";
+        this.value = "";
+        this.href = "";
+      }
+      firstUpdated() {
+        if (this.isButton()) {
+          this.formControlController.updateValidity();
+        }
+      }
+      handleBlur() {
+        this.hasFocus = false;
+        this.emit("sl-blur");
+      }
+      handleFocus() {
+        this.hasFocus = true;
+        this.emit("sl-focus");
+      }
+      handleClick(event) {
+        if (this.disabled || this.loading) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        if (this.type === "submit") {
+          this.formControlController.submit(this);
+        }
+        if (this.type === "reset") {
+          this.formControlController.reset(this);
+        }
+      }
+      isButton() {
+        return this.href ? false : true;
+      }
+      isLink() {
+        return this.href ? true : false;
+      }
+      handleDisabledChange() {
+        if (this.isButton()) {
+          this.formControlController.setValidity(this.disabled);
+        }
+      }
+      /** Simulates a click on the button. */
+      click() {
+        this.button.click();
+      }
+      /** Sets focus on the button. */
+      focus(options) {
+        this.button.focus(options);
+      }
+      /** Removes focus from the button. */
+      blur() {
+        this.button.blur();
+      }
+      /** Checks for validity but does not show the browser's validation message. */
+      checkValidity() {
+        if (this.isButton()) {
+          return this.button.checkValidity();
+        }
+        return true;
+      }
+      /** Checks for validity and shows the browser's validation message if the control is invalid. */
+      reportValidity() {
+        if (this.isButton()) {
+          return this.button.reportValidity();
+        }
+        return true;
+      }
+      /** Sets a custom validation message. Pass an empty string to restore validity. */
+      setCustomValidity(message) {
+        if (this.isButton()) {
+          this.button.setCustomValidity(message);
+          this.formControlController.updateValidity();
+        }
+      }
+      render() {
+        const isLink = this.isLink();
+        const tag = isLink ? i`a` : i`button`;
+        return n$1`
+      <${tag}
+        part="base"
+        class=${o$1({
+      button: true,
+      "button--default": this.variant === "default",
+      "button--primary": this.variant === "primary",
+      "button--success": this.variant === "success",
+      "button--neutral": this.variant === "neutral",
+      "button--warning": this.variant === "warning",
+      "button--danger": this.variant === "danger",
+      "button--text": this.variant === "text",
+      "button--small": this.size === "small",
+      "button--medium": this.size === "medium",
+      "button--large": this.size === "large",
+      "button--caret": this.caret,
+      "button--circle": this.circle,
+      "button--disabled": this.disabled,
+      "button--focused": this.hasFocus,
+      "button--loading": this.loading,
+      "button--standard": !this.outline,
+      "button--outline": this.outline,
+      "button--pill": this.pill,
+      "button--rtl": this.localize.dir() === "rtl",
+      "button--has-label": this.hasSlotController.test("[default]"),
+      "button--has-prefix": this.hasSlotController.test("prefix"),
+      "button--has-suffix": this.hasSlotController.test("suffix")
+    })}
+        ?disabled=${l$1(isLink ? void 0 : this.disabled)}
+        type=${l$1(isLink ? void 0 : this.type)}
+        title=${this.title}
+        name=${l$1(isLink ? void 0 : this.name)}
+        value=${l$1(isLink ? void 0 : this.value)}
+        href=${l$1(isLink ? this.href : void 0)}
+        target=${l$1(isLink ? this.target : void 0)}
+        download=${l$1(isLink ? this.download : void 0)}
+        rel=${l$1(isLink && this.target ? "noreferrer noopener" : void 0)}
+        role=${l$1(isLink ? void 0 : "button")}
+        aria-disabled=${this.disabled ? "true" : "false"}
+        tabindex=${this.disabled ? "-1" : "0"}
+        @blur=${this.handleBlur}
+        @focus=${this.handleFocus}
+        @click=${this.handleClick}
+      >
+        <slot name="prefix" part="prefix" class="button__prefix"></slot>
+        <slot part="label" class="button__label"></slot>
+        <slot name="suffix" part="suffix" class="button__suffix"></slot>
+        ${this.caret ? n$1` <sl-icon part="caret" class="button__caret" library="system" name="caret"></sl-icon> ` : ""}
+        ${this.loading ? n$1`<sl-spinner></sl-spinner>` : ""}
+      </${tag}>
+    `;
+      }
+    };
+    SlButton.styles = button_styles_default;
+    __decorateClass([
+      i2$2(".button")
+    ], SlButton.prototype, "button", 2);
+    __decorateClass([
+      t$1()
+    ], SlButton.prototype, "hasFocus", 2);
+    __decorateClass([
+      t$1()
+    ], SlButton.prototype, "invalid", 2);
+    __decorateClass([
+      e2$1()
+    ], SlButton.prototype, "title", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlButton.prototype, "variant", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlButton.prototype, "size", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlButton.prototype, "caret", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlButton.prototype, "disabled", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlButton.prototype, "loading", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlButton.prototype, "outline", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlButton.prototype, "pill", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlButton.prototype, "circle", 2);
+    __decorateClass([
+      e2$1()
+    ], SlButton.prototype, "type", 2);
+    __decorateClass([
+      e2$1()
+    ], SlButton.prototype, "name", 2);
+    __decorateClass([
+      e2$1()
+    ], SlButton.prototype, "value", 2);
+    __decorateClass([
+      e2$1()
+    ], SlButton.prototype, "href", 2);
+    __decorateClass([
+      e2$1()
+    ], SlButton.prototype, "target", 2);
+    __decorateClass([
+      e2$1()
+    ], SlButton.prototype, "download", 2);
+    __decorateClass([
+      e2$1()
+    ], SlButton.prototype, "form", 2);
+    __decorateClass([
+      e2$1({ attribute: "formaction" })
+    ], SlButton.prototype, "formAction", 2);
+    __decorateClass([
+      e2$1({ attribute: "formenctype" })
+    ], SlButton.prototype, "formEnctype", 2);
+    __decorateClass([
+      e2$1({ attribute: "formmethod" })
+    ], SlButton.prototype, "formMethod", 2);
+    __decorateClass([
+      e2$1({ attribute: "formnovalidate", type: Boolean })
+    ], SlButton.prototype, "formNoValidate", 2);
+    __decorateClass([
+      e2$1({ attribute: "formtarget" })
+    ], SlButton.prototype, "formTarget", 2);
+    __decorateClass([
+      watch("disabled", { waitUntilFirstUpdate: true })
+    ], SlButton.prototype, "handleDisabledChange", 1);
+    SlButton = __decorateClass([
+      e$1("sl-button")
+    ], SlButton);
+
+    // src/components/spinner/spinner.styles.ts
+    var spinner_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    --track-width: 2px;
+    --track-color: rgb(128 128 128 / 25%);
+    --indicator-color: var(--sl-color-primary-600);
+    --speed: 2s;
+
+    display: inline-flex;
+    width: 1em;
+    height: 1em;
+  }
+
+  .spinner {
+    flex: 1 1 auto;
+    height: 100%;
+    width: 100%;
+  }
+
+  .spinner__track,
+  .spinner__indicator {
+    fill: none;
+    stroke-width: var(--track-width);
+    r: calc(0.5em - var(--track-width) / 2);
+    cx: 0.5em;
+    cy: 0.5em;
+    transform-origin: 50% 50%;
+  }
+
+  .spinner__track {
+    stroke: var(--track-color);
+    transform-origin: 0% 0%;
+    mix-blend-mode: multiply;
+  }
+
+  .spinner__indicator {
+    stroke: var(--indicator-color);
+    stroke-linecap: round;
+    stroke-dasharray: 150% 75%;
+    animation: spin var(--speed) linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+      stroke-dasharray: 0.01em, 2.75em;
+    }
+
+    50% {
+      transform: rotate(450deg);
+      stroke-dasharray: 1.375em, 1.375em;
+    }
+
+    100% {
+      transform: rotate(1080deg);
+      stroke-dasharray: 0.01em, 2.75em;
+    }
+  }
+`;
+
+    // src/components/spinner/spinner.ts
+    var SlSpinner = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.localize = new LocalizeController2(this);
+      }
+      render() {
+        return y`
+      <svg part="base" class="spinner" role="progressbar" aria-valuetext=${this.localize.term("loading")}>
+        <circle class="spinner__track"></circle>
+        <circle class="spinner__indicator"></circle>
+      </svg>
+    `;
+      }
+    };
+    SlSpinner.styles = spinner_styles_default;
+    SlSpinner = __decorateClass([
+      e$1("sl-spinner")
+    ], SlSpinner);
+
+    // src/utilities/base-path.ts
+    var basePath = "";
+    function setBasePath(path) {
+      basePath = path;
+    }
+    function getBasePath() {
+      if (!basePath) {
+        const scripts = [...document.getElementsByTagName("script")];
+        const configScript = scripts.find((script) => script.hasAttribute("data-shoelace"));
+        if (configScript) {
+          setBasePath(configScript.getAttribute("data-shoelace"));
+        } else {
+          const fallbackScript = scripts.find((s) => /shoelace(\.min)?\.js($|\?)/.test(s.src));
+          let path = "";
+          if (fallbackScript) {
+            path = fallbackScript.getAttribute("src");
+          }
+          setBasePath(path.split("/").slice(0, -1).join("/"));
+        }
+      }
+      return basePath.replace(/\/$/, "");
+    }
+
+    // src/components/icon/library.default.ts
+    var library = {
+      name: "default",
+      resolver: (name) => `${getBasePath()}/assets/icons/${name}.svg`
+    };
+    var library_default_default = library;
+
+    // src/components/icon/library.system.ts
+    var icons = {
+      caret: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  `,
+      check: `
+    <svg part="checked-icon" class="checkbox__icon" viewBox="0 0 16 16">
+      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
+        <g stroke="currentColor" stroke-width="2">
+          <g transform="translate(3.428571, 3.428571)">
+            <path d="M0,5.71428571 L3.42857143,9.14285714"></path>
+            <path d="M9.14285714,0 L3.42857143,9.14285714"></path>
+          </g>
+        </g>
+      </g>
+    </svg>
+  `,
+      "chevron-down": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+    </svg>
+  `,
+      "chevron-left": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+    </svg>
+  `,
+      "chevron-right": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+    </svg>
+  `,
+      eye: `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+      <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+      <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+    </svg>
+  `,
+      "eye-slash": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash" viewBox="0 0 16 16">
+      <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/>
+      <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/>
+      <path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"/>
+    </svg>
+  `,
+      eyedropper: `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eyedropper" viewBox="0 0 16 16">
+      <path d="M13.354.646a1.207 1.207 0 0 0-1.708 0L8.5 3.793l-.646-.647a.5.5 0 1 0-.708.708L8.293 5l-7.147 7.146A.5.5 0 0 0 1 12.5v1.793l-.854.853a.5.5 0 1 0 .708.707L1.707 15H3.5a.5.5 0 0 0 .354-.146L11 7.707l1.146 1.147a.5.5 0 0 0 .708-.708l-.647-.646 3.147-3.146a1.207 1.207 0 0 0 0-1.708l-2-2zM2 12.707l7-7L10.293 7l-7 7H2v-1.293z"></path>
+    </svg>
+  `,
+      "grip-vertical": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-grip-vertical" viewBox="0 0 16 16">
+      <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"></path>
+    </svg>
+  `,
+      indeterminate: `
+    <svg part="indeterminate-icon" class="checkbox__icon" viewBox="0 0 16 16">
+      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
+        <g stroke="currentColor" stroke-width="2">
+          <g transform="translate(2.285714, 6.857143)">
+            <path d="M10.2857143,1.14285714 L1.14285714,1.14285714"></path>
+          </g>
+        </g>
+      </g>
+    </svg>
+  `,
+      "person-fill": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+      <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+    </svg>
+  `,
+      "play-fill": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+      <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"></path>
+    </svg>
+  `,
+      "pause-fill": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pause-fill" viewBox="0 0 16 16">
+      <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"></path>
+    </svg>
+  `,
+      radio: `
+    <svg part="checked-icon" class="radio__icon" viewBox="0 0 16 16">
+      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g fill="currentColor">
+          <circle cx="8" cy="8" r="3.42857143"></circle>
+        </g>
+      </g>
+    </svg>
+  `,
+      "star-fill": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+      <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+    </svg>
+  `,
+      "x-lg": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+    </svg>
+  `,
+      "x-circle-fill": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"></path>
+    </svg>
+  `
+    };
+    var systemLibrary = {
+      name: "system",
+      resolver: (name) => {
+        if (name in icons) {
+          return `data:image/svg+xml,${encodeURIComponent(icons[name])}`;
+        }
+        return "";
+      }
+    };
+    var library_system_default = systemLibrary;
+
+    // src/components/icon/library.ts
+    var registry = [library_default_default, library_system_default];
+    var watchedIcons = [];
+    function watchIcon(icon) {
+      watchedIcons.push(icon);
+    }
+    function unwatchIcon(icon) {
+      watchedIcons = watchedIcons.filter((el) => el !== icon);
+    }
+    function getIconLibrary(name) {
+      return registry.find((lib) => lib.name === name);
+    }
+
+    // src/components/include/request.ts
+    var includeFiles = /* @__PURE__ */ new Map();
+    function requestInclude(src, mode = "cors") {
+      if (includeFiles.has(src)) {
+        return includeFiles.get(src);
+      }
+      const fileDataPromise = fetch(src, { mode }).then(async (response) => {
+        return {
+          ok: response.ok,
+          status: response.status,
+          html: await response.text()
+        };
+      });
+      includeFiles.set(src, fileDataPromise);
+      return fileDataPromise;
+    }
+
+    // src/components/icon/request.ts
+    var iconFiles = /* @__PURE__ */ new Map();
+    async function requestIcon(url) {
+      if (iconFiles.has(url)) {
+        return iconFiles.get(url);
+      }
+      const fileData = await requestInclude(url);
+      const iconFileData = {
+        ok: fileData.ok,
+        status: fileData.status,
+        svg: null
+      };
+      if (fileData.ok) {
+        const div = document.createElement("div");
+        div.innerHTML = fileData.html;
+        const svg = div.firstElementChild;
+        iconFileData.svg = (svg == null ? void 0 : svg.tagName.toLowerCase()) === "svg" ? svg.outerHTML : "";
+      }
+      iconFiles.set(url, iconFileData);
+      return iconFileData;
+    }
+
+    // src/components/icon/icon.styles.ts
+    var icon_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    box-sizing: content-box !important;
+  }
+
+  svg {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+`;
+
+    // node_modules/lit-html/directives/unsafe-html.js
+    var e4 = class extends i$3 {
+      constructor(i2) {
+        if (super(i2), this.it = b$1, i2.type !== t$3.CHILD)
+          throw Error(this.constructor.directiveName + "() can only be used in child bindings");
+      }
+      render(r) {
+        if (r === b$1 || null == r)
+          return this._t = void 0, this.it = r;
+        if (r === x$1)
+          return r;
+        if ("string" != typeof r)
+          throw Error(this.constructor.directiveName + "() called with a non-string value");
+        if (r === this.it)
+          return this._t;
+        this.it = r;
+        const s = [r];
+        return s.raw = s, this._t = { _$litType$: this.constructor.resultType, strings: s, values: [] };
+      }
+    };
+    e4.directiveName = "unsafeHTML", e4.resultType = 1;
+
+    // node_modules/lit-html/directives/unsafe-svg.js
+    var t3 = class extends e4 {
+    };
+    t3.directiveName = "unsafeSVG", t3.resultType = 2;
+    var o2$1 = e$3(t3);
+
+    // src/components/icon/icon.ts
+    var parser;
+    var SlIcon = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.svg = "";
+        this.label = "";
+        this.library = "default";
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        watchIcon(this);
+      }
+      firstUpdated() {
+        this.setIcon();
+      }
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        unwatchIcon(this);
+      }
+      getUrl() {
+        const library = getIconLibrary(this.library);
+        if (this.name && library) {
+          return library.resolver(this.name);
+        }
+        return this.src;
+      }
+      handleLabelChange() {
+        const hasLabel = typeof this.label === "string" && this.label.length > 0;
+        if (hasLabel) {
+          this.setAttribute("role", "img");
+          this.setAttribute("aria-label", this.label);
+          this.removeAttribute("aria-hidden");
+        } else {
+          this.removeAttribute("role");
+          this.removeAttribute("aria-label");
+          this.setAttribute("aria-hidden", "true");
+        }
+      }
+      async setIcon() {
+        var _a;
+        const library = getIconLibrary(this.library);
+        const url = this.getUrl();
+        if (!parser) {
+          parser = new DOMParser();
+        }
+        if (url) {
+          try {
+            const file = await requestIcon(url);
+            if (url !== this.getUrl()) {
+              return;
+            } else if (file.ok) {
+              const doc = parser.parseFromString(file.svg, "text/html");
+              const svgEl = doc.body.querySelector("svg");
+              if (svgEl !== null) {
+                (_a = library == null ? void 0 : library.mutator) == null ? void 0 : _a.call(library, svgEl);
+                this.svg = svgEl.outerHTML;
+                this.emit("sl-load");
+              } else {
+                this.svg = "";
+                this.emit("sl-error");
+              }
+            } else {
+              this.svg = "";
+              this.emit("sl-error");
+            }
+          } catch (e5) {
+            this.emit("sl-error");
+          }
+        } else if (this.svg.length > 0) {
+          this.svg = "";
+        }
+      }
+      render() {
+        return y` ${o2$1(this.svg)} `;
+      }
+    };
+    SlIcon.styles = icon_styles_default;
+    __decorateClass([
+      t$1()
+    ], SlIcon.prototype, "svg", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlIcon.prototype, "name", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIcon.prototype, "src", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIcon.prototype, "label", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlIcon.prototype, "library", 2);
+    __decorateClass([
+      watch("label")
+    ], SlIcon.prototype, "handleLabelChange", 1);
+    __decorateClass([
+      watch(["name", "src", "library"])
+    ], SlIcon.prototype, "setIcon", 1);
+    SlIcon = __decorateClass([
+      e$1("sl-icon")
+    ], SlIcon);
+    /*! Bundled license information:
+
+    lit-html/directives/unsafe-html.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    lit-html/directives/unsafe-svg.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+    */
+
+    // src/internal/tabbable.ts
+    function isTabbable(el) {
+      const tag = el.tagName.toLowerCase();
+      if (el.getAttribute("tabindex") === "-1") {
+        return false;
+      }
+      if (el.hasAttribute("disabled")) {
+        return false;
+      }
+      if (el.hasAttribute("aria-disabled") && el.getAttribute("aria-disabled") !== "false") {
+        return false;
+      }
+      if (tag === "input" && el.getAttribute("type") === "radio" && !el.hasAttribute("checked")) {
+        return false;
+      }
+      if (el.offsetParent === null) {
+        return false;
+      }
+      if (window.getComputedStyle(el).visibility === "hidden") {
+        return false;
+      }
+      if ((tag === "audio" || tag === "video") && el.hasAttribute("controls")) {
+        return true;
+      }
+      if (el.hasAttribute("tabindex")) {
+        return true;
+      }
+      if (el.hasAttribute("contenteditable") && el.getAttribute("contenteditable") !== "false") {
+        return true;
+      }
+      return ["button", "input", "select", "textarea", "a", "audio", "video", "summary"].includes(tag);
+    }
+    function getTabbableBoundary(root) {
+      var _a, _b;
+      const allElements = [];
+      function walk(el) {
+        if (el instanceof HTMLElement) {
+          allElements.push(el);
+          if (el.shadowRoot !== null && el.shadowRoot.mode === "open") {
+            walk(el.shadowRoot);
+          }
+        }
+        [...el.children].forEach((e) => walk(e));
+      }
+      walk(root);
+      const start = (_a = allElements.find((el) => isTabbable(el))) != null ? _a : null;
+      const end = (_b = allElements.reverse().find((el) => isTabbable(el))) != null ? _b : null;
+      return { start, end };
+    }
+
+    // src/internal/modal.ts
+    var activeModals = [];
+    var Modal = class {
+      constructor(element) {
+        this.tabDirection = "forward";
+        this.element = element;
+        this.handleFocusIn = this.handleFocusIn.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleKeyUp = this.handleKeyUp.bind(this);
+      }
+      activate() {
+        activeModals.push(this.element);
+        document.addEventListener("focusin", this.handleFocusIn);
+        document.addEventListener("keydown", this.handleKeyDown);
+        document.addEventListener("keyup", this.handleKeyUp);
+      }
+      deactivate() {
+        activeModals = activeModals.filter((modal) => modal !== this.element);
+        document.removeEventListener("focusin", this.handleFocusIn);
+        document.removeEventListener("keydown", this.handleKeyDown);
+        document.removeEventListener("keyup", this.handleKeyUp);
+      }
+      isActive() {
+        return activeModals[activeModals.length - 1] === this.element;
+      }
+      checkFocus() {
+        if (this.isActive()) {
+          if (!this.element.matches(":focus-within")) {
+            const { start, end } = getTabbableBoundary(this.element);
+            const target = this.tabDirection === "forward" ? start : end;
+            if (typeof (target == null ? void 0 : target.focus) === "function") {
+              target.focus({ preventScroll: true });
+            }
+          }
+        }
+      }
+      handleFocusIn() {
+        this.checkFocus();
+      }
+      handleKeyDown(event) {
+        if (event.key === "Tab" && event.shiftKey) {
+          this.tabDirection = "backward";
+          requestAnimationFrame(() => this.checkFocus());
+        }
+      }
+      handleKeyUp() {
+        this.tabDirection = "forward";
+      }
+    };
+
+    // src/internal/offset.ts
+    function getOffset(element, parent) {
+      return {
+        top: Math.round(element.getBoundingClientRect().top - parent.getBoundingClientRect().top),
+        left: Math.round(element.getBoundingClientRect().left - parent.getBoundingClientRect().left)
+      };
+    }
+
+    // src/internal/scroll.ts
+    var locks = /* @__PURE__ */ new Set();
+    function getScrollbarWidth() {
+      const documentWidth = document.documentElement.clientWidth;
+      return Math.abs(window.innerWidth - documentWidth);
+    }
+    function lockBodyScrolling(lockingEl) {
+      locks.add(lockingEl);
+      if (!document.body.classList.contains("sl-scroll-lock")) {
+        const scrollbarWidth = getScrollbarWidth();
+        document.body.classList.add("sl-scroll-lock");
+        document.body.style.setProperty("--sl-scroll-lock-size", `${scrollbarWidth}px`);
+      }
+    }
+    function unlockBodyScrolling(lockingEl) {
+      locks.delete(lockingEl);
+      if (locks.size === 0) {
+        document.body.classList.remove("sl-scroll-lock");
+        document.body.style.removeProperty("--sl-scrollbar-width");
+      }
+    }
+    function scrollIntoView(element, container, direction = "vertical", behavior = "smooth") {
+      const offset = getOffset(element, container);
+      const offsetTop = offset.top + container.scrollTop;
+      const offsetLeft = offset.left + container.scrollLeft;
+      const minX = container.scrollLeft;
+      const maxX = container.scrollLeft + container.offsetWidth;
+      const minY = container.scrollTop;
+      const maxY = container.scrollTop + container.offsetHeight;
+      if (direction === "horizontal" || direction === "both") {
+        if (offsetLeft < minX) {
+          container.scrollTo({ left: offsetLeft, behavior });
+        } else if (offsetLeft + element.clientWidth > maxX) {
+          container.scrollTo({ left: offsetLeft - container.offsetWidth + element.clientWidth, behavior });
+        }
+      }
+      if (direction === "vertical" || direction === "both") {
+        if (offsetTop < minY) {
+          container.scrollTo({ top: offsetTop, behavior });
+        } else if (offsetTop + element.clientHeight > maxY) {
+          container.scrollTo({ top: offsetTop - container.offsetHeight + element.clientHeight, behavior });
+        }
+      }
+    }
+
+    // src/components/dialog/dialog.styles.ts
+    var dialog_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    --width: 31rem;
+    --header-spacing: var(--sl-spacing-large);
+    --body-spacing: var(--sl-spacing-large);
+    --footer-spacing: var(--sl-spacing-large);
+
+    display: contents;
+  }
+
+  .dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: var(--sl-z-index-dialog);
+  }
+
+  .dialog__panel {
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+    width: var(--width);
+    max-width: calc(100% - var(--sl-spacing-2x-large));
+    max-height: calc(100% - var(--sl-spacing-2x-large));
+    background-color: var(--sl-panel-background-color);
+    border-radius: var(--sl-border-radius-medium);
+    box-shadow: var(--sl-shadow-x-large);
+  }
+
+  .dialog__panel:focus {
+    outline: none;
+  }
+
+  /* Ensure there's enough vertical padding for phones that don't update vh when chrome appears (e.g. iPhone) */
+  @media screen and (max-width: 420px) {
+    .dialog__panel {
+      max-height: 80vh;
+    }
+  }
+
+  .dialog--open .dialog__panel {
+    display: flex;
+    opacity: 1;
+  }
+
+  .dialog__header {
+    flex: 0 0 auto;
+    display: flex;
+  }
+
+  .dialog__title {
+    flex: 1 1 auto;
+    font: inherit;
+    font-size: var(--sl-font-size-large);
+    line-height: var(--sl-line-height-dense);
+    padding: var(--header-spacing);
+    margin: 0;
+  }
+
+  .dialog__header-actions {
+    flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: end;
+    gap: var(--sl-spacing-2x-small);
+    padding: 0 var(--header-spacing);
+  }
+
+  .dialog__header-actions sl-icon-button,
+  .dialog__header-actions ::slotted(sl-icon-button) {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    font-size: var(--sl-font-size-medium);
+  }
+
+  .dialog__body {
+    flex: 1 1 auto;
+    display: block;
+    padding: var(--body-spacing);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dialog__footer {
+    flex: 0 0 auto;
+    text-align: right;
+    padding: var(--footer-spacing);
+  }
+
+  .dialog__footer ::slotted(sl-button:not(:first-of-type)) {
+    margin-inline-start: var(--sl-spacing-x-small);
+  }
+
+  .dialog:not(.dialog--has-footer) .dialog__footer {
+    display: none;
+  }
+
+  .dialog__overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--sl-overlay-background-color);
+  }
+
+  @media (forced-colors: active) {
+    .dialog__panel {
+      border: solid 1px var(--sl-color-neutral-0);
+    }
+  }
+`;
+
+    // src/internal/event.ts
+    function waitForEvent(el, eventName) {
+      return new Promise((resolve) => {
+        function done(event) {
+          if (event.target === el) {
+            el.removeEventListener(eventName, done);
+            resolve();
+          }
+        }
+        el.addEventListener(eventName, done);
+      });
+    }
+
+    // src/internal/animate.ts
+    function animateTo(el, keyframes, options) {
+      return new Promise((resolve) => {
+        if ((options == null ? void 0 : options.duration) === Infinity) {
+          throw new Error("Promise-based animations must be finite.");
+        }
+        const animation = el.animate(keyframes, __spreadProps(__spreadValues({}, options), {
+          duration: prefersReducedMotion() ? 0 : options.duration
+        }));
+        animation.addEventListener("cancel", resolve, { once: true });
+        animation.addEventListener("finish", resolve, { once: true });
+      });
+    }
+    function parseDuration(delay) {
+      delay = delay.toString().toLowerCase();
+      if (delay.indexOf("ms") > -1) {
+        return parseFloat(delay);
+      }
+      if (delay.indexOf("s") > -1) {
+        return parseFloat(delay) * 1e3;
+      }
+      return parseFloat(delay);
+    }
+    function prefersReducedMotion() {
+      const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+      return query.matches;
+    }
+    function stopAnimations(el) {
+      return Promise.all(
+        el.getAnimations().map((animation) => {
+          return new Promise((resolve) => {
+            const handleAnimationEvent = requestAnimationFrame(resolve);
+            animation.addEventListener("cancel", () => handleAnimationEvent, { once: true });
+            animation.addEventListener("finish", () => handleAnimationEvent, { once: true });
+            animation.cancel();
+          });
+        })
+      );
+    }
+
+    // src/utilities/animation-registry.ts
+    var defaultAnimationRegistry = /* @__PURE__ */ new Map();
+    var customAnimationRegistry = /* @__PURE__ */ new WeakMap();
+    function ensureAnimation(animation) {
+      return animation != null ? animation : { keyframes: [], options: { duration: 0 } };
+    }
+    function getLogicalAnimation(animation, dir) {
+      if (dir.toLowerCase() === "rtl") {
+        return {
+          keyframes: animation.rtlKeyframes || animation.keyframes,
+          options: animation.options
+        };
+      }
+      return animation;
+    }
+    function setDefaultAnimation(animationName, animation) {
+      defaultAnimationRegistry.set(animationName, ensureAnimation(animation));
+    }
+    function getAnimation(el, animationName, options) {
+      const customAnimation = customAnimationRegistry.get(el);
+      if (customAnimation == null ? void 0 : customAnimation[animationName]) {
+        return getLogicalAnimation(customAnimation[animationName], options.dir);
+      }
+      const defaultAnimation = defaultAnimationRegistry.get(animationName);
+      if (defaultAnimation) {
+        return getLogicalAnimation(defaultAnimation, options.dir);
+      }
+      return {
+        keyframes: [],
+        options: { duration: 0 }
+      };
+    }
+
+    // src/components/dialog/dialog.ts
+    var SlDialog = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.hasSlotController = new HasSlotController(this, "footer");
+        this.localize = new LocalizeController2(this);
+        this.open = false;
+        this.label = "";
+        this.noHeader = false;
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        this.handleDocumentKeyDown = this.handleDocumentKeyDown.bind(this);
+        this.modal = new Modal(this);
+      }
+      firstUpdated() {
+        this.dialog.hidden = !this.open;
+        if (this.open) {
+          this.addOpenListeners();
+          this.modal.activate();
+          lockBodyScrolling(this);
+        }
+      }
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        unlockBodyScrolling(this);
+      }
+      requestClose(source) {
+        const slRequestClose = this.emit("sl-request-close", {
+          cancelable: true,
+          detail: { source }
+        });
+        if (slRequestClose.defaultPrevented) {
+          const animation = getAnimation(this, "dialog.denyClose", { dir: this.localize.dir() });
+          animateTo(this.panel, animation.keyframes, animation.options);
+          return;
+        }
+        this.hide();
+      }
+      addOpenListeners() {
+        document.addEventListener("keydown", this.handleDocumentKeyDown);
+      }
+      removeOpenListeners() {
+        document.removeEventListener("keydown", this.handleDocumentKeyDown);
+      }
+      handleDocumentKeyDown(event) {
+        if (this.open && event.key === "Escape") {
+          event.stopPropagation();
+          this.requestClose("keyboard");
+        }
+      }
+      async handleOpenChange() {
+        if (this.open) {
+          this.emit("sl-show");
+          this.addOpenListeners();
+          this.originalTrigger = document.activeElement;
+          this.modal.activate();
+          lockBodyScrolling(this);
+          const autoFocusTarget = this.querySelector("[autofocus]");
+          if (autoFocusTarget) {
+            autoFocusTarget.removeAttribute("autofocus");
+          }
+          await Promise.all([stopAnimations(this.dialog), stopAnimations(this.overlay)]);
+          this.dialog.hidden = false;
+          requestAnimationFrame(() => {
+            const slInitialFocus = this.emit("sl-initial-focus", { cancelable: true });
+            if (!slInitialFocus.defaultPrevented) {
+              if (autoFocusTarget) {
+                autoFocusTarget.focus({ preventScroll: true });
+              } else {
+                this.panel.focus({ preventScroll: true });
+              }
+            }
+            if (autoFocusTarget) {
+              autoFocusTarget.setAttribute("autofocus", "");
+            }
+          });
+          const panelAnimation = getAnimation(this, "dialog.show", { dir: this.localize.dir() });
+          const overlayAnimation = getAnimation(this, "dialog.overlay.show", { dir: this.localize.dir() });
+          await Promise.all([
+            animateTo(this.panel, panelAnimation.keyframes, panelAnimation.options),
+            animateTo(this.overlay, overlayAnimation.keyframes, overlayAnimation.options)
+          ]);
+          this.emit("sl-after-show");
+        } else {
+          this.emit("sl-hide");
+          this.removeOpenListeners();
+          this.modal.deactivate();
+          await Promise.all([stopAnimations(this.dialog), stopAnimations(this.overlay)]);
+          const panelAnimation = getAnimation(this, "dialog.hide", { dir: this.localize.dir() });
+          const overlayAnimation = getAnimation(this, "dialog.overlay.hide", { dir: this.localize.dir() });
+          await Promise.all([
+            animateTo(this.overlay, overlayAnimation.keyframes, overlayAnimation.options).then(() => {
+              this.overlay.hidden = true;
+            }),
+            animateTo(this.panel, panelAnimation.keyframes, panelAnimation.options).then(() => {
+              this.panel.hidden = true;
+            })
+          ]);
+          this.dialog.hidden = true;
+          this.overlay.hidden = false;
+          this.panel.hidden = false;
+          unlockBodyScrolling(this);
+          const trigger = this.originalTrigger;
+          if (typeof (trigger == null ? void 0 : trigger.focus) === "function") {
+            setTimeout(() => trigger.focus());
+          }
+          this.emit("sl-after-hide");
+        }
+      }
+      /** Shows the dialog. */
+      async show() {
+        if (this.open) {
+          return void 0;
+        }
+        this.open = true;
+        return waitForEvent(this, "sl-after-show");
+      }
+      /** Hides the dialog */
+      async hide() {
+        if (!this.open) {
+          return void 0;
+        }
+        this.open = false;
+        return waitForEvent(this, "sl-after-hide");
+      }
+      render() {
+        return y`
+      <div
+        part="base"
+        class=${o$1({
+      dialog: true,
+      "dialog--open": this.open,
+      "dialog--has-footer": this.hasSlotController.test("footer")
+    })}
+      >
+        <div part="overlay" class="dialog__overlay" @click=${() => this.requestClose("overlay")} tabindex="-1"></div>
+
+        <div
+          part="panel"
+          class="dialog__panel"
+          role="dialog"
+          aria-modal="true"
+          aria-hidden=${this.open ? "false" : "true"}
+          aria-label=${l$1(this.noHeader ? this.label : void 0)}
+          aria-labelledby=${l$1(!this.noHeader ? "title" : void 0)}
+          tabindex="0"
+        >
+          ${!this.noHeader ? y`
+                <header part="header" class="dialog__header">
+                  <h2 part="title" class="dialog__title" id="title">
+                    <slot name="label"> ${this.label.length > 0 ? this.label : String.fromCharCode(65279)} </slot>
+                  </h2>
+                  <div part="header-actions" class="dialog__header-actions">
+                    <slot name="header-actions"></slot>
+                    <sl-icon-button
+                      part="close-button"
+                      exportparts="base:close-button__base"
+                      class="dialog__close"
+                      name="x-lg"
+                      label=${this.localize.term("close")}
+                      library="system"
+                      @click="${() => this.requestClose("close-button")}"
+                    ></sl-icon-button>
+                  </div>
+                </header>
+              ` : ""}
+
+          <slot part="body" class="dialog__body"></slot>
+
+          <footer part="footer" class="dialog__footer">
+            <slot name="footer"></slot>
+          </footer>
+        </div>
+      </div>
+    `;
+      }
+    };
+    SlDialog.styles = dialog_styles_default;
+    __decorateClass([
+      i2$2(".dialog")
+    ], SlDialog.prototype, "dialog", 2);
+    __decorateClass([
+      i2$2(".dialog__panel")
+    ], SlDialog.prototype, "panel", 2);
+    __decorateClass([
+      i2$2(".dialog__overlay")
+    ], SlDialog.prototype, "overlay", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlDialog.prototype, "open", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlDialog.prototype, "label", 2);
+    __decorateClass([
+      e2$1({ attribute: "no-header", type: Boolean, reflect: true })
+    ], SlDialog.prototype, "noHeader", 2);
+    __decorateClass([
+      watch("open", { waitUntilFirstUpdate: true })
+    ], SlDialog.prototype, "handleOpenChange", 1);
+    SlDialog = __decorateClass([
+      e$1("sl-dialog")
+    ], SlDialog);
+    setDefaultAnimation("dialog.show", {
+      keyframes: [
+        { opacity: 0, scale: 0.8 },
+        { opacity: 1, scale: 1 }
+      ],
+      options: { duration: 250, easing: "ease" }
+    });
+    setDefaultAnimation("dialog.hide", {
+      keyframes: [
+        { opacity: 1, scale: 1 },
+        { opacity: 0, scale: 0.8 }
+      ],
+      options: { duration: 250, easing: "ease" }
+    });
+    setDefaultAnimation("dialog.denyClose", {
+      keyframes: [{ scale: 1 }, { scale: 1.02 }, { scale: 1 }],
+      options: { duration: 250 }
+    });
+    setDefaultAnimation("dialog.overlay.show", {
+      keyframes: [{ opacity: 0 }, { opacity: 1 }],
+      options: { duration: 250 }
+    });
+    setDefaultAnimation("dialog.overlay.hide", {
+      keyframes: [{ opacity: 1 }, { opacity: 0 }],
+      options: { duration: 250 }
+    });
+
+    // src/components/icon-button/icon-button.styles.ts
+    var icon_button_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    display: inline-block;
+    color: var(--sl-color-neutral-600);
+  }
+
+  .icon-button {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    border-radius: var(--sl-border-radius-medium);
+    font-size: inherit;
+    color: inherit;
+    padding: var(--sl-spacing-x-small);
+    cursor: pointer;
+    transition: var(--sl-transition-x-fast) color;
+    -webkit-appearance: none;
+  }
+
+  .icon-button:hover:not(.icon-button--disabled),
+  .icon-button:focus-visible:not(.icon-button--disabled) {
+    color: var(--sl-color-primary-600);
+  }
+
+  .icon-button:active:not(.icon-button--disabled) {
+    color: var(--sl-color-primary-700);
+  }
+
+  .icon-button:focus {
+    outline: none;
+  }
+
+  .icon-button--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .icon-button:focus-visible {
+    outline: var(--sl-focus-ring);
+    outline-offset: var(--sl-focus-ring-offset);
+  }
+
+  .icon-button__icon {
+    pointer-events: none;
+  }
+`;
+
+    // src/components/icon-button/icon-button.ts
+    var SlIconButton = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.hasFocus = false;
+        this.label = "";
+        this.disabled = false;
+      }
+      handleBlur() {
+        this.hasFocus = false;
+        this.emit("sl-blur");
+      }
+      handleFocus() {
+        this.hasFocus = true;
+        this.emit("sl-focus");
+      }
+      handleClick(event) {
+        if (this.disabled) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }
+      /** Simulates a click on the icon button. */
+      click() {
+        this.button.click();
+      }
+      /** Sets focus on the icon button. */
+      focus(options) {
+        this.button.focus(options);
+      }
+      /** Removes focus from the icon button. */
+      blur() {
+        this.button.blur();
+      }
+      render() {
+        const isLink = this.href ? true : false;
+        const tag = isLink ? i`a` : i`button`;
+        return n$1`
+      <${tag}
+        part="base"
+        class=${o$1({
+      "icon-button": true,
+      "icon-button--disabled": !isLink && this.disabled,
+      "icon-button--focused": this.hasFocus
+    })}
+        ?disabled=${l$1(isLink ? void 0 : this.disabled)}
+        type=${l$1(isLink ? void 0 : "button")}
+        href=${l$1(isLink ? this.href : void 0)}
+        target=${l$1(isLink ? this.target : void 0)}
+        download=${l$1(isLink ? this.download : void 0)}
+        rel=${l$1(isLink && this.target ? "noreferrer noopener" : void 0)}
+        role=${l$1(isLink ? void 0 : "button")}
+        aria-disabled=${this.disabled ? "true" : "false"}
+        aria-label="${this.label}"
+        tabindex=${this.disabled ? "-1" : "0"}
+        @blur=${this.handleBlur}
+        @focus=${this.handleFocus}
+        @click=${this.handleClick}
+      >
+        <sl-icon
+          class="icon-button__icon"
+          name=${l$1(this.name)}
+          library=${l$1(this.library)}
+          src=${l$1(this.src)}
+          aria-hidden="true"
+        ></sl-icon>
+      </${tag}>
+    `;
+      }
+    };
+    SlIconButton.styles = icon_button_styles_default;
+    __decorateClass([
+      i2$2(".icon-button")
+    ], SlIconButton.prototype, "button", 2);
+    __decorateClass([
+      t$1()
+    ], SlIconButton.prototype, "hasFocus", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "name", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "library", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "src", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "href", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "target", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "download", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "label", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlIconButton.prototype, "disabled", 2);
+    SlIconButton = __decorateClass([
+      e$1("sl-icon-button")
+    ], SlIconButton);
+
+    // src/internal/drag.ts
+    function drag(container, options) {
+      function move(pointerEvent) {
+        const dims = container.getBoundingClientRect();
+        const defaultView = container.ownerDocument.defaultView;
+        const offsetX = dims.left + defaultView.pageXOffset;
+        const offsetY = dims.top + defaultView.pageYOffset;
+        const x = pointerEvent.pageX - offsetX;
+        const y = pointerEvent.pageY - offsetY;
+        if (options == null ? void 0 : options.onMove) {
+          options.onMove(x, y);
+        }
+      }
+      function stop() {
+        document.removeEventListener("pointermove", move);
+        document.removeEventListener("pointerup", stop);
+        if (options == null ? void 0 : options.onStop) {
+          options.onStop();
+        }
+      }
+      document.addEventListener("pointermove", move, { passive: true });
+      document.addEventListener("pointerup", stop);
+      if ((options == null ? void 0 : options.initialEvent) instanceof PointerEvent) {
+        move(options.initialEvent);
+      }
+    }
+
+    // src/internal/math.ts
+    function clamp(value, min, max) {
+      const noNegativeZero = (n) => Object.is(n, -0) ? 0 : n;
+      if (value < min) {
+        return noNegativeZero(min);
+      }
+      if (value > max) {
+        return noNegativeZero(max);
+      }
+      return noNegativeZero(value);
+    }
+
+    // node_modules/lit-html/directives/style-map.js
+    var i2$1 = e$3(class extends i$3 {
+      constructor(t2) {
+        var e2;
+        if (super(t2), t2.type !== t$3.ATTRIBUTE || "style" !== t2.name || (null === (e2 = t2.strings) || void 0 === e2 ? void 0 : e2.length) > 2)
+          throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.");
+      }
+      render(t2) {
+        return Object.keys(t2).reduce((e2, r) => {
+          const s = t2[r];
+          return null == s ? e2 : e2 + `${r = r.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g, "-$&").toLowerCase()}:${s};`;
+        }, "");
+      }
+      update(e2, [r]) {
+        const { style: s } = e2.element;
+        if (void 0 === this.vt) {
+          this.vt = /* @__PURE__ */ new Set();
+          for (const t2 in r)
+            this.vt.add(t2);
+          return this.render(r);
+        }
+        this.vt.forEach((t2) => {
+          null == r[t2] && (this.vt.delete(t2), t2.includes("-") ? s.removeProperty(t2) : s[t2] = "");
+        });
+        for (const t2 in r) {
+          const e3 = r[t2];
+          null != e3 && (this.vt.add(t2), t2.includes("-") ? s.setProperty(t2, e3) : s[t2] = e3);
+        }
+        return x$1;
+      }
+    });
+    /*! Bundled license information:
+
+    lit-html/directives/style-map.js:
+      (**
+       * @license
+       * Copyright 2018 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+    */
+
+    // src/components/color-picker/color-picker.styles.ts
+    var color_picker_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    --grid-width: 280px;
+    --grid-height: 200px;
+    --grid-handle-size: 16px;
+    --slider-height: 15px;
+    --slider-handle-size: 17px;
+    --swatch-size: 25px;
+
+    display: inline-block;
+  }
+
+  .color-picker {
+    width: var(--grid-width);
+    font-family: var(--sl-font-sans);
+    font-size: var(--sl-font-size-medium);
+    font-weight: var(--sl-font-weight-normal);
+    color: var(--color);
+    background-color: var(--sl-panel-background-color);
+    border-radius: var(--sl-border-radius-medium);
+    user-select: none;
+  }
+
+  .color-picker--inline {
+    border: solid var(--sl-panel-border-width) var(--sl-panel-border-color);
+  }
+
+  .color-picker--inline:focus-visible {
+    outline: var(--sl-focus-ring);
+    outline-offset: var(--sl-focus-ring-offset);
+  }
+
+  .color-picker__grid {
+    position: relative;
+    height: var(--grid-height);
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%),
+      linear-gradient(to right, #fff 0%, rgba(255, 255, 255, 0) 100%);
+    border-top-left-radius: var(--sl-border-radius-medium);
+    border-top-right-radius: var(--sl-border-radius-medium);
+    cursor: crosshair;
+    forced-color-adjust: none;
+  }
+
+  .color-picker__grid-handle {
+    position: absolute;
+    width: var(--grid-handle-size);
+    height: var(--grid-handle-size);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+    border: solid 2px white;
+    margin-top: calc(var(--grid-handle-size) / -2);
+    margin-left: calc(var(--grid-handle-size) / -2);
+    transition: var(--sl-transition-fast) scale;
+  }
+
+  .color-picker__grid-handle--dragging {
+    cursor: none;
+    scale: 1.5;
+  }
+
+  .color-picker__grid-handle:focus-visible {
+    outline: var(--sl-focus-ring);
+  }
+
+  .color-picker__controls {
+    padding: var(--sl-spacing-small);
+    display: flex;
+    align-items: center;
+  }
+
+  .color-picker__sliders {
+    flex: 1 1 auto;
+  }
+
+  .color-picker__slider {
+    position: relative;
+    height: var(--slider-height);
+    border-radius: var(--sl-border-radius-pill);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+    forced-color-adjust: none;
+  }
+
+  .color-picker__slider:not(:last-of-type) {
+    margin-bottom: var(--sl-spacing-small);
+  }
+
+  .color-picker__slider-handle {
+    position: absolute;
+    top: calc(50% - var(--slider-handle-size) / 2);
+    width: var(--slider-handle-size);
+    height: var(--slider-handle-size);
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+    margin-left: calc(var(--slider-handle-size) / -2);
+  }
+
+  .color-picker__slider-handle:focus-visible {
+    outline: var(--sl-focus-ring);
+  }
+
+  .color-picker__hue {
+    background-image: linear-gradient(
+      to right,
+      rgb(255, 0, 0) 0%,
+      rgb(255, 255, 0) 17%,
+      rgb(0, 255, 0) 33%,
+      rgb(0, 255, 255) 50%,
+      rgb(0, 0, 255) 67%,
+      rgb(255, 0, 255) 83%,
+      rgb(255, 0, 0) 100%
+    );
+  }
+
+  .color-picker__alpha .color-picker__alpha-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+  }
+
+  .color-picker__preview {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: none;
+    border-radius: var(--sl-border-radius-circle);
+    background: none;
+    margin-left: var(--sl-spacing-small);
+    cursor: copy;
+    forced-color-adjust: none;
+  }
+
+  .color-picker__preview:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+
+    /* We use a custom property in lieu of currentColor because of https://bugs.webkit.org/show_bug.cgi?id=216780 */
+    background-color: var(--preview-color);
+  }
+
+  .color-picker__preview:focus-visible {
+    outline: var(--sl-focus-ring);
+    outline-offset: var(--sl-focus-ring-offset);
+  }
+
+  .color-picker__preview-color {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: solid 1px rgba(0, 0, 0, 0.125);
+  }
+
+  .color-picker__preview-color--copied {
+    animation: pulse 0.75s;
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 var(--sl-color-primary-500);
+    }
+    70% {
+      box-shadow: 0 0 0 0.5rem transparent;
+    }
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
+  }
+
+  .color-picker__user-input {
+    display: flex;
+    padding: 0 var(--sl-spacing-small) var(--sl-spacing-small) var(--sl-spacing-small);
+  }
+
+  .color-picker__user-input sl-input {
+    min-width: 0; /* fix input width in Safari */
+    flex: 1 1 auto;
+  }
+
+  .color-picker__user-input sl-button-group {
+    margin-left: var(--sl-spacing-small);
+  }
+
+  .color-picker__user-input sl-button {
+    min-width: 3.25rem;
+    max-width: 3.25rem;
+    font-size: 1rem;
+  }
+
+  .color-picker__swatches {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-gap: 0.5rem;
+    justify-items: center;
+    border-top: solid 1px var(--sl-color-neutral-200);
+    padding: var(--sl-spacing-small);
+    forced-color-adjust: none;
+  }
+
+  .color-picker__swatch {
+    position: relative;
+    width: var(--swatch-size);
+    height: var(--swatch-size);
+    border-radius: var(--sl-border-radius-small);
+  }
+
+  .color-picker__swatch .color-picker__swatch-color {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: solid 1px rgba(0, 0, 0, 0.125);
+    border-radius: inherit;
+    cursor: pointer;
+  }
+
+  .color-picker__swatch:focus-visible {
+    outline: var(--sl-focus-ring);
+    outline-offset: var(--sl-focus-ring-offset);
+  }
+
+  .color-picker__transparent-bg {
+    background-image: linear-gradient(45deg, var(--sl-color-neutral-300) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, var(--sl-color-neutral-300) 75%),
+      linear-gradient(45deg, transparent 75%, var(--sl-color-neutral-300) 75%),
+      linear-gradient(45deg, var(--sl-color-neutral-300) 25%, transparent 25%);
+    background-size: 10px 10px;
+    background-position: 0 0, 0 0, -5px -5px, 5px 5px;
+  }
+
+  .color-picker--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .color-picker--disabled .color-picker__grid,
+  .color-picker--disabled .color-picker__grid-handle,
+  .color-picker--disabled .color-picker__slider,
+  .color-picker--disabled .color-picker__slider-handle,
+  .color-picker--disabled .color-picker__preview,
+  .color-picker--disabled .color-picker__swatch,
+  .color-picker--disabled .color-picker__swatch-color {
+    pointer-events: none;
+  }
+
+  /*
+   * Color dropdown
+   */
+
+  .color-dropdown::part(panel) {
+    max-height: none;
+    background-color: var(--sl-panel-background-color);
+    border: solid var(--sl-panel-border-width) var(--sl-panel-border-color);
+    border-radius: var(--sl-border-radius-medium);
+    overflow: visible;
+  }
+
+  .color-dropdown__trigger {
+    display: inline-block;
+    position: relative;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    forced-color-adjust: none;
+  }
+
+  .color-dropdown__trigger.color-dropdown__trigger--small {
+    width: var(--sl-input-height-small);
+    height: var(--sl-input-height-small);
+    border-radius: var(--sl-border-radius-circle);
+  }
+
+  .color-dropdown__trigger.color-dropdown__trigger--medium {
+    width: var(--sl-input-height-medium);
+    height: var(--sl-input-height-medium);
+    border-radius: var(--sl-border-radius-circle);
+  }
+
+  .color-dropdown__trigger.color-dropdown__trigger--large {
+    width: var(--sl-input-height-large);
+    height: var(--sl-input-height-large);
+    border-radius: var(--sl-border-radius-circle);
+  }
+
+  .color-dropdown__trigger:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background-color: currentColor;
+    box-shadow: inset 0 0 0 2px var(--sl-input-border-color), inset 0 0 0 4px var(--sl-color-neutral-0);
+  }
+
+  .color-dropdown__trigger--empty:before {
+    background-color: transparent;
+  }
+
+  .color-dropdown__trigger:focus-visible {
+    outline: none;
+  }
+
+  .color-dropdown__trigger:focus-visible:not(.color-dropdown__trigger--disabled) {
+    outline: var(--sl-focus-ring);
+    outline-offset: var(--sl-focus-ring-offset);
+  }
+
+  .color-dropdown__trigger.color-dropdown__trigger--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+    // src/internal/default-value.ts
+    var defaultValue = (propertyName = "value") => (proto, key) => {
+      const ctor = proto.constructor;
+      const attributeChangedCallback = ctor.prototype.attributeChangedCallback;
+      ctor.prototype.attributeChangedCallback = function(name, old, value) {
+        var _a;
+        const options = ctor.getPropertyOptions(propertyName);
+        const attributeName = typeof options.attribute === "string" ? options.attribute : propertyName;
+        if (name === attributeName) {
+          const converter = options.converter || n2$1;
+          const fromAttribute = typeof converter === "function" ? converter : (_a = converter == null ? void 0 : converter.fromAttribute) != null ? _a : n2$1.fromAttribute;
+          const newValue = fromAttribute(value, options.type);
+          if (this[propertyName] !== newValue) {
+            this[key] = newValue;
+          }
+        }
+        attributeChangedCallback.call(this, name, old, value);
+      };
+    };
+
+    // node_modules/@ctrl/tinycolor/dist/module/util.js
+    function bound01(n, max) {
+      if (isOnePointZero(n)) {
+        n = "100%";
+      }
+      var isPercent = isPercentage(n);
+      n = max === 360 ? n : Math.min(max, Math.max(0, parseFloat(n)));
+      if (isPercent) {
+        n = parseInt(String(n * max), 10) / 100;
+      }
+      if (Math.abs(n - max) < 1e-6) {
+        return 1;
+      }
+      if (max === 360) {
+        n = (n < 0 ? n % max + max : n % max) / parseFloat(String(max));
+      } else {
+        n = n % max / parseFloat(String(max));
+      }
+      return n;
+    }
+    function clamp01(val) {
+      return Math.min(1, Math.max(0, val));
+    }
+    function isOnePointZero(n) {
+      return typeof n === "string" && n.indexOf(".") !== -1 && parseFloat(n) === 1;
+    }
+    function isPercentage(n) {
+      return typeof n === "string" && n.indexOf("%") !== -1;
+    }
+    function boundAlpha(a) {
+      a = parseFloat(a);
+      if (isNaN(a) || a < 0 || a > 1) {
+        a = 1;
+      }
+      return a;
+    }
+    function convertToPercentage(n) {
+      if (n <= 1) {
+        return "".concat(Number(n) * 100, "%");
+      }
+      return n;
+    }
+    function pad2(c) {
+      return c.length === 1 ? "0" + c : String(c);
+    }
+
+    // node_modules/@ctrl/tinycolor/dist/module/conversion.js
+    function rgbToRgb(r, g, b) {
+      return {
+        r: bound01(r, 255) * 255,
+        g: bound01(g, 255) * 255,
+        b: bound01(b, 255) * 255
+      };
+    }
+    function rgbToHsl(r, g, b) {
+      r = bound01(r, 255);
+      g = bound01(g, 255);
+      b = bound01(b, 255);
+      var max = Math.max(r, g, b);
+      var min = Math.min(r, g, b);
+      var h = 0;
+      var s = 0;
+      var l2 = (max + min) / 2;
+      if (max === min) {
+        s = 0;
+        h = 0;
+      } else {
+        var d = max - min;
+        s = l2 > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r:
+            h = (g - b) / d + (g < b ? 6 : 0);
+            break;
+          case g:
+            h = (b - r) / d + 2;
+            break;
+          case b:
+            h = (r - g) / d + 4;
+            break;
+        }
+        h /= 6;
+      }
+      return { h, s, l: l2 };
+    }
+    function hue2rgb(p, q, t2) {
+      if (t2 < 0) {
+        t2 += 1;
+      }
+      if (t2 > 1) {
+        t2 -= 1;
+      }
+      if (t2 < 1 / 6) {
+        return p + (q - p) * (6 * t2);
+      }
+      if (t2 < 1 / 2) {
+        return q;
+      }
+      if (t2 < 2 / 3) {
+        return p + (q - p) * (2 / 3 - t2) * 6;
+      }
+      return p;
+    }
+    function hslToRgb(h, s, l2) {
+      var r;
+      var g;
+      var b;
+      h = bound01(h, 360);
+      s = bound01(s, 100);
+      l2 = bound01(l2, 100);
+      if (s === 0) {
+        g = l2;
+        b = l2;
+        r = l2;
+      } else {
+        var q = l2 < 0.5 ? l2 * (1 + s) : l2 + s - l2 * s;
+        var p = 2 * l2 - q;
+        r = hue2rgb(p, q, h + 1 / 3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1 / 3);
+      }
+      return { r: r * 255, g: g * 255, b: b * 255 };
+    }
+    function rgbToHsv(r, g, b) {
+      r = bound01(r, 255);
+      g = bound01(g, 255);
+      b = bound01(b, 255);
+      var max = Math.max(r, g, b);
+      var min = Math.min(r, g, b);
+      var h = 0;
+      var v = max;
+      var d = max - min;
+      var s = max === 0 ? 0 : d / max;
+      if (max === min) {
+        h = 0;
+      } else {
+        switch (max) {
+          case r:
+            h = (g - b) / d + (g < b ? 6 : 0);
+            break;
+          case g:
+            h = (b - r) / d + 2;
+            break;
+          case b:
+            h = (r - g) / d + 4;
+            break;
+        }
+        h /= 6;
+      }
+      return { h, s, v };
+    }
+    function hsvToRgb(h, s, v) {
+      h = bound01(h, 360) * 6;
+      s = bound01(s, 100);
+      v = bound01(v, 100);
+      var i3 = Math.floor(h);
+      var f = h - i3;
+      var p = v * (1 - s);
+      var q = v * (1 - f * s);
+      var t2 = v * (1 - (1 - f) * s);
+      var mod = i3 % 6;
+      var r = [v, q, p, p, t2, v][mod];
+      var g = [t2, v, v, q, p, p][mod];
+      var b = [p, p, t2, v, v, q][mod];
+      return { r: r * 255, g: g * 255, b: b * 255 };
+    }
+    function rgbToHex(r, g, b, allow3Char) {
+      var hex = [
+        pad2(Math.round(r).toString(16)),
+        pad2(Math.round(g).toString(16)),
+        pad2(Math.round(b).toString(16))
+      ];
+      if (allow3Char && hex[0].startsWith(hex[0].charAt(1)) && hex[1].startsWith(hex[1].charAt(1)) && hex[2].startsWith(hex[2].charAt(1))) {
+        return hex[0].charAt(0) + hex[1].charAt(0) + hex[2].charAt(0);
+      }
+      return hex.join("");
+    }
+    function rgbaToHex(r, g, b, a, allow4Char) {
+      var hex = [
+        pad2(Math.round(r).toString(16)),
+        pad2(Math.round(g).toString(16)),
+        pad2(Math.round(b).toString(16)),
+        pad2(convertDecimalToHex(a))
+      ];
+      if (allow4Char && hex[0].startsWith(hex[0].charAt(1)) && hex[1].startsWith(hex[1].charAt(1)) && hex[2].startsWith(hex[2].charAt(1)) && hex[3].startsWith(hex[3].charAt(1))) {
+        return hex[0].charAt(0) + hex[1].charAt(0) + hex[2].charAt(0) + hex[3].charAt(0);
+      }
+      return hex.join("");
+    }
+    function convertDecimalToHex(d) {
+      return Math.round(parseFloat(d) * 255).toString(16);
+    }
+    function convertHexToDecimal(h) {
+      return parseIntFromHex(h) / 255;
+    }
+    function parseIntFromHex(val) {
+      return parseInt(val, 16);
+    }
+    function numberInputToObject(color) {
+      return {
+        r: color >> 16,
+        g: (color & 65280) >> 8,
+        b: color & 255
+      };
+    }
+
+    // node_modules/@ctrl/tinycolor/dist/module/css-color-names.js
+    var names = {
+      aliceblue: "#f0f8ff",
+      antiquewhite: "#faebd7",
+      aqua: "#00ffff",
+      aquamarine: "#7fffd4",
+      azure: "#f0ffff",
+      beige: "#f5f5dc",
+      bisque: "#ffe4c4",
+      black: "#000000",
+      blanchedalmond: "#ffebcd",
+      blue: "#0000ff",
+      blueviolet: "#8a2be2",
+      brown: "#a52a2a",
+      burlywood: "#deb887",
+      cadetblue: "#5f9ea0",
+      chartreuse: "#7fff00",
+      chocolate: "#d2691e",
+      coral: "#ff7f50",
+      cornflowerblue: "#6495ed",
+      cornsilk: "#fff8dc",
+      crimson: "#dc143c",
+      cyan: "#00ffff",
+      darkblue: "#00008b",
+      darkcyan: "#008b8b",
+      darkgoldenrod: "#b8860b",
+      darkgray: "#a9a9a9",
+      darkgreen: "#006400",
+      darkgrey: "#a9a9a9",
+      darkkhaki: "#bdb76b",
+      darkmagenta: "#8b008b",
+      darkolivegreen: "#556b2f",
+      darkorange: "#ff8c00",
+      darkorchid: "#9932cc",
+      darkred: "#8b0000",
+      darksalmon: "#e9967a",
+      darkseagreen: "#8fbc8f",
+      darkslateblue: "#483d8b",
+      darkslategray: "#2f4f4f",
+      darkslategrey: "#2f4f4f",
+      darkturquoise: "#00ced1",
+      darkviolet: "#9400d3",
+      deeppink: "#ff1493",
+      deepskyblue: "#00bfff",
+      dimgray: "#696969",
+      dimgrey: "#696969",
+      dodgerblue: "#1e90ff",
+      firebrick: "#b22222",
+      floralwhite: "#fffaf0",
+      forestgreen: "#228b22",
+      fuchsia: "#ff00ff",
+      gainsboro: "#dcdcdc",
+      ghostwhite: "#f8f8ff",
+      goldenrod: "#daa520",
+      gold: "#ffd700",
+      gray: "#808080",
+      green: "#008000",
+      greenyellow: "#adff2f",
+      grey: "#808080",
+      honeydew: "#f0fff0",
+      hotpink: "#ff69b4",
+      indianred: "#cd5c5c",
+      indigo: "#4b0082",
+      ivory: "#fffff0",
+      khaki: "#f0e68c",
+      lavenderblush: "#fff0f5",
+      lavender: "#e6e6fa",
+      lawngreen: "#7cfc00",
+      lemonchiffon: "#fffacd",
+      lightblue: "#add8e6",
+      lightcoral: "#f08080",
+      lightcyan: "#e0ffff",
+      lightgoldenrodyellow: "#fafad2",
+      lightgray: "#d3d3d3",
+      lightgreen: "#90ee90",
+      lightgrey: "#d3d3d3",
+      lightpink: "#ffb6c1",
+      lightsalmon: "#ffa07a",
+      lightseagreen: "#20b2aa",
+      lightskyblue: "#87cefa",
+      lightslategray: "#778899",
+      lightslategrey: "#778899",
+      lightsteelblue: "#b0c4de",
+      lightyellow: "#ffffe0",
+      lime: "#00ff00",
+      limegreen: "#32cd32",
+      linen: "#faf0e6",
+      magenta: "#ff00ff",
+      maroon: "#800000",
+      mediumaquamarine: "#66cdaa",
+      mediumblue: "#0000cd",
+      mediumorchid: "#ba55d3",
+      mediumpurple: "#9370db",
+      mediumseagreen: "#3cb371",
+      mediumslateblue: "#7b68ee",
+      mediumspringgreen: "#00fa9a",
+      mediumturquoise: "#48d1cc",
+      mediumvioletred: "#c71585",
+      midnightblue: "#191970",
+      mintcream: "#f5fffa",
+      mistyrose: "#ffe4e1",
+      moccasin: "#ffe4b5",
+      navajowhite: "#ffdead",
+      navy: "#000080",
+      oldlace: "#fdf5e6",
+      olive: "#808000",
+      olivedrab: "#6b8e23",
+      orange: "#ffa500",
+      orangered: "#ff4500",
+      orchid: "#da70d6",
+      palegoldenrod: "#eee8aa",
+      palegreen: "#98fb98",
+      paleturquoise: "#afeeee",
+      palevioletred: "#db7093",
+      papayawhip: "#ffefd5",
+      peachpuff: "#ffdab9",
+      peru: "#cd853f",
+      pink: "#ffc0cb",
+      plum: "#dda0dd",
+      powderblue: "#b0e0e6",
+      purple: "#800080",
+      rebeccapurple: "#663399",
+      red: "#ff0000",
+      rosybrown: "#bc8f8f",
+      royalblue: "#4169e1",
+      saddlebrown: "#8b4513",
+      salmon: "#fa8072",
+      sandybrown: "#f4a460",
+      seagreen: "#2e8b57",
+      seashell: "#fff5ee",
+      sienna: "#a0522d",
+      silver: "#c0c0c0",
+      skyblue: "#87ceeb",
+      slateblue: "#6a5acd",
+      slategray: "#708090",
+      slategrey: "#708090",
+      snow: "#fffafa",
+      springgreen: "#00ff7f",
+      steelblue: "#4682b4",
+      tan: "#d2b48c",
+      teal: "#008080",
+      thistle: "#d8bfd8",
+      tomato: "#ff6347",
+      turquoise: "#40e0d0",
+      violet: "#ee82ee",
+      wheat: "#f5deb3",
+      white: "#ffffff",
+      whitesmoke: "#f5f5f5",
+      yellow: "#ffff00",
+      yellowgreen: "#9acd32"
+    };
+
+    // node_modules/@ctrl/tinycolor/dist/module/format-input.js
+    function inputToRGB(color) {
+      var rgb = { r: 0, g: 0, b: 0 };
+      var a = 1;
+      var s = null;
+      var v = null;
+      var l2 = null;
+      var ok = false;
+      var format = false;
+      if (typeof color === "string") {
+        color = stringInputToObject(color);
+      }
+      if (typeof color === "object") {
+        if (isValidCSSUnit(color.r) && isValidCSSUnit(color.g) && isValidCSSUnit(color.b)) {
+          rgb = rgbToRgb(color.r, color.g, color.b);
+          ok = true;
+          format = String(color.r).substr(-1) === "%" ? "prgb" : "rgb";
+        } else if (isValidCSSUnit(color.h) && isValidCSSUnit(color.s) && isValidCSSUnit(color.v)) {
+          s = convertToPercentage(color.s);
+          v = convertToPercentage(color.v);
+          rgb = hsvToRgb(color.h, s, v);
+          ok = true;
+          format = "hsv";
+        } else if (isValidCSSUnit(color.h) && isValidCSSUnit(color.s) && isValidCSSUnit(color.l)) {
+          s = convertToPercentage(color.s);
+          l2 = convertToPercentage(color.l);
+          rgb = hslToRgb(color.h, s, l2);
+          ok = true;
+          format = "hsl";
+        }
+        if (Object.prototype.hasOwnProperty.call(color, "a")) {
+          a = color.a;
+        }
+      }
+      a = boundAlpha(a);
+      return {
+        ok,
+        format: color.format || format,
+        r: Math.min(255, Math.max(rgb.r, 0)),
+        g: Math.min(255, Math.max(rgb.g, 0)),
+        b: Math.min(255, Math.max(rgb.b, 0)),
+        a
+      };
+    }
+    var CSS_INTEGER = "[-\\+]?\\d+%?";
+    var CSS_NUMBER = "[-\\+]?\\d*\\.\\d+%?";
+    var CSS_UNIT = "(?:".concat(CSS_NUMBER, ")|(?:").concat(CSS_INTEGER, ")");
+    var PERMISSIVE_MATCH3 = "[\\s|\\(]+(".concat(CSS_UNIT, ")[,|\\s]+(").concat(CSS_UNIT, ")[,|\\s]+(").concat(CSS_UNIT, ")\\s*\\)?");
+    var PERMISSIVE_MATCH4 = "[\\s|\\(]+(".concat(CSS_UNIT, ")[,|\\s]+(").concat(CSS_UNIT, ")[,|\\s]+(").concat(CSS_UNIT, ")[,|\\s]+(").concat(CSS_UNIT, ")\\s*\\)?");
+    var matchers = {
+      CSS_UNIT: new RegExp(CSS_UNIT),
+      rgb: new RegExp("rgb" + PERMISSIVE_MATCH3),
+      rgba: new RegExp("rgba" + PERMISSIVE_MATCH4),
+      hsl: new RegExp("hsl" + PERMISSIVE_MATCH3),
+      hsla: new RegExp("hsla" + PERMISSIVE_MATCH4),
+      hsv: new RegExp("hsv" + PERMISSIVE_MATCH3),
+      hsva: new RegExp("hsva" + PERMISSIVE_MATCH4),
+      hex3: /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})$/,
+      hex6: /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/,
+      hex4: /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})$/,
+      hex8: /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/
+    };
+    function stringInputToObject(color) {
+      color = color.trim().toLowerCase();
+      if (color.length === 0) {
+        return false;
+      }
+      var named = false;
+      if (names[color]) {
+        color = names[color];
+        named = true;
+      } else if (color === "transparent") {
+        return { r: 0, g: 0, b: 0, a: 0, format: "name" };
+      }
+      var match = matchers.rgb.exec(color);
+      if (match) {
+        return { r: match[1], g: match[2], b: match[3] };
+      }
+      match = matchers.rgba.exec(color);
+      if (match) {
+        return { r: match[1], g: match[2], b: match[3], a: match[4] };
+      }
+      match = matchers.hsl.exec(color);
+      if (match) {
+        return { h: match[1], s: match[2], l: match[3] };
+      }
+      match = matchers.hsla.exec(color);
+      if (match) {
+        return { h: match[1], s: match[2], l: match[3], a: match[4] };
+      }
+      match = matchers.hsv.exec(color);
+      if (match) {
+        return { h: match[1], s: match[2], v: match[3] };
+      }
+      match = matchers.hsva.exec(color);
+      if (match) {
+        return { h: match[1], s: match[2], v: match[3], a: match[4] };
+      }
+      match = matchers.hex8.exec(color);
+      if (match) {
+        return {
+          r: parseIntFromHex(match[1]),
+          g: parseIntFromHex(match[2]),
+          b: parseIntFromHex(match[3]),
+          a: convertHexToDecimal(match[4]),
+          format: named ? "name" : "hex8"
+        };
+      }
+      match = matchers.hex6.exec(color);
+      if (match) {
+        return {
+          r: parseIntFromHex(match[1]),
+          g: parseIntFromHex(match[2]),
+          b: parseIntFromHex(match[3]),
+          format: named ? "name" : "hex"
+        };
+      }
+      match = matchers.hex4.exec(color);
+      if (match) {
+        return {
+          r: parseIntFromHex(match[1] + match[1]),
+          g: parseIntFromHex(match[2] + match[2]),
+          b: parseIntFromHex(match[3] + match[3]),
+          a: convertHexToDecimal(match[4] + match[4]),
+          format: named ? "name" : "hex8"
+        };
+      }
+      match = matchers.hex3.exec(color);
+      if (match) {
+        return {
+          r: parseIntFromHex(match[1] + match[1]),
+          g: parseIntFromHex(match[2] + match[2]),
+          b: parseIntFromHex(match[3] + match[3]),
+          format: named ? "name" : "hex"
+        };
+      }
+      return false;
+    }
+    function isValidCSSUnit(color) {
+      return Boolean(matchers.CSS_UNIT.exec(String(color)));
+    }
+
+    // node_modules/@ctrl/tinycolor/dist/module/index.js
+    var TinyColor = (
+      /** @class */
+      function() {
+        function TinyColor2(color, opts) {
+          if (color === void 0) {
+            color = "";
+          }
+          if (opts === void 0) {
+            opts = {};
+          }
+          var _a;
+          if (color instanceof TinyColor2) {
+            return color;
+          }
+          if (typeof color === "number") {
+            color = numberInputToObject(color);
+          }
+          this.originalInput = color;
+          var rgb = inputToRGB(color);
+          this.originalInput = color;
+          this.r = rgb.r;
+          this.g = rgb.g;
+          this.b = rgb.b;
+          this.a = rgb.a;
+          this.roundA = Math.round(100 * this.a) / 100;
+          this.format = (_a = opts.format) !== null && _a !== void 0 ? _a : rgb.format;
+          this.gradientType = opts.gradientType;
+          if (this.r < 1) {
+            this.r = Math.round(this.r);
+          }
+          if (this.g < 1) {
+            this.g = Math.round(this.g);
+          }
+          if (this.b < 1) {
+            this.b = Math.round(this.b);
+          }
+          this.isValid = rgb.ok;
+        }
+        TinyColor2.prototype.isDark = function() {
+          return this.getBrightness() < 128;
+        };
+        TinyColor2.prototype.isLight = function() {
+          return !this.isDark();
+        };
+        TinyColor2.prototype.getBrightness = function() {
+          var rgb = this.toRgb();
+          return (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1e3;
+        };
+        TinyColor2.prototype.getLuminance = function() {
+          var rgb = this.toRgb();
+          var R;
+          var G;
+          var B;
+          var RsRGB = rgb.r / 255;
+          var GsRGB = rgb.g / 255;
+          var BsRGB = rgb.b / 255;
+          if (RsRGB <= 0.03928) {
+            R = RsRGB / 12.92;
+          } else {
+            R = Math.pow((RsRGB + 0.055) / 1.055, 2.4);
+          }
+          if (GsRGB <= 0.03928) {
+            G = GsRGB / 12.92;
+          } else {
+            G = Math.pow((GsRGB + 0.055) / 1.055, 2.4);
+          }
+          if (BsRGB <= 0.03928) {
+            B = BsRGB / 12.92;
+          } else {
+            B = Math.pow((BsRGB + 0.055) / 1.055, 2.4);
+          }
+          return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+        };
+        TinyColor2.prototype.getAlpha = function() {
+          return this.a;
+        };
+        TinyColor2.prototype.setAlpha = function(alpha) {
+          this.a = boundAlpha(alpha);
+          this.roundA = Math.round(100 * this.a) / 100;
+          return this;
+        };
+        TinyColor2.prototype.isMonochrome = function() {
+          var s = this.toHsl().s;
+          return s === 0;
+        };
+        TinyColor2.prototype.toHsv = function() {
+          var hsv = rgbToHsv(this.r, this.g, this.b);
+          return { h: hsv.h * 360, s: hsv.s, v: hsv.v, a: this.a };
+        };
+        TinyColor2.prototype.toHsvString = function() {
+          var hsv = rgbToHsv(this.r, this.g, this.b);
+          var h = Math.round(hsv.h * 360);
+          var s = Math.round(hsv.s * 100);
+          var v = Math.round(hsv.v * 100);
+          return this.a === 1 ? "hsv(".concat(h, ", ").concat(s, "%, ").concat(v, "%)") : "hsva(".concat(h, ", ").concat(s, "%, ").concat(v, "%, ").concat(this.roundA, ")");
+        };
+        TinyColor2.prototype.toHsl = function() {
+          var hsl = rgbToHsl(this.r, this.g, this.b);
+          return { h: hsl.h * 360, s: hsl.s, l: hsl.l, a: this.a };
+        };
+        TinyColor2.prototype.toHslString = function() {
+          var hsl = rgbToHsl(this.r, this.g, this.b);
+          var h = Math.round(hsl.h * 360);
+          var s = Math.round(hsl.s * 100);
+          var l2 = Math.round(hsl.l * 100);
+          return this.a === 1 ? "hsl(".concat(h, ", ").concat(s, "%, ").concat(l2, "%)") : "hsla(".concat(h, ", ").concat(s, "%, ").concat(l2, "%, ").concat(this.roundA, ")");
+        };
+        TinyColor2.prototype.toHex = function(allow3Char) {
+          if (allow3Char === void 0) {
+            allow3Char = false;
+          }
+          return rgbToHex(this.r, this.g, this.b, allow3Char);
+        };
+        TinyColor2.prototype.toHexString = function(allow3Char) {
+          if (allow3Char === void 0) {
+            allow3Char = false;
+          }
+          return "#" + this.toHex(allow3Char);
+        };
+        TinyColor2.prototype.toHex8 = function(allow4Char) {
+          if (allow4Char === void 0) {
+            allow4Char = false;
+          }
+          return rgbaToHex(this.r, this.g, this.b, this.a, allow4Char);
+        };
+        TinyColor2.prototype.toHex8String = function(allow4Char) {
+          if (allow4Char === void 0) {
+            allow4Char = false;
+          }
+          return "#" + this.toHex8(allow4Char);
+        };
+        TinyColor2.prototype.toRgb = function() {
+          return {
+            r: Math.round(this.r),
+            g: Math.round(this.g),
+            b: Math.round(this.b),
+            a: this.a
+          };
+        };
+        TinyColor2.prototype.toRgbString = function() {
+          var r = Math.round(this.r);
+          var g = Math.round(this.g);
+          var b = Math.round(this.b);
+          return this.a === 1 ? "rgb(".concat(r, ", ").concat(g, ", ").concat(b, ")") : "rgba(".concat(r, ", ").concat(g, ", ").concat(b, ", ").concat(this.roundA, ")");
+        };
+        TinyColor2.prototype.toPercentageRgb = function() {
+          var fmt = function(x) {
+            return "".concat(Math.round(bound01(x, 255) * 100), "%");
+          };
+          return {
+            r: fmt(this.r),
+            g: fmt(this.g),
+            b: fmt(this.b),
+            a: this.a
+          };
+        };
+        TinyColor2.prototype.toPercentageRgbString = function() {
+          var rnd = function(x) {
+            return Math.round(bound01(x, 255) * 100);
+          };
+          return this.a === 1 ? "rgb(".concat(rnd(this.r), "%, ").concat(rnd(this.g), "%, ").concat(rnd(this.b), "%)") : "rgba(".concat(rnd(this.r), "%, ").concat(rnd(this.g), "%, ").concat(rnd(this.b), "%, ").concat(this.roundA, ")");
+        };
+        TinyColor2.prototype.toName = function() {
+          if (this.a === 0) {
+            return "transparent";
+          }
+          if (this.a < 1) {
+            return false;
+          }
+          var hex = "#" + rgbToHex(this.r, this.g, this.b, false);
+          for (var _i = 0, _a = Object.entries(names); _i < _a.length; _i++) {
+            var _b = _a[_i], key = _b[0], value = _b[1];
+            if (hex === value) {
+              return key;
+            }
+          }
+          return false;
+        };
+        TinyColor2.prototype.toString = function(format) {
+          var formatSet = Boolean(format);
+          format = format !== null && format !== void 0 ? format : this.format;
+          var formattedString = false;
+          var hasAlpha = this.a < 1 && this.a >= 0;
+          var needsAlphaFormat = !formatSet && hasAlpha && (format.startsWith("hex") || format === "name");
+          if (needsAlphaFormat) {
+            if (format === "name" && this.a === 0) {
+              return this.toName();
+            }
+            return this.toRgbString();
+          }
+          if (format === "rgb") {
+            formattedString = this.toRgbString();
+          }
+          if (format === "prgb") {
+            formattedString = this.toPercentageRgbString();
+          }
+          if (format === "hex" || format === "hex6") {
+            formattedString = this.toHexString();
+          }
+          if (format === "hex3") {
+            formattedString = this.toHexString(true);
+          }
+          if (format === "hex4") {
+            formattedString = this.toHex8String(true);
+          }
+          if (format === "hex8") {
+            formattedString = this.toHex8String();
+          }
+          if (format === "name") {
+            formattedString = this.toName();
+          }
+          if (format === "hsl") {
+            formattedString = this.toHslString();
+          }
+          if (format === "hsv") {
+            formattedString = this.toHsvString();
+          }
+          return formattedString || this.toHexString();
+        };
+        TinyColor2.prototype.toNumber = function() {
+          return (Math.round(this.r) << 16) + (Math.round(this.g) << 8) + Math.round(this.b);
+        };
+        TinyColor2.prototype.clone = function() {
+          return new TinyColor2(this.toString());
+        };
+        TinyColor2.prototype.lighten = function(amount) {
+          if (amount === void 0) {
+            amount = 10;
+          }
+          var hsl = this.toHsl();
+          hsl.l += amount / 100;
+          hsl.l = clamp01(hsl.l);
+          return new TinyColor2(hsl);
+        };
+        TinyColor2.prototype.brighten = function(amount) {
+          if (amount === void 0) {
+            amount = 10;
+          }
+          var rgb = this.toRgb();
+          rgb.r = Math.max(0, Math.min(255, rgb.r - Math.round(255 * -(amount / 100))));
+          rgb.g = Math.max(0, Math.min(255, rgb.g - Math.round(255 * -(amount / 100))));
+          rgb.b = Math.max(0, Math.min(255, rgb.b - Math.round(255 * -(amount / 100))));
+          return new TinyColor2(rgb);
+        };
+        TinyColor2.prototype.darken = function(amount) {
+          if (amount === void 0) {
+            amount = 10;
+          }
+          var hsl = this.toHsl();
+          hsl.l -= amount / 100;
+          hsl.l = clamp01(hsl.l);
+          return new TinyColor2(hsl);
+        };
+        TinyColor2.prototype.tint = function(amount) {
+          if (amount === void 0) {
+            amount = 10;
+          }
+          return this.mix("white", amount);
+        };
+        TinyColor2.prototype.shade = function(amount) {
+          if (amount === void 0) {
+            amount = 10;
+          }
+          return this.mix("black", amount);
+        };
+        TinyColor2.prototype.desaturate = function(amount) {
+          if (amount === void 0) {
+            amount = 10;
+          }
+          var hsl = this.toHsl();
+          hsl.s -= amount / 100;
+          hsl.s = clamp01(hsl.s);
+          return new TinyColor2(hsl);
+        };
+        TinyColor2.prototype.saturate = function(amount) {
+          if (amount === void 0) {
+            amount = 10;
+          }
+          var hsl = this.toHsl();
+          hsl.s += amount / 100;
+          hsl.s = clamp01(hsl.s);
+          return new TinyColor2(hsl);
+        };
+        TinyColor2.prototype.greyscale = function() {
+          return this.desaturate(100);
+        };
+        TinyColor2.prototype.spin = function(amount) {
+          var hsl = this.toHsl();
+          var hue = (hsl.h + amount) % 360;
+          hsl.h = hue < 0 ? 360 + hue : hue;
+          return new TinyColor2(hsl);
+        };
+        TinyColor2.prototype.mix = function(color, amount) {
+          if (amount === void 0) {
+            amount = 50;
+          }
+          var rgb1 = this.toRgb();
+          var rgb2 = new TinyColor2(color).toRgb();
+          var p = amount / 100;
+          var rgba = {
+            r: (rgb2.r - rgb1.r) * p + rgb1.r,
+            g: (rgb2.g - rgb1.g) * p + rgb1.g,
+            b: (rgb2.b - rgb1.b) * p + rgb1.b,
+            a: (rgb2.a - rgb1.a) * p + rgb1.a
+          };
+          return new TinyColor2(rgba);
+        };
+        TinyColor2.prototype.analogous = function(results, slices) {
+          if (results === void 0) {
+            results = 6;
+          }
+          if (slices === void 0) {
+            slices = 30;
+          }
+          var hsl = this.toHsl();
+          var part = 360 / slices;
+          var ret = [this];
+          for (hsl.h = (hsl.h - (part * results >> 1) + 720) % 360; --results; ) {
+            hsl.h = (hsl.h + part) % 360;
+            ret.push(new TinyColor2(hsl));
+          }
+          return ret;
+        };
+        TinyColor2.prototype.complement = function() {
+          var hsl = this.toHsl();
+          hsl.h = (hsl.h + 180) % 360;
+          return new TinyColor2(hsl);
+        };
+        TinyColor2.prototype.monochromatic = function(results) {
+          if (results === void 0) {
+            results = 6;
+          }
+          var hsv = this.toHsv();
+          var h = hsv.h;
+          var s = hsv.s;
+          var v = hsv.v;
+          var res = [];
+          var modification = 1 / results;
+          while (results--) {
+            res.push(new TinyColor2({ h, s, v }));
+            v = (v + modification) % 1;
+          }
+          return res;
+        };
+        TinyColor2.prototype.splitcomplement = function() {
+          var hsl = this.toHsl();
+          var h = hsl.h;
+          return [
+            this,
+            new TinyColor2({ h: (h + 72) % 360, s: hsl.s, l: hsl.l }),
+            new TinyColor2({ h: (h + 216) % 360, s: hsl.s, l: hsl.l })
+          ];
+        };
+        TinyColor2.prototype.onBackground = function(background) {
+          var fg = this.toRgb();
+          var bg = new TinyColor2(background).toRgb();
+          return new TinyColor2({
+            r: bg.r + (fg.r - bg.r) * fg.a,
+            g: bg.g + (fg.g - bg.g) * fg.a,
+            b: bg.b + (fg.b - bg.b) * fg.a
+          });
+        };
+        TinyColor2.prototype.triad = function() {
+          return this.polyad(3);
+        };
+        TinyColor2.prototype.tetrad = function() {
+          return this.polyad(4);
+        };
+        TinyColor2.prototype.polyad = function(n) {
+          var hsl = this.toHsl();
+          var h = hsl.h;
+          var result = [this];
+          var increment = 360 / n;
+          for (var i3 = 1; i3 < n; i3++) {
+            result.push(new TinyColor2({ h: (h + i3 * increment) % 360, s: hsl.s, l: hsl.l }));
+          }
+          return result;
+        };
+        TinyColor2.prototype.equals = function(color) {
+          return this.toRgbString() === new TinyColor2(color).toRgbString();
+        };
+        return TinyColor2;
+      }()
+    );
+
+    // src/components/color-picker/color-picker.ts
+    var hasEyeDropper = "EyeDropper" in window;
+    var SlColorPicker = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.formControlController = new FormControlController(this);
+        this.isSafeValue = false;
+        this.localize = new LocalizeController2(this);
+        this.isDraggingGridHandle = false;
+        this.isEmpty = false;
+        this.inputValue = "";
+        this.hue = 0;
+        this.saturation = 100;
+        this.brightness = 100;
+        this.alpha = 100;
+        this.value = "";
+        this.defaultValue = "";
+        this.label = "";
+        this.format = "hex";
+        this.inline = false;
+        this.size = "medium";
+        this.noFormatToggle = false;
+        this.name = "";
+        this.disabled = false;
+        this.hoist = false;
+        this.opacity = false;
+        this.uppercase = false;
+        this.swatches = "";
+        this.form = "";
+      }
+      handleCopy() {
+        this.input.select();
+        document.execCommand("copy");
+        this.previewButton.focus();
+        this.previewButton.classList.add("color-picker__preview-color--copied");
+        this.previewButton.addEventListener("animationend", () => {
+          this.previewButton.classList.remove("color-picker__preview-color--copied");
+        });
+      }
+      handleFormatToggle() {
+        const formats = ["hex", "rgb", "hsl", "hsv"];
+        const nextIndex = (formats.indexOf(this.format) + 1) % formats.length;
+        this.format = formats[nextIndex];
+        this.setColor(this.value);
+        this.emit("sl-change");
+        this.emit("sl-input");
+      }
+      handleAlphaDrag(event) {
+        const container = this.shadowRoot.querySelector(".color-picker__slider.color-picker__alpha");
+        const handle = container.querySelector(".color-picker__slider-handle");
+        const { width } = container.getBoundingClientRect();
+        let oldValue = this.value;
+        handle.focus();
+        event.preventDefault();
+        drag(container, {
+          onMove: (x) => {
+            this.alpha = clamp(x / width * 100, 0, 100);
+            this.syncValues();
+            if (this.value !== oldValue) {
+              oldValue = this.value;
+              this.emit("sl-change");
+              this.emit("sl-input");
+            }
+          },
+          initialEvent: event
+        });
+      }
+      handleHueDrag(event) {
+        const container = this.shadowRoot.querySelector(".color-picker__slider.color-picker__hue");
+        const handle = container.querySelector(".color-picker__slider-handle");
+        const { width } = container.getBoundingClientRect();
+        let oldValue = this.value;
+        handle.focus();
+        event.preventDefault();
+        drag(container, {
+          onMove: (x) => {
+            this.hue = clamp(x / width * 360, 0, 360);
+            this.syncValues();
+            if (this.value !== oldValue) {
+              oldValue = this.value;
+              this.emit("sl-change");
+              this.emit("sl-input");
+            }
+          },
+          initialEvent: event
+        });
+      }
+      handleGridDrag(event) {
+        const grid = this.shadowRoot.querySelector(".color-picker__grid");
+        const handle = grid.querySelector(".color-picker__grid-handle");
+        const { width, height } = grid.getBoundingClientRect();
+        let oldValue = this.value;
+        handle.focus();
+        event.preventDefault();
+        this.isDraggingGridHandle = true;
+        drag(grid, {
+          onMove: (x, y2) => {
+            this.saturation = clamp(x / width * 100, 0, 100);
+            this.brightness = clamp(100 - y2 / height * 100, 0, 100);
+            this.syncValues();
+            if (this.value !== oldValue) {
+              oldValue = this.value;
+              this.emit("sl-change");
+              this.emit("sl-input");
+            }
+          },
+          onStop: () => this.isDraggingGridHandle = false,
+          initialEvent: event
+        });
+      }
+      handleAlphaKeyDown(event) {
+        const increment = event.shiftKey ? 10 : 1;
+        const oldValue = this.value;
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          this.alpha = clamp(this.alpha - increment, 0, 100);
+          this.syncValues();
+        }
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          this.alpha = clamp(this.alpha + increment, 0, 100);
+          this.syncValues();
+        }
+        if (event.key === "Home") {
+          event.preventDefault();
+          this.alpha = 0;
+          this.syncValues();
+        }
+        if (event.key === "End") {
+          event.preventDefault();
+          this.alpha = 100;
+          this.syncValues();
+        }
+        if (this.value !== oldValue) {
+          this.emit("sl-change");
+          this.emit("sl-input");
+        }
+      }
+      handleHueKeyDown(event) {
+        const increment = event.shiftKey ? 10 : 1;
+        const oldValue = this.value;
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          this.hue = clamp(this.hue - increment, 0, 360);
+          this.syncValues();
+        }
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          this.hue = clamp(this.hue + increment, 0, 360);
+          this.syncValues();
+        }
+        if (event.key === "Home") {
+          event.preventDefault();
+          this.hue = 0;
+          this.syncValues();
+        }
+        if (event.key === "End") {
+          event.preventDefault();
+          this.hue = 360;
+          this.syncValues();
+        }
+        if (this.value !== oldValue) {
+          this.emit("sl-change");
+          this.emit("sl-input");
+        }
+      }
+      handleGridKeyDown(event) {
+        const increment = event.shiftKey ? 10 : 1;
+        const oldValue = this.value;
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          this.saturation = clamp(this.saturation - increment, 0, 100);
+          this.syncValues();
+        }
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          this.saturation = clamp(this.saturation + increment, 0, 100);
+          this.syncValues();
+        }
+        if (event.key === "ArrowUp") {
+          event.preventDefault();
+          this.brightness = clamp(this.brightness + increment, 0, 100);
+          this.syncValues();
+        }
+        if (event.key === "ArrowDown") {
+          event.preventDefault();
+          this.brightness = clamp(this.brightness - increment, 0, 100);
+          this.syncValues();
+        }
+        if (this.value !== oldValue) {
+          this.emit("sl-change");
+          this.emit("sl-input");
+        }
+      }
+      handleInputChange(event) {
+        const target = event.target;
+        const oldValue = this.value;
+        event.stopPropagation();
+        if (this.input.value) {
+          this.setColor(target.value);
+          target.value = this.value;
+        } else {
+          this.value = "";
+        }
+        if (this.value !== oldValue) {
+          this.emit("sl-change");
+          this.emit("sl-input");
+        }
+      }
+      handleInputInput(event) {
+        event.stopPropagation();
+      }
+      handleInputKeyDown(event) {
+        if (event.key === "Enter") {
+          const oldValue = this.value;
+          if (this.input.value) {
+            this.setColor(this.input.value);
+            this.input.value = this.value;
+            if (this.value !== oldValue) {
+              this.emit("sl-change");
+              this.emit("sl-input");
+            }
+            setTimeout(() => this.input.select());
+          } else {
+            this.hue = 0;
+          }
+        }
+      }
+      handleTouchMove(event) {
+        event.preventDefault();
+      }
+      parseColor(colorString) {
+        const color = new TinyColor(colorString);
+        if (!color.isValid) {
+          return null;
+        }
+        const hslColor = color.toHsl();
+        const hsl = {
+          h: hslColor.h,
+          s: hslColor.s * 100,
+          l: hslColor.l * 100,
+          a: hslColor.a
+        };
+        const rgb = color.toRgb();
+        const hex = color.toHexString();
+        const hexa = color.toHex8String();
+        const hsvColor = color.toHsv();
+        const hsv = {
+          h: hsvColor.h,
+          s: hsvColor.s * 100,
+          v: hsvColor.v * 100,
+          a: hsvColor.a
+        };
+        return {
+          hsl: {
+            h: hsl.h,
+            s: hsl.s,
+            l: hsl.l,
+            string: this.setLetterCase(`hsl(${Math.round(hsl.h)}, ${Math.round(hsl.s)}%, ${Math.round(hsl.l)}%)`)
+          },
+          hsla: {
+            h: hsl.h,
+            s: hsl.s,
+            l: hsl.l,
+            a: hsl.a,
+            string: this.setLetterCase(
+              `hsla(${Math.round(hsl.h)}, ${Math.round(hsl.s)}%, ${Math.round(hsl.l)}%, ${hsl.a.toFixed(2).toString()})`
+            )
+          },
+          hsv: {
+            h: hsv.h,
+            s: hsv.s,
+            v: hsv.v,
+            string: this.setLetterCase(`hsv(${Math.round(hsv.h)}, ${Math.round(hsv.s)}%, ${Math.round(hsv.v)}%)`)
+          },
+          hsva: {
+            h: hsv.h,
+            s: hsv.s,
+            v: hsv.v,
+            a: hsv.a,
+            string: this.setLetterCase(
+              `hsva(${Math.round(hsv.h)}, ${Math.round(hsv.s)}%, ${Math.round(hsv.v)}%, ${hsv.a.toFixed(2).toString()})`
+            )
+          },
+          rgb: {
+            r: rgb.r,
+            g: rgb.g,
+            b: rgb.b,
+            string: this.setLetterCase(`rgb(${Math.round(rgb.r)}, ${Math.round(rgb.g)}, ${Math.round(rgb.b)})`)
+          },
+          rgba: {
+            r: rgb.r,
+            g: rgb.g,
+            b: rgb.b,
+            a: rgb.a,
+            string: this.setLetterCase(
+              `rgba(${Math.round(rgb.r)}, ${Math.round(rgb.g)}, ${Math.round(rgb.b)}, ${rgb.a.toFixed(2).toString()})`
+            )
+          },
+          hex: this.setLetterCase(hex),
+          hexa: this.setLetterCase(hexa)
+        };
+      }
+      setColor(colorString) {
+        const newColor = this.parseColor(colorString);
+        if (newColor === null) {
+          return false;
+        }
+        this.hue = newColor.hsva.h;
+        this.saturation = newColor.hsva.s;
+        this.brightness = newColor.hsva.v;
+        this.alpha = this.opacity ? newColor.hsva.a * 100 : 100;
+        this.syncValues();
+        return true;
+      }
+      setLetterCase(string) {
+        if (typeof string !== "string") {
+          return "";
+        }
+        return this.uppercase ? string.toUpperCase() : string.toLowerCase();
+      }
+      async syncValues() {
+        const currentColor = this.parseColor(
+          `hsva(${this.hue}, ${this.saturation}%, ${this.brightness}%, ${this.alpha / 100})`
+        );
+        if (currentColor === null) {
+          return;
+        }
+        if (this.format === "hsl") {
+          this.inputValue = this.opacity ? currentColor.hsla.string : currentColor.hsl.string;
+        } else if (this.format === "rgb") {
+          this.inputValue = this.opacity ? currentColor.rgba.string : currentColor.rgb.string;
+        } else if (this.format === "hsv") {
+          this.inputValue = this.opacity ? currentColor.hsva.string : currentColor.hsv.string;
+        } else {
+          this.inputValue = this.opacity ? currentColor.hexa : currentColor.hex;
+        }
+        this.isSafeValue = true;
+        this.value = this.inputValue;
+        await this.updateComplete;
+        this.isSafeValue = false;
+      }
+      handleAfterHide() {
+        this.previewButton.classList.remove("color-picker__preview-color--copied");
+      }
+      handleEyeDropper() {
+        if (!hasEyeDropper) {
+          return;
+        }
+        const eyeDropper = new EyeDropper();
+        eyeDropper.open().then((colorSelectionResult) => this.setColor(colorSelectionResult.sRGBHex)).catch(() => {
+        });
+      }
+      selectSwatch(color) {
+        const oldValue = this.value;
+        if (!this.disabled) {
+          this.setColor(color);
+          if (this.value !== oldValue) {
+            this.emit("sl-change");
+            this.emit("sl-input");
+          }
+        }
+      }
+      /** Generates a hex string from HSV values. Hue must be 0-360. All other arguments must be 0-100. */
+      getHexString(hue, saturation, brightness, alpha = 100) {
+        const color = new TinyColor(`hsva(${hue}, ${saturation}, ${brightness}, ${alpha / 100})`);
+        if (!color.isValid) {
+          return "";
+        }
+        return color.toHex8String();
+      }
+      handleFormatChange() {
+        this.syncValues();
+      }
+      handleOpacityChange() {
+        this.alpha = 100;
+      }
+      handleValueChange(oldValue, newValue) {
+        this.isEmpty = !newValue;
+        if (!newValue) {
+          this.hue = 0;
+          this.saturation = 0;
+          this.brightness = 100;
+          this.alpha = 100;
+        }
+        if (!this.isSafeValue) {
+          const newColor = this.parseColor(newValue);
+          if (newColor !== null) {
+            this.inputValue = this.value;
+            this.hue = newColor.hsva.h;
+            this.saturation = newColor.hsva.s;
+            this.brightness = newColor.hsva.v;
+            this.alpha = newColor.hsva.a * 100;
+            this.syncValues();
+          } else {
+            this.inputValue = oldValue != null ? oldValue : "";
+          }
+        }
+      }
+      /** Returns the current value as a string in the specified format. */
+      getFormattedValue(format = "hex") {
+        const currentColor = this.parseColor(
+          `hsva(${this.hue}, ${this.saturation}%, ${this.brightness}%, ${this.alpha / 100})`
+        );
+        if (currentColor === null) {
+          return "";
+        }
+        switch (format) {
+          case "hex":
+            return currentColor.hex;
+          case "hexa":
+            return currentColor.hexa;
+          case "rgb":
+            return currentColor.rgb.string;
+          case "rgba":
+            return currentColor.rgba.string;
+          case "hsl":
+            return currentColor.hsl.string;
+          case "hsla":
+            return currentColor.hsla.string;
+          case "hsv":
+            return currentColor.hsv.string;
+          case "hsva":
+            return currentColor.hsva.string;
+          default:
+            return "";
+        }
+      }
+      /** Checks for validity but does not show the browser's validation message. */
+      checkValidity() {
+        return this.input.checkValidity();
+      }
+      /** Checks for validity and shows the browser's validation message if the control is invalid. */
+      reportValidity() {
+        if (!this.inline && !this.checkValidity()) {
+          this.dropdown.show();
+          this.addEventListener("sl-after-show", () => this.input.reportValidity(), { once: true });
+          return this.checkValidity();
+        }
+        return this.input.reportValidity();
+      }
+      /** Sets a custom validation message. Pass an empty string to restore validity. */
+      setCustomValidity(message) {
+        this.input.setCustomValidity(message);
+        this.formControlController.updateValidity();
+      }
+      render() {
+        const gridHandleX = this.saturation;
+        const gridHandleY = 100 - this.brightness;
+        const swatches = Array.isArray(this.swatches) ? this.swatches : this.swatches.split(";").filter((color) => color.trim() !== "");
+        const colorPicker = y`
+      <div
+        part="base"
+        class=${o$1({
+      "color-picker": true,
+      "color-picker--inline": this.inline,
+      "color-picker--disabled": this.disabled
+    })}
+        aria-disabled=${this.disabled ? "true" : "false"}
+        aria-labelledby="label"
+        tabindex=${this.inline ? "0" : "-1"}
+      >
+        ${this.inline ? y`
+              <sl-visually-hidden id="label">
+                <slot name="label">${this.label}</slot>
+              </sl-visually-hidden>
+            ` : null}
+
+        <div
+          part="grid"
+          class="color-picker__grid"
+          style=${i2$1({ backgroundColor: this.getHexString(this.hue, 100, 100) })}
+          @pointerdown=${this.handleGridDrag}
+          @touchmove=${this.handleTouchMove}
+        >
+          <span
+            part="grid-handle"
+            class=${o$1({
+      "color-picker__grid-handle": true,
+      "color-picker__grid-handle--dragging": this.isDraggingGridHandle
+    })}
+            style=${i2$1({
+      top: `${gridHandleY}%`,
+      left: `${gridHandleX}%`,
+      backgroundColor: this.getHexString(this.hue, this.saturation, this.brightness, this.alpha)
+    })}
+            role="application"
+            aria-label="HSV"
+            tabindex=${l$1(this.disabled ? void 0 : "0")}
+            @keydown=${this.handleGridKeyDown}
+          ></span>
+        </div>
+
+        <div class="color-picker__controls">
+          <div class="color-picker__sliders">
+            <div
+              part="slider hue-slider"
+              class="color-picker__hue color-picker__slider"
+              @pointerdown=${this.handleHueDrag}
+              @touchmove=${this.handleTouchMove}
+            >
+              <span
+                part="slider-handle hue-slider-handle"
+                class="color-picker__slider-handle"
+                style=${i2$1({
+      left: `${this.hue === 0 ? 0 : 100 / (360 / this.hue)}%`
+    })}
+                role="slider"
+                aria-label="hue"
+                aria-orientation="horizontal"
+                aria-valuemin="0"
+                aria-valuemax="360"
+                aria-valuenow=${`${Math.round(this.hue)}`}
+                tabindex=${l$1(this.disabled ? void 0 : "0")}
+                @keydown=${this.handleHueKeyDown}
+              ></span>
+            </div>
+
+            ${this.opacity ? y`
+                  <div
+                    part="slider opacity-slider"
+                    class="color-picker__alpha color-picker__slider color-picker__transparent-bg"
+                    @pointerdown="${this.handleAlphaDrag}"
+                    @touchmove=${this.handleTouchMove}
+                  >
+                    <div
+                      class="color-picker__alpha-gradient"
+                      style=${i2$1({
+      backgroundImage: `linear-gradient(
+                          to right,
+                          ${this.getHexString(this.hue, this.saturation, this.brightness, 0)} 0%
+                          ${this.getHexString(this.hue, this.saturation, this.brightness, 100)} 100%
+                        )`
+    })}
+                    ></div>
+                    <span
+                      part="slider-handle opacity-slider-handle"
+                      class="color-picker__slider-handle"
+                      style=${i2$1({
+      left: `${this.alpha}%`
+    })}
+                      role="slider"
+                      aria-label="alpha"
+                      aria-orientation="horizontal"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      aria-valuenow=${Math.round(this.alpha)}
+                      tabindex=${l$1(this.disabled ? void 0 : "0")}
+                      @keydown=${this.handleAlphaKeyDown}
+                    ></span>
+                  </div>
+                ` : ""}
+          </div>
+
+          <button
+            type="button"
+            part="preview"
+            class="color-picker__preview color-picker__transparent-bg"
+            aria-label=${this.localize.term("copy")}
+            style=${i2$1({
+      "--preview-color": this.getHexString(this.hue, this.saturation, this.brightness, this.alpha)
+    })}
+            @click=${this.handleCopy}
+          ></button>
+        </div>
+
+        <div class="color-picker__user-input" aria-live="polite">
+          <sl-input
+            part="input"
+            type="text"
+            name=${this.name}
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            value=${this.isEmpty ? "" : this.inputValue}
+            ?disabled=${this.disabled}
+            aria-label=${this.localize.term("currentValue")}
+            @keydown=${this.handleInputKeyDown}
+            @sl-change=${this.handleInputChange}
+            @sl-input=${this.handleInputInput}
+          ></sl-input>
+
+          <sl-button-group>
+            ${!this.noFormatToggle ? y`
+                  <sl-button
+                    part="format-button"
+                    aria-label=${this.localize.term("toggleColorFormat")}
+                    exportparts="
+                      base:format-button__base,
+                      prefix:format-button__prefix,
+                      label:format-button__label,
+                      suffix:format-button__suffix,
+                      caret:format-button__caret
+                    "
+                    @click=${this.handleFormatToggle}
+                  >
+                    ${this.setLetterCase(this.format)}
+                  </sl-button>
+                ` : ""}
+            ${hasEyeDropper ? y`
+                  <sl-button
+                    part="eye-dropper-button"
+                    exportparts="
+                      base:eye-dropper-button__base,
+                      prefix:eye-dropper-button__prefix,
+                      label:eye-dropper-button__label,
+                      suffix:eye-dropper-button__suffix,
+                      caret:eye-dropper-button__caret
+                    "
+                    @click=${this.handleEyeDropper}
+                  >
+                    <sl-icon
+                      library="system"
+                      name="eyedropper"
+                      label=${this.localize.term("selectAColorFromTheScreen")}
+                    ></sl-icon>
+                  </sl-button>
+                ` : ""}
+          </sl-button-group>
+        </div>
+
+        ${swatches.length > 0 ? y`
+              <div part="swatches" class="color-picker__swatches">
+                ${swatches.map((swatch) => {
+      const parsedColor = this.parseColor(swatch);
+      if (!parsedColor) {
+        console.error(`Unable to parse swatch color: "${swatch}"`, this);
+        return "";
+      }
+      return y`
+                    <div
+                      part="swatch"
+                      class="color-picker__swatch color-picker__transparent-bg"
+                      tabindex=${l$1(this.disabled ? void 0 : "0")}
+                      role="button"
+                      aria-label=${swatch}
+                      @click=${() => this.selectSwatch(swatch)}
+                      @keydown=${(event) => !this.disabled && event.key === "Enter" && this.setColor(parsedColor.hexa)}
+                    >
+                      <div
+                        class="color-picker__swatch-color"
+                        style=${i2$1({ backgroundColor: parsedColor.hexa })}
+                      ></div>
+                    </div>
+                  `;
+    })}
+              </div>
+            ` : ""}
+      </div>
+    `;
+        if (this.inline) {
+          return colorPicker;
+        }
+        return y`
+      <sl-dropdown
+        class="color-dropdown"
+        aria-disabled=${this.disabled ? "true" : "false"}
+        .containing-element=${this}
+        ?disabled=${this.disabled}
+        ?hoist=${this.hoist}
+        @sl-after-hide=${this.handleAfterHide}
+      >
+        <button
+          part="trigger"
+          slot="trigger"
+          class=${o$1({
+      "color-dropdown__trigger": true,
+      "color-dropdown__trigger--disabled": this.disabled,
+      "color-dropdown__trigger--small": this.size === "small",
+      "color-dropdown__trigger--medium": this.size === "medium",
+      "color-dropdown__trigger--large": this.size === "large",
+      "color-dropdown__trigger--empty": this.isEmpty,
+      "color-picker__transparent-bg": true
+    })}
+          style=${i2$1({
+      color: this.getHexString(this.hue, this.saturation, this.brightness, this.alpha)
+    })}
+          type="button"
+        >
+          <sl-visually-hidden>
+            <slot name="label">${this.label}</slot>
+          </sl-visually-hidden>
+        </button>
+        ${colorPicker}
+      </sl-dropdown>
+    `;
+      }
+    };
+    SlColorPicker.styles = color_picker_styles_default;
+    __decorateClass([
+      i2$2('[part~="input"]')
+    ], SlColorPicker.prototype, "input", 2);
+    __decorateClass([
+      i2$2('[part~="preview"]')
+    ], SlColorPicker.prototype, "previewButton", 2);
+    __decorateClass([
+      i2$2(".color-dropdown")
+    ], SlColorPicker.prototype, "dropdown", 2);
+    __decorateClass([
+      t$1()
+    ], SlColorPicker.prototype, "isDraggingGridHandle", 2);
+    __decorateClass([
+      t$1()
+    ], SlColorPicker.prototype, "isEmpty", 2);
+    __decorateClass([
+      t$1()
+    ], SlColorPicker.prototype, "inputValue", 2);
+    __decorateClass([
+      t$1()
+    ], SlColorPicker.prototype, "hue", 2);
+    __decorateClass([
+      t$1()
+    ], SlColorPicker.prototype, "saturation", 2);
+    __decorateClass([
+      t$1()
+    ], SlColorPicker.prototype, "brightness", 2);
+    __decorateClass([
+      t$1()
+    ], SlColorPicker.prototype, "alpha", 2);
+    __decorateClass([
+      e2$1()
+    ], SlColorPicker.prototype, "value", 2);
+    __decorateClass([
+      defaultValue()
+    ], SlColorPicker.prototype, "defaultValue", 2);
+    __decorateClass([
+      e2$1()
+    ], SlColorPicker.prototype, "label", 2);
+    __decorateClass([
+      e2$1()
+    ], SlColorPicker.prototype, "format", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlColorPicker.prototype, "inline", 2);
+    __decorateClass([
+      e2$1()
+    ], SlColorPicker.prototype, "size", 2);
+    __decorateClass([
+      e2$1({ attribute: "no-format-toggle", type: Boolean })
+    ], SlColorPicker.prototype, "noFormatToggle", 2);
+    __decorateClass([
+      e2$1()
+    ], SlColorPicker.prototype, "name", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlColorPicker.prototype, "disabled", 2);
+    __decorateClass([
+      e2$1({ type: Boolean })
+    ], SlColorPicker.prototype, "hoist", 2);
+    __decorateClass([
+      e2$1({ type: Boolean })
+    ], SlColorPicker.prototype, "opacity", 2);
+    __decorateClass([
+      e2$1({ type: Boolean })
+    ], SlColorPicker.prototype, "uppercase", 2);
+    __decorateClass([
+      e2$1()
+    ], SlColorPicker.prototype, "swatches", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlColorPicker.prototype, "form", 2);
+    __decorateClass([
+      watch("format", { waitUntilFirstUpdate: true })
+    ], SlColorPicker.prototype, "handleFormatChange", 1);
+    __decorateClass([
+      watch("opacity", { waitUntilFirstUpdate: true })
+    ], SlColorPicker.prototype, "handleOpacityChange", 1);
+    __decorateClass([
+      watch("value")
+    ], SlColorPicker.prototype, "handleValueChange", 1);
+    SlColorPicker = __decorateClass([
+      e$1("sl-color-picker")
+    ], SlColorPicker);
+
+    // src/components/visually-hidden/visually-hidden.styles.ts
+    var visually_hidden_styles_default = i$2`
+  ${component_styles_default}
+
+  :host(:not(:focus-within)) {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    clip: rect(0 0 0 0) !important;
+    clip-path: inset(50%) !important;
+    border: none !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    padding: 0 !important;
+  }
+`;
+
+    // src/components/visually-hidden/visually-hidden.ts
+    var SlVisuallyHidden = class extends ShoelaceElement {
+      render() {
+        return y` <slot></slot> `;
+      }
+    };
+    SlVisuallyHidden.styles = visually_hidden_styles_default;
+    SlVisuallyHidden = __decorateClass([
+      e$1("sl-visually-hidden")
+    ], SlVisuallyHidden);
+
+    // src/styles/form-control.styles.ts
+    var form_control_styles_default = i$2`
+  .form-control .form-control__label {
+    display: none;
+  }
+
+  .form-control .form-control__help-text {
+    display: none;
+  }
+
+  /* Label */
+  .form-control--has-label .form-control__label {
+    display: inline-block;
+    color: var(--sl-input-label-color);
+    margin-bottom: var(--sl-spacing-3x-small);
+  }
+
+  .form-control--has-label.form-control--small .form-control__label {
+    font-size: var(--sl-input-label-font-size-small);
+  }
+
+  .form-control--has-label.form-control--medium .form-control__label {
+    font-size: var(--sl-input-label-font-size-medium);
+  }
+
+  .form-control--has-label.form-control--large .form-control_label {
+    font-size: var(--sl-input-label-font-size-large);
+  }
+
+  :host([required]) .form-control--has-label .form-control__label::after {
+    content: var(--sl-input-required-content);
+    margin-inline-start: var(--sl-input-required-content-offset);
+    color: var(--sl-input-required-content-color);
+  }
+
+  /* Help text */
+  .form-control--has-help-text .form-control__help-text {
+    display: block;
+    color: var(--sl-input-help-text-color);
+    margin-top: var(--sl-spacing-3x-small);
+  }
+
+  .form-control--has-help-text.form-control--small .form-control__help-text {
+    font-size: var(--sl-input-help-text-font-size-small);
+  }
+
+  .form-control--has-help-text.form-control--medium .form-control__help-text {
+    font-size: var(--sl-input-help-text-font-size-medium);
+  }
+
+  .form-control--has-help-text.form-control--large .form-control__help-text {
+    font-size: var(--sl-input-help-text-font-size-large);
+  }
+
+  .form-control--has-help-text.form-control--radio-group .form-control__help-text {
+    margin-top: var(--sl-spacing-2x-small);
+  }
+`;
+
+    // src/components/input/input.styles.ts
+    var input_styles_default = i$2`
+  ${component_styles_default}
+  ${form_control_styles_default}
+
+  :host {
+    display: block;
+  }
+
+  .input {
+    flex: 1 1 auto;
+    display: inline-flex;
+    align-items: stretch;
+    justify-content: start;
+    position: relative;
+    width: 100%;
+    font-family: var(--sl-input-font-family);
+    font-weight: var(--sl-input-font-weight);
+    letter-spacing: var(--sl-input-letter-spacing);
+    vertical-align: middle;
+    overflow: hidden;
+    cursor: text;
+    transition: var(--sl-transition-fast) color, var(--sl-transition-fast) border, var(--sl-transition-fast) box-shadow,
+      var(--sl-transition-fast) background-color;
+  }
+
+  /* Standard inputs */
+  .input--standard {
+    background-color: var(--sl-input-background-color);
+    border: solid var(--sl-input-border-width) var(--sl-input-border-color);
+  }
+
+  .input--standard:hover:not(.input--disabled) {
+    background-color: var(--sl-input-background-color-hover);
+    border-color: var(--sl-input-border-color-hover);
+  }
+
+  .input--standard.input--focused:not(.input--disabled) {
+    background-color: var(--sl-input-background-color-focus);
+    border-color: var(--sl-input-border-color-focus);
+    box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+  }
+
+  .input--standard.input--focused:not(.input--disabled) .input__control {
+    color: var(--sl-input-color-focus);
+  }
+
+  .input--standard.input--disabled {
+    background-color: var(--sl-input-background-color-disabled);
+    border-color: var(--sl-input-border-color-disabled);
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .input--standard.input--disabled .input__control {
+    color: var(--sl-input-color-disabled);
+  }
+
+  .input--standard.input--disabled .input__control::placeholder {
+    color: var(--sl-input-placeholder-color-disabled);
+  }
+
+  /* Filled inputs */
+  .input--filled {
+    border: none;
+    background-color: var(--sl-input-filled-background-color);
+    color: var(--sl-input-color);
+  }
+
+  .input--filled:hover:not(.input--disabled) {
+    background-color: var(--sl-input-filled-background-color-hover);
+  }
+
+  .input--filled.input--focused:not(.input--disabled) {
+    background-color: var(--sl-input-filled-background-color-focus);
+    outline: var(--sl-focus-ring);
+    outline-offset: var(--sl-focus-ring-offset);
+  }
+
+  .input--filled.input--disabled {
+    background-color: var(--sl-input-filled-background-color-disabled);
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .input__control {
+    flex: 1 1 auto;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    min-width: 0;
+    height: 100%;
+    color: var(--sl-input-color);
+    border: none;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    cursor: inherit;
+    -webkit-appearance: none;
+  }
+
+  .input__control::-webkit-search-decoration,
+  .input__control::-webkit-search-cancel-button,
+  .input__control::-webkit-search-results-button,
+  .input__control::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+  }
+
+  .input__control:-webkit-autofill,
+  .input__control:-webkit-autofill:hover,
+  .input__control:-webkit-autofill:focus,
+  .input__control:-webkit-autofill:active {
+    box-shadow: 0 0 0 var(--sl-input-height-large) var(--sl-input-background-color-hover) inset !important;
+    -webkit-text-fill-color: var(--sl-color-primary-500);
+    caret-color: var(--sl-input-color);
+  }
+
+  .input--filled .input__control:-webkit-autofill,
+  .input--filled .input__control:-webkit-autofill:hover,
+  .input--filled .input__control:-webkit-autofill:focus,
+  .input--filled .input__control:-webkit-autofill:active {
+    box-shadow: 0 0 0 var(--sl-input-height-large) var(--sl-input-filled-background-color) inset !important;
+  }
+
+  .input__control::placeholder {
+    color: var(--sl-input-placeholder-color);
+    user-select: none;
+  }
+
+  .input:hover:not(.input--disabled) .input__control {
+    color: var(--sl-input-color-hover);
+  }
+
+  .input__control:focus {
+    outline: none;
+  }
+
+  .input__prefix,
+  .input__suffix {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    cursor: default;
+  }
+
+  .input__prefix::slotted(sl-icon),
+  .input__suffix::slotted(sl-icon) {
+    color: var(--sl-input-icon-color);
+  }
+
+  /*
+   * Size modifiers
+   */
+
+  .input--small {
+    border-radius: var(--sl-input-border-radius-small);
+    font-size: var(--sl-input-font-size-small);
+    height: var(--sl-input-height-small);
+  }
+
+  .input--small .input__control {
+    height: calc(var(--sl-input-height-small) - var(--sl-input-border-width) * 2);
+    padding: 0 var(--sl-input-spacing-small);
+  }
+
+  .input--small .input__clear,
+  .input--small .input__password-toggle {
+    width: calc(1em + var(--sl-input-spacing-small) * 2);
+  }
+
+  .input--small .input__prefix::slotted(*) {
+    margin-inline-start: var(--sl-input-spacing-small);
+  }
+
+  .input--small .input__suffix::slotted(*) {
+    margin-inline-end: var(--sl-input-spacing-small);
+  }
+
+  .input--medium {
+    border-radius: var(--sl-input-border-radius-medium);
+    font-size: var(--sl-input-font-size-medium);
+    height: var(--sl-input-height-medium);
+  }
+
+  .input--medium .input__control {
+    height: calc(var(--sl-input-height-medium) - var(--sl-input-border-width) * 2);
+    padding: 0 var(--sl-input-spacing-medium);
+  }
+
+  .input--medium .input__clear,
+  .input--medium .input__password-toggle {
+    width: calc(1em + var(--sl-input-spacing-medium) * 2);
+  }
+
+  .input--medium .input__prefix::slotted(*) {
+    margin-inline-start: var(--sl-input-spacing-medium);
+  }
+
+  .input--medium .input__suffix::slotted(*) {
+    margin-inline-end: var(--sl-input-spacing-medium);
+  }
+
+  .input--large {
+    border-radius: var(--sl-input-border-radius-large);
+    font-size: var(--sl-input-font-size-large);
+    height: var(--sl-input-height-large);
+  }
+
+  .input--large .input__control {
+    height: calc(var(--sl-input-height-large) - var(--sl-input-border-width) * 2);
+    padding: 0 var(--sl-input-spacing-large);
+  }
+
+  .input--large .input__clear,
+  .input--large .input__password-toggle {
+    width: calc(1em + var(--sl-input-spacing-large) * 2);
+  }
+
+  .input--large .input__prefix::slotted(*) {
+    margin-inline-start: var(--sl-input-spacing-large);
+  }
+
+  .input--large .input__suffix::slotted(*) {
+    margin-inline-end: var(--sl-input-spacing-large);
+  }
+
+  /*
+   * Pill modifier
+   */
+
+  .input--pill.input--small {
+    border-radius: var(--sl-input-height-small);
+  }
+
+  .input--pill.input--medium {
+    border-radius: var(--sl-input-height-medium);
+  }
+
+  .input--pill.input--large {
+    border-radius: var(--sl-input-height-large);
+  }
+
+  /*
+   * Clearable + Password Toggle
+   */
+
+  .input__clear,
+  .input__password-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: inherit;
+    color: var(--sl-input-icon-color);
+    border: none;
+    background: none;
+    padding: 0;
+    transition: var(--sl-transition-fast) color;
+    cursor: pointer;
+  }
+
+  .input__clear:hover,
+  .input__password-toggle:hover {
+    color: var(--sl-input-icon-color-hover);
+  }
+
+  .input__clear:focus,
+  .input__password-toggle:focus {
+    outline: none;
+  }
+
+  .input--empty .input__clear {
+    visibility: hidden;
+  }
+
+  /* Don't show the browser's password toggle in Edge */
+  ::-ms-reveal {
+    display: none;
+  }
+
+  /* Hide Firefox's clear button on date and time inputs */
+  .input--is-firefox input[type='date'],
+  .input--is-firefox input[type='time'] {
+    clip-path: inset(0 2em 0 0);
+  }
+
+  /* Hide the built-in number spinner */
+  .input--no-spin-buttons input[type='number']::-webkit-outer-spin-button,
+  .input--no-spin-buttons input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    display: none;
+  }
+
+  .input--no-spin-buttons input[type='number'] {
+    -moz-appearance: textfield;
+  }
+`;
+
+    var e2 = (o) => void 0 === o.strings;
+    var f$1 = {};
+    var s$1 = (o, l3 = f$1) => o._$AH = l3;
+
+    // node_modules/lit-html/directives/live.js
+    var l2$1 = e$3(class extends i$3 {
+      constructor(r) {
+        if (super(r), r.type !== t$3.PROPERTY && r.type !== t$3.ATTRIBUTE && r.type !== t$3.BOOLEAN_ATTRIBUTE)
+          throw Error("The `live` directive is not allowed on child or event bindings");
+        if (!e2(r))
+          throw Error("`live` bindings can only contain a single expression");
+      }
+      render(r) {
+        return r;
+      }
+      update(i2, [t2]) {
+        if (t2 === x$1 || t2 === b$1)
+          return t2;
+        const o = i2.element, l3 = i2.name;
+        if (i2.type === t$3.PROPERTY) {
+          if (t2 === o[l3])
+            return x$1;
+        } else if (i2.type === t$3.BOOLEAN_ATTRIBUTE) {
+          if (!!t2 === o.hasAttribute(l3))
+            return x$1;
+        } else if (i2.type === t$3.ATTRIBUTE && o.getAttribute(l3) === t2 + "")
+          return x$1;
+        return s$1(i2), t2;
+      }
+    });
+    /*! Bundled license information:
+
+    lit-html/directive-helpers.js:
+      (**
+       * @license
+       * Copyright 2020 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    lit-html/directives/live.js:
+      (**
+       * @license
+       * Copyright 2020 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+    */
+
+    // src/components/input/input.ts
+    var _a;
+    var isChromium = (_a = navigator.userAgentData) == null ? void 0 : _a.brands.some((b) => b.brand.includes("Chromium"));
+    var isFirefox = isChromium ? false : navigator.userAgent.includes("Firefox");
+    var SlInput = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.formControlController = new FormControlController(this);
+        this.hasSlotController = new HasSlotController(this, "help-text", "label");
+        this.localize = new LocalizeController2(this);
+        this.hasFocus = false;
+        this.title = "";
+        this.type = "text";
+        this.name = "";
+        this.value = "";
+        this.defaultValue = "";
+        this.size = "medium";
+        this.filled = false;
+        this.pill = false;
+        this.label = "";
+        this.helpText = "";
+        this.clearable = false;
+        this.disabled = false;
+        this.placeholder = "";
+        this.readonly = false;
+        this.passwordToggle = false;
+        this.passwordVisible = false;
+        this.noSpinButtons = false;
+        this.form = "";
+        this.required = false;
+        this.spellcheck = true;
+      }
+      /** Gets or sets the current value as a `Date` object. Returns `null` if the value can't be converted. */
+      get valueAsDate() {
+        var _a2, _b;
+        return (_b = (_a2 = this.input) == null ? void 0 : _a2.valueAsDate) != null ? _b : null;
+      }
+      set valueAsDate(newValue) {
+        const input = document.createElement("input");
+        input.type = "date";
+        input.valueAsDate = newValue;
+        this.value = input.value;
+      }
+      /** Gets or sets the current value as a number. Returns `NaN` if the value can't be converted. */
+      get valueAsNumber() {
+        var _a2, _b;
+        return (_b = (_a2 = this.input) == null ? void 0 : _a2.valueAsNumber) != null ? _b : parseFloat(this.value);
+      }
+      set valueAsNumber(newValue) {
+        const input = document.createElement("input");
+        input.type = "number";
+        input.valueAsNumber = newValue;
+        this.value = input.value;
+      }
+      firstUpdated() {
+        this.formControlController.updateValidity();
+      }
+      handleBlur() {
+        this.hasFocus = false;
+        this.emit("sl-blur");
+      }
+      handleChange() {
+        this.value = this.input.value;
+        this.emit("sl-change");
+      }
+      handleClearClick(event) {
+        this.value = "";
+        this.emit("sl-clear");
+        this.emit("sl-input");
+        this.emit("sl-change");
+        this.input.focus();
+        event.stopPropagation();
+      }
+      handleFocus() {
+        this.hasFocus = true;
+        this.emit("sl-focus");
+      }
+      handleInput() {
+        this.value = this.input.value;
+        this.formControlController.updateValidity();
+        this.emit("sl-input");
+      }
+      handleInvalid() {
+        this.formControlController.setValidity(false);
+      }
+      handleKeyDown(event) {
+        const hasModifier = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+        if (event.key === "Enter" && !hasModifier) {
+          setTimeout(() => {
+            if (!event.defaultPrevented && !event.isComposing) {
+              this.formControlController.submit();
+            }
+          });
+        }
+      }
+      handlePasswordToggle() {
+        this.passwordVisible = !this.passwordVisible;
+      }
+      handleDisabledChange() {
+        this.formControlController.setValidity(this.disabled);
+      }
+      handleStepChange() {
+        this.input.step = String(this.step);
+        this.formControlController.updateValidity();
+      }
+      async handleValueChange() {
+        await this.updateComplete;
+        this.formControlController.updateValidity();
+      }
+      /** Sets focus on the input. */
+      focus(options) {
+        this.input.focus(options);
+      }
+      /** Removes focus from the input. */
+      blur() {
+        this.input.blur();
+      }
+      /** Selects all the text in the input. */
+      select() {
+        this.input.select();
+      }
+      /** Sets the start and end positions of the text selection (0-based). */
+      setSelectionRange(selectionStart, selectionEnd, selectionDirection = "none") {
+        this.input.setSelectionRange(selectionStart, selectionEnd, selectionDirection);
+      }
+      /** Replaces a range of text with a new string. */
+      setRangeText(replacement, start, end, selectMode) {
+        this.input.setRangeText(replacement, start, end, selectMode);
+        if (this.value !== this.input.value) {
+          this.value = this.input.value;
+        }
+      }
+      /** Displays the browser picker for an input element (only works if the browser supports it for the input type). */
+      showPicker() {
+        if ("showPicker" in HTMLInputElement.prototype) {
+          this.input.showPicker();
+        }
+      }
+      /** Increments the value of a numeric input type by the value of the step attribute. */
+      stepUp() {
+        this.input.stepUp();
+        if (this.value !== this.input.value) {
+          this.value = this.input.value;
+        }
+      }
+      /** Decrements the value of a numeric input type by the value of the step attribute. */
+      stepDown() {
+        this.input.stepDown();
+        if (this.value !== this.input.value) {
+          this.value = this.input.value;
+        }
+      }
+      /** Checks for validity but does not show the browser's validation message. */
+      checkValidity() {
+        return this.input.checkValidity();
+      }
+      /** Checks for validity and shows the browser's validation message if the control is invalid. */
+      reportValidity() {
+        return this.input.reportValidity();
+      }
+      /** Sets a custom validation message. Pass an empty string to restore validity. */
+      setCustomValidity(message) {
+        this.input.setCustomValidity(message);
+        this.formControlController.updateValidity();
+      }
+      render() {
+        const hasLabelSlot = this.hasSlotController.test("label");
+        const hasHelpTextSlot = this.hasSlotController.test("help-text");
+        const hasLabel = this.label ? true : !!hasLabelSlot;
+        const hasHelpText = this.helpText ? true : !!hasHelpTextSlot;
+        const hasClearIcon = this.clearable && !this.disabled && !this.readonly && (typeof this.value === "number" || this.value.length > 0);
+        return y`
+      <div
+        part="form-control"
+        class=${o$1({
+      "form-control": true,
+      "form-control--small": this.size === "small",
+      "form-control--medium": this.size === "medium",
+      "form-control--large": this.size === "large",
+      "form-control--has-label": hasLabel,
+      "form-control--has-help-text": hasHelpText
+    })}
+      >
+        <label
+          part="form-control-label"
+          class="form-control__label"
+          for="input"
+          aria-hidden=${hasLabel ? "false" : "true"}
+        >
+          <slot name="label">${this.label}</slot>
+        </label>
+
+        <div part="form-control-input" class="form-control-input">
+          <div
+            part="base"
+            class=${o$1({
+      input: true,
+      // Sizes
+      "input--small": this.size === "small",
+      "input--medium": this.size === "medium",
+      "input--large": this.size === "large",
+      // States
+      "input--pill": this.pill,
+      "input--standard": !this.filled,
+      "input--filled": this.filled,
+      "input--disabled": this.disabled,
+      "input--focused": this.hasFocus,
+      "input--empty": !this.value,
+      "input--no-spin-buttons": this.noSpinButtons,
+      "input--is-firefox": isFirefox
+    })}
+          >
+            <slot name="prefix" part="prefix" class="input__prefix"></slot>
+            <input
+              part="input"
+              id="input"
+              class="input__control"
+              type=${this.type === "password" && this.passwordVisible ? "text" : this.type}
+              title=${this.title}
+              name=${l$1(this.name)}
+              ?disabled=${this.disabled}
+              ?readonly=${this.readonly}
+              ?required=${this.required}
+              placeholder=${l$1(this.placeholder)}
+              minlength=${l$1(this.minlength)}
+              maxlength=${l$1(this.maxlength)}
+              min=${l$1(this.min)}
+              max=${l$1(this.max)}
+              step=${l$1(this.step)}
+              .value=${l2$1(this.value)}
+              autocapitalize=${l$1(this.type === "password" ? "off" : this.autocapitalize)}
+              autocomplete=${l$1(this.type === "password" ? "off" : this.autocomplete)}
+              autocorrect=${l$1(this.type === "password" ? "off" : this.autocorrect)}
+              ?autofocus=${this.autofocus}
+              spellcheck=${this.spellcheck}
+              pattern=${l$1(this.pattern)}
+              enterkeyhint=${l$1(this.enterkeyhint)}
+              inputmode=${l$1(this.inputmode)}
+              aria-describedby="help-text"
+              @change=${this.handleChange}
+              @input=${this.handleInput}
+              @invalid=${this.handleInvalid}
+              @keydown=${this.handleKeyDown}
+              @focus=${this.handleFocus}
+              @blur=${this.handleBlur}
+            />
+
+            ${hasClearIcon ? y`
+                    <button
+                      part="clear-button"
+                      class="input__clear"
+                      type="button"
+                      aria-label=${this.localize.term("clearEntry")}
+                      @click=${this.handleClearClick}
+                      tabindex="-1"
+                    >
+                      <slot name="clear-icon">
+                        <sl-icon name="x-circle-fill" library="system"></sl-icon>
+                      </slot>
+                    </button>
+                  ` : ""}
+            ${this.passwordToggle && !this.disabled ? y`
+                    <button
+                      part="password-toggle-button"
+                      class="input__password-toggle"
+                      type="button"
+                      aria-label=${this.localize.term(this.passwordVisible ? "hidePassword" : "showPassword")}
+                      @click=${this.handlePasswordToggle}
+                      tabindex="-1"
+                    >
+                      ${this.passwordVisible ? y`
+                            <slot name="show-password-icon">
+                              <sl-icon name="eye-slash" library="system"></sl-icon>
+                            </slot>
+                          ` : y`
+                            <slot name="hide-password-icon">
+                              <sl-icon name="eye" library="system"></sl-icon>
+                            </slot>
+                          `}
+                    </button>
+                  ` : ""}
+
+            <slot name="suffix" part="suffix" class="input__suffix"></slot>
+          </div>
+        </div>
+
+        <slot
+          name="help-text"
+          part="form-control-help-text"
+          id="help-text"
+          class="form-control__help-text"
+          aria-hidden=${hasHelpText ? "false" : "true"}
+        >
+          ${this.helpText}
+        </slot>
+        </div>
+      </div>
+    `;
+      }
+    };
+    SlInput.styles = input_styles_default;
+    __decorateClass([
+      i2$2(".input__control")
+    ], SlInput.prototype, "input", 2);
+    __decorateClass([
+      t$1()
+    ], SlInput.prototype, "hasFocus", 2);
+    __decorateClass([
+      e2$1()
+    ], SlInput.prototype, "title", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlInput.prototype, "type", 2);
+    __decorateClass([
+      e2$1()
+    ], SlInput.prototype, "name", 2);
+    __decorateClass([
+      e2$1()
+    ], SlInput.prototype, "value", 2);
+    __decorateClass([
+      defaultValue()
+    ], SlInput.prototype, "defaultValue", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlInput.prototype, "size", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlInput.prototype, "filled", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlInput.prototype, "pill", 2);
+    __decorateClass([
+      e2$1()
+    ], SlInput.prototype, "label", 2);
+    __decorateClass([
+      e2$1({ attribute: "help-text" })
+    ], SlInput.prototype, "helpText", 2);
+    __decorateClass([
+      e2$1({ type: Boolean })
+    ], SlInput.prototype, "clearable", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlInput.prototype, "disabled", 2);
+    __decorateClass([
+      e2$1()
+    ], SlInput.prototype, "placeholder", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlInput.prototype, "readonly", 2);
+    __decorateClass([
+      e2$1({ attribute: "password-toggle", type: Boolean })
+    ], SlInput.prototype, "passwordToggle", 2);
+    __decorateClass([
+      e2$1({ attribute: "password-visible", type: Boolean })
+    ], SlInput.prototype, "passwordVisible", 2);
+    __decorateClass([
+      e2$1({ attribute: "no-spin-buttons", type: Boolean })
+    ], SlInput.prototype, "noSpinButtons", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlInput.prototype, "form", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlInput.prototype, "required", 2);
+    __decorateClass([
+      e2$1()
+    ], SlInput.prototype, "pattern", 2);
+    __decorateClass([
+      e2$1({ type: Number })
+    ], SlInput.prototype, "minlength", 2);
+    __decorateClass([
+      e2$1({ type: Number })
+    ], SlInput.prototype, "maxlength", 2);
+    __decorateClass([
+      e2$1({ type: Number })
+    ], SlInput.prototype, "min", 2);
+    __decorateClass([
+      e2$1({ type: Number })
+    ], SlInput.prototype, "max", 2);
+    __decorateClass([
+      e2$1()
+    ], SlInput.prototype, "step", 2);
+    __decorateClass([
+      e2$1()
+    ], SlInput.prototype, "autocapitalize", 2);
+    __decorateClass([
+      e2$1()
+    ], SlInput.prototype, "autocorrect", 2);
+    __decorateClass([
+      e2$1()
+    ], SlInput.prototype, "autocomplete", 2);
+    __decorateClass([
+      e2$1({ type: Boolean })
+    ], SlInput.prototype, "autofocus", 2);
+    __decorateClass([
+      e2$1()
+    ], SlInput.prototype, "enterkeyhint", 2);
+    __decorateClass([
+      e2$1({
+        type: Boolean,
+        converter: {
+          // Allow "true|false" attribute values but keep the property boolean
+          fromAttribute: (value) => !value || value === "false" ? false : true,
+          toAttribute: (value) => value ? "true" : "false"
+        }
+      })
+    ], SlInput.prototype, "spellcheck", 2);
+    __decorateClass([
+      e2$1()
+    ], SlInput.prototype, "inputmode", 2);
+    __decorateClass([
+      watch("disabled", { waitUntilFirstUpdate: true })
+    ], SlInput.prototype, "handleDisabledChange", 1);
+    __decorateClass([
+      watch("step", { waitUntilFirstUpdate: true })
+    ], SlInput.prototype, "handleStepChange", 1);
+    __decorateClass([
+      watch("value", { waitUntilFirstUpdate: true })
+    ], SlInput.prototype, "handleValueChange", 1);
+    SlInput = __decorateClass([
+      e$1("sl-input")
+    ], SlInput);
+
+    // src/components/dropdown/dropdown.styles.ts
+    var dropdown_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    display: inline-block;
+  }
+
+  .dropdown::part(popup) {
+    z-index: var(--sl-z-index-dropdown);
+  }
+
+  .dropdown[data-current-placement^='top']::part(popup) {
+    transform-origin: bottom;
+  }
+
+  .dropdown[data-current-placement^='bottom']::part(popup) {
+    transform-origin: top;
+  }
+
+  .dropdown[data-current-placement^='left']::part(popup) {
+    transform-origin: right;
+  }
+
+  .dropdown[data-current-placement^='right']::part(popup) {
+    transform-origin: left;
+  }
+
+  .dropdown__trigger {
+    display: block;
+  }
+
+  .dropdown__panel {
+    font-family: var(--sl-font-sans);
+    font-size: var(--sl-font-size-medium);
+    font-weight: var(--sl-font-weight-normal);
+    box-shadow: var(--sl-shadow-large);
+    border-radius: var(--sl-border-radius-medium);
+    pointer-events: none;
+  }
+
+  .dropdown--open .dropdown__panel {
+    display: block;
+    pointer-events: all;
+  }
+
+  /* When users slot a menu, make sure it conforms to the popup's auto-size */
+  ::slotted(sl-menu) {
+    max-width: var(--auto-size-available-width) !important;
+    max-height: var(--auto-size-available-height) !important;
+  }
+`;
+
+    // src/components/dropdown/dropdown.ts
+    var SlDropdown = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.localize = new LocalizeController2(this);
+        this.open = false;
+        this.placement = "bottom-start";
+        this.disabled = false;
+        this.stayOpenOnSelect = false;
+        this.distance = 0;
+        this.skidding = 0;
+        this.hoist = false;
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        this.handleMenuItemActivate = this.handleMenuItemActivate.bind(this);
+        this.handlePanelSelect = this.handlePanelSelect.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleDocumentKeyDown = this.handleDocumentKeyDown.bind(this);
+        this.handleDocumentMouseDown = this.handleDocumentMouseDown.bind(this);
+        if (!this.containingElement) {
+          this.containingElement = this;
+        }
+      }
+      firstUpdated() {
+        this.panel.hidden = !this.open;
+        if (this.open) {
+          this.addOpenListeners();
+          this.popup.active = true;
+        }
+      }
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        this.removeOpenListeners();
+        this.hide();
+      }
+      focusOnTrigger() {
+        const trigger = this.trigger.assignedElements({ flatten: true })[0];
+        if (typeof (trigger == null ? void 0 : trigger.focus) === "function") {
+          trigger.focus();
+        }
+      }
+      getMenu() {
+        return this.panel.assignedElements({ flatten: true }).find((el) => el.tagName.toLowerCase() === "sl-menu");
+      }
+      handleKeyDown(event) {
+        if (this.open && event.key === "Escape") {
+          event.stopPropagation();
+          this.hide();
+          this.focusOnTrigger();
+        }
+      }
+      handleDocumentKeyDown(event) {
+        var _a;
+        if (event.key === "Tab") {
+          if (this.open && ((_a = document.activeElement) == null ? void 0 : _a.tagName.toLowerCase()) === "sl-menu-item") {
+            event.preventDefault();
+            this.hide();
+            this.focusOnTrigger();
+            return;
+          }
+          setTimeout(() => {
+            var _a2, _b, _c;
+            const activeElement = ((_a2 = this.containingElement) == null ? void 0 : _a2.getRootNode()) instanceof ShadowRoot ? (_c = (_b = document.activeElement) == null ? void 0 : _b.shadowRoot) == null ? void 0 : _c.activeElement : document.activeElement;
+            if (!this.containingElement || (activeElement == null ? void 0 : activeElement.closest(this.containingElement.tagName.toLowerCase())) !== this.containingElement) {
+              this.hide();
+            }
+          });
+        }
+      }
+      handleDocumentMouseDown(event) {
+        const path = event.composedPath();
+        if (this.containingElement && !path.includes(this.containingElement)) {
+          this.hide();
+        }
+      }
+      handleMenuItemActivate(event) {
+        const item = event.target;
+        scrollIntoView(item, this.panel);
+      }
+      handlePanelSelect(event) {
+        const target = event.target;
+        if (!this.stayOpenOnSelect && target.tagName.toLowerCase() === "sl-menu") {
+          this.hide();
+          this.focusOnTrigger();
+        }
+      }
+      handleTriggerClick() {
+        if (this.open) {
+          this.hide();
+        } else {
+          this.show();
+        }
+      }
+      handleTriggerKeyDown(event) {
+        if (event.key === "Escape" && this.open) {
+          event.stopPropagation();
+          this.focusOnTrigger();
+          this.hide();
+          return;
+        }
+        if ([" ", "Enter"].includes(event.key)) {
+          event.preventDefault();
+          this.handleTriggerClick();
+          return;
+        }
+        const menu = this.getMenu();
+        if (menu) {
+          const menuItems = menu.defaultSlot.assignedElements({ flatten: true });
+          const firstMenuItem = menuItems[0];
+          const lastMenuItem = menuItems[menuItems.length - 1];
+          if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+            event.preventDefault();
+            if (!this.open) {
+              this.show();
+            }
+            if (menuItems.length > 0) {
+              requestAnimationFrame(() => {
+                if (event.key === "ArrowDown" || event.key === "Home") {
+                  menu.setCurrentItem(firstMenuItem);
+                  firstMenuItem.focus();
+                }
+                if (event.key === "ArrowUp" || event.key === "End") {
+                  menu.setCurrentItem(lastMenuItem);
+                  lastMenuItem.focus();
+                }
+              });
+            }
+          }
+        }
+      }
+      handleTriggerKeyUp(event) {
+        if (event.key === " ") {
+          event.preventDefault();
+        }
+      }
+      handleTriggerSlotChange() {
+        this.updateAccessibleTrigger();
+      }
+      //
+      // Slotted triggers can be arbitrary content, but we need to link them to the dropdown panel with `aria-haspopup` and
+      // `aria-expanded`. These must be applied to the "accessible trigger" (the tabbable portion of the trigger element
+      // that gets slotted in) so screen readers will understand them. The accessible trigger could be the slotted element,
+      // a child of the slotted element, or an element in the slotted element's shadow root.
+      //
+      // For example, the accessible trigger of an <sl-button> is a <button> located inside its shadow root.
+      //
+      // To determine this, we assume the first tabbable element in the trigger slot is the "accessible trigger."
+      //
+      updateAccessibleTrigger() {
+        const assignedElements = this.trigger.assignedElements({ flatten: true });
+        const accessibleTrigger = assignedElements.find((el) => getTabbableBoundary(el).start);
+        let target;
+        if (accessibleTrigger) {
+          switch (accessibleTrigger.tagName.toLowerCase()) {
+            case "sl-button":
+            case "sl-icon-button":
+              target = accessibleTrigger.button;
+              break;
+            default:
+              target = accessibleTrigger;
+          }
+          target.setAttribute("aria-haspopup", "true");
+          target.setAttribute("aria-expanded", this.open ? "true" : "false");
+        }
+      }
+      /** Shows the dropdown panel. */
+      async show() {
+        if (this.open) {
+          return void 0;
+        }
+        this.open = true;
+        return waitForEvent(this, "sl-after-show");
+      }
+      /** Hides the dropdown panel */
+      async hide() {
+        if (!this.open) {
+          return void 0;
+        }
+        this.open = false;
+        return waitForEvent(this, "sl-after-hide");
+      }
+      /**
+       * Instructs the dropdown menu to reposition. Useful when the position or size of the trigger changes when the menu
+       * is activated.
+       */
+      reposition() {
+        this.popup.reposition();
+      }
+      addOpenListeners() {
+        this.panel.addEventListener("sl-activate", this.handleMenuItemActivate);
+        this.panel.addEventListener("sl-select", this.handlePanelSelect);
+        this.panel.addEventListener("keydown", this.handleKeyDown);
+        document.addEventListener("keydown", this.handleDocumentKeyDown);
+        document.addEventListener("mousedown", this.handleDocumentMouseDown);
+      }
+      removeOpenListeners() {
+        if (this.panel) {
+          this.panel.removeEventListener("sl-activate", this.handleMenuItemActivate);
+          this.panel.removeEventListener("sl-select", this.handlePanelSelect);
+          this.panel.removeEventListener("keydown", this.handleKeyDown);
+        }
+        document.removeEventListener("keydown", this.handleDocumentKeyDown);
+        document.removeEventListener("mousedown", this.handleDocumentMouseDown);
+      }
+      async handleOpenChange() {
+        if (this.disabled) {
+          this.open = false;
+          return;
+        }
+        this.updateAccessibleTrigger();
+        if (this.open) {
+          this.emit("sl-show");
+          this.addOpenListeners();
+          await stopAnimations(this);
+          this.panel.hidden = false;
+          this.popup.active = true;
+          const { keyframes, options } = getAnimation(this, "dropdown.show", { dir: this.localize.dir() });
+          await animateTo(this.popup.popup, keyframes, options);
+          this.emit("sl-after-show");
+        } else {
+          this.emit("sl-hide");
+          this.removeOpenListeners();
+          await stopAnimations(this);
+          const { keyframes, options } = getAnimation(this, "dropdown.hide", { dir: this.localize.dir() });
+          await animateTo(this.popup.popup, keyframes, options);
+          this.panel.hidden = true;
+          this.popup.active = false;
+          this.emit("sl-after-hide");
+        }
+      }
+      render() {
+        return y`
+      <sl-popup
+        part="base"
+        id="dropdown"
+        placement=${this.placement}
+        distance=${this.distance}
+        skidding=${this.skidding}
+        strategy=${this.hoist ? "fixed" : "absolute"}
+        flip
+        shift
+        auto-size="vertical"
+        auto-size-padding="10"
+        class=${o$1({
+      dropdown: true,
+      "dropdown--open": this.open
+    })}
+      >
+        <slot
+          name="trigger"
+          slot="anchor"
+          part="trigger"
+          class="dropdown__trigger"
+          @click=${this.handleTriggerClick}
+          @keydown=${this.handleTriggerKeyDown}
+          @keyup=${this.handleTriggerKeyUp}
+          @slotchange=${this.handleTriggerSlotChange}
+        ></slot>
+
+        <slot
+          part="panel"
+          class="dropdown__panel"
+          aria-hidden=${this.open ? "false" : "true"}
+          aria-labelledby="dropdown"
+        ></slot>
+      </sl-popup>
+    `;
+      }
+    };
+    SlDropdown.styles = dropdown_styles_default;
+    __decorateClass([
+      i2$2(".dropdown")
+    ], SlDropdown.prototype, "popup", 2);
+    __decorateClass([
+      i2$2(".dropdown__trigger")
+    ], SlDropdown.prototype, "trigger", 2);
+    __decorateClass([
+      i2$2(".dropdown__panel")
+    ], SlDropdown.prototype, "panel", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlDropdown.prototype, "open", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlDropdown.prototype, "placement", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlDropdown.prototype, "disabled", 2);
+    __decorateClass([
+      e2$1({ attribute: "stay-open-on-select", type: Boolean, reflect: true })
+    ], SlDropdown.prototype, "stayOpenOnSelect", 2);
+    __decorateClass([
+      e2$1({ attribute: false })
+    ], SlDropdown.prototype, "containingElement", 2);
+    __decorateClass([
+      e2$1({ type: Number })
+    ], SlDropdown.prototype, "distance", 2);
+    __decorateClass([
+      e2$1({ type: Number })
+    ], SlDropdown.prototype, "skidding", 2);
+    __decorateClass([
+      e2$1({ type: Boolean })
+    ], SlDropdown.prototype, "hoist", 2);
+    __decorateClass([
+      watch("open", { waitUntilFirstUpdate: true })
+    ], SlDropdown.prototype, "handleOpenChange", 1);
+    SlDropdown = __decorateClass([
+      e$1("sl-dropdown")
+    ], SlDropdown);
+    setDefaultAnimation("dropdown.show", {
+      keyframes: [
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1 }
+      ],
+      options: { duration: 100, easing: "ease" }
+    });
+    setDefaultAnimation("dropdown.hide", {
+      keyframes: [
+        { opacity: 1, scale: 1 },
+        { opacity: 0, scale: 0.9 }
+      ],
+      options: { duration: 100, easing: "ease" }
+    });
+
+    // src/components/popup/popup.styles.ts
+    var popup_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    --arrow-color: var(--sl-color-neutral-1000);
+    --arrow-size: 6px;
+
+    /*
+     * These properties are computed to account for the arrow's dimensions after being rotated 45º. The constant
+     * 0.7071 is derived from sin(45), which is the diagonal size of the arrow's container after rotating.
+     */
+    --arrow-size-diagonal: calc(var(--arrow-size) * 0.7071);
+    --arrow-padding-offset: calc(var(--arrow-size-diagonal) - var(--arrow-size));
+
+    display: contents;
+  }
+
+  .popup {
+    position: absolute;
+    isolation: isolate;
+    max-width: var(--auto-size-available-width, none);
+    max-height: var(--auto-size-available-height, none);
+  }
+
+  .popup--fixed {
+    position: fixed;
+  }
+
+  .popup:not(.popup--active) {
+    display: none;
+  }
+
+  .popup__arrow {
+    position: absolute;
+    width: calc(var(--arrow-size-diagonal) * 2);
+    height: calc(var(--arrow-size-diagonal) * 2);
+    rotate: 45deg;
+    background: var(--arrow-color);
+    z-index: -1;
+  }
+`;
+
+    // node_modules/@floating-ui/core/dist/floating-ui.core.browser.min.mjs
+    function t(t2) {
+      return t2.split("-")[1];
+    }
+    function e3(t2) {
+      return "y" === t2 ? "height" : "width";
+    }
+    function n(t2) {
+      return t2.split("-")[0];
+    }
+    function o2(t2) {
+      return ["top", "bottom"].includes(n(t2)) ? "x" : "y";
+    }
+    function i2(i4, r3, a3) {
+      let { reference: l3, floating: s3 } = i4;
+      const c3 = l3.x + l3.width / 2 - s3.width / 2, f3 = l3.y + l3.height / 2 - s3.height / 2, u3 = o2(r3), m3 = e3(u3), g3 = l3[m3] / 2 - s3[m3] / 2, d3 = "x" === u3;
+      let p3;
+      switch (n(r3)) {
+        case "top":
+          p3 = { x: c3, y: l3.y - s3.height };
+          break;
+        case "bottom":
+          p3 = { x: c3, y: l3.y + l3.height };
+          break;
+        case "right":
+          p3 = { x: l3.x + l3.width, y: f3 };
+          break;
+        case "left":
+          p3 = { x: l3.x - s3.width, y: f3 };
+          break;
+        default:
+          p3 = { x: l3.x, y: l3.y };
+      }
+      switch (t(r3)) {
+        case "start":
+          p3[u3] -= g3 * (a3 && d3 ? -1 : 1);
+          break;
+        case "end":
+          p3[u3] += g3 * (a3 && d3 ? -1 : 1);
+      }
+      return p3;
+    }
+    var r = async (t2, e4, n3) => {
+      const { placement: o4 = "bottom", strategy: r3 = "absolute", middleware: a3 = [], platform: l3 } = n3, s3 = a3.filter(Boolean), c3 = await (null == l3.isRTL ? void 0 : l3.isRTL(e4));
+      let f3 = await l3.getElementRects({ reference: t2, floating: e4, strategy: r3 }), { x: u3, y: m3 } = i2(f3, o4, c3), g3 = o4, d3 = {}, p3 = 0;
+      for (let n4 = 0; n4 < s3.length; n4++) {
+        const { name: a4, fn: h3 } = s3[n4], { x: y4, y: x3, data: w3, reset: v3 } = await h3({ x: u3, y: m3, initialPlacement: o4, placement: g3, strategy: r3, middlewareData: d3, rects: f3, platform: l3, elements: { reference: t2, floating: e4 } });
+        u3 = null != y4 ? y4 : u3, m3 = null != x3 ? x3 : m3, d3 = __spreadProps(__spreadValues({}, d3), { [a4]: __spreadValues(__spreadValues({}, d3[a4]), w3) }), v3 && p3 <= 50 && (p3++, "object" == typeof v3 && (v3.placement && (g3 = v3.placement), v3.rects && (f3 = true === v3.rects ? await l3.getElementRects({ reference: t2, floating: e4, strategy: r3 }) : v3.rects), { x: u3, y: m3 } = i2(f3, g3, c3)), n4 = -1);
+      }
+      return { x: u3, y: m3, placement: g3, strategy: r3, middlewareData: d3 };
+    };
+    function a(t2) {
+      return "number" != typeof t2 ? function(t3) {
+        return __spreadValues({ top: 0, right: 0, bottom: 0, left: 0 }, t3);
+      }(t2) : { top: t2, right: t2, bottom: t2, left: t2 };
+    }
+    function l(t2) {
+      return __spreadProps(__spreadValues({}, t2), { top: t2.y, left: t2.x, right: t2.x + t2.width, bottom: t2.y + t2.height });
+    }
+    async function s(t2, e4) {
+      var n3;
+      void 0 === e4 && (e4 = {});
+      const { x: o4, y: i4, platform: r3, rects: s3, elements: c3, strategy: f3 } = t2, { boundary: u3 = "clippingAncestors", rootBoundary: m3 = "viewport", elementContext: g3 = "floating", altBoundary: d3 = false, padding: p3 = 0 } = e4, h3 = a(p3), y4 = c3[d3 ? "floating" === g3 ? "reference" : "floating" : g3], x3 = l(await r3.getClippingRect({ element: null == (n3 = await (null == r3.isElement ? void 0 : r3.isElement(y4))) || n3 ? y4 : y4.contextElement || await (null == r3.getDocumentElement ? void 0 : r3.getDocumentElement(c3.floating)), boundary: u3, rootBoundary: m3, strategy: f3 })), w3 = "floating" === g3 ? __spreadProps(__spreadValues({}, s3.floating), { x: o4, y: i4 }) : s3.reference, v3 = await (null == r3.getOffsetParent ? void 0 : r3.getOffsetParent(c3.floating)), b3 = await (null == r3.isElement ? void 0 : r3.isElement(v3)) && await (null == r3.getScale ? void 0 : r3.getScale(v3)) || { x: 1, y: 1 }, R2 = l(r3.convertOffsetParentRelativeRectToViewportRelativeRect ? await r3.convertOffsetParentRelativeRectToViewportRelativeRect({ rect: w3, offsetParent: v3, strategy: f3 }) : w3);
+      return { top: (x3.top - R2.top + h3.top) / b3.y, bottom: (R2.bottom - x3.bottom + h3.bottom) / b3.y, left: (x3.left - R2.left + h3.left) / b3.x, right: (R2.right - x3.right + h3.right) / b3.x };
+    }
+    var c = Math.min;
+    var f = Math.max;
+    function u(t2, e4, n3) {
+      return f(t2, c(e4, n3));
+    }
+    var m = (n3) => ({ name: "arrow", options: n3, async fn(i4) {
+      const { element: r3, padding: l3 = 0 } = n3 || {}, { x: s3, y: c3, placement: f3, rects: m3, platform: g3 } = i4;
+      if (null == r3)
+        return {};
+      const d3 = a(l3), p3 = { x: s3, y: c3 }, h3 = o2(f3), y4 = e3(h3), x3 = await g3.getDimensions(r3), w3 = "y" === h3 ? "top" : "left", v3 = "y" === h3 ? "bottom" : "right", b3 = m3.reference[y4] + m3.reference[h3] - p3[h3] - m3.floating[y4], R2 = p3[h3] - m3.reference[h3], A2 = await (null == g3.getOffsetParent ? void 0 : g3.getOffsetParent(r3));
+      let P3 = A2 ? "y" === h3 ? A2.clientHeight || 0 : A2.clientWidth || 0 : 0;
+      0 === P3 && (P3 = m3.floating[y4]);
+      const T3 = b3 / 2 - R2 / 2, O3 = d3[w3], D3 = P3 - x3[y4] - d3[v3], E3 = P3 / 2 - x3[y4] / 2 + T3, L3 = u(O3, E3, D3), k2 = null != t(f3) && E3 != L3 && m3.reference[y4] / 2 - (E3 < O3 ? d3[w3] : d3[v3]) - x3[y4] / 2 < 0;
+      return { [h3]: p3[h3] - (k2 ? E3 < O3 ? O3 - E3 : D3 - E3 : 0), data: { [h3]: L3, centerOffset: E3 - L3 } };
+    } });
+    var g = ["top", "right", "bottom", "left"];
+    g.reduce((t2, e4) => t2.concat(e4, e4 + "-start", e4 + "-end"), []);
+    var p = { left: "right", right: "left", bottom: "top", top: "bottom" };
+    function h(t2) {
+      return t2.replace(/left|right|bottom|top/g, (t3) => p[t3]);
+    }
+    function y2(n3, i4, r3) {
+      void 0 === r3 && (r3 = false);
+      const a3 = t(n3), l3 = o2(n3), s3 = e3(l3);
+      let c3 = "x" === l3 ? a3 === (r3 ? "end" : "start") ? "right" : "left" : "start" === a3 ? "bottom" : "top";
+      return i4.reference[s3] > i4.floating[s3] && (c3 = h(c3)), { main: c3, cross: h(c3) };
+    }
+    var x = { start: "end", end: "start" };
+    function w(t2) {
+      return t2.replace(/start|end/g, (t3) => x[t3]);
+    }
+    var b = function(e4) {
+      return void 0 === e4 && (e4 = {}), { name: "flip", options: e4, async fn(o4) {
+        var i4;
+        const { placement: r3, middlewareData: a3, rects: l3, initialPlacement: c3, platform: f3, elements: u3 } = o4, _a = e4, { mainAxis: m3 = true, crossAxis: g3 = true, fallbackPlacements: d3, fallbackStrategy: p3 = "bestFit", fallbackAxisSideDirection: x3 = "none", flipAlignment: v3 = true } = _a, b3 = __objRest(_a, ["mainAxis", "crossAxis", "fallbackPlacements", "fallbackStrategy", "fallbackAxisSideDirection", "flipAlignment"]), R2 = n(r3), A2 = n(c3) === c3, P3 = await (null == f3.isRTL ? void 0 : f3.isRTL(u3.floating)), T3 = d3 || (A2 || !v3 ? [h(c3)] : function(t2) {
+          const e5 = h(t2);
+          return [w(t2), e5, w(e5)];
+        }(c3));
+        d3 || "none" === x3 || T3.push(...function(e5, o5, i5, r4) {
+          const a4 = t(e5);
+          let l4 = function(t2, e6, n3) {
+            const o6 = ["left", "right"], i6 = ["right", "left"], r5 = ["top", "bottom"], a5 = ["bottom", "top"];
+            switch (t2) {
+              case "top":
+              case "bottom":
+                return n3 ? e6 ? i6 : o6 : e6 ? o6 : i6;
+              case "left":
+              case "right":
+                return e6 ? r5 : a5;
+              default:
+                return [];
+            }
+          }(n(e5), "start" === i5, r4);
+          return a4 && (l4 = l4.map((t2) => t2 + "-" + a4), o5 && (l4 = l4.concat(l4.map(w)))), l4;
+        }(c3, v3, x3, P3));
+        const O3 = [c3, ...T3], D3 = await s(o4, b3), E3 = [];
+        let L3 = (null == (i4 = a3.flip) ? void 0 : i4.overflows) || [];
+        if (m3 && E3.push(D3[R2]), g3) {
+          const { main: t2, cross: e5 } = y2(r3, l3, P3);
+          E3.push(D3[t2], D3[e5]);
+        }
+        if (L3 = [...L3, { placement: r3, overflows: E3 }], !E3.every((t2) => t2 <= 0)) {
+          var k2;
+          const t2 = ((null == (k2 = a3.flip) ? void 0 : k2.index) || 0) + 1, e5 = O3[t2];
+          if (e5)
+            return { data: { index: t2, overflows: L3 }, reset: { placement: e5 } };
+          let n3 = "bottom";
+          switch (p3) {
+            case "bestFit": {
+              var B;
+              const t3 = null == (B = L3.map((t4) => [t4, t4.overflows.filter((t5) => t5 > 0).reduce((t5, e6) => t5 + e6, 0)]).sort((t4, e6) => t4[1] - e6[1])[0]) ? void 0 : B[0].placement;
+              t3 && (n3 = t3);
+              break;
+            }
+            case "initialPlacement":
+              n3 = c3;
+          }
+          if (r3 !== n3)
+            return { reset: { placement: n3 } };
+        }
+        return {};
+      } };
+    };
+    var O = function(e4) {
+      return void 0 === e4 && (e4 = 0), { name: "offset", options: e4, async fn(i4) {
+        const { x: r3, y: a3 } = i4, l3 = await async function(e5, i5) {
+          const { placement: r4, platform: a4, elements: l4 } = e5, s3 = await (null == a4.isRTL ? void 0 : a4.isRTL(l4.floating)), c3 = n(r4), f3 = t(r4), u3 = "x" === o2(r4), m3 = ["left", "top"].includes(c3) ? -1 : 1, g3 = s3 && u3 ? -1 : 1, d3 = "function" == typeof i5 ? i5(e5) : i5;
+          let { mainAxis: p3, crossAxis: h3, alignmentAxis: y4 } = "number" == typeof d3 ? { mainAxis: d3, crossAxis: 0, alignmentAxis: null } : __spreadValues({ mainAxis: 0, crossAxis: 0, alignmentAxis: null }, d3);
+          return f3 && "number" == typeof y4 && (h3 = "end" === f3 ? -1 * y4 : y4), u3 ? { x: h3 * g3, y: p3 * m3 } : { x: p3 * m3, y: h3 * g3 };
+        }(i4, e4);
+        return { x: r3 + l3.x, y: a3 + l3.y, data: l3 };
+      } };
+    };
+    function D(t2) {
+      return "x" === t2 ? "y" : "x";
+    }
+    var E = function(t2) {
+      return void 0 === t2 && (t2 = {}), { name: "shift", options: t2, async fn(e4) {
+        const { x: i4, y: r3, placement: a3 } = e4, _a = t2, { mainAxis: l3 = true, crossAxis: c3 = false, limiter: f3 = { fn: (t3) => {
+          let { x: e5, y: n3 } = t3;
+          return { x: e5, y: n3 };
+        } } } = _a, m3 = __objRest(_a, ["mainAxis", "crossAxis", "limiter"]), g3 = { x: i4, y: r3 }, d3 = await s(e4, m3), p3 = o2(n(a3)), h3 = D(p3);
+        let y4 = g3[p3], x3 = g3[h3];
+        if (l3) {
+          const t3 = "y" === p3 ? "bottom" : "right";
+          y4 = u(y4 + d3["y" === p3 ? "top" : "left"], y4, y4 - d3[t3]);
+        }
+        if (c3) {
+          const t3 = "y" === h3 ? "bottom" : "right";
+          x3 = u(x3 + d3["y" === h3 ? "top" : "left"], x3, x3 - d3[t3]);
+        }
+        const w3 = f3.fn(__spreadProps(__spreadValues({}, e4), { [p3]: y4, [h3]: x3 }));
+        return __spreadProps(__spreadValues({}, w3), { data: { x: w3.x - i4, y: w3.y - r3 } });
+      } };
+    };
+    var k = function(e4) {
+      return void 0 === e4 && (e4 = {}), { name: "size", options: e4, async fn(o4) {
+        const { placement: i4, rects: r3, platform: a3, elements: l3 } = o4, _a = e4, { apply: c3 = () => {
+        } } = _a, u3 = __objRest(_a, ["apply"]), m3 = await s(o4, u3), g3 = n(i4), d3 = t(i4);
+        let p3, h3;
+        "top" === g3 || "bottom" === g3 ? (p3 = g3, h3 = d3 === (await (null == a3.isRTL ? void 0 : a3.isRTL(l3.floating)) ? "start" : "end") ? "left" : "right") : (h3 = g3, p3 = "end" === d3 ? "top" : "bottom");
+        const y4 = f(m3.left, 0), x3 = f(m3.right, 0), w3 = f(m3.top, 0), v3 = f(m3.bottom, 0), b3 = { availableHeight: r3.floating.height - (["left", "right"].includes(i4) ? 2 * (0 !== w3 || 0 !== v3 ? w3 + v3 : f(m3.top, m3.bottom)) : m3[p3]), availableWidth: r3.floating.width - (["top", "bottom"].includes(i4) ? 2 * (0 !== y4 || 0 !== x3 ? y4 + x3 : f(m3.left, m3.right)) : m3[h3]) };
+        await c3(__spreadValues(__spreadValues({}, o4), b3));
+        const R2 = await a3.getDimensions(l3.floating);
+        return r3.floating.width !== R2.width || r3.floating.height !== R2.height ? { reset: { rects: true } } : {};
+      } };
+    };
+
+    // node_modules/@floating-ui/dom/dist/floating-ui.dom.browser.min.mjs
+    function n2(t2) {
+      var e4;
+      return (null == (e4 = t2.ownerDocument) ? void 0 : e4.defaultView) || window;
+    }
+    function o3(t2) {
+      return n2(t2).getComputedStyle(t2);
+    }
+    function i3(t2) {
+      return f2(t2) ? (t2.nodeName || "").toLowerCase() : "";
+    }
+    var r2;
+    function l2() {
+      if (r2)
+        return r2;
+      const t2 = navigator.userAgentData;
+      return t2 && Array.isArray(t2.brands) ? (r2 = t2.brands.map((t3) => t3.brand + "/" + t3.version).join(" "), r2) : navigator.userAgent;
+    }
+    function c2(t2) {
+      return t2 instanceof n2(t2).HTMLElement;
+    }
+    function s2(t2) {
+      return t2 instanceof n2(t2).Element;
+    }
+    function f2(t2) {
+      return t2 instanceof n2(t2).Node;
+    }
+    function u2(t2) {
+      if ("undefined" == typeof ShadowRoot)
+        return false;
+      return t2 instanceof n2(t2).ShadowRoot || t2 instanceof ShadowRoot;
+    }
+    function a2(t2) {
+      const { overflow: e4, overflowX: n3, overflowY: i4, display: r3 } = o3(t2);
+      return /auto|scroll|overlay|hidden|clip/.test(e4 + i4 + n3) && !["inline", "contents"].includes(r3);
+    }
+    function d2(t2) {
+      return ["table", "td", "th"].includes(i3(t2));
+    }
+    function h2(t2) {
+      const e4 = /firefox/i.test(l2()), n3 = o3(t2), i4 = n3.backdropFilter || n3.WebkitBackdropFilter;
+      return "none" !== n3.transform || "none" !== n3.perspective || !!i4 && "none" !== i4 || e4 && "filter" === n3.willChange || e4 && !!n3.filter && "none" !== n3.filter || ["transform", "perspective"].some((t3) => n3.willChange.includes(t3)) || ["paint", "layout", "strict", "content"].some((t3) => {
+        const e5 = n3.contain;
+        return null != e5 && e5.includes(t3);
+      });
+    }
+    function p2() {
+      return !/^((?!chrome|android).)*safari/i.test(l2());
+    }
+    function g2(t2) {
+      return ["html", "body", "#document"].includes(i3(t2));
+    }
+    var m2 = Math.min;
+    var y3 = Math.max;
+    var x2 = Math.round;
+    function w2(t2) {
+      const e4 = o3(t2);
+      let n3 = parseFloat(e4.width), i4 = parseFloat(e4.height);
+      const r3 = t2.offsetWidth, l3 = t2.offsetHeight, c3 = x2(n3) !== r3 || x2(i4) !== l3;
+      return c3 && (n3 = r3, i4 = l3), { width: n3, height: i4, fallback: c3 };
+    }
+    function v2(t2) {
+      return s2(t2) ? t2 : t2.contextElement;
+    }
+    var b2 = { x: 1, y: 1 };
+    function L2(t2) {
+      const e4 = v2(t2);
+      if (!c2(e4))
+        return b2;
+      const n3 = e4.getBoundingClientRect(), { width: o4, height: i4, fallback: r3 } = w2(e4);
+      let l3 = (r3 ? x2(n3.width) : n3.width) / o4, s3 = (r3 ? x2(n3.height) : n3.height) / i4;
+      return l3 && Number.isFinite(l3) || (l3 = 1), s3 && Number.isFinite(s3) || (s3 = 1), { x: l3, y: s3 };
+    }
+    function E2(t2, e4, o4, i4) {
+      var r3, l3;
+      void 0 === e4 && (e4 = false), void 0 === o4 && (o4 = false);
+      const c3 = t2.getBoundingClientRect(), f3 = v2(t2);
+      let u3 = b2;
+      e4 && (i4 ? s2(i4) && (u3 = L2(i4)) : u3 = L2(t2));
+      const a3 = f3 ? n2(f3) : window, d3 = !p2() && o4;
+      let h3 = (c3.left + (d3 && (null == (r3 = a3.visualViewport) ? void 0 : r3.offsetLeft) || 0)) / u3.x, g3 = (c3.top + (d3 && (null == (l3 = a3.visualViewport) ? void 0 : l3.offsetTop) || 0)) / u3.y, m3 = c3.width / u3.x, y4 = c3.height / u3.y;
+      if (f3) {
+        const t3 = n2(f3), e5 = i4 && s2(i4) ? n2(i4) : i4;
+        let o5 = t3.frameElement;
+        for (; o5 && i4 && e5 !== t3; ) {
+          const t4 = L2(o5), e6 = o5.getBoundingClientRect(), i5 = getComputedStyle(o5);
+          e6.x += (o5.clientLeft + parseFloat(i5.paddingLeft)) * t4.x, e6.y += (o5.clientTop + parseFloat(i5.paddingTop)) * t4.y, h3 *= t4.x, g3 *= t4.y, m3 *= t4.x, y4 *= t4.y, h3 += e6.x, g3 += e6.y, o5 = n2(o5).frameElement;
+        }
+      }
+      return { width: m3, height: y4, top: g3, right: h3 + m3, bottom: g3 + y4, left: h3, x: h3, y: g3 };
+    }
+    function R(t2) {
+      return ((f2(t2) ? t2.ownerDocument : t2.document) || window.document).documentElement;
+    }
+    function T2(t2) {
+      return s2(t2) ? { scrollLeft: t2.scrollLeft, scrollTop: t2.scrollTop } : { scrollLeft: t2.pageXOffset, scrollTop: t2.pageYOffset };
+    }
+    function C(t2) {
+      return E2(R(t2)).left + T2(t2).scrollLeft;
+    }
+    function F(t2, e4, n3) {
+      const o4 = c2(e4), r3 = R(e4), l3 = E2(t2, true, "fixed" === n3, e4);
+      let s3 = { scrollLeft: 0, scrollTop: 0 };
+      const f3 = { x: 0, y: 0 };
+      if (o4 || !o4 && "fixed" !== n3)
+        if (("body" !== i3(e4) || a2(r3)) && (s3 = T2(e4)), c2(e4)) {
+          const t3 = E2(e4, true);
+          f3.x = t3.x + e4.clientLeft, f3.y = t3.y + e4.clientTop;
+        } else
+          r3 && (f3.x = C(r3));
+      return { x: l3.left + s3.scrollLeft - f3.x, y: l3.top + s3.scrollTop - f3.y, width: l3.width, height: l3.height };
+    }
+    function W(t2) {
+      if ("html" === i3(t2))
+        return t2;
+      const e4 = t2.assignedSlot || t2.parentNode || (u2(t2) ? t2.host : null) || R(t2);
+      return u2(e4) ? e4.host : e4;
+    }
+    function D2(t2) {
+      return c2(t2) && "fixed" !== o3(t2).position ? t2.offsetParent : null;
+    }
+    function S(t2) {
+      const e4 = n2(t2);
+      let r3 = D2(t2);
+      for (; r3 && d2(r3) && "static" === o3(r3).position; )
+        r3 = D2(r3);
+      return r3 && ("html" === i3(r3) || "body" === i3(r3) && "static" === o3(r3).position && !h2(r3)) ? e4 : r3 || function(t3) {
+        let e5 = W(t3);
+        for (; c2(e5) && !g2(e5); ) {
+          if (h2(e5))
+            return e5;
+          e5 = W(e5);
+        }
+        return null;
+      }(t2) || e4;
+    }
+    function A(t2) {
+      const e4 = W(t2);
+      return g2(e4) ? t2.ownerDocument.body : c2(e4) && a2(e4) ? e4 : A(e4);
+    }
+    function H(t2, e4) {
+      var o4;
+      void 0 === e4 && (e4 = []);
+      const i4 = A(t2), r3 = i4 === (null == (o4 = t2.ownerDocument) ? void 0 : o4.body), l3 = n2(i4);
+      return r3 ? e4.concat(l3, l3.visualViewport || [], a2(i4) ? i4 : []) : e4.concat(i4, H(i4));
+    }
+    function O2(e4, i4, r3) {
+      return "viewport" === i4 ? l(function(t2, e5) {
+        const o4 = n2(t2), i5 = R(t2), r4 = o4.visualViewport;
+        let l3 = i5.clientWidth, c3 = i5.clientHeight, s3 = 0, f3 = 0;
+        if (r4) {
+          l3 = r4.width, c3 = r4.height;
+          const t3 = p2();
+          (t3 || !t3 && "fixed" === e5) && (s3 = r4.offsetLeft, f3 = r4.offsetTop);
+        }
+        return { width: l3, height: c3, x: s3, y: f3 };
+      }(e4, r3)) : s2(i4) ? function(t2, e5) {
+        const n3 = E2(t2, true, "fixed" === e5), o4 = n3.top + t2.clientTop, i5 = n3.left + t2.clientLeft, r4 = c2(t2) ? L2(t2) : { x: 1, y: 1 }, l3 = t2.clientWidth * r4.x, s3 = t2.clientHeight * r4.y, f3 = i5 * r4.x, u3 = o4 * r4.y;
+        return { top: u3, left: f3, right: f3 + l3, bottom: u3 + s3, x: f3, y: u3, width: l3, height: s3 };
+      }(i4, r3) : l(function(t2) {
+        var e5;
+        const n3 = R(t2), i5 = T2(t2), r4 = null == (e5 = t2.ownerDocument) ? void 0 : e5.body, l3 = y3(n3.scrollWidth, n3.clientWidth, r4 ? r4.scrollWidth : 0, r4 ? r4.clientWidth : 0), c3 = y3(n3.scrollHeight, n3.clientHeight, r4 ? r4.scrollHeight : 0, r4 ? r4.clientHeight : 0);
+        let s3 = -i5.scrollLeft + C(t2);
+        const f3 = -i5.scrollTop;
+        return "rtl" === o3(r4 || n3).direction && (s3 += y3(n3.clientWidth, r4 ? r4.clientWidth : 0) - l3), { width: l3, height: c3, x: s3, y: f3 };
+      }(R(e4)));
+    }
+    var P2 = { getClippingRect: function(t2) {
+      let { element: e4, boundary: n3, rootBoundary: r3, strategy: l3 } = t2;
+      const c3 = "clippingAncestors" === n3 ? function(t3, e5) {
+        const n4 = e5.get(t3);
+        if (n4)
+          return n4;
+        let r4 = H(t3).filter((t4) => s2(t4) && "body" !== i3(t4)), l4 = null;
+        const c4 = "fixed" === o3(t3).position;
+        let f4 = c4 ? W(t3) : t3;
+        for (; s2(f4) && !g2(f4); ) {
+          const t4 = o3(f4), e6 = h2(f4);
+          (c4 ? e6 || l4 : e6 || "static" !== t4.position || !l4 || !["absolute", "fixed"].includes(l4.position)) ? l4 = t4 : r4 = r4.filter((t5) => t5 !== f4), f4 = W(f4);
+        }
+        return e5.set(t3, r4), r4;
+      }(e4, this._c) : [].concat(n3), f3 = [...c3, r3], u3 = f3[0], a3 = f3.reduce((t3, n4) => {
+        const o4 = O2(e4, n4, l3);
+        return t3.top = y3(o4.top, t3.top), t3.right = m2(o4.right, t3.right), t3.bottom = m2(o4.bottom, t3.bottom), t3.left = y3(o4.left, t3.left), t3;
+      }, O2(e4, u3, l3));
+      return { width: a3.right - a3.left, height: a3.bottom - a3.top, x: a3.left, y: a3.top };
+    }, convertOffsetParentRelativeRectToViewportRelativeRect: function(t2) {
+      let { rect: e4, offsetParent: n3, strategy: o4 } = t2;
+      const r3 = c2(n3), l3 = R(n3);
+      if (n3 === l3)
+        return e4;
+      let s3 = { scrollLeft: 0, scrollTop: 0 }, f3 = { x: 1, y: 1 };
+      const u3 = { x: 0, y: 0 };
+      if ((r3 || !r3 && "fixed" !== o4) && (("body" !== i3(n3) || a2(l3)) && (s3 = T2(n3)), c2(n3))) {
+        const t3 = E2(n3);
+        f3 = L2(n3), u3.x = t3.x + n3.clientLeft, u3.y = t3.y + n3.clientTop;
+      }
+      return { width: e4.width * f3.x, height: e4.height * f3.y, x: e4.x * f3.x - s3.scrollLeft * f3.x + u3.x, y: e4.y * f3.y - s3.scrollTop * f3.y + u3.y };
+    }, isElement: s2, getDimensions: function(t2) {
+      return w2(t2);
+    }, getOffsetParent: S, getDocumentElement: R, getScale: L2, async getElementRects(t2) {
+      let { reference: e4, floating: n3, strategy: o4 } = t2;
+      const i4 = this.getOffsetParent || S, r3 = this.getDimensions;
+      return { reference: F(e4, await i4(n3), o4), floating: __spreadValues({ x: 0, y: 0 }, await r3(n3)) };
+    }, getClientRects: (t2) => Array.from(t2.getClientRects()), isRTL: (t2) => "rtl" === o3(t2).direction };
+    function z(t2, e4, n3, o4) {
+      void 0 === o4 && (o4 = {});
+      const { ancestorScroll: i4 = true, ancestorResize: r3 = true, elementResize: l3 = true, animationFrame: c3 = false } = o4, f3 = i4 && !c3, u3 = f3 || r3 ? [...s2(t2) ? H(t2) : t2.contextElement ? H(t2.contextElement) : [], ...H(e4)] : [];
+      u3.forEach((t3) => {
+        f3 && t3.addEventListener("scroll", n3, { passive: true }), r3 && t3.addEventListener("resize", n3);
+      });
+      let a3, d3 = null;
+      if (l3) {
+        let o5 = true;
+        d3 = new ResizeObserver(() => {
+          o5 || n3(), o5 = false;
+        }), s2(t2) && !c3 && d3.observe(t2), s2(t2) || !t2.contextElement || c3 || d3.observe(t2.contextElement), d3.observe(e4);
+      }
+      let h3 = c3 ? E2(t2) : null;
+      return c3 && function e5() {
+        const o5 = E2(t2);
+        !h3 || o5.x === h3.x && o5.y === h3.y && o5.width === h3.width && o5.height === h3.height || n3();
+        h3 = o5, a3 = requestAnimationFrame(e5);
+      }(), n3(), () => {
+        var t3;
+        u3.forEach((t4) => {
+          f3 && t4.removeEventListener("scroll", n3), r3 && t4.removeEventListener("resize", n3);
+        }), null == (t3 = d3) || t3.disconnect(), d3 = null, c3 && cancelAnimationFrame(a3);
+      };
+    }
+    var V = (t2, n3, o4) => {
+      const i4 = /* @__PURE__ */ new Map(), r3 = __spreadValues({ platform: P2 }, o4), l3 = __spreadProps(__spreadValues({}, r3.platform), { _c: i4 });
+      return r(t2, n3, __spreadProps(__spreadValues({}, r3), { platform: l3 }));
+    };
+
+    // src/components/popup/popup.ts
+    var SlPopup = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.active = false;
+        this.placement = "top";
+        this.strategy = "absolute";
+        this.distance = 0;
+        this.skidding = 0;
+        this.arrow = false;
+        this.arrowPlacement = "anchor";
+        this.arrowPadding = 10;
+        this.flip = false;
+        this.flipFallbackPlacements = "";
+        this.flipFallbackStrategy = "best-fit";
+        this.flipPadding = 0;
+        this.shift = false;
+        this.shiftPadding = 0;
+        this.autoSizePadding = 0;
+      }
+      async connectedCallback() {
+        super.connectedCallback();
+        await this.updateComplete;
+        this.start();
+      }
+      disconnectedCallback() {
+        this.stop();
+      }
+      async updated(changedProps) {
+        super.updated(changedProps);
+        if (changedProps.has("active")) {
+          if (this.active) {
+            this.start();
+          } else {
+            this.stop();
+          }
+        }
+        if (changedProps.has("anchor")) {
+          this.handleAnchorChange();
+        }
+        if (this.active) {
+          await this.updateComplete;
+          this.reposition();
+        }
+      }
+      async handleAnchorChange() {
+        await this.stop();
+        if (this.anchor && typeof this.anchor === "string") {
+          const root = this.getRootNode();
+          this.anchorEl = root.getElementById(this.anchor);
+        } else if (this.anchor instanceof HTMLElement) {
+          this.anchorEl = this.anchor;
+        } else {
+          this.anchorEl = this.querySelector('[slot="anchor"]');
+        }
+        if (this.anchorEl instanceof HTMLSlotElement) {
+          this.anchorEl = this.anchorEl.assignedElements({ flatten: true })[0];
+        }
+        if (!this.anchorEl) {
+          throw new Error(
+            "Invalid anchor element: no anchor could be found using the anchor slot or the anchor attribute."
+          );
+        }
+        this.start();
+      }
+      start() {
+        if (!this.anchorEl) {
+          return;
+        }
+        this.cleanup = z(this.anchorEl, this.popup, () => {
+          this.reposition();
+        });
+      }
+      async stop() {
+        return new Promise((resolve) => {
+          if (this.cleanup) {
+            this.cleanup();
+            this.cleanup = void 0;
+            this.removeAttribute("data-current-placement");
+            this.style.removeProperty("--auto-size-available-width");
+            this.style.removeProperty("--auto-size-available-height");
+            requestAnimationFrame(() => resolve());
+          } else {
+            resolve();
+          }
+        });
+      }
+      /** Forces the popup to recalculate and reposition itself. */
+      reposition() {
+        if (!this.active || !this.anchorEl) {
+          return;
+        }
+        const middleware = [
+          // The offset middleware goes first
+          O({ mainAxis: this.distance, crossAxis: this.skidding })
+        ];
+        if (this.sync) {
+          middleware.push(
+            k({
+              apply: ({ rects }) => {
+                const syncWidth = this.sync === "width" || this.sync === "both";
+                const syncHeight = this.sync === "height" || this.sync === "both";
+                this.popup.style.width = syncWidth ? `${rects.reference.width}px` : "";
+                this.popup.style.height = syncHeight ? `${rects.reference.height}px` : "";
+              }
+            })
+          );
+        } else {
+          this.popup.style.width = "";
+          this.popup.style.height = "";
+        }
+        if (this.flip) {
+          middleware.push(
+            b({
+              boundary: this.flipBoundary,
+              // @ts-expect-error - We're converting a string attribute to an array here
+              fallbackPlacements: this.flipFallbackPlacements,
+              fallbackStrategy: this.flipFallbackStrategy === "best-fit" ? "bestFit" : "initialPlacement",
+              padding: this.flipPadding
+            })
+          );
+        }
+        if (this.shift) {
+          middleware.push(
+            E({
+              boundary: this.shiftBoundary,
+              padding: this.shiftPadding
+            })
+          );
+        }
+        if (this.autoSize) {
+          middleware.push(
+            k({
+              boundary: this.autoSizeBoundary,
+              padding: this.autoSizePadding,
+              apply: ({ availableWidth, availableHeight }) => {
+                if (this.autoSize === "vertical" || this.autoSize === "both") {
+                  this.style.setProperty("--auto-size-available-height", `${availableHeight}px`);
+                } else {
+                  this.style.removeProperty("--auto-size-available-height");
+                }
+                if (this.autoSize === "horizontal" || this.autoSize === "both") {
+                  this.style.setProperty("--auto-size-available-width", `${availableWidth}px`);
+                } else {
+                  this.style.removeProperty("--auto-size-available-width");
+                }
+              }
+            })
+          );
+        } else {
+          this.style.removeProperty("--auto-size-available-width");
+          this.style.removeProperty("--auto-size-available-height");
+        }
+        if (this.arrow) {
+          middleware.push(
+            m({
+              element: this.arrowEl,
+              padding: this.arrowPadding
+            })
+          );
+        }
+        V(this.anchorEl, this.popup, {
+          placement: this.placement,
+          middleware,
+          strategy: this.strategy
+        }).then(({ x: x3, y: y4, middlewareData, placement }) => {
+          const isRtl = getComputedStyle(this).direction === "rtl";
+          const staticSide = { top: "bottom", right: "left", bottom: "top", left: "right" }[placement.split("-")[0]];
+          this.setAttribute("data-current-placement", placement);
+          Object.assign(this.popup.style, {
+            left: `${x3}px`,
+            top: `${y4}px`
+          });
+          if (this.arrow) {
+            const arrowX = middlewareData.arrow.x;
+            const arrowY = middlewareData.arrow.y;
+            let top = "";
+            let right = "";
+            let bottom = "";
+            let left = "";
+            if (this.arrowPlacement === "start") {
+              const value = typeof arrowX === "number" ? `calc(${this.arrowPadding}px - var(--arrow-padding-offset))` : "";
+              top = typeof arrowY === "number" ? `calc(${this.arrowPadding}px - var(--arrow-padding-offset))` : "";
+              right = isRtl ? value : "";
+              left = isRtl ? "" : value;
+            } else if (this.arrowPlacement === "end") {
+              const value = typeof arrowX === "number" ? `calc(${this.arrowPadding}px - var(--arrow-padding-offset))` : "";
+              right = isRtl ? "" : value;
+              left = isRtl ? value : "";
+              bottom = typeof arrowY === "number" ? `calc(${this.arrowPadding}px - var(--arrow-padding-offset))` : "";
+            } else if (this.arrowPlacement === "center") {
+              left = typeof arrowX === "number" ? `calc(50% - var(--arrow-size-diagonal))` : "";
+              top = typeof arrowY === "number" ? `calc(50% - var(--arrow-size-diagonal))` : "";
+            } else {
+              left = typeof arrowX === "number" ? `${arrowX}px` : "";
+              top = typeof arrowY === "number" ? `${arrowY}px` : "";
+            }
+            Object.assign(this.arrowEl.style, {
+              top,
+              right,
+              bottom,
+              left,
+              [staticSide]: "calc(var(--arrow-size-diagonal) * -1)"
+            });
+          }
+        });
+        this.emit("sl-reposition");
+      }
+      render() {
+        return y`
+      <slot name="anchor" @slotchange=${this.handleAnchorChange}></slot>
+
+      <div
+        part="popup"
+        class=${o$1({
+      popup: true,
+      "popup--active": this.active,
+      "popup--fixed": this.strategy === "fixed",
+      "popup--has-arrow": this.arrow
+    })}
+      >
+        <slot></slot>
+        ${this.arrow ? y`<div part="arrow" class="popup__arrow" role="presentation"></div>` : ""}
+      </div>
+    `;
+      }
+    };
+    SlPopup.styles = popup_styles_default;
+    __decorateClass([
+      i2$2(".popup")
+    ], SlPopup.prototype, "popup", 2);
+    __decorateClass([
+      i2$2(".popup__arrow")
+    ], SlPopup.prototype, "arrowEl", 2);
+    __decorateClass([
+      e2$1()
+    ], SlPopup.prototype, "anchor", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlPopup.prototype, "active", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlPopup.prototype, "placement", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlPopup.prototype, "strategy", 2);
+    __decorateClass([
+      e2$1({ type: Number })
+    ], SlPopup.prototype, "distance", 2);
+    __decorateClass([
+      e2$1({ type: Number })
+    ], SlPopup.prototype, "skidding", 2);
+    __decorateClass([
+      e2$1({ type: Boolean })
+    ], SlPopup.prototype, "arrow", 2);
+    __decorateClass([
+      e2$1({ attribute: "arrow-placement" })
+    ], SlPopup.prototype, "arrowPlacement", 2);
+    __decorateClass([
+      e2$1({ attribute: "arrow-padding", type: Number })
+    ], SlPopup.prototype, "arrowPadding", 2);
+    __decorateClass([
+      e2$1({ type: Boolean })
+    ], SlPopup.prototype, "flip", 2);
+    __decorateClass([
+      e2$1({
+        attribute: "flip-fallback-placements",
+        converter: {
+          fromAttribute: (value) => {
+            return value.split(" ").map((p3) => p3.trim()).filter((p3) => p3 !== "");
+          },
+          toAttribute: (value) => {
+            return value.join(" ");
+          }
+        }
+      })
+    ], SlPopup.prototype, "flipFallbackPlacements", 2);
+    __decorateClass([
+      e2$1({ attribute: "flip-fallback-strategy" })
+    ], SlPopup.prototype, "flipFallbackStrategy", 2);
+    __decorateClass([
+      e2$1({ type: Object })
+    ], SlPopup.prototype, "flipBoundary", 2);
+    __decorateClass([
+      e2$1({ attribute: "flip-padding", type: Number })
+    ], SlPopup.prototype, "flipPadding", 2);
+    __decorateClass([
+      e2$1({ type: Boolean })
+    ], SlPopup.prototype, "shift", 2);
+    __decorateClass([
+      e2$1({ type: Object })
+    ], SlPopup.prototype, "shiftBoundary", 2);
+    __decorateClass([
+      e2$1({ attribute: "shift-padding", type: Number })
+    ], SlPopup.prototype, "shiftPadding", 2);
+    __decorateClass([
+      e2$1({ attribute: "auto-size" })
+    ], SlPopup.prototype, "autoSize", 2);
+    __decorateClass([
+      e2$1()
+    ], SlPopup.prototype, "sync", 2);
+    __decorateClass([
+      e2$1({ type: Object })
+    ], SlPopup.prototype, "autoSizeBoundary", 2);
+    __decorateClass([
+      e2$1({ attribute: "auto-size-padding", type: Number })
+    ], SlPopup.prototype, "autoSizePadding", 2);
+    SlPopup = __decorateClass([
+      e$1("sl-popup")
+    ], SlPopup);
+
+    // src/components/button-group/button-group.styles.ts
+    var button_group_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    display: inline-block;
+  }
+
+  .button-group {
+    display: flex;
+    flex-wrap: nowrap;
+  }
+`;
+
+    // src/components/button-group/button-group.ts
+    var SlButtonGroup = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.disableRole = false;
+        this.label = "";
+      }
+      handleFocus(event) {
+        const button = findButton(event.target);
+        button == null ? void 0 : button.classList.add("sl-button-group__button--focus");
+      }
+      handleBlur(event) {
+        const button = findButton(event.target);
+        button == null ? void 0 : button.classList.remove("sl-button-group__button--focus");
+      }
+      handleMouseOver(event) {
+        const button = findButton(event.target);
+        button == null ? void 0 : button.classList.add("sl-button-group__button--hover");
+      }
+      handleMouseOut(event) {
+        const button = findButton(event.target);
+        button == null ? void 0 : button.classList.remove("sl-button-group__button--hover");
+      }
+      handleSlotChange() {
+        const slottedElements = [...this.defaultSlot.assignedElements({ flatten: true })];
+        slottedElements.forEach((el) => {
+          const index = slottedElements.indexOf(el);
+          const button = findButton(el);
+          if (button !== null) {
+            button.classList.add("sl-button-group__button");
+            button.classList.toggle("sl-button-group__button--first", index === 0);
+            button.classList.toggle("sl-button-group__button--inner", index > 0 && index < slottedElements.length - 1);
+            button.classList.toggle("sl-button-group__button--last", index === slottedElements.length - 1);
+            button.classList.toggle("sl-button-group__button--radio", button.tagName.toLowerCase() === "sl-radio-button");
+          }
+        });
+      }
+      render() {
+        return y`
+      <slot
+        part="base"
+        class="button-group"
+        role="${this.disableRole ? "presentation" : "group"}"
+        aria-label=${this.label}
+        @focusout=${this.handleBlur}
+        @focusin=${this.handleFocus}
+        @mouseover=${this.handleMouseOver}
+        @mouseout=${this.handleMouseOut}
+        @slotchange=${this.handleSlotChange}
+      ></slot>
+    `;
+      }
+    };
+    SlButtonGroup.styles = button_group_styles_default;
+    __decorateClass([
+      i2$2("slot")
+    ], SlButtonGroup.prototype, "defaultSlot", 2);
+    __decorateClass([
+      t$1()
+    ], SlButtonGroup.prototype, "disableRole", 2);
+    __decorateClass([
+      e2$1()
+    ], SlButtonGroup.prototype, "label", 2);
+    SlButtonGroup = __decorateClass([
+      e$1("sl-button-group")
+    ], SlButtonGroup);
+    function findButton(el) {
+      var _a;
+      const selector = "sl-button, sl-radio-button";
+      return (_a = el.closest(selector)) != null ? _a : el.querySelector(selector);
+    }
+
+    // src/components/tab-group/tab-group.styles.ts
+    var tab_group_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    --indicator-color: var(--sl-color-primary-600);
+    --track-color: var(--sl-color-neutral-200);
+    --track-width: 2px;
+
+    display: block;
+  }
+
+  .tab-group {
+    display: flex;
+    border-radius: 0;
+  }
+
+  .tab-group__tabs {
+    display: flex;
+    position: relative;
+  }
+
+  .tab-group__indicator {
+    position: absolute;
+    transition: var(--sl-transition-fast) translate ease, var(--sl-transition-fast) width ease;
+  }
+
+  .tab-group--has-scroll-controls .tab-group__nav-container {
+    position: relative;
+    padding: 0 var(--sl-spacing-x-large);
+  }
+
+  .tab-group__body {
+    display: block;
+    overflow: auto;
+  }
+
+  .tab-group__scroll-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--sl-spacing-x-large);
+  }
+
+  .tab-group__scroll-button--start {
+    left: 0;
+  }
+
+  .tab-group__scroll-button--end {
+    right: 0;
+  }
+
+  .tab-group--rtl .tab-group__scroll-button--start {
+    left: auto;
+    right: 0;
+  }
+
+  .tab-group--rtl .tab-group__scroll-button--end {
+    left: 0;
+    right: auto;
+  }
+
+  /*
+   * Top
+   */
+
+  .tab-group--top {
+    flex-direction: column;
+  }
+
+  .tab-group--top .tab-group__nav-container {
+    order: 1;
+  }
+
+  .tab-group--top .tab-group__nav {
+    display: flex;
+    overflow-x: auto;
+
+    /* Hide scrollbar in Firefox */
+    scrollbar-width: none;
+  }
+
+  /* Hide scrollbar in Chrome/Safari */
+  .tab-group--top .tab-group__nav::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  .tab-group--top .tab-group__tabs {
+    flex: 1 1 auto;
+    position: relative;
+    flex-direction: row;
+    border-bottom: solid var(--track-width) var(--track-color);
+  }
+
+  .tab-group--top .tab-group__indicator {
+    bottom: calc(-1 * var(--track-width));
+    border-bottom: solid var(--track-width) var(--indicator-color);
+  }
+
+  .tab-group--top .tab-group__body {
+    order: 2;
+  }
+
+  .tab-group--top ::slotted(sl-tab-panel) {
+    --padding: var(--sl-spacing-medium) 0;
+  }
+
+  /*
+   * Bottom
+   */
+
+  .tab-group--bottom {
+    flex-direction: column;
+  }
+
+  .tab-group--bottom .tab-group__nav-container {
+    order: 2;
+  }
+
+  .tab-group--bottom .tab-group__nav {
+    display: flex;
+    overflow-x: auto;
+
+    /* Hide scrollbar in Firefox */
+    scrollbar-width: none;
+  }
+
+  /* Hide scrollbar in Chrome/Safari */
+  .tab-group--bottom .tab-group__nav::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  .tab-group--bottom .tab-group__tabs {
+    flex: 1 1 auto;
+    position: relative;
+    flex-direction: row;
+    border-top: solid var(--track-width) var(--track-color);
+  }
+
+  .tab-group--bottom .tab-group__indicator {
+    top: calc(-1 * var(--track-width));
+    border-top: solid var(--track-width) var(--indicator-color);
+  }
+
+  .tab-group--bottom .tab-group__body {
+    order: 1;
+  }
+
+  .tab-group--bottom ::slotted(sl-tab-panel) {
+    --padding: var(--sl-spacing-medium) 0;
+  }
+
+  /*
+   * Start
+   */
+
+  .tab-group--start {
+    flex-direction: row;
+  }
+
+  .tab-group--start .tab-group__nav-container {
+    order: 1;
+  }
+
+  .tab-group--start .tab-group__tabs {
+    flex: 0 0 auto;
+    flex-direction: column;
+    border-inline-end: solid var(--track-width) var(--track-color);
+  }
+
+  .tab-group--start .tab-group__indicator {
+    right: calc(-1 * var(--track-width));
+    border-right: solid var(--track-width) var(--indicator-color);
+  }
+
+  .tab-group--start.tab-group--rtl .tab-group__indicator {
+    right: auto;
+    left: calc(-1 * var(--track-width));
+  }
+
+  .tab-group--start .tab-group__body {
+    flex: 1 1 auto;
+    order: 2;
+  }
+
+  .tab-group--start ::slotted(sl-tab-panel) {
+    --padding: 0 var(--sl-spacing-medium);
+  }
+
+  /*
+   * End
+   */
+
+  .tab-group--end {
+    flex-direction: row;
+  }
+
+  .tab-group--end .tab-group__nav-container {
+    order: 2;
+  }
+
+  .tab-group--end .tab-group__tabs {
+    flex: 0 0 auto;
+    flex-direction: column;
+    border-left: solid var(--track-width) var(--track-color);
+  }
+
+  .tab-group--end .tab-group__indicator {
+    left: calc(-1 * var(--track-width));
+    border-inline-start: solid var(--track-width) var(--indicator-color);
+  }
+
+  .tab-group--end.tab-group--rtl .tab-group__indicator {
+    right: calc(-1 * var(--track-width));
+    left: auto;
+  }
+
+  .tab-group--end .tab-group__body {
+    flex: 1 1 auto;
+    order: 1;
+  }
+
+  .tab-group--end ::slotted(sl-tab-panel) {
+    --padding: 0 var(--sl-spacing-medium);
+  }
+`;
+
+    // src/components/tab-group/tab-group.ts
+    var SlTabGroup = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.localize = new LocalizeController2(this);
+        this.tabs = [];
+        this.panels = [];
+        this.hasScrollControls = false;
+        this.placement = "top";
+        this.activation = "auto";
+        this.noScrollControls = false;
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        this.resizeObserver = new ResizeObserver(() => {
+          this.repositionIndicator();
+          this.updateScrollControls();
+        });
+        this.mutationObserver = new MutationObserver((mutations) => {
+          if (mutations.some((m) => !["aria-labelledby", "aria-controls"].includes(m.attributeName))) {
+            setTimeout(() => this.setAriaLabels());
+          }
+          if (mutations.some((m) => m.attributeName === "disabled")) {
+            this.syncTabsAndPanels();
+          }
+        });
+        this.updateComplete.then(() => {
+          this.syncTabsAndPanels();
+          this.mutationObserver.observe(this, { attributes: true, childList: true, subtree: true });
+          this.resizeObserver.observe(this.nav);
+          const intersectionObserver = new IntersectionObserver((entries, observer) => {
+            var _a;
+            if (entries[0].intersectionRatio > 0) {
+              this.setAriaLabels();
+              this.setActiveTab((_a = this.getActiveTab()) != null ? _a : this.tabs[0], { emitEvents: false });
+              observer.unobserve(entries[0].target);
+            }
+          });
+          intersectionObserver.observe(this.tabGroup);
+        });
+      }
+      disconnectedCallback() {
+        this.mutationObserver.disconnect();
+        this.resizeObserver.unobserve(this.nav);
+      }
+      getAllTabs(options = { includeDisabled: true }) {
+        const slot = this.shadowRoot.querySelector('slot[name="nav"]');
+        return [...slot.assignedElements()].filter((el) => {
+          return options.includeDisabled ? el.tagName.toLowerCase() === "sl-tab" : el.tagName.toLowerCase() === "sl-tab" && !el.disabled;
+        });
+      }
+      getAllPanels() {
+        return [...this.body.assignedElements()].filter((el) => el.tagName.toLowerCase() === "sl-tab-panel");
+      }
+      getActiveTab() {
+        return this.tabs.find((el) => el.active);
+      }
+      handleClick(event) {
+        const target = event.target;
+        const tab = target.closest("sl-tab");
+        const tabGroup = tab == null ? void 0 : tab.closest("sl-tab-group");
+        if (tabGroup !== this) {
+          return;
+        }
+        if (tab !== null) {
+          this.setActiveTab(tab, { scrollBehavior: "smooth" });
+        }
+      }
+      handleKeyDown(event) {
+        const target = event.target;
+        const tab = target.closest("sl-tab");
+        const tabGroup = tab == null ? void 0 : tab.closest("sl-tab-group");
+        if (tabGroup !== this) {
+          return;
+        }
+        if (["Enter", " "].includes(event.key)) {
+          if (tab !== null) {
+            this.setActiveTab(tab, { scrollBehavior: "smooth" });
+            event.preventDefault();
+          }
+        }
+        if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) {
+          const activeEl = this.tabs.find((t2) => t2.matches(":focus"));
+          const isRtl = this.localize.dir() === "rtl";
+          if ((activeEl == null ? void 0 : activeEl.tagName.toLowerCase()) === "sl-tab") {
+            let index = this.tabs.indexOf(activeEl);
+            if (event.key === "Home") {
+              index = 0;
+            } else if (event.key === "End") {
+              index = this.tabs.length - 1;
+            } else if (["top", "bottom"].includes(this.placement) && event.key === (isRtl ? "ArrowRight" : "ArrowLeft") || ["start", "end"].includes(this.placement) && event.key === "ArrowUp") {
+              index--;
+            } else if (["top", "bottom"].includes(this.placement) && event.key === (isRtl ? "ArrowLeft" : "ArrowRight") || ["start", "end"].includes(this.placement) && event.key === "ArrowDown") {
+              index++;
+            }
+            if (index < 0) {
+              index = this.tabs.length - 1;
+            }
+            if (index > this.tabs.length - 1) {
+              index = 0;
+            }
+            this.tabs[index].focus({ preventScroll: true });
+            if (this.activation === "auto") {
+              this.setActiveTab(this.tabs[index], { scrollBehavior: "smooth" });
+            }
+            if (["top", "bottom"].includes(this.placement)) {
+              scrollIntoView(this.tabs[index], this.nav, "horizontal");
+            }
+            event.preventDefault();
+          }
+        }
+      }
+      handleScrollToStart() {
+        this.nav.scroll({
+          left: this.localize.dir() === "rtl" ? this.nav.scrollLeft + this.nav.clientWidth : this.nav.scrollLeft - this.nav.clientWidth,
+          behavior: "smooth"
+        });
+      }
+      handleScrollToEnd() {
+        this.nav.scroll({
+          left: this.localize.dir() === "rtl" ? this.nav.scrollLeft - this.nav.clientWidth : this.nav.scrollLeft + this.nav.clientWidth,
+          behavior: "smooth"
+        });
+      }
+      setActiveTab(tab, options) {
+        options = __spreadValues({
+          emitEvents: true,
+          scrollBehavior: "auto"
+        }, options);
+        if (tab !== this.activeTab && !tab.disabled) {
+          const previousTab = this.activeTab;
+          this.activeTab = tab;
+          this.tabs.map((el) => el.active = el === this.activeTab);
+          this.panels.map((el) => {
+            var _a;
+            return el.active = el.name === ((_a = this.activeTab) == null ? void 0 : _a.panel);
+          });
+          this.syncIndicator();
+          if (["top", "bottom"].includes(this.placement)) {
+            scrollIntoView(this.activeTab, this.nav, "horizontal", options.scrollBehavior);
+          }
+          if (options.emitEvents) {
+            if (previousTab) {
+              this.emit("sl-tab-hide", { detail: { name: previousTab.panel } });
+            }
+            this.emit("sl-tab-show", { detail: { name: this.activeTab.panel } });
+          }
+        }
+      }
+      setAriaLabels() {
+        this.tabs.forEach((tab) => {
+          const panel = this.panels.find((el) => el.name === tab.panel);
+          if (panel) {
+            tab.setAttribute("aria-controls", panel.getAttribute("id"));
+            panel.setAttribute("aria-labelledby", tab.getAttribute("id"));
+          }
+        });
+      }
+      repositionIndicator() {
+        const currentTab = this.getActiveTab();
+        if (!currentTab) {
+          return;
+        }
+        const width = currentTab.clientWidth;
+        const height = currentTab.clientHeight;
+        const isRtl = this.localize.dir() === "rtl";
+        const allTabs = this.getAllTabs();
+        const precedingTabs = allTabs.slice(0, allTabs.indexOf(currentTab));
+        const offset = precedingTabs.reduce(
+          (previous, current) => ({
+            left: previous.left + current.clientWidth,
+            top: previous.top + current.clientHeight
+          }),
+          { left: 0, top: 0 }
+        );
+        switch (this.placement) {
+          case "top":
+          case "bottom":
+            this.indicator.style.width = `${width}px`;
+            this.indicator.style.height = "auto";
+            this.indicator.style.translate = isRtl ? `${-1 * offset.left}px` : `${offset.left}px`;
+            break;
+          case "start":
+          case "end":
+            this.indicator.style.width = "auto";
+            this.indicator.style.height = `${height}px`;
+            this.indicator.style.translate = `0 ${offset.top}px`;
+            break;
+        }
+      }
+      // This stores tabs and panels so we can refer to a cache instead of calling querySelectorAll() multiple times.
+      syncTabsAndPanels() {
+        this.tabs = this.getAllTabs({ includeDisabled: false });
+        this.panels = this.getAllPanels();
+        this.syncIndicator();
+      }
+      updateScrollControls() {
+        if (this.noScrollControls) {
+          this.hasScrollControls = false;
+        } else {
+          this.hasScrollControls = ["top", "bottom"].includes(this.placement) && this.nav.scrollWidth > this.nav.clientWidth;
+        }
+      }
+      syncIndicator() {
+        const tab = this.getActiveTab();
+        if (tab) {
+          this.indicator.style.display = "block";
+          this.repositionIndicator();
+        } else {
+          this.indicator.style.display = "none";
+        }
+      }
+      /** Shows the specified tab panel. */
+      show(panel) {
+        const tab = this.tabs.find((el) => el.panel === panel);
+        if (tab) {
+          this.setActiveTab(tab, { scrollBehavior: "smooth" });
+        }
+      }
+      render() {
+        const isRtl = this.localize.dir() === "rtl";
+        return y`
+      <div
+        part="base"
+        class=${o$1({
+      "tab-group": true,
+      "tab-group--top": this.placement === "top",
+      "tab-group--bottom": this.placement === "bottom",
+      "tab-group--start": this.placement === "start",
+      "tab-group--end": this.placement === "end",
+      "tab-group--rtl": this.localize.dir() === "rtl",
+      "tab-group--has-scroll-controls": this.hasScrollControls
+    })}
+        @click=${this.handleClick}
+        @keydown=${this.handleKeyDown}
+      >
+        <div class="tab-group__nav-container" part="nav">
+          ${this.hasScrollControls ? y`
+                <sl-icon-button
+                  part="scroll-button scroll-button--start"
+                  exportparts="base:scroll-button__base"
+                  class="tab-group__scroll-button tab-group__scroll-button--start"
+                  name=${isRtl ? "chevron-right" : "chevron-left"}
+                  library="system"
+                  label=${this.localize.term("scrollToStart")}
+                  @click=${this.handleScrollToStart}
+                ></sl-icon-button>
+              ` : ""}
+
+          <div class="tab-group__nav">
+            <div part="tabs" class="tab-group__tabs" role="tablist">
+              <div part="active-tab-indicator" class="tab-group__indicator"></div>
+              <slot name="nav" @slotchange=${this.syncTabsAndPanels}></slot>
+            </div>
+          </div>
+
+          ${this.hasScrollControls ? y`
+                <sl-icon-button
+                  part="scroll-button scroll-button--end"
+                  exportparts="base:scroll-button__base"
+                  class="tab-group__scroll-button tab-group__scroll-button--end"
+                  name=${isRtl ? "chevron-left" : "chevron-right"}
+                  library="system"
+                  label=${this.localize.term("scrollToEnd")}
+                  @click=${this.handleScrollToEnd}
+                ></sl-icon-button>
+              ` : ""}
+        </div>
+
+        <slot part="body" class="tab-group__body" @slotchange=${this.syncTabsAndPanels}></slot>
+      </div>
+    `;
+      }
+    };
+    SlTabGroup.styles = tab_group_styles_default;
+    __decorateClass([
+      i2$2(".tab-group")
+    ], SlTabGroup.prototype, "tabGroup", 2);
+    __decorateClass([
+      i2$2(".tab-group__body")
+    ], SlTabGroup.prototype, "body", 2);
+    __decorateClass([
+      i2$2(".tab-group__nav")
+    ], SlTabGroup.prototype, "nav", 2);
+    __decorateClass([
+      i2$2(".tab-group__indicator")
+    ], SlTabGroup.prototype, "indicator", 2);
+    __decorateClass([
+      t$1()
+    ], SlTabGroup.prototype, "hasScrollControls", 2);
+    __decorateClass([
+      e2$1()
+    ], SlTabGroup.prototype, "placement", 2);
+    __decorateClass([
+      e2$1()
+    ], SlTabGroup.prototype, "activation", 2);
+    __decorateClass([
+      e2$1({ attribute: "no-scroll-controls", type: Boolean })
+    ], SlTabGroup.prototype, "noScrollControls", 2);
+    __decorateClass([
+      watch("noScrollControls", { waitUntilFirstUpdate: true })
+    ], SlTabGroup.prototype, "updateScrollControls", 1);
+    __decorateClass([
+      watch("placement", { waitUntilFirstUpdate: true })
+    ], SlTabGroup.prototype, "syncIndicator", 1);
+    SlTabGroup = __decorateClass([
+      e$1("sl-tab-group")
+    ], SlTabGroup);
+
+    // src/components/tab/tab.styles.ts
+    var tab_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    display: inline-block;
+  }
+
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--sl-font-sans);
+    font-size: var(--sl-font-size-small);
+    font-weight: var(--sl-font-weight-semibold);
+    border-radius: var(--sl-border-radius-medium);
+    color: var(--sl-color-neutral-600);
+    padding: var(--sl-spacing-medium) var(--sl-spacing-large);
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+    transition: var(--transition-speed) box-shadow, var(--transition-speed) color;
+  }
+
+  .tab:hover:not(.tab--disabled) {
+    color: var(--sl-color-primary-600);
+  }
+
+  .tab:focus {
+    outline: none;
+  }
+
+  .tab:focus-visible:not(.tab--disabled) {
+    color: var(--sl-color-primary-600);
+  }
+
+  .tab:focus-visible {
+    outline: var(--sl-focus-ring);
+    outline-offset: calc(-1 * var(--sl-focus-ring-width) - var(--sl-focus-ring-offset));
+  }
+
+  .tab.tab--active:not(.tab--disabled) {
+    color: var(--sl-color-primary-600);
+  }
+
+  .tab.tab--closable {
+    padding-inline-end: var(--sl-spacing-small);
+  }
+
+  .tab.tab--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .tab__close-button {
+    font-size: var(--sl-font-size-small);
+    margin-inline-start: var(--sl-spacing-small);
+  }
+
+  .tab__close-button::part(base) {
+    padding: var(--sl-spacing-3x-small);
+  }
+
+  @media (forced-colors: active) {
+    .tab.tab--active:not(.tab--disabled) {
+      outline: solid 1px transparent;
+      outline-offset: -3px;
+    }
+  }
+`;
+
+    // src/components/tab/tab.ts
+    var id$1 = 0;
+    var SlTab = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.localize = new LocalizeController2(this);
+        this.attrId = ++id$1;
+        this.componentId = `sl-tab-${this.attrId}`;
+        this.panel = "";
+        this.active = false;
+        this.closable = false;
+        this.disabled = false;
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        this.setAttribute("role", "tab");
+      }
+      handleCloseClick() {
+        this.emit("sl-close");
+      }
+      handleActiveChange() {
+        this.setAttribute("aria-selected", this.active ? "true" : "false");
+      }
+      handleDisabledChange() {
+        this.setAttribute("aria-disabled", this.disabled ? "true" : "false");
+      }
+      /** Sets focus to the tab. */
+      focus(options) {
+        this.tab.focus(options);
+      }
+      /** Removes focus from the tab. */
+      blur() {
+        this.tab.blur();
+      }
+      render() {
+        this.id = this.id.length > 0 ? this.id : this.componentId;
+        return y`
+      <div
+        part="base"
+        class=${o$1({
+      tab: true,
+      "tab--active": this.active,
+      "tab--closable": this.closable,
+      "tab--disabled": this.disabled
+    })}
+        tabindex=${this.disabled ? "-1" : "0"}
+      >
+        <slot></slot>
+        ${this.closable ? y`
+              <sl-icon-button
+                part="close-button"
+                exportparts="base:close-button__base"
+                name="x-lg"
+                library="system"
+                label=${this.localize.term("close")}
+                class="tab__close-button"
+                @click=${this.handleCloseClick}
+                tabindex="-1"
+              ></sl-icon-button>
+            ` : ""}
+      </div>
+    `;
+      }
+    };
+    SlTab.styles = tab_styles_default;
+    __decorateClass([
+      i2$2(".tab")
+    ], SlTab.prototype, "tab", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlTab.prototype, "panel", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlTab.prototype, "active", 2);
+    __decorateClass([
+      e2$1({ type: Boolean })
+    ], SlTab.prototype, "closable", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlTab.prototype, "disabled", 2);
+    __decorateClass([
+      watch("active")
+    ], SlTab.prototype, "handleActiveChange", 1);
+    __decorateClass([
+      watch("disabled")
+    ], SlTab.prototype, "handleDisabledChange", 1);
+    SlTab = __decorateClass([
+      e$1("sl-tab")
+    ], SlTab);
+
+    // src/components/tab-panel/tab-panel.styles.ts
+    var tab_panel_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    --padding: 0;
+
+    display: none;
+  }
+
+  :host([active]) {
+    display: block;
+  }
+
+  .tab-panel {
+    display: block;
+    padding: var(--padding);
+  }
+`;
+
+    // src/components/tab-panel/tab-panel.ts
+    var id = 0;
+    var SlTabPanel = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.attrId = ++id;
+        this.componentId = `sl-tab-panel-${this.attrId}`;
+        this.name = "";
+        this.active = false;
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        this.id = this.id.length > 0 ? this.id : this.componentId;
+        this.setAttribute("role", "tabpanel");
+      }
+      handleActiveChange() {
+        this.setAttribute("aria-hidden", this.active ? "false" : "true");
+      }
+      render() {
+        return y`
+      <slot
+        part="base"
+        class=${o$1({
+      "tab-panel": true,
+      "tab-panel--active": this.active
+    })}
+      ></slot>
+    `;
+      }
+    };
+    SlTabPanel.styles = tab_panel_styles_default;
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlTabPanel.prototype, "name", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlTabPanel.prototype, "active", 2);
+    __decorateClass([
+      watch("active")
+    ], SlTabPanel.prototype, "handleActiveChange", 1);
+    SlTabPanel = __decorateClass([
+      e$1("sl-tab-panel")
+    ], SlTabPanel);
+
+    // src/components/tooltip/tooltip.styles.ts
+    var tooltip_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    --max-width: 20rem;
+    --hide-delay: 0ms;
+    --show-delay: 150ms;
+
+    display: contents;
+  }
+
+  .tooltip {
+    --arrow-size: var(--sl-tooltip-arrow-size);
+    --arrow-color: var(--sl-tooltip-background-color);
+  }
+
+  .tooltip::part(popup) {
+    pointer-events: none;
+    z-index: var(--sl-z-index-tooltip);
+  }
+
+  .tooltip[placement^='top']::part(popup) {
+    transform-origin: bottom;
+  }
+
+  .tooltip[placement^='bottom']::part(popup) {
+    transform-origin: top;
+  }
+
+  .tooltip[placement^='left']::part(popup) {
+    transform-origin: right;
+  }
+
+  .tooltip[placement^='right']::part(popup) {
+    transform-origin: left;
+  }
+
+  .tooltip__body {
+    display: block;
+    width: max-content;
+    max-width: var(--max-width);
+    border-radius: var(--sl-tooltip-border-radius);
+    background-color: var(--sl-tooltip-background-color);
+    font-family: var(--sl-tooltip-font-family);
+    font-size: var(--sl-tooltip-font-size);
+    font-weight: var(--sl-tooltip-font-weight);
+    line-height: var(--sl-tooltip-line-height);
+    color: var(--sl-tooltip-color);
+    padding: var(--sl-tooltip-padding);
+    pointer-events: none;
+  }
+`;
+
+    // src/components/tooltip/tooltip.ts
+    var SlTooltip = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.localize = new LocalizeController2(this);
+        this.content = "";
+        this.placement = "top";
+        this.disabled = false;
+        this.distance = 8;
+        this.open = false;
+        this.skidding = 0;
+        this.trigger = "hover focus";
+        this.hoist = false;
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        this.handleBlur = this.handleBlur.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.handleFocus = this.handleFocus.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleMouseOver = this.handleMouseOver.bind(this);
+        this.handleMouseOut = this.handleMouseOut.bind(this);
+        this.updateComplete.then(() => {
+          this.addEventListener("blur", this.handleBlur, true);
+          this.addEventListener("focus", this.handleFocus, true);
+          this.addEventListener("click", this.handleClick);
+          this.addEventListener("keydown", this.handleKeyDown);
+          this.addEventListener("mouseover", this.handleMouseOver);
+          this.addEventListener("mouseout", this.handleMouseOut);
+        });
+      }
+      firstUpdated() {
+        this.body.hidden = !this.open;
+        if (this.open) {
+          this.popup.active = true;
+          this.popup.reposition();
+        }
+      }
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        this.removeEventListener("blur", this.handleBlur, true);
+        this.removeEventListener("focus", this.handleFocus, true);
+        this.removeEventListener("click", this.handleClick);
+        this.removeEventListener("keydown", this.handleKeyDown);
+        this.removeEventListener("mouseover", this.handleMouseOver);
+        this.removeEventListener("mouseout", this.handleMouseOut);
+      }
+      handleBlur() {
+        if (this.hasTrigger("focus")) {
+          this.hide();
+        }
+      }
+      handleClick() {
+        if (this.hasTrigger("click")) {
+          if (this.open) {
+            this.hide();
+          } else {
+            this.show();
+          }
+        }
+      }
+      handleFocus() {
+        if (this.hasTrigger("focus")) {
+          this.show();
+        }
+      }
+      handleKeyDown(event) {
+        if (this.open && event.key === "Escape") {
+          event.stopPropagation();
+          this.hide();
+        }
+      }
+      handleMouseOver() {
+        if (this.hasTrigger("hover")) {
+          const delay = parseDuration(getComputedStyle(this).getPropertyValue("--show-delay"));
+          clearTimeout(this.hoverTimeout);
+          this.hoverTimeout = window.setTimeout(() => this.show(), delay);
+        }
+      }
+      handleMouseOut() {
+        if (this.hasTrigger("hover")) {
+          const delay = parseDuration(getComputedStyle(this).getPropertyValue("--hide-delay"));
+          clearTimeout(this.hoverTimeout);
+          this.hoverTimeout = window.setTimeout(() => this.hide(), delay);
+        }
+      }
+      hasTrigger(triggerType) {
+        const triggers = this.trigger.split(" ");
+        return triggers.includes(triggerType);
+      }
+      async handleOpenChange() {
+        if (this.open) {
+          if (this.disabled) {
+            return;
+          }
+          this.emit("sl-show");
+          await stopAnimations(this.body);
+          this.body.hidden = false;
+          this.popup.active = true;
+          const { keyframes, options } = getAnimation(this, "tooltip.show", { dir: this.localize.dir() });
+          await animateTo(this.popup.popup, keyframes, options);
+          this.emit("sl-after-show");
+        } else {
+          this.emit("sl-hide");
+          await stopAnimations(this.body);
+          const { keyframes, options } = getAnimation(this, "tooltip.hide", { dir: this.localize.dir() });
+          await animateTo(this.popup.popup, keyframes, options);
+          this.popup.active = false;
+          this.body.hidden = true;
+          this.emit("sl-after-hide");
+        }
+      }
+      async handleOptionsChange() {
+        if (this.hasUpdated) {
+          await this.updateComplete;
+          this.popup.reposition();
+        }
+      }
+      handleDisabledChange() {
+        if (this.disabled && this.open) {
+          this.hide();
+        }
+      }
+      /** Shows the tooltip. */
+      async show() {
+        if (this.open) {
+          return void 0;
+        }
+        this.open = true;
+        return waitForEvent(this, "sl-after-show");
+      }
+      /** Hides the tooltip */
+      async hide() {
+        if (!this.open) {
+          return void 0;
+        }
+        this.open = false;
+        return waitForEvent(this, "sl-after-hide");
+      }
+      render() {
+        return y`
+      <sl-popup
+        part="base"
+        exportparts="
+          popup:base__popup,
+          arrow:base__arrow
+        "
+        class=${o$1({
+      tooltip: true,
+      "tooltip--open": this.open
+    })}
+        placement=${this.placement}
+        distance=${this.distance}
+        skidding=${this.skidding}
+        strategy=${this.hoist ? "fixed" : "absolute"}
+        flip
+        shift
+        arrow
+      >
+        <slot slot="anchor" aria-describedby="tooltip"></slot>
+
+        <slot
+          name="content"
+          part="body"
+          id="tooltip"
+          class="tooltip__body"
+          role="tooltip"
+          aria-live=${this.open ? "polite" : "off"}
+        >
+          ${this.content}
+        </slot>
+      </sl-popup>
+    `;
+      }
+    };
+    SlTooltip.styles = tooltip_styles_default;
+    __decorateClass([
+      i2$2("slot:not([name])")
+    ], SlTooltip.prototype, "defaultSlot", 2);
+    __decorateClass([
+      i2$2(".tooltip__body")
+    ], SlTooltip.prototype, "body", 2);
+    __decorateClass([
+      i2$2("sl-popup")
+    ], SlTooltip.prototype, "popup", 2);
+    __decorateClass([
+      e2$1()
+    ], SlTooltip.prototype, "content", 2);
+    __decorateClass([
+      e2$1()
+    ], SlTooltip.prototype, "placement", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlTooltip.prototype, "disabled", 2);
+    __decorateClass([
+      e2$1({ type: Number })
+    ], SlTooltip.prototype, "distance", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlTooltip.prototype, "open", 2);
+    __decorateClass([
+      e2$1({ type: Number })
+    ], SlTooltip.prototype, "skidding", 2);
+    __decorateClass([
+      e2$1()
+    ], SlTooltip.prototype, "trigger", 2);
+    __decorateClass([
+      e2$1({ type: Boolean })
+    ], SlTooltip.prototype, "hoist", 2);
+    __decorateClass([
+      watch("open", { waitUntilFirstUpdate: true })
+    ], SlTooltip.prototype, "handleOpenChange", 1);
+    __decorateClass([
+      watch(["content", "distance", "hoist", "placement", "skidding"])
+    ], SlTooltip.prototype, "handleOptionsChange", 1);
+    __decorateClass([
+      watch("disabled")
+    ], SlTooltip.prototype, "handleDisabledChange", 1);
+    SlTooltip = __decorateClass([
+      e$1("sl-tooltip")
+    ], SlTooltip);
+    setDefaultAnimation("tooltip.show", {
+      keyframes: [
+        { opacity: 0, scale: 0.8 },
+        { opacity: 1, scale: 1 }
+      ],
+      options: { duration: 150, easing: "ease" }
+    });
+    setDefaultAnimation("tooltip.hide", {
+      keyframes: [
+        { opacity: 1, scale: 1 },
+        { opacity: 0, scale: 0.8 }
+      ],
+      options: { duration: 150, easing: "ease" }
+    });
+
+    // src/components/switch/switch.styles.ts
+    var switch_styles_default = i$2`
+  ${component_styles_default}
+
+  :host {
+    display: inline-block;
+  }
+
+  :host([size='small']) {
+    --height: var(--sl-toggle-size-small);
+    --thumb-size: calc(var(--sl-toggle-size-small) + 4px);
+    --width: calc(var(--height) * 2);
+
+    font-size: var(--sl-input-font-size-small);
+  }
+
+  :host([size='medium']) {
+    --height: var(--sl-toggle-size-medium);
+    --thumb-size: calc(var(--sl-toggle-size-medium) + 4px);
+    --width: calc(var(--height) * 2);
+
+    font-size: var(--sl-input-font-size-medium);
+  }
+
+  :host([size='large']) {
+    --height: var(--sl-toggle-size-large);
+    --thumb-size: calc(var(--sl-toggle-size-large) + 4px);
+    --width: calc(var(--height) * 2);
+
+    font-size: var(--sl-input-font-size-large);
+  }
+
+  .switch {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--sl-input-font-family);
+    font-size: inherit;
+    font-weight: var(--sl-input-font-weight);
+    color: var(--sl-input-label-color);
+    vertical-align: middle;
+    cursor: pointer;
+  }
+
+  .switch__control {
+    flex: 0 0 auto;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--width);
+    height: var(--height);
+    background-color: var(--sl-color-neutral-400);
+    border: solid var(--sl-input-border-width) var(--sl-color-neutral-400);
+    border-radius: var(--height);
+    transition: var(--sl-transition-fast) border-color, var(--sl-transition-fast) background-color;
+  }
+
+  .switch__control .switch__thumb {
+    width: var(--thumb-size);
+    height: var(--thumb-size);
+    background-color: var(--sl-color-neutral-0);
+    border-radius: 50%;
+    border: solid var(--sl-input-border-width) var(--sl-color-neutral-400);
+    translate: calc((var(--width) - var(--height)) / -2);
+    transition: var(--sl-transition-fast) translate ease, var(--sl-transition-fast) background-color,
+      var(--sl-transition-fast) border-color, var(--sl-transition-fast) box-shadow;
+  }
+
+  .switch__input {
+    position: absolute;
+    opacity: 0;
+    padding: 0;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  /* Hover */
+  .switch:not(.switch--checked):not(.switch--disabled) .switch__control:hover {
+    background-color: var(--sl-color-neutral-400);
+    border-color: var(--sl-color-neutral-400);
+  }
+
+  .switch:not(.switch--checked):not(.switch--disabled) .switch__control:hover .switch__thumb {
+    background-color: var(--sl-color-neutral-0);
+    border-color: var(--sl-color-neutral-400);
+  }
+
+  /* Focus */
+  .switch:not(.switch--checked):not(.switch--disabled) .switch__input:focus-visible ~ .switch__control {
+    background-color: var(--sl-color-neutral-400);
+    border-color: var(--sl-color-neutral-400);
+  }
+
+  .switch:not(.switch--checked):not(.switch--disabled) .switch__input:focus-visible ~ .switch__control .switch__thumb {
+    background-color: var(--sl-color-neutral-0);
+    border-color: var(--sl-color-primary-600);
+    outline: var(--sl-focus-ring);
+    outline-offset: var(--sl-focus-ring-offset);
+  }
+
+  /* Checked */
+  .switch--checked .switch__control {
+    background-color: var(--sl-color-primary-600);
+    border-color: var(--sl-color-primary-600);
+  }
+
+  .switch--checked .switch__control .switch__thumb {
+    background-color: var(--sl-color-neutral-0);
+    border-color: var(--sl-color-primary-600);
+    translate: calc((var(--width) - var(--height)) / 2);
+  }
+
+  /* Checked + hover */
+  .switch.switch--checked:not(.switch--disabled) .switch__control:hover {
+    background-color: var(--sl-color-primary-600);
+    border-color: var(--sl-color-primary-600);
+  }
+
+  .switch.switch--checked:not(.switch--disabled) .switch__control:hover .switch__thumb {
+    background-color: var(--sl-color-neutral-0);
+    border-color: var(--sl-color-primary-600);
+  }
+
+  /* Checked + focus */
+  .switch.switch--checked:not(.switch--disabled) .switch__input:focus-visible ~ .switch__control {
+    background-color: var(--sl-color-primary-600);
+    border-color: var(--sl-color-primary-600);
+  }
+
+  .switch.switch--checked:not(.switch--disabled) .switch__input:focus-visible ~ .switch__control .switch__thumb {
+    background-color: var(--sl-color-neutral-0);
+    border-color: var(--sl-color-primary-600);
+    outline: var(--sl-focus-ring);
+    outline-offset: var(--sl-focus-ring-offset);
+  }
+
+  /* Disabled */
+  .switch--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .switch__label {
+    display: inline-block;
+    line-height: var(--height);
+    margin-inline-start: 0.5em;
+    user-select: none;
+  }
+
+  :host([required]) .switch__label::after {
+    content: var(--sl-input-required-content);
+    margin-inline-start: var(--sl-input-required-content-offset);
+  }
+`;
+
+    // src/components/switch/switch.ts
+    var SlSwitch = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.formControlController = new FormControlController(this, {
+          value: (control) => control.checked ? control.value || "on" : void 0,
+          defaultValue: (control) => control.defaultChecked,
+          setValue: (control, checked) => control.checked = checked
+        });
+        this.hasFocus = false;
+        this.title = "";
+        this.name = "";
+        this.size = "medium";
+        this.disabled = false;
+        this.checked = false;
+        this.defaultChecked = false;
+        this.form = "";
+        this.required = false;
+      }
+      firstUpdated() {
+        this.formControlController.updateValidity();
+      }
+      handleBlur() {
+        this.hasFocus = false;
+        this.emit("sl-blur");
+      }
+      handleInput() {
+        this.emit("sl-input");
+      }
+      handleClick() {
+        this.checked = !this.checked;
+        this.emit("sl-change");
+      }
+      handleFocus() {
+        this.hasFocus = true;
+        this.emit("sl-focus");
+      }
+      handleKeyDown(event) {
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          this.checked = false;
+          this.emit("sl-change");
+          this.emit("sl-input");
+        }
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          this.checked = true;
+          this.emit("sl-change");
+          this.emit("sl-input");
+        }
+      }
+      handleCheckedChange() {
+        this.input.checked = this.checked;
+        this.formControlController.updateValidity();
+      }
+      handleDisabledChange() {
+        this.formControlController.setValidity(true);
+      }
+      /** Simulates a click on the switch. */
+      click() {
+        this.input.click();
+      }
+      /** Sets focus on the switch. */
+      focus(options) {
+        this.input.focus(options);
+      }
+      /** Removes focus from the switch. */
+      blur() {
+        this.input.blur();
+      }
+      /** Checks for validity but does not show the browser's validation message. */
+      checkValidity() {
+        return this.input.checkValidity();
+      }
+      /** Checks for validity and shows the browser's validation message if the control is invalid. */
+      reportValidity() {
+        return this.input.reportValidity();
+      }
+      /** Sets a custom validation message. Pass an empty string to restore validity. */
+      setCustomValidity(message) {
+        this.input.setCustomValidity(message);
+        this.formControlController.updateValidity();
+      }
+      render() {
+        return y`
+      <label
+        part="base"
+        class=${o$1({
+      switch: true,
+      "switch--checked": this.checked,
+      "switch--disabled": this.disabled,
+      "switch--focused": this.hasFocus,
+      "switch--small": this.size === "small",
+      "switch--medium": this.size === "medium",
+      "switch--large": this.size === "large"
+    })}
+      >
+        <input
+          class="switch__input"
+          type="checkbox"
+          title=${this.title}
+          name=${this.name}
+          value=${l$1(this.value)}
+          .checked=${l2$1(this.checked)}
+          .disabled=${this.disabled}
+          .required=${this.required}
+          role="switch"
+          aria-checked=${this.checked ? "true" : "false"}
+          @click=${this.handleClick}
+          @input=${this.handleInput}
+          @blur=${this.handleBlur}
+          @focus=${this.handleFocus}
+          @keydown=${this.handleKeyDown}
+        />
+
+        <span part="control" class="switch__control">
+          <span part="thumb" class="switch__thumb"></span>
+        </span>
+
+        <slot part="label" class="switch__label"></slot>
+      </label>
+    `;
+      }
+    };
+    SlSwitch.styles = switch_styles_default;
+    __decorateClass([
+      i2$2('input[type="checkbox"]')
+    ], SlSwitch.prototype, "input", 2);
+    __decorateClass([
+      t$1()
+    ], SlSwitch.prototype, "hasFocus", 2);
+    __decorateClass([
+      e2$1()
+    ], SlSwitch.prototype, "title", 2);
+    __decorateClass([
+      e2$1()
+    ], SlSwitch.prototype, "name", 2);
+    __decorateClass([
+      e2$1()
+    ], SlSwitch.prototype, "value", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlSwitch.prototype, "size", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlSwitch.prototype, "disabled", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlSwitch.prototype, "checked", 2);
+    __decorateClass([
+      defaultValue("checked")
+    ], SlSwitch.prototype, "defaultChecked", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlSwitch.prototype, "form", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlSwitch.prototype, "required", 2);
+    __decorateClass([
+      watch("checked", { waitUntilFirstUpdate: true })
+    ], SlSwitch.prototype, "handleCheckedChange", 1);
+    __decorateClass([
+      watch("disabled", { waitUntilFirstUpdate: true })
+    ], SlSwitch.prototype, "handleDisabledChange", 1);
+    SlSwitch = __decorateClass([
+      e$1("sl-switch")
+    ], SlSwitch);
+
     /* src\CanvasCollections.svelte generated by Svelte v3.55.0 */
 
-    const { console: console_1, document: document_1 } = globals;
+    const { console: console_1 } = globals;
     const file = "src\\CanvasCollections.svelte";
 
-    // (465:0) {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
+    // (479:0) {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
     function create_if_block(ctx) {
     	let div2;
     	let div1;
@@ -35075,20 +44167,20 @@ Do you wish to proceed?`).then(ok => {
     			t8 = space();
     			if (if_block5) if_block5.c();
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 468, 8, 19180);
+    			add_location(div0, file, 482, 8, 20170);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 470, 11, 19324);
+    			add_location(i, file, 484, 11, 20314);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "href", a_href_value = /*HELP*/ ctx[7].switchTitle.url);
-    			add_location(a, file, 469, 8, 19248);
-    			set_custom_element_data(sl_tooltip, "class", "svelte-138fxmf");
-    			add_location(sl_tooltip, file, 467, 6, 19158);
-    			add_location(small, file, 495, 6, 20164);
-    			attr_dev(div1, "class", "cc-switch-title svelte-138fxmf");
-    			add_location(div1, file, 466, 4, 19121);
-    			attr_dev(div2, "class", "cc-switch-container svelte-138fxmf");
-    			add_location(div2, file, 465, 2, 19082);
+    			add_location(a, file, 483, 8, 20238);
+    			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
+    			add_location(sl_tooltip, file, 481, 6, 20148);
+    			add_location(small, file, 509, 6, 21154);
+    			attr_dev(div1, "class", "cc-switch-title svelte-dfjd7v");
+    			add_location(div1, file, 480, 4, 20111);
+    			attr_dev(div2, "class", "cc-switch-container svelte-dfjd7v");
+    			add_location(div2, file, 479, 2, 20072);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -35230,14 +44322,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(465:0) {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}",
+    		source: "(479:0) {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (474:6) {#if allDataLoaded && !noCollections}
+    // (488:6) {#if allDataLoaded && !noCollections}
     function create_if_block_6(ctx) {
     	let i;
     	let i_class_value;
@@ -35253,7 +44345,7 @@ Do you wish to proceed?`).then(ok => {
     			? 'icon-mini-arrow-down'
     			: 'icon-mini-arrow-right') + " cc-module-icon"));
 
-    			add_location(i, file, 474, 8, 19456);
+    			add_location(i, file, 488, 8, 20446);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -35285,14 +44377,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_6.name,
     		type: "if",
-    		source: "(474:6) {#if allDataLoaded && !noCollections}",
+    		source: "(488:6) {#if allDataLoaded && !noCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (490:6) {:else}
+    // (504:6) {:else}
     function create_else_block(ctx) {
     	let sl_tooltip;
     	let div;
@@ -35307,11 +44399,11 @@ Do you wish to proceed?`).then(ok => {
     			t = space();
     			i = element("i");
     			attr_dev(div, "slot", "content");
-    			add_location(div, file, 491, 10, 20017);
+    			add_location(div, file, 505, 10, 21007);
     			attr_dev(i, "class", "icon-unpublish");
-    			add_location(i, file, 492, 10, 20092);
-    			set_custom_element_data(sl_tooltip, "class", "svelte-138fxmf");
-    			add_location(sl_tooltip, file, 490, 8, 19993);
+    			add_location(i, file, 506, 10, 21082);
+    			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
+    			add_location(sl_tooltip, file, 504, 8, 20983);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, sl_tooltip, anchor);
@@ -35331,14 +44423,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(490:6) {:else}",
+    		source: "(504:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (484:6) {#if isCollectionsOn(false, $collectionsStore["VISIBILITY"])}
+    // (498:6) {#if isCollectionsOn(false, $collectionsStore["VISIBILITY"])}
     function create_if_block_5(ctx) {
     	let sl_tooltip;
     	let div;
@@ -35353,11 +44445,11 @@ Do you wish to proceed?`).then(ok => {
     			t = space();
     			i = element("i");
     			attr_dev(div, "slot", "content");
-    			add_location(div, file, 485, 10, 19823);
-    			attr_dev(i, "class", "icon-Solid icon-publish svelte-138fxmf");
-    			add_location(i, file, 486, 10, 19896);
-    			set_custom_element_data(sl_tooltip, "class", "svelte-138fxmf");
-    			add_location(sl_tooltip, file, 484, 8, 19799);
+    			add_location(div, file, 499, 10, 20813);
+    			attr_dev(i, "class", "icon-Solid icon-publish svelte-dfjd7v");
+    			add_location(i, file, 500, 10, 20886);
+    			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
+    			add_location(sl_tooltip, file, 498, 8, 20789);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, sl_tooltip, anchor);
@@ -35377,14 +44469,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(484:6) {#if isCollectionsOn(false, $collectionsStore[\\\"VISIBILITY\\\"])}",
+    		source: "(498:6) {#if isCollectionsOn(false, $collectionsStore[\\\"VISIBILITY\\\"])}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (500:4) {#if noCollections}
+    // (514:4) {#if noCollections}
     function create_if_block_4(ctx) {
     	let label;
     	let sl_switch;
@@ -35396,11 +44488,11 @@ Do you wish to proceed?`).then(ok => {
     			label = element("label");
     			sl_switch = element("sl-switch");
     			set_custom_element_data(sl_switch, "id", "cc-switch");
-    			set_custom_element_data(sl_switch, "class", "svelte-138fxmf");
-    			add_location(sl_switch, file, 501, 8, 20297);
-    			attr_dev(label, "class", "cc-switch svelte-138fxmf");
+    			set_custom_element_data(sl_switch, "class", "svelte-dfjd7v");
+    			add_location(sl_switch, file, 515, 8, 21287);
+    			attr_dev(label, "class", "cc-switch svelte-dfjd7v");
     			attr_dev(label, "for", "cc-switch");
-    			add_location(label, file, 500, 6, 20246);
+    			add_location(label, file, 514, 6, 21236);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, label, anchor);
@@ -35423,14 +44515,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(500:4) {#if noCollections}",
+    		source: "(514:4) {#if noCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (505:4) {#if allDataLoaded && $configStore["ccOn"]}
+    // (519:4) {#if allDataLoaded && $configStore["ccOn"]}
     function create_if_block_3(ctx) {
     	let div;
     	let button;
@@ -35448,13 +44540,13 @@ Do you wish to proceed?`).then(ok => {
 
     			attr_dev(button, "class", button_class_value = "" + (null_to_empty(/*$configStore*/ ctx[8]["needToSaveCollections"]
     			? "cc-active-save-button"
-    			: "cc-save-button") + " svelte-138fxmf"));
+    			: "cc-save-button") + " svelte-dfjd7v"));
 
     			attr_dev(button, "id", "cc-save-button");
     			button.disabled = button_disabled_value = !/*$configStore*/ ctx[8]["needToSaveCollections"];
-    			add_location(button, file, 506, 8, 20477);
-    			attr_dev(div, "class", "cc-save svelte-138fxmf");
-    			add_location(div, file, 505, 6, 20446);
+    			add_location(button, file, 520, 8, 21467);
+    			attr_dev(div, "class", "cc-save svelte-dfjd7v");
+    			add_location(div, file, 519, 6, 21436);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -35481,7 +44573,7 @@ Do you wish to proceed?`).then(ok => {
 
     			if (dirty[0] & /*$configStore*/ 256 && button_class_value !== (button_class_value = "" + (null_to_empty(/*$configStore*/ ctx[8]["needToSaveCollections"]
     			? "cc-active-save-button"
-    			: "cc-save-button") + " svelte-138fxmf"))) {
+    			: "cc-save-button") + " svelte-dfjd7v"))) {
     				attr_dev(button, "class", button_class_value);
     			}
 
@@ -35500,14 +44592,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(505:4) {#if allDataLoaded && $configStore[\\\"ccOn\\\"]}",
+    		source: "(519:4) {#if allDataLoaded && $configStore[\\\"ccOn\\\"]}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (522:4) {#if !ccPublished && !noCollections}
+    // (536:4) {#if !ccPublished && !noCollections}
     function create_if_block_2(ctx) {
     	let div1;
     	let sl_tooltip;
@@ -35534,27 +44626,27 @@ Do you wish to proceed?`).then(ok => {
     			sl_button = element("sl-button");
     			sl_button.textContent = "unpublished";
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 524, 10, 21118);
+    			add_location(div0, file, 538, 10, 22108);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 530, 13, 21344);
+    			add_location(i, file, 544, 13, 22334);
     			attr_dev(a0, "id", "cc-about-unpublished");
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "href", a0_href_value = /*HELP*/ ctx[7].unpublished.url);
-    			add_location(a0, file, 525, 10, 21188);
+    			add_location(a0, file, 539, 10, 22178);
     			set_custom_element_data(sl_tooltip, "trigger", "hover focus");
-    			set_custom_element_data(sl_tooltip, "class", "svelte-138fxmf");
-    			add_location(sl_tooltip, file, 523, 8, 21072);
+    			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
+    			add_location(sl_tooltip, file, 537, 8, 22062);
     			set_custom_element_data(sl_button, "pill", "");
     			set_custom_element_data(sl_button, "size", "small");
     			set_custom_element_data(sl_button, "variant", "warning");
-    			add_location(sl_button, file, 534, 10, 21511);
+    			add_location(sl_button, file, 548, 10, 22501);
     			attr_dev(a1, "href", /*collectionsConfigUrl*/ ctx[12]);
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noreferrer");
-    			add_location(a1, file, 533, 8, 21435);
-    			attr_dev(div1, "class", "cc-unpublished svelte-138fxmf");
-    			add_location(div1, file, 522, 6, 21034);
+    			add_location(a1, file, 547, 8, 22425);
+    			attr_dev(div1, "class", "cc-unpublished svelte-dfjd7v");
+    			add_location(div1, file, 536, 6, 22024);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -35583,14 +44675,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(522:4) {#if !ccPublished && !noCollections}",
+    		source: "(536:4) {#if !ccPublished && !noCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (539:4) {#if showConfig}
+    // (553:4) {#if showConfig}
     function create_if_block_1(ctx) {
     	let div;
     	let collectionsconfiguration;
@@ -35602,8 +44694,8 @@ Do you wish to proceed?`).then(ok => {
     			div = element("div");
     			create_component(collectionsconfiguration.$$.fragment);
     			attr_dev(div, "id", "cc-config");
-    			attr_dev(div, "class", "border border-trbl svelte-138fxmf");
-    			add_location(div, file, 539, 6, 21650);
+    			attr_dev(div, "class", "border border-trbl svelte-dfjd7v");
+    			add_location(div, file, 553, 6, 22640);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -35629,7 +44721,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(539:4) {#if showConfig}",
+    		source: "(553:4) {#if showConfig}",
     		ctx
     	});
 
@@ -35637,10 +44729,6 @@ Do you wish to proceed?`).then(ok => {
     }
 
     function create_fragment(ctx) {
-    	let link;
-    	let script;
-    	let script_src_value;
-    	let t;
     	let if_block_anchor;
     	let current;
     	let mounted;
@@ -35649,25 +44737,13 @@ Do you wish to proceed?`).then(ok => {
 
     	const block = {
     		c: function create() {
-    			link = element("link");
-    			script = element("script");
-    			t = space();
     			if (if_block) if_block.c();
     			if_block_anchor = empty();
-    			attr_dev(link, "rel", "stylesheet");
-    			attr_dev(link, "href", "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css");
-    			add_location(link, file, 454, 2, 18726);
-    			attr_dev(script, "type", "module");
-    			if (!src_url_equal(script.src, script_src_value = "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js")) attr_dev(script, "src", script_src_value);
-    			add_location(script, file, 458, 2, 18857);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			append_dev(document_1.head, link);
-    			append_dev(document_1.head, script);
-    			insert_dev(target, t, anchor);
     			if (if_block) if_block.m(target, anchor);
     			insert_dev(target, if_block_anchor, anchor);
     			current = true;
@@ -35711,9 +44787,6 @@ Do you wish to proceed?`).then(ok => {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			detach_dev(link);
-    			detach_dev(script);
-    			if (detaching) detach_dev(t);
     			if (if_block) if_block.d(detaching);
     			if (detaching) detach_dev(if_block_anchor);
     			mounted = false;
@@ -35813,6 +44886,7 @@ Do you wish to proceed?`).then(ok => {
     			});
     	};
 
+    	setBasePath('../node_modules/@shoelace-style/shoelace/dist/');
     	debug("______________ CanvasCollections.svelte _______________");
     	let { courseId } = $$props;
     	let { editMode } = $$props;
@@ -36272,6 +45346,7 @@ Do you wish to proceed?`).then(ok => {
     		calculateActualNum,
     		debug,
     		toastAlert,
+    		setBasePath,
     		TIME_BETWEEN_SAVES,
     		TIME_BETWEEN_CANVAS_REFRESH,
     		AUTO_SAVE,

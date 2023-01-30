@@ -23,6 +23,7 @@
     "prettier": "^2.8.1",
     "prettier-plugin-svelte": "^2.9.0",
     "rollup": "^2.3.4",
+    "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-svelte": "^7.1.0",
     "rollup-plugin-terser": "^7.0.0",
@@ -34,6 +35,7 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
+    "@shoelace-style/shoelace": "^2.0.0",
     "cl-editor": "^2.3.0",
     "sanitize-html": "^2.8.1"
   }
