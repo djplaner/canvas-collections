@@ -344,14 +344,13 @@ export class CollectionsDetails {
   migrateCollectionsConfiguration() {
     let modules = this.collections["MODULES"];
 
-        // loop through importedModuleDetails
+    // loop through importedModuleDetails
     this.importedModuleIds.forEach((importedModuleId) => {
-      console.log("hello")
+      console.log("hello");
       if (this.importModuleDetails[importedModuleId].matched) {
         // there's a matching currentModuleId
-        let currentModuleId = this.importModuleDetails[
-          importedModuleId
-        ].currentModuleId;
+        let currentModuleId =
+          this.importModuleDetails[importedModuleId].currentModuleId;
 
         // make a new copy of modules[importedModuleId] and assign it to modules[currentModuleId]
         modules[currentModuleId] = JSON.parse(
@@ -362,24 +361,24 @@ export class CollectionsDetails {
       }
     });
 
-
     // this.importedImages contains entries for each imported image
     // { moduleId: moduleName: src: ....}
     // this.importModuleDetails is an object keyed on moduleId
-    // { matched: boolean; currentModuleId } 
+    // { matched: boolean; currentModuleId }
 
     // loop thru each imported image
     this.importedImages.forEach((importedImage) => {
       // if the imported image has been matched to a current module
       if (this.importModuleDetails[importedImage.moduleId].matched) {
         // get the currentModuleId
-        let currentModuleId = this.importModuleDetails[
-          importedImage.moduleId
-        ].currentModuleId;
+        let currentModuleId =
+          this.importModuleDetails[importedImage.moduleId].currentModuleId;
         // get the current module
         let currentModule = modules[currentModuleId];
         // update the image src
-        currentModule.image = importedImage.src;
+        if (currentModule && currentModule.hasOwnProperty("image")) {
+          currentModule.image = importedImage.src;
+        }
       }
     });
   }

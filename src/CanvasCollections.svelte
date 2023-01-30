@@ -19,6 +19,8 @@
   import { toastAlert } from "./lib/ui";
 
   import "@shoelace-style/shoelace/dist/themes/light.css";
+
+  import "@shoelace-style/shoelace/dist/components/alert/alert.js";
   import "@shoelace-style/shoelace/dist/components/badge/badge.js";
   import "@shoelace-style/shoelace/dist/components/button/button.js";
   import "@shoelace-style/shoelace/dist/components/dialog/dialog.js";
@@ -297,7 +299,6 @@
     delete $configStore["migrationOutcome"];
 
     if (outcome === "cancel") {
-      alert("Ok not doing anthing");
       return;
     } else if (outcome === "refresh") {
       // TODO probably with the dialog not closing

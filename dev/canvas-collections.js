@@ -13678,7 +13678,7 @@ var app = (function () {
             // this.importedImages contains entries for each imported image
             // { moduleId: moduleName: src: ....}
             // this.importModuleDetails is an object keyed on moduleId
-            // { matched: boolean; currentModuleId } 
+            // { matched: boolean; currentModuleId }
             // loop thru each imported image
             this.importedImages.forEach((importedImage) => {
                 // if the imported image has been matched to a current module
@@ -13688,7 +13688,9 @@ var app = (function () {
                     // get the current module
                     let currentModule = modules[currentModuleId];
                     // update the image src
-                    currentModule.image = importedImage.src;
+                    if (currentModule && currentModule.hasOwnProperty("image")) {
+                        currentModule.image = importedImage.src;
+                    }
                 }
             });
         }
@@ -35008,38 +35010,329 @@ Do you wish to proceed?`).then(ok => {
         }
     }
 
-    // node_modules/lit-html/directive.js
-    var t$3 = { ATTRIBUTE: 1, CHILD: 2, PROPERTY: 3, BOOLEAN_ATTRIBUTE: 4, EVENT: 5, ELEMENT: 6 };
-    var e$3 = (t2) => (...e2) => ({ _$litDirective$: t2, values: e2 });
-    var i$3 = class {
-      constructor(t2) {
+    // src/internal/event.ts
+    function waitForEvent(el, eventName) {
+      return new Promise((resolve) => {
+        function done(event) {
+          if (event.target === el) {
+            el.removeEventListener(eventName, done);
+            resolve();
+          }
+        }
+        el.addEventListener(eventName, done);
+      });
+    }
+
+    var __defProp = Object.defineProperty;
+    var __defProps = Object.defineProperties;
+    var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+    var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+    var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+    var __hasOwnProp = Object.prototype.hasOwnProperty;
+    var __propIsEnum = Object.prototype.propertyIsEnumerable;
+    var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+    var __spreadValues = (a, b) => {
+      for (var prop in b || (b = {}))
+        if (__hasOwnProp.call(b, prop))
+          __defNormalProp(a, prop, b[prop]);
+      if (__getOwnPropSymbols)
+        for (var prop of __getOwnPropSymbols(b)) {
+          if (__propIsEnum.call(b, prop))
+            __defNormalProp(a, prop, b[prop]);
+        }
+      return a;
+    };
+    var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+    var __objRest = (source, exclude) => {
+      var target = {};
+      for (var prop in source)
+        if (__hasOwnProp.call(source, prop) && exclude.indexOf(prop) < 0)
+          target[prop] = source[prop];
+      if (source != null && __getOwnPropSymbols)
+        for (var prop of __getOwnPropSymbols(source)) {
+          if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source, prop))
+            target[prop] = source[prop];
+        }
+      return target;
+    };
+    var __decorateClass = (decorators, target, key, kind) => {
+      var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+      for (var i = decorators.length - 1, decorator; i >= 0; i--)
+        if (decorator = decorators[i])
+          result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+      if (kind && result)
+        __defProp(target, key, result);
+      return result;
+    };
+
+    // src/internal/animate.ts
+    function animateTo(el, keyframes, options) {
+      return new Promise((resolve) => {
+        if ((options == null ? void 0 : options.duration) === Infinity) {
+          throw new Error("Promise-based animations must be finite.");
+        }
+        const animation = el.animate(keyframes, __spreadProps(__spreadValues({}, options), {
+          duration: prefersReducedMotion() ? 0 : options.duration
+        }));
+        animation.addEventListener("cancel", resolve, { once: true });
+        animation.addEventListener("finish", resolve, { once: true });
+      });
+    }
+    function parseDuration(delay) {
+      delay = delay.toString().toLowerCase();
+      if (delay.indexOf("ms") > -1) {
+        return parseFloat(delay);
       }
-      get _$AU() {
-        return this._$AM._$AU;
+      if (delay.indexOf("s") > -1) {
+        return parseFloat(delay) * 1e3;
       }
-      _$AT(t2, e2, i2) {
-        this._$Ct = t2, this._$AM = e2, this._$Ci = i2;
+      return parseFloat(delay);
+    }
+    function prefersReducedMotion() {
+      const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+      return query.matches;
+    }
+    function stopAnimations(el) {
+      return Promise.all(
+        el.getAnimations().map((animation) => {
+          return new Promise((resolve) => {
+            const handleAnimationEvent = requestAnimationFrame(resolve);
+            animation.addEventListener("cancel", () => handleAnimationEvent, { once: true });
+            animation.addEventListener("finish", () => handleAnimationEvent, { once: true });
+            animation.cancel();
+          });
+        })
+      );
+    }
+
+    // src/utilities/animation-registry.ts
+    var defaultAnimationRegistry = /* @__PURE__ */ new Map();
+    var customAnimationRegistry = /* @__PURE__ */ new WeakMap();
+    function ensureAnimation(animation) {
+      return animation != null ? animation : { keyframes: [], options: { duration: 0 } };
+    }
+    function getLogicalAnimation(animation, dir) {
+      if (dir.toLowerCase() === "rtl") {
+        return {
+          keyframes: animation.rtlKeyframes || animation.keyframes,
+          options: animation.options
+        };
       }
-      _$AS(t2, e2) {
-        return this.update(t2, e2);
+      return animation;
+    }
+    function setDefaultAnimation(animationName, animation) {
+      defaultAnimationRegistry.set(animationName, ensureAnimation(animation));
+    }
+    function getAnimation(el, animationName, options) {
+      const customAnimation = customAnimationRegistry.get(el);
+      if (customAnimation == null ? void 0 : customAnimation[animationName]) {
+        return getLogicalAnimation(customAnimation[animationName], options.dir);
       }
-      update(t2, e2) {
-        return this.render(...e2);
+      const defaultAnimation = defaultAnimationRegistry.get(animationName);
+      if (defaultAnimation) {
+        return getLogicalAnimation(defaultAnimation, options.dir);
+      }
+      return {
+        keyframes: [],
+        options: { duration: 0 }
+      };
+    }
+
+    // node_modules/@shoelace-style/localize/dist/index.js
+    var connectedElements = /* @__PURE__ */ new Set();
+    var documentElementObserver = new MutationObserver(update);
+    var translations = /* @__PURE__ */ new Map();
+    var documentDirection = document.documentElement.dir || "ltr";
+    var documentLanguage = document.documentElement.lang || navigator.language;
+    var fallback;
+    documentElementObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["dir", "lang"]
+    });
+    function registerTranslation(...translation2) {
+      translation2.map((t) => {
+        const code = t.$code.toLowerCase();
+        if (translations.has(code)) {
+          translations.set(code, Object.assign(Object.assign({}, translations.get(code)), t));
+        } else {
+          translations.set(code, t);
+        }
+        if (!fallback) {
+          fallback = t;
+        }
+      });
+      update();
+    }
+    function update() {
+      documentDirection = document.documentElement.dir || "ltr";
+      documentLanguage = document.documentElement.lang || navigator.language;
+      [...connectedElements.keys()].map((el) => {
+        if (typeof el.requestUpdate === "function") {
+          el.requestUpdate();
+        }
+      });
+    }
+    var LocalizeController = class {
+      constructor(host) {
+        this.host = host;
+        this.host.addController(this);
+      }
+      hostConnected() {
+        connectedElements.add(this.host);
+      }
+      hostDisconnected() {
+        connectedElements.delete(this.host);
+      }
+      dir() {
+        return `${this.host.dir || documentDirection}`.toLowerCase();
+      }
+      lang() {
+        return `${this.host.lang || documentLanguage}`.toLowerCase();
+      }
+      term(key, ...args) {
+        var _a, _b;
+        const locale = new Intl.Locale(this.lang());
+        const language = locale === null || locale === void 0 ? void 0 : locale.language.toLowerCase();
+        const region = (_b = (_a = locale === null || locale === void 0 ? void 0 : locale.region) === null || _a === void 0 ? void 0 : _a.toLowerCase()) !== null && _b !== void 0 ? _b : "";
+        const primary = translations.get(`${language}-${region}`);
+        const secondary = translations.get(language);
+        let term;
+        if (primary && primary[key]) {
+          term = primary[key];
+        } else if (secondary && secondary[key]) {
+          term = secondary[key];
+        } else if (fallback && fallback[key]) {
+          term = fallback[key];
+        } else {
+          console.error(`No translation found for: ${String(key)}`);
+          return String(key);
+        }
+        if (typeof term === "function") {
+          return term(...args);
+        }
+        return term;
+      }
+      date(dateToFormat, options) {
+        dateToFormat = new Date(dateToFormat);
+        return new Intl.DateTimeFormat(this.lang(), options).format(dateToFormat);
+      }
+      number(numberToFormat, options) {
+        numberToFormat = Number(numberToFormat);
+        return isNaN(numberToFormat) ? "" : new Intl.NumberFormat(this.lang(), options).format(numberToFormat);
+      }
+      relativeTime(value, unit, options) {
+        return new Intl.RelativeTimeFormat(this.lang(), options).format(value, unit);
       }
     };
-    /*! Bundled license information:
 
-    lit-html/directive.js:
-      (**
-       * @license
-       * Copyright 2017 Google LLC
-       * SPDX-License-Identifier: BSD-3-Clause
-       *)
-    */
+    // src/utilities/localize.ts
+    var LocalizeController2 = class extends LocalizeController {
+    };
+
+    // src/translations/en.ts
+    var translation = {
+      $code: "en",
+      $name: "English",
+      $dir: "ltr",
+      clearEntry: "Clear entry",
+      close: "Close",
+      copy: "Copy",
+      numOptionsSelected: (num) => {
+        if (num === 0)
+          return "No options selected";
+        if (num === 1)
+          return "1 option selected";
+        return `${num} options selected`;
+      },
+      currentValue: "Current value",
+      hidePassword: "Hide password",
+      loading: "Loading",
+      progress: "Progress",
+      remove: "Remove",
+      resize: "Resize",
+      scrollToEnd: "Scroll to end",
+      scrollToStart: "Scroll to start",
+      selectAColorFromTheScreen: "Select a color from the screen",
+      showPassword: "Show password",
+      toggleColorFormat: "Toggle color format"
+    };
+    registerTranslation(translation);
+
+    // src/internal/slot.ts
+    var HasSlotController = class {
+      constructor(host, ...slotNames) {
+        this.slotNames = [];
+        (this.host = host).addController(this);
+        this.slotNames = slotNames;
+        this.handleSlotChange = this.handleSlotChange.bind(this);
+      }
+      hasDefaultSlot() {
+        return [...this.host.childNodes].some((node) => {
+          if (node.nodeType === node.TEXT_NODE && node.textContent.trim() !== "") {
+            return true;
+          }
+          if (node.nodeType === node.ELEMENT_NODE) {
+            const el = node;
+            const tagName = el.tagName.toLowerCase();
+            if (tagName === "sl-visually-hidden") {
+              return false;
+            }
+            if (!el.hasAttribute("slot")) {
+              return true;
+            }
+          }
+          return false;
+        });
+      }
+      hasNamedSlot(name) {
+        return this.host.querySelector(`:scope > [slot="${name}"]`) !== null;
+      }
+      test(slotName) {
+        return slotName === "[default]" ? this.hasDefaultSlot() : this.hasNamedSlot(slotName);
+      }
+      hostConnected() {
+        this.host.shadowRoot.addEventListener("slotchange", this.handleSlotChange);
+      }
+      hostDisconnected() {
+        this.host.shadowRoot.removeEventListener("slotchange", this.handleSlotChange);
+      }
+      handleSlotChange(event) {
+        const slot = event.target;
+        if (this.slotNames.includes("[default]") && !slot.name || slot.name && this.slotNames.includes(slot.name)) {
+          this.host.requestUpdate();
+        }
+      }
+    };
+
+    // src/internal/watch.ts
+    function watch(propertyName, options) {
+      const resolvedOptions = __spreadValues({
+        waitUntilFirstUpdate: false
+      }, options);
+      return (proto, decoratedFnName) => {
+        const { update } = proto;
+        const watchedProperties = Array.isArray(propertyName) ? propertyName : [propertyName];
+        proto.update = function(changedProps) {
+          watchedProperties.forEach((property) => {
+            const key = property;
+            if (changedProps.has(key)) {
+              const oldValue = changedProps.get(key);
+              const newValue = this[key];
+              if (oldValue !== newValue) {
+                if (!resolvedOptions.waitUntilFirstUpdate || this.hasUpdated) {
+                  this[decoratedFnName](oldValue, newValue);
+                }
+              }
+            }
+          });
+          update.call(this, changedProps);
+        };
+      };
+    }
 
     // node_modules/@lit/reactive-element/css-tag.js
-    var t$2 = window;
-    var e$2 = t$2.ShadowRoot && (void 0 === t$2.ShadyCSS || t$2.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype;
+    var t$3 = window;
+    var e$3 = t$3.ShadowRoot && (void 0 === t$3.ShadyCSS || t$3.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype;
     var s$3 = Symbol();
     var n$3 = /* @__PURE__ */ new WeakMap();
     var o$2 = class {
@@ -35051,7 +35344,7 @@ Do you wish to proceed?`).then(ok => {
       get styleSheet() {
         let t3 = this.o;
         const s5 = this.t;
-        if (e$2 && void 0 === t3) {
+        if (e$3 && void 0 === t3) {
           const e4 = void 0 !== s5 && 1 === s5.length;
           e4 && (t3 = n$3.get(s5)), void 0 === t3 && ((this.o = t3 = new CSSStyleSheet()).replaceSync(this.cssText), e4 && n$3.set(s5, t3));
         }
@@ -35062,7 +35355,7 @@ Do you wish to proceed?`).then(ok => {
       }
     };
     var r$1 = (t3) => new o$2("string" == typeof t3 ? t3 : t3 + "", void 0, s$3);
-    var i$2 = (t3, ...e4) => {
+    var i$3 = (t3, ...e4) => {
       const n5 = 1 === t3.length ? t3[0] : e4.reduce((e5, s5, n6) => e5 + ((t4) => {
         if (true === t4._$cssResult$)
           return t4.cssText;
@@ -35073,12 +35366,12 @@ Do you wish to proceed?`).then(ok => {
       return new o$2(n5, t3, s$3);
     };
     var S$1 = (s5, n5) => {
-      e$2 ? s5.adoptedStyleSheets = n5.map((t3) => t3 instanceof CSSStyleSheet ? t3 : t3.styleSheet) : n5.forEach((e4) => {
-        const n6 = document.createElement("style"), o5 = t$2.litNonce;
+      e$3 ? s5.adoptedStyleSheets = n5.map((t3) => t3 instanceof CSSStyleSheet ? t3 : t3.styleSheet) : n5.forEach((e4) => {
+        const n6 = document.createElement("style"), o5 = t$3.litNonce;
         void 0 !== o5 && n6.setAttribute("nonce", o5), n6.textContent = e4.cssText, s5.appendChild(n6);
       });
     };
-    var c$1 = e$2 ? (t3) => t3 : (t3) => t3 instanceof CSSStyleSheet ? ((t4) => {
+    var c$1 = e$3 ? (t3) => t3 : (t3) => t3 instanceof CSSStyleSheet ? ((t4) => {
       let e4 = "";
       for (const s5 of t4.cssRules)
         e4 += s5.cssText;
@@ -35658,11 +35951,153 @@ Do you wish to proceed?`).then(ok => {
        *)
     */
 
+    // src/styles/component.styles.ts
+    var component_styles_default = i$3`
+  :host {
+    box-sizing: border-box;
+  }
+
+  :host *,
+  :host *::before,
+  :host *::after {
+    box-sizing: inherit;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+`;
+
+    // src/components/alert/alert.styles.ts
+    var alert_styles_default = i$3`
+  ${component_styles_default}
+
+  :host {
+    display: contents;
+
+    /* For better DX, we'll reset the margin here so the base part can inherit it */
+    margin: 0;
+  }
+
+  .alert {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    background-color: var(--sl-panel-background-color);
+    border: solid var(--sl-panel-border-width) var(--sl-panel-border-color);
+    border-top-width: calc(var(--sl-panel-border-width) * 3);
+    border-radius: var(--sl-border-radius-medium);
+    font-family: var(--sl-font-sans);
+    font-size: var(--sl-font-size-small);
+    font-weight: var(--sl-font-weight-normal);
+    line-height: 1.6;
+    color: var(--sl-color-neutral-700);
+    margin: inherit;
+  }
+
+  .alert:not(.alert--has-icon) .alert__icon,
+  .alert:not(.alert--closable) .alert__close-button {
+    display: none;
+  }
+
+  .alert__icon {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    font-size: var(--sl-font-size-large);
+    padding-inline-start: var(--sl-spacing-large);
+  }
+
+  .alert--primary {
+    border-top-color: var(--sl-color-primary-600);
+  }
+
+  .alert--primary .alert__icon {
+    color: var(--sl-color-primary-600);
+  }
+
+  .alert--success {
+    border-top-color: var(--sl-color-success-600);
+  }
+
+  .alert--success .alert__icon {
+    color: var(--sl-color-success-600);
+  }
+
+  .alert--neutral {
+    border-top-color: var(--sl-color-neutral-600);
+  }
+
+  .alert--neutral .alert__icon {
+    color: var(--sl-color-neutral-600);
+  }
+
+  .alert--warning {
+    border-top-color: var(--sl-color-warning-600);
+  }
+
+  .alert--warning .alert__icon {
+    color: var(--sl-color-warning-600);
+  }
+
+  .alert--danger {
+    border-top-color: var(--sl-color-danger-600);
+  }
+
+  .alert--danger .alert__icon {
+    color: var(--sl-color-danger-600);
+  }
+
+  .alert__message {
+    flex: 1 1 auto;
+    display: block;
+    padding: var(--sl-spacing-large);
+    overflow: hidden;
+  }
+
+  .alert__close-button {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    font-size: var(--sl-font-size-medium);
+    padding-inline-end: var(--sl-spacing-medium);
+  }
+`;
+
+    // node_modules/lit-html/directive.js
+    var t$2 = { ATTRIBUTE: 1, CHILD: 2, PROPERTY: 3, BOOLEAN_ATTRIBUTE: 4, EVENT: 5, ELEMENT: 6 };
+    var e$2 = (t2) => (...e2) => ({ _$litDirective$: t2, values: e2 });
+    var i$2 = class {
+      constructor(t2) {
+      }
+      get _$AU() {
+        return this._$AM._$AU;
+      }
+      _$AT(t2, e2, i2) {
+        this._$Ct = t2, this._$AM = e2, this._$Ci = i2;
+      }
+      _$AS(t2, e2) {
+        return this.update(t2, e2);
+      }
+      update(t2, e2) {
+        return this.render(...e2);
+      }
+    };
+    /*! Bundled license information:
+
+    lit-html/directive.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+    */
+
     // node_modules/lit-html/directives/class-map.js
-    var o$1 = e$3(class extends i$3 {
+    var o$1 = e$2(class extends i$2 {
       constructor(t2) {
         var i2;
-        if (super(t2), t2.type !== t$3.ATTRIBUTE || "class" !== t2.name || (null === (i2 = t2.strings) || void 0 === i2 ? void 0 : i2.length) > 2)
+        if (super(t2), t2.type !== t$2.ATTRIBUTE || "class" !== t2.name || (null === (i2 = t2.strings) || void 0 === i2 ? void 0 : i2.length) > 2)
           throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.");
       }
       render(t2) {
@@ -35696,48 +36131,6 @@ Do you wish to proceed?`).then(ok => {
        * SPDX-License-Identifier: BSD-3-Clause
        *)
     */
-
-    var __defProp = Object.defineProperty;
-    var __defProps = Object.defineProperties;
-    var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-    var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
-    var __getOwnPropSymbols = Object.getOwnPropertySymbols;
-    var __hasOwnProp = Object.prototype.hasOwnProperty;
-    var __propIsEnum = Object.prototype.propertyIsEnumerable;
-    var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-    var __spreadValues = (a, b) => {
-      for (var prop in b || (b = {}))
-        if (__hasOwnProp.call(b, prop))
-          __defNormalProp(a, prop, b[prop]);
-      if (__getOwnPropSymbols)
-        for (var prop of __getOwnPropSymbols(b)) {
-          if (__propIsEnum.call(b, prop))
-            __defNormalProp(a, prop, b[prop]);
-        }
-      return a;
-    };
-    var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-    var __objRest = (source, exclude) => {
-      var target = {};
-      for (var prop in source)
-        if (__hasOwnProp.call(source, prop) && exclude.indexOf(prop) < 0)
-          target[prop] = source[prop];
-      if (source != null && __getOwnPropSymbols)
-        for (var prop of __getOwnPropSymbols(source)) {
-          if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source, prop))
-            target[prop] = source[prop];
-        }
-      return target;
-    };
-    var __decorateClass = (decorators, target, key, kind) => {
-      var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
-      for (var i = decorators.length - 1, decorator; i >= 0; i--)
-        if (decorator = decorators[i])
-          result = (kind ? decorator(target, key, result) : decorator(result)) || result;
-      if (kind && result)
-        __defProp(target, key, result);
-      return result;
-    };
 
     // node_modules/@lit/reactive-element/decorators/custom-element.js
     var e$1 = (e5) => (n2) => "function" == typeof n2 ? ((e6, n3) => (customElements.define(e6, n3), n3))(e5, n2) : ((e6, n3) => {
@@ -35896,25 +36289,756 @@ Do you wish to proceed?`).then(ok => {
        *)
     */
 
-    // src/styles/component.styles.ts
-    var component_styles_default = i$2`
+    // src/components/alert/alert.ts
+    var toastStack = Object.assign(document.createElement("div"), { className: "sl-toast-stack" });
+    var SlAlert = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.hasSlotController = new HasSlotController(this, "icon", "suffix");
+        this.localize = new LocalizeController2(this);
+        this.open = false;
+        this.closable = false;
+        this.variant = "primary";
+        this.duration = Infinity;
+      }
+      firstUpdated() {
+        this.base.hidden = !this.open;
+      }
+      restartAutoHide() {
+        clearTimeout(this.autoHideTimeout);
+        if (this.open && this.duration < Infinity) {
+          this.autoHideTimeout = window.setTimeout(() => this.hide(), this.duration);
+        }
+      }
+      handleCloseClick() {
+        this.hide();
+      }
+      handleMouseMove() {
+        this.restartAutoHide();
+      }
+      async handleOpenChange() {
+        if (this.open) {
+          this.emit("sl-show");
+          if (this.duration < Infinity) {
+            this.restartAutoHide();
+          }
+          await stopAnimations(this.base);
+          this.base.hidden = false;
+          const { keyframes, options } = getAnimation(this, "alert.show", { dir: this.localize.dir() });
+          await animateTo(this.base, keyframes, options);
+          this.emit("sl-after-show");
+        } else {
+          this.emit("sl-hide");
+          clearTimeout(this.autoHideTimeout);
+          await stopAnimations(this.base);
+          const { keyframes, options } = getAnimation(this, "alert.hide", { dir: this.localize.dir() });
+          await animateTo(this.base, keyframes, options);
+          this.base.hidden = true;
+          this.emit("sl-after-hide");
+        }
+      }
+      handleDurationChange() {
+        this.restartAutoHide();
+      }
+      /** Shows the alert. */
+      async show() {
+        if (this.open) {
+          return void 0;
+        }
+        this.open = true;
+        return waitForEvent(this, "sl-after-show");
+      }
+      /** Hides the alert */
+      async hide() {
+        if (!this.open) {
+          return void 0;
+        }
+        this.open = false;
+        return waitForEvent(this, "sl-after-hide");
+      }
+      /**
+       * Displays the alert as a toast notification. This will move the alert out of its position in the DOM and, when
+       * dismissed, it will be removed from the DOM completely. By storing a reference to the alert, you can reuse it by
+       * calling this method again. The returned promise will resolve after the alert is hidden.
+       */
+      async toast() {
+        return new Promise((resolve) => {
+          if (toastStack.parentElement === null) {
+            document.body.append(toastStack);
+          }
+          toastStack.appendChild(this);
+          requestAnimationFrame(() => {
+            this.clientWidth;
+            this.show();
+          });
+          this.addEventListener(
+            "sl-after-hide",
+            () => {
+              toastStack.removeChild(this);
+              resolve();
+              if (toastStack.querySelector("sl-alert") === null) {
+                toastStack.remove();
+              }
+            },
+            { once: true }
+          );
+        });
+      }
+      render() {
+        return y`
+      <div
+        part="base"
+        class=${o$1({
+      alert: true,
+      "alert--open": this.open,
+      "alert--closable": this.closable,
+      "alert--has-icon": this.hasSlotController.test("icon"),
+      "alert--primary": this.variant === "primary",
+      "alert--success": this.variant === "success",
+      "alert--neutral": this.variant === "neutral",
+      "alert--warning": this.variant === "warning",
+      "alert--danger": this.variant === "danger"
+    })}
+        role="alert"
+        aria-hidden=${this.open ? "false" : "true"}
+        @mousemove=${this.handleMouseMove}
+      >
+        <slot name="icon" part="icon" class="alert__icon"></slot>
+
+        <slot part="message" class="alert__message" aria-live="polite"></slot>
+
+        ${this.closable ? y`
+              <sl-icon-button
+                part="close-button"
+                exportparts="base:close-button__base"
+                class="alert__close-button"
+                name="x-lg"
+                library="system"
+                label=${this.localize.term("close")}
+                @click=${this.handleCloseClick}
+              ></sl-icon-button>
+            ` : ""}
+      </div>
+    `;
+      }
+    };
+    SlAlert.styles = alert_styles_default;
+    __decorateClass([
+      i2$2('[part~="base"]')
+    ], SlAlert.prototype, "base", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlAlert.prototype, "open", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlAlert.prototype, "closable", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlAlert.prototype, "variant", 2);
+    __decorateClass([
+      e2$1({ type: Number })
+    ], SlAlert.prototype, "duration", 2);
+    __decorateClass([
+      watch("open", { waitUntilFirstUpdate: true })
+    ], SlAlert.prototype, "handleOpenChange", 1);
+    __decorateClass([
+      watch("duration")
+    ], SlAlert.prototype, "handleDurationChange", 1);
+    SlAlert = __decorateClass([
+      e$1("sl-alert")
+    ], SlAlert);
+    setDefaultAnimation("alert.show", {
+      keyframes: [
+        { opacity: 0, scale: 0.8 },
+        { opacity: 1, scale: 1 }
+      ],
+      options: { duration: 250, easing: "ease" }
+    });
+    setDefaultAnimation("alert.hide", {
+      keyframes: [
+        { opacity: 1, scale: 1 },
+        { opacity: 0, scale: 0.8 }
+      ],
+      options: { duration: 250, easing: "ease" }
+    });
+
+    // src/components/icon-button/icon-button.styles.ts
+    var icon_button_styles_default = i$3`
+  ${component_styles_default}
+
   :host {
-    box-sizing: border-box;
+    display: inline-block;
+    color: var(--sl-color-neutral-600);
   }
 
-  :host *,
-  :host *::before,
-  :host *::after {
-    box-sizing: inherit;
+  .icon-button {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    border-radius: var(--sl-border-radius-medium);
+    font-size: inherit;
+    color: inherit;
+    padding: var(--sl-spacing-x-small);
+    cursor: pointer;
+    transition: var(--sl-transition-x-fast) color;
+    -webkit-appearance: none;
   }
 
-  [hidden] {
-    display: none !important;
+  .icon-button:hover:not(.icon-button--disabled),
+  .icon-button:focus-visible:not(.icon-button--disabled) {
+    color: var(--sl-color-primary-600);
+  }
+
+  .icon-button:active:not(.icon-button--disabled) {
+    color: var(--sl-color-primary-700);
+  }
+
+  .icon-button:focus {
+    outline: none;
+  }
+
+  .icon-button--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .icon-button:focus-visible {
+    outline: var(--sl-focus-ring);
+    outline-offset: var(--sl-focus-ring-offset);
+  }
+
+  .icon-button__icon {
+    pointer-events: none;
   }
 `;
 
+    // node_modules/lit-html/static.js
+    var e = Symbol.for("");
+    var l$2 = (t) => {
+      if ((null == t ? void 0 : t.r) === e)
+        return null == t ? void 0 : t._$litStatic$;
+    };
+    var i = (t, ...r) => ({ _$litStatic$: r.reduce((r2, e2, l2) => r2 + ((t2) => {
+      if (void 0 !== t2._$litStatic$)
+        return t2._$litStatic$;
+      throw Error(`Value passed to 'literal' function must be a 'literal' result: ${t2}. Use 'unsafeStatic' to pass non-literal values, but
+            take care to ensure page security.`);
+    })(e2) + t[l2 + 1], t[0]), r: e });
+    var s$2 = /* @__PURE__ */ new Map();
+    var a$1 = (t) => (r, ...e2) => {
+      const o = e2.length;
+      let i2, a2;
+      const n2 = [], u2 = [];
+      let c, $ = 0, f = false;
+      for (; $ < o; ) {
+        for (c = r[$]; $ < o && void 0 !== (a2 = e2[$], i2 = l$2(a2)); )
+          c += i2 + r[++$], f = true;
+        u2.push(a2), n2.push(c), $++;
+      }
+      if ($ === o && n2.push(r[o]), f) {
+        const t2 = n2.join("$$lit$$");
+        void 0 === (r = s$2.get(t2)) && (n2.raw = n2, s$2.set(t2, r = n2)), e2 = u2;
+      }
+      return t(r, ...e2);
+    };
+    var n$1 = a$1(y);
+    /*! Bundled license information:
+
+    lit-html/static.js:
+      (**
+       * @license
+       * Copyright 2020 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+    */
+
+    // node_modules/lit-html/directives/if-defined.js
+    var l$1 = (l2) => null != l2 ? l2 : b$1;
+    /*! Bundled license information:
+
+    lit-html/directives/if-defined.js:
+      (**
+       * @license
+       * Copyright 2018 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+    */
+
+    // src/components/icon-button/icon-button.ts
+    var SlIconButton = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.hasFocus = false;
+        this.label = "";
+        this.disabled = false;
+      }
+      handleBlur() {
+        this.hasFocus = false;
+        this.emit("sl-blur");
+      }
+      handleFocus() {
+        this.hasFocus = true;
+        this.emit("sl-focus");
+      }
+      handleClick(event) {
+        if (this.disabled) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }
+      /** Simulates a click on the icon button. */
+      click() {
+        this.button.click();
+      }
+      /** Sets focus on the icon button. */
+      focus(options) {
+        this.button.focus(options);
+      }
+      /** Removes focus from the icon button. */
+      blur() {
+        this.button.blur();
+      }
+      render() {
+        const isLink = this.href ? true : false;
+        const tag = isLink ? i`a` : i`button`;
+        return n$1`
+      <${tag}
+        part="base"
+        class=${o$1({
+      "icon-button": true,
+      "icon-button--disabled": !isLink && this.disabled,
+      "icon-button--focused": this.hasFocus
+    })}
+        ?disabled=${l$1(isLink ? void 0 : this.disabled)}
+        type=${l$1(isLink ? void 0 : "button")}
+        href=${l$1(isLink ? this.href : void 0)}
+        target=${l$1(isLink ? this.target : void 0)}
+        download=${l$1(isLink ? this.download : void 0)}
+        rel=${l$1(isLink && this.target ? "noreferrer noopener" : void 0)}
+        role=${l$1(isLink ? void 0 : "button")}
+        aria-disabled=${this.disabled ? "true" : "false"}
+        aria-label="${this.label}"
+        tabindex=${this.disabled ? "-1" : "0"}
+        @blur=${this.handleBlur}
+        @focus=${this.handleFocus}
+        @click=${this.handleClick}
+      >
+        <sl-icon
+          class="icon-button__icon"
+          name=${l$1(this.name)}
+          library=${l$1(this.library)}
+          src=${l$1(this.src)}
+          aria-hidden="true"
+        ></sl-icon>
+      </${tag}>
+    `;
+      }
+    };
+    SlIconButton.styles = icon_button_styles_default;
+    __decorateClass([
+      i2$2(".icon-button")
+    ], SlIconButton.prototype, "button", 2);
+    __decorateClass([
+      t$1()
+    ], SlIconButton.prototype, "hasFocus", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "name", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "library", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "src", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "href", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "target", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "download", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIconButton.prototype, "label", 2);
+    __decorateClass([
+      e2$1({ type: Boolean, reflect: true })
+    ], SlIconButton.prototype, "disabled", 2);
+    SlIconButton = __decorateClass([
+      e$1("sl-icon-button")
+    ], SlIconButton);
+
+    // src/utilities/base-path.ts
+    var basePath = "";
+    function setBasePath(path) {
+      basePath = path;
+    }
+    function getBasePath() {
+      if (!basePath) {
+        const scripts = [...document.getElementsByTagName("script")];
+        const configScript = scripts.find((script) => script.hasAttribute("data-shoelace"));
+        if (configScript) {
+          setBasePath(configScript.getAttribute("data-shoelace"));
+        } else {
+          const fallbackScript = scripts.find((s) => /shoelace(\.min)?\.js($|\?)/.test(s.src));
+          let path = "";
+          if (fallbackScript) {
+            path = fallbackScript.getAttribute("src");
+          }
+          setBasePath(path.split("/").slice(0, -1).join("/"));
+        }
+      }
+      return basePath.replace(/\/$/, "");
+    }
+
+    // src/components/icon/library.default.ts
+    var library = {
+      name: "default",
+      resolver: (name) => `${getBasePath()}/assets/icons/${name}.svg`
+    };
+    var library_default_default = library;
+
+    // src/components/icon/library.system.ts
+    var icons = {
+      caret: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  `,
+      check: `
+    <svg part="checked-icon" class="checkbox__icon" viewBox="0 0 16 16">
+      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
+        <g stroke="currentColor" stroke-width="2">
+          <g transform="translate(3.428571, 3.428571)">
+            <path d="M0,5.71428571 L3.42857143,9.14285714"></path>
+            <path d="M9.14285714,0 L3.42857143,9.14285714"></path>
+          </g>
+        </g>
+      </g>
+    </svg>
+  `,
+      "chevron-down": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+    </svg>
+  `,
+      "chevron-left": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+    </svg>
+  `,
+      "chevron-right": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+    </svg>
+  `,
+      eye: `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+      <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+      <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+    </svg>
+  `,
+      "eye-slash": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash" viewBox="0 0 16 16">
+      <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/>
+      <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/>
+      <path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"/>
+    </svg>
+  `,
+      eyedropper: `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eyedropper" viewBox="0 0 16 16">
+      <path d="M13.354.646a1.207 1.207 0 0 0-1.708 0L8.5 3.793l-.646-.647a.5.5 0 1 0-.708.708L8.293 5l-7.147 7.146A.5.5 0 0 0 1 12.5v1.793l-.854.853a.5.5 0 1 0 .708.707L1.707 15H3.5a.5.5 0 0 0 .354-.146L11 7.707l1.146 1.147a.5.5 0 0 0 .708-.708l-.647-.646 3.147-3.146a1.207 1.207 0 0 0 0-1.708l-2-2zM2 12.707l7-7L10.293 7l-7 7H2v-1.293z"></path>
+    </svg>
+  `,
+      "grip-vertical": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-grip-vertical" viewBox="0 0 16 16">
+      <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"></path>
+    </svg>
+  `,
+      indeterminate: `
+    <svg part="indeterminate-icon" class="checkbox__icon" viewBox="0 0 16 16">
+      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
+        <g stroke="currentColor" stroke-width="2">
+          <g transform="translate(2.285714, 6.857143)">
+            <path d="M10.2857143,1.14285714 L1.14285714,1.14285714"></path>
+          </g>
+        </g>
+      </g>
+    </svg>
+  `,
+      "person-fill": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+      <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+    </svg>
+  `,
+      "play-fill": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+      <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"></path>
+    </svg>
+  `,
+      "pause-fill": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pause-fill" viewBox="0 0 16 16">
+      <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"></path>
+    </svg>
+  `,
+      radio: `
+    <svg part="checked-icon" class="radio__icon" viewBox="0 0 16 16">
+      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g fill="currentColor">
+          <circle cx="8" cy="8" r="3.42857143"></circle>
+        </g>
+      </g>
+    </svg>
+  `,
+      "star-fill": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+      <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+    </svg>
+  `,
+      "x-lg": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+    </svg>
+  `,
+      "x-circle-fill": `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"></path>
+    </svg>
+  `
+    };
+    var systemLibrary = {
+      name: "system",
+      resolver: (name) => {
+        if (name in icons) {
+          return `data:image/svg+xml,${encodeURIComponent(icons[name])}`;
+        }
+        return "";
+      }
+    };
+    var library_system_default = systemLibrary;
+
+    // src/components/icon/library.ts
+    var registry = [library_default_default, library_system_default];
+    var watchedIcons = [];
+    function watchIcon(icon) {
+      watchedIcons.push(icon);
+    }
+    function unwatchIcon(icon) {
+      watchedIcons = watchedIcons.filter((el) => el !== icon);
+    }
+    function getIconLibrary(name) {
+      return registry.find((lib) => lib.name === name);
+    }
+
+    // src/components/include/request.ts
+    var includeFiles = /* @__PURE__ */ new Map();
+    function requestInclude(src, mode = "cors") {
+      if (includeFiles.has(src)) {
+        return includeFiles.get(src);
+      }
+      const fileDataPromise = fetch(src, { mode }).then(async (response) => {
+        return {
+          ok: response.ok,
+          status: response.status,
+          html: await response.text()
+        };
+      });
+      includeFiles.set(src, fileDataPromise);
+      return fileDataPromise;
+    }
+
+    // src/components/icon/request.ts
+    var iconFiles = /* @__PURE__ */ new Map();
+    async function requestIcon(url) {
+      if (iconFiles.has(url)) {
+        return iconFiles.get(url);
+      }
+      const fileData = await requestInclude(url);
+      const iconFileData = {
+        ok: fileData.ok,
+        status: fileData.status,
+        svg: null
+      };
+      if (fileData.ok) {
+        const div = document.createElement("div");
+        div.innerHTML = fileData.html;
+        const svg = div.firstElementChild;
+        iconFileData.svg = (svg == null ? void 0 : svg.tagName.toLowerCase()) === "svg" ? svg.outerHTML : "";
+      }
+      iconFiles.set(url, iconFileData);
+      return iconFileData;
+    }
+
+    // src/components/icon/icon.styles.ts
+    var icon_styles_default = i$3`
+  ${component_styles_default}
+
+  :host {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    box-sizing: content-box !important;
+  }
+
+  svg {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+`;
+
+    // node_modules/lit-html/directives/unsafe-html.js
+    var e4 = class extends i$2 {
+      constructor(i2) {
+        if (super(i2), this.it = b$1, i2.type !== t$2.CHILD)
+          throw Error(this.constructor.directiveName + "() can only be used in child bindings");
+      }
+      render(r) {
+        if (r === b$1 || null == r)
+          return this._t = void 0, this.it = r;
+        if (r === x$1)
+          return r;
+        if ("string" != typeof r)
+          throw Error(this.constructor.directiveName + "() called with a non-string value");
+        if (r === this.it)
+          return this._t;
+        this.it = r;
+        const s = [r];
+        return s.raw = s, this._t = { _$litType$: this.constructor.resultType, strings: s, values: [] };
+      }
+    };
+    e4.directiveName = "unsafeHTML", e4.resultType = 1;
+
+    // node_modules/lit-html/directives/unsafe-svg.js
+    var t3 = class extends e4 {
+    };
+    t3.directiveName = "unsafeSVG", t3.resultType = 2;
+    var o2$1 = e$2(t3);
+
+    // src/components/icon/icon.ts
+    var parser;
+    var SlIcon = class extends ShoelaceElement {
+      constructor() {
+        super(...arguments);
+        this.svg = "";
+        this.label = "";
+        this.library = "default";
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        watchIcon(this);
+      }
+      firstUpdated() {
+        this.setIcon();
+      }
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        unwatchIcon(this);
+      }
+      getUrl() {
+        const library = getIconLibrary(this.library);
+        if (this.name && library) {
+          return library.resolver(this.name);
+        }
+        return this.src;
+      }
+      handleLabelChange() {
+        const hasLabel = typeof this.label === "string" && this.label.length > 0;
+        if (hasLabel) {
+          this.setAttribute("role", "img");
+          this.setAttribute("aria-label", this.label);
+          this.removeAttribute("aria-hidden");
+        } else {
+          this.removeAttribute("role");
+          this.removeAttribute("aria-label");
+          this.setAttribute("aria-hidden", "true");
+        }
+      }
+      async setIcon() {
+        var _a;
+        const library = getIconLibrary(this.library);
+        const url = this.getUrl();
+        if (!parser) {
+          parser = new DOMParser();
+        }
+        if (url) {
+          try {
+            const file = await requestIcon(url);
+            if (url !== this.getUrl()) {
+              return;
+            } else if (file.ok) {
+              const doc = parser.parseFromString(file.svg, "text/html");
+              const svgEl = doc.body.querySelector("svg");
+              if (svgEl !== null) {
+                (_a = library == null ? void 0 : library.mutator) == null ? void 0 : _a.call(library, svgEl);
+                this.svg = svgEl.outerHTML;
+                this.emit("sl-load");
+              } else {
+                this.svg = "";
+                this.emit("sl-error");
+              }
+            } else {
+              this.svg = "";
+              this.emit("sl-error");
+            }
+          } catch (e5) {
+            this.emit("sl-error");
+          }
+        } else if (this.svg.length > 0) {
+          this.svg = "";
+        }
+      }
+      render() {
+        return y` ${o2$1(this.svg)} `;
+      }
+    };
+    SlIcon.styles = icon_styles_default;
+    __decorateClass([
+      t$1()
+    ], SlIcon.prototype, "svg", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlIcon.prototype, "name", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIcon.prototype, "src", 2);
+    __decorateClass([
+      e2$1()
+    ], SlIcon.prototype, "label", 2);
+    __decorateClass([
+      e2$1({ reflect: true })
+    ], SlIcon.prototype, "library", 2);
+    __decorateClass([
+      watch("label")
+    ], SlIcon.prototype, "handleLabelChange", 1);
+    __decorateClass([
+      watch(["name", "src", "library"])
+    ], SlIcon.prototype, "setIcon", 1);
+    SlIcon = __decorateClass([
+      e$1("sl-icon")
+    ], SlIcon);
+    /*! Bundled license information:
+
+    lit-html/directives/unsafe-html.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+
+    lit-html/directives/unsafe-svg.js:
+      (**
+       * @license
+       * Copyright 2017 Google LLC
+       * SPDX-License-Identifier: BSD-3-Clause
+       *)
+    */
+
     // src/components/badge/badge.styles.ts
-    var badge_styles_default = i$2`
+    var badge_styles_default = i$3`
   ${component_styles_default}
 
   :host {
@@ -36260,7 +37384,7 @@ Do you wish to proceed?`).then(ok => {
     };
 
     // src/components/button/button.styles.ts
-    var button_styles_default = i$2`
+    var button_styles_default = i$3`
   ${component_styles_default}
 
   :host {
@@ -36850,250 +37974,6 @@ Do you wish to proceed?`).then(ok => {
   }
 `;
 
-    // node_modules/lit-html/static.js
-    var e = Symbol.for("");
-    var l$2 = (t) => {
-      if ((null == t ? void 0 : t.r) === e)
-        return null == t ? void 0 : t._$litStatic$;
-    };
-    var i = (t, ...r) => ({ _$litStatic$: r.reduce((r2, e2, l2) => r2 + ((t2) => {
-      if (void 0 !== t2._$litStatic$)
-        return t2._$litStatic$;
-      throw Error(`Value passed to 'literal' function must be a 'literal' result: ${t2}. Use 'unsafeStatic' to pass non-literal values, but
-            take care to ensure page security.`);
-    })(e2) + t[l2 + 1], t[0]), r: e });
-    var s$2 = /* @__PURE__ */ new Map();
-    var a$1 = (t) => (r, ...e2) => {
-      const o = e2.length;
-      let i2, a2;
-      const n2 = [], u2 = [];
-      let c, $ = 0, f = false;
-      for (; $ < o; ) {
-        for (c = r[$]; $ < o && void 0 !== (a2 = e2[$], i2 = l$2(a2)); )
-          c += i2 + r[++$], f = true;
-        u2.push(a2), n2.push(c), $++;
-      }
-      if ($ === o && n2.push(r[o]), f) {
-        const t2 = n2.join("$$lit$$");
-        void 0 === (r = s$2.get(t2)) && (n2.raw = n2, s$2.set(t2, r = n2)), e2 = u2;
-      }
-      return t(r, ...e2);
-    };
-    var n$1 = a$1(y);
-    /*! Bundled license information:
-
-    lit-html/static.js:
-      (**
-       * @license
-       * Copyright 2020 Google LLC
-       * SPDX-License-Identifier: BSD-3-Clause
-       *)
-    */
-
-    // node_modules/@shoelace-style/localize/dist/index.js
-    var connectedElements = /* @__PURE__ */ new Set();
-    var documentElementObserver = new MutationObserver(update);
-    var translations = /* @__PURE__ */ new Map();
-    var documentDirection = document.documentElement.dir || "ltr";
-    var documentLanguage = document.documentElement.lang || navigator.language;
-    var fallback;
-    documentElementObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["dir", "lang"]
-    });
-    function registerTranslation(...translation2) {
-      translation2.map((t) => {
-        const code = t.$code.toLowerCase();
-        if (translations.has(code)) {
-          translations.set(code, Object.assign(Object.assign({}, translations.get(code)), t));
-        } else {
-          translations.set(code, t);
-        }
-        if (!fallback) {
-          fallback = t;
-        }
-      });
-      update();
-    }
-    function update() {
-      documentDirection = document.documentElement.dir || "ltr";
-      documentLanguage = document.documentElement.lang || navigator.language;
-      [...connectedElements.keys()].map((el) => {
-        if (typeof el.requestUpdate === "function") {
-          el.requestUpdate();
-        }
-      });
-    }
-    var LocalizeController = class {
-      constructor(host) {
-        this.host = host;
-        this.host.addController(this);
-      }
-      hostConnected() {
-        connectedElements.add(this.host);
-      }
-      hostDisconnected() {
-        connectedElements.delete(this.host);
-      }
-      dir() {
-        return `${this.host.dir || documentDirection}`.toLowerCase();
-      }
-      lang() {
-        return `${this.host.lang || documentLanguage}`.toLowerCase();
-      }
-      term(key, ...args) {
-        var _a, _b;
-        const locale = new Intl.Locale(this.lang());
-        const language = locale === null || locale === void 0 ? void 0 : locale.language.toLowerCase();
-        const region = (_b = (_a = locale === null || locale === void 0 ? void 0 : locale.region) === null || _a === void 0 ? void 0 : _a.toLowerCase()) !== null && _b !== void 0 ? _b : "";
-        const primary = translations.get(`${language}-${region}`);
-        const secondary = translations.get(language);
-        let term;
-        if (primary && primary[key]) {
-          term = primary[key];
-        } else if (secondary && secondary[key]) {
-          term = secondary[key];
-        } else if (fallback && fallback[key]) {
-          term = fallback[key];
-        } else {
-          console.error(`No translation found for: ${String(key)}`);
-          return String(key);
-        }
-        if (typeof term === "function") {
-          return term(...args);
-        }
-        return term;
-      }
-      date(dateToFormat, options) {
-        dateToFormat = new Date(dateToFormat);
-        return new Intl.DateTimeFormat(this.lang(), options).format(dateToFormat);
-      }
-      number(numberToFormat, options) {
-        numberToFormat = Number(numberToFormat);
-        return isNaN(numberToFormat) ? "" : new Intl.NumberFormat(this.lang(), options).format(numberToFormat);
-      }
-      relativeTime(value, unit, options) {
-        return new Intl.RelativeTimeFormat(this.lang(), options).format(value, unit);
-      }
-    };
-
-    // src/utilities/localize.ts
-    var LocalizeController2 = class extends LocalizeController {
-    };
-
-    // src/translations/en.ts
-    var translation = {
-      $code: "en",
-      $name: "English",
-      $dir: "ltr",
-      clearEntry: "Clear entry",
-      close: "Close",
-      copy: "Copy",
-      numOptionsSelected: (num) => {
-        if (num === 0)
-          return "No options selected";
-        if (num === 1)
-          return "1 option selected";
-        return `${num} options selected`;
-      },
-      currentValue: "Current value",
-      hidePassword: "Hide password",
-      loading: "Loading",
-      progress: "Progress",
-      remove: "Remove",
-      resize: "Resize",
-      scrollToEnd: "Scroll to end",
-      scrollToStart: "Scroll to start",
-      selectAColorFromTheScreen: "Select a color from the screen",
-      showPassword: "Show password",
-      toggleColorFormat: "Toggle color format"
-    };
-    registerTranslation(translation);
-
-    // src/internal/slot.ts
-    var HasSlotController = class {
-      constructor(host, ...slotNames) {
-        this.slotNames = [];
-        (this.host = host).addController(this);
-        this.slotNames = slotNames;
-        this.handleSlotChange = this.handleSlotChange.bind(this);
-      }
-      hasDefaultSlot() {
-        return [...this.host.childNodes].some((node) => {
-          if (node.nodeType === node.TEXT_NODE && node.textContent.trim() !== "") {
-            return true;
-          }
-          if (node.nodeType === node.ELEMENT_NODE) {
-            const el = node;
-            const tagName = el.tagName.toLowerCase();
-            if (tagName === "sl-visually-hidden") {
-              return false;
-            }
-            if (!el.hasAttribute("slot")) {
-              return true;
-            }
-          }
-          return false;
-        });
-      }
-      hasNamedSlot(name) {
-        return this.host.querySelector(`:scope > [slot="${name}"]`) !== null;
-      }
-      test(slotName) {
-        return slotName === "[default]" ? this.hasDefaultSlot() : this.hasNamedSlot(slotName);
-      }
-      hostConnected() {
-        this.host.shadowRoot.addEventListener("slotchange", this.handleSlotChange);
-      }
-      hostDisconnected() {
-        this.host.shadowRoot.removeEventListener("slotchange", this.handleSlotChange);
-      }
-      handleSlotChange(event) {
-        const slot = event.target;
-        if (this.slotNames.includes("[default]") && !slot.name || slot.name && this.slotNames.includes(slot.name)) {
-          this.host.requestUpdate();
-        }
-      }
-    };
-
-    // node_modules/lit-html/directives/if-defined.js
-    var l$1 = (l2) => null != l2 ? l2 : b$1;
-    /*! Bundled license information:
-
-    lit-html/directives/if-defined.js:
-      (**
-       * @license
-       * Copyright 2018 Google LLC
-       * SPDX-License-Identifier: BSD-3-Clause
-       *)
-    */
-
-    // src/internal/watch.ts
-    function watch(propertyName, options) {
-      const resolvedOptions = __spreadValues({
-        waitUntilFirstUpdate: false
-      }, options);
-      return (proto, decoratedFnName) => {
-        const { update } = proto;
-        const watchedProperties = Array.isArray(propertyName) ? propertyName : [propertyName];
-        proto.update = function(changedProps) {
-          watchedProperties.forEach((property) => {
-            const key = property;
-            if (changedProps.has(key)) {
-              const oldValue = changedProps.get(key);
-              const newValue = this[key];
-              if (oldValue !== newValue) {
-                if (!resolvedOptions.waitUntilFirstUpdate || this.hasUpdated) {
-                  this[decoratedFnName](oldValue, newValue);
-                }
-              }
-            }
-          });
-          update.call(this, changedProps);
-        };
-      };
-    }
-
     // src/components/button/button.ts
     var SlButton = class extends ShoelaceElement {
       constructor() {
@@ -37333,7 +38213,7 @@ Do you wish to proceed?`).then(ok => {
     ], SlButton);
 
     // src/components/spinner/spinner.styles.ts
-    var spinner_styles_default = i$2`
+    var spinner_styles_default = i$3`
   ${component_styles_default}
 
   :host {
@@ -37413,372 +38293,6 @@ Do you wish to proceed?`).then(ok => {
     SlSpinner = __decorateClass([
       e$1("sl-spinner")
     ], SlSpinner);
-
-    // src/utilities/base-path.ts
-    var basePath = "";
-    function setBasePath(path) {
-      basePath = path;
-    }
-    function getBasePath() {
-      if (!basePath) {
-        const scripts = [...document.getElementsByTagName("script")];
-        const configScript = scripts.find((script) => script.hasAttribute("data-shoelace"));
-        if (configScript) {
-          setBasePath(configScript.getAttribute("data-shoelace"));
-        } else {
-          const fallbackScript = scripts.find((s) => /shoelace(\.min)?\.js($|\?)/.test(s.src));
-          let path = "";
-          if (fallbackScript) {
-            path = fallbackScript.getAttribute("src");
-          }
-          setBasePath(path.split("/").slice(0, -1).join("/"));
-        }
-      }
-      return basePath.replace(/\/$/, "");
-    }
-
-    // src/components/icon/library.default.ts
-    var library = {
-      name: "default",
-      resolver: (name) => `${getBasePath()}/assets/icons/${name}.svg`
-    };
-    var library_default_default = library;
-
-    // src/components/icon/library.system.ts
-    var icons = {
-      caret: `
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="6 9 12 15 18 9"></polyline>
-    </svg>
-  `,
-      check: `
-    <svg part="checked-icon" class="checkbox__icon" viewBox="0 0 16 16">
-      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
-        <g stroke="currentColor" stroke-width="2">
-          <g transform="translate(3.428571, 3.428571)">
-            <path d="M0,5.71428571 L3.42857143,9.14285714"></path>
-            <path d="M9.14285714,0 L3.42857143,9.14285714"></path>
-          </g>
-        </g>
-      </g>
-    </svg>
-  `,
-      "chevron-down": `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
-      <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-    </svg>
-  `,
-      "chevron-left": `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
-      <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-    </svg>
-  `,
-      "chevron-right": `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-      <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
-    </svg>
-  `,
-      eye: `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-      <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
-      <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
-    </svg>
-  `,
-      "eye-slash": `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash" viewBox="0 0 16 16">
-      <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/>
-      <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/>
-      <path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"/>
-    </svg>
-  `,
-      eyedropper: `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eyedropper" viewBox="0 0 16 16">
-      <path d="M13.354.646a1.207 1.207 0 0 0-1.708 0L8.5 3.793l-.646-.647a.5.5 0 1 0-.708.708L8.293 5l-7.147 7.146A.5.5 0 0 0 1 12.5v1.793l-.854.853a.5.5 0 1 0 .708.707L1.707 15H3.5a.5.5 0 0 0 .354-.146L11 7.707l1.146 1.147a.5.5 0 0 0 .708-.708l-.647-.646 3.147-3.146a1.207 1.207 0 0 0 0-1.708l-2-2zM2 12.707l7-7L10.293 7l-7 7H2v-1.293z"></path>
-    </svg>
-  `,
-      "grip-vertical": `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-grip-vertical" viewBox="0 0 16 16">
-      <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"></path>
-    </svg>
-  `,
-      indeterminate: `
-    <svg part="indeterminate-icon" class="checkbox__icon" viewBox="0 0 16 16">
-      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
-        <g stroke="currentColor" stroke-width="2">
-          <g transform="translate(2.285714, 6.857143)">
-            <path d="M10.2857143,1.14285714 L1.14285714,1.14285714"></path>
-          </g>
-        </g>
-      </g>
-    </svg>
-  `,
-      "person-fill": `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
-      <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-    </svg>
-  `,
-      "play-fill": `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
-      <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"></path>
-    </svg>
-  `,
-      "pause-fill": `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pause-fill" viewBox="0 0 16 16">
-      <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"></path>
-    </svg>
-  `,
-      radio: `
-    <svg part="checked-icon" class="radio__icon" viewBox="0 0 16 16">
-      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g fill="currentColor">
-          <circle cx="8" cy="8" r="3.42857143"></circle>
-        </g>
-      </g>
-    </svg>
-  `,
-      "star-fill": `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
-      <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
-    </svg>
-  `,
-      "x-lg": `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
-    </svg>
-  `,
-      "x-circle-fill": `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
-      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"></path>
-    </svg>
-  `
-    };
-    var systemLibrary = {
-      name: "system",
-      resolver: (name) => {
-        if (name in icons) {
-          return `data:image/svg+xml,${encodeURIComponent(icons[name])}`;
-        }
-        return "";
-      }
-    };
-    var library_system_default = systemLibrary;
-
-    // src/components/icon/library.ts
-    var registry = [library_default_default, library_system_default];
-    var watchedIcons = [];
-    function watchIcon(icon) {
-      watchedIcons.push(icon);
-    }
-    function unwatchIcon(icon) {
-      watchedIcons = watchedIcons.filter((el) => el !== icon);
-    }
-    function getIconLibrary(name) {
-      return registry.find((lib) => lib.name === name);
-    }
-
-    // src/components/include/request.ts
-    var includeFiles = /* @__PURE__ */ new Map();
-    function requestInclude(src, mode = "cors") {
-      if (includeFiles.has(src)) {
-        return includeFiles.get(src);
-      }
-      const fileDataPromise = fetch(src, { mode }).then(async (response) => {
-        return {
-          ok: response.ok,
-          status: response.status,
-          html: await response.text()
-        };
-      });
-      includeFiles.set(src, fileDataPromise);
-      return fileDataPromise;
-    }
-
-    // src/components/icon/request.ts
-    var iconFiles = /* @__PURE__ */ new Map();
-    async function requestIcon(url) {
-      if (iconFiles.has(url)) {
-        return iconFiles.get(url);
-      }
-      const fileData = await requestInclude(url);
-      const iconFileData = {
-        ok: fileData.ok,
-        status: fileData.status,
-        svg: null
-      };
-      if (fileData.ok) {
-        const div = document.createElement("div");
-        div.innerHTML = fileData.html;
-        const svg = div.firstElementChild;
-        iconFileData.svg = (svg == null ? void 0 : svg.tagName.toLowerCase()) === "svg" ? svg.outerHTML : "";
-      }
-      iconFiles.set(url, iconFileData);
-      return iconFileData;
-    }
-
-    // src/components/icon/icon.styles.ts
-    var icon_styles_default = i$2`
-  ${component_styles_default}
-
-  :host {
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    box-sizing: content-box !important;
-  }
-
-  svg {
-    display: block;
-    height: 100%;
-    width: 100%;
-  }
-`;
-
-    // node_modules/lit-html/directives/unsafe-html.js
-    var e4 = class extends i$3 {
-      constructor(i2) {
-        if (super(i2), this.it = b$1, i2.type !== t$3.CHILD)
-          throw Error(this.constructor.directiveName + "() can only be used in child bindings");
-      }
-      render(r) {
-        if (r === b$1 || null == r)
-          return this._t = void 0, this.it = r;
-        if (r === x$1)
-          return r;
-        if ("string" != typeof r)
-          throw Error(this.constructor.directiveName + "() called with a non-string value");
-        if (r === this.it)
-          return this._t;
-        this.it = r;
-        const s = [r];
-        return s.raw = s, this._t = { _$litType$: this.constructor.resultType, strings: s, values: [] };
-      }
-    };
-    e4.directiveName = "unsafeHTML", e4.resultType = 1;
-
-    // node_modules/lit-html/directives/unsafe-svg.js
-    var t3 = class extends e4 {
-    };
-    t3.directiveName = "unsafeSVG", t3.resultType = 2;
-    var o2$1 = e$3(t3);
-
-    // src/components/icon/icon.ts
-    var parser;
-    var SlIcon = class extends ShoelaceElement {
-      constructor() {
-        super(...arguments);
-        this.svg = "";
-        this.label = "";
-        this.library = "default";
-      }
-      connectedCallback() {
-        super.connectedCallback();
-        watchIcon(this);
-      }
-      firstUpdated() {
-        this.setIcon();
-      }
-      disconnectedCallback() {
-        super.disconnectedCallback();
-        unwatchIcon(this);
-      }
-      getUrl() {
-        const library = getIconLibrary(this.library);
-        if (this.name && library) {
-          return library.resolver(this.name);
-        }
-        return this.src;
-      }
-      handleLabelChange() {
-        const hasLabel = typeof this.label === "string" && this.label.length > 0;
-        if (hasLabel) {
-          this.setAttribute("role", "img");
-          this.setAttribute("aria-label", this.label);
-          this.removeAttribute("aria-hidden");
-        } else {
-          this.removeAttribute("role");
-          this.removeAttribute("aria-label");
-          this.setAttribute("aria-hidden", "true");
-        }
-      }
-      async setIcon() {
-        var _a;
-        const library = getIconLibrary(this.library);
-        const url = this.getUrl();
-        if (!parser) {
-          parser = new DOMParser();
-        }
-        if (url) {
-          try {
-            const file = await requestIcon(url);
-            if (url !== this.getUrl()) {
-              return;
-            } else if (file.ok) {
-              const doc = parser.parseFromString(file.svg, "text/html");
-              const svgEl = doc.body.querySelector("svg");
-              if (svgEl !== null) {
-                (_a = library == null ? void 0 : library.mutator) == null ? void 0 : _a.call(library, svgEl);
-                this.svg = svgEl.outerHTML;
-                this.emit("sl-load");
-              } else {
-                this.svg = "";
-                this.emit("sl-error");
-              }
-            } else {
-              this.svg = "";
-              this.emit("sl-error");
-            }
-          } catch (e5) {
-            this.emit("sl-error");
-          }
-        } else if (this.svg.length > 0) {
-          this.svg = "";
-        }
-      }
-      render() {
-        return y` ${o2$1(this.svg)} `;
-      }
-    };
-    SlIcon.styles = icon_styles_default;
-    __decorateClass([
-      t$1()
-    ], SlIcon.prototype, "svg", 2);
-    __decorateClass([
-      e2$1({ reflect: true })
-    ], SlIcon.prototype, "name", 2);
-    __decorateClass([
-      e2$1()
-    ], SlIcon.prototype, "src", 2);
-    __decorateClass([
-      e2$1()
-    ], SlIcon.prototype, "label", 2);
-    __decorateClass([
-      e2$1({ reflect: true })
-    ], SlIcon.prototype, "library", 2);
-    __decorateClass([
-      watch("label")
-    ], SlIcon.prototype, "handleLabelChange", 1);
-    __decorateClass([
-      watch(["name", "src", "library"])
-    ], SlIcon.prototype, "setIcon", 1);
-    SlIcon = __decorateClass([
-      e$1("sl-icon")
-    ], SlIcon);
-    /*! Bundled license information:
-
-    lit-html/directives/unsafe-html.js:
-      (**
-       * @license
-       * Copyright 2017 Google LLC
-       * SPDX-License-Identifier: BSD-3-Clause
-       *)
-
-    lit-html/directives/unsafe-svg.js:
-      (**
-       * @license
-       * Copyright 2017 Google LLC
-       * SPDX-License-Identifier: BSD-3-Clause
-       *)
-    */
 
     // src/internal/tabbable.ts
     function isTabbable(el) {
@@ -37934,7 +38448,7 @@ Do you wish to proceed?`).then(ok => {
     }
 
     // src/components/dialog/dialog.styles.ts
-    var dialog_styles_default = i$2`
+    var dialog_styles_default = i$3`
   ${component_styles_default}
 
   :host {
@@ -38054,92 +38568,6 @@ Do you wish to proceed?`).then(ok => {
     }
   }
 `;
-
-    // src/internal/event.ts
-    function waitForEvent(el, eventName) {
-      return new Promise((resolve) => {
-        function done(event) {
-          if (event.target === el) {
-            el.removeEventListener(eventName, done);
-            resolve();
-          }
-        }
-        el.addEventListener(eventName, done);
-      });
-    }
-
-    // src/internal/animate.ts
-    function animateTo(el, keyframes, options) {
-      return new Promise((resolve) => {
-        if ((options == null ? void 0 : options.duration) === Infinity) {
-          throw new Error("Promise-based animations must be finite.");
-        }
-        const animation = el.animate(keyframes, __spreadProps(__spreadValues({}, options), {
-          duration: prefersReducedMotion() ? 0 : options.duration
-        }));
-        animation.addEventListener("cancel", resolve, { once: true });
-        animation.addEventListener("finish", resolve, { once: true });
-      });
-    }
-    function parseDuration(delay) {
-      delay = delay.toString().toLowerCase();
-      if (delay.indexOf("ms") > -1) {
-        return parseFloat(delay);
-      }
-      if (delay.indexOf("s") > -1) {
-        return parseFloat(delay) * 1e3;
-      }
-      return parseFloat(delay);
-    }
-    function prefersReducedMotion() {
-      const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-      return query.matches;
-    }
-    function stopAnimations(el) {
-      return Promise.all(
-        el.getAnimations().map((animation) => {
-          return new Promise((resolve) => {
-            const handleAnimationEvent = requestAnimationFrame(resolve);
-            animation.addEventListener("cancel", () => handleAnimationEvent, { once: true });
-            animation.addEventListener("finish", () => handleAnimationEvent, { once: true });
-            animation.cancel();
-          });
-        })
-      );
-    }
-
-    // src/utilities/animation-registry.ts
-    var defaultAnimationRegistry = /* @__PURE__ */ new Map();
-    var customAnimationRegistry = /* @__PURE__ */ new WeakMap();
-    function ensureAnimation(animation) {
-      return animation != null ? animation : { keyframes: [], options: { duration: 0 } };
-    }
-    function getLogicalAnimation(animation, dir) {
-      if (dir.toLowerCase() === "rtl") {
-        return {
-          keyframes: animation.rtlKeyframes || animation.keyframes,
-          options: animation.options
-        };
-      }
-      return animation;
-    }
-    function setDefaultAnimation(animationName, animation) {
-      defaultAnimationRegistry.set(animationName, ensureAnimation(animation));
-    }
-    function getAnimation(el, animationName, options) {
-      const customAnimation = customAnimationRegistry.get(el);
-      if (customAnimation == null ? void 0 : customAnimation[animationName]) {
-        return getLogicalAnimation(customAnimation[animationName], options.dir);
-      }
-      const defaultAnimation = defaultAnimationRegistry.get(animationName);
-      if (defaultAnimation) {
-        return getLogicalAnimation(defaultAnimation, options.dir);
-      }
-      return {
-        keyframes: [],
-        options: { duration: 0 }
-      };
-    }
 
     // src/components/dialog/dialog.ts
     var SlDialog = class extends ShoelaceElement {
@@ -38371,163 +38799,6 @@ Do you wish to proceed?`).then(ok => {
       options: { duration: 250 }
     });
 
-    // src/components/icon-button/icon-button.styles.ts
-    var icon_button_styles_default = i$2`
-  ${component_styles_default}
-
-  :host {
-    display: inline-block;
-    color: var(--sl-color-neutral-600);
-  }
-
-  .icon-button {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    background: none;
-    border: none;
-    border-radius: var(--sl-border-radius-medium);
-    font-size: inherit;
-    color: inherit;
-    padding: var(--sl-spacing-x-small);
-    cursor: pointer;
-    transition: var(--sl-transition-x-fast) color;
-    -webkit-appearance: none;
-  }
-
-  .icon-button:hover:not(.icon-button--disabled),
-  .icon-button:focus-visible:not(.icon-button--disabled) {
-    color: var(--sl-color-primary-600);
-  }
-
-  .icon-button:active:not(.icon-button--disabled) {
-    color: var(--sl-color-primary-700);
-  }
-
-  .icon-button:focus {
-    outline: none;
-  }
-
-  .icon-button--disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .icon-button:focus-visible {
-    outline: var(--sl-focus-ring);
-    outline-offset: var(--sl-focus-ring-offset);
-  }
-
-  .icon-button__icon {
-    pointer-events: none;
-  }
-`;
-
-    // src/components/icon-button/icon-button.ts
-    var SlIconButton = class extends ShoelaceElement {
-      constructor() {
-        super(...arguments);
-        this.hasFocus = false;
-        this.label = "";
-        this.disabled = false;
-      }
-      handleBlur() {
-        this.hasFocus = false;
-        this.emit("sl-blur");
-      }
-      handleFocus() {
-        this.hasFocus = true;
-        this.emit("sl-focus");
-      }
-      handleClick(event) {
-        if (this.disabled) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-      }
-      /** Simulates a click on the icon button. */
-      click() {
-        this.button.click();
-      }
-      /** Sets focus on the icon button. */
-      focus(options) {
-        this.button.focus(options);
-      }
-      /** Removes focus from the icon button. */
-      blur() {
-        this.button.blur();
-      }
-      render() {
-        const isLink = this.href ? true : false;
-        const tag = isLink ? i`a` : i`button`;
-        return n$1`
-      <${tag}
-        part="base"
-        class=${o$1({
-      "icon-button": true,
-      "icon-button--disabled": !isLink && this.disabled,
-      "icon-button--focused": this.hasFocus
-    })}
-        ?disabled=${l$1(isLink ? void 0 : this.disabled)}
-        type=${l$1(isLink ? void 0 : "button")}
-        href=${l$1(isLink ? this.href : void 0)}
-        target=${l$1(isLink ? this.target : void 0)}
-        download=${l$1(isLink ? this.download : void 0)}
-        rel=${l$1(isLink && this.target ? "noreferrer noopener" : void 0)}
-        role=${l$1(isLink ? void 0 : "button")}
-        aria-disabled=${this.disabled ? "true" : "false"}
-        aria-label="${this.label}"
-        tabindex=${this.disabled ? "-1" : "0"}
-        @blur=${this.handleBlur}
-        @focus=${this.handleFocus}
-        @click=${this.handleClick}
-      >
-        <sl-icon
-          class="icon-button__icon"
-          name=${l$1(this.name)}
-          library=${l$1(this.library)}
-          src=${l$1(this.src)}
-          aria-hidden="true"
-        ></sl-icon>
-      </${tag}>
-    `;
-      }
-    };
-    SlIconButton.styles = icon_button_styles_default;
-    __decorateClass([
-      i2$2(".icon-button")
-    ], SlIconButton.prototype, "button", 2);
-    __decorateClass([
-      t$1()
-    ], SlIconButton.prototype, "hasFocus", 2);
-    __decorateClass([
-      e2$1()
-    ], SlIconButton.prototype, "name", 2);
-    __decorateClass([
-      e2$1()
-    ], SlIconButton.prototype, "library", 2);
-    __decorateClass([
-      e2$1()
-    ], SlIconButton.prototype, "src", 2);
-    __decorateClass([
-      e2$1()
-    ], SlIconButton.prototype, "href", 2);
-    __decorateClass([
-      e2$1()
-    ], SlIconButton.prototype, "target", 2);
-    __decorateClass([
-      e2$1()
-    ], SlIconButton.prototype, "download", 2);
-    __decorateClass([
-      e2$1()
-    ], SlIconButton.prototype, "label", 2);
-    __decorateClass([
-      e2$1({ type: Boolean, reflect: true })
-    ], SlIconButton.prototype, "disabled", 2);
-    SlIconButton = __decorateClass([
-      e$1("sl-icon-button")
-    ], SlIconButton);
-
     // src/internal/drag.ts
     function drag(container, options) {
       function move(pointerEvent) {
@@ -38568,10 +38839,10 @@ Do you wish to proceed?`).then(ok => {
     }
 
     // node_modules/lit-html/directives/style-map.js
-    var i2$1 = e$3(class extends i$3 {
+    var i2$1 = e$2(class extends i$2 {
       constructor(t2) {
         var e2;
-        if (super(t2), t2.type !== t$3.ATTRIBUTE || "style" !== t2.name || (null === (e2 = t2.strings) || void 0 === e2 ? void 0 : e2.length) > 2)
+        if (super(t2), t2.type !== t$2.ATTRIBUTE || "style" !== t2.name || (null === (e2 = t2.strings) || void 0 === e2 ? void 0 : e2.length) > 2)
           throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.");
       }
       render(t2) {
@@ -38609,7 +38880,7 @@ Do you wish to proceed?`).then(ok => {
     */
 
     // src/components/color-picker/color-picker.styles.ts
-    var color_picker_styles_default = i$2`
+    var color_picker_styles_default = i$3`
   ${component_styles_default}
 
   :host {
@@ -40622,7 +40893,7 @@ Do you wish to proceed?`).then(ok => {
     ], SlColorPicker);
 
     // src/components/visually-hidden/visually-hidden.styles.ts
-    var visually_hidden_styles_default = i$2`
+    var visually_hidden_styles_default = i$3`
   ${component_styles_default}
 
   :host(:not(:focus-within)) {
@@ -40650,7 +40921,7 @@ Do you wish to proceed?`).then(ok => {
     ], SlVisuallyHidden);
 
     // src/styles/form-control.styles.ts
-    var form_control_styles_default = i$2`
+    var form_control_styles_default = i$3`
   .form-control .form-control__label {
     display: none;
   }
@@ -40709,7 +40980,7 @@ Do you wish to proceed?`).then(ok => {
 `;
 
     // src/components/input/input.styles.ts
-    var input_styles_default = i$2`
+    var input_styles_default = i$3`
   ${component_styles_default}
   ${form_control_styles_default}
 
@@ -41011,9 +41282,9 @@ Do you wish to proceed?`).then(ok => {
     var s$1 = (o, l3 = f$1) => o._$AH = l3;
 
     // node_modules/lit-html/directives/live.js
-    var l2$1 = e$3(class extends i$3 {
+    var l2$1 = e$2(class extends i$2 {
       constructor(r) {
-        if (super(r), r.type !== t$3.PROPERTY && r.type !== t$3.ATTRIBUTE && r.type !== t$3.BOOLEAN_ATTRIBUTE)
+        if (super(r), r.type !== t$2.PROPERTY && r.type !== t$2.ATTRIBUTE && r.type !== t$2.BOOLEAN_ATTRIBUTE)
           throw Error("The `live` directive is not allowed on child or event bindings");
         if (!e2(r))
           throw Error("`live` bindings can only contain a single expression");
@@ -41025,13 +41296,13 @@ Do you wish to proceed?`).then(ok => {
         if (t2 === x$1 || t2 === b$1)
           return t2;
         const o = i2.element, l3 = i2.name;
-        if (i2.type === t$3.PROPERTY) {
+        if (i2.type === t$2.PROPERTY) {
           if (t2 === o[l3])
             return x$1;
-        } else if (i2.type === t$3.BOOLEAN_ATTRIBUTE) {
+        } else if (i2.type === t$2.BOOLEAN_ATTRIBUTE) {
           if (!!t2 === o.hasAttribute(l3))
             return x$1;
-        } else if (i2.type === t$3.ATTRIBUTE && o.getAttribute(l3) === t2 + "")
+        } else if (i2.type === t$2.ATTRIBUTE && o.getAttribute(l3) === t2 + "")
           return x$1;
         return s$1(i2), t2;
       }
@@ -41477,7 +41748,7 @@ Do you wish to proceed?`).then(ok => {
     ], SlInput);
 
     // src/components/dropdown/dropdown.styles.ts
-    var dropdown_styles_default = i$2`
+    var dropdown_styles_default = i$3`
   ${component_styles_default}
 
   :host {
@@ -41855,7 +42126,7 @@ Do you wish to proceed?`).then(ok => {
     });
 
     // src/components/popup/popup.styles.ts
-    var popup_styles_default = i$2`
+    var popup_styles_default = i$3`
   ${component_styles_default}
 
   :host {
@@ -42637,7 +42908,7 @@ Do you wish to proceed?`).then(ok => {
     ], SlPopup);
 
     // src/components/button-group/button-group.styles.ts
-    var button_group_styles_default = i$2`
+    var button_group_styles_default = i$3`
   ${component_styles_default}
 
   :host {
@@ -42723,7 +42994,7 @@ Do you wish to proceed?`).then(ok => {
     }
 
     // src/components/tab-group/tab-group.styles.ts
-    var tab_group_styles_default = i$2`
+    var tab_group_styles_default = i$3`
   ${component_styles_default}
 
   :host {
@@ -43264,7 +43535,7 @@ Do you wish to proceed?`).then(ok => {
     ], SlTabGroup);
 
     // src/components/tab/tab.styles.ts
-    var tab_styles_default = i$2`
+    var tab_styles_default = i$3`
   ${component_styles_default}
 
   :host {
@@ -43424,7 +43695,7 @@ Do you wish to proceed?`).then(ok => {
     ], SlTab);
 
     // src/components/tab-panel/tab-panel.styles.ts
-    var tab_panel_styles_default = i$2`
+    var tab_panel_styles_default = i$3`
   ${component_styles_default}
 
   :host {
@@ -43488,7 +43759,7 @@ Do you wish to proceed?`).then(ok => {
     ], SlTabPanel);
 
     // src/components/tooltip/tooltip.styles.ts
-    var tooltip_styles_default = i$2`
+    var tooltip_styles_default = i$3`
   ${component_styles_default}
 
   :host {
@@ -43778,7 +44049,7 @@ Do you wish to proceed?`).then(ok => {
     });
 
     // src/components/switch/switch.styles.ts
-    var switch_styles_default = i$2`
+    var switch_styles_default = i$3`
   ${component_styles_default}
 
   :host {
@@ -44167,20 +44438,20 @@ Do you wish to proceed?`).then(ok => {
     			t8 = space();
     			if (if_block5) if_block5.c();
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 482, 8, 20215);
+    			add_location(div0, file, 482, 8, 20242);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 484, 11, 20359);
+    			add_location(i, file, 484, 11, 20386);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "href", a_href_value = /*HELP*/ ctx[7].switchTitle.url);
-    			add_location(a, file, 483, 8, 20283);
+    			add_location(a, file, 483, 8, 20310);
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 481, 6, 20193);
-    			add_location(small, file, 508, 6, 21187);
+    			add_location(sl_tooltip, file, 481, 6, 20220);
+    			add_location(small, file, 508, 6, 21214);
     			attr_dev(div1, "class", "cc-switch-title svelte-dfjd7v");
-    			add_location(div1, file, 480, 4, 20156);
+    			add_location(div1, file, 480, 4, 20183);
     			attr_dev(div2, "class", "cc-switch-container svelte-dfjd7v");
-    			add_location(div2, file, 479, 2, 20117);
+    			add_location(div2, file, 479, 2, 20144);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -44345,7 +44616,7 @@ Do you wish to proceed?`).then(ok => {
     			? 'icon-mini-arrow-down'
     			: 'icon-mini-arrow-right') + " cc-module-icon"));
 
-    			add_location(i, file, 488, 8, 20491);
+    			add_location(i, file, 488, 8, 20518);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -44399,11 +44670,11 @@ Do you wish to proceed?`).then(ok => {
     			t = space();
     			i = element("i");
     			attr_dev(div, "slot", "content");
-    			add_location(div, file, 504, 10, 21040);
+    			add_location(div, file, 504, 10, 21067);
     			attr_dev(i, "class", "icon-unpublish");
-    			add_location(i, file, 505, 10, 21115);
+    			add_location(i, file, 505, 10, 21142);
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 503, 8, 21016);
+    			add_location(sl_tooltip, file, 503, 8, 21043);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, sl_tooltip, anchor);
@@ -44445,11 +44716,11 @@ Do you wish to proceed?`).then(ok => {
     			t = space();
     			i = element("i");
     			attr_dev(div, "slot", "content");
-    			add_location(div, file, 499, 10, 20858);
+    			add_location(div, file, 499, 10, 20885);
     			attr_dev(i, "class", "icon-Solid icon-publish svelte-dfjd7v");
-    			add_location(i, file, 500, 10, 20931);
+    			add_location(i, file, 500, 10, 20958);
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 498, 8, 20834);
+    			add_location(sl_tooltip, file, 498, 8, 20861);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, sl_tooltip, anchor);
@@ -44489,10 +44760,10 @@ Do you wish to proceed?`).then(ok => {
     			sl_switch = element("sl-switch");
     			set_custom_element_data(sl_switch, "id", "cc-switch");
     			set_custom_element_data(sl_switch, "class", "svelte-dfjd7v");
-    			add_location(sl_switch, file, 513, 8, 21318);
+    			add_location(sl_switch, file, 513, 8, 21345);
     			attr_dev(label, "class", "cc-switch svelte-dfjd7v");
     			attr_dev(label, "for", "cc-switch");
-    			add_location(label, file, 512, 6, 21267);
+    			add_location(label, file, 512, 6, 21294);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, label, anchor);
@@ -44544,9 +44815,9 @@ Do you wish to proceed?`).then(ok => {
 
     			attr_dev(button, "id", "cc-save-button");
     			button.disabled = button_disabled_value = !/*$configStore*/ ctx[8]["needToSaveCollections"];
-    			add_location(button, file, 518, 8, 21498);
+    			add_location(button, file, 518, 8, 21525);
     			attr_dev(div, "class", "cc-save svelte-dfjd7v");
-    			add_location(div, file, 517, 6, 21467);
+    			add_location(div, file, 517, 6, 21494);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -44626,27 +44897,27 @@ Do you wish to proceed?`).then(ok => {
     			sl_button = element("sl-button");
     			sl_button.textContent = "unpublished";
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 536, 10, 22139);
+    			add_location(div0, file, 536, 10, 22166);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 542, 13, 22365);
+    			add_location(i, file, 542, 13, 22392);
     			attr_dev(a0, "id", "cc-about-unpublished");
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "href", a0_href_value = /*HELP*/ ctx[7].unpublished.url);
-    			add_location(a0, file, 537, 10, 22209);
+    			add_location(a0, file, 537, 10, 22236);
     			set_custom_element_data(sl_tooltip, "trigger", "hover focus");
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 535, 8, 22093);
+    			add_location(sl_tooltip, file, 535, 8, 22120);
     			set_custom_element_data(sl_button, "pill", "");
     			set_custom_element_data(sl_button, "size", "small");
     			set_custom_element_data(sl_button, "variant", "warning");
-    			add_location(sl_button, file, 546, 10, 22532);
+    			add_location(sl_button, file, 546, 10, 22559);
     			attr_dev(a1, "href", /*collectionsConfigUrl*/ ctx[12]);
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noreferrer");
-    			add_location(a1, file, 545, 8, 22456);
+    			add_location(a1, file, 545, 8, 22483);
     			attr_dev(div1, "class", "cc-unpublished svelte-dfjd7v");
-    			add_location(div1, file, 534, 6, 22055);
+    			add_location(div1, file, 534, 6, 22082);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -44695,7 +44966,7 @@ Do you wish to proceed?`).then(ok => {
     			create_component(collectionsconfiguration.$$.fragment);
     			attr_dev(div, "id", "cc-config");
     			attr_dev(div, "class", "border border-trbl svelte-dfjd7v");
-    			add_location(div, file, 551, 6, 22671);
+    			add_location(div, file, 551, 6, 22698);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -45103,7 +45374,6 @@ Do you wish to proceed?`).then(ok => {
     		delete $configStore["migrationOutcome"];
 
     		if (outcome === "cancel") {
-    			alert("Ok not doing anthing");
     			return;
     		} else if (outcome === "refresh") {
     			// TODO probably with the dialog not closing
