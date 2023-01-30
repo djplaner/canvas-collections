@@ -14,7 +14,10 @@ Canvas Collections support for collections includes properties and operations. B
 | Name | Name is included in the navigation bar used to move between collections. Should be contextually meaningful and purposeful |
 | Representation | If and what additional visualisation of the collections modules will be visible. There are currently [three options](../../reference/representations/overview.md). |
 | Default collection | The collection visitors see when they first visit the modules view. |
-| Include page | The name of an existing Canvas course page. The content of this page will be included before the representation. |
+| Hide collection | Don't show this collection to students |
+| Add unallocated | When showing students this collection, include any modules that haven't been allocated a collection. |
+| Include page | The name of an existing Canvas course page. By default, the content of this page will be included _before_ the collection's representation. |
+| After (include page) | Modify the placement of the include so it appears _after_ the collection's representation |
 | Output page | The name of an existing Canvas course page. The [Claytons representation](../../reference/representations/claytons/overview.md) of the collection will be written to this page when _updated_ or _Full Claytons_.  |
 
 ## Collection operations
