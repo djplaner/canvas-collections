@@ -130,8 +130,6 @@
    * Callback function for when canvasDetails is loaded
    */
   function gotCanvasDetails() {
-    console.log("XXXXXXXXXXXXXXX getCanvasDetails");
-    console.log(canvasDetails);
     canvasDataLoaded = true;
     // canvasDetails.courseModules is an array of Canvas module objects
     // set $modulesStore to a dict of Canvas module objects keyed on the module id
@@ -149,8 +147,6 @@
    * has been retrieved or if there were problems
    */
   function gotCollectionsDetails(status: string = "") {
-    console.log("YYYYYYYY gotCollectionsDetails");
-    console.log(collectionsDetails);
 
     /*
     if (status === "no collections config") {
@@ -195,9 +191,7 @@
         collectionsDataLoaded = true;
         checkAllDataLoaded();
       }
-    } else {
-      console.log(`gotCollectionsDetails - error ${status}`);
-    }
+    } 
   }
 
   /**
@@ -376,8 +370,6 @@
    */
   function toggleConfigShow(e) {
     showConfig = !showConfig;
-    console.log(`toggleConfigShow new ${showConfig}`);
-    console.log(e);
   }
 
   /**

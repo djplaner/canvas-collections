@@ -14,8 +14,6 @@
   import IncludePage from "./IncludePage.svelte";
 
   import { debug } from "../lib/debug";
-  import { toastAlert } from "../lib/ui";
-  import AssessmentTable from "./Representations/AssessmentTable.svelte";
 
   debug(
     `______________ CanvasCollectionsRepresentation.svelte _currentCollection ${$configStore["currentCollections"]}______________`

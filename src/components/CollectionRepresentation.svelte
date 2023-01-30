@@ -21,14 +21,13 @@
 
   import { afterUpdate } from "svelte";
 
-  import UniversityDateCalendar from "../lib/university-date-calendar";
+//  import UniversityDateCalendar from "../lib/university-date-calendar";
 
-  let calendar = new UniversityDateCalendar();
+//  let calendar = new UniversityDateCalendar();
 
   import { modifyCanvasModulesList } from "./Representations/representationSupport";
 
   import { debug } from "../lib/debug";
-  import { toastAlert } from "../lib/ui";
 
   export let collectionName: string;
   export let claytons: boolean;
@@ -42,10 +41,6 @@
   debug(
     `_______________ CollectionRepresentation.svelte __collection ${collectionName} __ Claytons ${claytons}___________`
   );
-  console.log("----------- configStore");
-  debug($configStore);
-  console.log("----------- modulesStore");
-  debug($modulesStore);
 
   let representationComponent: any;
   $: {
@@ -133,7 +128,6 @@
 <svelte:component
   this={representationComponent}
   collection={$configStore["currentCollection"]}
-  {calendar}
   {claytons}
 />
 

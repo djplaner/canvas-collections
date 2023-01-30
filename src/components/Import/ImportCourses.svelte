@@ -24,8 +24,6 @@
   let importCourseDetails = {}
 
   
-  console.log($configStore)
-
   wf_fetchData(`${baseApiUrl}/courses/${currentCourseId}`).then((msg) => {
     if (msg.status === 200) {
       currentCourseDetails = msg.body;

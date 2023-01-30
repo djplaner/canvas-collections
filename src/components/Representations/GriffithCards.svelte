@@ -21,8 +21,13 @@
   } from "./representationSupport";
   import { debug } from "../../lib/debug";
 
+  import UniversityDateCalendar from "../../lib/university-date-calendar";
+
+  let calendar = new UniversityDateCalendar();
+
+
   export let collection: string;
-  export let calendar: any;
+//  export let calendar: any;
   export let claytons: boolean;
   if (!claytons) {
     claytons = false;

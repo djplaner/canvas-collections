@@ -41,10 +41,6 @@ export class CanvasDetails {
     // convert courseId to integer
     this["config"]["courseId"] = parseInt(this["config"]["courseId"]);
 
-    console.log(
-      `XXXXX canvasDetails: constructor: ${this["config"]["courseId"]}`
-    );
-
     this.requestCourseObject();
   }
 

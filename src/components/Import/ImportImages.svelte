@@ -8,7 +8,7 @@
   import { modulesStore } from "../../stores";
   import { wf_fetchData } from "../../lib/CanvasSetup";
 
-  export let imagesCompleteStatus = false
+  export let imagesCompleteStatus = false;
   export let currentCourseId;
   export let importCourseId;
   export let collectionsDetails;
@@ -19,7 +19,7 @@
   const currentHostName = document.location.hostname;
   const baseApiUrl = `https://${currentHostName}/api/v1`;
 
-  let images = collectionsDetails.getImportedImages() //convertCourseImages(courseImages);
+  let images = collectionsDetails.getImportedImages(); //convertCourseImages(courseImages);
 
   checkImagesExist();
 
@@ -27,46 +27,9 @@
     imageDataGenerated = numImagesReceived === images.length;
 
     if (imageDataGenerated) {
-		imagesCompleteStatus = true
-      console.log("--------------------");
-      console.log(images);
+      imagesCompleteStatus = true;
     }
   }
-
-  /**
-   * @function convertCourseImages
-   * @param courseImages - the HTML element containing the course images
-   * @returns {Array} images
-   * { moduleId:  the id of the imported module
-   *   src:  the img.src that has been updated in the course copy
-   *          to match for the current course
-   * }
-   * To be used later to modify collections configuration etc.
-   */
-/*  function convertCourseImages(courseImages) {
-    console.log(courseImages);
-    const imgElements = courseImages.querySelectorAll("img.cc-moduleImage");
-    console.log(imgElements);
-    let images = [];
-
-    imgElements.forEach((imgElement) => {
-      console.log(imgElement);
-      console.log(`id is ${imgElement.id}`);
-      let moduleId = imgElement.id.replace("cc-moduleImage-", "");
-	  let moduleName = "<em>not found</em>"
-	  if (collectionsDetails.collections.MODULES[parseInt(moduleId)]) {
-		  moduleName = collectionsDetails.collections.MODULES[parseInt(moduleId)].name;
-	  }
-
-      images.push({
-        moduleId: moduleId,
-		moduleName: moduleName,
-        src: imgElement.src,
-        details: false, // flag if have Canvas API data yet
-      });
-    });
-    return images;
-  } */
 
   /**
    * @function checkImagesExist
@@ -114,7 +77,6 @@
                 image[key] = msg.body[key];
               });
               image.details = true;
-              console.log(image);
             }
             numImagesReceived++;
           });
@@ -143,19 +105,19 @@
   {:else}
     {#each images as image}
       <tr>
-          {#if image.courseImage}
-        <td class="cc-success">
+        {#if image.courseImage}
+          <td class="cc-success">
             <sl-icon name="check-circle" />
-		</td>
-          {/if}
-          {#if image.otherCourse}
-        <td class="cc-error">
+          </td>
+        {/if}
+        {#if image.otherCourse}
+          <td class="cc-error">
             <sl-icon name="exclamation-triangle" /> Other course
-		</td>
-          {/if}
-		  <td>
-			{image.moduleName}
-		  </td>
+          </td>
+        {/if}
+        <td>
+          {image.moduleName}
+        </td>
         <td>
           <a href={image.src} target="_blank" rel="noreferrer">
             {image.display_name}
@@ -186,10 +148,10 @@
   }
 
   .cc-success {
-	color: green;
+    color: green;
   }
 
   .cc-error {
-	color: red;
+    color: red;
   }
 </style>

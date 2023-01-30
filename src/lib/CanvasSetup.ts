@@ -3,7 +3,7 @@
  */
 
 import { debug } from "./debug";
-const DEBUG = true;
+const DEBUG = false;
 
 /**
  * @function checkContext
@@ -119,8 +119,6 @@ function setCsrfToken(): string {
 export async function requestCourseObject(courseId: number, csrfToken: string) {
   let callUrl = `/api/v1/courses/${courseId}`;
 
-  DEBUG &&
-    console.log(`cc_Controller: requestCourseOjbect: callUrl = ${callUrl}`);
 
   const response = await fetch(callUrl, {
     method: "GET",
@@ -139,13 +137,7 @@ export async function requestCourseObject(courseId: number, csrfToken: string) {
 
   const data = await response.json();
 
-  if (data.length === 0) {
-    // TODO unsure about the validity of this
-    DEBUG &&
-      console.log(
-        `cc_Controller: requestCourseObject: couldn't get course object`
-      );
-  } else {
+  if (data.length !== 0) {
     return data;
     //			this.courseObject = data;
     /*			this.generateSTRM();

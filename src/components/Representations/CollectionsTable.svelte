@@ -60,7 +60,6 @@
 
     // loop through all of the modules
     // - count the number of times each label is used
-    console.log($collectionsStore["MODULES"]);
 
     for (const key in $collectionsStore["MODULES"]) {
       if (

@@ -110,10 +110,8 @@ export class CollectionsDetails {
     // - status: "unauthorized" suggesting student view and can't access it
     // - ?? if there isn't one
     if (!this.collectionsPageResponse.hasOwnProperty("body")) {
-      console.log(this.collectionsPageResponse);
       if (this.collectionsPageResponse.hasOwnProperty("status")) {
         if (this.collectionsPageResponse["status"] === "unauthorized") {
-          console.log("CollectionsDetails: parseCollectionsPage: unauthorized");
           this.ccOn = false;
           this.ccPublished = false;
           this.finishedCallBack();
@@ -203,7 +201,6 @@ export class CollectionsDetails {
    * The rest of the loading of collections will proceed
    */
   checkForImportedCollections(courseImages) {
-    console.log(courseImages);
 
     const imagesCourseId = parseInt(courseImages.id.replace("cc-course-", ""));
 
@@ -227,7 +224,6 @@ export class CollectionsDetails {
 
     const imgElements =
       this.courseImages.querySelectorAll("img.cc-moduleImage");
-    console.log(imgElements);
 
     imgElements.forEach((imgElement) => {
       let moduleId = imgElement.id.replace("cc-moduleImage-", "");
@@ -346,7 +342,6 @@ export class CollectionsDetails {
 
     // loop through importedModuleDetails
     this.importedModuleIds.forEach((importedModuleId) => {
-      console.log("hello");
       if (this.importModuleDetails[importedModuleId].matched) {
         // there's a matching currentModuleId
         let currentModuleId =

@@ -106,13 +106,10 @@
   }
   modulesCompleteStatus = true;
 
-  importedModuleIds.forEach((importedModuleId) => {
+/*  importedModuleIds.forEach((importedModuleId) => {
     if (importModuleDetails[importedModuleId].matched) {
-      console.log("EEEEEEEEEEEEEEEEEEE")
-      console.log(importModuleDetails[importedModuleId])
-      console.log(currentModules[importModuleDetails[importedModuleId].currentModuleId].name)
     }
-  });
+  }); */
 
   /**
    * @function initialiseModules

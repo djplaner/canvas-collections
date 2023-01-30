@@ -317,7 +317,6 @@ export class updatePageController {
       // get the include page content
       // a chain that eventually starts getOutputPage
       includePageName = includePageName.toLowerCase().replace(/ /g, "-");
-      console.log(`startUpdate: includePageName ${includePageName}`);
       this.getIncludePageContent(includePageName);
     } else {
       this.getOutputPage();
@@ -418,10 +417,6 @@ export class updatePageController {
   private async getIncludePageContent(pageName: string) {
     let callUrl = `/api/v1/courses/${this.configStore["courseId"]}/pages/${pageName}`;
 
-    console.log(
-      `updatePageController: getIncludePageContent: callUrl = ${callUrl}`
-    );
-
     const response = await fetch(callUrl, {
       method: "GET",
       credentials: "include",
@@ -433,9 +428,6 @@ export class updatePageController {
     });
 
     if (!response.ok) {
-      console.log(
-        `updatePagController: getIncludePageContent: response not ok`
-      );
       // TODO if in edit mode, display some error
       return;
     }
@@ -643,12 +635,6 @@ export class updatePageController {
       originalContent = this.tasks[0].pageObject.body;
     }
 
-    /*    console.log(
-      `updatePageController: updateOutputPage: pageObject = ${JSON.stringify(
-        this.pageObject
-      )}`
-    ); */
-
     let collectionName = this.tasks[0].collection;
     const escCollectionName = collectionName.replace(/ /g, "-");
 
@@ -811,8 +797,6 @@ export class updatePageController {
     if (newContent.indexOf(CIDI_LABS_CUSTOM_CSS) === -1) {
       newContent = newContent + CIDI_LABS_CUSTOM_CSS;
     }
-
-    console.log(`updatePageController: writeOutputPage: callUrl = ${callUrl}`);
 
     let _body = {
       wiki_page: {

@@ -65,8 +65,6 @@ export class moduleLabelApplicator {
     );
     let allCollectionsModules = this.collectionsStore["MODULES"];
 
-    console.log("--------- calculateNewModuleNames");
-    console.log(collectionsCanvasModules);
     for (let canvasModule of collectionsCanvasModules) {
       if (!allCollectionsModules[canvasModule["id"]]) {
         alert("calculateNewModuleNames - should not be required - missing module id");
@@ -120,16 +118,8 @@ export class moduleLabelApplicator {
 
       if (newName !== oldName) {
         this.newNames.push({ id: canvasModule["id"], newName: newName });
-        console.log(
-          `------------- moduleLabelApplicator: ${oldName} -> ${prepend}: ${oldName}`
-        );
-        console.log(canvasModule);
-        console.log(`-------------`);
       }
     }
-
-    console.log("------------ end of calculateNewModuleNames");
-    console.log(this.newNames);
   }
 
   /**
@@ -149,11 +139,6 @@ export class moduleLabelApplicator {
     const updateModule = this.newNames[0];
 
     let callUrl = `/api/v1/courses/${this.parentController.courseId}/modules/${updateModule.id}`;
-
-    DEBUG &&
-      console.log(
-        `moduleLabelApplicator: updateNewModuleNames: callUrl = ${callUrl}`
-      );
 
     let _body = {
       module: {
