@@ -68,7 +68,7 @@
 
   $: {
     if ($configStore.hasOwnProperty("migrationOutcome")) {
-      completeMigration()
+      completeMigration();
     }
     // recatively update the tooltip for the switch title depending on whether
     // collections is on or off
@@ -214,7 +214,7 @@
         );
         checked = $configStore["ccOn"];
         if ($configStore["ccOn"]) {
-          //addCollectionsDisplay();
+          addCollectionsDisplay();
           // set up auto save for collections config
           if ($configStore["editMode"] && AUTO_SAVE && !saveIntervalOn) {
             saveIntervalOn = true;
@@ -273,28 +273,46 @@
    * - proceed - update the collections configuration and set up collections
    * - cancel - do nothing
    * - refresh - empty out the collections configuration and set up collections
-  */
+   */
   function completeMigration() {
     // save the outcome and remove it from configStore so this is only called once
     const outcome = $configStore["migrationOutcome"];
-    $configStore["lastMigrationOutcome"]=outcome;
-    delete $configStore["migrationOutcome"]
+    $configStore["lastMigrationOutcome"] = outcome;
+    delete $configStore["migrationOutcome"];
 
-    if (outcome==="cancel") {
-      alert("Ok not doing anthing")
-      return
-    } else if (outcome==="refresh") {
+    if (outcome === "cancel") {
+      alert("Ok not doing anthing");
+      return;
+    } else if (outcome === "refresh") {
       // TODO probably with the dialog not closing
       importedCollections = false;
-      alert("Going to refresh to nothing")
-      collectionsDetails.resetImport()
+      collectionsDetails.resetImport();
       initialiseCollections();
       // TODO need to do something to refresh the page - show collections
-    } else if ( outcome==="proceed") {
+    } else if (outcome === "proceed") {
       collectionsDetails.migrateCollectionsConfiguration();
+      collectionsDetails.resetImport();
+      importedCollections = false;
+      gotCollectionsDetails("");
 
+      collectionsDetails.saveCollections(
+        $collectionsStore,
+        true,
+        true,
+        completeImportCollections
+      );
     }
+  }
 
+  function completeImportCollections(status) {
+    if (status ) {
+      toastAlert(
+        `<p>The import of Collection's 
+        <a href="/courses/${courseId}}/pages/canvas-collections-configuration" target="_blank" rel="noreferrer">
+          configuration</a> has been successful.</p>`,
+        "success"
+      );
+    } 
   }
 
   /**

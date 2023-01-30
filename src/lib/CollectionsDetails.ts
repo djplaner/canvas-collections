@@ -382,8 +382,6 @@ export class CollectionsDetails {
         currentModule.image = importedImage.src;
       }
     });
-
-    alert("hello");
   }
 
   getImportedModuleIds() {
