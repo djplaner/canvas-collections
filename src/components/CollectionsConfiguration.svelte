@@ -14,13 +14,8 @@
   import NewCollection from "./Configuration/NewCollection.svelte";
   import FullClaytons from "./Configuration/FullClaytons.svelte";
 
-  import { debug } from "../lib/debug";
-  import { toastAlert } from "../lib/ui";
-  import { handle_promise } from "svelte/internal";
-  debug("______________ CollectionsConfiguration.svelte _______________");
-
   const visibilityOptions = ["no-one", "students", "teachers", "all"];
-  const CC_VERSION = "1.0.0b";
+  const CC_VERSION = "1.0.1b";
 
   /**
    * Declare and populate variables to track whether includePage and outputPage

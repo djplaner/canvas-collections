@@ -6,26 +6,8 @@
   import { collectionsStore } from "../../stores";
   import CollectionConfiguration from "./CollectionConfiguration.svelte";
 
-  import { debug } from "../../lib/debug";
-
   export let includePageExists = {};
   export let outputPageExists = {};
-  export let pageNamesCollections = {};
-
-
-  debug("______________ ExistingCollections.svelte _______________");
-
-  debug("includePageExists");
-  debug(includePageExists);
-  debug("outputPageExists");
-  debug(outputPageExists);
-  debug("pageNamesCollections");
-  debug(pageNamesCollections);
-
-  debug("------------------------- ExistingCollections");
-  debug($collectionsStore);
-  debug("EEEEEEEEEEEE COLLECTIONS_ORDER");
-  debug($collectionsStore["COLLECTIONS_ORDER"]);
 
   const HELP = {
     existing: {

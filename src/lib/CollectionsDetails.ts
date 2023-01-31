@@ -19,11 +19,8 @@
 
 import { wf_fetchData, wf_postData } from "./CanvasSetup";
 import sanitizeHtml from "sanitize-html";
-import { debug } from "./debug";
 import { configStore } from "../stores";
 import { get } from "svelte/store";
-import ModuleDateConfiguration from "../components/Configuration/ModuleDateConfiguration.svelte";
-import { toastAlert } from "./ui";
 
 export class CollectionsDetails {
   // parsed collections JSON
@@ -72,10 +69,6 @@ export class CollectionsDetails {
     this.baseApiUrl = `https://${this.currentHostName}/api/v1`;
     // convert courseId to integer - probably unnecessary at this stage
     this["config"]["courseId"] = parseInt(this.config["courseId"]);
-
-    debug(
-      `YYYYY collectionsDetails: constructor: ${this["config"]["courseId"]} `
-    );
 
     this.requestCollectionsPage();
   }

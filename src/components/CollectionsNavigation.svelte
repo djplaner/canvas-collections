@@ -4,13 +4,8 @@
    * TODO
    */
   import { collectionsStore, configStore } from "../stores";
-  import { debug } from "../lib/debug";
 
   export let activeCollectionName : string;
-
-  debug(
-    `______________ CollectionsNavigation.svelte _currentCollection ${activeCollectionName}______________`
-  );
 
   let collectionNames = [];
   let activeCollection = {};

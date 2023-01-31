@@ -15,7 +15,6 @@
     calculateActualNum,
   } from "./lib/CollectionsDetails";
 
-  import { debug } from "./lib/debug";
   import { toastAlert } from "./lib/ui";
 
   import "@shoelace-style/shoelace/dist/themes/light.css";
@@ -35,8 +34,6 @@
 
   import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
   setBasePath("../node_modules/@shoelace-style/shoelace/dist/");
-
-  debug("______________ CanvasCollections.svelte _______________");
 
   const TIME_BETWEEN_SAVES = 10000;
   const TIME_BETWEEN_CANVAS_REFRESH = 15000;

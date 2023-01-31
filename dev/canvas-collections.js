@@ -3,9 +3,6 @@ var app = (function () {
     'use strict';
 
     function noop() { }
-    function is_promise(value) {
-        return value && typeof value === 'object' && typeof value.then === 'function';
-    }
     function add_location(element, file, line, column, char) {
         element.__svelte_meta = {
             loc: { file, line, column, char }
@@ -432,87 +429,11 @@ var app = (function () {
         }
     }
 
-    function handle_promise(promise, info) {
-        const token = info.token = {};
-        function update(type, index, key, value) {
-            if (info.token !== token)
-                return;
-            info.resolved = value;
-            let child_ctx = info.ctx;
-            if (key !== undefined) {
-                child_ctx = child_ctx.slice();
-                child_ctx[key] = value;
-            }
-            const block = type && (info.current = type)(child_ctx);
-            let needs_flush = false;
-            if (info.block) {
-                if (info.blocks) {
-                    info.blocks.forEach((block, i) => {
-                        if (i !== index && block) {
-                            group_outros();
-                            transition_out(block, 1, 1, () => {
-                                if (info.blocks[i] === block) {
-                                    info.blocks[i] = null;
-                                }
-                            });
-                            check_outros();
-                        }
-                    });
-                }
-                else {
-                    info.block.d(1);
-                }
-                block.c();
-                transition_in(block, 1);
-                block.m(info.mount(), info.anchor);
-                needs_flush = true;
-            }
-            info.block = block;
-            if (info.blocks)
-                info.blocks[index] = block;
-            if (needs_flush) {
-                flush();
-            }
-        }
-        if (is_promise(promise)) {
-            const current_component = get_current_component();
-            promise.then(value => {
-                set_current_component(current_component);
-                update(info.then, 1, info.value, value);
-                set_current_component(null);
-            }, error => {
-                set_current_component(current_component);
-                update(info.catch, 2, info.error, error);
-                set_current_component(null);
-                if (!info.hasCatch) {
-                    throw error;
-                }
-            });
-            // if we previously had a then/catch block, destroy it
-            if (info.current !== info.pending) {
-                update(info.pending, 0);
-                return true;
-            }
-        }
-        else {
-            if (info.current !== info.then) {
-                update(info.then, 1, info.value, promise);
-                return true;
-            }
-            info.resolved = promise;
-        }
-    }
-
     const globals = (typeof window !== 'undefined'
         ? window
         : typeof globalThis !== 'undefined'
             ? globalThis
             : global);
-    function debug$1(file, line, column, values) {
-        console.log(`{@debug} ${file ? file + ' ' : ''}(${line}:${column})`); // eslint-disable-line no-console
-        console.log(values); // eslint-disable-line no-console
-        return '';
-    }
 
     function bind(component, name, callback, value) {
         const index = component.$$.props[name];
@@ -805,9 +726,6 @@ var app = (function () {
             };
         }
         return { set, update, subscribe };
-    }
-
-    function debug(message) {
     }
 
     /**
@@ -1694,7 +1612,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (220:8) {:else}
+    // (219:8) {:else}
     function create_else_block$b(ctx) {
     	let input;
     	let input_id_value;
@@ -1707,7 +1625,7 @@ var app = (function () {
     			set_style(input, "width", "10rem");
     			input.value = "";
     			attr_dev(input, "class", "svelte-le37x9");
-    			add_location(input, file$p, 220, 10, 8181);
+    			add_location(input, file$p, 219, 10, 8139);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, input, anchor);
@@ -1726,14 +1644,14 @@ var app = (function () {
     		block,
     		id: create_else_block$b.name,
     		type: "else",
-    		source: "(220:8) {:else}",
+    		source: "(219:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (212:8) {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("label")}
+    // (211:8) {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("label")}
     function create_if_block$i(ctx) {
     	let input;
     	let input_id_value;
@@ -1747,7 +1665,7 @@ var app = (function () {
     			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-label");
     			set_style(input, "width", "10rem");
     			attr_dev(input, "class", "svelte-le37x9");
-    			add_location(input, file$p, 212, 10, 7895);
+    			add_location(input, file$p, 211, 10, 7853);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, input, anchor);
@@ -1782,14 +1700,14 @@ var app = (function () {
     		block,
     		id: create_if_block$i.name,
     		type: "if",
-    		source: "(212:8) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].hasOwnProperty(\\\"date\\\") && $collectionsStore[\\\"MODULES\\\"][moduleId].date.hasOwnProperty(\\\"label\\\")}",
+    		source: "(211:8) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].hasOwnProperty(\\\"date\\\") && $collectionsStore[\\\"MODULES\\\"][moduleId].date.hasOwnProperty(\\\"label\\\")}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (255:10) {#each daysOfWeek as day}
+    // (254:10) {#each daysOfWeek as day}
     function create_each_block_3(ctx) {
     	let option;
     	let t_value = /*day*/ ctx[37] + "";
@@ -1801,7 +1719,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = /*day*/ ctx[37];
     			option.value = option.__value;
-    			add_location(option, file$p, 255, 12, 9336);
+    			add_location(option, file$p, 254, 12, 9294);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -1817,14 +1735,14 @@ var app = (function () {
     		block,
     		id: create_each_block_3.name,
     		type: "each",
-    		source: "(255:10) {#each daysOfWeek as day}",
+    		source: "(254:10) {#each daysOfWeek as day}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (285:10) {#each weeksOfTerm as week}
+    // (284:10) {#each weeksOfTerm as week}
     function create_each_block_2$2(ctx) {
     	let option;
     	let t_value = /*week*/ ctx[34] + "";
@@ -1836,7 +1754,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = /*week*/ ctx[34].toString();
     			option.value = option.__value;
-    			add_location(option, file$p, 285, 12, 10388);
+    			add_location(option, file$p, 284, 12, 10346);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -1852,14 +1770,14 @@ var app = (function () {
     		block,
     		id: create_each_block_2$2.name,
     		type: "each",
-    		source: "(285:10) {#each weeksOfTerm as week}",
+    		source: "(284:10) {#each weeksOfTerm as week}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (383:10) {#each daysOfWeek as day}
+    // (382:10) {#each daysOfWeek as day}
     function create_each_block_1$4(ctx) {
     	let option;
     	let t_value = /*day*/ ctx[37] + "";
@@ -1871,7 +1789,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = /*day*/ ctx[37];
     			option.value = option.__value;
-    			add_location(option, file$p, 383, 12, 13788);
+    			add_location(option, file$p, 382, 12, 13746);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -1887,14 +1805,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1$4.name,
     		type: "each",
-    		source: "(383:10) {#each daysOfWeek as day}",
+    		source: "(382:10) {#each daysOfWeek as day}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (402:10) {#each weeksOfTerm as week}
+    // (401:10) {#each weeksOfTerm as week}
     function create_each_block$f(ctx) {
     	let option;
     	let t_value = /*week*/ ctx[34] + "";
@@ -1906,7 +1824,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = /*week*/ ctx[34].toString();
     			option.value = option.__value;
-    			add_location(option, file$p, 402, 12, 14409);
+    			add_location(option, file$p, 401, 12, 14367);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -1922,7 +1840,7 @@ var app = (function () {
     		block,
     		id: create_each_block$f.name,
     		type: "each",
-    		source: "(402:10) {#each weeksOfTerm as week}",
+    		source: "(401:10) {#each weeksOfTerm as week}",
     		ctx
     	});
 
@@ -2340,235 +2258,235 @@ var app = (function () {
     			div23 = element("div");
     			t62 = space();
     			input7 = element("input");
-    			add_location(strong0, file$p, 171, 4, 6328);
+    			add_location(strong0, file$p, 170, 4, 6286);
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file$p, 173, 6, 6420);
+    			add_location(div0, file$p, 172, 6, 6378);
     			attr_dev(i0, "class", "icon-question cc-module-icon");
-    			add_location(i0, file$p, 175, 9, 6561);
+    			add_location(i0, file$p, 174, 9, 6519);
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "href", /*HELP*/ ctx[8].studyPeriod.href);
-    			add_location(a0, file$p, 174, 6, 6486);
+    			add_location(a0, file$p, 173, 6, 6444);
     			set_custom_element_data(sl_tooltip0, "class", "cc-about-module-studyPeriod svelte-le37x9");
-    			add_location(sl_tooltip0, file$p, 172, 4, 6364);
-    			add_location(p0, file$p, 170, 2, 6319);
+    			add_location(sl_tooltip0, file$p, 171, 4, 6322);
+    			add_location(p0, file$p, 169, 2, 6277);
     			attr_dev(div1, "class", "cc-current-studyPeriod svelte-le37x9");
-    			add_location(div1, file$p, 169, 0, 6279);
-    			add_location(strong1, file$p, 184, 4, 6725);
+    			add_location(div1, file$p, 168, 0, 6237);
+    			add_location(strong1, file$p, 183, 4, 6683);
     			attr_dev(div2, "slot", "content");
-    			add_location(div2, file$p, 186, 6, 6781);
+    			add_location(div2, file$p, 185, 6, 6739);
     			attr_dev(i1, "class", "icon-question cc-module-icon");
-    			add_location(i1, file$p, 188, 8, 6928);
+    			add_location(i1, file$p, 187, 8, 6886);
     			attr_dev(a1, "href", /*HELP*/ ctx[8].calculatedDate.href);
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noreferrer");
-    			add_location(a1, file$p, 187, 6, 6850);
+    			add_location(a1, file$p, 186, 6, 6808);
     			set_custom_element_data(sl_tooltip1, "class", "svelte-le37x9");
-    			add_location(sl_tooltip1, file$p, 185, 4, 6761);
-    			add_location(p1, file$p, 183, 2, 6716);
+    			add_location(sl_tooltip1, file$p, 184, 4, 6719);
+    			add_location(p1, file$p, 182, 2, 6674);
     			attr_dev(div3, "class", "cc-calculated-date svelte-le37x9");
-    			add_location(div3, file$p, 182, 0, 6680);
+    			add_location(div3, file$p, 181, 0, 6638);
     			attr_dev(div4, "slot", "content");
-    			add_location(div4, file$p, 200, 8, 7300);
+    			add_location(div4, file$p, 199, 8, 7258);
     			attr_dev(i2, "class", "icon-question cc-module-icon");
-    			add_location(i2, file$p, 202, 11, 7441);
+    			add_location(i2, file$p, 201, 11, 7399);
     			attr_dev(a2, "target", "_blank");
     			attr_dev(a2, "rel", "noreferrer");
     			attr_dev(a2, "href", /*HELP*/ ctx[8].dateStart.href);
-    			add_location(a2, file$p, 201, 8, 7366);
+    			add_location(a2, file$p, 200, 8, 7324);
     			set_custom_element_data(sl_tooltip2, "id", "cc-about-module-date-start");
     			set_custom_element_data(sl_tooltip2, "class", "svelte-le37x9");
-    			add_location(sl_tooltip2, file$p, 199, 6, 7246);
+    			add_location(sl_tooltip2, file$p, 198, 6, 7204);
     			attr_dev(div5, "class", "cc-date-heading svelte-le37x9");
-    			add_location(div5, file$p, 197, 4, 7191);
+    			add_location(div5, file$p, 196, 4, 7149);
     			attr_dev(label0, "for", label0_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-label");
-    			add_location(label0, file$p, 208, 8, 7612);
+    			add_location(label0, file$p, 207, 8, 7570);
     			attr_dev(span0, "class", "cc-module-label svelte-le37x9");
-    			add_location(span0, file$p, 207, 6, 7572);
+    			add_location(span0, file$p, 206, 6, 7530);
     			attr_dev(span1, "class", "cc-module-input svelte-le37x9");
-    			add_location(span1, file$p, 210, 6, 7705);
+    			add_location(span1, file$p, 209, 6, 7663);
     			attr_dev(div6, "class", "cc-module-form svelte-le37x9");
-    			add_location(div6, file$p, 206, 4, 7536);
+    			add_location(div6, file$p, 205, 4, 7494);
     			attr_dev(label1, "for", label1_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day");
-    			add_location(label1, file$p, 231, 8, 8462);
+    			add_location(label1, file$p, 230, 8, 8420);
     			attr_dev(div7, "slot", "content");
-    			add_location(div7, file$p, 234, 10, 8593);
+    			add_location(div7, file$p, 233, 10, 8551);
     			attr_dev(input0, "type", "checkbox");
-    			add_location(input0, file$p, 235, 10, 8660);
+    			add_location(input0, file$p, 234, 10, 8618);
     			set_custom_element_data(sl_tooltip3, "id", "cc-about-module-date-stop");
     			set_custom_element_data(sl_tooltip3, "class", "svelte-le37x9");
-    			add_location(sl_tooltip3, file$p, 233, 8, 8538);
+    			add_location(sl_tooltip3, file$p, 232, 8, 8496);
     			attr_dev(span2, "class", "cc-module-label svelte-le37x9");
-    			add_location(span2, file$p, 230, 6, 8422);
+    			add_location(span2, file$p, 229, 6, 8380);
     			option0.__value = "";
     			option0.value = option0.__value;
-    			add_location(option0, file$p, 253, 10, 9249);
+    			add_location(option0, file$p, 252, 10, 9207);
     			attr_dev(select0, "id", select0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day");
     			attr_dev(select0, "class", "svelte-le37x9");
     			if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["day"] === void 0) add_render_callback(() => /*select0_change_handler*/ ctx[17].call(select0));
-    			add_location(select0, file$p, 248, 8, 9059);
+    			add_location(select0, file$p, 247, 8, 9017);
     			attr_dev(span3, "class", "cc-module-input svelte-le37x9");
-    			add_location(span3, file$p, 247, 6, 9019);
+    			add_location(span3, file$p, 246, 6, 8977);
     			attr_dev(div8, "class", "cc-module-form svelte-le37x9");
-    			add_location(div8, file$p, 229, 4, 8386);
+    			add_location(div8, file$p, 228, 4, 8344);
     			attr_dev(label2, "for", label2_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week");
-    			add_location(label2, file$p, 262, 8, 9517);
+    			add_location(label2, file$p, 261, 8, 9475);
     			attr_dev(div9, "slot", "content");
-    			add_location(div9, file$p, 264, 10, 9640);
+    			add_location(div9, file$p, 263, 10, 9598);
     			attr_dev(input1, "type", "checkbox");
-    			add_location(input1, file$p, 265, 10, 9707);
+    			add_location(input1, file$p, 264, 10, 9665);
     			set_custom_element_data(sl_tooltip4, "id", "cc-about-module-date-stop");
     			set_custom_element_data(sl_tooltip4, "class", "svelte-le37x9");
-    			add_location(sl_tooltip4, file$p, 263, 8, 9585);
+    			add_location(sl_tooltip4, file$p, 262, 8, 9543);
     			attr_dev(span4, "class", "cc-module-label svelte-le37x9");
-    			add_location(span4, file$p, 261, 6, 9477);
+    			add_location(span4, file$p, 260, 6, 9435);
     			option1.__value = "";
     			option1.value = option1.__value;
-    			add_location(option1, file$p, 283, 10, 10299);
+    			add_location(option1, file$p, 282, 10, 10257);
     			attr_dev(select1, "id", select1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week");
     			attr_dev(select1, "class", "svelte-le37x9");
     			if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["week"] === void 0) add_render_callback(() => /*select1_change_handler*/ ctx[20].call(select1));
-    			add_location(select1, file$p, 278, 8, 10107);
+    			add_location(select1, file$p, 277, 8, 10065);
     			attr_dev(span5, "class", "cc-module-input svelte-le37x9");
-    			add_location(span5, file$p, 277, 6, 10067);
+    			add_location(span5, file$p, 276, 6, 10025);
     			attr_dev(div10, "class", "cc-module-form svelte-le37x9");
-    			add_location(div10, file$p, 260, 4, 9441);
+    			add_location(div10, file$p, 259, 4, 9399);
     			attr_dev(label3, "for", label3_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time");
-    			add_location(label3, file$p, 292, 8, 10582);
+    			add_location(label3, file$p, 291, 8, 10540);
     			attr_dev(div11, "slot", "content");
-    			add_location(div11, file$p, 294, 10, 10705);
+    			add_location(div11, file$p, 293, 10, 10663);
     			attr_dev(input2, "type", "checkbox");
-    			add_location(input2, file$p, 295, 10, 10772);
+    			add_location(input2, file$p, 294, 10, 10730);
     			set_custom_element_data(sl_tooltip5, "id", "cc-about-module-date-stop");
     			set_custom_element_data(sl_tooltip5, "class", "svelte-le37x9");
-    			add_location(sl_tooltip5, file$p, 293, 8, 10650);
+    			add_location(sl_tooltip5, file$p, 292, 8, 10608);
     			attr_dev(span6, "class", "cc-module-label svelte-le37x9");
-    			add_location(span6, file$p, 291, 6, 10542);
-    			add_location(style0, file$p, 308, 8, 11172);
+    			add_location(span6, file$p, 290, 6, 10500);
+    			add_location(style0, file$p, 307, 8, 11130);
     			attr_dev(input3, "type", "time");
     			attr_dev(input3, "id", input3_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time");
     			attr_dev(input3, "name", "time");
     			attr_dev(input3, "class", "svelte-le37x9");
-    			add_location(input3, file$p, 315, 10, 11322);
+    			add_location(input3, file$p, 314, 10, 11280);
     			set_custom_element_data(aeon_datepicker0, "local", "en-au");
-    			add_location(aeon_datepicker0, file$p, 314, 8, 11279);
+    			add_location(aeon_datepicker0, file$p, 313, 8, 11237);
     			attr_dev(span7, "class", "cc-module-input svelte-le37x9");
-    			add_location(span7, file$p, 307, 6, 11132);
+    			add_location(span7, file$p, 306, 6, 11090);
     			attr_dev(div12, "class", "cc-module-form svelte-le37x9");
-    			add_location(div12, file$p, 290, 4, 10506);
+    			add_location(div12, file$p, 289, 4, 10464);
     			attr_dev(label4, "for", label4_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-calendar-date");
-    			add_location(label4, file$p, 327, 8, 11697);
+    			add_location(label4, file$p, 326, 8, 11655);
     			attr_dev(div13, "slot", "content");
-    			add_location(div13, file$p, 329, 10, 11829);
+    			add_location(div13, file$p, 328, 10, 11787);
     			attr_dev(input4, "type", "checkbox");
-    			add_location(input4, file$p, 330, 10, 11896);
+    			add_location(input4, file$p, 329, 10, 11854);
     			set_custom_element_data(sl_tooltip6, "id", "cc-about-module-date-stop");
     			set_custom_element_data(sl_tooltip6, "class", "svelte-le37x9");
-    			add_location(sl_tooltip6, file$p, 328, 8, 11774);
+    			add_location(sl_tooltip6, file$p, 327, 8, 11732);
     			attr_dev(span8, "class", "cc-module-label svelte-le37x9");
-    			add_location(span8, file$p, 326, 6, 11657);
+    			add_location(span8, file$p, 325, 6, 11615);
     			attr_dev(div14, "slot", "content");
-    			add_location(div14, file$p, 344, 10, 12364);
+    			add_location(div14, file$p, 343, 10, 12322);
     			attr_dev(input5, "id", input5_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-calendar-date");
     			attr_dev(input5, "type", "text");
     			input5.disabled = true;
     			input5.value = input5_value_value = "" + (/*$collectionsStore*/ ctx[1]['MODULES'][/*moduleId*/ ctx[0]]['date']['date'] + " " + /*$collectionsStore*/ ctx[1]['MODULES'][/*moduleId*/ ctx[0]]['date']['month']);
     			attr_dev(input5, "class", "svelte-le37x9");
-    			add_location(input5, file$p, 346, 10, 12437);
+    			add_location(input5, file$p, 345, 10, 12395);
     			set_custom_element_data(sl_tooltip7, "class", "cc-about-module-studyPeriod svelte-le37x9");
-    			add_location(sl_tooltip7, file$p, 343, 8, 12304);
+    			add_location(sl_tooltip7, file$p, 342, 8, 12262);
     			attr_dev(span9, "class", "cc-module-input svelte-le37x9");
-    			add_location(span9, file$p, 342, 6, 12264);
+    			add_location(span9, file$p, 341, 6, 12222);
     			attr_dev(div15, "class", "cc-module-form svelte-le37x9");
-    			add_location(div15, file$p, 325, 4, 11621);
+    			add_location(div15, file$p, 324, 4, 11579);
     			attr_dev(div16, "class", "cc-date-col svelte-le37x9");
     			attr_dev(div16, "id", div16_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-start");
-    			add_location(div16, file$p, 196, 2, 7116);
+    			add_location(div16, file$p, 195, 2, 7074);
     			attr_dev(div17, "slot", "content");
-    			add_location(div17, file$p, 362, 8, 12975);
+    			add_location(div17, file$p, 361, 8, 12933);
     			attr_dev(i3, "class", "icon-question cc-module-icon");
-    			add_location(i3, file$p, 364, 11, 13114);
+    			add_location(i3, file$p, 363, 11, 13072);
     			attr_dev(a3, "target", "_blank");
     			attr_dev(a3, "rel", "noreferrer");
     			attr_dev(a3, "href", /*HELP*/ ctx[8].stopDate.href);
-    			add_location(a3, file$p, 363, 8, 13040);
+    			add_location(a3, file$p, 362, 8, 12998);
     			set_custom_element_data(sl_tooltip8, "id", "cc-about-module-date-stop");
     			set_custom_element_data(sl_tooltip8, "class", "svelte-le37x9");
-    			add_location(sl_tooltip8, file$p, 361, 6, 12922);
+    			add_location(sl_tooltip8, file$p, 360, 6, 12880);
     			attr_dev(div18, "class", "cc-date-heading svelte-le37x9");
-    			add_location(div18, file$p, 359, 4, 12868);
+    			add_location(div18, file$p, 358, 4, 12826);
     			attr_dev(div19, "class", "cc-module-form svelte-le37x9");
     			set_style(div19, "height", "2.375rem");
-    			add_location(div19, file$p, 368, 4, 13209);
+    			add_location(div19, file$p, 367, 4, 13167);
     			attr_dev(label5, "for", label5_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day-to");
-    			add_location(label5, file$p, 371, 8, 13346);
+    			add_location(label5, file$p, 370, 8, 13304);
     			attr_dev(span10, "class", "cc-module-label svelte-le37x9");
-    			add_location(span10, file$p, 370, 6, 13306);
+    			add_location(span10, file$p, 369, 6, 13264);
     			option2.__value = "";
     			option2.value = option2.__value;
-    			add_location(option2, file$p, 381, 10, 13701);
+    			add_location(option2, file$p, 380, 10, 13659);
     			attr_dev(select2, "id", select2_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-day-to");
     			attr_dev(select2, "class", "svelte-le37x9");
     			if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["day"] === void 0) add_render_callback(() => /*select2_change_handler*/ ctx[26].call(select2));
-    			add_location(select2, file$p, 374, 8, 13476);
+    			add_location(select2, file$p, 373, 8, 13434);
     			attr_dev(span11, "class", "cc-module-input svelte-le37x9");
-    			add_location(span11, file$p, 373, 6, 13436);
+    			add_location(span11, file$p, 372, 6, 13394);
     			attr_dev(div20, "class", "cc-module-form svelte-le37x9");
-    			add_location(div20, file$p, 369, 4, 13270);
+    			add_location(div20, file$p, 368, 4, 13228);
     			attr_dev(label6, "for", label6_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week-to");
-    			add_location(label6, file$p, 390, 8, 13969);
+    			add_location(label6, file$p, 389, 8, 13927);
     			attr_dev(span12, "class", "cc-module-label svelte-le37x9");
-    			add_location(span12, file$p, 389, 6, 13929);
+    			add_location(span12, file$p, 388, 6, 13887);
     			option3.__value = "";
     			option3.value = option3.__value;
-    			add_location(option3, file$p, 400, 10, 14320);
+    			add_location(option3, file$p, 399, 10, 14278);
     			attr_dev(select3, "id", select3_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-week-to");
     			attr_dev(select3, "class", "svelte-le37x9");
     			if (/*$collectionsStore*/ ctx[1]["MODULES"][/*moduleId*/ ctx[0]]["date"]["to"]["week"] === void 0) add_render_callback(() => /*select3_change_handler*/ ctx[27].call(select3));
-    			add_location(select3, file$p, 393, 8, 14093);
+    			add_location(select3, file$p, 392, 8, 14051);
     			attr_dev(span13, "class", "cc-module-input svelte-le37x9");
-    			add_location(span13, file$p, 392, 6, 14053);
+    			add_location(span13, file$p, 391, 6, 14011);
     			attr_dev(div21, "class", "cc-module-form svelte-le37x9");
-    			add_location(div21, file$p, 388, 4, 13893);
+    			add_location(div21, file$p, 387, 4, 13851);
     			attr_dev(label7, "for", label7_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time-to");
-    			add_location(label7, file$p, 409, 8, 14603);
+    			add_location(label7, file$p, 408, 8, 14561);
     			attr_dev(span14, "class", "cc-module-label svelte-le37x9");
-    			add_location(span14, file$p, 408, 6, 14563);
-    			add_location(style1, file$p, 412, 8, 14727);
+    			add_location(span14, file$p, 407, 6, 14521);
+    			add_location(style1, file$p, 411, 8, 14685);
     			attr_dev(input6, "type", "time");
     			attr_dev(input6, "id", input6_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-time-to");
     			attr_dev(input6, "name", "time");
     			attr_dev(input6, "class", "svelte-le37x9");
-    			add_location(input6, file$p, 419, 10, 14877);
+    			add_location(input6, file$p, 418, 10, 14835);
     			set_custom_element_data(aeon_datepicker1, "local", "en-au");
-    			add_location(aeon_datepicker1, file$p, 418, 8, 14834);
+    			add_location(aeon_datepicker1, file$p, 417, 8, 14792);
     			attr_dev(span15, "class", "cc-module-input svelte-le37x9");
-    			add_location(span15, file$p, 411, 6, 14687);
+    			add_location(span15, file$p, 410, 6, 14645);
     			attr_dev(div22, "class", "cc-module-form svelte-le37x9");
-    			add_location(div22, file$p, 407, 4, 14527);
+    			add_location(div22, file$p, 406, 4, 14485);
     			attr_dev(label8, "for", label8_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-calendar-date-to");
-    			add_location(label8, file$p, 433, 8, 15291);
+    			add_location(label8, file$p, 432, 8, 15249);
     			attr_dev(span16, "class", "cc-module-label svelte-le37x9");
-    			add_location(span16, file$p, 432, 6, 15251);
+    			add_location(span16, file$p, 431, 6, 15209);
     			attr_dev(div23, "slot", "content");
-    			add_location(div23, file$p, 437, 10, 15484);
+    			add_location(div23, file$p, 436, 10, 15442);
     			attr_dev(input7, "id", input7_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-calendar-date-to");
     			attr_dev(input7, "type", "text");
     			input7.disabled = true;
     			input7.value = input7_value_value = "" + (/*$collectionsStore*/ ctx[1]['MODULES'][/*moduleId*/ ctx[0]]['date']['to']['date'] + " " + /*$collectionsStore*/ ctx[1]['MODULES'][/*moduleId*/ ctx[0]]['date']['to']['month']);
     			attr_dev(input7, "class", "svelte-le37x9");
-    			add_location(input7, file$p, 438, 10, 15555);
+    			add_location(input7, file$p, 437, 10, 15513);
     			set_custom_element_data(sl_tooltip9, "class", "cc-about-module-studyPeriod svelte-le37x9");
-    			add_location(sl_tooltip9, file$p, 436, 8, 15424);
+    			add_location(sl_tooltip9, file$p, 435, 8, 15382);
     			attr_dev(span17, "class", "cc-module-input svelte-le37x9");
-    			add_location(span17, file$p, 435, 6, 15384);
+    			add_location(span17, file$p, 434, 6, 15342);
     			attr_dev(div24, "class", "cc-module-form svelte-le37x9");
-    			add_location(div24, file$p, 431, 4, 15215);
+    			add_location(div24, file$p, 430, 4, 15173);
     			attr_dev(div25, "class", "cc-date-col svelte-le37x9");
     			attr_dev(div25, "id", div25_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-date-stop");
-    			add_location(div25, file$p, 358, 2, 12794);
+    			add_location(div25, file$p, 357, 2, 12752);
     			attr_dev(div26, "class", "cc-date-row svelte-le37x9");
-    			add_location(div26, file$p, 195, 0, 7087);
+    			add_location(div26, file$p, 194, 0, 7045);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3351,7 +3269,6 @@ var app = (function () {
     	$$self.$capture_state = () => ({
     		collectionsStore,
     		configStore,
-    		debug,
     		UniversityDateCalendar,
     		moduleId,
     		calendar,
@@ -13334,77 +13251,6 @@ var app = (function () {
     };
 
     /**
-     * @file ui.ts
-     * @description UI helper functions
-     */
-    /**
-     * @function toastAlert
-     * @param {string} message - HTML to be displayed in the toast
-     * @param {string} status - primary, success, neutral, warning, danger
-     * @description Quick implementation of the shoelace style toast alert notification
-     * https://shoelace.style/components/alert
-     */
-    function toastAlert(message, status = "primary", duration = null) {
-        const iconMapping = {
-            primary: "info-circle",
-            success: "check2-circle",
-            neutral: "gear",
-            warning: "exclamation-triangle",
-            danger: "exclamation-octagon",
-        };
-        // create a shoelace style sl-alert element
-        const alert = document.createElement("sl-alert");
-        // set variant duration closable attributes
-        alert.setAttribute("variant", status);
-        //alert.setAttribute("duration", "5000");
-        alert.setAttribute("closable", "true");
-        if (duration) {
-            alert.setAttribute("duration", duration);
-        }
-        alert.innerHTML = `
-    <sl-icon slot="icon" name="${iconMapping[status]}"></sl-icon>
-    ${message}
-    `;
-        alert.toast();
-    }
-    /**
-     * @function ccConfirm
-     * @param message
-     * @description Controller to implement a confirm dialog using shoelace style
-     * copied from https://jsfiddle.net/claviska/s3vdafmw/7/
-     */
-    const ccConfirm = (message) => {
-        return new Promise((resolve, reject) => {
-            const div = document.createElement("div");
-            div.innerHTML = `
-      <sl-dialog label="Confirm">
-        ${message}
-        <sl-button slot="footer">Cancel</sl-button>
-        <sl-button slot="footer" type="primary">OK</sl-button>
-      </sl-dialog>    
-    `;
-            const dialog = div.querySelector("sl-dialog");
-            const cancel = div.querySelector("sl-button");
-            const ok = cancel.nextElementSibling;
-            document.body.appendChild(dialog);
-            customElements.whenDefined("sl-dialog").then(() => {
-                dialog.show();
-                ok.addEventListener("click", () => {
-                    resolve(true);
-                    dialog.hide();
-                });
-                cancel.addEventListener("click", () => {
-                    resolve(false);
-                    dialog.hide();
-                });
-                dialog.addEventListener("sl-hide", () => {
-                    resolve(false);
-                });
-            });
-        });
-    };
-
-    /**
      * @class CollectionsDetails
      * @description Given a course Id retrieve and possibly update the content of
      * the Canvas Collections Configuration page
@@ -13436,7 +13282,6 @@ var app = (function () {
             this.baseApiUrl = `https://${this.currentHostName}/api/v1`;
             // convert courseId to integer - probably unnecessary at this stage
             this["config"]["courseId"] = parseInt(this.config["courseId"]);
-            debug(`YYYYY collectionsDetails: constructor: ${this["config"]["courseId"]} `);
             this.requestCollectionsPage();
         }
         /**
@@ -16348,7 +16193,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (118:10) {#each $collectionsStore["COLLECTIONS_ORDER"] as collectionName}
+    // (117:10) {#each $collectionsStore["COLLECTIONS_ORDER"] as collectionName}
     function create_each_block$c(ctx) {
     	let option;
     	let t_value = /*collectionName*/ ctx[34] + "";
@@ -16361,7 +16206,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = option_value_value = /*collectionName*/ ctx[34];
     			option.value = option.__value;
-    			add_location(option, file$l, 118, 12, 5213);
+    			add_location(option, file$l, 117, 12, 5171);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -16384,14 +16229,14 @@ var app = (function () {
     		block,
     		id: create_each_block$c.name,
     		type: "each",
-    		source: "(118:10) {#each $collectionsStore[\\\"COLLECTIONS_ORDER\\\"] as collectionName}",
+    		source: "(117:10) {#each $collectionsStore[\\\"COLLECTIONS_ORDER\\\"] as collectionName}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (161:8) {:else}
+    // (160:8) {:else}
     function create_else_block_2$2(ctx) {
     	let input;
     	let input_id_value;
@@ -16406,7 +16251,7 @@ var app = (function () {
     			set_style(input, "width", "10rem");
     			input.disabled = true;
     			attr_dev(input, "class", "svelte-1au0op9");
-    			add_location(input, file$l, 161, 10, 6740);
+    			add_location(input, file$l, 160, 10, 6698);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, input, anchor);
@@ -16437,14 +16282,14 @@ var app = (function () {
     		block,
     		id: create_else_block_2$2.name,
     		type: "else",
-    		source: "(161:8) {:else}",
+    		source: "(160:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (151:8) {#if $collectionsStore["MODULES"][moduleId].fyi}
+    // (150:8) {#if $collectionsStore["MODULES"][moduleId].fyi}
     function create_if_block_2$b(ctx) {
     	let input;
     	let input_id_value;
@@ -16458,7 +16303,7 @@ var app = (function () {
     			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyiText");
     			set_style(input, "width", "10rem");
     			attr_dev(input, "class", "svelte-1au0op9");
-    			add_location(input, file$l, 151, 10, 6318);
+    			add_location(input, file$l, 150, 10, 6276);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, input, anchor);
@@ -16494,14 +16339,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2$b.name,
     		type: "if",
-    		source: "(151:8) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].fyi}",
+    		source: "(150:8) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].fyi}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (235:8) {:else}
+    // (234:8) {:else}
     function create_else_block_1$4(ctx) {
     	let input;
     	let input_id_value;
@@ -16514,7 +16359,7 @@ var app = (function () {
     			attr_dev(input, "type", "text");
     			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num");
     			set_style(input, "width", "3rem");
-    			add_location(input, file$l, 235, 10, 9440);
+    			add_location(input, file$l, 234, 10, 9398);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, input, anchor);
@@ -16550,14 +16395,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1$4.name,
     		type: "else",
-    		source: "(235:8) {:else}",
+    		source: "(234:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (224:8) {#if $collectionsStore["MODULES"][moduleId].autonum}
+    // (223:8) {#if $collectionsStore["MODULES"][moduleId].autonum}
     function create_if_block_1$e(ctx) {
     	let input;
     	let input_id_value;
@@ -16571,7 +16416,7 @@ var app = (function () {
     			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num");
     			set_style(input, "width", "3rem");
     			input.disabled = true;
-    			add_location(input, file$l, 224, 10, 8999);
+    			add_location(input, file$l, 223, 10, 8957);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, input, anchor);
@@ -16607,14 +16452,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$e.name,
     		type: "if",
-    		source: "(224:8) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].autonum}",
+    		source: "(223:8) {#if $collectionsStore[\\\"MODULES\\\"][moduleId].autonum}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (289:8) {:else}
+    // (288:8) {:else}
     function create_else_block$a(ctx) {
     	let input;
     	let input_id_value;
@@ -16628,7 +16473,7 @@ var app = (function () {
     			attr_dev(input, "class", "cc-module-config-engageText svelte-1au0op9");
     			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engageText");
     			set_style(input, "width", "10rem");
-    			add_location(input, file$l, 289, 10, 11338);
+    			add_location(input, file$l, 288, 10, 11296);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, input, anchor);
@@ -16664,14 +16509,14 @@ var app = (function () {
     		block,
     		id: create_else_block$a.name,
     		type: "else",
-    		source: "(289:8) {:else}",
+    		source: "(288:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (281:8) {#if !$collectionsStore["MODULES"][moduleId].engage}
+    // (280:8) {#if !$collectionsStore["MODULES"][moduleId].engage}
     function create_if_block$g(ctx) {
     	let input;
     	let input_id_value;
@@ -16686,7 +16531,7 @@ var app = (function () {
     			set_style(input, "width", "10rem");
     			input.disabled = true;
     			attr_dev(input, "class", "svelte-1au0op9");
-    			add_location(input, file$l, 281, 10, 11075);
+    			add_location(input, file$l, 280, 10, 11033);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, input, anchor);
@@ -16717,7 +16562,7 @@ var app = (function () {
     		block,
     		id: create_if_block$g.name,
     		type: "if",
-    		source: "(281:8) {#if !$collectionsStore[\\\"MODULES\\\"][moduleId].engage}",
+    		source: "(280:8) {#if !$collectionsStore[\\\"MODULES\\\"][moduleId].engage}",
     		ctx
     	});
 
@@ -16999,166 +16844,166 @@ var app = (function () {
     			t34 = space();
     			create_component(editor.$$.fragment);
     			attr_dev(label0, "for", label0_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-collection");
-    			add_location(label0, file$l, 96, 8, 4328);
+    			add_location(label0, file$l, 95, 8, 4286);
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file$l, 98, 10, 4432);
+    			add_location(div0, file$l, 97, 10, 4390);
     			attr_dev(i0, "class", "icon-question cc-module-icon");
-    			add_location(i0, file$l, 106, 12, 4728);
+    			add_location(i0, file$l, 105, 12, 4686);
     			attr_dev(a0, "id", "cc-about-basic-module-collection");
     			attr_dev(a0, "href", /*HELP*/ ctx[6].configCollection.url);
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "class", "cc-module-link");
-    			add_location(a0, file$l, 99, 10, 4507);
+    			add_location(a0, file$l, 98, 10, 4465);
     			set_custom_element_data(sl_tooltip0, "class", "svelte-1au0op9");
-    			add_location(sl_tooltip0, file$l, 97, 8, 4408);
+    			add_location(sl_tooltip0, file$l, 96, 8, 4366);
     			attr_dev(span0, "class", "cc-module-label svelte-1au0op9");
-    			add_location(span0, file$l, 95, 6, 4288);
+    			add_location(span0, file$l, 94, 6, 4246);
     			option.__value = "";
     			option.value = option.__value;
-    			add_location(option, file$l, 116, 10, 5086);
+    			add_location(option, file$l, 115, 10, 5044);
     			attr_dev(select, "id", select_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-collection");
     			attr_dev(select, "class", "svelte-1au0op9");
-    			add_location(select, file$l, 111, 8, 4872);
+    			add_location(select, file$l, 110, 8, 4830);
     			attr_dev(span1, "class", "cc-module-input svelte-1au0op9");
-    			add_location(span1, file$l, 110, 6, 4832);
+    			add_location(span1, file$l, 109, 6, 4790);
     			attr_dev(div1, "class", "cc-module-form svelte-1au0op9");
-    			add_location(div1, file$l, 94, 4, 4252);
+    			add_location(div1, file$l, 93, 4, 4210);
     			attr_dev(div2, "class", "cc-module-col svelte-1au0op9");
-    			add_location(div2, file$l, 93, 2, 4219);
+    			add_location(div2, file$l, 92, 2, 4177);
     			attr_dev(label1, "for", label1_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyi");
-    			add_location(label1, file$l, 127, 8, 5457);
+    			add_location(label1, file$l, 126, 8, 5415);
     			attr_dev(div3, "slot", "content");
-    			add_location(div3, file$l, 129, 10, 5547);
+    			add_location(div3, file$l, 128, 10, 5505);
     			attr_dev(i1, "class", "icon-question cc-module-icon");
-    			add_location(i1, file$l, 136, 12, 5778);
+    			add_location(i1, file$l, 135, 12, 5736);
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noreferrer");
     			attr_dev(a1, "href", /*HELP*/ ctx[6].configFYI.url);
     			attr_dev(a1, "class", "cc-module-link");
-    			add_location(a1, file$l, 130, 10, 5615);
+    			add_location(a1, file$l, 129, 10, 5573);
     			set_custom_element_data(sl_tooltip1, "class", "svelte-1au0op9");
-    			add_location(sl_tooltip1, file$l, 128, 8, 5523);
+    			add_location(sl_tooltip1, file$l, 127, 8, 5481);
     			attr_dev(input0, "type", "checkbox");
     			attr_dev(input0, "id", input0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-fyi");
     			set_style(input0, "position", "relative");
     			set_style(input0, "top", "-0.25rem");
-    			add_location(input0, file$l, 140, 10, 5913);
+    			add_location(input0, file$l, 139, 10, 5871);
     			attr_dev(span2, "class", "cc-config-autonum svelte-1au0op9");
-    			add_location(span2, file$l, 139, 8, 5869);
+    			add_location(span2, file$l, 138, 8, 5827);
     			attr_dev(span3, "class", "cc-module-label svelte-1au0op9");
-    			add_location(span3, file$l, 126, 6, 5417);
+    			add_location(span3, file$l, 125, 6, 5375);
     			attr_dev(span4, "class", "cc-module-input svelte-1au0op9");
-    			add_location(span4, file$l, 149, 6, 6218);
+    			add_location(span4, file$l, 148, 6, 6176);
     			attr_dev(div4, "class", "cc-module-form svelte-1au0op9");
-    			add_location(div4, file$l, 125, 4, 5381);
+    			add_location(div4, file$l, 124, 4, 5339);
     			attr_dev(div5, "class", "cc-module-col svelte-1au0op9");
-    			add_location(div5, file$l, 124, 2, 5348);
+    			add_location(div5, file$l, 123, 2, 5306);
     			attr_dev(div6, "class", "cc-module-row svelte-1au0op9");
-    			add_location(div6, file$l, 92, 0, 4188);
+    			add_location(div6, file$l, 91, 0, 4146);
     			attr_dev(label2, "for", label2_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-label");
-    			add_location(label2, file$l, 178, 8, 7173);
+    			add_location(label2, file$l, 177, 8, 7131);
     			attr_dev(div7, "slot", "content");
-    			add_location(div7, file$l, 180, 10, 7295);
+    			add_location(div7, file$l, 179, 10, 7253);
     			attr_dev(i2, "class", "icon-question cc-module-icon");
-    			add_location(i2, file$l, 182, 12, 7443);
+    			add_location(i2, file$l, 181, 12, 7401);
     			attr_dev(a2, "target", "_blank");
     			attr_dev(a2, "href", /*HELP*/ ctx[6].configLabel.url);
     			attr_dev(a2, "rel", "noreferrer");
-    			add_location(a2, file$l, 181, 10, 7365);
+    			add_location(a2, file$l, 180, 10, 7323);
     			set_custom_element_data(sl_tooltip2, "id", "cc-about-module-label");
     			set_custom_element_data(sl_tooltip2, "class", "svelte-1au0op9");
-    			add_location(sl_tooltip2, file$l, 179, 8, 7244);
+    			add_location(sl_tooltip2, file$l, 178, 8, 7202);
     			attr_dev(span5, "class", "cc-module-label svelte-1au0op9");
-    			add_location(span5, file$l, 177, 6, 7133);
+    			add_location(span5, file$l, 176, 6, 7091);
     			attr_dev(input1, "type", "text");
     			attr_dev(input1, "id", input1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-label");
     			set_style(input1, "width", "10rem");
-    			add_location(input1, file$l, 187, 8, 7592);
+    			add_location(input1, file$l, 186, 8, 7550);
     			attr_dev(span6, "class", "cc-module-form-input");
-    			add_location(span6, file$l, 186, 6, 7547);
+    			add_location(span6, file$l, 185, 6, 7505);
     			attr_dev(div8, "class", "cc-module-form svelte-1au0op9");
-    			add_location(div8, file$l, 176, 4, 7097);
+    			add_location(div8, file$l, 175, 4, 7055);
     			attr_dev(div9, "class", "cc-module-col svelte-1au0op9");
-    			add_location(div9, file$l, 175, 2, 7064);
+    			add_location(div9, file$l, 174, 2, 7022);
     			attr_dev(label3, "for", label3_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-num");
-    			add_location(label3, file$l, 203, 8, 8130);
+    			add_location(label3, file$l, 202, 8, 8088);
     			attr_dev(div10, "slot", "content");
-    			add_location(div10, file$l, 205, 10, 8223);
+    			add_location(div10, file$l, 204, 10, 8181);
     			attr_dev(i3, "class", "icon-question cc-module-icon");
-    			add_location(i3, file$l, 207, 12, 8375);
+    			add_location(i3, file$l, 206, 12, 8333);
     			attr_dev(a3, "target", "_blank");
     			attr_dev(a3, "href", /*HELP*/ ctx[6].configAutoNum.url);
     			attr_dev(a3, "rel", "noreferrer");
-    			add_location(a3, file$l, 206, 10, 8295);
+    			add_location(a3, file$l, 205, 10, 8253);
     			set_custom_element_data(sl_tooltip3, "class", "svelte-1au0op9");
-    			add_location(sl_tooltip3, file$l, 204, 8, 8199);
+    			add_location(sl_tooltip3, file$l, 203, 8, 8157);
     			attr_dev(input2, "type", "checkbox");
     			input2.checked = input2_checked_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].autonum;
     			attr_dev(input2, "id", input2_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-autonum");
     			set_style(input2, "position", "relative");
     			set_style(input2, "top", "-0.25rem");
-    			add_location(input2, file$l, 212, 10, 8527);
+    			add_location(input2, file$l, 211, 10, 8485);
     			attr_dev(span7, "class", "cc-config-autonum svelte-1au0op9");
-    			add_location(span7, file$l, 210, 8, 8466);
+    			add_location(span7, file$l, 209, 8, 8424);
     			attr_dev(span8, "class", "cc-module-label svelte-1au0op9");
-    			add_location(span8, file$l, 202, 6, 8090);
+    			add_location(span8, file$l, 201, 6, 8048);
     			attr_dev(span9, "class", "cc-module-form-input");
-    			add_location(span9, file$l, 222, 6, 8890);
+    			add_location(span9, file$l, 221, 6, 8848);
     			attr_dev(div11, "class", "cc-module-form svelte-1au0op9");
-    			add_location(div11, file$l, 201, 4, 8054);
+    			add_location(div11, file$l, 200, 4, 8012);
     			attr_dev(div12, "class", "cc-module-col svelte-1au0op9");
-    			add_location(div12, file$l, 200, 2, 8021);
+    			add_location(div12, file$l, 199, 2, 7979);
     			attr_dev(div13, "class", "cc-module-row svelte-1au0op9");
-    			add_location(div13, file$l, 174, 0, 7033);
+    			add_location(div13, file$l, 173, 0, 6991);
     			attr_dev(label4, "for", label4_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engage");
-    			add_location(label4, file$l, 254, 8, 10034);
+    			add_location(label4, file$l, 253, 8, 9992);
     			attr_dev(div14, "slot", "content");
-    			add_location(div14, file$l, 256, 10, 10130);
+    			add_location(div14, file$l, 255, 10, 10088);
     			attr_dev(i4, "class", "icon-question cc-module-icon");
-    			add_location(i4, file$l, 264, 12, 10369);
+    			add_location(i4, file$l, 263, 12, 10327);
     			attr_dev(a4, "target", "_blank");
     			attr_dev(a4, "rel", "noreferrer");
     			attr_dev(a4, "href", /*HELP*/ ctx[6].configEngage.url);
     			attr_dev(a4, "class", "cc-module-link");
-    			add_location(a4, file$l, 258, 10, 10203);
+    			add_location(a4, file$l, 257, 10, 10161);
     			set_custom_element_data(sl_tooltip4, "class", "svelte-1au0op9");
-    			add_location(sl_tooltip4, file$l, 255, 8, 10106);
+    			add_location(sl_tooltip4, file$l, 254, 8, 10064);
     			attr_dev(input3, "type", "checkbox");
     			attr_dev(input3, "id", input3_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-engage");
     			set_style(input3, "position", "relative");
     			set_style(input3, "top", "-0.25rem");
-    			add_location(input3, file$l, 268, 10, 10504);
+    			add_location(input3, file$l, 267, 10, 10462);
     			attr_dev(span10, "class", "cc-config-autonum svelte-1au0op9");
-    			add_location(span10, file$l, 267, 8, 10460);
+    			add_location(span10, file$l, 266, 8, 10418);
     			attr_dev(span11, "class", "cc-module-label svelte-1au0op9");
-    			add_location(span11, file$l, 253, 6, 9994);
+    			add_location(span11, file$l, 252, 6, 9952);
     			attr_dev(span12, "class", "cc-module-input svelte-1au0op9");
-    			add_location(span12, file$l, 279, 6, 10971);
+    			add_location(span12, file$l, 278, 6, 10929);
     			attr_dev(div15, "class", "cc-module-form svelte-1au0op9");
-    			add_location(div15, file$l, 252, 4, 9958);
+    			add_location(div15, file$l, 251, 4, 9916);
     			attr_dev(div16, "class", "cc-module-col svelte-1au0op9");
-    			add_location(div16, file$l, 251, 2, 9925);
+    			add_location(div16, file$l, 250, 2, 9883);
     			attr_dev(div17, "class", "cc-module-col svelte-1au0op9");
-    			add_location(div17, file$l, 303, 2, 11842);
+    			add_location(div17, file$l, 302, 2, 11800);
     			attr_dev(div18, "class", "cc-module-row svelte-1au0op9");
-    			add_location(div18, file$l, 250, 0, 9894);
+    			add_location(div18, file$l, 249, 0, 9852);
     			attr_dev(label5, "for", label5_for_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-description");
-    			add_location(label5, file$l, 307, 2, 11929);
+    			add_location(label5, file$l, 306, 2, 11887);
     			attr_dev(div19, "slot", "content");
-    			add_location(div19, file$l, 309, 4, 12023);
+    			add_location(div19, file$l, 308, 4, 11981);
     			attr_dev(i5, "class", "icon-question cc-module-icon");
-    			add_location(i5, file$l, 317, 6, 12268);
+    			add_location(i5, file$l, 316, 6, 12226);
     			attr_dev(a5, "id", "cc-about-module-description");
     			attr_dev(a5, "href", /*HELP*/ ctx[6].configDescription.url);
     			attr_dev(a5, "target", "_blank");
     			attr_dev(a5, "rel", "noreferrer");
     			attr_dev(a5, "class", "cc-module-link");
-    			add_location(a5, file$l, 310, 4, 12093);
+    			add_location(a5, file$l, 309, 4, 12051);
     			set_custom_element_data(sl_tooltip5, "class", "svelte-1au0op9");
-    			add_location(sl_tooltip5, file$l, 308, 2, 12005);
+    			add_location(sl_tooltip5, file$l, 307, 2, 11963);
     			attr_dev(div20, "class", "cc-module-config-description svelte-1au0op9");
-    			add_location(div20, file$l, 306, 0, 11883);
+    			add_location(div20, file$l, 305, 0, 11841);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -17670,7 +17515,6 @@ var app = (function () {
     		calculateActualNum,
     		onMount,
     		Editor,
-    		debug: debug$1,
     		moduleId,
     		html,
     		switchAutoNum,
@@ -17749,6 +17593,77 @@ var app = (function () {
     	}
     }
 
+    /**
+     * @file ui.ts
+     * @description UI helper functions
+     */
+    /**
+     * @function toastAlert
+     * @param {string} message - HTML to be displayed in the toast
+     * @param {string} status - primary, success, neutral, warning, danger
+     * @description Quick implementation of the shoelace style toast alert notification
+     * https://shoelace.style/components/alert
+     */
+    function toastAlert(message, status = "primary", duration = null) {
+        const iconMapping = {
+            primary: "info-circle",
+            success: "check2-circle",
+            neutral: "gear",
+            warning: "exclamation-triangle",
+            danger: "exclamation-octagon",
+        };
+        // create a shoelace style sl-alert element
+        const alert = document.createElement("sl-alert");
+        // set variant duration closable attributes
+        alert.setAttribute("variant", status);
+        //alert.setAttribute("duration", "5000");
+        alert.setAttribute("closable", "true");
+        if (duration) {
+            alert.setAttribute("duration", duration);
+        }
+        alert.innerHTML = `
+    <sl-icon slot="icon" name="${iconMapping[status]}"></sl-icon>
+    ${message}
+    `;
+        alert.toast();
+    }
+    /**
+     * @function ccConfirm
+     * @param message
+     * @description Controller to implement a confirm dialog using shoelace style
+     * copied from https://jsfiddle.net/claviska/s3vdafmw/7/
+     */
+    const ccConfirm = (message) => {
+        return new Promise((resolve, reject) => {
+            const div = document.createElement("div");
+            div.innerHTML = `
+      <sl-dialog label="Confirm">
+        ${message}
+        <sl-button slot="footer">Cancel</sl-button>
+        <sl-button slot="footer" type="primary">OK</sl-button>
+      </sl-dialog>    
+    `;
+            const dialog = div.querySelector("sl-dialog");
+            const cancel = div.querySelector("sl-button");
+            const ok = cancel.nextElementSibling;
+            document.body.appendChild(dialog);
+            customElements.whenDefined("sl-dialog").then(() => {
+                dialog.show();
+                ok.addEventListener("click", () => {
+                    resolve(true);
+                    dialog.hide();
+                });
+                cancel.addEventListener("click", () => {
+                    resolve(false);
+                    dialog.hide();
+                });
+                dialog.addEventListener("sl-hide", () => {
+                    resolve(false);
+                });
+            });
+        });
+    };
+
     /* src\components\Configuration\ModuleBannerConfiguration.svelte generated by Svelte v3.55.0 */
     const file$k = "src\\components\\Configuration\\ModuleBannerConfiguration.svelte";
 
@@ -17758,7 +17673,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (193:10) {#each imageScaleOptions as imageScaleOption}
+    // (190:10) {#each imageScaleOptions as imageScaleOption}
     function create_each_block$b(ctx) {
     	let option;
     	let t_value = /*imageScaleOption*/ ctx[15] + "";
@@ -17770,7 +17685,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = /*imageScaleOption*/ ctx[15];
     			option.value = option.__value;
-    			add_location(option, file$k, 193, 12, 7721);
+    			add_location(option, file$k, 190, 12, 7556);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -17786,7 +17701,7 @@ var app = (function () {
     		block,
     		id: create_each_block$b.name,
     		type: "each",
-    		source: "(193:10) {#each imageScaleOptions as imageScaleOption}",
+    		source: "(190:10) {#each imageScaleOptions as imageScaleOption}",
     		ctx
     	});
 
@@ -17981,128 +17896,128 @@ var app = (function () {
     			t28 = space();
     			sl_color_picker = element("sl-color-picker");
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file$k, 145, 2, 5996);
+    			add_location(div0, file$k, 142, 2, 5831);
     			attr_dev(i0, "class", "icon-question cc-module-icon");
-    			add_location(i0, file$k, 147, 4, 6131);
+    			add_location(i0, file$k, 144, 4, 5966);
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "href", /*HELP*/ ctx[7].moduleBanner.href);
     			attr_dev(a0, "rel", "noreferrer");
-    			add_location(a0, file$k, 146, 2, 6059);
+    			add_location(a0, file$k, 143, 2, 5894);
     			set_custom_element_data(sl_tooltip0, "id", "cc-about-module-banner");
     			set_custom_element_data(sl_tooltip0, "class", "svelte-15vu42i");
-    			add_location(sl_tooltip0, file$k, 144, 0, 5952);
-    			add_location(strong, file$k, 150, 0, 6198);
+    			add_location(sl_tooltip0, file$k, 141, 0, 5787);
+    			add_location(strong, file$k, 147, 0, 6033);
     			set_custom_element_data(sl_tab0, "class", "cc-banner-tab");
     			set_custom_element_data(sl_tab0, "name", "image");
     			set_custom_element_data(sl_tab0, "slot", "nav");
     			set_custom_element_data(sl_tab0, "active", sl_tab0_active_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].banner === "image");
     			set_custom_element_data(sl_tab0, "panel", sl_tab0_panel_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-image");
-    			add_location(sl_tab0, file$k, 152, 2, 6287);
+    			add_location(sl_tab0, file$k, 149, 2, 6122);
     			set_custom_element_data(sl_tab1, "class", "cc-banner-tab");
     			set_custom_element_data(sl_tab1, "name", "iframe");
     			set_custom_element_data(sl_tab1, "slot", "nav");
     			set_custom_element_data(sl_tab1, "active", sl_tab1_active_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].banner === "iframe");
     			set_custom_element_data(sl_tab1, "panel", sl_tab1_panel_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-iframe");
-    			add_location(sl_tab1, file$k, 159, 2, 6497);
+    			add_location(sl_tab1, file$k, 156, 2, 6332);
     			set_custom_element_data(sl_tab2, "class", "cc-banner-tab");
     			set_custom_element_data(sl_tab2, "name", "colour");
     			set_custom_element_data(sl_tab2, "slot", "nav");
     			set_custom_element_data(sl_tab2, "active", sl_tab2_active_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].banner === "colour");
     			set_custom_element_data(sl_tab2, "panel", sl_tab2_panel_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-colour");
-    			add_location(sl_tab2, file$k, 166, 2, 6711);
+    			add_location(sl_tab2, file$k, 163, 2, 6546);
     			attr_dev(label0, "for", label0_for_value = "cc-collection-representation-" + /*moduleId*/ ctx[0] + "-imageSize");
-    			add_location(label0, file$k, 177, 8, 7064);
+    			add_location(label0, file$k, 174, 8, 6899);
     			attr_dev(div1, "slot", "content");
-    			add_location(div1, file$k, 181, 10, 7202);
+    			add_location(div1, file$k, 178, 10, 7037);
     			attr_dev(i1, "class", "icon-question cc-module-icon");
-    			add_location(i1, file$k, 183, 13, 7361);
+    			add_location(i1, file$k, 180, 13, 7196);
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "href", /*HELP*/ ctx[7].moduleImageScale.href);
     			attr_dev(a1, "rel", "noreferrer");
-    			add_location(a1, file$k, 182, 10, 7277);
+    			add_location(a1, file$k, 179, 10, 7112);
     			set_custom_element_data(sl_tooltip1, "class", "svelte-15vu42i");
-    			add_location(sl_tooltip1, file$k, 180, 8, 7178);
+    			add_location(sl_tooltip1, file$k, 177, 8, 7013);
     			attr_dev(span0, "class", "cc-module-label svelte-15vu42i");
-    			add_location(span0, file$k, 176, 6, 7024);
+    			add_location(span0, file$k, 173, 6, 6859);
     			attr_dev(select, "id", select_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-imageSize");
     			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].imageSize === void 0) add_render_callback(() => /*select_change_handler*/ ctx[9].call(select));
-    			add_location(select, file$k, 188, 8, 7505);
+    			add_location(select, file$k, 185, 8, 7340);
     			attr_dev(span1, "class", "cc-module-input svelte-15vu42i");
-    			add_location(span1, file$k, 187, 6, 7465);
+    			add_location(span1, file$k, 184, 6, 7300);
     			attr_dev(div2, "class", "cc-module-form svelte-15vu42i");
-    			add_location(div2, file$k, 175, 4, 6988);
+    			add_location(div2, file$k, 172, 4, 6823);
     			attr_dev(label1, "for", label1_for_value = "cc-module-config-collection-representation-" + /*moduleId*/ ctx[0] + "-image");
-    			add_location(label1, file$k, 200, 8, 7928);
+    			add_location(label1, file$k, 197, 8, 7763);
     			attr_dev(div3, "slot", "content");
-    			add_location(div3, file$k, 206, 10, 8126);
+    			add_location(div3, file$k, 203, 10, 7961);
     			attr_dev(i2, "class", "icon-question cc-module-icon");
-    			add_location(i2, file$k, 208, 13, 8281);
+    			add_location(i2, file$k, 205, 13, 8116);
     			attr_dev(a2, "target", "_blank");
     			attr_dev(a2, "href", /*HELP*/ ctx[7].moduleImageUrl.href);
     			attr_dev(a2, "rel", "noreferrer");
-    			add_location(a2, file$k, 207, 10, 8199);
+    			add_location(a2, file$k, 204, 10, 8034);
     			set_custom_element_data(sl_tooltip2, "id", "cc-about-module-image-url");
     			set_custom_element_data(sl_tooltip2, "class", "svelte-15vu42i");
-    			add_location(sl_tooltip2, file$k, 205, 8, 8071);
+    			add_location(sl_tooltip2, file$k, 202, 8, 7906);
     			attr_dev(span2, "class", "cc-module-label svelte-15vu42i");
-    			add_location(span2, file$k, 199, 6, 7888);
+    			add_location(span2, file$k, 196, 6, 7723);
     			attr_dev(input, "class", "cc-module-config-input svelte-15vu42i");
     			attr_dev(input, "type", "text");
     			attr_dev(input, "id", input_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-image");
-    			add_location(input, file$k, 213, 8, 8425);
+    			add_location(input, file$k, 210, 8, 8260);
     			attr_dev(span3, "class", "cc-module-input svelte-15vu42i");
-    			add_location(span3, file$k, 212, 6, 8385);
+    			add_location(span3, file$k, 209, 6, 8220);
     			attr_dev(div4, "class", "cc-module-form svelte-15vu42i");
-    			add_location(div4, file$k, 198, 4, 7852);
+    			add_location(div4, file$k, 195, 4, 7687);
     			set_custom_element_data(sl_tab_panel0, "name", sl_tab_panel0_name_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-image");
-    			add_location(sl_tab_panel0, file$k, 174, 2, 6927);
+    			add_location(sl_tab_panel0, file$k, 171, 2, 6762);
     			attr_dev(label2, "for", label2_for_value = "cc-collection-representation-" + /*moduleId*/ ctx[0] + "-iframe");
     			set_style(label2, "padding-top", "0.8rem");
-    			add_location(label2, file$k, 228, 6, 8986);
+    			add_location(label2, file$k, 225, 6, 8821);
     			attr_dev(div5, "slot", "content");
-    			add_location(div5, file$k, 235, 8, 9191);
+    			add_location(div5, file$k, 232, 8, 9026);
     			attr_dev(i3, "class", "icon-question cc-module-icon");
-    			add_location(i3, file$k, 237, 11, 9338);
+    			add_location(i3, file$k, 234, 11, 9173);
     			attr_dev(a3, "target", "_blank");
     			attr_dev(a3, "href", /*HELP*/ ctx[7].moduleIframe.href);
     			attr_dev(a3, "rel", "noreferrer");
-    			add_location(a3, file$k, 236, 8, 9260);
+    			add_location(a3, file$k, 233, 8, 9095);
     			set_custom_element_data(sl_tooltip3, "id", "cc-about-module-iframe");
     			set_custom_element_data(sl_tooltip3, "class", "svelte-15vu42i");
-    			add_location(sl_tooltip3, file$k, 234, 6, 9141);
+    			add_location(sl_tooltip3, file$k, 231, 6, 8976);
     			attr_dev(textarea, "class", "cc-module-iframe svelte-15vu42i");
     			attr_dev(textarea, "cols", "60");
     			attr_dev(textarea, "rows", "10");
     			attr_dev(textarea, "id", textarea_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-iframe");
     			textarea.value = textarea_value_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].iframe;
-    			add_location(textarea, file$k, 240, 6, 9423);
+    			add_location(textarea, file$k, 237, 6, 9258);
     			attr_dev(div6, "class", "cc-module-config-collection-representation");
-    			add_location(div6, file$k, 227, 4, 8922);
+    			add_location(div6, file$k, 224, 4, 8757);
     			set_custom_element_data(sl_tab_panel1, "name", sl_tab_panel1_name_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-iframe");
-    			add_location(sl_tab_panel1, file$k, 226, 2, 8860);
+    			add_location(sl_tab_panel1, file$k, 223, 2, 8695);
     			attr_dev(label3, "for", label3_for_value = "cc-collection-representation-" + /*moduleId*/ ctx[0] + "-color");
     			set_style(label3, "padding-top", "0.8rem");
-    			add_location(label3, file$k, 254, 6, 9861);
+    			add_location(label3, file$k, 251, 6, 9696);
     			attr_dev(div7, "slot", "content");
-    			add_location(div7, file$k, 261, 8, 10064);
+    			add_location(div7, file$k, 258, 8, 9899);
     			attr_dev(i4, "class", "icon-question cc-module-icon");
-    			add_location(i4, file$k, 263, 11, 10211);
+    			add_location(i4, file$k, 260, 11, 10046);
     			attr_dev(a4, "target", "_blank");
     			attr_dev(a4, "href", /*HELP*/ ctx[7].moduleColour.href);
     			attr_dev(a4, "rel", "noreferrer");
-    			add_location(a4, file$k, 262, 8, 10133);
+    			add_location(a4, file$k, 259, 8, 9968);
     			set_custom_element_data(sl_tooltip4, "id", "cc-about-module-color");
     			set_custom_element_data(sl_tooltip4, "class", "svelte-15vu42i");
-    			add_location(sl_tooltip4, file$k, 260, 6, 10015);
+    			add_location(sl_tooltip4, file$k, 257, 6, 9850);
     			set_custom_element_data(sl_color_picker, "id", sl_color_picker_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-color");
     			set_custom_element_data(sl_color_picker, "value", sl_color_picker_value_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].bannerColour);
     			set_custom_element_data(sl_color_picker, "label", "Select a color");
-    			add_location(sl_color_picker, file$k, 266, 6, 10296);
+    			add_location(sl_color_picker, file$k, 263, 6, 10131);
     			attr_dev(div8, "class", "cc-module-config-collection-representation");
-    			add_location(div8, file$k, 253, 4, 9797);
+    			add_location(div8, file$k, 250, 4, 9632);
     			set_custom_element_data(sl_tab_panel2, "name", sl_tab_panel2_name_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-colour");
-    			add_location(sl_tab_panel2, file$k, 252, 2, 9735);
-    			add_location(sl_tab_group, file$k, 151, 0, 6223);
+    			add_location(sl_tab_panel2, file$k, 249, 2, 9570);
+    			add_location(sl_tab_group, file$k, 148, 0, 6058);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -18359,7 +18274,6 @@ var app = (function () {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('ModuleBannerConfiguration', slots, []);
     	let { moduleId } = $$props;
-    	debug($collectionsStore["MODULES"][moduleId]);
     	const imageScaleOptions = ["none", "contain", "cover", "fill", "scale-down", "auto"];
 
     	/**
@@ -18534,7 +18448,6 @@ Do you wish to proceed?`).then(ok => {
     	$$self.$capture_state = () => ({
     		collectionsStore,
     		configStore,
-    		debug,
     		ccConfirm,
     		sanitizeHtml: sanitizeHtml_1,
     		moduleId,
@@ -18609,7 +18522,7 @@ Do you wish to proceed?`).then(ok => {
     	return child_ctx;
     }
 
-    // (261:6) {#each Object.entries($collectionsStore["MODULES"][moduleId].metadata) as [key, value]}
+    // (256:6) {#each Object.entries($collectionsStore["MODULES"][moduleId].metadata) as [key, value]}
     function create_each_block$a(ctx) {
     	let tr;
     	let td0;
@@ -18661,21 +18574,21 @@ Do you wish to proceed?`).then(ok => {
     			attr_dev(input0, "id", input0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-metadata-" + /*key*/ ctx[22] + "-name");
     			input0.value = input0_value_value = /*key*/ ctx[22];
     			attr_dev(input0, "pattern", String.raw`[^<>"]`);
-    			add_location(input0, file$j, 263, 12, 10164);
+    			add_location(input0, file$j, 258, 12, 9893);
     			attr_dev(td0, "class", "svelte-yo85j4");
-    			add_location(td0, file$j, 262, 10, 10146);
+    			add_location(td0, file$j, 257, 10, 9875);
     			attr_dev(input1, "type", "text");
     			attr_dev(input1, "id", input1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-metadata-" + /*key*/ ctx[22] + "-value");
     			input1.value = input1_value_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*moduleId*/ ctx[0]].metadata[/*key*/ ctx[22]];
-    			add_location(input1, file$j, 273, 12, 10500);
+    			add_location(input1, file$j, 268, 12, 10229);
     			attr_dev(td1, "class", "svelte-yo85j4");
-    			add_location(td1, file$j, 272, 10, 10482);
+    			add_location(td1, file$j, 267, 10, 10211);
     			attr_dev(i, "class", "icon-trash cc-delete-metadata svelte-yo85j4");
     			attr_dev(i, "id", i_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-metadata-" + /*key*/ ctx[22] + "-delete");
-    			add_location(i, file$j, 282, 12, 10843);
+    			add_location(i, file$j, 277, 12, 10572);
     			attr_dev(td2, "class", "svelte-yo85j4");
-    			add_location(td2, file$j, 281, 10, 10825);
-    			add_location(tr, file$j, 261, 8, 10130);
+    			add_location(td2, file$j, 276, 10, 10554);
+    			add_location(tr, file$j, 256, 8, 9859);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -18736,7 +18649,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_each_block$a.name,
     		type: "each",
-    		source: "(261:6) {#each Object.entries($collectionsStore[\\\"MODULES\\\"][moduleId].metadata) as [key, value]}",
+    		source: "(256:6) {#each Object.entries($collectionsStore[\\\"MODULES\\\"][moduleId].metadata) as [key, value]}",
     		ctx
     	});
 
@@ -18832,46 +18745,46 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file$j, 218, 12, 8814);
+    			add_location(div0, file$j, 213, 12, 8543);
     			attr_dev(i0, "class", "icon-question cc-module-icon");
-    			add_location(i0, file$j, 219, 12, 8879);
+    			add_location(i0, file$j, 214, 12, 8608);
     			set_custom_element_data(sl_tooltip0, "class", "svelte-yo85j4");
-    			add_location(sl_tooltip0, file$j, 217, 10, 8788);
+    			add_location(sl_tooltip0, file$j, 212, 10, 8517);
     			attr_dev(th0, "class", "svelte-yo85j4");
-    			add_location(th0, file$j, 215, 8, 8756);
+    			add_location(th0, file$j, 210, 8, 8485);
     			attr_dev(div1, "slot", "content");
-    			add_location(div1, file$j, 225, 12, 9030);
+    			add_location(div1, file$j, 220, 12, 8759);
     			attr_dev(i1, "class", "icon-question cc-module-icon");
-    			add_location(i1, file$j, 226, 12, 9096);
+    			add_location(i1, file$j, 221, 12, 8825);
     			set_custom_element_data(sl_tooltip1, "class", "svelte-yo85j4");
-    			add_location(sl_tooltip1, file$j, 224, 10, 9004);
+    			add_location(sl_tooltip1, file$j, 219, 10, 8733);
     			attr_dev(th1, "class", "svelte-yo85j4");
-    			add_location(th1, file$j, 222, 8, 8971);
+    			add_location(th1, file$j, 217, 8, 8700);
     			attr_dev(th2, "class", "svelte-yo85j4");
-    			add_location(th2, file$j, 229, 8, 9188);
-    			add_location(tr0, file$j, 214, 6, 8742);
-    			add_location(thead, file$j, 213, 4, 8727);
+    			add_location(th2, file$j, 224, 8, 8917);
+    			add_location(tr0, file$j, 209, 6, 8471);
+    			add_location(thead, file$j, 208, 4, 8456);
     			attr_dev(input0, "type", "text");
     			attr_dev(input0, "id", input0_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-metadata-add-name");
-    			add_location(input0, file$j, 235, 11, 9281);
+    			add_location(input0, file$j, 230, 11, 9010);
     			attr_dev(td0, "class", "svelte-yo85j4");
-    			add_location(td0, file$j, 234, 8, 9265);
+    			add_location(td0, file$j, 229, 8, 8994);
     			attr_dev(input1, "type", "text");
     			attr_dev(input1, "id", input1_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-metadata-add-value");
-    			add_location(input1, file$j, 243, 11, 9531);
+    			add_location(input1, file$j, 238, 11, 9260);
     			attr_dev(td1, "class", "svelte-yo85j4");
-    			add_location(td1, file$j, 242, 8, 9515);
+    			add_location(td1, file$j, 237, 8, 9244);
     			button.disabled = /*readyToAdd*/ ctx[1];
     			attr_dev(button, "id", button_id_value = "cc-module-config-" + /*moduleId*/ ctx[0] + "-metadata-add");
     			attr_dev(button, "class", "cc-module-config-metadata-add");
-    			add_location(button, file$j, 251, 11, 9782);
+    			add_location(button, file$j, 246, 11, 9511);
     			attr_dev(td2, "class", "svelte-yo85j4");
-    			add_location(td2, file$j, 250, 8, 9766);
-    			add_location(tr1, file$j, 233, 6, 9251);
-    			add_location(tbody, file$j, 232, 4, 9236);
-    			add_location(table, file$j, 212, 2, 8714);
+    			add_location(td2, file$j, 245, 8, 9495);
+    			add_location(tr1, file$j, 228, 6, 8980);
+    			add_location(tbody, file$j, 227, 4, 8965);
+    			add_location(table, file$j, 207, 2, 8443);
     			attr_dev(div2, "class", "cc-module-config-additional-metadata border border-trbl svelte-yo85j4");
-    			add_location(div2, file$j, 211, 0, 8641);
+    			add_location(div2, file$j, 206, 0, 8370);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -19001,8 +18914,6 @@ Do you wish to proceed?`).then(ok => {
     	validate_slots('ModuleMetaDataConfiguration', slots, []);
     	let { moduleId } = $$props;
     	let readyToAdd = true;
-    	debug($collectionsStore["MODULES"][moduleId]);
-    	debug($collectionsStore["MODULES"][moduleId].metadata);
 
     	/**
      * @function addMetaData
@@ -19271,7 +19182,6 @@ Do you wish to proceed?`).then(ok => {
     		sanitizeHtml: sanitizeHtml_1,
     		collectionsStore,
     		configStore,
-    		debug,
     		toastAlert,
     		ccConfirm,
     		moduleId,
@@ -19345,7 +19255,7 @@ Do you wish to proceed?`).then(ok => {
     /* src\components\ModuleConfiguration.svelte generated by Svelte v3.55.0 */
     const file$i = "src\\components\\ModuleConfiguration.svelte";
 
-    // (54:2) {#if !allocated}
+    // (47:2) {#if !allocated}
     function create_if_block_1$d(ctx) {
     	let div;
     	let t;
@@ -19357,7 +19267,7 @@ Do you wish to proceed?`).then(ok => {
     			t = text("No collection allocated");
     			attr_dev(div, "class", "cc-module-no-collection svelte-1mjrzc0");
     			attr_dev(div, "id", div_id_value = "cc-module-config-no-collection-" + /*module*/ ctx[0]);
-    			add_location(div, file$i, 54, 4, 3084);
+    			add_location(div, file$i, 47, 4, 2811);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -19377,14 +19287,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_1$d.name,
     		type: "if",
-    		source: "(54:2) {#if !allocated}",
+    		source: "(47:2) {#if !allocated}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (90:0) {#if $collectionsStore["MODULES"][module].configVisible}
+    // (83:0) {#if $collectionsStore["MODULES"][module].configVisible}
     function create_if_block$f(ctx) {
     	let div5;
     	let sl_tab_group;
@@ -19507,81 +19417,81 @@ Do you wish to proceed?`).then(ok => {
     			sl_tab_panel3 = element("sl-tab-panel");
     			create_component(modulemetadataconfiguration.$$.fragment);
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file$i, 95, 10, 4251);
+    			add_location(div0, file$i, 88, 10, 3978);
     			attr_dev(i0, "class", "icon-question");
-    			add_location(i0, file$i, 102, 12, 4484);
+    			add_location(i0, file$i, 95, 12, 4211);
     			attr_dev(a0, "href", /*HELP*/ ctx[4].generalTab.url);
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "class", "cc-module-link");
-    			add_location(a0, file$i, 96, 10, 4320);
+    			add_location(a0, file$i, 89, 10, 4047);
     			set_custom_element_data(sl_tooltip0, "hoist", "");
     			set_custom_element_data(sl_tooltip0, "class", "svelte-1mjrzc0");
-    			add_location(sl_tooltip0, file$i, 94, 8, 4221);
+    			add_location(sl_tooltip0, file$i, 87, 8, 3948);
     			set_custom_element_data(sl_tab0, "slot", "nav");
     			set_custom_element_data(sl_tab0, "panel", "general");
     			set_style(sl_tab0, "text-align", "right");
     			set_custom_element_data(sl_tab0, "class", "svelte-1mjrzc0");
-    			add_location(sl_tab0, file$i, 92, 6, 4127);
+    			add_location(sl_tab0, file$i, 85, 6, 3854);
     			attr_dev(div1, "slot", "content");
-    			add_location(div1, file$i, 109, 10, 4689);
+    			add_location(div1, file$i, 102, 10, 4416);
     			attr_dev(i1, "class", "icon-question");
-    			add_location(i1, file$i, 116, 12, 4924);
+    			add_location(i1, file$i, 109, 12, 4651);
     			attr_dev(a1, "href", /*HELP*/ ctx[4].moduleDates.url);
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noreferrer");
     			attr_dev(a1, "class", "cc-module-link");
-    			add_location(a1, file$i, 110, 10, 4759);
+    			add_location(a1, file$i, 103, 10, 4486);
     			set_custom_element_data(sl_tooltip1, "class", "svelte-1mjrzc0");
-    			add_location(sl_tooltip1, file$i, 108, 8, 4665);
+    			add_location(sl_tooltip1, file$i, 101, 8, 4392);
     			set_custom_element_data(sl_tab1, "slot", "nav");
     			set_custom_element_data(sl_tab1, "panel", "dates");
     			set_style(sl_tab1, "text-align", "right");
     			set_custom_element_data(sl_tab1, "class", "svelte-1mjrzc0");
-    			add_location(sl_tab1, file$i, 106, 6, 4575);
+    			add_location(sl_tab1, file$i, 99, 6, 4302);
     			attr_dev(div2, "slot", "content");
-    			add_location(div2, file$i, 123, 10, 5131);
+    			add_location(div2, file$i, 116, 10, 4858);
     			attr_dev(i2, "class", "icon-question");
-    			add_location(i2, file$i, 125, 13, 5281);
+    			add_location(i2, file$i, 118, 13, 5008);
     			attr_dev(a2, "href", /*HELP*/ ctx[4].moduleBanner.url);
     			attr_dev(a2, "target", "_blank");
     			attr_dev(a2, "rel", "noreferrer");
-    			add_location(a2, file$i, 124, 10, 5202);
+    			add_location(a2, file$i, 117, 10, 4929);
     			set_custom_element_data(sl_tooltip2, "class", "svelte-1mjrzc0");
-    			add_location(sl_tooltip2, file$i, 122, 8, 5107);
+    			add_location(sl_tooltip2, file$i, 115, 8, 4834);
     			set_custom_element_data(sl_tab2, "slot", "nav");
     			set_custom_element_data(sl_tab2, "panel", "banner");
     			set_style(sl_tab2, "text-align", "right");
     			set_custom_element_data(sl_tab2, "class", "svelte-1mjrzc0");
-    			add_location(sl_tab2, file$i, 120, 6, 5015);
+    			add_location(sl_tab2, file$i, 113, 6, 4742);
     			attr_dev(div3, "slot", "content");
-    			add_location(div3, file$i, 133, 12, 5512);
+    			add_location(div3, file$i, 126, 12, 5239);
     			attr_dev(i3, "class", "icon-question");
-    			add_location(i3, file$i, 135, 14, 5670);
+    			add_location(i3, file$i, 128, 14, 5397);
     			attr_dev(a3, "href", /*HELP*/ ctx[4].moduleMetaData.url);
     			attr_dev(a3, "target", "_blank");
     			attr_dev(a3, "rel", "noreferrer");
-    			add_location(a3, file$i, 134, 12, 5587);
+    			add_location(a3, file$i, 127, 12, 5314);
     			set_custom_element_data(sl_tooltip3, "class", "svelte-1mjrzc0");
-    			add_location(sl_tooltip3, file$i, 132, 10, 5486);
-    			add_location(div4, file$i, 130, 8, 5443);
+    			add_location(sl_tooltip3, file$i, 125, 10, 5213);
+    			add_location(div4, file$i, 123, 8, 5170);
     			set_custom_element_data(sl_tab3, "slot", "nav");
     			set_custom_element_data(sl_tab3, "panel", "metadata");
     			set_style(sl_tab3, "text-align", "right");
     			set_custom_element_data(sl_tab3, "class", "svelte-1mjrzc0");
-    			add_location(sl_tab3, file$i, 129, 6, 5372);
+    			add_location(sl_tab3, file$i, 122, 6, 5099);
     			set_custom_element_data(sl_tab_panel0, "name", "general");
-    			add_location(sl_tab_panel0, file$i, 141, 6, 5783);
+    			add_location(sl_tab_panel0, file$i, 134, 6, 5510);
     			set_custom_element_data(sl_tab_panel1, "name", "dates");
-    			add_location(sl_tab_panel1, file$i, 144, 6, 5901);
+    			add_location(sl_tab_panel1, file$i, 137, 6, 5628);
     			set_custom_element_data(sl_tab_panel2, "name", "banner");
-    			add_location(sl_tab_panel2, file$i, 147, 6, 6014);
+    			add_location(sl_tab_panel2, file$i, 140, 6, 5741);
     			set_custom_element_data(sl_tab_panel3, "name", "metadata");
-    			add_location(sl_tab_panel3, file$i, 150, 6, 6130);
+    			add_location(sl_tab_panel3, file$i, 143, 6, 5857);
     			set_custom_element_data(sl_tab_group, "placement", "start");
-    			add_location(sl_tab_group, file$i, 91, 4, 4087);
+    			add_location(sl_tab_group, file$i, 84, 4, 3814);
     			attr_dev(div5, "class", "cc-module-config-tabs border border-trbl svelte-1mjrzc0");
-    			add_location(div5, file$i, 90, 2, 4027);
+    			add_location(div5, file$i, 83, 2, 3754);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div5, anchor);
@@ -19678,7 +19588,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block$f.name,
     		type: "if",
-    		source: "(90:0) {#if $collectionsStore[\\\"MODULES\\\"][module].configVisible}",
+    		source: "(83:0) {#if $collectionsStore[\\\"MODULES\\\"][module].configVisible}",
     		ctx
     	});
 
@@ -19735,23 +19645,23 @@ Do you wish to proceed?`).then(ok => {
     			? "icon-mini-arrow-down"
     			: "icon-mini-arrow-right");
 
-    			add_location(i0, file$i, 62, 4, 3254);
-    			add_location(em, file$i, 72, 4, 3567);
+    			add_location(i0, file$i, 55, 4, 2981);
+    			add_location(em, file$i, 65, 4, 3294);
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file$i, 74, 6, 3651);
+    			add_location(div0, file$i, 67, 6, 3378);
     			attr_dev(i1, "class", "icon-question");
-    			add_location(i1, file$i, 83, 8, 3886);
+    			add_location(i1, file$i, 76, 8, 3613);
     			attr_dev(a, "href", /*HELP*/ ctx[4].moduleConfiguration.url);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "class", "cc-module-link");
-    			add_location(a, file$i, 77, 6, 3737);
+    			add_location(a, file$i, 70, 6, 3464);
     			set_custom_element_data(sl_tooltip, "class", "svelte-1mjrzc0");
-    			add_location(sl_tooltip, file$i, 73, 4, 3631);
-    			add_location(span, file$i, 61, 2, 3242);
+    			add_location(sl_tooltip, file$i, 66, 4, 3358);
+    			add_location(span, file$i, 54, 2, 2969);
     			attr_dev(div1, "class", "cc-module-config border border-trbl svelte-1mjrzc0");
     			attr_dev(div1, "id", div1_id_value = "cc-module-config-" + /*module*/ ctx[0]);
-    			add_location(div1, file$i, 52, 0, 2978);
+    			add_location(div1, file$i, 45, 0, 2705);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -19885,9 +19795,6 @@ Do you wish to proceed?`).then(ok => {
     		set_store_value(configStore, $configStore["needToSaveCollections"] = true, $configStore);
     	}
 
-    	// cc-module-config-33347-description
-    	// 33336
-    	// 33337
     	const HELP = {
     		moduleConfiguration: {
     			tooltip: "Click the arrow to open/close the Collections interface to configure data about this module",
@@ -19940,7 +19847,6 @@ Do you wish to proceed?`).then(ok => {
     		ModuleGeneralConfiguration,
     		ModuleBannerConfiguration,
     		ModuleMetaDataConfiguration,
-    		debug,
     		removeModuleConfiguration,
     		module,
     		toggleModuleConfigShow,
@@ -22735,17 +22641,17 @@ Do you wish to proceed?`).then(ok => {
 
     function get_each_context_1$3(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[9] = list[i];
+    	child_ctx[8] = list[i];
     	return child_ctx;
     }
 
     function get_each_context$9(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[9] = list[i];
+    	child_ctx[8] = list[i];
     	return child_ctx;
     }
 
-    // (227:0) {:else}
+    // (217:0) {:else}
     function create_else_block_2$1(ctx) {
     	let div;
     	let current;
@@ -22770,7 +22676,7 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			attr_dev(div, "class", "cc-card-interface cc-representation svelte-3dolfn");
-    			add_location(div, file$d, 227, 2, 9440);
+    			add_location(div, file$d, 217, 2, 9038);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -22838,14 +22744,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_else_block_2$1.name,
     		type: "else",
-    		source: "(227:0) {:else}",
+    		source: "(217:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (84:0) {#if claytons}
+    // (74:0) {#if claytons}
     function create_if_block$a(ctx) {
     	let div;
     	let current;
@@ -22872,7 +22778,7 @@ Do you wish to proceed?`).then(ok => {
     			set_style(div, "flex-wrap", "wrap");
     			set_style(div, "display", "flex");
     			set_style(div, "margin-top", "0.5em");
-    			add_location(div, file$d, 85, 2, 3046);
+    			add_location(div, file$d, 75, 2, 2644);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -22940,14 +22846,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block$a.name,
     		type: "if",
-    		source: "(84:0) {#if claytons}",
+    		source: "(74:0) {#if claytons}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (241:14) {#if !$collectionsStore["MODULES"][theModule.id].fyi}
+    // (231:14) {#if !$collectionsStore["MODULES"][theModule.id].fyi}
     function create_if_block_13(ctx) {
     	let a;
     	let t;
@@ -22958,16 +22864,16 @@ Do you wish to proceed?`).then(ok => {
     			a = element("a");
     			t = text(" ");
     			attr_dev(a, "class", "cc-card-link svelte-3dolfn");
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
+    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
     			attr_dev(a, "style", "");
-    			add_location(a, file$d, 241, 16, 10054);
+    			add_location(a, file$d, 231, 16, 9652);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
     			append_dev(a, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[9].id))) {
+    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
     				attr_dev(a, "href", a_href_value);
     			}
     		},
@@ -22980,20 +22886,20 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_13.name,
     		type: "if",
-    		source: "(241:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		source: "(231:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (259:14) {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
+    // (249:14) {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
     function create_if_block_11$1(ctx) {
     	let div;
     	let span;
 
     	function select_block_type_3(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText) return create_if_block_12$1;
+    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText) return create_if_block_12$1;
     		return create_else_block_3;
     	}
 
@@ -23006,9 +22912,9 @@ Do you wish to proceed?`).then(ok => {
     			span = element("span");
     			if_block.c();
     			attr_dev(span, "class", "cc-fyi-text");
-    			add_location(span, file$d, 260, 18, 10868);
+    			add_location(span, file$d, 250, 18, 10466);
     			attr_dev(div, "class", "cc-card-fyi svelte-3dolfn");
-    			add_location(div, file$d, 259, 16, 10823);
+    			add_location(div, file$d, 249, 16, 10421);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -23038,14 +22944,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_11$1.name,
     		type: "if",
-    		source: "(259:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyi && $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText !== \\\"\\\"}",
+    		source: "(249:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyi && $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText !== \\\"\\\"}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (264:20) {:else}
+    // (254:20) {:else}
     function create_else_block_3(ctx) {
     	let t;
 
@@ -23066,17 +22972,17 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_else_block_3.name,
     		type: "else",
-    		source: "(264:20) {:else}",
+    		source: "(254:20) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (262:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
+    // (252:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
     function create_if_block_12$1(ctx) {
     	let html_tag;
-    	let raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText + "";
+    	let raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "";
     	let html_anchor;
 
     	const block = {
@@ -23090,7 +22996,7 @@ Do you wish to proceed?`).then(ok => {
     			insert_dev(target, html_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 12 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText + "")) html_tag.p(raw_value);
+    			if (dirty & /*$collectionsStore, modules*/ 12 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "")) html_tag.p(raw_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(html_anchor);
@@ -23102,19 +23008,19 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_12$1.name,
     		type: "if",
-    		source: "(262:20) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText}",
+    		source: "(252:20) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (270:14) {#if isUnPublishedUnallocated(theModule.id)}
+    // (260:14) {#if isUnPublishedUnallocated(theModule.id)}
     function create_if_block_8$1(ctx) {
     	let div;
     	let t;
-    	let if_block0 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].published && create_if_block_10$1(ctx);
-    	let if_block1 = /*$configStore*/ ctx[4]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].collection !== /*collection*/ ctx[1] && create_if_block_9$1(ctx);
+    	let if_block0 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].published && create_if_block_10$1(ctx);
+    	let if_block1 = /*$configStore*/ ctx[4]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].collection !== /*collection*/ ctx[1] && create_if_block_9$1(ctx);
 
     	const block = {
     		c: function create() {
@@ -23123,7 +23029,7 @@ Do you wish to proceed?`).then(ok => {
     			t = space();
     			if (if_block1) if_block1.c();
     			attr_dev(div, "class", "cc-card-published svelte-3dolfn");
-    			add_location(div, file$d, 270, 16, 11290);
+    			add_location(div, file$d, 260, 16, 10888);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -23132,7 +23038,7 @@ Do you wish to proceed?`).then(ok => {
     			if (if_block1) if_block1.m(div, null);
     		},
     		p: function update(ctx, dirty) {
-    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].published) {
+    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].published) {
     				if (if_block0) ; else {
     					if_block0 = create_if_block_10$1(ctx);
     					if_block0.c();
@@ -23143,7 +23049,7 @@ Do you wish to proceed?`).then(ok => {
     				if_block0 = null;
     			}
 
-    			if (/*$configStore*/ ctx[4]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].collection !== /*collection*/ ctx[1]) {
+    			if (/*$configStore*/ ctx[4]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].collection !== /*collection*/ ctx[1]) {
     				if (if_block1) ; else {
     					if_block1 = create_if_block_9$1(ctx);
     					if_block1.c();
@@ -23165,14 +23071,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_8$1.name,
     		type: "if",
-    		source: "(270:14) {#if isUnPublishedUnallocated(theModule.id)}",
+    		source: "(260:14) {#if isUnPublishedUnallocated(theModule.id)}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (272:18) {#if !$collectionsStore["MODULES"][theModule.id].published}
+    // (262:18) {#if !$collectionsStore["MODULES"][theModule.id].published}
     function create_if_block_10$1(ctx) {
     	let t;
 
@@ -23192,14 +23098,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_10$1.name,
     		type: "if",
-    		source: "(272:18) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].published}",
+    		source: "(262:18) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].published}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (275:18) {#if $configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection}
+    // (265:18) {#if $configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection}
     function create_if_block_9$1(ctx) {
     	let t;
 
@@ -23219,14 +23125,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_9$1.name,
     		type: "if",
-    		source: "(275:18) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][theModule.id].collection !== collection}",
+    		source: "(265:18) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][theModule.id].collection !== collection}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (305:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
+    // (295:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
     function create_if_block_7$2(ctx) {
     	let div1;
     	let div0;
@@ -23234,7 +23140,7 @@ Do you wish to proceed?`).then(ok => {
     	let t0;
     	let a_href_value;
     	let t1;
-    	let t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engageText + "";
+    	let t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engageText + "";
     	let t2;
 
     	const block = {
@@ -23245,13 +23151,13 @@ Do you wish to proceed?`).then(ok => {
     			t0 = text(" ");
     			t1 = space();
     			t2 = text(t2_value);
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
+    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
     			attr_dev(a, "class", "gu-engage svelte-3dolfn");
-    			add_location(a, file$d, 307, 20, 13046);
+    			add_location(a, file$d, 297, 20, 12644);
     			attr_dev(div0, "class", "cc-card-engage-button svelte-3dolfn");
-    			add_location(div0, file$d, 306, 18, 12989);
+    			add_location(div0, file$d, 296, 18, 12587);
     			attr_dev(div1, "class", "cc-card-engage svelte-3dolfn");
-    			add_location(div1, file$d, 305, 16, 12941);
+    			add_location(div1, file$d, 295, 16, 12539);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -23262,11 +23168,11 @@ Do you wish to proceed?`).then(ok => {
     			append_dev(div0, t2);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[9].id))) {
+    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
     				attr_dev(a, "href", a_href_value);
     			}
 
-    			if (dirty & /*$collectionsStore, modules*/ 12 && t2_value !== (t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engageText + "")) set_data_dev(t2, t2_value);
+    			if (dirty & /*$collectionsStore, modules*/ 12 && t2_value !== (t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engageText + "")) set_data_dev(t2, t2_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div1);
@@ -23277,14 +23183,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_7$2.name,
     		type: "if",
-    		source: "(305:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		source: "(295:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (229:4) {#each modules as theModule}
+    // (219:4) {#each modules as theModule}
     function create_each_block_1$3(ctx) {
     	let div9;
     	let div8;
@@ -23296,7 +23202,7 @@ Do you wish to proceed?`).then(ok => {
     	let datewidget;
     	let t2;
     	let t3;
-    	let show_if = /*isUnPublishedUnallocated*/ ctx[7](/*theModule*/ ctx[9].id);
+    	let show_if = /*isUnPublishedUnallocated*/ ctx[7](/*theModule*/ ctx[8].id);
     	let div0_data_moduleid_value;
     	let t4;
     	let div4;
@@ -23304,17 +23210,17 @@ Do you wish to proceed?`).then(ok => {
     	let div1;
     	let span;
     	let html_tag;
-    	let raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].label + "";
+    	let raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].label + "";
     	let t5;
-    	let t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].actualNum + "";
+    	let t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].actualNum + "";
     	let t6;
     	let t7;
     	let h3;
-    	let raw1_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id]) + "";
+    	let raw1_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id]) + "";
     	let h3_data_moduleid_value;
     	let t8;
     	let div2;
-    	let raw2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].description + "";
+    	let raw2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].description + "";
     	let div3_class_value;
     	let t9;
     	let div6;
@@ -23327,12 +23233,12 @@ Do you wish to proceed?`).then(ok => {
     	let current;
     	let mounted;
     	let dispose;
-    	let if_block0 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_13(ctx);
-    	var switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].banner];
+    	let if_block0 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_13(ctx);
+    	var switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].banner];
 
     	function switch_props(ctx) {
     		return {
-    			props: { moduleId: /*theModule*/ ctx[9].id },
+    			props: { moduleId: /*theModule*/ ctx[8].id },
     			$$inline: true
     		};
     	}
@@ -23343,16 +23249,16 @@ Do you wish to proceed?`).then(ok => {
 
     	datewidget = new DateWidget({
     			props: {
-    				date: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].date,
-    				dateHide: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].dateHide,
+    				date: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].date,
+    				dateHide: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].dateHide,
     				calendar: /*calendar*/ ctx[5]
     			},
     			$$inline: true
     		});
 
-    	let if_block1 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText !== "" && create_if_block_11$1(ctx);
+    	let if_block1 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText !== "" && create_if_block_11$1(ctx);
     	let if_block2 = show_if && create_if_block_8$1(ctx);
-    	let if_block3 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_7$2(ctx);
+    	let if_block3 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_7$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -23388,42 +23294,42 @@ Do you wish to proceed?`).then(ok => {
     			div5 = element("div");
     			t11 = space();
     			attr_dev(div0, "class", "cc-card-banner-container svelte-3dolfn");
-    			attr_dev(div0, "data-moduleid", div0_data_moduleid_value = /*theModule*/ ctx[9].id);
-    			add_location(div0, file$d, 239, 12, 9900);
+    			attr_dev(div0, "data-moduleid", div0_data_moduleid_value = /*theModule*/ ctx[8].id);
+    			add_location(div0, file$d, 229, 12, 9498);
     			html_tag.a = t5;
     			attr_dev(span, "class", "cc-card-label svelte-3dolfn");
-    			add_location(span, file$d, 288, 18, 12090);
+    			add_location(span, file$d, 278, 18, 11688);
     			attr_dev(h3, "class", "cc-card-title svelte-3dolfn");
-    			attr_dev(h3, "data-moduleid", h3_data_moduleid_value = /*theModule*/ ctx[9].id);
-    			add_location(h3, file$d, 292, 18, 12319);
+    			attr_dev(h3, "data-moduleid", h3_data_moduleid_value = /*theModule*/ ctx[8].id);
+    			add_location(h3, file$d, 282, 18, 11917);
     			attr_dev(div1, "class", "cc-card-label svelte-3dolfn");
-    			add_location(div1, file$d, 287, 16, 12043);
+    			add_location(div1, file$d, 277, 16, 11641);
     			attr_dev(div2, "class", "cc-card-description svelte-3dolfn");
-    			add_location(div2, file$d, 298, 16, 12578);
+    			add_location(div2, file$d, 288, 16, 12176);
 
-    			attr_dev(div3, "class", div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi
+    			attr_dev(div3, "class", div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
     			? "cc-card-content"
     			: "cc-unclickable-card-content") + " svelte-3dolfn"));
 
-    			add_location(div3, file$d, 282, 14, 11842);
+    			add_location(div3, file$d, 272, 14, 11440);
     			attr_dev(div4, "class", "cc-card-content-height svelte-3dolfn");
-    			add_location(div4, file$d, 280, 12, 11731);
+    			add_location(div4, file$d, 270, 12, 11329);
     			attr_dev(div5, "class", "cc-progress svelte-3dolfn");
-    			add_location(div5, file$d, 314, 14, 13321);
+    			add_location(div5, file$d, 304, 14, 12919);
     			attr_dev(div6, "class", "cc-card-footer svelte-3dolfn");
-    			add_location(div6, file$d, 303, 12, 12773);
+    			add_location(div6, file$d, 293, 12, 12371);
     			attr_dev(div7, "class", "cc-card-flex svelte-3dolfn");
-    			add_location(div7, file$d, 238, 10, 9860);
-    			attr_dev(div8, "id", div8_id_value = "cc_module_" + /*theModule*/ ctx[9].id);
+    			add_location(div7, file$d, 228, 10, 9458);
+    			attr_dev(div8, "id", div8_id_value = "cc_module_" + /*theModule*/ ctx[8].id);
     			attr_dev(div8, "class", "cc-card svelte-3dolfn");
-    			add_location(div8, file$d, 237, 8, 9797);
-    			attr_dev(div9, "id", div9_id_value = "cc_module_" + /*theModule*/ ctx[9].id);
+    			add_location(div8, file$d, 227, 8, 9395);
+    			attr_dev(div9, "id", div9_id_value = "cc_module_" + /*theModule*/ ctx[8].id);
 
-    			attr_dev(div9, "class", div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi
+    			attr_dev(div9, "class", div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
     			? "cc-unclickable-card"
     			: "cc-clickable-card") + " svelte-3dolfn"));
 
-    			add_location(div9, file$d, 229, 6, 9531);
+    			add_location(div9, file$d, 219, 6, 9129);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div9, anchor);
@@ -23471,7 +23377,7 @@ Do you wish to proceed?`).then(ok => {
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi) {
+    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
@@ -23485,9 +23391,9 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			const switch_instance_changes = {};
-    			if (dirty & /*modules*/ 8) switch_instance_changes.moduleId = /*theModule*/ ctx[9].id;
+    			if (dirty & /*modules*/ 8) switch_instance_changes.moduleId = /*theModule*/ ctx[8].id;
 
-    			if (switch_value !== (switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].banner])) {
+    			if (switch_value !== (switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].banner])) {
     				if (switch_instance) {
     					group_outros();
     					const old_component = switch_instance;
@@ -23512,11 +23418,11 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			const datewidget_changes = {};
-    			if (dirty & /*$collectionsStore, modules*/ 12) datewidget_changes.date = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].date;
-    			if (dirty & /*$collectionsStore, modules*/ 12) datewidget_changes.dateHide = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].dateHide;
+    			if (dirty & /*$collectionsStore, modules*/ 12) datewidget_changes.date = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].date;
+    			if (dirty & /*$collectionsStore, modules*/ 12) datewidget_changes.dateHide = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].dateHide;
     			datewidget.$set(datewidget_changes);
 
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText !== "") {
+    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText !== "") {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
@@ -23529,7 +23435,7 @@ Do you wish to proceed?`).then(ok => {
     				if_block1 = null;
     			}
 
-    			if (dirty & /*modules*/ 8) show_if = /*isUnPublishedUnallocated*/ ctx[7](/*theModule*/ ctx[9].id);
+    			if (dirty & /*modules*/ 8) show_if = /*isUnPublishedUnallocated*/ ctx[7](/*theModule*/ ctx[8].id);
 
     			if (show_if) {
     				if (if_block2) {
@@ -23544,25 +23450,25 @@ Do you wish to proceed?`).then(ok => {
     				if_block2 = null;
     			}
 
-    			if (!current || dirty & /*modules*/ 8 && div0_data_moduleid_value !== (div0_data_moduleid_value = /*theModule*/ ctx[9].id)) {
+    			if (!current || dirty & /*modules*/ 8 && div0_data_moduleid_value !== (div0_data_moduleid_value = /*theModule*/ ctx[8].id)) {
     				attr_dev(div0, "data-moduleid", div0_data_moduleid_value);
     			}
 
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw0_value !== (raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].label + "")) html_tag.p(raw0_value);
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && t6_value !== (t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].actualNum + "")) set_data_dev(t6, t6_value);
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw1_value !== (raw1_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id]) + "")) h3.innerHTML = raw1_value;
-    			if (!current || dirty & /*modules*/ 8 && h3_data_moduleid_value !== (h3_data_moduleid_value = /*theModule*/ ctx[9].id)) {
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw0_value !== (raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].label + "")) html_tag.p(raw0_value);
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && t6_value !== (t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].actualNum + "")) set_data_dev(t6, t6_value);
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw1_value !== (raw1_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id]) + "")) h3.innerHTML = raw1_value;
+    			if (!current || dirty & /*modules*/ 8 && h3_data_moduleid_value !== (h3_data_moduleid_value = /*theModule*/ ctx[8].id)) {
     				attr_dev(h3, "data-moduleid", h3_data_moduleid_value);
     			}
 
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw2_value !== (raw2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].description + "")) div2.innerHTML = raw2_value;
-    			if (!current || dirty & /*$collectionsStore, modules*/ 12 && div3_class_value !== (div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw2_value !== (raw2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].description + "")) div2.innerHTML = raw2_value;
+    			if (!current || dirty & /*$collectionsStore, modules*/ 12 && div3_class_value !== (div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
     			? "cc-card-content"
     			: "cc-unclickable-card-content") + " svelte-3dolfn"))) {
     				attr_dev(div3, "class", div3_class_value);
     			}
 
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi) {
+    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
     				if (if_block3) {
     					if_block3.p(ctx, dirty);
     				} else {
@@ -23575,15 +23481,15 @@ Do you wish to proceed?`).then(ok => {
     				if_block3 = null;
     			}
 
-    			if (!current || dirty & /*modules*/ 8 && div8_id_value !== (div8_id_value = "cc_module_" + /*theModule*/ ctx[9].id)) {
+    			if (!current || dirty & /*modules*/ 8 && div8_id_value !== (div8_id_value = "cc_module_" + /*theModule*/ ctx[8].id)) {
     				attr_dev(div8, "id", div8_id_value);
     			}
 
-    			if (!current || dirty & /*modules*/ 8 && div9_id_value !== (div9_id_value = "cc_module_" + /*theModule*/ ctx[9].id)) {
+    			if (!current || dirty & /*modules*/ 8 && div9_id_value !== (div9_id_value = "cc_module_" + /*theModule*/ ctx[8].id)) {
     				attr_dev(div9, "id", div9_id_value);
     			}
 
-    			if (!current || dirty & /*$collectionsStore, modules*/ 12 && div9_class_value !== (div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi
+    			if (!current || dirty & /*$collectionsStore, modules*/ 12 && div9_class_value !== (div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
     			? "cc-unclickable-card"
     			: "cc-clickable-card") + " svelte-3dolfn"))) {
     				attr_dev(div9, "class", div9_class_value);
@@ -23617,14 +23523,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_each_block_1$3.name,
     		type: "each",
-    		source: "(229:4) {#each modules as theModule}",
+    		source: "(219:4) {#each modules as theModule}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (107:14) {#if !$collectionsStore["MODULES"][theModule.id].fyi}
+    // (97:14) {#if !$collectionsStore["MODULES"][theModule.id].fyi}
     function create_if_block_6$3(ctx) {
     	let a;
     	let t;
@@ -23635,16 +23541,16 @@ Do you wish to proceed?`).then(ok => {
     			a = element("a");
     			t = text(" ");
     			attr_dev(a, "class", "claytons-card-link");
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
+    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
     			attr_dev(a, "style", "position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;");
-    			add_location(a, file$d, 107, 16, 3992);
+    			add_location(a, file$d, 97, 16, 3590);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
     			append_dev(a, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[9].id))) {
+    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
     				attr_dev(a, "href", a_href_value);
     			}
     		},
@@ -23657,20 +23563,20 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_6$3.name,
     		type: "if",
-    		source: "(107:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		source: "(97:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (129:14) {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
+    // (119:14) {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
     function create_if_block_4$4(ctx) {
     	let div;
     	let span;
 
     	function select_block_type_1(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText) return create_if_block_5$3;
+    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText) return create_if_block_5$3;
     		return create_else_block_1$2;
     	}
 
@@ -23683,7 +23589,7 @@ Do you wish to proceed?`).then(ok => {
     			span = element("span");
     			if_block.c();
     			attr_dev(span, "class", "claytons-fyi-text");
-    			add_location(span, file$d, 133, 18, 5238);
+    			add_location(span, file$d, 123, 18, 4836);
     			attr_dev(div, "class", "claytons-card-fyi");
     			set_style(div, "position", "absolute");
     			set_style(div, "background", "rgba(0,0,0,0.75)");
@@ -23692,7 +23598,7 @@ Do you wish to proceed?`).then(ok => {
     			set_style(div, "padding", "0.25rem");
     			set_style(div, "font-size", "x-small");
     			set_style(div, "text-align", "center");
-    			add_location(div, file$d, 129, 16, 5000);
+    			add_location(div, file$d, 119, 16, 4598);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -23722,14 +23628,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_4$4.name,
     		type: "if",
-    		source: "(129:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyi && $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText !== \\\"\\\"}",
+    		source: "(119:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyi && $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText !== \\\"\\\"}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (137:20) {:else}
+    // (127:20) {:else}
     function create_else_block_1$2(ctx) {
     	let t;
 
@@ -23750,17 +23656,17 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_else_block_1$2.name,
     		type: "else",
-    		source: "(137:20) {:else}",
+    		source: "(127:20) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (135:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
+    // (125:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
     function create_if_block_5$3(ctx) {
     	let html_tag;
-    	let raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText + "";
+    	let raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "";
     	let html_anchor;
 
     	const block = {
@@ -23774,7 +23680,7 @@ Do you wish to proceed?`).then(ok => {
     			insert_dev(target, html_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 12 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText + "")) html_tag.p(raw_value);
+    			if (dirty & /*$collectionsStore, modules*/ 12 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "")) html_tag.p(raw_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(html_anchor);
@@ -23786,14 +23692,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_5$3.name,
     		type: "if",
-    		source: "(135:20) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText}",
+    		source: "(125:20) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (148:14) {#if !$collectionsStore["MODULES"][theModule.id].fyi}
+    // (138:14) {#if !$collectionsStore["MODULES"][theModule.id].fyi}
     function create_if_block_3$5(ctx) {
     	let a;
     	let t;
@@ -23804,16 +23710,16 @@ Do you wish to proceed?`).then(ok => {
     			a = element("a");
     			t = text(" ");
     			attr_dev(a, "class", "claytons-card-link");
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
+    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
     			attr_dev(a, "style", "position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;");
-    			add_location(a, file$d, 148, 16, 5849);
+    			add_location(a, file$d, 138, 16, 5447);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
     			append_dev(a, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[9].id))) {
+    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
     				attr_dev(a, "href", a_href_value);
     			}
     		},
@@ -23826,17 +23732,17 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_3$5.name,
     		type: "if",
-    		source: "(148:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		source: "(138:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (184:20) {:else}
+    // (174:20) {:else}
     function create_else_block$5(ctx) {
     	let html_tag;
-    	let raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id]) + "";
+    	let raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id]) + "";
     	let html_anchor;
 
     	const block = {
@@ -23850,7 +23756,7 @@ Do you wish to proceed?`).then(ok => {
     			insert_dev(target, html_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 12 && raw_value !== (raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id]) + "")) html_tag.p(raw_value);
+    			if (dirty & /*$collectionsStore, modules*/ 12 && raw_value !== (raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id]) + "")) html_tag.p(raw_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(html_anchor);
@@ -23862,34 +23768,34 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_else_block$5.name,
     		type: "else",
-    		source: "(184:20) {:else}",
+    		source: "(174:20) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (174:20) {#if !$collectionsStore["MODULES"][theModule.id].fyi}
+    // (164:20) {#if !$collectionsStore["MODULES"][theModule.id].fyi}
     function create_if_block_2$8(ctx) {
     	let a;
-    	let raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id]) + "";
+    	let raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id]) + "";
     	let a_href_value;
 
     	const block = {
     		c: function create() {
     			a = element("a");
     			attr_dev(a, "class", "claytons-card-link");
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
+    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
     			set_style(a, "text-decoration", "none");
-    			add_location(a, file$d, 174, 22, 7233);
+    			add_location(a, file$d, 164, 22, 6831);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
     			a.innerHTML = raw_value;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 12 && raw_value !== (raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id]) + "")) a.innerHTML = raw_value;
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[9].id))) {
+    			if (dirty & /*$collectionsStore, modules*/ 12 && raw_value !== (raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id]) + "")) a.innerHTML = raw_value;
+    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
     				attr_dev(a, "href", a_href_value);
     			}
     		},
@@ -23902,19 +23808,19 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_2$8.name,
     		type: "if",
-    		source: "(174:20) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		source: "(164:20) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (203:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
+    // (193:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
     function create_if_block_1$9(ctx) {
     	let div1;
     	let div0;
     	let a;
-    	let t_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engageText + "";
+    	let t_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engageText + "";
     	let t;
     	let a_href_value;
 
@@ -23924,16 +23830,16 @@ Do you wish to proceed?`).then(ok => {
     			div0 = element("div");
     			a = element("a");
     			t = text(t_value);
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[9].id));
+    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
     			attr_dev(a, "class", "claytons-gu-engage");
     			set_style(a, "text-decoration", "none");
-    			add_location(a, file$d, 210, 20, 8975);
+    			add_location(a, file$d, 200, 20, 8573);
     			attr_dev(div0, "class", "claytons-card-engage-button");
     			attr_dev(div0, "style", "float:right; position:relative; color:rgba(30,58,138,1); border-radius:0.25rem; padding 0.5rem 1rem 0.5rem 1rem; border:1px solid rgba(30,58,138,1);");
-    			add_location(div0, file$d, 204, 18, 8493);
+    			add_location(div0, file$d, 194, 18, 8091);
     			attr_dev(div1, "class", "claytons-card-engage");
     			set_style(div1, "padding-right", "1rem");
-    			add_location(div1, file$d, 203, 16, 8410);
+    			add_location(div1, file$d, 193, 16, 8008);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -23942,9 +23848,9 @@ Do you wish to proceed?`).then(ok => {
     			append_dev(a, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 12 && t_value !== (t_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engageText + "")) set_data_dev(t, t_value);
+    			if (dirty & /*$collectionsStore, modules*/ 12 && t_value !== (t_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engageText + "")) set_data_dev(t, t_value);
 
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[9].id))) {
+    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
     				attr_dev(a, "href", a_href_value);
     			}
     		},
@@ -23957,14 +23863,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_1$9.name,
     		type: "if",
-    		source: "(203:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		source: "(193:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (87:4) {#each modules as theModule}
+    // (77:4) {#each modules as theModule}
     function create_each_block$9(ctx) {
     	let div8;
     	let div7;
@@ -23983,16 +23889,16 @@ Do you wish to proceed?`).then(ok => {
     	let div1;
     	let span;
     	let html_tag;
-    	let raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].label + "";
+    	let raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].label + "";
     	let t5;
-    	let t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].actualNum + "";
+    	let t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].actualNum + "";
     	let t6;
     	let t7;
     	let h3;
     	let h3_data_moduleid_value;
     	let t8;
     	let div2;
-    	let raw1_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].description + "";
+    	let raw1_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].description + "";
     	let div3_class_value;
     	let t9;
     	let div5;
@@ -24000,13 +23906,13 @@ Do you wish to proceed?`).then(ok => {
     	let t10;
     	let div8_id_value;
     	let current;
-    	let if_block0 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_6$3(ctx);
-    	var switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].banner];
+    	let if_block0 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_6$3(ctx);
+    	var switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].banner];
 
     	function switch_props(ctx) {
     		return {
     			props: {
-    				moduleId: /*theModule*/ ctx[9].id,
+    				moduleId: /*theModule*/ ctx[8].id,
     				claytons: /*claytons*/ ctx[0]
     			},
     			$$inline: true
@@ -24019,24 +23925,24 @@ Do you wish to proceed?`).then(ok => {
 
     	datewidget = new DateWidget({
     			props: {
-    				date: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].date,
-    				dateHide: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].dateHide,
+    				date: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].date,
+    				dateHide: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].dateHide,
     				calendar: /*calendar*/ ctx[5]
     			},
     			$$inline: true
     		});
 
-    	let if_block1 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText !== "" && create_if_block_4$4(ctx);
-    	let if_block2 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_3$5(ctx);
+    	let if_block1 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText !== "" && create_if_block_4$4(ctx);
+    	let if_block2 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_3$5(ctx);
 
     	function select_block_type_2(ctx, dirty) {
-    		if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi) return create_if_block_2$8;
+    		if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) return create_if_block_2$8;
     		return create_else_block$5;
     	}
 
     	let current_block_type = select_block_type_2(ctx);
     	let if_block3 = current_block_type(ctx);
-    	let if_block4 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_1$9(ctx);
+    	let if_block4 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_1$9(ctx);
 
     	const block = {
     		c: function create() {
@@ -24071,26 +23977,26 @@ Do you wish to proceed?`).then(ok => {
     			if (if_block4) if_block4.c();
     			t10 = space();
     			attr_dev(div0, "class", "claytons-card-banner-container");
-    			attr_dev(div0, "data-moduleid", div0_data_moduleid_value = /*theModule*/ ctx[9].id);
+    			attr_dev(div0, "data-moduleid", div0_data_moduleid_value = /*theModule*/ ctx[8].id);
     			set_style(div0, "position", "relative");
-    			add_location(div0, file$d, 101, 12, 3746);
+    			add_location(div0, file$d, 91, 12, 3344);
     			html_tag.a = t5;
     			attr_dev(span, "class", "claytons-card-label");
     			set_style(span, "font-size", "0.9rem");
-    			add_location(span, file$d, 164, 18, 6684);
+    			add_location(span, file$d, 154, 18, 6282);
     			attr_dev(h3, "class", "claytons-card-title");
-    			attr_dev(h3, "data-moduleid", h3_data_moduleid_value = /*theModule*/ ctx[9].id);
+    			attr_dev(h3, "data-moduleid", h3_data_moduleid_value = /*theModule*/ ctx[8].id);
     			set_style(h3, "font-size", "1rem");
     			set_style(h3, "font-weight", "strong");
-    			add_location(h3, file$d, 168, 18, 6945);
+    			add_location(h3, file$d, 158, 18, 6543);
     			attr_dev(div1, "class", "claytons-card-label");
     			set_style(div1, "font-size", "0.9rem");
-    			add_location(div1, file$d, 163, 16, 6605);
+    			add_location(div1, file$d, 153, 16, 6203);
     			attr_dev(div2, "class", "claytons-card-description");
     			set_style(div2, "font-size", "0.75rem");
-    			add_location(div2, file$d, 190, 16, 7869);
+    			add_location(div2, file$d, 180, 16, 7467);
 
-    			attr_dev(div3, "class", div3_class_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi
+    			attr_dev(div3, "class", div3_class_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
     			? "claytons-card-content"
     			: "claytons-unclickable-card-content");
 
@@ -24098,16 +24004,16 @@ Do you wish to proceed?`).then(ok => {
     			set_style(div3, "flex", "1 1 0%");
     			set_style(div3, "display", "flex");
     			set_style(div3, "flex-direction", "column");
-    			add_location(div3, file$d, 157, 14, 6303);
+    			add_location(div3, file$d, 147, 14, 5901);
     			attr_dev(div4, "class", "claytons-card-content-height");
     			set_style(div4, "height", "12rem");
     			set_style(div4, "overflow", "auto");
     			set_style(div4, "position", "relative");
-    			add_location(div4, file$d, 143, 12, 5622);
+    			add_location(div4, file$d, 133, 12, 5220);
     			attr_dev(div5, "class", "claytons-card-footer");
     			set_style(div5, "height", "4rem");
     			set_style(div5, "position", "relative");
-    			add_location(div5, file$d, 198, 12, 8153);
+    			add_location(div5, file$d, 188, 12, 7751);
     			attr_dev(div6, "class", "claytons-card-flex");
     			set_style(div6, "overflow", "hidden");
     			set_style(div6, "flex-direction", "column");
@@ -24116,19 +24022,19 @@ Do you wish to proceed?`).then(ok => {
     			set_style(div6, "position", "relative");
     			set_style(div6, "border-style", "outset");
     			set_style(div6, "border-radius", "1em");
-    			add_location(div6, file$d, 97, 10, 3531);
-    			attr_dev(div7, "id", div7_id_value = "cc_module_" + /*theModule*/ ctx[9].id);
+    			add_location(div6, file$d, 87, 10, 3129);
+    			attr_dev(div7, "id", div7_id_value = "cc_module_" + /*theModule*/ ctx[8].id);
     			attr_dev(div7, "class", "claytons-card svelte-3dolfn");
     			set_style(div7, "background-color", "#fff");
     			set_style(div7, "border-radius", "1em");
-    			add_location(div7, file$d, 92, 8, 3367);
-    			attr_dev(div8, "id", div8_id_value = "cc_module_" + /*theModule*/ ctx[9].id);
+    			add_location(div7, file$d, 82, 8, 2965);
+    			attr_dev(div8, "id", div8_id_value = "cc_module_" + /*theModule*/ ctx[8].id);
     			set_style(div8, "padding", "0.75rem");
     			set_style(div8, "flex-direction", "column");
     			set_style(div8, "display", "flex");
     			set_style(div8, "width", "30%");
     			attr_dev(div8, "class", "svelte-3dolfn");
-    			add_location(div8, file$d, 88, 6, 3223);
+    			add_location(div8, file$d, 78, 6, 2821);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div8, anchor);
@@ -24165,7 +24071,7 @@ Do you wish to proceed?`).then(ok => {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi) {
+    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
@@ -24179,10 +24085,10 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			const switch_instance_changes = {};
-    			if (dirty & /*modules*/ 8) switch_instance_changes.moduleId = /*theModule*/ ctx[9].id;
+    			if (dirty & /*modules*/ 8) switch_instance_changes.moduleId = /*theModule*/ ctx[8].id;
     			if (dirty & /*claytons*/ 1) switch_instance_changes.claytons = /*claytons*/ ctx[0];
 
-    			if (switch_value !== (switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].banner])) {
+    			if (switch_value !== (switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].banner])) {
     				if (switch_instance) {
     					group_outros();
     					const old_component = switch_instance;
@@ -24207,11 +24113,11 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			const datewidget_changes = {};
-    			if (dirty & /*$collectionsStore, modules*/ 12) datewidget_changes.date = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].date;
-    			if (dirty & /*$collectionsStore, modules*/ 12) datewidget_changes.dateHide = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].dateHide;
+    			if (dirty & /*$collectionsStore, modules*/ 12) datewidget_changes.date = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].date;
+    			if (dirty & /*$collectionsStore, modules*/ 12) datewidget_changes.dateHide = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].dateHide;
     			datewidget.$set(datewidget_changes);
 
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText !== "") {
+    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText !== "") {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
@@ -24224,11 +24130,11 @@ Do you wish to proceed?`).then(ok => {
     				if_block1 = null;
     			}
 
-    			if (!current || dirty & /*modules*/ 8 && div0_data_moduleid_value !== (div0_data_moduleid_value = /*theModule*/ ctx[9].id)) {
+    			if (!current || dirty & /*modules*/ 8 && div0_data_moduleid_value !== (div0_data_moduleid_value = /*theModule*/ ctx[8].id)) {
     				attr_dev(div0, "data-moduleid", div0_data_moduleid_value);
     			}
 
-    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi) {
+    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
     				if (if_block2) {
     					if_block2.p(ctx, dirty);
     				} else {
@@ -24241,8 +24147,8 @@ Do you wish to proceed?`).then(ok => {
     				if_block2 = null;
     			}
 
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw0_value !== (raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].label + "")) html_tag.p(raw0_value);
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && t6_value !== (t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].actualNum + "")) set_data_dev(t6, t6_value);
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw0_value !== (raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].label + "")) html_tag.p(raw0_value);
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && t6_value !== (t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].actualNum + "")) set_data_dev(t6, t6_value);
 
     			if (current_block_type === (current_block_type = select_block_type_2(ctx)) && if_block3) {
     				if_block3.p(ctx, dirty);
@@ -24256,18 +24162,18 @@ Do you wish to proceed?`).then(ok => {
     				}
     			}
 
-    			if (!current || dirty & /*modules*/ 8 && h3_data_moduleid_value !== (h3_data_moduleid_value = /*theModule*/ ctx[9].id)) {
+    			if (!current || dirty & /*modules*/ 8 && h3_data_moduleid_value !== (h3_data_moduleid_value = /*theModule*/ ctx[8].id)) {
     				attr_dev(h3, "data-moduleid", h3_data_moduleid_value);
     			}
 
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw1_value !== (raw1_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].description + "")) div2.innerHTML = raw1_value;
-    			if (!current || dirty & /*$collectionsStore, modules*/ 12 && div3_class_value !== (div3_class_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi
+    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw1_value !== (raw1_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].description + "")) div2.innerHTML = raw1_value;
+    			if (!current || dirty & /*$collectionsStore, modules*/ 12 && div3_class_value !== (div3_class_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
     			? "claytons-card-content"
     			: "claytons-unclickable-card-content")) {
     				attr_dev(div3, "class", div3_class_value);
     			}
 
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi) {
+    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
     				if (if_block4) {
     					if_block4.p(ctx, dirty);
     				} else {
@@ -24280,11 +24186,11 @@ Do you wish to proceed?`).then(ok => {
     				if_block4 = null;
     			}
 
-    			if (!current || dirty & /*modules*/ 8 && div7_id_value !== (div7_id_value = "cc_module_" + /*theModule*/ ctx[9].id)) {
+    			if (!current || dirty & /*modules*/ 8 && div7_id_value !== (div7_id_value = "cc_module_" + /*theModule*/ ctx[8].id)) {
     				attr_dev(div7, "id", div7_id_value);
     			}
 
-    			if (!current || dirty & /*modules*/ 8 && div8_id_value !== (div8_id_value = "cc_module_" + /*theModule*/ ctx[9].id)) {
+    			if (!current || dirty & /*modules*/ 8 && div8_id_value !== (div8_id_value = "cc_module_" + /*theModule*/ ctx[8].id)) {
     				attr_dev(div8, "id", div8_id_value);
     			}
     		},
@@ -24315,7 +24221,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_each_block$9.name,
     		type: "each",
-    		source: "(87:4) {#each modules as theModule}",
+    		source: "(77:4) {#each modules as theModule}",
     		ctx
     	});
 
@@ -24404,17 +24310,6 @@ Do you wish to proceed?`).then(ok => {
     	return block;
     }
 
-    const line = "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
-
-    /**
-     * @function cardClick
-     * @param event
-     * @description Handle click within a div.cc-clickable-card by
-     * - find the parent div.cc-clickable-card
-     *   If there isn't one, do nothing
-     * - finding the a.cc-card-link within the div
-     * - clicking it
-     */
     function cardClick(event) {
     	// can we find the parent div.cc-clickable-card
     	let card = event.target.closest("div.cc-clickable-card");
@@ -24432,13 +24327,10 @@ Do you wish to proceed?`).then(ok => {
     function instance$g($$self, $$props, $$invalidate) {
     	let $collectionsStore;
     	let $configStore;
-    	let $modulesStore;
     	validate_store(collectionsStore, 'collectionsStore');
     	component_subscribe($$self, collectionsStore, $$value => $$invalidate(2, $collectionsStore = $$value));
     	validate_store(configStore, 'configStore');
     	component_subscribe($$self, configStore, $$value => $$invalidate(4, $configStore = $$value));
-    	validate_store(modulesStore, 'modulesStore');
-    	component_subscribe($$self, modulesStore, $$value => $$invalidate(8, $modulesStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('GriffithCards', slots, []);
     	let calendar = new UniversityDateCalendar();
@@ -24514,24 +24406,17 @@ Do you wish to proceed?`).then(ok => {
     		BannerColour,
     		BannerImage,
     		DateWidget,
-    		getCollectionCanvasModules,
-    		addUnallocatedModules,
     		getRepresentationModules,
-    		generateModuleDate,
-    		checkModuleMetaData,
-    		debug,
     		UniversityDateCalendar,
     		calendar,
     		collection,
     		claytons,
-    		line,
     		BANNER_TRANSLATION,
     		modules,
     		cardClick,
     		isUnPublishedUnallocated,
     		$collectionsStore,
-    		$configStore,
-    		$modulesStore
+    		$configStore
     	});
 
     	$$self.$inject_state = $$props => {
@@ -29534,7 +29419,7 @@ Do you wish to proceed?`).then(ok => {
     	return child_ctx;
     }
 
-    // (35:6) {#if !($collectionsStore["COLLECTIONS"][collectionName].hide && !$configStore["editMode"])}
+    // (33:6) {#if !($collectionsStore["COLLECTIONS"][collectionName].hide && !$configStore["editMode"])}
     function create_if_block$4(ctx) {
     	let li;
     	let a;
@@ -29562,9 +29447,9 @@ Do you wish to proceed?`).then(ok => {
     			t2 = space();
     			attr_dev(a, "href", "#cc-collection-" + /*i*/ ctx[9]);
     			attr_dev(a, "class", "svelte-1oz84ff");
-    			add_location(a, file$7, 36, 10, 1494);
+    			add_location(a, file$7, 34, 10, 1343);
     			attr_dev(li, "class", li_class_value = "cc-nav " + /*activeCollection*/ ctx[2][/*collectionName*/ ctx[7]] + " svelte-1oz84ff");
-    			add_location(li, file$7, 35, 8, 1428);
+    			add_location(li, file$7, 33, 8, 1277);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -29610,14 +29495,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block$4.name,
     		type: "if",
-    		source: "(35:6) {#if !($collectionsStore[\\\"COLLECTIONS\\\"][collectionName].hide && !$configStore[\\\"editMode\\\"])}",
+    		source: "(33:6) {#if !($collectionsStore[\\\"COLLECTIONS\\\"][collectionName].hide && !$configStore[\\\"editMode\\\"])}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (42:10) {#if $collectionsStore["COLLECTIONS"][collectionName].hide}
+    // (40:10) {#if $collectionsStore["COLLECTIONS"][collectionName].hide}
     function create_if_block_1$3(ctx) {
     	let div;
 
@@ -29626,7 +29511,7 @@ Do you wish to proceed?`).then(ok => {
     			div = element("div");
     			div.textContent = "Hidden";
     			attr_dev(div, "class", "cc-collection-hidden svelte-1oz84ff");
-    			add_location(div, file$7, 42, 12, 1749);
+    			add_location(div, file$7, 40, 12, 1598);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -29640,14 +29525,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_1$3.name,
     		type: "if",
-    		source: "(42:10) {#if $collectionsStore[\\\"COLLECTIONS\\\"][collectionName].hide}",
+    		source: "(40:10) {#if $collectionsStore[\\\"COLLECTIONS\\\"][collectionName].hide}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (34:4) {#each collectionNames as collectionName, i}
+    // (32:4) {#each collectionNames as collectionName, i}
     function create_each_block$4(ctx) {
     	let if_block_anchor;
     	let if_block = !(/*$collectionsStore*/ ctx[1]["COLLECTIONS"][/*collectionName*/ ctx[7]].hide && !/*$configStore*/ ctx[3]["editMode"]) && create_if_block$4(ctx);
@@ -29685,7 +29570,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_each_block$4.name,
     		type: "each",
-    		source: "(34:4) {#each collectionNames as collectionName, i}",
+    		source: "(32:4) {#each collectionNames as collectionName, i}",
     		ctx
     	});
 
@@ -29713,9 +29598,9 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			attr_dev(ul, "class", "svelte-1oz84ff");
-    			add_location(ul, file$7, 32, 2, 1265);
+    			add_location(ul, file$7, 30, 2, 1114);
     			attr_dev(div, "class", "cc-nav svelte-1oz84ff");
-    			add_location(div, file$7, 31, 0, 1241);
+    			add_location(div, file$7, 29, 0, 1090);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -29823,7 +29708,6 @@ Do you wish to proceed?`).then(ok => {
     	$$self.$capture_state = () => ({
     		collectionsStore,
     		configStore,
-    		debug,
     		activeCollectionName,
     		collectionNames,
     		activeCollection,
@@ -30006,6 +29890,7 @@ Do you wish to proceed?`).then(ok => {
     	if (!claytons) {
     		claytons = false;
     	}
+
     	let representationComponent;
 
     	if (!collectionName) {
@@ -30041,7 +29926,6 @@ Do you wish to proceed?`).then(ok => {
     		representationsStore,
     		afterUpdate,
     		modifyCanvasModulesList,
-    		debug,
     		collectionName,
     		claytons,
     		complete,
@@ -30266,7 +30150,7 @@ Do you wish to proceed?`).then(ok => {
 
     /* src\components\CanvasCollectionsRepresentation.svelte generated by Svelte v3.55.0 */
 
-    // (75:0) {#if $collectionsStore["COLLECTIONS_ORDER"].length > 0}
+    // (71:0) {#if $collectionsStore["COLLECTIONS_ORDER"].length > 0}
     function create_if_block$3(ctx) {
     	let collectionsnavigation;
     	let t0;
@@ -30418,14 +30302,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block$3.name,
     		type: "if",
-    		source: "(75:0) {#if $collectionsStore[\\\"COLLECTIONS_ORDER\\\"].length > 0}",
+    		source: "(71:0) {#if $collectionsStore[\\\"COLLECTIONS_ORDER\\\"].length > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (79:2) {#if !$collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter}
+    // (75:2) {#if !$collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter}
     function create_if_block_2$2(ctx) {
     	let includepage;
     	let current;
@@ -30468,14 +30352,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_2$2.name,
     		type: "if",
-    		source: "(79:2) {#if !$collectionsStore[\\\"COLLECTIONS\\\"][$configStore[\\\"currentCollection\\\"]].includeAfter}",
+    		source: "(75:2) {#if !$collectionsStore[\\\"COLLECTIONS\\\"][$configStore[\\\"currentCollection\\\"]].includeAfter}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (86:2) {#if $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter}
+    // (82:2) {#if $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter}
     function create_if_block_1$2(ctx) {
     	let includepage;
     	let current;
@@ -30518,7 +30402,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_1$2.name,
     		type: "if",
-    		source: "(86:2) {#if $collectionsStore[\\\"COLLECTIONS\\\"][$configStore[\\\"currentCollection\\\"]].includeAfter}",
+    		source: "(82:2) {#if $collectionsStore[\\\"COLLECTIONS\\\"][$configStore[\\\"currentCollection\\\"]].includeAfter}",
     		ctx
     	});
 
@@ -30603,7 +30487,6 @@ Do you wish to proceed?`).then(ok => {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('CanvasCollectionsRepresentation', slots, []);
     	let complete = false;
-    	debug(`______________ CanvasCollectionsRepresentation.svelte _currentCollection ${$configStore["currentCollections"]}______________`);
 
     	/**
      * @function checkModuleScrollTo()
@@ -30677,7 +30560,6 @@ Do you wish to proceed?`).then(ok => {
     		CollectionRepresentation,
     		IncludePage,
     		afterUpdate,
-    		debug,
     		complete,
     		checkModuleScrollTo,
     		$configStore,
@@ -31438,7 +31320,7 @@ Do you wish to proceed?`).then(ok => {
     	return child_ctx;
     }
 
-    // (350:6) {#if order > 0}
+    // (347:6) {#if order > 0}
     function create_if_block_3$1(ctx) {
     	let i;
     	let i_id_value;
@@ -31450,7 +31332,7 @@ Do you wish to proceed?`).then(ok => {
     			i = element("i");
     			attr_dev(i, "class", "icon-arrow-up cc-move-collection svelte-15ntxpt");
     			attr_dev(i, "id", i_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-up");
-    			add_location(i, file$5, 350, 8, 16043);
+    			add_location(i, file$5, 347, 8, 15815);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -31480,14 +31362,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_3$1.name,
     		type: "if",
-    		source: "(350:6) {#if order > 0}",
+    		source: "(347:6) {#if order > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (358:6) {#if order < numCollections - 1}
+    // (355:6) {#if order < numCollections - 1}
     function create_if_block_2$1(ctx) {
     	let i;
     	let i_id_value;
@@ -31499,7 +31381,7 @@ Do you wish to proceed?`).then(ok => {
     			i = element("i");
     			attr_dev(i, "class", "icon-arrow-down cc-move-collection svelte-15ntxpt");
     			attr_dev(i, "id", i_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-down");
-    			add_location(i, file$5, 358, 8, 16303);
+    			add_location(i, file$5, 355, 8, 16075);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -31529,14 +31411,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_2$1.name,
     		type: "if",
-    		source: "(358:6) {#if order < numCollections - 1}",
+    		source: "(355:6) {#if order < numCollections - 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (427:8) {#each availableRepresentations as representation}
+    // (424:8) {#each availableRepresentations as representation}
     function create_each_block$3(ctx) {
     	let option;
     	let t_value = /*representation*/ ctx[32] + "";
@@ -31548,7 +31430,7 @@ Do you wish to proceed?`).then(ok => {
     			t = text(t_value);
     			option.__value = /*representation*/ ctx[32];
     			option.value = option.__value;
-    			add_location(option, file$5, 427, 10, 18479);
+    			add_location(option, file$5, 424, 10, 18251);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -31564,14 +31446,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_each_block$3.name,
     		type: "each",
-    		source: "(427:8) {#each availableRepresentations as representation}",
+    		source: "(424:8) {#each availableRepresentations as representation}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (559:4) {#if !includePageExists && $collectionsStore["COLLECTIONS"][collectionName].includePage}
+    // (556:4) {#if !includePageExists && $collectionsStore["COLLECTIONS"][collectionName].includePage}
     function create_if_block_1$1(ctx) {
     	let div;
     	let t0;
@@ -31587,9 +31469,9 @@ Do you wish to proceed?`).then(ok => {
     			strong = element("strong");
     			t1 = text(t1_value);
     			t2 = text(" does not exist");
-    			add_location(strong, file$5, 560, 13, 22966);
+    			add_location(strong, file$5, 557, 13, 22738);
     			attr_dev(div, "class", "cc-collection-two-line-error svelte-15ntxpt");
-    			add_location(div, file$5, 559, 6, 22909);
+    			add_location(div, file$5, 556, 6, 22681);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -31610,14 +31492,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(559:4) {#if !includePageExists && $collectionsStore[\\\"COLLECTIONS\\\"][collectionName].includePage}",
+    		source: "(556:4) {#if !includePageExists && $collectionsStore[\\\"COLLECTIONS\\\"][collectionName].includePage}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (605:4) {#if !outputPageExists && $collectionsStore["COLLECTIONS"][collectionName].outputPage !== ""}
+    // (602:4) {#if !outputPageExists && $collectionsStore["COLLECTIONS"][collectionName].outputPage !== ""}
     function create_if_block$2(ctx) {
     	let div;
     	let t0;
@@ -31631,9 +31513,9 @@ Do you wish to proceed?`).then(ok => {
     			t0 = text("Will create a new page named ");
     			strong = element("strong");
     			t1 = text(t1_value);
-    			add_location(strong, file$5, 606, 37, 24501);
+    			add_location(strong, file$5, 603, 37, 24273);
     			attr_dev(div, "class", "cc-collection-two-line-warning svelte-15ntxpt");
-    			add_location(div, file$5, 605, 6, 24418);
+    			add_location(div, file$5, 602, 6, 24190);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -31653,7 +31535,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block$2.name,
     		type: "if",
-    		source: "(605:4) {#if !outputPageExists && $collectionsStore[\\\"COLLECTIONS\\\"][collectionName].outputPage !== \\\"\\\"}",
+    		source: "(602:4) {#if !outputPageExists && $collectionsStore[\\\"COLLECTIONS\\\"][collectionName].outputPage !== \\\"\\\"}",
     		ctx
     	});
 
@@ -31976,193 +31858,193 @@ Do you wish to proceed?`).then(ok => {
     			if (if_block3) if_block3.c();
     			attr_dev(i0, "class", "icon-trash cc-delete-collection svelte-15ntxpt");
     			attr_dev(i0, "id", i0_id_value = "cc-collection-$" + /*collectionName*/ ctx[0] + "-delete");
-    			add_location(i0, file$5, 365, 6, 16529);
+    			add_location(i0, file$5, 362, 6, 16301);
     			attr_dev(span0, "class", "cc-collection-move svelte-15ntxpt");
-    			add_location(span0, file$5, 348, 4, 15977);
+    			add_location(span0, file$5, 345, 4, 15749);
     			attr_dev(p, "class", "svelte-15ntxpt");
-    			add_location(p, file$5, 345, 2, 15910);
+    			add_location(p, file$5, 342, 2, 15682);
     			attr_dev(label0, "for", label0_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-collectionName");
     			attr_dev(label0, "class", "svelte-15ntxpt");
-    			add_location(label0, file$5, 380, 6, 16934);
+    			add_location(label0, file$5, 377, 6, 16706);
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file$5, 382, 8, 17035);
+    			add_location(div0, file$5, 379, 8, 16807);
     			attr_dev(i1, "class", "icon-question cc-module-icon svelte-15ntxpt");
-    			add_location(i1, file$5, 384, 10, 17177);
+    			add_location(i1, file$5, 381, 10, 16949);
     			attr_dev(a0, "href", /*HELP*/ ctx[17].configName.url);
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "target", "_blank");
-    			add_location(a0, file$5, 383, 8, 17102);
+    			add_location(a0, file$5, 380, 8, 16874);
     			set_custom_element_data(sl_tooltip0, "class", "svelte-15ntxpt");
-    			add_location(sl_tooltip0, file$5, 381, 6, 17013);
+    			add_location(sl_tooltip0, file$5, 378, 6, 16785);
     			attr_dev(span1, "class", "cc-collection-label svelte-15ntxpt");
-    			add_location(span1, file$5, 379, 4, 16892);
+    			add_location(span1, file$5, 376, 4, 16664);
     			attr_dev(input0, "type", "text");
     			attr_dev(input0, "id", input0_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-collectionName");
     			input0.value = /*collectionName*/ ctx[0];
     			attr_dev(input0, "class", "svelte-15ntxpt");
-    			add_location(input0, file$5, 389, 6, 17315);
+    			add_location(input0, file$5, 386, 6, 17087);
     			attr_dev(span2, "class", "cc-collection-input svelte-15ntxpt");
-    			add_location(span2, file$5, 388, 4, 17273);
+    			add_location(span2, file$5, 385, 4, 17045);
     			attr_dev(div1, "class", "cc-collection-form svelte-15ntxpt");
-    			add_location(div1, file$5, 378, 2, 16854);
+    			add_location(div1, file$5, 375, 2, 16626);
     			attr_dev(label1, "for", label1_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-representation");
     			attr_dev(label1, "class", "svelte-15ntxpt");
-    			add_location(label1, file$5, 400, 6, 17595);
+    			add_location(label1, file$5, 397, 6, 17367);
     			attr_dev(div2, "slot", "content");
-    			add_location(div2, file$5, 404, 8, 17724);
+    			add_location(div2, file$5, 401, 8, 17496);
     			attr_dev(i2, "class", "icon-question cc-module-icon svelte-15ntxpt");
-    			add_location(i2, file$5, 412, 10, 17951);
+    			add_location(i2, file$5, 409, 10, 17723);
     			attr_dev(a1, "href", /*HELP*/ ctx[17].configRepresentation.url);
     			attr_dev(a1, "rel", "noreferrer");
     			attr_dev(a1, "target", "_blank");
-    			add_location(a1, file$5, 407, 8, 17823);
+    			add_location(a1, file$5, 404, 8, 17595);
     			set_custom_element_data(sl_tooltip1, "class", "svelte-15ntxpt");
-    			add_location(sl_tooltip1, file$5, 403, 6, 17702);
+    			add_location(sl_tooltip1, file$5, 400, 6, 17474);
     			attr_dev(span3, "class", "cc-collection-label svelte-15ntxpt");
-    			add_location(span3, file$5, 399, 4, 17553);
+    			add_location(span3, file$5, 396, 4, 17325);
     			attr_dev(select, "id", select_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-representation");
     			attr_dev(select, "class", "cc-collection-representation svelte-15ntxpt");
     			if (/*$collectionsStore*/ ctx[6]["COLLECTIONS"][/*collectionName*/ ctx[0]]["representation"] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[18].call(select));
-    			add_location(select, file$5, 417, 6, 18089);
+    			add_location(select, file$5, 414, 6, 17861);
     			attr_dev(span4, "class", "cc-collection-input svelte-15ntxpt");
-    			add_location(span4, file$5, 416, 4, 18047);
+    			add_location(span4, file$5, 413, 4, 17819);
     			attr_dev(div3, "class", "cc-collection-form svelte-15ntxpt");
-    			add_location(div3, file$5, 398, 2, 17515);
+    			add_location(div3, file$5, 395, 2, 17287);
     			attr_dev(label2, "for", label2_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-default");
     			attr_dev(label2, "class", "svelte-15ntxpt");
-    			add_location(label2, file$5, 435, 6, 18651);
+    			add_location(label2, file$5, 432, 6, 18423);
     			attr_dev(div4, "slot", "content");
-    			add_location(div4, file$5, 439, 8, 18773);
+    			add_location(div4, file$5, 436, 8, 18545);
     			attr_dev(i3, "class", "icon-question cc-module-icon svelte-15ntxpt");
-    			add_location(i3, file$5, 443, 10, 18943);
+    			add_location(i3, file$5, 440, 10, 18715);
     			attr_dev(a2, "href", /*HELP*/ ctx[17].configDefault.url);
     			attr_dev(a2, "target", "_blank");
     			attr_dev(a2, "rel", "noreferrer");
-    			add_location(a2, file$5, 442, 8, 18865);
+    			add_location(a2, file$5, 439, 8, 18637);
     			set_custom_element_data(sl_tooltip2, "class", "svelte-15ntxpt");
-    			add_location(sl_tooltip2, file$5, 438, 6, 18751);
+    			add_location(sl_tooltip2, file$5, 435, 6, 18523);
     			attr_dev(input1, "type", "checkbox");
     			attr_dev(input1, "id", input1_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-default");
     			input1.checked = input1_checked_value = /*$collectionsStore*/ ctx[6]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0];
     			attr_dev(input1, "class", "svelte-15ntxpt");
-    			add_location(input1, file$5, 446, 6, 19028);
-    			add_location(div5, file$5, 434, 4, 18638);
+    			add_location(input1, file$5, 443, 6, 18800);
+    			add_location(div5, file$5, 431, 4, 18410);
     			attr_dev(label3, "for", label3_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-hide");
     			attr_dev(label3, "class", "svelte-15ntxpt");
-    			add_location(label3, file$5, 455, 6, 19336);
+    			add_location(label3, file$5, 452, 6, 19108);
     			attr_dev(div6, "slot", "content");
-    			add_location(div6, file$5, 457, 8, 19436);
+    			add_location(div6, file$5, 454, 8, 19208);
     			attr_dev(i4, "class", "icon-question cc-module-icon svelte-15ntxpt");
-    			add_location(i4, file$5, 461, 10, 19600);
+    			add_location(i4, file$5, 458, 10, 19372);
     			attr_dev(a3, "target", "_blank");
     			attr_dev(a3, "href", /*HELP*/ ctx[17].configHide.url);
     			attr_dev(a3, "rel", "noreferrer");
-    			add_location(a3, file$5, 460, 8, 19525);
+    			add_location(a3, file$5, 457, 8, 19297);
     			set_custom_element_data(sl_tooltip3, "class", "svelte-15ntxpt");
-    			add_location(sl_tooltip3, file$5, 456, 6, 19414);
+    			add_location(sl_tooltip3, file$5, 453, 6, 19186);
     			attr_dev(input2, "type", "checkbox");
     			attr_dev(input2, "class", "cc-config-collection-hide svelte-15ntxpt");
     			input2.disabled = input2_disabled_value = /*$collectionsStore*/ ctx[6]["DEFAULT_ACTIVE_COLLECTION"] === /*collectionName*/ ctx[0];
-    			add_location(input2, file$5, 464, 6, 19685);
+    			add_location(input2, file$5, 461, 6, 19457);
     			attr_dev(div7, "class", "cc-collection-double-center svelte-15ntxpt");
-    			add_location(div7, file$5, 454, 4, 19287);
+    			add_location(div7, file$5, 451, 4, 19059);
     			attr_dev(label4, "for", label4_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated");
     			attr_dev(label4, "class", "svelte-15ntxpt");
-    			add_location(label4, file$5, 474, 6, 20052);
+    			add_location(label4, file$5, 471, 6, 19824);
     			attr_dev(div8, "slot", "content");
-    			add_location(div8, file$5, 478, 8, 20186);
+    			add_location(div8, file$5, 475, 8, 19958);
     			attr_dev(i5, "class", "icon-question cc-module-icon svelte-15ntxpt");
-    			add_location(i5, file$5, 482, 10, 20364);
+    			add_location(i5, file$5, 479, 10, 20136);
     			attr_dev(a4, "href", /*HELP*/ ctx[17].configUnallocated.url);
     			attr_dev(a4, "target", "_blank");
     			attr_dev(a4, "rel", "noreferrer");
-    			add_location(a4, file$5, 481, 8, 20282);
+    			add_location(a4, file$5, 478, 8, 20054);
     			set_custom_element_data(sl_tooltip4, "class", "svelte-15ntxpt");
-    			add_location(sl_tooltip4, file$5, 477, 6, 20164);
+    			add_location(sl_tooltip4, file$5, 474, 6, 19936);
     			attr_dev(input3, "type", "checkbox");
     			attr_dev(input3, "id", input3_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-unallocated");
     			attr_dev(input3, "class", "svelte-15ntxpt");
-    			add_location(input3, file$5, 485, 6, 20449);
-    			add_location(div9, file$5, 473, 4, 20039);
+    			add_location(input3, file$5, 482, 6, 20221);
+    			add_location(div9, file$5, 470, 4, 19811);
     			attr_dev(div10, "class", "cc-collection-double svelte-15ntxpt");
-    			add_location(div10, file$5, 433, 2, 18598);
+    			add_location(div10, file$5, 430, 2, 18370);
     			attr_dev(label5, "for", label5_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-include-page");
     			attr_dev(label5, "class", "svelte-15ntxpt");
-    			add_location(label5, file$5, 506, 6, 21061);
+    			add_location(label5, file$5, 503, 6, 20833);
     			attr_dev(div11, "slot", "content");
-    			add_location(div11, file$5, 510, 8, 21186);
+    			add_location(div11, file$5, 507, 8, 20958);
     			attr_dev(i6, "class", "icon-question cc-module-icon svelte-15ntxpt");
-    			add_location(i6, file$5, 518, 11, 21435);
+    			add_location(i6, file$5, 515, 11, 21207);
     			attr_dev(a5, "id", "cc-about-include-page");
     			attr_dev(a5, "rel", "noreferrer");
     			attr_dev(a5, "target", "_blank");
     			attr_dev(a5, "href", /*HELP*/ ctx[17].configIncludePage.url);
-    			add_location(a5, file$5, 513, 8, 21282);
+    			add_location(a5, file$5, 510, 8, 21054);
     			set_custom_element_data(sl_tooltip5, "class", "svelte-15ntxpt");
-    			add_location(sl_tooltip5, file$5, 509, 6, 21164);
+    			add_location(sl_tooltip5, file$5, 506, 6, 20936);
     			attr_dev(div12, "class", "cc-collection-two-line-header svelte-15ntxpt");
-    			add_location(div12, file$5, 505, 4, 21010);
-    			add_location(div13, file$5, 522, 4, 21530);
+    			add_location(div12, file$5, 502, 4, 20782);
+    			add_location(div13, file$5, 519, 4, 21302);
     			attr_dev(input4, "id", input4_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-includePage");
     			input4.value = input4_value_value = /*$collectionsStore*/ ctx[6]["COLLECTIONS"][/*collectionName*/ ctx[0]].includePage;
     			attr_dev(input4, "class", "svelte-15ntxpt");
-    			add_location(input4, file$5, 524, 6, 21602);
+    			add_location(input4, file$5, 521, 6, 21374);
     			attr_dev(label6, "for", label6_for_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after");
     			attr_dev(label6, "class", "svelte-15ntxpt");
-    			add_location(label6, file$5, 531, 8, 21845);
+    			add_location(label6, file$5, 528, 8, 21617);
     			attr_dev(div14, "slot", "content");
-    			add_location(div14, file$5, 535, 10, 21980);
+    			add_location(div14, file$5, 532, 10, 21752);
     			attr_dev(i7, "class", "icon-question cc-module-icon svelte-15ntxpt");
-    			add_location(i7, file$5, 544, 12, 22268);
+    			add_location(i7, file$5, 541, 12, 22040);
     			attr_dev(a6, "id", "cc-about-include-after");
     			attr_dev(a6, "href", /*HELP*/ ctx[17].configIncludePageAfter.url);
     			attr_dev(a6, "target", "_blank");
     			attr_dev(a6, "rel", "noreferrer");
-    			add_location(a6, file$5, 538, 10, 22087);
+    			add_location(a6, file$5, 535, 10, 21859);
     			set_custom_element_data(sl_tooltip6, "class", "svelte-15ntxpt");
-    			add_location(sl_tooltip6, file$5, 534, 8, 21956);
+    			add_location(sl_tooltip6, file$5, 531, 8, 21728);
     			attr_dev(input5, "type", "checkbox");
     			attr_dev(input5, "id", input5_id_value = "cc-config-collection-" + /*collectionName*/ ctx[0] + "-include-after");
     			attr_dev(input5, "class", "cc-config-collection-include-after svelte-15ntxpt");
-    			add_location(input5, file$5, 547, 8, 22359);
+    			add_location(input5, file$5, 544, 8, 22131);
     			attr_dev(span5, "class", "cc-collection-label svelte-15ntxpt");
-    			add_location(span5, file$5, 530, 6, 21801);
+    			add_location(span5, file$5, 527, 6, 21573);
     			attr_dev(div15, "class", "cc-collection-two-line-body svelte-15ntxpt");
-    			add_location(div15, file$5, 523, 4, 21553);
+    			add_location(div15, file$5, 520, 4, 21325);
     			attr_dev(div16, "class", "cc-collection-two-line svelte-15ntxpt");
-    			add_location(div16, file$5, 504, 2, 20968);
+    			add_location(div16, file$5, 501, 2, 20740);
     			attr_dev(label7, "for", label7_for_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page");
     			attr_dev(label7, "class", "svelte-15ntxpt");
-    			add_location(label7, file$5, 570, 6, 23252);
+    			add_location(label7, file$5, 567, 6, 23024);
     			attr_dev(div17, "slot", "content");
-    			add_location(div17, file$5, 574, 8, 23375);
+    			add_location(div17, file$5, 571, 8, 23147);
     			attr_dev(i8, "class", "icon-question cc-module-icon svelte-15ntxpt");
-    			add_location(i8, file$5, 583, 10, 23638);
+    			add_location(i8, file$5, 580, 10, 23410);
     			attr_dev(a7, "id", "cc-about-update-output-page");
     			attr_dev(a7, "target", "_blank");
     			attr_dev(a7, "href", /*HELP*/ ctx[17].configOutputPage.url);
     			attr_dev(a7, "rel", "noreferrer");
-    			add_location(a7, file$5, 577, 8, 23470);
+    			add_location(a7, file$5, 574, 8, 23242);
     			set_custom_element_data(sl_tooltip7, "class", "svelte-15ntxpt");
-    			add_location(sl_tooltip7, file$5, 573, 6, 23353);
+    			add_location(sl_tooltip7, file$5, 570, 6, 23125);
     			attr_dev(div18, "class", "cc-collection-two-line-header svelte-15ntxpt");
-    			add_location(div18, file$5, 569, 4, 23201);
-    			add_location(div19, file$5, 587, 4, 23733);
+    			add_location(div18, file$5, 566, 4, 22973);
+    			add_location(div19, file$5, 584, 4, 23505);
     			attr_dev(input6, "id", input6_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-outputPage");
     			input6.value = input6_value_value = /*$collectionsStore*/ ctx[6]["COLLECTIONS"][/*collectionName*/ ctx[0]].outputPage;
     			attr_dev(input6, "class", "svelte-15ntxpt");
-    			add_location(input6, file$5, 589, 6, 23805);
+    			add_location(input6, file$5, 586, 6, 23577);
     			attr_dev(button, "id", button_id_value = "cc-collection-" + /*collectionName*/ ctx[0] + "-output-page-update");
     			attr_dev(button, "class", "btn svelte-15ntxpt");
     			button.disabled = button_disabled_value = /*$collectionsStore*/ ctx[6]["COLLECTIONS"][/*collectionName*/ ctx[0]].outputPage === "";
-    			add_location(button, file$5, 594, 6, 24000);
+    			add_location(button, file$5, 591, 6, 23772);
     			attr_dev(div20, "class", "cc-collection-two-line-body svelte-15ntxpt");
-    			add_location(div20, file$5, 588, 4, 23756);
+    			add_location(div20, file$5, 585, 4, 23528);
     			attr_dev(div21, "class", "cc-collection-two-line svelte-15ntxpt");
-    			add_location(div21, file$5, 568, 2, 23159);
+    			add_location(div21, file$5, 565, 2, 22931);
     			attr_dev(div22, "class", "cc-existing-collection border border-trbl svelte-15ntxpt");
     			attr_dev(div22, "id", div22_id_value = "cc-collection-" + /*collectionName*/ ctx[0]);
-    			add_location(div22, file$5, 341, 0, 15807);
+    			add_location(div22, file$5, 338, 0, 15579);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -33014,7 +32896,6 @@ Do you wish to proceed?`).then(ok => {
     		outputPageExists,
     		order,
     		numCollections,
-    		debug,
     		dispatch,
     		modules,
     		moduleCount,
@@ -33156,13 +33037,13 @@ Do you wish to proceed?`).then(ok => {
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[8] = list[i];
-    	child_ctx[9] = list;
-    	child_ctx[10] = i;
+    	child_ctx[7] = list[i];
+    	child_ctx[8] = list;
+    	child_ctx[9] = i;
     	return child_ctx;
     }
 
-    // (41:2) {#if $collectionsStore["COLLECTIONS_ORDER"].length === 0}
+    // (28:2) {#if $collectionsStore["COLLECTIONS_ORDER"].length === 0}
     function create_if_block$1(ctx) {
     	let p;
 
@@ -33171,7 +33052,7 @@ Do you wish to proceed?`).then(ok => {
     			p = element("p");
     			p.textContent = "No collections have been defined";
     			attr_dev(p, "class", "svelte-15u04t7");
-    			add_location(p, file$4, 41, 4, 1428);
+    			add_location(p, file$4, 28, 4, 932);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -33185,14 +33066,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(41:2) {#if $collectionsStore[\\\"COLLECTIONS_ORDER\\\"].length === 0}",
+    		source: "(28:2) {#if $collectionsStore[\\\"COLLECTIONS_ORDER\\\"].length === 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (44:2) {#each $collectionsStore["COLLECTIONS_ORDER"] as collectionName, i}
+    // (31:2) {#each $collectionsStore["COLLECTIONS_ORDER"] as collectionName, i}
     function create_each_block$2(ctx) {
     	let collectionconfiguration;
     	let updating_includePageExists;
@@ -33200,25 +33081,25 @@ Do you wish to proceed?`).then(ok => {
     	let current;
 
     	function collectionconfiguration_includePageExists_binding(value) {
-    		/*collectionconfiguration_includePageExists_binding*/ ctx[5](value, /*collectionName*/ ctx[8]);
+    		/*collectionconfiguration_includePageExists_binding*/ ctx[4](value, /*collectionName*/ ctx[7]);
     	}
 
     	function collectionconfiguration_outputPageExists_binding(value) {
-    		/*collectionconfiguration_outputPageExists_binding*/ ctx[6](value, /*collectionName*/ ctx[8]);
+    		/*collectionconfiguration_outputPageExists_binding*/ ctx[5](value, /*collectionName*/ ctx[7]);
     	}
 
     	let collectionconfiguration_props = {
-    		collectionName: /*collectionName*/ ctx[8],
-    		order: /*i*/ ctx[10],
+    		collectionName: /*collectionName*/ ctx[7],
+    		order: /*i*/ ctx[9],
     		numCollections: /*$collectionsStore*/ ctx[2]["COLLECTIONS_ORDER"].length
     	};
 
-    	if (/*includePageExists*/ ctx[0][/*collectionName*/ ctx[8]] !== void 0) {
-    		collectionconfiguration_props.includePageExists = /*includePageExists*/ ctx[0][/*collectionName*/ ctx[8]];
+    	if (/*includePageExists*/ ctx[0][/*collectionName*/ ctx[7]] !== void 0) {
+    		collectionconfiguration_props.includePageExists = /*includePageExists*/ ctx[0][/*collectionName*/ ctx[7]];
     	}
 
-    	if (/*outputPageExists*/ ctx[1][/*collectionName*/ ctx[8]] !== void 0) {
-    		collectionconfiguration_props.outputPageExists = /*outputPageExists*/ ctx[1][/*collectionName*/ ctx[8]];
+    	if (/*outputPageExists*/ ctx[1][/*collectionName*/ ctx[7]] !== void 0) {
+    		collectionconfiguration_props.outputPageExists = /*outputPageExists*/ ctx[1][/*collectionName*/ ctx[7]];
     	}
 
     	collectionconfiguration = new CollectionConfiguration({
@@ -33226,9 +33107,9 @@ Do you wish to proceed?`).then(ok => {
     			$$inline: true
     		});
 
-    	binding_callbacks.push(() => bind(collectionconfiguration, 'includePageExists', collectionconfiguration_includePageExists_binding, /*includePageExists*/ ctx[0][/*collectionName*/ ctx[8]]));
-    	binding_callbacks.push(() => bind(collectionconfiguration, 'outputPageExists', collectionconfiguration_outputPageExists_binding, /*outputPageExists*/ ctx[1][/*collectionName*/ ctx[8]]));
-    	collectionconfiguration.$on("message", /*message_handler*/ ctx[7]);
+    	binding_callbacks.push(() => bind(collectionconfiguration, 'includePageExists', collectionconfiguration_includePageExists_binding, /*includePageExists*/ ctx[0][/*collectionName*/ ctx[7]]));
+    	binding_callbacks.push(() => bind(collectionconfiguration, 'outputPageExists', collectionconfiguration_outputPageExists_binding, /*outputPageExists*/ ctx[1][/*collectionName*/ ctx[7]]));
+    	collectionconfiguration.$on("message", /*message_handler*/ ctx[6]);
 
     	const block = {
     		c: function create() {
@@ -33241,18 +33122,18 @@ Do you wish to proceed?`).then(ok => {
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
     			const collectionconfiguration_changes = {};
-    			if (dirty & /*$collectionsStore*/ 4) collectionconfiguration_changes.collectionName = /*collectionName*/ ctx[8];
+    			if (dirty & /*$collectionsStore*/ 4) collectionconfiguration_changes.collectionName = /*collectionName*/ ctx[7];
     			if (dirty & /*$collectionsStore*/ 4) collectionconfiguration_changes.numCollections = /*$collectionsStore*/ ctx[2]["COLLECTIONS_ORDER"].length;
 
     			if (!updating_includePageExists && dirty & /*includePageExists, $collectionsStore*/ 5) {
     				updating_includePageExists = true;
-    				collectionconfiguration_changes.includePageExists = /*includePageExists*/ ctx[0][/*collectionName*/ ctx[8]];
+    				collectionconfiguration_changes.includePageExists = /*includePageExists*/ ctx[0][/*collectionName*/ ctx[7]];
     				add_flush_callback(() => updating_includePageExists = false);
     			}
 
     			if (!updating_outputPageExists && dirty & /*outputPageExists, $collectionsStore*/ 6) {
     				updating_outputPageExists = true;
-    				collectionconfiguration_changes.outputPageExists = /*outputPageExists*/ ctx[1][/*collectionName*/ ctx[8]];
+    				collectionconfiguration_changes.outputPageExists = /*outputPageExists*/ ctx[1][/*collectionName*/ ctx[7]];
     				add_flush_callback(() => updating_outputPageExists = false);
     			}
 
@@ -33276,7 +33157,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_each_block$2.name,
     		type: "each",
-    		source: "(44:2) {#each $collectionsStore[\\\"COLLECTIONS_ORDER\\\"] as collectionName, i}",
+    		source: "(31:2) {#each $collectionsStore[\\\"COLLECTIONS_ORDER\\\"] as collectionName, i}",
     		ctx
     	});
 
@@ -33328,16 +33209,16 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			each_1_anchor = empty();
-    			add_location(strong, file$4, 26, 2, 1011);
+    			add_location(strong, file$4, 13, 2, 515);
     			attr_dev(div, "slot", "content");
-    			add_location(div, file$4, 28, 8, 1079);
+    			add_location(div, file$4, 15, 8, 583);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file$4, 36, 10, 1282);
+    			add_location(i, file$4, 23, 10, 786);
     			attr_dev(a, "href", /*HELP*/ ctx[3].existing.url);
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "target", "_blank");
-    			add_location(a, file$4, 31, 8, 1166);
-    			add_location(sl_tooltip, file$4, 27, 7, 1057);
+    			add_location(a, file$4, 18, 8, 670);
+    			add_location(sl_tooltip, file$4, 14, 7, 561);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -33451,8 +33332,6 @@ Do you wish to proceed?`).then(ok => {
     	validate_slots('ExistingCollections', slots, []);
     	let { includePageExists = {} } = $$props;
     	let { outputPageExists = {} } = $$props;
-    	let { pageNamesCollections = {} } = $$props;
-    	debug($collectionsStore["COLLECTIONS_ORDER"]);
 
     	const HELP = {
     		existing: {
@@ -33461,7 +33340,7 @@ Do you wish to proceed?`).then(ok => {
     		}
     	};
 
-    	const writable_props = ['includePageExists', 'outputPageExists', 'pageNamesCollections'];
+    	const writable_props = ['includePageExists', 'outputPageExists'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<ExistingCollections> was created with unknown prop '${key}'`);
@@ -33488,16 +33367,13 @@ Do you wish to proceed?`).then(ok => {
     	$$self.$$set = $$props => {
     		if ('includePageExists' in $$props) $$invalidate(0, includePageExists = $$props.includePageExists);
     		if ('outputPageExists' in $$props) $$invalidate(1, outputPageExists = $$props.outputPageExists);
-    		if ('pageNamesCollections' in $$props) $$invalidate(4, pageNamesCollections = $$props.pageNamesCollections);
     	};
 
     	$$self.$capture_state = () => ({
     		collectionsStore,
     		CollectionConfiguration,
-    		debug,
     		includePageExists,
     		outputPageExists,
-    		pageNamesCollections,
     		HELP,
     		$collectionsStore
     	});
@@ -33505,7 +33381,6 @@ Do you wish to proceed?`).then(ok => {
     	$$self.$inject_state = $$props => {
     		if ('includePageExists' in $$props) $$invalidate(0, includePageExists = $$props.includePageExists);
     		if ('outputPageExists' in $$props) $$invalidate(1, outputPageExists = $$props.outputPageExists);
-    		if ('pageNamesCollections' in $$props) $$invalidate(4, pageNamesCollections = $$props.pageNamesCollections);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -33517,7 +33392,6 @@ Do you wish to proceed?`).then(ok => {
     		outputPageExists,
     		$collectionsStore,
     		HELP,
-    		pageNamesCollections,
     		collectionconfiguration_includePageExists_binding,
     		collectionconfiguration_outputPageExists_binding,
     		message_handler
@@ -33530,8 +33404,7 @@ Do you wish to proceed?`).then(ok => {
 
     		init(this, options, instance$4, create_fragment$4, safe_not_equal, {
     			includePageExists: 0,
-    			outputPageExists: 1,
-    			pageNamesCollections: 4
+    			outputPageExists: 1
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
@@ -33555,14 +33428,6 @@ Do you wish to proceed?`).then(ok => {
     	}
 
     	set outputPageExists(value) {
-    		throw new Error("<ExistingCollections>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get pageNamesCollections() {
-    		throw new Error("<ExistingCollections>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set pageNamesCollections(value) {
     		throw new Error("<ExistingCollections>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -34275,7 +34140,7 @@ Do you wish to proceed?`).then(ok => {
     	return child_ctx;
     }
 
-    // (131:6) {#each visibilityOptions as visibilityOption}
+    // (127:6) {#each visibilityOptions as visibilityOption}
     function create_each_block(ctx) {
     	let option;
     	let t_value = /*visibilityOption*/ ctx[15] + "";
@@ -34287,7 +34152,7 @@ Do you wish to proceed?`).then(ok => {
     			t = text(t_value);
     			option.__value = /*visibilityOption*/ ctx[15];
     			option.value = option.__value;
-    			add_location(option, file$1, 131, 8, 5453);
+    			add_location(option, file$1, 127, 8, 5248);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -34303,7 +34168,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(131:6) {#each visibilityOptions as visibilityOption}",
+    		source: "(127:6) {#each visibilityOptions as visibilityOption}",
     		ctx
     	});
 
@@ -34427,38 +34292,38 @@ Do you wish to proceed?`).then(ok => {
     			t9 = space();
     			create_component(fullclaytons.$$.fragment);
     			attr_dev(span, "class", "cc-version svelte-5recs2");
-    			add_location(span, file$1, 113, 6, 4795);
+    			add_location(span, file$1, 109, 6, 4590);
     			attr_dev(p, "class", "svelte-5recs2");
-    			add_location(p, file$1, 112, 4, 4756);
+    			add_location(p, file$1, 108, 4, 4551);
     			attr_dev(div0, "class", "cc-header cc-collections-label svelte-5recs2");
-    			add_location(div0, file$1, 111, 2, 4706);
-    			add_location(small, file$1, 117, 4, 4903);
+    			add_location(div0, file$1, 107, 2, 4501);
+    			add_location(small, file$1, 113, 4, 4698);
     			attr_dev(div1, "slot", "content");
-    			add_location(div1, file$1, 119, 6, 4954);
+    			add_location(div1, file$1, 115, 6, 4749);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file$1, 121, 9, 5092);
+    			add_location(i, file$1, 117, 9, 4887);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "href", /*HELP*/ ctx[7].visibility.url);
-    			add_location(a, file$1, 120, 6, 5019);
-    			add_location(sl_tooltip, file$1, 118, 4, 4934);
+    			add_location(a, file$1, 116, 6, 4814);
+    			add_location(sl_tooltip, file$1, 114, 4, 4729);
     			attr_dev(select, "id", "cc-collection-visibility");
     			attr_dev(select, "class", "cc-collection-representation svelte-5recs2");
     			if (/*$collectionsStore*/ ctx[4]["VISIBILITY"] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[8].call(select));
-    			add_location(select, file$1, 124, 4, 5171);
+    			add_location(select, file$1, 120, 4, 4966);
     			attr_dev(div2, "class", "cc-collections-input");
-    			add_location(div2, file$1, 116, 2, 4863);
+    			add_location(div2, file$1, 112, 2, 4658);
     			attr_dev(div3, "class", "cc-header-grid svelte-5recs2");
-    			add_location(div3, file$1, 110, 0, 4674);
+    			add_location(div3, file$1, 106, 0, 4469);
     			attr_dev(div4, "id", "cc-config-existing-collections");
-    			add_location(div4, file$1, 138, 4, 5623);
+    			add_location(div4, file$1, 134, 4, 5418);
     			attr_dev(div5, "id", "cc-config-new-collection");
-    			add_location(div5, file$1, 146, 4, 5854);
+    			add_location(div5, file$1, 142, 4, 5649);
     			attr_dev(div6, "id", "cc-config-body");
     			attr_dev(div6, "class", "svelte-5recs2");
-    			add_location(div6, file$1, 137, 2, 5592);
+    			add_location(div6, file$1, 133, 2, 5387);
     			attr_dev(div7, "class", "cc-box-body svelte-5recs2");
-    			add_location(div7, file$1, 136, 0, 5563);
+    			add_location(div7, file$1, 132, 0, 5358);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -34596,7 +34461,7 @@ Do you wish to proceed?`).then(ok => {
     	return block;
     }
 
-    const CC_VERSION = "1.0.0b";
+    const CC_VERSION = "1.0.1b";
 
     function instance$1($$self, $$props, $$invalidate) {
     	let $configStore;
@@ -34751,9 +34616,6 @@ Do you wish to proceed?`).then(ok => {
     		ExistingCollections,
     		NewCollection,
     		FullClaytons,
-    		debug,
-    		toastAlert,
-    		handle_promise,
     		visibilityOptions,
     		CC_VERSION,
     		includePageExists,
@@ -44301,7 +44163,7 @@ Do you wish to proceed?`).then(ok => {
     /* src\CanvasCollections.svelte generated by Svelte v3.55.0 */
     const file = "src\\CanvasCollections.svelte";
 
-    // (459:0) {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
+    // (457:0) {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
     function create_if_block(ctx) {
     	let div2;
     	let div1;
@@ -44363,20 +44225,20 @@ Do you wish to proceed?`).then(ok => {
     			t8 = space();
     			if (if_block5) if_block5.c();
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 462, 8, 19598);
+    			add_location(div0, file, 460, 8, 19493);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 464, 11, 19742);
+    			add_location(i, file, 462, 11, 19637);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "href", a_href_value = /*HELP*/ ctx[7].switchTitle.url);
-    			add_location(a, file, 463, 8, 19666);
+    			add_location(a, file, 461, 8, 19561);
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 461, 6, 19576);
-    			add_location(small, file, 488, 6, 20570);
+    			add_location(sl_tooltip, file, 459, 6, 19471);
+    			add_location(small, file, 486, 6, 20465);
     			attr_dev(div1, "class", "cc-switch-title svelte-dfjd7v");
-    			add_location(div1, file, 460, 4, 19539);
+    			add_location(div1, file, 458, 4, 19434);
     			attr_dev(div2, "class", "cc-switch-container svelte-dfjd7v");
-    			add_location(div2, file, 459, 2, 19500);
+    			add_location(div2, file, 457, 2, 19395);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -44518,14 +44380,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(459:0) {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}",
+    		source: "(457:0) {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (468:6) {#if allDataLoaded && !noCollections}
+    // (466:6) {#if allDataLoaded && !noCollections}
     function create_if_block_6(ctx) {
     	let i;
     	let i_class_value;
@@ -44541,7 +44403,7 @@ Do you wish to proceed?`).then(ok => {
     			? 'icon-mini-arrow-down'
     			: 'icon-mini-arrow-right') + " cc-module-icon"));
 
-    			add_location(i, file, 468, 8, 19874);
+    			add_location(i, file, 466, 8, 19769);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -44573,14 +44435,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_6.name,
     		type: "if",
-    		source: "(468:6) {#if allDataLoaded && !noCollections}",
+    		source: "(466:6) {#if allDataLoaded && !noCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (483:6) {:else}
+    // (481:6) {:else}
     function create_else_block(ctx) {
     	let sl_tooltip;
     	let div;
@@ -44595,11 +44457,11 @@ Do you wish to proceed?`).then(ok => {
     			t = space();
     			i = element("i");
     			attr_dev(div, "slot", "content");
-    			add_location(div, file, 484, 10, 20423);
+    			add_location(div, file, 482, 10, 20318);
     			attr_dev(i, "class", "icon-unpublish");
-    			add_location(i, file, 485, 10, 20498);
+    			add_location(i, file, 483, 10, 20393);
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 483, 8, 20399);
+    			add_location(sl_tooltip, file, 481, 8, 20294);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, sl_tooltip, anchor);
@@ -44619,14 +44481,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(483:6) {:else}",
+    		source: "(481:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (478:6) {#if isCollectionsOn(false, $collectionsStore["VISIBILITY"])}
+    // (476:6) {#if isCollectionsOn(false, $collectionsStore["VISIBILITY"])}
     function create_if_block_5(ctx) {
     	let sl_tooltip;
     	let div;
@@ -44641,11 +44503,11 @@ Do you wish to proceed?`).then(ok => {
     			t = space();
     			i = element("i");
     			attr_dev(div, "slot", "content");
-    			add_location(div, file, 479, 10, 20241);
+    			add_location(div, file, 477, 10, 20136);
     			attr_dev(i, "class", "icon-Solid icon-publish svelte-dfjd7v");
-    			add_location(i, file, 480, 10, 20314);
+    			add_location(i, file, 478, 10, 20209);
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 478, 8, 20217);
+    			add_location(sl_tooltip, file, 476, 8, 20112);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, sl_tooltip, anchor);
@@ -44665,14 +44527,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(478:6) {#if isCollectionsOn(false, $collectionsStore[\\\"VISIBILITY\\\"])}",
+    		source: "(476:6) {#if isCollectionsOn(false, $collectionsStore[\\\"VISIBILITY\\\"])}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (492:4) {#if noCollections}
+    // (490:4) {#if noCollections}
     function create_if_block_4(ctx) {
     	let label;
     	let sl_switch;
@@ -44685,10 +44547,10 @@ Do you wish to proceed?`).then(ok => {
     			sl_switch = element("sl-switch");
     			set_custom_element_data(sl_switch, "id", "cc-switch");
     			set_custom_element_data(sl_switch, "class", "svelte-dfjd7v");
-    			add_location(sl_switch, file, 493, 8, 20701);
+    			add_location(sl_switch, file, 491, 8, 20596);
     			attr_dev(label, "class", "cc-switch svelte-dfjd7v");
     			attr_dev(label, "for", "cc-switch");
-    			add_location(label, file, 492, 6, 20650);
+    			add_location(label, file, 490, 6, 20545);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, label, anchor);
@@ -44711,14 +44573,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(492:4) {#if noCollections}",
+    		source: "(490:4) {#if noCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (497:4) {#if allDataLoaded && $configStore["ccOn"]}
+    // (495:4) {#if allDataLoaded && $configStore["ccOn"]}
     function create_if_block_3(ctx) {
     	let div;
     	let button;
@@ -44740,9 +44602,9 @@ Do you wish to proceed?`).then(ok => {
 
     			attr_dev(button, "id", "cc-save-button");
     			button.disabled = button_disabled_value = !/*$configStore*/ ctx[8]["needToSaveCollections"];
-    			add_location(button, file, 498, 8, 20881);
+    			add_location(button, file, 496, 8, 20776);
     			attr_dev(div, "class", "cc-save svelte-dfjd7v");
-    			add_location(div, file, 497, 6, 20850);
+    			add_location(div, file, 495, 6, 20745);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -44788,14 +44650,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(497:4) {#if allDataLoaded && $configStore[\\\"ccOn\\\"]}",
+    		source: "(495:4) {#if allDataLoaded && $configStore[\\\"ccOn\\\"]}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (514:4) {#if !ccPublished && !noCollections}
+    // (512:4) {#if !ccPublished && !noCollections}
     function create_if_block_2(ctx) {
     	let div1;
     	let sl_tooltip;
@@ -44822,27 +44684,27 @@ Do you wish to proceed?`).then(ok => {
     			sl_button = element("sl-button");
     			sl_button.textContent = "unpublished";
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 516, 10, 21522);
+    			add_location(div0, file, 514, 10, 21417);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 522, 13, 21748);
+    			add_location(i, file, 520, 13, 21643);
     			attr_dev(a0, "id", "cc-about-unpublished");
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "href", a0_href_value = /*HELP*/ ctx[7].unpublished.url);
-    			add_location(a0, file, 517, 10, 21592);
+    			add_location(a0, file, 515, 10, 21487);
     			set_custom_element_data(sl_tooltip, "trigger", "hover focus");
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 515, 8, 21476);
+    			add_location(sl_tooltip, file, 513, 8, 21371);
     			set_custom_element_data(sl_button, "pill", "");
     			set_custom_element_data(sl_button, "size", "small");
     			set_custom_element_data(sl_button, "variant", "warning");
-    			add_location(sl_button, file, 526, 10, 21915);
+    			add_location(sl_button, file, 524, 10, 21810);
     			attr_dev(a1, "href", /*collectionsConfigUrl*/ ctx[12]);
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noreferrer");
-    			add_location(a1, file, 525, 8, 21839);
+    			add_location(a1, file, 523, 8, 21734);
     			attr_dev(div1, "class", "cc-unpublished svelte-dfjd7v");
-    			add_location(div1, file, 514, 6, 21438);
+    			add_location(div1, file, 512, 6, 21333);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -44871,14 +44733,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(514:4) {#if !ccPublished && !noCollections}",
+    		source: "(512:4) {#if !ccPublished && !noCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (531:4) {#if showConfig}
+    // (529:4) {#if showConfig}
     function create_if_block_1(ctx) {
     	let div;
     	let collectionsconfiguration;
@@ -44891,7 +44753,7 @@ Do you wish to proceed?`).then(ok => {
     			create_component(collectionsconfiguration.$$.fragment);
     			attr_dev(div, "id", "cc-config");
     			attr_dev(div, "class", "border border-trbl svelte-dfjd7v");
-    			add_location(div, file, 531, 6, 22054);
+    			add_location(div, file, 529, 6, 21949);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -44917,7 +44779,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(531:4) {#if showConfig}",
+    		source: "(529:4) {#if showConfig}",
     		ctx
     	});
 
@@ -45528,7 +45390,6 @@ Do you wish to proceed?`).then(ok => {
     		CanvasDetails,
     		CollectionsDetails,
     		calculateActualNum,
-    		debug,
     		toastAlert,
     		setBasePath,
     		TIME_BETWEEN_SAVES,

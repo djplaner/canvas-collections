@@ -11,7 +11,6 @@
 
   import { collectionsStore, configStore } from "../../stores";
 
-  import { debug } from "../../lib/debug";
   import UniversityDateCalendar from "../../lib/university-date-calendar";
 
   export let moduleId: Number;

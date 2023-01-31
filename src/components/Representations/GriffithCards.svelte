@@ -11,15 +11,7 @@
   import BannerImage from "./GriffithCards/BannerImage.svelte";
   import DateWidget from "./GriffithCards/DateWidget.svelte";
 
-  import {
-    getCollectionCanvasModules,
-    addUnallocatedModules,
-    getRepresentationModules,
-    //    modifyCanvasModulesList,
-    generateModuleDate,
-    checkModuleMetaData,
-  } from "./representationSupport";
-  import { debug } from "../../lib/debug";
+  import { getRepresentationModules } from "./representationSupport";
 
   import UniversityDateCalendar from "../../lib/university-date-calendar";
 
@@ -32,20 +24,11 @@
     claytons = false;
   }
 
-  const line = "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
-  debug(line);
-  debug(calendar);
-
   const BANNER_TRANSLATION = {
     image: BannerImage,
     colour: BannerColour,
     iframe: BannerIframe,
   };
-
-  debug(
-    "_______________ Cards.svelte __collection " + collection + " _____________"
-  );
-  debug($modulesStore);
 
   // calculate the moduleIds belonging to collection
   let modules;
@@ -55,8 +38,6 @@
       claytons,
       $collectionsStore["COLLECTIONS"][collection]["unallocated"]
     );
-    let tmp = "fred"
-    tmp = `${tmp}`
   }
 
   /**
@@ -86,25 +67,24 @@
    * @returns true if the module is unpublished or unallocated & if that information
    * should be shown.  In particular, is used to figure out if to show a small
    * message on a card about unpublished/unallocated
-   * 
+   *
    * Conditions include
    * - only staff (editMode) should see unpublished/unallocated messages
    * - students (!editMode) should not see unpublished/unallocated messages
    */
   function isUnPublishedUnallocated(moduleId) {
     if (!$configStore["editMode"]) {
-      return false
+      return false;
     }
 
     // is it unpublished
-    if (!$collectionsStore["MODULES"][moduleId].published ) {
-      return true
-    } 
+    if (!$collectionsStore["MODULES"][moduleId].published) {
+      return true;
+    }
 
     // is it unallocated
-    return $collectionsStore["MODULES"][moduleId].collection !== collection
+    return $collectionsStore["MODULES"][moduleId].collection !== collection;
   }
-
 </script>
 
 {#if claytons}

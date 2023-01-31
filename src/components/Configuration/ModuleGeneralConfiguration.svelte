@@ -14,7 +14,6 @@
 
   import { onMount } from "svelte";
   import Editor from "cl-editor/src/Editor.svelte";
-  import { debug } from "svelte/internal";
 
   export let moduleId: Number;
 

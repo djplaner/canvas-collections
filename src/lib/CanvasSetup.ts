@@ -2,9 +2,6 @@
  * Define suite of methods to interact with Canvas during app set up
  */
 
-import { debug } from "./debug";
-const DEBUG = false;
-
 /**
  * @function checkContext
  * @returns {Object} containing editMode, courseId, modulesPage
@@ -300,7 +297,6 @@ export function addCollectionsRepresentation() {
  */
 
 export function removeCollectionsRepresentation() {
-  debug(":::::::::::::: removeCollectionsRepresentation ::::::::::::::");
   const representation = document.querySelector(
     "div#canvas-collections-representation"
   );
@@ -349,9 +345,6 @@ export function getPageName(
   courseId: string,
   callBack: Function
 ) {
-  debug(
-    `-------------------- getPageName -- ${pageName} ---------------------`
-  );
 
   if (pageName === undefined ) {
     console.trace()
@@ -373,8 +366,6 @@ export function getPageName(
     };
     const slugifiedPageName = pageName.slugify();
     const apiUrl = `https://${document.location.hostname}/api/v1/courses/${courseId}/pages/${slugifiedPageName}`;
-
-    debug(`apiUrl: ${apiUrl}`);
 
     wf_fetchData(apiUrl).then((msg) => {
         callBack(pageName, msg.body);

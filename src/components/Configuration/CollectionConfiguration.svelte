@@ -23,12 +23,7 @@
   export let order: Number;
   export let numCollections: Number;
 
-  import { debug } from "../../lib/debug";
-
   const dispatch = createEventDispatcher();
-  debug(
-    `__________________ CollectionConfiguration.svelte __collection ${collectionName} order ${order} numCollections ${numCollections}_______________`
-  );
 
   // Assume includePage and outputPage exist
   /*  export let 
@@ -45,8 +40,6 @@
   const modules = getCollectionCanvasModules(collectionName);
   let moduleCount = modules.length;
   let moduleName = moduleCount === 1 ? "module" : "modules";
-
-  debug($representationsStore);
 
   let availableRepresentations = Object.getOwnPropertyNames(
     $representationsStore

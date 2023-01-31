@@ -3,8 +3,6 @@ import { get } from "svelte/store";
 
 import { collectionsStore, configStore, modulesStore } from "../../stores";
 
-import { debug } from "../../lib/debug";
-
 /**
  * @function getCollectionCanvasModules
  * @param collection - Collection name
@@ -223,8 +221,6 @@ export function modifyCanvasModulesList(collection, showUnallocated) {
     return !moduleIds.includes(parseInt(moduleId, 10));
   });
 
-  debug(` --- moduleIds ${moduleIds} --- otherModuleIds ${otherModuleIds} ---`);
-
   // for other modules
   // - if collection is not null hide the module
   // - if null, create an unallocated ModuleConfiguration
@@ -305,8 +301,6 @@ function addModuleConfiguration(moduleId: Number) {
         module: moduleId,
       },
     });
-    debug("XXXXX moduleConfigComponent");
-    debug(moduleConfigComponent);
   }
 }
 

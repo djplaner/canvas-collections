@@ -10,7 +10,6 @@
   import ModuleBannerConfiguration from "./Configuration/ModuleBannerConfiguration.svelte";
   import ModuleMetaDataConfiguration from "./Configuration/ModuleMetaDataConfiguration.svelte";
 
-  import { debug } from "../lib/debug";
   import { removeModuleConfiguration } from "../lib/CanvasSetup";
 
   export let module: Number;
@@ -19,21 +18,11 @@
     $collectionsStore["MODULES"][module].collection !== null &&
     $collectionsStore["MODULES"][module].collection !== "";
 
-  debug(
-    `______________ ModuleConfiguration.svelte - module ${module} allocated ${allocated} _______________`
-  );
-
-  debug("-------- collectionsStore");
-  debug($collectionsStore);
-
   function toggleModuleConfigShow() {
     $collectionsStore["MODULES"][module].configVisible =
       !$collectionsStore["MODULES"][module].configVisible;
     $configStore["needToSaveCollections"] = true;
   }
-  // cc-module-config-33347-description
-  // 33336
-  // 33337
 
   const HELP = {
     moduleConfiguration: {

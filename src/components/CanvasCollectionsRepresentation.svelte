@@ -15,14 +15,8 @@
 
   import { afterUpdate } from "svelte";
 
-  import { debug } from "../lib/debug";
 
   let complete : boolean = false
-  debug(
-    `______________ CanvasCollectionsRepresentation.svelte _currentCollection ${$configStore["currentCollections"]}______________`
-  );
-  debug("---- collectionsStore");
-  debug($collectionsStore);
 
   //let localCollectionName : string = "";
 

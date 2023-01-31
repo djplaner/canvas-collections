@@ -27,7 +27,6 @@
 
   import { modifyCanvasModulesList } from "./Representations/representationSupport";
 
-  import { debug } from "../lib/debug";
 
   export let collectionName: string;
   export let claytons: boolean;
@@ -37,10 +36,6 @@
   if (!claytons) {
     claytons = false;
   }
-
-  debug(
-    `_______________ CollectionRepresentation.svelte __collection ${collectionName} __ Claytons ${claytons}___________`
-  );
 
   let representationComponent: any;
   $: {

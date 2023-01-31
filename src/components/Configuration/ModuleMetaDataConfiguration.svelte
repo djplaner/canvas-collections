@@ -9,20 +9,12 @@
   import sanitizeHtml from "sanitize-html";
 
   import { collectionsStore, configStore } from "../../stores";
-  import { debug } from "../../lib/debug";
 
   import { toastAlert, ccConfirm } from "../../lib/ui";
 
   export let moduleId: Number;
 
   let readyToAdd = true;
-
-  debug(
-    "!!!!!!!!!!!!!!!!!!! ModuleMetaDataConfiguration.svelte !!!!!!!!!!!!!!!!!!!!!!!"
-  );
-  debug(`Module ID: ${moduleId}`);
-  debug($collectionsStore["MODULES"][moduleId]);
-  debug($collectionsStore["MODULES"][moduleId].metadata);
 
   /**
    * @function addMetaData

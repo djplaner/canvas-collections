@@ -10,16 +10,11 @@
    */
   import { collectionsStore, configStore } from "../../stores";
 
-  import { debug } from "../../lib/debug";
-
   import { ccConfirm } from "../../lib/ui";
 
   import sanitizeHtml from "sanitize-html";
 
   export let moduleId: Number;
-
-  debug("______________ ModuleBannerConfiguration.svelte _______________");
-  debug($collectionsStore["MODULES"][moduleId]);
 
   const imageScaleOptions = [
     "none",
