@@ -86,7 +86,7 @@
     <IncludePage collectionName={$configStore["currentCollection"]} />
   {/if}
   <CollectionRepresentation
-    bind:collectionName={$configStore["currentCollection"]}
+    bind:collectionName={$configStore["currentCollection"]} 
     claytons={false}
   />
   {#if $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter}

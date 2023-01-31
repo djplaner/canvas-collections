@@ -28,14 +28,20 @@
   import { modifyCanvasModulesList } from "./Representations/representationSupport";
 
 
-  export let collectionName: string;
-  export let claytons: boolean;
+  export let collectionName: string 
+  export let claytons: boolean
 
   let complete: boolean = false;
 
   if (!claytons) {
     claytons = false;
   }
+
+  console.log(`---------- CollectionRepresentation.svelte: collectionName=${collectionName} claytons=${claytons} ----------`)
+
+/*  if (claytons===false) {
+    collectionName = $configStore["currentCollection"];
+  }*/
 
   let representationComponent: any;
   $: {
