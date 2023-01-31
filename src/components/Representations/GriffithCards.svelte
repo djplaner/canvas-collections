@@ -25,9 +25,8 @@
 
   let calendar = new UniversityDateCalendar();
 
-
   export let collection: string;
-//  export let calendar: any;
+  //  export let calendar: any;
   export let claytons: boolean;
   if (!claytons) {
     claytons = false;
@@ -187,21 +186,29 @@
                     {/if}
                   </h3>
                 </div>
-                <div class="claytons-card-description" style="font-size:0.75rem;">
+                <div
+                  class="claytons-card-description"
+                  style="font-size:0.75rem;"
+                >
                   {@html $collectionsStore["MODULES"][theModule.id].description}
                 </div>
               </div>
             </div>
-            <div class="claytons-card-footer" style="height:4rem;position:relative;">
+            <div
+              class="claytons-card-footer"
+              style="height:4rem;position:relative;"
+            >
               {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
                 <div class="claytons-card-engage" style="padding-right: 1rem;">
                   <div
                     class="claytons-card-engage-button"
-                    style="float:right;position:relative;color:rgba(30,58,138,1);border-radius:0.25rem;padding0.5rem 1rem 0.5rem 1rem;border:1px solid rgba(30,58,138,1)"
+                    style="float:right; position:relative; color:rgba(30,58,138,1); 
+                    border-radius:0.25rem; padding 0.5rem 1rem 0.5rem 1rem; border:1px solid rgba(30,58,138,1);"
                   >
+                    <!--style="float:right;position:relative;color:rgba(30,58,138,1);border-radius:0.25rem;padding0.5rem 1rem 0.5rem 1rem;border:1px solid rgba(30,58,138,1)"-->
                     <a
                       href={getModuleUrl(theModule.id)}
-                      class="gu-engage"
+                      class="claytons-gu-engage"
                       style="text-decoration:none;"
                     >
                       {$collectionsStore["MODULES"][theModule.id].engageText}

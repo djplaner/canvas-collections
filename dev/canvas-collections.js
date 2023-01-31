@@ -22732,7 +22732,7 @@ Do you wish to proceed?`).then(ok => {
     	return child_ctx;
     }
 
-    // (195:0) {:else}
+    // (203:0) {:else}
     function create_else_block_2$1(ctx) {
     	let div;
     	let current;
@@ -22757,7 +22757,7 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			attr_dev(div, "class", "cc-card-interface cc-representation svelte-1oao3hv");
-    			add_location(div, file$d, 195, 2, 8260);
+    			add_location(div, file$d, 203, 2, 8576);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -22825,7 +22825,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_else_block_2$1.name,
     		type: "else",
-    		source: "(195:0) {:else}",
+    		source: "(203:0) {:else}",
     		ctx
     	});
 
@@ -22934,7 +22934,7 @@ Do you wish to proceed?`).then(ok => {
     	return block;
     }
 
-    // (209:14) {#if !$collectionsStore["MODULES"][theModule.id].fyi}
+    // (217:14) {#if !$collectionsStore["MODULES"][theModule.id].fyi}
     function create_if_block_13(ctx) {
     	let a;
     	let t;
@@ -22947,7 +22947,7 @@ Do you wish to proceed?`).then(ok => {
     			attr_dev(a, "class", "cc-card-link svelte-1oao3hv");
     			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
     			attr_dev(a, "style", "");
-    			add_location(a, file$d, 209, 16, 8874);
+    			add_location(a, file$d, 217, 16, 9190);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
@@ -22967,14 +22967,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_13.name,
     		type: "if",
-    		source: "(209:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		source: "(217:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (227:14) {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
+    // (235:14) {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
     function create_if_block_11$1(ctx) {
     	let div;
     	let span;
@@ -22993,9 +22993,9 @@ Do you wish to proceed?`).then(ok => {
     			span = element("span");
     			if_block.c();
     			attr_dev(span, "class", "cc-fyi-text");
-    			add_location(span, file$d, 228, 18, 9688);
+    			add_location(span, file$d, 236, 18, 10004);
     			attr_dev(div, "class", "cc-card-fyi svelte-1oao3hv");
-    			add_location(div, file$d, 227, 16, 9643);
+    			add_location(div, file$d, 235, 16, 9959);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -23025,14 +23025,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_11$1.name,
     		type: "if",
-    		source: "(227:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyi && $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText !== \\\"\\\"}",
+    		source: "(235:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyi && $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText !== \\\"\\\"}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (232:20) {:else}
+    // (240:20) {:else}
     function create_else_block_3(ctx) {
     	let t;
 
@@ -23053,14 +23053,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_else_block_3.name,
     		type: "else",
-    		source: "(232:20) {:else}",
+    		source: "(240:20) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (230:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
+    // (238:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
     function create_if_block_12$1(ctx) {
     	let html_tag;
     	let raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "";
@@ -23089,14 +23089,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_12$1.name,
     		type: "if",
-    		source: "(230:20) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText}",
+    		source: "(238:20) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].fyiText}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (238:14) {#if !$collectionsStore["MODULES"][theModule.id].published || ($configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection)}
+    // (246:14) {#if !$collectionsStore["MODULES"][theModule.id].published || ($configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection)}
     function create_if_block_8$1(ctx) {
     	let div;
     	let t;
@@ -23110,7 +23110,7 @@ Do you wish to proceed?`).then(ok => {
     			t = space();
     			if (if_block1) if_block1.c();
     			attr_dev(div, "class", "cc-card-published svelte-1oao3hv");
-    			add_location(div, file$d, 238, 16, 10227);
+    			add_location(div, file$d, 246, 16, 10543);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -23152,14 +23152,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_8$1.name,
     		type: "if",
-    		source: "(238:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].published || ($configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][theModule.id].collection !== collection)}",
+    		source: "(246:14) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].published || ($configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][theModule.id].collection !== collection)}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (240:18) {#if !$collectionsStore["MODULES"][theModule.id].published}
+    // (248:18) {#if !$collectionsStore["MODULES"][theModule.id].published}
     function create_if_block_10$1(ctx) {
     	let t;
 
@@ -23179,14 +23179,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_10$1.name,
     		type: "if",
-    		source: "(240:18) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].published}",
+    		source: "(248:18) {#if !$collectionsStore[\\\"MODULES\\\"][theModule.id].published}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (243:18) {#if $configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection}
+    // (251:18) {#if $configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection}
     function create_if_block_9$1(ctx) {
     	let t;
 
@@ -23206,14 +23206,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_9$1.name,
     		type: "if",
-    		source: "(243:18) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][theModule.id].collection !== collection}",
+    		source: "(251:18) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][theModule.id].collection !== collection}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (273:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
+    // (281:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
     function create_if_block_7$2(ctx) {
     	let div1;
     	let div0;
@@ -23234,11 +23234,11 @@ Do you wish to proceed?`).then(ok => {
     			t2 = text(t2_value);
     			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
     			attr_dev(a, "class", "gu-engage svelte-1oao3hv");
-    			add_location(a, file$d, 275, 20, 11983);
+    			add_location(a, file$d, 283, 20, 12299);
     			attr_dev(div0, "class", "cc-card-engage-button svelte-1oao3hv");
-    			add_location(div0, file$d, 274, 18, 11926);
+    			add_location(div0, file$d, 282, 18, 12242);
     			attr_dev(div1, "class", "cc-card-engage svelte-1oao3hv");
-    			add_location(div1, file$d, 273, 16, 11878);
+    			add_location(div1, file$d, 281, 16, 12194);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -23264,14 +23264,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_7$2.name,
     		type: "if",
-    		source: "(273:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		source: "(281:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (197:4) {#each modules as theModule}
+    // (205:4) {#each modules as theModule}
     function create_each_block_1$3(ctx) {
     	let div9;
     	let div8;
@@ -23375,41 +23375,41 @@ Do you wish to proceed?`).then(ok => {
     			t11 = space();
     			attr_dev(div0, "class", "cc-card-banner-container svelte-1oao3hv");
     			attr_dev(div0, "data-moduleid", div0_data_moduleid_value = /*theModule*/ ctx[8].id);
-    			add_location(div0, file$d, 207, 12, 8720);
+    			add_location(div0, file$d, 215, 12, 9036);
     			html_tag.a = t5;
     			attr_dev(span, "class", "cc-card-label svelte-1oao3hv");
-    			add_location(span, file$d, 256, 18, 11027);
+    			add_location(span, file$d, 264, 18, 11343);
     			attr_dev(h3, "class", "cc-card-title svelte-1oao3hv");
     			attr_dev(h3, "data-moduleid", h3_data_moduleid_value = /*theModule*/ ctx[8].id);
-    			add_location(h3, file$d, 260, 18, 11256);
+    			add_location(h3, file$d, 268, 18, 11572);
     			attr_dev(div1, "class", "cc-card-label svelte-1oao3hv");
-    			add_location(div1, file$d, 255, 16, 10980);
+    			add_location(div1, file$d, 263, 16, 11296);
     			attr_dev(div2, "class", "cc-card-description svelte-1oao3hv");
-    			add_location(div2, file$d, 266, 16, 11515);
+    			add_location(div2, file$d, 274, 16, 11831);
 
     			attr_dev(div3, "class", div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
     			? "cc-card-content"
     			: "cc-unclickable-card-content") + " svelte-1oao3hv"));
 
-    			add_location(div3, file$d, 250, 14, 10779);
+    			add_location(div3, file$d, 258, 14, 11095);
     			attr_dev(div4, "class", "cc-card-content-height svelte-1oao3hv");
-    			add_location(div4, file$d, 248, 12, 10668);
+    			add_location(div4, file$d, 256, 12, 10984);
     			attr_dev(div5, "class", "cc-progress svelte-1oao3hv");
-    			add_location(div5, file$d, 282, 14, 12258);
+    			add_location(div5, file$d, 290, 14, 12574);
     			attr_dev(div6, "class", "cc-card-footer svelte-1oao3hv");
-    			add_location(div6, file$d, 271, 12, 11710);
+    			add_location(div6, file$d, 279, 12, 12026);
     			attr_dev(div7, "class", "cc-card-flex svelte-1oao3hv");
-    			add_location(div7, file$d, 206, 10, 8680);
+    			add_location(div7, file$d, 214, 10, 8996);
     			attr_dev(div8, "id", div8_id_value = "cc_module_" + /*theModule*/ ctx[8].id);
     			attr_dev(div8, "class", "cc-card svelte-1oao3hv");
-    			add_location(div8, file$d, 205, 8, 8617);
+    			add_location(div8, file$d, 213, 8, 8933);
     			attr_dev(div9, "id", div9_id_value = "cc_module_" + /*theModule*/ ctx[8].id);
 
     			attr_dev(div9, "class", div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
     			? "cc-unclickable-card"
     			: "cc-clickable-card") + " svelte-1oao3hv"));
 
-    			add_location(div9, file$d, 197, 6, 8351);
+    			add_location(div9, file$d, 205, 6, 8667);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div9, anchor);
@@ -23601,7 +23601,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_each_block_1$3.name,
     		type: "each",
-    		source: "(197:4) {#each modules as theModule}",
+    		source: "(205:4) {#each modules as theModule}",
     		ctx
     	});
 
@@ -23893,7 +23893,7 @@ Do you wish to proceed?`).then(ok => {
     	return block;
     }
 
-    // (173:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
+    // (179:14) {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
     function create_if_block_1$9(ctx) {
     	let div1;
     	let div0;
@@ -23909,15 +23909,15 @@ Do you wish to proceed?`).then(ok => {
     			a = element("a");
     			t = text(t_value);
     			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
-    			attr_dev(a, "class", "gu-engage svelte-1oao3hv");
+    			attr_dev(a, "class", "claytons-gu-engage");
     			set_style(a, "text-decoration", "none");
-    			add_location(a, file$d, 178, 20, 7804);
+    			add_location(a, file$d, 186, 20, 8111);
     			attr_dev(div0, "class", "claytons-card-engage-button");
-    			attr_dev(div0, "style", "float:right;position:relative;color:rgba(30,58,138,1);border-radius:0.25rem;padding0.5rem 1rem 0.5rem 1rem;border:1px solid rgba(30,58,138,1)");
-    			add_location(div0, file$d, 174, 18, 7529);
+    			attr_dev(div0, "style", "float:right; position:relative; color:rgba(30,58,138,1); border-radius:0.25rem; padding 0.5rem 1rem 0.5rem 1rem; border:1px solid rgba(30,58,138,1);");
+    			add_location(div0, file$d, 180, 18, 7629);
     			attr_dev(div1, "class", "claytons-card-engage");
     			set_style(div1, "padding-right", "1rem");
-    			add_location(div1, file$d, 173, 16, 7446);
+    			add_location(div1, file$d, 179, 16, 7546);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -23941,7 +23941,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_1$9.name,
     		type: "if",
-    		source: "(173:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
+    		source: "(179:14) {#if $collectionsStore[\\\"MODULES\\\"][theModule.id].engage && !$collectionsStore[\\\"MODULES\\\"][theModule.id].fyi}",
     		ctx
     	});
 
@@ -24091,7 +24091,7 @@ Do you wish to proceed?`).then(ok => {
     			attr_dev(div5, "class", "claytons-card-footer");
     			set_style(div5, "height", "4rem");
     			set_style(div5, "position", "relative");
-    			add_location(div5, file$d, 171, 12, 7233);
+    			add_location(div5, file$d, 174, 12, 7289);
     			attr_dev(div6, "class", "claytons-card-flex");
     			set_style(div6, "overflow", "hidden");
     			set_style(div6, "flex-direction", "column");
