@@ -16,11 +16,13 @@ export function getCollectionCanvasModules(collection) {
 
   // collection store is not the Canvas modules (collections modules)
   const cStore = get(collectionsStore);
+  const figStore = get(configStore);
+  const editMode = figStore["editMode"];
   const collectionsModules = cStore["MODULES"];
   const canvasModules = get(modulesStore);
 
   // track the module ids we add to the list
-  let addedModuleIds = []
+  let addedModuleIds = [];
   canvasModules.forEach((module) => {
     // for each canvas module
     const moduleId = module.id;
@@ -28,23 +30,26 @@ export function getCollectionCanvasModules(collection) {
       // if the module belongs to the selected collection
       // push the canvas module onto the array
       modules.push(module);
-      addedModuleIds.push(moduleId)
+      addedModuleIds.push(moduleId);
     }
   });
 
   // Add in any FYI modules
-  /*
-  for (const moduleId in collectionsModules) {
-    // find the fyi module's not already added above, in this collection
-    if (collectionsModules[moduleId].collection === collection &&
+
+  if (!editMode) {
+    for (const moduleId in collectionsModules) {
+      // find the fyi module's not already added above, in this collection
+      if (
+        collectionsModules[moduleId].collection === collection &&
         !addedModuleIds.includes(moduleId) &&
         collectionsModules[moduleId].fyi
-        ) {
-      // if the module belongs to the selected collection
-      // push the canvas module onto the array
-      modules.push(collectionsModules[moduleId]);
+      ) {
+        // if the module belongs to the selected collection
+        // push the canvas module onto the array
+        modules.push(collectionsModules[moduleId]);
+      }
     }
-  } */
+  }
   return modules;
 }
 
@@ -99,6 +104,7 @@ export function getRepresentationModules(
   const config = get(configStore);
   const editMode = config["editMode"];
 
+  // is the problem that we're starting with the Canvas modules
   modules = getCollectionCanvasModules(collectionName);
   // add unallocated modules if,
   if (editMode) {
@@ -107,11 +113,13 @@ export function getRepresentationModules(
       modules = modules.concat(addUnallocatedModules(editMode));
     }
     //} else if ((claytons && unallocated) || !claytons) {
-  } else if (unallocated) {
-    // staff add if
-    // - claytons mode and unallocated is true
-    // - ! claytons
-    modules = modules.concat(addUnallocatedModules(editMode));
+  } else {
+    // for students, they should be able to see
+    // - modules not allocated to this collection, if unallocated is true
+    // - fyi modules, i.e. fyi is set
+    if (unallocated) {
+      modules = modules.concat(addUnallocatedModules(editMode));
+    }
   }
 
   return modules;
