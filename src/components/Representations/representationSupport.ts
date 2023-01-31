@@ -98,8 +98,8 @@ export function getRepresentationModules(
     if (unallocated && !claytons) {
       modules = modules.concat(addUnallocatedModules(editMode));
     }
-  //} else if ((claytons && unallocated) || !claytons) {
-  } else if ( unallocated) {
+    //} else if ((claytons && unallocated) || !claytons) {
+  } else if (unallocated) {
     // staff add if
     // - claytons mode and unallocated is true
     // - ! claytons
@@ -169,15 +169,15 @@ export function generateModuleDate(module) {
   return dateStr;
 }
 
-  function isNotEmptyDate(date: object): boolean {
-    return (
-      (date.hasOwnProperty("week") && date["week"] !== "") ||
-      (date.hasOwnProperty("month") && date["month"] !== "") ||
-      (date.hasOwnProperty("date") && date["date"] !== "") ||
-      (date.hasOwnProperty("day") && date["day"] !== "") ||
-      (date.hasOwnProperty("time") && date["time"] !== "")
-    );
-  }
+function isNotEmptyDate(date: object): boolean {
+  return (
+    (date.hasOwnProperty("week") && date["week"] !== "") ||
+    (date.hasOwnProperty("month") && date["month"] !== "") ||
+    (date.hasOwnProperty("date") && date["date"] !== "") ||
+    (date.hasOwnProperty("day") && date["day"] !== "") ||
+    (date.hasOwnProperty("time") && date["time"] !== "")
+  );
+}
 
 /**
  * @function modifyCanvasModulesList

@@ -5,7 +5,6 @@
  */
 /* jshint esversion: 6 */
 
-
 export default class UniversityDateCalendar {
   //private static instance: UniversityDateCalendar;
   private defaultPeriod: string;
@@ -212,56 +211,63 @@ export default class UniversityDateCalendar {
    */
 
   public getCurrentPeriod(courseCode) {
-    // does objectCourseCode contain a pair of brackets?
-    // if not, we've got a dev site or an org site
-    let brackets = courseCode.match(/\(([^)]+)\)/);
-    if (!brackets) {
-      // is it a DEV course
-      if (courseCode.startsWith("DEV_")) {
-        // use regex ^DEV_([^_]*)_([\d]*)$ to extract the course code and STRM
-        const regex = /^DEV_([^_]*)_([\d]*)$/;
-        const match = regex.exec(courseCode);
+    // Kludge for DEV courses that don't have brackets
+    if ( courseCode.match(/^DEV_/) ) {
+      courseCode = `(${courseCode})`
+    } 
+    // still doesn't start with ( use the default period
+    if ( !courseCode.startsWith("(")) {
+      return this.defaultPeriod
+    }
+    // extract out each of the individual courseIds in courseCode
+    // e.g. joined courses could have multiple
+    const courseIds = courseCode
+      .match(/\([^()]+\)(?=[^()]*$)/, "")[0]
+      .replace(/[\(\)]/g, "") // Remove parentheses from the remaining string
+      .split("/"); // break up the string on delineating /
+
+    // process each courseId separately and try to separate out two components
+    // courseCode - e.g. 1252QCA
+    // STRM - e.g. 3228
+    let courseIdsComponents = [];
+
+    for (let courseId of courseIds) {
+      // split up into the components
+      let components = courseId.split("_");
+
+      // want to identify the courseCode and the STRM
+      let obj = {};
+      for (let component of components) {
+        let match = component.match(/^[0-9][0-9][0-9][0-9][A-Z][A-Z][A-Z]$/);
         if (match) {
-          return match[2];
+          obj["courseCode"] = match[0];
+          continue;
         }
-        return this.defaultPeriod;
+        match = component.match(/^[0-9][0-9][0-9][0-9]$/);
+        if (match) {
+          obj["STRM"] = match[0];
+          continue;
+        }
       }
-      // no brackets, not a dev site, go with default, but create calendar
-      // before we leave
-      // TODO - this should check to see if Canvas Collections has a default
-      //  STRM defined
+      courseIdsComponents.push(obj);
+    }
+
+    // now get a unique list of the STRMs found in the courseCode
+    let STRMs = courseIdsComponents.map((obj) => obj.STRM);
+    // get unique list
+    STRMs = [...new Set(STRMs)];
+
+    if (STRMs.length === 0) {
+      // if there aren't any, use the default
       return this.defaultPeriod;
+    } else if (STRMs.length > 1) {
+      // more than one, report an error and use the first one
+      console.error(`Multiple STRMs found in courseCode: ${courseCode}`);
     }
-
-    // We've got brackets in course code, suggesting that it's a production course site
-    // Is it a standard course, possible formats are
-    // coursecode_strm
-    // coursecode_strm_campus
-
-    // use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
-    //const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
-    // match a course code - first group - any chars but _
-    // match four digits (strm)
-    // optionally other stuff
-    const canvasCourseCode = courseCode.match(/\(([^)]+)\)/)[1];
-    let regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
-    let match = regex.exec(canvasCourseCode);
-    if (match) {
-      return match[2];
-    } else {
-      // a chance we might have a joined course
-      // - Get the very first course code and extract the STRM from there
-      regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*\//;
-      match = regex.exec(canvasCourseCode);
-      if (match) {
-        return match[2];
-      }
-    }
-
-    return this.defaultPeriod;
+    // return the first STRM because there is at least one STRM
+    return STRMs[0];
   }
 }
-
 
 // Calendar for Griffith University
 // Period is represented by a four digit number - an STRM
@@ -332,6 +338,7 @@ const MONTHS = [
  */
 
 const CALENDAR = {
+  // 2023
   "3231": {
     0: { start: "2023-02-27", stop: "2023-03-03" },
     1: { start: "2023-03-06", stop: "2023-03-12" },
@@ -351,6 +358,7 @@ const CALENDAR = {
     15: { start: "2023-06-19", stop: "2023-07-25" },
     exam: { start: "2023-06-08", stop: "2023-06-17" },
   },
+  // 2022
   "3221": {
     0: { start: "2022-03-07", stop: "2022-03-13" },
     1: { start: "2022-03-14", stop: "2022-03-20" },

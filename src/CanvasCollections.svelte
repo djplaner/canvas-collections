@@ -63,6 +63,7 @@
     ccOn: false,
   };
 
+
   let collectionsConfigUrl = `/courses/${$configStore["courseId"]}/pages/canvas-collections-configuration`;
 
   let noCollections = true;
@@ -536,17 +537,6 @@
 </script>
 
 <svelte:window on:beforeunload={beforeUnload} />
-
-<!--<svelte:head>
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css"
-  />
-  <script
-    type="module"
-    src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"
-  ></script>
-</svelte:head> -->
 
 {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
   <div class="cc-switch-container">

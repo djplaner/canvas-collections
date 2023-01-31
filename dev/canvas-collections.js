@@ -993,51 +993,57 @@ var app = (function () {
          * In particular to handle the "YP" course ids
          */
         getCurrentPeriod(courseCode) {
-            // does objectCourseCode contain a pair of brackets?
-            // if not, we've got a dev site or an org site
-            let brackets = courseCode.match(/\(([^)]+)\)/);
-            if (!brackets) {
-                // is it a DEV course
-                if (courseCode.startsWith("DEV_")) {
-                    // use regex ^DEV_([^_]*)_([\d]*)$ to extract the course code and STRM
-                    const regex = /^DEV_([^_]*)_([\d]*)$/;
-                    const match = regex.exec(courseCode);
-                    if (match) {
-                        return match[2];
-                    }
-                    return this.defaultPeriod;
-                }
-                // no brackets, not a dev site, go with default, but create calendar
-                // before we leave
-                // TODO - this should check to see if Canvas Collections has a default
-                //  STRM defined
+            // Kludge for DEV courses that don't have brackets
+            if (courseCode.match(/^DEV_/)) {
+                courseCode = `(${courseCode})`;
+            }
+            // still doesn't start with ( use the default period
+            if (!courseCode.startsWith("(")) {
                 return this.defaultPeriod;
             }
-            // We've got brackets in course code, suggesting that it's a production course site
-            // Is it a standard course, possible formats are
-            // coursecode_strm
-            // coursecode_strm_campus
-            // use regex ^([^-]*)-([\d]*)-[^-]*-[^-]*$ to extract the course code and STRM
-            //const regex = /^([^-]*)-([\d]*)-[^-]*-[^-]*$/;
-            // match a course code - first group - any chars but _
-            // match four digits (strm)
-            // optionally other stuff
-            const canvasCourseCode = courseCode.match(/\(([^)]+)\)/)[1];
-            let regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*$/;
-            let match = regex.exec(canvasCourseCode);
-            if (match) {
-                return match[2];
-            }
-            else {
-                // a chance we might have a joined course
-                // - Get the very first course code and extract the STRM from there
-                regex = /^([^_]*)_([\d][\d][\d][\d])(_.*)*\//;
-                match = regex.exec(canvasCourseCode);
-                if (match) {
-                    return match[2];
+            // extract out each of the individual courseIds in courseCode
+            // e.g. joined courses could have multiple
+            const courseIds = courseCode
+                .match(/\([^()]+\)(?=[^()]*$)/, "")[0]
+                .replace(/[\(\)]/g, "") // Remove parentheses from the remaining string
+                .split("/"); // break up the string on delineating /
+            // process each courseId separately and try to separate out two components
+            // courseCode - e.g. 1252QCA
+            // STRM - e.g. 3228
+            let courseIdsComponents = [];
+            for (let courseId of courseIds) {
+                // split up into the components
+                let components = courseId.split("_");
+                // want to identify the courseCode and the STRM
+                let obj = {};
+                for (let component of components) {
+                    let match = component.match(/^[0-9][0-9][0-9][0-9][A-Z][A-Z][A-Z]$/);
+                    if (match) {
+                        obj["courseCode"] = match[0];
+                        continue;
+                    }
+                    match = component.match(/^[0-9][0-9][0-9][0-9]$/);
+                    if (match) {
+                        obj["STRM"] = match[0];
+                        continue;
+                    }
                 }
+                courseIdsComponents.push(obj);
             }
-            return this.defaultPeriod;
+            // now get a unique list of the STRMs found in the courseCode
+            let STRMs = courseIdsComponents.map((obj) => obj.STRM);
+            // get unique list
+            STRMs = [...new Set(STRMs)];
+            if (STRMs.length === 0) {
+                // if there aren't any, use the default
+                return this.defaultPeriod;
+            }
+            else if (STRMs.length > 1) {
+                // more than one, report an error and use the first one
+                console.error(`Multiple STRMs found in courseCode: ${courseCode}`);
+            }
+            // return the first STRM because there is at least one STRM
+            return STRMs[0];
         }
     }
     // Calendar for Griffith University
@@ -1105,6 +1111,7 @@ var app = (function () {
      *   3191 3195 319
      */
     const CALENDAR = {
+        // 2023
         "3231": {
             0: { start: "2023-02-27", stop: "2023-03-03" },
             1: { start: "2023-03-06", stop: "2023-03-12" },
@@ -1124,6 +1131,7 @@ var app = (function () {
             15: { start: "2023-06-19", stop: "2023-07-25" },
             exam: { start: "2023-06-08", stop: "2023-06-17" },
         },
+        // 2022
         "3221": {
             0: { start: "2022-03-07", stop: "2022-03-13" },
             1: { start: "2022-03-14", stop: "2022-03-20" },
@@ -34795,7 +34803,7 @@ Do you wish to proceed?`).then(ok => {
             wf_fetchData(`${this.baseApiUrl}/courses/${this.config.courseId}`).then((msg) => {
                 if (msg.status === 200) {
                     this.courseObject = msg.body;
-                    //this.generateSTRM();
+                    this.generateSTRM();
                     this.requestModuleInformation();
                 }
             });
@@ -44250,7 +44258,7 @@ Do you wish to proceed?`).then(ok => {
     /* src\CanvasCollections.svelte generated by Svelte v3.55.0 */
     const file = "src\\CanvasCollections.svelte";
 
-    // (470:0) {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
+    // (459:0) {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
     function create_if_block(ctx) {
     	let div2;
     	let div1;
@@ -44312,20 +44320,20 @@ Do you wish to proceed?`).then(ok => {
     			t8 = space();
     			if (if_block5) if_block5.c();
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 473, 8, 19904);
+    			add_location(div0, file, 462, 8, 19600);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 475, 11, 20048);
+    			add_location(i, file, 464, 11, 19744);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noreferrer");
     			attr_dev(a, "href", a_href_value = /*HELP*/ ctx[7].switchTitle.url);
-    			add_location(a, file, 474, 8, 19972);
+    			add_location(a, file, 463, 8, 19668);
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 472, 6, 19882);
-    			add_location(small, file, 499, 6, 20876);
+    			add_location(sl_tooltip, file, 461, 6, 19578);
+    			add_location(small, file, 488, 6, 20572);
     			attr_dev(div1, "class", "cc-switch-title svelte-dfjd7v");
-    			add_location(div1, file, 471, 4, 19845);
+    			add_location(div1, file, 460, 4, 19541);
     			attr_dev(div2, "class", "cc-switch-container svelte-dfjd7v");
-    			add_location(div2, file, 470, 2, 19806);
+    			add_location(div2, file, 459, 2, 19502);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -44467,14 +44475,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(470:0) {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}",
+    		source: "(459:0) {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (479:6) {#if allDataLoaded && !noCollections}
+    // (468:6) {#if allDataLoaded && !noCollections}
     function create_if_block_6(ctx) {
     	let i;
     	let i_class_value;
@@ -44490,7 +44498,7 @@ Do you wish to proceed?`).then(ok => {
     			? 'icon-mini-arrow-down'
     			: 'icon-mini-arrow-right') + " cc-module-icon"));
 
-    			add_location(i, file, 479, 8, 20180);
+    			add_location(i, file, 468, 8, 19876);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -44522,14 +44530,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_6.name,
     		type: "if",
-    		source: "(479:6) {#if allDataLoaded && !noCollections}",
+    		source: "(468:6) {#if allDataLoaded && !noCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (494:6) {:else}
+    // (483:6) {:else}
     function create_else_block(ctx) {
     	let sl_tooltip;
     	let div;
@@ -44544,11 +44552,11 @@ Do you wish to proceed?`).then(ok => {
     			t = space();
     			i = element("i");
     			attr_dev(div, "slot", "content");
-    			add_location(div, file, 495, 10, 20729);
+    			add_location(div, file, 484, 10, 20425);
     			attr_dev(i, "class", "icon-unpublish");
-    			add_location(i, file, 496, 10, 20804);
+    			add_location(i, file, 485, 10, 20500);
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 494, 8, 20705);
+    			add_location(sl_tooltip, file, 483, 8, 20401);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, sl_tooltip, anchor);
@@ -44568,14 +44576,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(494:6) {:else}",
+    		source: "(483:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (489:6) {#if isCollectionsOn(false, $collectionsStore["VISIBILITY"])}
+    // (478:6) {#if isCollectionsOn(false, $collectionsStore["VISIBILITY"])}
     function create_if_block_5(ctx) {
     	let sl_tooltip;
     	let div;
@@ -44590,11 +44598,11 @@ Do you wish to proceed?`).then(ok => {
     			t = space();
     			i = element("i");
     			attr_dev(div, "slot", "content");
-    			add_location(div, file, 490, 10, 20547);
+    			add_location(div, file, 479, 10, 20243);
     			attr_dev(i, "class", "icon-Solid icon-publish svelte-dfjd7v");
-    			add_location(i, file, 491, 10, 20620);
+    			add_location(i, file, 480, 10, 20316);
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 489, 8, 20523);
+    			add_location(sl_tooltip, file, 478, 8, 20219);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, sl_tooltip, anchor);
@@ -44614,14 +44622,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(489:6) {#if isCollectionsOn(false, $collectionsStore[\\\"VISIBILITY\\\"])}",
+    		source: "(478:6) {#if isCollectionsOn(false, $collectionsStore[\\\"VISIBILITY\\\"])}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (503:4) {#if noCollections}
+    // (492:4) {#if noCollections}
     function create_if_block_4(ctx) {
     	let label;
     	let sl_switch;
@@ -44634,10 +44642,10 @@ Do you wish to proceed?`).then(ok => {
     			sl_switch = element("sl-switch");
     			set_custom_element_data(sl_switch, "id", "cc-switch");
     			set_custom_element_data(sl_switch, "class", "svelte-dfjd7v");
-    			add_location(sl_switch, file, 504, 8, 21007);
+    			add_location(sl_switch, file, 493, 8, 20703);
     			attr_dev(label, "class", "cc-switch svelte-dfjd7v");
     			attr_dev(label, "for", "cc-switch");
-    			add_location(label, file, 503, 6, 20956);
+    			add_location(label, file, 492, 6, 20652);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, label, anchor);
@@ -44660,14 +44668,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(503:4) {#if noCollections}",
+    		source: "(492:4) {#if noCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (508:4) {#if allDataLoaded && $configStore["ccOn"]}
+    // (497:4) {#if allDataLoaded && $configStore["ccOn"]}
     function create_if_block_3(ctx) {
     	let div;
     	let button;
@@ -44689,9 +44697,9 @@ Do you wish to proceed?`).then(ok => {
 
     			attr_dev(button, "id", "cc-save-button");
     			button.disabled = button_disabled_value = !/*$configStore*/ ctx[8]["needToSaveCollections"];
-    			add_location(button, file, 509, 8, 21187);
+    			add_location(button, file, 498, 8, 20883);
     			attr_dev(div, "class", "cc-save svelte-dfjd7v");
-    			add_location(div, file, 508, 6, 21156);
+    			add_location(div, file, 497, 6, 20852);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -44737,14 +44745,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(508:4) {#if allDataLoaded && $configStore[\\\"ccOn\\\"]}",
+    		source: "(497:4) {#if allDataLoaded && $configStore[\\\"ccOn\\\"]}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (525:4) {#if !ccPublished && !noCollections}
+    // (514:4) {#if !ccPublished && !noCollections}
     function create_if_block_2(ctx) {
     	let div1;
     	let sl_tooltip;
@@ -44771,27 +44779,27 @@ Do you wish to proceed?`).then(ok => {
     			sl_button = element("sl-button");
     			sl_button.textContent = "unpublished";
     			attr_dev(div0, "slot", "content");
-    			add_location(div0, file, 527, 10, 21828);
+    			add_location(div0, file, 516, 10, 21524);
     			attr_dev(i, "class", "icon-question cc-module-icon");
-    			add_location(i, file, 533, 13, 22054);
+    			add_location(i, file, 522, 13, 21750);
     			attr_dev(a0, "id", "cc-about-unpublished");
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noreferrer");
     			attr_dev(a0, "href", a0_href_value = /*HELP*/ ctx[7].unpublished.url);
-    			add_location(a0, file, 528, 10, 21898);
+    			add_location(a0, file, 517, 10, 21594);
     			set_custom_element_data(sl_tooltip, "trigger", "hover focus");
     			set_custom_element_data(sl_tooltip, "class", "svelte-dfjd7v");
-    			add_location(sl_tooltip, file, 526, 8, 21782);
+    			add_location(sl_tooltip, file, 515, 8, 21478);
     			set_custom_element_data(sl_button, "pill", "");
     			set_custom_element_data(sl_button, "size", "small");
     			set_custom_element_data(sl_button, "variant", "warning");
-    			add_location(sl_button, file, 537, 10, 22221);
+    			add_location(sl_button, file, 526, 10, 21917);
     			attr_dev(a1, "href", /*collectionsConfigUrl*/ ctx[12]);
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noreferrer");
-    			add_location(a1, file, 536, 8, 22145);
+    			add_location(a1, file, 525, 8, 21841);
     			attr_dev(div1, "class", "cc-unpublished svelte-dfjd7v");
-    			add_location(div1, file, 525, 6, 21744);
+    			add_location(div1, file, 514, 6, 21440);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -44820,14 +44828,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(525:4) {#if !ccPublished && !noCollections}",
+    		source: "(514:4) {#if !ccPublished && !noCollections}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (542:4) {#if showConfig}
+    // (531:4) {#if showConfig}
     function create_if_block_1(ctx) {
     	let div;
     	let collectionsconfiguration;
@@ -44840,7 +44848,7 @@ Do you wish to proceed?`).then(ok => {
     			create_component(collectionsconfiguration.$$.fragment);
     			attr_dev(div, "id", "cc-config");
     			attr_dev(div, "class", "border border-trbl svelte-dfjd7v");
-    			add_location(div, file, 542, 6, 22360);
+    			add_location(div, file, 531, 6, 22056);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -44866,7 +44874,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(542:4) {#if showConfig}",
+    		source: "(531:4) {#if showConfig}",
     		ctx
     	});
 

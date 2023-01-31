@@ -11,6 +11,8 @@ export class CanvasDetails {
   public courseObject: object;
   public courseModules: object;
   public studyPeriod: string;
+  public courseCode: string;
+
 
   private config: object;
   //  private csrfToken: string;
@@ -46,9 +48,9 @@ export class CanvasDetails {
 
   /**
    * @method refreshCanvasDetails
-   * @param {Function} callBack 
+   * @param {Function} callBack
    */
-  refreshCanvasDetails(callBack : Function) {
+  refreshCanvasDetails(callBack: Function) {
     this.finishedCallBack = callBack;
     this.requestCourseObject();
   }
@@ -63,7 +65,7 @@ export class CanvasDetails {
       (msg) => {
         if (msg.status === 200) {
           this.courseObject = msg.body;
-          //this.generateSTRM();
+          this.generateSTRM()
           this.requestModuleInformation();
         }
       }
