@@ -528,6 +528,9 @@ export class CollectionsDetails {
         if (!module.hasOwnProperty("label")) {
           module.label = "";
         }
+        if (!module.hasOwnProperty("banner") || module.banner === "") {
+          module.banner="image"
+        }
         if (!module.hasOwnProperty("metadata")) {
           module.metadata = {};
         }
