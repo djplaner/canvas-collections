@@ -37,8 +37,11 @@
 
   const TIME_BETWEEN_SAVES = 10000;
   const TIME_BETWEEN_CANVAS_REFRESH = 15000;
-  const AUTO_SAVE = true;
-  const EXIT_SAVE = true;
+  const AUTO_SAVE_BASE = true;
+  const EXIT_SAVE_BASE = true;
+  // change these based on being in student view
+  let AUTO_SAVE = AUTO_SAVE_BASE;
+  let EXIT_SAVE = EXIT_SAVE_BASE;
 
   export let courseId: number;
   export let editMode: boolean;
@@ -59,6 +62,18 @@
     needToSaveCollections: false,
     ccOn: false,
   };
+
+
+  $: {
+    // modify save settings as we enter/leave student view
+    if (!$configStore['editMode']) {
+      AUTO_SAVE = false;
+      EXIT_SAVE = false;
+    } else {
+      AUTO_SAVE = AUTO_SAVE_BASE;
+      EXIT_SAVE = EXIT_SAVE_BASE;
+    }
+  }
 
   let collectionsConfigUrl = `/courses/${$configStore["courseId"]}/pages/canvas-collections-configuration`;
 
@@ -486,7 +501,7 @@
    * save them
    */
   function beforeUnload(event) {
-    if (EXIT_SAVE && $configStore["needToSaveCollections"]) {
+    if (EXIT_SAVE && $configStore["needToSaveCollections"] && !$configStore['editMode']) {
       event.preventDefault();
       collectionsDetails.saveCollections(
         $collectionsStore,
