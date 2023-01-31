@@ -37,15 +37,18 @@
   let numWeighting = 0;
   let numLearningOutcomes = 0;
 
-  let modules ;
-    $: {
+  let modules;
+  $: {
     modules = generateModulesData();
-  } 
+  }
 
   function generateDate(module) {
     if (module.date) {
-      if (module.date["week"] || (module.date["month"] && module.date["date"])) {
-        module.date = addCalendarDate(module.date,calendar);
+      if (
+        module.date["week"] ||
+        (module.date["month"] && module.date["date"])
+      ) {
+        module.date = addCalendarDate(module.date, calendar);
         return generateModuleDate(module);
       }
     }
@@ -195,7 +198,10 @@
               </div>
             </td>
             {#if numLearningOutcomes}
-              <td role="cell">
+              <td
+                role="cell"
+                style="display:table-cell; text-align: left; vertical-align:top"
+              >
                 <div style="margin:0; font-size:0.8rem">
                   <p>
                     {checkModuleMetaData(
@@ -228,7 +234,8 @@
           <th role="columnheader" scope="col"
             ><span class="cc-table-header-text">Description</span></th
           >
-          {#if numWeighting > 0 && !$configStore["editMode"]}
+          {#if numWeighting > 0}
+            <!-- && !$configStore["editMode"]} -->
             <th role="columnheader" scope="col"
               ><span class="cc-table-header-text">Weighting</span></th
             >
@@ -236,7 +243,8 @@
           <th role="columnheader" scope="col"
             ><span class="cc-table-header-text">Due Date</span></th
           >
-          {#if numLearningOutcomes > 0 && !$configStore["editMode"]}
+          {#if numLearningOutcomes > 0}
+            <!--&& !$configStore["editMode"]} -->
             <th role="columnheader" scope="col"
               ><span class="cc-table-header-text">Learning Outcomes</span></th
             >
@@ -275,7 +283,8 @@
                 </p>
               </div>
             </td>
-            {#if numWeighting > 0 && !$configStore["editMode"]}
+            {#if numWeighting > 0}
+              <!-- && !$configStore["editMode"]} -->
               <td role="cell">
                 <span class="cc-responsive-table__heading" aria-hidden="true"
                   >Weighting</span
@@ -301,7 +310,8 @@
                 </p>
               </div>
             </td>
-            {#if numLearningOutcomes > 0 && !$configStore["editMode"]}
+            {#if numLearningOutcomes > 0}
+              <!-- && !$configStore["editMode"]} -->
               <td role="cell">
                 <span class="cc-responsive-table__heading" aria-hidden="true"
                   >Learning Outcomes</span
