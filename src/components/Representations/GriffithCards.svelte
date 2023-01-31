@@ -77,6 +77,32 @@
       }
     }
   }
+
+  /**
+   * @function isUnPublishedUnallocated
+   * @param moduleId - of the current module
+   * @returns true if the module is unpublished or unallocated & if that information
+   * should be shown.  In particular, is used to figure out if to show a small
+   * message on a card about unpublished/unallocated
+   * 
+   * Conditions include
+   * - only staff (editMode) should see unpublished/unallocated messages
+   * - students (!editMode) should not see unpublished/unallocated messages
+   */
+  function isUnPublishedUnallocated(moduleId) {
+    if (!$configStore["editMode"]) {
+      return false
+    }
+
+    // is it unpublished
+    if (!$collectionsStore["MODULES"][moduleId].published ) {
+      return true
+    } 
+
+    // is it unallocated
+    return $collectionsStore["MODULES"][moduleId].collection !== collection
+  }
+
 </script>
 
 {#if claytons}
@@ -265,7 +291,7 @@
                   </span>
                 </div>
               {/if}
-              {#if !$collectionsStore["MODULES"][theModule.id].published || ($configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection)}
+              {#if isUnPublishedUnallocated(theModule.id)}
                 <div class="cc-card-published">
                   {#if !$collectionsStore["MODULES"][theModule.id].published}
                     Unpublished.
@@ -648,7 +674,7 @@
 
   .cc-card-published {
     position: absolute;
-    bottom: 0;
+    top: 0;
     background: rgba(255, 0, 0, 0.75);
     color: white;
     font-size: x-small;

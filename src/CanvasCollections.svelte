@@ -39,7 +39,7 @@
   debug("______________ CanvasCollections.svelte _______________");
 
   const TIME_BETWEEN_SAVES = 10000;
-  const TIME_BETWEEN_CANVAS_REFRESH = 1500000;
+  const TIME_BETWEEN_CANVAS_REFRESH = 15000;
   const AUTO_SAVE = true;
   const EXIT_SAVE = true;
 
