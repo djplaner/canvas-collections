@@ -78,7 +78,7 @@
 
 <svelte:component
   this={representationComponent}
-  collection={$configStore["currentCollection"]}
+  collection={collectionName}
   {claytons}
 />
 

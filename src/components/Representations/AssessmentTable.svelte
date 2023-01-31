@@ -33,21 +33,20 @@
   let numWeighting = 0;
   let numLearningOutcomes = 0;
 
-  // kludge to test reactive nature
-  // set collection to currentCollection
-  // TODO - this isn't right, the prop isn't being dynamically updated
-  //collection = $configStore['currentCollection'];
+  let modules = generateModulesData();
+/*  $: {
+  } */
 
-  let modules;
-  $: {
-    modules = getRepresentationModules(
+
+  function generateModulesData() {
+    let modulesData = getRepresentationModules(
       collection,
       claytons,
       $collectionsStore["COLLECTIONS"][collection]["unallocated"]
     );
 
     // count the number of modules that have weighting and learning outcomes
-    modules.forEach((module) => {
+    modulesData.forEach((module) => {
       if (
         $collectionsStore["MODULES"][module.id].hasOwnProperty("metadata") &&
         $collectionsStore["MODULES"][module.id]["metadata"].hasOwnProperty(
@@ -69,6 +68,8 @@
         numLearningOutcomes++;
       }
     });
+
+    return modulesData
   }
 </script>
 

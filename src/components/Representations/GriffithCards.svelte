@@ -31,9 +31,11 @@
   };
 
   // calculate the moduleIds belonging to collection
-  let modules;
-  $: {
-    modules = getRepresentationModules(
+  let modules = generateModulesData()
+
+  function generateModulesData() {
+
+    return getRepresentationModules(
       collection,
       claytons,
       $collectionsStore["COLLECTIONS"][collection]["unallocated"]

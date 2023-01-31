@@ -22641,13 +22641,13 @@ Do you wish to proceed?`).then(ok => {
 
     function get_each_context_1$3(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[8] = list[i];
+    	child_ctx[9] = list[i];
     	return child_ctx;
     }
 
     function get_each_context$9(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[8] = list[i];
+    	child_ctx[9] = list[i];
     	return child_ctx;
     }
 
@@ -22655,7 +22655,7 @@ Do you wish to proceed?`).then(ok => {
     function create_else_block_2$1(ctx) {
     	let div;
     	let current;
-    	let each_value_1 = /*modules*/ ctx[3];
+    	let each_value_1 = /*modules*/ ctx[6];
     	validate_each_argument(each_value_1);
     	let each_blocks = [];
 
@@ -22676,7 +22676,7 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			attr_dev(div, "class", "cc-card-interface cc-representation svelte-3dolfn");
-    			add_location(div, file$d, 214, 2, 8819);
+    			add_location(div, file$d, 214, 2, 8868);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -22689,7 +22689,7 @@ Do you wish to proceed?`).then(ok => {
     		},
     		p: function update(ctx, dirty) {
     			if (dirty & /*modules, $collectionsStore, cardClick, getModuleUrl, deLabelModuleName, $configStore, collection, isUnPublishedUnallocated, calendar, BANNER_TRANSLATION*/ 254) {
-    				each_value_1 = /*modules*/ ctx[3];
+    				each_value_1 = /*modules*/ ctx[6];
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -22755,7 +22755,7 @@ Do you wish to proceed?`).then(ok => {
     function create_if_block$a(ctx) {
     	let div;
     	let current;
-    	let each_value = /*modules*/ ctx[3];
+    	let each_value = /*modules*/ ctx[6];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -22778,7 +22778,7 @@ Do you wish to proceed?`).then(ok => {
     			set_style(div, "flex-wrap", "wrap");
     			set_style(div, "display", "flex");
     			set_style(div, "margin-top", "0.5em");
-    			add_location(div, file$d, 75, 2, 2644);
+    			add_location(div, file$d, 75, 2, 2693);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -22790,8 +22790,8 @@ Do you wish to proceed?`).then(ok => {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*modules, getModuleUrl, $collectionsStore, deLabelModuleName, calendar, BANNER_TRANSLATION, claytons*/ 109) {
-    				each_value = /*modules*/ ctx[3];
+    			if (dirty & /*modules, getModuleUrl, $collectionsStore, deLabelModuleName, calendar, BANNER_TRANSLATION, claytons*/ 117) {
+    				each_value = /*modules*/ ctx[6];
     				validate_each_argument(each_value);
     				let i;
 
@@ -22857,26 +22857,21 @@ Do you wish to proceed?`).then(ok => {
     function create_if_block_13(ctx) {
     	let a;
     	let t;
-    	let a_href_value;
 
     	const block = {
     		c: function create() {
     			a = element("a");
     			t = text(" ");
     			attr_dev(a, "class", "cc-card-link svelte-3dolfn");
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
+    			attr_dev(a, "href", getModuleUrl(/*theModule*/ ctx[9].id));
     			attr_dev(a, "style", "");
-    			add_location(a, file$d, 228, 16, 9433);
+    			add_location(a, file$d, 228, 16, 9482);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
     			append_dev(a, t);
     		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
-    				attr_dev(a, "href", a_href_value);
-    			}
-    		},
+    		p: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(a);
     		}
@@ -22899,7 +22894,7 @@ Do you wish to proceed?`).then(ok => {
     	let span;
 
     	function select_block_type_3(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText) return create_if_block_12$1;
+    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText) return create_if_block_12$1;
     		return create_else_block_3;
     	}
 
@@ -22912,9 +22907,9 @@ Do you wish to proceed?`).then(ok => {
     			span = element("span");
     			if_block.c();
     			attr_dev(span, "class", "cc-fyi-text");
-    			add_location(span, file$d, 247, 18, 10247);
+    			add_location(span, file$d, 247, 18, 10296);
     			attr_dev(div, "class", "cc-card-fyi svelte-3dolfn");
-    			add_location(div, file$d, 246, 16, 10202);
+    			add_location(div, file$d, 246, 16, 10251);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -22982,7 +22977,7 @@ Do you wish to proceed?`).then(ok => {
     // (249:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
     function create_if_block_12$1(ctx) {
     	let html_tag;
-    	let raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "";
+    	let raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText + "";
     	let html_anchor;
 
     	const block = {
@@ -22996,7 +22991,7 @@ Do you wish to proceed?`).then(ok => {
     			insert_dev(target, html_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 12 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "")) html_tag.p(raw_value);
+    			if (dirty & /*$collectionsStore*/ 4 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText + "")) html_tag.p(raw_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(html_anchor);
@@ -23019,8 +23014,8 @@ Do you wish to proceed?`).then(ok => {
     function create_if_block_8$1(ctx) {
     	let div;
     	let t;
-    	let if_block0 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].published && create_if_block_10$1(ctx);
-    	let if_block1 = /*$configStore*/ ctx[4]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].collection !== /*collection*/ ctx[1] && create_if_block_9$1(ctx);
+    	let if_block0 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].published && create_if_block_10$1(ctx);
+    	let if_block1 = /*$configStore*/ ctx[3]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].collection !== /*collection*/ ctx[1] && create_if_block_9$1(ctx);
 
     	const block = {
     		c: function create() {
@@ -23029,7 +23024,7 @@ Do you wish to proceed?`).then(ok => {
     			t = space();
     			if (if_block1) if_block1.c();
     			attr_dev(div, "class", "cc-card-published svelte-3dolfn");
-    			add_location(div, file$d, 257, 16, 10669);
+    			add_location(div, file$d, 257, 16, 10718);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -23038,7 +23033,7 @@ Do you wish to proceed?`).then(ok => {
     			if (if_block1) if_block1.m(div, null);
     		},
     		p: function update(ctx, dirty) {
-    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].published) {
+    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].published) {
     				if (if_block0) ; else {
     					if_block0 = create_if_block_10$1(ctx);
     					if_block0.c();
@@ -23049,7 +23044,7 @@ Do you wish to proceed?`).then(ok => {
     				if_block0 = null;
     			}
 
-    			if (/*$configStore*/ ctx[4]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].collection !== /*collection*/ ctx[1]) {
+    			if (/*$configStore*/ ctx[3]["editMode"] && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].collection !== /*collection*/ ctx[1]) {
     				if (if_block1) ; else {
     					if_block1 = create_if_block_9$1(ctx);
     					if_block1.c();
@@ -23138,9 +23133,8 @@ Do you wish to proceed?`).then(ok => {
     	let div0;
     	let a;
     	let t0;
-    	let a_href_value;
     	let t1;
-    	let t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engageText + "";
+    	let t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engageText + "";
     	let t2;
 
     	const block = {
@@ -23151,13 +23145,13 @@ Do you wish to proceed?`).then(ok => {
     			t0 = text(" ");
     			t1 = space();
     			t2 = text(t2_value);
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
+    			attr_dev(a, "href", getModuleUrl(/*theModule*/ ctx[9].id));
     			attr_dev(a, "class", "gu-engage svelte-3dolfn");
-    			add_location(a, file$d, 294, 20, 12425);
+    			add_location(a, file$d, 294, 20, 12474);
     			attr_dev(div0, "class", "cc-card-engage-button svelte-3dolfn");
-    			add_location(div0, file$d, 293, 18, 12368);
+    			add_location(div0, file$d, 293, 18, 12417);
     			attr_dev(div1, "class", "cc-card-engage svelte-3dolfn");
-    			add_location(div1, file$d, 292, 16, 12320);
+    			add_location(div1, file$d, 292, 16, 12369);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -23168,11 +23162,7 @@ Do you wish to proceed?`).then(ok => {
     			append_dev(div0, t2);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
-    				attr_dev(a, "href", a_href_value);
-    			}
-
-    			if (dirty & /*$collectionsStore, modules*/ 12 && t2_value !== (t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engageText + "")) set_data_dev(t2, t2_value);
+    			if (dirty & /*$collectionsStore*/ 4 && t2_value !== (t2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engageText + "")) set_data_dev(t2, t2_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div1);
@@ -23202,43 +23192,39 @@ Do you wish to proceed?`).then(ok => {
     	let datewidget;
     	let t2;
     	let t3;
-    	let show_if = /*isUnPublishedUnallocated*/ ctx[7](/*theModule*/ ctx[8].id);
-    	let div0_data_moduleid_value;
+    	let show_if = /*isUnPublishedUnallocated*/ ctx[7](/*theModule*/ ctx[9].id);
     	let t4;
     	let div4;
     	let div3;
     	let div1;
     	let span;
     	let html_tag;
-    	let raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].label + "";
+    	let raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].label + "";
     	let t5;
-    	let t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].actualNum + "";
+    	let t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].actualNum + "";
     	let t6;
     	let t7;
     	let h3;
-    	let raw1_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id]) + "";
-    	let h3_data_moduleid_value;
+    	let raw1_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id]) + "";
     	let t8;
     	let div2;
-    	let raw2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].description + "";
+    	let raw2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].description + "";
     	let div3_class_value;
     	let t9;
     	let div6;
     	let t10;
     	let div5;
-    	let div8_id_value;
     	let t11;
-    	let div9_id_value;
     	let div9_class_value;
     	let current;
     	let mounted;
     	let dispose;
-    	let if_block0 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_13(ctx);
-    	var switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].banner];
+    	let if_block0 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_13(ctx);
+    	var switch_value = /*BANNER_TRANSLATION*/ ctx[5][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].banner];
 
     	function switch_props(ctx) {
     		return {
-    			props: { moduleId: /*theModule*/ ctx[8].id },
+    			props: { moduleId: /*theModule*/ ctx[9].id },
     			$$inline: true
     		};
     	}
@@ -23249,16 +23235,16 @@ Do you wish to proceed?`).then(ok => {
 
     	datewidget = new DateWidget({
     			props: {
-    				date: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].date,
-    				dateHide: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].dateHide,
-    				calendar: /*calendar*/ ctx[5]
+    				date: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].date,
+    				dateHide: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].dateHide,
+    				calendar: /*calendar*/ ctx[4]
     			},
     			$$inline: true
     		});
 
-    	let if_block1 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText !== "" && create_if_block_11$1(ctx);
+    	let if_block1 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText !== "" && create_if_block_11$1(ctx);
     	let if_block2 = show_if && create_if_block_8$1(ctx);
-    	let if_block3 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_7$2(ctx);
+    	let if_block3 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_7$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -23294,42 +23280,42 @@ Do you wish to proceed?`).then(ok => {
     			div5 = element("div");
     			t11 = space();
     			attr_dev(div0, "class", "cc-card-banner-container svelte-3dolfn");
-    			attr_dev(div0, "data-moduleid", div0_data_moduleid_value = /*theModule*/ ctx[8].id);
-    			add_location(div0, file$d, 226, 12, 9279);
+    			attr_dev(div0, "data-moduleid", /*theModule*/ ctx[9].id);
+    			add_location(div0, file$d, 226, 12, 9328);
     			html_tag.a = t5;
     			attr_dev(span, "class", "cc-card-label svelte-3dolfn");
-    			add_location(span, file$d, 275, 18, 11469);
+    			add_location(span, file$d, 275, 18, 11518);
     			attr_dev(h3, "class", "cc-card-title svelte-3dolfn");
-    			attr_dev(h3, "data-moduleid", h3_data_moduleid_value = /*theModule*/ ctx[8].id);
-    			add_location(h3, file$d, 279, 18, 11698);
+    			attr_dev(h3, "data-moduleid", /*theModule*/ ctx[9].id);
+    			add_location(h3, file$d, 279, 18, 11747);
     			attr_dev(div1, "class", "cc-card-label svelte-3dolfn");
-    			add_location(div1, file$d, 274, 16, 11422);
+    			add_location(div1, file$d, 274, 16, 11471);
     			attr_dev(div2, "class", "cc-card-description svelte-3dolfn");
-    			add_location(div2, file$d, 285, 16, 11957);
+    			add_location(div2, file$d, 285, 16, 12006);
 
-    			attr_dev(div3, "class", div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
+    			attr_dev(div3, "class", div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi
     			? "cc-card-content"
     			: "cc-unclickable-card-content") + " svelte-3dolfn"));
 
-    			add_location(div3, file$d, 269, 14, 11221);
+    			add_location(div3, file$d, 269, 14, 11270);
     			attr_dev(div4, "class", "cc-card-content-height svelte-3dolfn");
-    			add_location(div4, file$d, 267, 12, 11110);
+    			add_location(div4, file$d, 267, 12, 11159);
     			attr_dev(div5, "class", "cc-progress svelte-3dolfn");
-    			add_location(div5, file$d, 301, 14, 12700);
+    			add_location(div5, file$d, 301, 14, 12749);
     			attr_dev(div6, "class", "cc-card-footer svelte-3dolfn");
-    			add_location(div6, file$d, 290, 12, 12152);
+    			add_location(div6, file$d, 290, 12, 12201);
     			attr_dev(div7, "class", "cc-card-flex svelte-3dolfn");
-    			add_location(div7, file$d, 225, 10, 9239);
-    			attr_dev(div8, "id", div8_id_value = "cc_module_" + /*theModule*/ ctx[8].id);
+    			add_location(div7, file$d, 225, 10, 9288);
+    			attr_dev(div8, "id", "cc_module_" + /*theModule*/ ctx[9].id);
     			attr_dev(div8, "class", "cc-card svelte-3dolfn");
-    			add_location(div8, file$d, 224, 8, 9176);
-    			attr_dev(div9, "id", div9_id_value = "cc_module_" + /*theModule*/ ctx[8].id);
+    			add_location(div8, file$d, 224, 8, 9225);
+    			attr_dev(div9, "id", "cc_module_" + /*theModule*/ ctx[9].id);
 
-    			attr_dev(div9, "class", div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
+    			attr_dev(div9, "class", div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi
     			? "cc-unclickable-card"
     			: "cc-clickable-card") + " svelte-3dolfn"));
 
-    			add_location(div9, file$d, 216, 6, 8910);
+    			add_location(div9, file$d, 216, 6, 8959);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div9, anchor);
@@ -23377,7 +23363,7 @@ Do you wish to proceed?`).then(ok => {
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
+    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
@@ -23390,10 +23376,7 @@ Do you wish to proceed?`).then(ok => {
     				if_block0 = null;
     			}
 
-    			const switch_instance_changes = {};
-    			if (dirty & /*modules*/ 8) switch_instance_changes.moduleId = /*theModule*/ ctx[8].id;
-
-    			if (switch_value !== (switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].banner])) {
+    			if (switch_value !== (switch_value = /*BANNER_TRANSLATION*/ ctx[5][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].banner])) {
     				if (switch_instance) {
     					group_outros();
     					const old_component = switch_instance;
@@ -23413,16 +23396,14 @@ Do you wish to proceed?`).then(ok => {
     				} else {
     					switch_instance = null;
     				}
-    			} else if (switch_value) {
-    				switch_instance.$set(switch_instance_changes);
     			}
 
     			const datewidget_changes = {};
-    			if (dirty & /*$collectionsStore, modules*/ 12) datewidget_changes.date = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].date;
-    			if (dirty & /*$collectionsStore, modules*/ 12) datewidget_changes.dateHide = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].dateHide;
+    			if (dirty & /*$collectionsStore*/ 4) datewidget_changes.date = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].date;
+    			if (dirty & /*$collectionsStore*/ 4) datewidget_changes.dateHide = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].dateHide;
     			datewidget.$set(datewidget_changes);
 
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText !== "") {
+    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText !== "") {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
@@ -23435,40 +23416,17 @@ Do you wish to proceed?`).then(ok => {
     				if_block1 = null;
     			}
 
-    			if (dirty & /*modules*/ 8) show_if = /*isUnPublishedUnallocated*/ ctx[7](/*theModule*/ ctx[8].id);
-
-    			if (show_if) {
-    				if (if_block2) {
-    					if_block2.p(ctx, dirty);
-    				} else {
-    					if_block2 = create_if_block_8$1(ctx);
-    					if_block2.c();
-    					if_block2.m(div0, null);
-    				}
-    			} else if (if_block2) {
-    				if_block2.d(1);
-    				if_block2 = null;
-    			}
-
-    			if (!current || dirty & /*modules*/ 8 && div0_data_moduleid_value !== (div0_data_moduleid_value = /*theModule*/ ctx[8].id)) {
-    				attr_dev(div0, "data-moduleid", div0_data_moduleid_value);
-    			}
-
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw0_value !== (raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].label + "")) html_tag.p(raw0_value);
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && t6_value !== (t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].actualNum + "")) set_data_dev(t6, t6_value);
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw1_value !== (raw1_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id]) + "")) h3.innerHTML = raw1_value;
-    			if (!current || dirty & /*modules*/ 8 && h3_data_moduleid_value !== (h3_data_moduleid_value = /*theModule*/ ctx[8].id)) {
-    				attr_dev(h3, "data-moduleid", h3_data_moduleid_value);
-    			}
-
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw2_value !== (raw2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].description + "")) div2.innerHTML = raw2_value;
-    			if (!current || dirty & /*$collectionsStore, modules*/ 12 && div3_class_value !== (div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
+    			if (show_if) if_block2.p(ctx, dirty);
+    			if ((!current || dirty & /*$collectionsStore*/ 4) && raw0_value !== (raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].label + "")) html_tag.p(raw0_value);
+    			if ((!current || dirty & /*$collectionsStore*/ 4) && t6_value !== (t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].actualNum + "")) set_data_dev(t6, t6_value);
+    			if ((!current || dirty & /*$collectionsStore*/ 4) && raw1_value !== (raw1_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id]) + "")) h3.innerHTML = raw1_value;			if ((!current || dirty & /*$collectionsStore*/ 4) && raw2_value !== (raw2_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].description + "")) div2.innerHTML = raw2_value;
+    			if (!current || dirty & /*$collectionsStore*/ 4 && div3_class_value !== (div3_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi
     			? "cc-card-content"
     			: "cc-unclickable-card-content") + " svelte-3dolfn"))) {
     				attr_dev(div3, "class", div3_class_value);
     			}
 
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
+    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi) {
     				if (if_block3) {
     					if_block3.p(ctx, dirty);
     				} else {
@@ -23481,15 +23439,7 @@ Do you wish to proceed?`).then(ok => {
     				if_block3 = null;
     			}
 
-    			if (!current || dirty & /*modules*/ 8 && div8_id_value !== (div8_id_value = "cc_module_" + /*theModule*/ ctx[8].id)) {
-    				attr_dev(div8, "id", div8_id_value);
-    			}
-
-    			if (!current || dirty & /*modules*/ 8 && div9_id_value !== (div9_id_value = "cc_module_" + /*theModule*/ ctx[8].id)) {
-    				attr_dev(div9, "id", div9_id_value);
-    			}
-
-    			if (!current || dirty & /*$collectionsStore, modules*/ 12 && div9_class_value !== (div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
+    			if (!current || dirty & /*$collectionsStore*/ 4 && div9_class_value !== (div9_class_value = "" + (null_to_empty(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi
     			? "cc-unclickable-card"
     			: "cc-clickable-card") + " svelte-3dolfn"))) {
     				attr_dev(div9, "class", div9_class_value);
@@ -23534,26 +23484,21 @@ Do you wish to proceed?`).then(ok => {
     function create_if_block_6$3(ctx) {
     	let a;
     	let t;
-    	let a_href_value;
 
     	const block = {
     		c: function create() {
     			a = element("a");
     			t = text(" ");
     			attr_dev(a, "class", "claytons-card-link");
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
+    			attr_dev(a, "href", getModuleUrl(/*theModule*/ ctx[9].id));
     			attr_dev(a, "style", "position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;");
-    			add_location(a, file$d, 97, 16, 3590);
+    			add_location(a, file$d, 97, 16, 3639);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
     			append_dev(a, t);
     		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
-    				attr_dev(a, "href", a_href_value);
-    			}
-    		},
+    		p: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(a);
     		}
@@ -23576,7 +23521,7 @@ Do you wish to proceed?`).then(ok => {
     	let span;
 
     	function select_block_type_1(ctx, dirty) {
-    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText) return create_if_block_5$3;
+    		if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText) return create_if_block_5$3;
     		return create_else_block_1$2;
     	}
 
@@ -23589,7 +23534,7 @@ Do you wish to proceed?`).then(ok => {
     			span = element("span");
     			if_block.c();
     			attr_dev(span, "class", "claytons-fyi-text");
-    			add_location(span, file$d, 123, 18, 4836);
+    			add_location(span, file$d, 123, 18, 4885);
     			attr_dev(div, "class", "claytons-card-fyi");
     			set_style(div, "position", "absolute");
     			set_style(div, "background", "rgba(0,0,0,0.75)");
@@ -23598,7 +23543,7 @@ Do you wish to proceed?`).then(ok => {
     			set_style(div, "padding", "0.25rem");
     			set_style(div, "font-size", "x-small");
     			set_style(div, "text-align", "center");
-    			add_location(div, file$d, 119, 16, 4598);
+    			add_location(div, file$d, 119, 16, 4647);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -23666,7 +23611,7 @@ Do you wish to proceed?`).then(ok => {
     // (125:20) {#if $collectionsStore["MODULES"][theModule.id].fyiText}
     function create_if_block_5$3(ctx) {
     	let html_tag;
-    	let raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "";
+    	let raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText + "";
     	let html_anchor;
 
     	const block = {
@@ -23680,7 +23625,7 @@ Do you wish to proceed?`).then(ok => {
     			insert_dev(target, html_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 12 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText + "")) html_tag.p(raw_value);
+    			if (dirty & /*$collectionsStore*/ 4 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText + "")) html_tag.p(raw_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(html_anchor);
@@ -23703,26 +23648,21 @@ Do you wish to proceed?`).then(ok => {
     function create_if_block_3$5(ctx) {
     	let a;
     	let t;
-    	let a_href_value;
 
     	const block = {
     		c: function create() {
     			a = element("a");
     			t = text(" ");
     			attr_dev(a, "class", "claytons-card-link");
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
+    			attr_dev(a, "href", getModuleUrl(/*theModule*/ ctx[9].id));
     			attr_dev(a, "style", "position:absolute;:width:100%;height:100%;top:0;left:0;z-index:1;text-decoration:none;");
-    			add_location(a, file$d, 138, 16, 5447);
+    			add_location(a, file$d, 138, 16, 5496);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
     			append_dev(a, t);
     		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
-    				attr_dev(a, "href", a_href_value);
-    			}
-    		},
+    		p: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(a);
     		}
@@ -23742,7 +23682,7 @@ Do you wish to proceed?`).then(ok => {
     // (174:20) {:else}
     function create_else_block$5(ctx) {
     	let html_tag;
-    	let raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id]) + "";
+    	let raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id]) + "";
     	let html_anchor;
 
     	const block = {
@@ -23756,7 +23696,7 @@ Do you wish to proceed?`).then(ok => {
     			insert_dev(target, html_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 12 && raw_value !== (raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id]) + "")) html_tag.p(raw_value);
+    			if (dirty & /*$collectionsStore*/ 4 && raw_value !== (raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id]) + "")) html_tag.p(raw_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(html_anchor);
@@ -23778,27 +23718,22 @@ Do you wish to proceed?`).then(ok => {
     // (164:20) {#if !$collectionsStore["MODULES"][theModule.id].fyi}
     function create_if_block_2$8(ctx) {
     	let a;
-    	let raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id]) + "";
-    	let a_href_value;
+    	let raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id]) + "";
 
     	const block = {
     		c: function create() {
     			a = element("a");
     			attr_dev(a, "class", "claytons-card-link");
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
+    			attr_dev(a, "href", getModuleUrl(/*theModule*/ ctx[9].id));
     			set_style(a, "text-decoration", "none");
-    			add_location(a, file$d, 164, 22, 6831);
+    			add_location(a, file$d, 164, 22, 6880);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
     			a.innerHTML = raw_value;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 12 && raw_value !== (raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id]) + "")) a.innerHTML = raw_value;
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
-    				attr_dev(a, "href", a_href_value);
-    			}
-    		},
+    			if (dirty & /*$collectionsStore*/ 4 && raw_value !== (raw_value = deLabelModuleName(/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id]) + "")) a.innerHTML = raw_value;		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(a);
     		}
@@ -23820,9 +23755,8 @@ Do you wish to proceed?`).then(ok => {
     	let div1;
     	let div0;
     	let a;
-    	let t_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engageText + "";
+    	let t_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engageText + "";
     	let t;
-    	let a_href_value;
 
     	const block = {
     		c: function create() {
@@ -23830,10 +23764,10 @@ Do you wish to proceed?`).then(ok => {
     			div0 = element("div");
     			a = element("a");
     			t = text(t_value);
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*theModule*/ ctx[8].id));
+    			attr_dev(a, "href", getModuleUrl(/*theModule*/ ctx[9].id));
     			attr_dev(a, "class", "claytons-gu-engage");
     			set_style(a, "text-decoration", "none");
-    			add_location(a, file$d, 197, 20, 8354);
+    			add_location(a, file$d, 197, 20, 8403);
     			attr_dev(div0, "class", "claytons-card-engage-button");
     			set_style(div0, "float", "right");
     			set_style(div0, "position", "relative");
@@ -23841,10 +23775,10 @@ Do you wish to proceed?`).then(ok => {
     			set_style(div0, "border-radius", "0.25rem");
     			set_style(div0, "padding", "0.5rem 1rem 0.5rem 1rem");
     			set_style(div0, "border", "1px solid rgba(30,58,138,1)");
-    			add_location(div0, file$d, 194, 18, 8091);
+    			add_location(div0, file$d, 194, 18, 8140);
     			attr_dev(div1, "class", "claytons-card-engage");
     			set_style(div1, "padding-right", "1rem");
-    			add_location(div1, file$d, 193, 16, 8008);
+    			add_location(div1, file$d, 193, 16, 8057);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -23853,11 +23787,7 @@ Do you wish to proceed?`).then(ok => {
     			append_dev(a, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 12 && t_value !== (t_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engageText + "")) set_data_dev(t, t_value);
-
-    			if (dirty & /*modules*/ 8 && a_href_value !== (a_href_value = getModuleUrl(/*theModule*/ ctx[8].id))) {
-    				attr_dev(a, "href", a_href_value);
-    			}
+    			if (dirty & /*$collectionsStore*/ 4 && t_value !== (t_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engageText + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div1);
@@ -23886,7 +23816,6 @@ Do you wish to proceed?`).then(ok => {
     	let t1;
     	let datewidget;
     	let t2;
-    	let div0_data_moduleid_value;
     	let t3;
     	let div4;
     	let t4;
@@ -23894,30 +23823,27 @@ Do you wish to proceed?`).then(ok => {
     	let div1;
     	let span;
     	let html_tag;
-    	let raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].label + "";
+    	let raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].label + "";
     	let t5;
-    	let t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].actualNum + "";
+    	let t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].actualNum + "";
     	let t6;
     	let t7;
     	let h3;
-    	let h3_data_moduleid_value;
     	let t8;
     	let div2;
-    	let raw1_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].description + "";
+    	let raw1_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].description + "";
     	let div3_class_value;
     	let t9;
     	let div5;
-    	let div7_id_value;
     	let t10;
-    	let div8_id_value;
     	let current;
-    	let if_block0 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_6$3(ctx);
-    	var switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].banner];
+    	let if_block0 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_6$3(ctx);
+    	var switch_value = /*BANNER_TRANSLATION*/ ctx[5][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].banner];
 
     	function switch_props(ctx) {
     		return {
     			props: {
-    				moduleId: /*theModule*/ ctx[8].id,
+    				moduleId: /*theModule*/ ctx[9].id,
     				claytons: /*claytons*/ ctx[0]
     			},
     			$$inline: true
@@ -23930,24 +23856,24 @@ Do you wish to proceed?`).then(ok => {
 
     	datewidget = new DateWidget({
     			props: {
-    				date: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].date,
-    				dateHide: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].dateHide,
-    				calendar: /*calendar*/ ctx[5]
+    				date: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].date,
+    				dateHide: /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].dateHide,
+    				calendar: /*calendar*/ ctx[4]
     			},
     			$$inline: true
     		});
 
-    	let if_block1 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText !== "" && create_if_block_4$4(ctx);
-    	let if_block2 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_3$5(ctx);
+    	let if_block1 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText !== "" && create_if_block_4$4(ctx);
+    	let if_block2 = !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_3$5(ctx);
 
     	function select_block_type_2(ctx, dirty) {
-    		if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) return create_if_block_2$8;
+    		if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi) return create_if_block_2$8;
     		return create_else_block$5;
     	}
 
     	let current_block_type = select_block_type_2(ctx);
     	let if_block3 = current_block_type(ctx);
-    	let if_block4 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && create_if_block_1$9(ctx);
+    	let if_block4 = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && create_if_block_1$9(ctx);
 
     	const block = {
     		c: function create() {
@@ -23982,26 +23908,26 @@ Do you wish to proceed?`).then(ok => {
     			if (if_block4) if_block4.c();
     			t10 = space();
     			attr_dev(div0, "class", "claytons-card-banner-container");
-    			attr_dev(div0, "data-moduleid", div0_data_moduleid_value = /*theModule*/ ctx[8].id);
+    			attr_dev(div0, "data-moduleid", /*theModule*/ ctx[9].id);
     			set_style(div0, "position", "relative");
-    			add_location(div0, file$d, 91, 12, 3344);
+    			add_location(div0, file$d, 91, 12, 3393);
     			html_tag.a = t5;
     			attr_dev(span, "class", "claytons-card-label");
     			set_style(span, "font-size", "0.9rem");
-    			add_location(span, file$d, 154, 18, 6282);
+    			add_location(span, file$d, 154, 18, 6331);
     			attr_dev(h3, "class", "claytons-card-title");
-    			attr_dev(h3, "data-moduleid", h3_data_moduleid_value = /*theModule*/ ctx[8].id);
+    			attr_dev(h3, "data-moduleid", /*theModule*/ ctx[9].id);
     			set_style(h3, "font-size", "1rem");
     			set_style(h3, "font-weight", "strong");
-    			add_location(h3, file$d, 158, 18, 6543);
+    			add_location(h3, file$d, 158, 18, 6592);
     			attr_dev(div1, "class", "claytons-card-label");
     			set_style(div1, "font-size", "0.9rem");
-    			add_location(div1, file$d, 153, 16, 6203);
+    			add_location(div1, file$d, 153, 16, 6252);
     			attr_dev(div2, "class", "claytons-card-description");
     			set_style(div2, "font-size", "0.75rem");
-    			add_location(div2, file$d, 180, 16, 7467);
+    			add_location(div2, file$d, 180, 16, 7516);
 
-    			attr_dev(div3, "class", div3_class_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
+    			attr_dev(div3, "class", div3_class_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi
     			? "claytons-card-content"
     			: "claytons-unclickable-card-content");
 
@@ -24009,16 +23935,16 @@ Do you wish to proceed?`).then(ok => {
     			set_style(div3, "flex", "1 1 0%");
     			set_style(div3, "display", "flex");
     			set_style(div3, "flex-direction", "column");
-    			add_location(div3, file$d, 147, 14, 5901);
+    			add_location(div3, file$d, 147, 14, 5950);
     			attr_dev(div4, "class", "claytons-card-content-height");
     			set_style(div4, "height", "12rem");
     			set_style(div4, "overflow", "auto");
     			set_style(div4, "position", "relative");
-    			add_location(div4, file$d, 133, 12, 5220);
+    			add_location(div4, file$d, 133, 12, 5269);
     			attr_dev(div5, "class", "claytons-card-footer");
     			set_style(div5, "height", "4rem");
     			set_style(div5, "position", "relative");
-    			add_location(div5, file$d, 188, 12, 7751);
+    			add_location(div5, file$d, 188, 12, 7800);
     			attr_dev(div6, "class", "claytons-card-flex");
     			set_style(div6, "overflow", "hidden");
     			set_style(div6, "flex-direction", "column");
@@ -24027,19 +23953,19 @@ Do you wish to proceed?`).then(ok => {
     			set_style(div6, "position", "relative");
     			set_style(div6, "border-style", "outset");
     			set_style(div6, "border-radius", "1em");
-    			add_location(div6, file$d, 87, 10, 3129);
-    			attr_dev(div7, "id", div7_id_value = "cc_module_" + /*theModule*/ ctx[8].id);
+    			add_location(div6, file$d, 87, 10, 3178);
+    			attr_dev(div7, "id", "cc_module_" + /*theModule*/ ctx[9].id);
     			attr_dev(div7, "class", "claytons-card svelte-3dolfn");
     			set_style(div7, "background-color", "#fff");
     			set_style(div7, "border-radius", "1em");
-    			add_location(div7, file$d, 82, 8, 2965);
-    			attr_dev(div8, "id", div8_id_value = "cc_module_" + /*theModule*/ ctx[8].id);
+    			add_location(div7, file$d, 82, 8, 3014);
+    			attr_dev(div8, "id", "cc_module_" + /*theModule*/ ctx[9].id);
     			set_style(div8, "padding", "0.75rem");
     			set_style(div8, "flex-direction", "column");
     			set_style(div8, "display", "flex");
     			set_style(div8, "width", "30%");
     			attr_dev(div8, "class", "svelte-3dolfn");
-    			add_location(div8, file$d, 78, 6, 2821);
+    			add_location(div8, file$d, 78, 6, 2870);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div8, anchor);
@@ -24076,7 +24002,7 @@ Do you wish to proceed?`).then(ok => {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
+    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
@@ -24090,10 +24016,9 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			const switch_instance_changes = {};
-    			if (dirty & /*modules*/ 8) switch_instance_changes.moduleId = /*theModule*/ ctx[8].id;
     			if (dirty & /*claytons*/ 1) switch_instance_changes.claytons = /*claytons*/ ctx[0];
 
-    			if (switch_value !== (switch_value = /*BANNER_TRANSLATION*/ ctx[6][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].banner])) {
+    			if (switch_value !== (switch_value = /*BANNER_TRANSLATION*/ ctx[5][/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].banner])) {
     				if (switch_instance) {
     					group_outros();
     					const old_component = switch_instance;
@@ -24118,11 +24043,11 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			const datewidget_changes = {};
-    			if (dirty & /*$collectionsStore, modules*/ 12) datewidget_changes.date = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].date;
-    			if (dirty & /*$collectionsStore, modules*/ 12) datewidget_changes.dateHide = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].dateHide;
+    			if (dirty & /*$collectionsStore*/ 4) datewidget_changes.date = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].date;
+    			if (dirty & /*$collectionsStore*/ 4) datewidget_changes.dateHide = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].dateHide;
     			datewidget.$set(datewidget_changes);
 
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyiText !== "") {
+    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi && /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyiText !== "") {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
@@ -24135,11 +24060,7 @@ Do you wish to proceed?`).then(ok => {
     				if_block1 = null;
     			}
 
-    			if (!current || dirty & /*modules*/ 8 && div0_data_moduleid_value !== (div0_data_moduleid_value = /*theModule*/ ctx[8].id)) {
-    				attr_dev(div0, "data-moduleid", div0_data_moduleid_value);
-    			}
-
-    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
+    			if (!/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi) {
     				if (if_block2) {
     					if_block2.p(ctx, dirty);
     				} else {
@@ -24152,8 +24073,8 @@ Do you wish to proceed?`).then(ok => {
     				if_block2 = null;
     			}
 
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw0_value !== (raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].label + "")) html_tag.p(raw0_value);
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && t6_value !== (t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].actualNum + "")) set_data_dev(t6, t6_value);
+    			if ((!current || dirty & /*$collectionsStore*/ 4) && raw0_value !== (raw0_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].label + "")) html_tag.p(raw0_value);
+    			if ((!current || dirty & /*$collectionsStore*/ 4) && t6_value !== (t6_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].actualNum + "")) set_data_dev(t6, t6_value);
 
     			if (current_block_type === (current_block_type = select_block_type_2(ctx)) && if_block3) {
     				if_block3.p(ctx, dirty);
@@ -24167,18 +24088,14 @@ Do you wish to proceed?`).then(ok => {
     				}
     			}
 
-    			if (!current || dirty & /*modules*/ 8 && h3_data_moduleid_value !== (h3_data_moduleid_value = /*theModule*/ ctx[8].id)) {
-    				attr_dev(h3, "data-moduleid", h3_data_moduleid_value);
-    			}
-
-    			if ((!current || dirty & /*$collectionsStore, modules*/ 12) && raw1_value !== (raw1_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].description + "")) div2.innerHTML = raw1_value;
-    			if (!current || dirty & /*$collectionsStore, modules*/ 12 && div3_class_value !== (div3_class_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi
+    			if ((!current || dirty & /*$collectionsStore*/ 4) && raw1_value !== (raw1_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].description + "")) div2.innerHTML = raw1_value;
+    			if (!current || dirty & /*$collectionsStore*/ 4 && div3_class_value !== (div3_class_value = /*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi
     			? "claytons-card-content"
     			: "claytons-unclickable-card-content")) {
     				attr_dev(div3, "class", div3_class_value);
     			}
 
-    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[8].id].fyi) {
+    			if (/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].engage && !/*$collectionsStore*/ ctx[2]["MODULES"][/*theModule*/ ctx[9].id].fyi) {
     				if (if_block4) {
     					if_block4.p(ctx, dirty);
     				} else {
@@ -24189,14 +24106,6 @@ Do you wish to proceed?`).then(ok => {
     			} else if (if_block4) {
     				if_block4.d(1);
     				if_block4 = null;
-    			}
-
-    			if (!current || dirty & /*modules*/ 8 && div7_id_value !== (div7_id_value = "cc_module_" + /*theModule*/ ctx[8].id)) {
-    				attr_dev(div7, "id", div7_id_value);
-    			}
-
-    			if (!current || dirty & /*modules*/ 8 && div8_id_value !== (div8_id_value = "cc_module_" + /*theModule*/ ctx[8].id)) {
-    				attr_dev(div8, "id", div8_id_value);
     			}
     		},
     		i: function intro(local) {
@@ -24335,7 +24244,7 @@ Do you wish to proceed?`).then(ok => {
     	validate_store(collectionsStore, 'collectionsStore');
     	component_subscribe($$self, collectionsStore, $$value => $$invalidate(2, $collectionsStore = $$value));
     	validate_store(configStore, 'configStore');
-    	component_subscribe($$self, configStore, $$value => $$invalidate(4, $configStore = $$value));
+    	component_subscribe($$self, configStore, $$value => $$invalidate(3, $configStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('GriffithCards', slots, []);
     	let calendar = new UniversityDateCalendar();
@@ -24353,7 +24262,11 @@ Do you wish to proceed?`).then(ok => {
     	};
 
     	// calculate the moduleIds belonging to collection
-    	let modules;
+    	let modules = generateModulesData();
+
+    	function generateModulesData() {
+    		return getRepresentationModules(collection, claytons, $collectionsStore["COLLECTIONS"][collection]["unallocated"]);
+    	}
 
     	/**
      * @function isUnPublishedUnallocated
@@ -24418,6 +24331,7 @@ Do you wish to proceed?`).then(ok => {
     		claytons,
     		BANNER_TRANSLATION,
     		modules,
+    		generateModulesData,
     		cardClick,
     		isUnPublishedUnallocated,
     		$collectionsStore,
@@ -24425,32 +24339,24 @@ Do you wish to proceed?`).then(ok => {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('calendar' in $$props) $$invalidate(5, calendar = $$props.calendar);
+    		if ('calendar' in $$props) $$invalidate(4, calendar = $$props.calendar);
     		if ('collection' in $$props) $$invalidate(1, collection = $$props.collection);
     		if ('claytons' in $$props) $$invalidate(0, claytons = $$props.claytons);
-    		if ('modules' in $$props) $$invalidate(3, modules = $$props.modules);
+    		if ('modules' in $$props) $$invalidate(6, modules = $$props.modules);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*collection, claytons, $collectionsStore*/ 7) {
-    			{
-    				$$invalidate(3, modules = getRepresentationModules(collection, claytons, $collectionsStore["COLLECTIONS"][collection]["unallocated"]));
-    			}
-    		}
-    	};
-
     	return [
     		claytons,
     		collection,
     		$collectionsStore,
-    		modules,
     		$configStore,
     		calendar,
     		BANNER_TRANSLATION,
+    		modules,
     		isUnPublishedUnallocated
     	];
     }
@@ -24543,17 +24449,17 @@ Do you wish to proceed?`).then(ok => {
 
     function get_each_context_1$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[7] = list[i];
+    	child_ctx[8] = list[i];
     	return child_ctx;
     }
 
     function get_each_context$8(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[7] = list[i];
+    	child_ctx[8] = list[i];
     	return child_ctx;
     }
 
-    // (160:0) {:else}
+    // (159:0) {:else}
     function create_else_block$4(ctx) {
     	let div;
     	let table;
@@ -24571,9 +24477,9 @@ Do you wish to proceed?`).then(ok => {
     	let t6;
     	let t7;
     	let tbody;
-    	let if_block0 = /*numWeighting*/ ctx[2] > 0 && !/*$configStore*/ ctx[6]["editMode"] && create_if_block_12(ctx);
-    	let if_block1 = /*numLearningOutcomes*/ ctx[3] > 0 && !/*$configStore*/ ctx[6]["editMode"] && create_if_block_11(ctx);
-    	let each_value_1 = /*modules*/ ctx[4];
+    	let if_block0 = /*numWeighting*/ ctx[2] > 0 && !/*$configStore*/ ctx[5]["editMode"] && create_if_block_12(ctx);
+    	let if_block1 = /*numLearningOutcomes*/ ctx[3] > 0 && !/*$configStore*/ ctx[5]["editMode"] && create_if_block_11(ctx);
+    	let each_value_1 = /*modules*/ ctx[6];
     	validate_each_argument(each_value_1);
     	let each_blocks = [];
 
@@ -24610,37 +24516,37 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			attr_dev(span0, "class", "cc-table-header-text svelte-102b4gf");
-    			add_location(span0, file$c, 169, 13, 6353);
+    			add_location(span0, file$c, 168, 13, 6264);
     			attr_dev(th0, "role", "columnheader");
     			attr_dev(th0, "scope", "col");
     			attr_dev(th0, "class", "svelte-102b4gf");
-    			add_location(th0, file$c, 168, 10, 6303);
+    			add_location(th0, file$c, 167, 10, 6214);
     			attr_dev(span1, "class", "cc-table-header-text svelte-102b4gf");
-    			add_location(span1, file$c, 172, 13, 6479);
+    			add_location(span1, file$c, 171, 13, 6390);
     			attr_dev(th1, "role", "columnheader");
     			attr_dev(th1, "scope", "col");
     			attr_dev(th1, "class", "svelte-102b4gf");
-    			add_location(th1, file$c, 171, 10, 6429);
+    			add_location(th1, file$c, 170, 10, 6340);
     			attr_dev(span2, "class", "cc-table-header-text svelte-102b4gf");
-    			add_location(span2, file$c, 180, 13, 6822);
+    			add_location(span2, file$c, 179, 13, 6733);
     			attr_dev(th2, "role", "columnheader");
     			attr_dev(th2, "scope", "col");
     			attr_dev(th2, "class", "svelte-102b4gf");
-    			add_location(th2, file$c, 179, 10, 6772);
+    			add_location(th2, file$c, 178, 10, 6683);
     			attr_dev(tr, "role", "row");
     			attr_dev(tr, "class", "svelte-102b4gf");
-    			add_location(tr, file$c, 167, 8, 6276);
+    			add_location(tr, file$c, 166, 8, 6187);
     			attr_dev(thead, "role", "rowgroup");
     			attr_dev(thead, "class", "svelte-102b4gf");
-    			add_location(thead, file$c, 166, 6, 6243);
+    			add_location(thead, file$c, 165, 6, 6154);
     			attr_dev(tbody, "class", "svelte-102b4gf");
-    			add_location(tbody, file$c, 189, 6, 7154);
+    			add_location(tbody, file$c, 188, 6, 7065);
     			attr_dev(table, "class", "cc-responsive-table svelte-102b4gf");
     			attr_dev(table, "role", "table");
-    			add_location(table, file$c, 164, 4, 6151);
+    			add_location(table, file$c, 163, 4, 6062);
     			attr_dev(div, "id", "cc-assessment-table");
     			attr_dev(div, "class", "cc-assessment-container cc-representation svelte-102b4gf");
-    			add_location(div, file$c, 160, 2, 6051);
+    			add_location(div, file$c, 159, 2, 5962);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -24667,7 +24573,7 @@ Do you wish to proceed?`).then(ok => {
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (/*numWeighting*/ ctx[2] > 0 && !/*$configStore*/ ctx[6]["editMode"]) {
+    			if (/*numWeighting*/ ctx[2] > 0 && !/*$configStore*/ ctx[5]["editMode"]) {
     				if (if_block0) ; else {
     					if_block0 = create_if_block_12(ctx);
     					if_block0.c();
@@ -24678,7 +24584,7 @@ Do you wish to proceed?`).then(ok => {
     				if_block0 = null;
     			}
 
-    			if (/*numLearningOutcomes*/ ctx[3] > 0 && !/*$configStore*/ ctx[6]["editMode"]) {
+    			if (/*numLearningOutcomes*/ ctx[3] > 0 && !/*$configStore*/ ctx[5]["editMode"]) {
     				if (if_block1) ; else {
     					if_block1 = create_if_block_11(ctx);
     					if_block1.c();
@@ -24690,7 +24596,7 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			if (dirty & /*checkModuleMetaData, $collectionsStore, modules, $configStore, numLearningOutcomes, generateModuleDate, numWeighting, collection, getModuleUrl*/ 126) {
-    				each_value_1 = /*modules*/ ctx[4];
+    				each_value_1 = /*modules*/ ctx[6];
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -24725,14 +24631,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_else_block$4.name,
     		type: "else",
-    		source: "(160:0) {:else}",
+    		source: "(159:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (47:0) {#if claytons}
+    // (46:0) {#if claytons}
     function create_if_block$9(ctx) {
     	let div;
     	let table;
@@ -24752,7 +24658,7 @@ Do you wish to proceed?`).then(ok => {
     	let tbody;
     	let if_block0 = /*numWeighting*/ ctx[2] > 0 && create_if_block_6$2(ctx);
     	let if_block1 = /*numLearningOutcomes*/ ctx[3] && create_if_block_5$2(ctx);
-    	let each_value = /*modules*/ ctx[4];
+    	let each_value = /*modules*/ ctx[6];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -24789,33 +24695,33 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			set_style(span0, "color", "#ffffff");
-    			add_location(span0, file$c, 58, 12, 2316);
+    			add_location(span0, file$c, 57, 12, 2227);
     			attr_dev(th0, "role", "columnheader");
     			attr_dev(th0, "scope", "col");
     			set_style(th0, "background-color", "#c02123");
-    			add_location(th0, file$c, 53, 10, 2180);
+    			add_location(th0, file$c, 52, 10, 2091);
     			set_style(span1, "color", "#ffffff");
-    			add_location(span1, file$c, 65, 12, 2537);
+    			add_location(span1, file$c, 64, 12, 2448);
     			attr_dev(th1, "role", "columnheader");
     			attr_dev(th1, "scope", "col");
     			set_style(th1, "background-color", "#c02123");
     			set_style(th1, "width", "20rem");
-    			add_location(th1, file$c, 60, 10, 2387);
+    			add_location(th1, file$c, 59, 10, 2298);
     			set_style(span2, "color", "#ffffff");
-    			add_location(span2, file$c, 81, 12, 3027);
+    			add_location(span2, file$c, 80, 12, 2938);
     			attr_dev(th2, "role", "columnheader");
     			attr_dev(th2, "scope", "col");
     			set_style(th2, "background-color", "#c02123");
-    			add_location(th2, file$c, 76, 10, 2891);
-    			add_location(tr, file$c, 52, 8, 2164);
-    			add_location(thead, file$c, 51, 6, 2147);
+    			add_location(th2, file$c, 75, 10, 2802);
+    			add_location(tr, file$c, 51, 8, 2075);
+    			add_location(thead, file$c, 50, 6, 2058);
     			attr_dev(tbody, "class", "svelte-102b4gf");
-    			add_location(tbody, file$c, 94, 6, 3416);
+    			add_location(tbody, file$c, 93, 6, 3327);
     			attr_dev(table, "class", "ic-Table--hover-row ic-Table ic-Table--striped -ic-Table-condensed");
-    			add_location(table, file$c, 48, 4, 2044);
+    			add_location(table, file$c, 47, 4, 1955);
     			attr_dev(div, "id", "cc-assessment-table");
     			attr_dev(div, "class", "svelte-102b4gf");
-    			add_location(div, file$c, 47, 2, 2008);
+    			add_location(div, file$c, 46, 2, 1919);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -24865,7 +24771,7 @@ Do you wish to proceed?`).then(ok => {
     			}
 
     			if (dirty & /*checkModuleMetaData, $collectionsStore, modules, $configStore, claytons, numLearningOutcomes, generateModuleDate, numWeighting, collection, getModuleUrl*/ 127) {
-    				each_value = /*modules*/ ctx[4];
+    				each_value = /*modules*/ ctx[6];
     				validate_each_argument(each_value);
     				let i;
 
@@ -24900,14 +24806,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block$9.name,
     		type: "if",
-    		source: "(47:0) {#if claytons}",
+    		source: "(46:0) {#if claytons}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (175:10) {#if numWeighting > 0 && !$configStore["editMode"] }
+    // (174:10) {#if numWeighting > 0 && !$configStore["editMode"] }
     function create_if_block_12(ctx) {
     	let th;
     	let span;
@@ -24918,11 +24824,11 @@ Do you wish to proceed?`).then(ok => {
     			span = element("span");
     			span.textContent = "Weighting";
     			attr_dev(span, "class", "cc-table-header-text svelte-102b4gf");
-    			add_location(span, file$c, 176, 13, 6675);
+    			add_location(span, file$c, 175, 13, 6586);
     			attr_dev(th, "role", "columnheader");
     			attr_dev(th, "scope", "col");
     			attr_dev(th, "class", "svelte-102b4gf");
-    			add_location(th, file$c, 175, 10, 6625);
+    			add_location(th, file$c, 174, 10, 6536);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, th, anchor);
@@ -24937,14 +24843,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_12.name,
     		type: "if",
-    		source: "(175:10) {#if numWeighting > 0 && !$configStore[\\\"editMode\\\"] }",
+    		source: "(174:10) {#if numWeighting > 0 && !$configStore[\\\"editMode\\\"] }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (183:10) {#if numLearningOutcomes > 0 && !$configStore["editMode"] }
+    // (182:10) {#if numLearningOutcomes > 0 && !$configStore["editMode"] }
     function create_if_block_11(ctx) {
     	let th;
     	let span;
@@ -24955,11 +24861,11 @@ Do you wish to proceed?`).then(ok => {
     			span = element("span");
     			span.textContent = "Learning Outcomes";
     			attr_dev(span, "class", "cc-table-header-text svelte-102b4gf");
-    			add_location(span, file$c, 184, 13, 7022);
+    			add_location(span, file$c, 183, 13, 6933);
     			attr_dev(th, "role", "columnheader");
     			attr_dev(th, "scope", "col");
     			attr_dev(th, "class", "svelte-102b4gf");
-    			add_location(th, file$c, 183, 10, 6972);
+    			add_location(th, file$c, 182, 10, 6883);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, th, anchor);
@@ -24974,14 +24880,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_11.name,
     		type: "if",
-    		source: "(183:10) {#if numLearningOutcomes > 0 && !$configStore[\\\"editMode\\\"] }",
+    		source: "(182:10) {#if numLearningOutcomes > 0 && !$configStore[\\\"editMode\\\"] }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (210:14) {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
+    // (209:14) {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
     function create_if_block_10(ctx) {
     	let div;
 
@@ -24990,7 +24896,7 @@ Do you wish to proceed?`).then(ok => {
     			div = element("div");
     			div.textContent = "Unpublished";
     			attr_dev(div, "class", "cc-published svelte-102b4gf");
-    			add_location(div, file$c, 210, 16, 8019);
+    			add_location(div, file$c, 209, 16, 7930);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -25004,14 +24910,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_10.name,
     		type: "if",
-    		source: "(210:14) {#if $configStore[\\\"editMode\\\"] && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
+    		source: "(209:14) {#if $configStore[\\\"editMode\\\"] && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (213:14) {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection !== collection}
+    // (212:14) {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection !== collection}
     function create_if_block_9(ctx) {
     	let div;
 
@@ -25020,7 +24926,7 @@ Do you wish to proceed?`).then(ok => {
     			div = element("div");
     			div.textContent = "No collection allocated";
     			attr_dev(div, "class", "cc-unallocated svelte-102b4gf");
-    			add_location(div, file$c, 213, 16, 8216);
+    			add_location(div, file$c, 212, 16, 8127);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -25034,21 +24940,21 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_9.name,
     		type: "if",
-    		source: "(213:14) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collection}",
+    		source: "(212:14) {#if $configStore[\\\"editMode\\\"] && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collection}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (222:10) {#if numWeighting > 0 && ! $configStore["editMode"] }
+    // (221:10) {#if numWeighting > 0 && ! $configStore["editMode"] }
     function create_if_block_8(ctx) {
     	let td;
     	let span;
     	let t1;
     	let div;
     	let p;
-    	let t2_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "weighting", /*$configStore*/ ctx[6]["editMode"]) + "";
+    	let t2_value = checkModuleMetaData(/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id], "weighting", /*$configStore*/ ctx[5]["editMode"]) + "";
     	let t2;
 
     	const block = {
@@ -25062,14 +24968,14 @@ Do you wish to proceed?`).then(ok => {
     			t2 = text(t2_value);
     			attr_dev(span, "class", "cc-responsive-table__heading svelte-102b4gf");
     			attr_dev(span, "aria-hidden", "true");
-    			add_location(span, file$c, 223, 14, 8616);
+    			add_location(span, file$c, 222, 14, 8527);
     			attr_dev(p, "class", "svelte-102b4gf");
-    			add_location(p, file$c, 227, 16, 8794);
+    			add_location(p, file$c, 226, 16, 8705);
     			attr_dev(div, "class", "cc-table-cell-text svelte-102b4gf");
-    			add_location(div, file$c, 226, 14, 8744);
+    			add_location(div, file$c, 225, 14, 8655);
     			attr_dev(td, "role", "cell");
     			attr_dev(td, "class", "svelte-102b4gf");
-    			add_location(td, file$c, 222, 12, 8584);
+    			add_location(td, file$c, 221, 12, 8495);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, td, anchor);
@@ -25080,7 +24986,7 @@ Do you wish to proceed?`).then(ok => {
     			append_dev(p, t2);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules, $configStore*/ 112 && t2_value !== (t2_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "weighting", /*$configStore*/ ctx[6]["editMode"]) + "")) set_data_dev(t2, t2_value);
+    			if (dirty & /*$collectionsStore, $configStore*/ 48 && t2_value !== (t2_value = checkModuleMetaData(/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id], "weighting", /*$configStore*/ ctx[5]["editMode"]) + "")) set_data_dev(t2, t2_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(td);
@@ -25091,21 +24997,21 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_8.name,
     		type: "if",
-    		source: "(222:10) {#if numWeighting > 0 && ! $configStore[\\\"editMode\\\"] }",
+    		source: "(221:10) {#if numWeighting > 0 && ! $configStore[\\\"editMode\\\"] }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (248:10) {#if numLearningOutcomes > 0 && !$configStore["editMode"] }
+    // (247:10) {#if numLearningOutcomes > 0 && !$configStore["editMode"] }
     function create_if_block_7$1(ctx) {
     	let td;
     	let span;
     	let t1;
     	let div;
     	let p;
-    	let t2_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "learning outcomes", /*$configStore*/ ctx[6]["editMode"]) + "";
+    	let t2_value = checkModuleMetaData(/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id], "learning outcomes", /*$configStore*/ ctx[5]["editMode"]) + "";
     	let t2;
 
     	const block = {
@@ -25119,14 +25025,14 @@ Do you wish to proceed?`).then(ok => {
     			t2 = text(t2_value);
     			attr_dev(span, "class", "cc-responsive-table__heading svelte-102b4gf");
     			attr_dev(span, "aria-hidden", "true");
-    			add_location(span, file$c, 249, 14, 9571);
+    			add_location(span, file$c, 248, 14, 9482);
     			attr_dev(p, "class", "svelte-102b4gf");
-    			add_location(p, file$c, 253, 16, 9757);
+    			add_location(p, file$c, 252, 16, 9668);
     			attr_dev(div, "class", "cc-table-cell-text svelte-102b4gf");
-    			add_location(div, file$c, 252, 14, 9707);
+    			add_location(div, file$c, 251, 14, 9618);
     			attr_dev(td, "role", "cell");
     			attr_dev(td, "class", "svelte-102b4gf");
-    			add_location(td, file$c, 248, 12, 9539);
+    			add_location(td, file$c, 247, 12, 9450);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, td, anchor);
@@ -25137,7 +25043,7 @@ Do you wish to proceed?`).then(ok => {
     			append_dev(p, t2);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules, $configStore*/ 112 && t2_value !== (t2_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "learning outcomes", /*$configStore*/ ctx[6]["editMode"]) + "")) set_data_dev(t2, t2_value);
+    			if (dirty & /*$collectionsStore, $configStore*/ 48 && t2_value !== (t2_value = checkModuleMetaData(/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id], "learning outcomes", /*$configStore*/ ctx[5]["editMode"]) + "")) set_data_dev(t2, t2_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(td);
@@ -25148,14 +25054,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_7$1.name,
     		type: "if",
-    		source: "(248:10) {#if numLearningOutcomes > 0 && !$configStore[\\\"editMode\\\"] }",
+    		source: "(247:10) {#if numLearningOutcomes > 0 && !$configStore[\\\"editMode\\\"] }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (191:8) {#each modules as module}
+    // (190:8) {#each modules as module}
     function create_each_block_1$2(ctx) {
     	let tr;
     	let td0;
@@ -25164,9 +25070,8 @@ Do you wish to proceed?`).then(ok => {
     	let div0;
     	let p0;
     	let a;
-    	let t2_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].name + "";
+    	let t2_value = /*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].name + "";
     	let t2;
-    	let a_href_value;
     	let t3;
     	let td1;
     	let span1;
@@ -25175,7 +25080,7 @@ Do you wish to proceed?`).then(ok => {
     	let t7;
     	let div1;
     	let p1;
-    	let raw_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].description + "";
+    	let raw_value = /*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].description + "";
     	let t8;
     	let t9;
     	let td2;
@@ -25183,14 +25088,14 @@ Do you wish to proceed?`).then(ok => {
     	let t11;
     	let div2;
     	let p2;
-    	let t12_value = generateModuleDate(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id]) + "";
+    	let t12_value = generateModuleDate(/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id]) + "";
     	let t12;
     	let t13;
     	let t14;
-    	let if_block0 = /*$configStore*/ ctx[6]["editMode"] && !/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].published && create_if_block_10(ctx);
-    	let if_block1 = /*$configStore*/ ctx[6]["editMode"] && /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].collection !== /*collection*/ ctx[1] && create_if_block_9(ctx);
-    	let if_block2 = /*numWeighting*/ ctx[2] > 0 && !/*$configStore*/ ctx[6]["editMode"] && create_if_block_8(ctx);
-    	let if_block3 = /*numLearningOutcomes*/ ctx[3] > 0 && !/*$configStore*/ ctx[6]["editMode"] && create_if_block_7$1(ctx);
+    	let if_block0 = /*$configStore*/ ctx[5]["editMode"] && !/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].published && create_if_block_10(ctx);
+    	let if_block1 = /*$configStore*/ ctx[5]["editMode"] && /*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].collection !== /*collection*/ ctx[1] && create_if_block_9(ctx);
+    	let if_block2 = /*numWeighting*/ ctx[2] > 0 && !/*$configStore*/ ctx[5]["editMode"] && create_if_block_8(ctx);
+    	let if_block3 = /*numLearningOutcomes*/ ctx[3] > 0 && !/*$configStore*/ ctx[5]["editMode"] && create_if_block_7$1(ctx);
 
     	const block = {
     		c: function create() {
@@ -25229,39 +25134,39 @@ Do you wish to proceed?`).then(ok => {
     			t14 = space();
     			attr_dev(span0, "class", "cc-responsive-table__heading svelte-102b4gf");
     			attr_dev(span0, "aria-hidden", "true");
-    			add_location(span0, file$c, 193, 14, 7269);
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*module*/ ctx[7].id));
-    			add_location(a, file$c, 198, 18, 7466);
+    			add_location(span0, file$c, 192, 14, 7180);
+    			attr_dev(a, "href", getModuleUrl(/*module*/ ctx[8].id));
+    			add_location(a, file$c, 197, 18, 7377);
     			attr_dev(p0, "class", "svelte-102b4gf");
-    			add_location(p0, file$c, 197, 16, 7443);
+    			add_location(p0, file$c, 196, 16, 7354);
     			attr_dev(div0, "class", "cc-table-cell-text svelte-102b4gf");
-    			add_location(div0, file$c, 196, 14, 7393);
+    			add_location(div0, file$c, 195, 14, 7304);
     			attr_dev(td0, "role", "cell");
     			attr_dev(td0, "class", "svelte-102b4gf");
-    			add_location(td0, file$c, 192, 12, 7237);
+    			add_location(td0, file$c, 191, 12, 7148);
     			attr_dev(span1, "class", "cc-responsive-table__heading svelte-102b4gf");
     			attr_dev(span1, "aria-hidden", "true");
-    			add_location(span1, file$c, 206, 14, 7787);
+    			add_location(span1, file$c, 205, 14, 7698);
     			attr_dev(p1, "class", "svelte-102b4gf");
-    			add_location(p1, file$c, 216, 16, 8360);
+    			add_location(p1, file$c, 215, 16, 8271);
     			attr_dev(div1, "class", "cc-table-cell-text svelte-102b4gf");
-    			add_location(div1, file$c, 215, 14, 8310);
+    			add_location(div1, file$c, 214, 14, 8221);
     			attr_dev(td1, "role", "cell");
     			attr_dev(td1, "class", "descriptionCell svelte-102b4gf");
-    			add_location(td1, file$c, 205, 12, 7731);
+    			add_location(td1, file$c, 204, 12, 7642);
     			attr_dev(span2, "class", "cc-responsive-table__heading svelte-102b4gf");
     			attr_dev(span2, "aria-hidden", "true");
-    			add_location(span2, file$c, 238, 14, 9130);
+    			add_location(span2, file$c, 237, 14, 9041);
     			attr_dev(p2, "class", "svelte-102b4gf");
-    			add_location(p2, file$c, 242, 16, 9307);
+    			add_location(p2, file$c, 241, 16, 9218);
     			attr_dev(div2, "class", "cc-table-cell-text svelte-102b4gf");
-    			add_location(div2, file$c, 241, 14, 9257);
+    			add_location(div2, file$c, 240, 14, 9168);
     			attr_dev(td2, "role", "cell");
     			attr_dev(td2, "class", "svelte-102b4gf");
-    			add_location(td2, file$c, 237, 12, 9098);
+    			add_location(td2, file$c, 236, 12, 9009);
     			attr_dev(tr, "role", "row");
     			attr_dev(tr, "class", "svelte-102b4gf");
-    			add_location(tr, file$c, 191, 10, 7208);
+    			add_location(tr, file$c, 190, 10, 7119);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -25297,13 +25202,9 @@ Do you wish to proceed?`).then(ok => {
     			append_dev(tr, t14);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 48 && t2_value !== (t2_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].name + "")) set_data_dev(t2, t2_value);
+    			if (dirty & /*$collectionsStore*/ 16 && t2_value !== (t2_value = /*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].name + "")) set_data_dev(t2, t2_value);
 
-    			if (dirty & /*modules*/ 16 && a_href_value !== (a_href_value = getModuleUrl(/*module*/ ctx[7].id))) {
-    				attr_dev(a, "href", a_href_value);
-    			}
-
-    			if (/*$configStore*/ ctx[6]["editMode"] && !/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].published) {
+    			if (/*$configStore*/ ctx[5]["editMode"] && !/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].published) {
     				if (if_block0) ; else {
     					if_block0 = create_if_block_10(ctx);
     					if_block0.c();
@@ -25314,7 +25215,7 @@ Do you wish to proceed?`).then(ok => {
     				if_block0 = null;
     			}
 
-    			if (/*$configStore*/ ctx[6]["editMode"] && /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].collection !== /*collection*/ ctx[1]) {
+    			if (/*$configStore*/ ctx[5]["editMode"] && /*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].collection !== /*collection*/ ctx[1]) {
     				if (if_block1) ; else {
     					if_block1 = create_if_block_9(ctx);
     					if_block1.c();
@@ -25325,8 +25226,8 @@ Do you wish to proceed?`).then(ok => {
     				if_block1 = null;
     			}
 
-    			if (dirty & /*$collectionsStore, modules*/ 48 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].description + "")) p1.innerHTML = raw_value;
-    			if (/*numWeighting*/ ctx[2] > 0 && !/*$configStore*/ ctx[6]["editMode"]) {
+    			if (dirty & /*$collectionsStore*/ 16 && raw_value !== (raw_value = /*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].description + "")) p1.innerHTML = raw_value;
+    			if (/*numWeighting*/ ctx[2] > 0 && !/*$configStore*/ ctx[5]["editMode"]) {
     				if (if_block2) {
     					if_block2.p(ctx, dirty);
     				} else {
@@ -25339,9 +25240,9 @@ Do you wish to proceed?`).then(ok => {
     				if_block2 = null;
     			}
 
-    			if (dirty & /*$collectionsStore, modules*/ 48 && t12_value !== (t12_value = generateModuleDate(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id]) + "")) set_data_dev(t12, t12_value);
+    			if (dirty & /*$collectionsStore*/ 16 && t12_value !== (t12_value = generateModuleDate(/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id]) + "")) set_data_dev(t12, t12_value);
 
-    			if (/*numLearningOutcomes*/ ctx[3] > 0 && !/*$configStore*/ ctx[6]["editMode"]) {
+    			if (/*numLearningOutcomes*/ ctx[3] > 0 && !/*$configStore*/ ctx[5]["editMode"]) {
     				if (if_block3) {
     					if_block3.p(ctx, dirty);
     				} else {
@@ -25367,14 +25268,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_each_block_1$2.name,
     		type: "each",
-    		source: "(191:8) {#each modules as module}",
+    		source: "(190:8) {#each modules as module}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (68:10) {#if numWeighting > 0 }
+    // (67:10) {#if numWeighting > 0 }
     function create_if_block_6$2(ctx) {
     	let th;
     	let span;
@@ -25385,11 +25286,11 @@ Do you wish to proceed?`).then(ok => {
     			span = element("span");
     			span.textContent = "Weighting";
     			set_style(span, "color", "#ffffff");
-    			add_location(span, file$c, 73, 14, 2797);
+    			add_location(span, file$c, 72, 14, 2708);
     			attr_dev(th, "role", "columnheader");
     			attr_dev(th, "scope", "col");
     			set_style(th, "background-color", "#c02123");
-    			add_location(th, file$c, 68, 12, 2651);
+    			add_location(th, file$c, 67, 12, 2562);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, th, anchor);
@@ -25404,14 +25305,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_6$2.name,
     		type: "if",
-    		source: "(68:10) {#if numWeighting > 0 }",
+    		source: "(67:10) {#if numWeighting > 0 }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (84:10) {#if numLearningOutcomes }
+    // (83:10) {#if numLearningOutcomes }
     function create_if_block_5$2(ctx) {
     	let th;
     	let span;
@@ -25422,11 +25323,11 @@ Do you wish to proceed?`).then(ok => {
     			span = element("span");
     			span.textContent = "Learning Outcomes";
     			set_style(span, "color", "#ffffff");
-    			add_location(span, file$c, 89, 14, 3287);
+    			add_location(span, file$c, 88, 14, 3198);
     			attr_dev(th, "role", "columnheader");
     			attr_dev(th, "scope", "col");
     			set_style(th, "background-color", "#c02123");
-    			add_location(th, file$c, 84, 12, 3141);
+    			add_location(th, file$c, 83, 12, 3052);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, th, anchor);
@@ -25441,14 +25342,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_5$2.name,
     		type: "if",
-    		source: "(84:10) {#if numLearningOutcomes }",
+    		source: "(83:10) {#if numLearningOutcomes }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (108:14) {#if $configStore["editMode"] && !claytons && !$collectionsStore["MODULES"][module.id].published}
+    // (107:14) {#if $configStore["editMode"] && !claytons && !$collectionsStore["MODULES"][module.id].published}
     function create_if_block_4$3(ctx) {
     	let div;
 
@@ -25457,7 +25358,7 @@ Do you wish to proceed?`).then(ok => {
     			div = element("div");
     			div.textContent = "Unpublished";
     			attr_dev(div, "class", "cc-published svelte-102b4gf");
-    			add_location(div, file$c, 108, 16, 4088);
+    			add_location(div, file$c, 107, 16, 3999);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -25471,14 +25372,14 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_4$3.name,
     		type: "if",
-    		source: "(108:14) {#if $configStore[\\\"editMode\\\"] && !claytons && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
+    		source: "(107:14) {#if $configStore[\\\"editMode\\\"] && !claytons && !$collectionsStore[\\\"MODULES\\\"][module.id].published}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (111:14) {#if $configStore["editMode"] && !claytons && $collectionsStore["MODULES"][module.id].collection !== collection}
+    // (110:14) {#if $configStore["editMode"] && !claytons && $collectionsStore["MODULES"][module.id].collection !== collection}
     function create_if_block_3$4(ctx) {
     	let div;
 
@@ -25487,7 +25388,7 @@ Do you wish to proceed?`).then(ok => {
     			div = element("div");
     			div.textContent = "No collection allocated";
     			attr_dev(div, "class", "cc-unallocated svelte-102b4gf");
-    			add_location(div, file$c, 111, 16, 4298);
+    			add_location(div, file$c, 110, 16, 4209);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -25501,19 +25402,19 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_3$4.name,
     		type: "if",
-    		source: "(111:14) {#if $configStore[\\\"editMode\\\"] && !claytons && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collection}",
+    		source: "(110:14) {#if $configStore[\\\"editMode\\\"] && !claytons && $collectionsStore[\\\"MODULES\\\"][module.id].collection !== collection}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (120:12) {#if numWeighting > 0 }
+    // (119:12) {#if numWeighting > 0 }
     function create_if_block_2$7(ctx) {
     	let td;
     	let div;
     	let p;
-    	let t_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "weighting", /*$configStore*/ ctx[6]["editMode"], /*claytons*/ ctx[0]) + "";
+    	let t_value = checkModuleMetaData(/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id], "weighting", /*$configStore*/ ctx[5]["editMode"], /*claytons*/ ctx[0]) + "";
     	let t;
 
     	const block = {
@@ -25522,16 +25423,16 @@ Do you wish to proceed?`).then(ok => {
     			div = element("div");
     			p = element("p");
     			t = text(t_value);
-    			add_location(p, file$c, 122, 18, 4807);
+    			add_location(p, file$c, 121, 18, 4718);
     			set_style(div, "margin", "0");
     			set_style(div, "font-size", "0.8rem");
-    			add_location(div, file$c, 121, 16, 4747);
+    			add_location(div, file$c, 120, 16, 4658);
     			attr_dev(td, "role", "cell");
     			set_style(td, "display", "table-cell");
     			set_style(td, "text-align", "left");
     			set_style(td, "vertical-align", "top");
     			attr_dev(td, "class", "svelte-102b4gf");
-    			add_location(td, file$c, 120, 14, 4648);
+    			add_location(td, file$c, 119, 14, 4559);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, td, anchor);
@@ -25540,7 +25441,7 @@ Do you wish to proceed?`).then(ok => {
     			append_dev(p, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules, $configStore, claytons*/ 113 && t_value !== (t_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "weighting", /*$configStore*/ ctx[6]["editMode"], /*claytons*/ ctx[0]) + "")) set_data_dev(t, t_value);
+    			if (dirty & /*$collectionsStore, $configStore, claytons*/ 49 && t_value !== (t_value = checkModuleMetaData(/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id], "weighting", /*$configStore*/ ctx[5]["editMode"], /*claytons*/ ctx[0]) + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(td);
@@ -25551,19 +25452,19 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_2$7.name,
     		type: "if",
-    		source: "(120:12) {#if numWeighting > 0 }",
+    		source: "(119:12) {#if numWeighting > 0 }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (141:12) {#if numLearningOutcomes}
+    // (140:12) {#if numLearningOutcomes}
     function create_if_block_1$8(ctx) {
     	let td;
     	let div;
     	let p;
-    	let t_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "learning outcomes", /*$configStore*/ ctx[6]["editMode"], /*claytons*/ ctx[0]) + "";
+    	let t_value = checkModuleMetaData(/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id], "learning outcomes", /*$configStore*/ ctx[5]["editMode"], /*claytons*/ ctx[0]) + "";
     	let t;
 
     	const block = {
@@ -25572,13 +25473,13 @@ Do you wish to proceed?`).then(ok => {
     			div = element("div");
     			p = element("p");
     			t = text(t_value);
-    			add_location(p, file$c, 143, 18, 5617);
+    			add_location(p, file$c, 142, 18, 5528);
     			set_style(div, "margin", "0");
     			set_style(div, "font-size", "0.8rem");
-    			add_location(div, file$c, 142, 16, 5557);
+    			add_location(div, file$c, 141, 16, 5468);
     			attr_dev(td, "role", "cell");
     			attr_dev(td, "class", "svelte-102b4gf");
-    			add_location(td, file$c, 141, 14, 5523);
+    			add_location(td, file$c, 140, 14, 5434);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, td, anchor);
@@ -25587,7 +25488,7 @@ Do you wish to proceed?`).then(ok => {
     			append_dev(p, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules, $configStore, claytons*/ 113 && t_value !== (t_value = checkModuleMetaData(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id], "learning outcomes", /*$configStore*/ ctx[6]["editMode"], /*claytons*/ ctx[0]) + "")) set_data_dev(t, t_value);
+    			if (dirty & /*$collectionsStore, $configStore, claytons*/ 49 && t_value !== (t_value = checkModuleMetaData(/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id], "learning outcomes", /*$configStore*/ ctx[5]["editMode"], /*claytons*/ ctx[0]) + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(td);
@@ -25598,39 +25499,38 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_if_block_1$8.name,
     		type: "if",
-    		source: "(141:12) {#if numLearningOutcomes}",
+    		source: "(140:12) {#if numLearningOutcomes}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (96:8) {#each modules as module}
+    // (95:8) {#each modules as module}
     function create_each_block$8(ctx) {
     	let tr;
     	let td0;
     	let div0;
     	let p0;
     	let a;
-    	let raw0_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].name + "";
-    	let a_href_value;
+    	let raw0_value = /*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].name + "";
     	let t0;
     	let td1;
     	let t1;
     	let t2;
     	let div1;
     	let p1;
-    	let raw1_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].description + "";
+    	let raw1_value = /*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].description + "";
     	let t3;
     	let t4;
     	let td2;
     	let div2;
     	let p2;
-    	let raw2_value = generateModuleDate(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id]) + "";
+    	let raw2_value = generateModuleDate(/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id]) + "";
     	let t5;
     	let t6;
-    	let if_block0 = /*$configStore*/ ctx[6]["editMode"] && !/*claytons*/ ctx[0] && !/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].published && create_if_block_4$3(ctx);
-    	let if_block1 = /*$configStore*/ ctx[6]["editMode"] && !/*claytons*/ ctx[0] && /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].collection !== /*collection*/ ctx[1] && create_if_block_3$4(ctx);
+    	let if_block0 = /*$configStore*/ ctx[5]["editMode"] && !/*claytons*/ ctx[0] && !/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].published && create_if_block_4$3(ctx);
+    	let if_block1 = /*$configStore*/ ctx[5]["editMode"] && !/*claytons*/ ctx[0] && /*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].collection !== /*collection*/ ctx[1] && create_if_block_3$4(ctx);
     	let if_block2 = /*numWeighting*/ ctx[2] > 0 && create_if_block_2$7(ctx);
     	let if_block3 = /*numLearningOutcomes*/ ctx[3] && create_if_block_1$8(ctx);
 
@@ -25658,40 +25558,40 @@ Do you wish to proceed?`).then(ok => {
     			t5 = space();
     			if (if_block3) if_block3.c();
     			t6 = space();
-    			attr_dev(a, "href", a_href_value = getModuleUrl(/*module*/ ctx[7].id));
-    			add_location(a, file$c, 100, 18, 3667);
-    			add_location(p0, file$c, 99, 16, 3644);
+    			attr_dev(a, "href", getModuleUrl(/*module*/ ctx[8].id));
+    			add_location(a, file$c, 99, 18, 3578);
+    			add_location(p0, file$c, 98, 16, 3555);
     			set_style(div0, "margin", "0");
     			set_style(div0, "font-size", "0.8rem");
-    			add_location(div0, file$c, 98, 14, 3586);
+    			add_location(div0, file$c, 97, 14, 3497);
     			attr_dev(td0, "role", "cell");
     			set_style(td0, "display", "table-cell");
     			set_style(td0, "text-align", "left");
     			set_style(td0, "vertical-align", "top");
     			attr_dev(td0, "class", "svelte-102b4gf");
-    			add_location(td0, file$c, 97, 12, 3488);
-    			add_location(p1, file$c, 114, 16, 4450);
+    			add_location(td0, file$c, 96, 12, 3399);
+    			add_location(p1, file$c, 113, 16, 4361);
     			set_style(div1, "margin", "0");
     			set_style(div1, "font-size", "0.8rem");
-    			add_location(div1, file$c, 113, 14, 4392);
+    			add_location(div1, file$c, 112, 14, 4303);
     			attr_dev(td1, "role", "cell");
     			set_style(td1, "display", "table-cell");
     			set_style(td1, "text-align", "left");
     			set_style(td1, "vertical-align", "top");
     			attr_dev(td1, "class", "svelte-102b4gf");
-    			add_location(td1, file$c, 106, 12, 3876);
-    			add_location(p2, file$c, 135, 16, 5315);
+    			add_location(td1, file$c, 105, 12, 3787);
+    			add_location(p2, file$c, 134, 16, 5226);
     			set_style(div2, "margin", "0");
     			set_style(div2, "font-size", "0.8rem");
-    			add_location(div2, file$c, 134, 14, 5257);
+    			add_location(div2, file$c, 133, 14, 5168);
     			attr_dev(td2, "role", "cell");
     			set_style(td2, "display", "table-cell");
     			set_style(td2, "text-align", "left");
     			set_style(td2, "vertical-align", "top");
     			attr_dev(td2, "class", "svelte-102b4gf");
-    			add_location(td2, file$c, 133, 12, 5160);
+    			add_location(td2, file$c, 132, 12, 5071);
     			attr_dev(tr, "class", "svelte-102b4gf");
-    			add_location(tr, file$c, 96, 10, 3470);
+    			add_location(tr, file$c, 95, 10, 3381);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -25721,12 +25621,8 @@ Do you wish to proceed?`).then(ok => {
     			append_dev(tr, t6);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$collectionsStore, modules*/ 48 && raw0_value !== (raw0_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].name + "")) a.innerHTML = raw0_value;
-    			if (dirty & /*modules*/ 16 && a_href_value !== (a_href_value = getModuleUrl(/*module*/ ctx[7].id))) {
-    				attr_dev(a, "href", a_href_value);
-    			}
-
-    			if (/*$configStore*/ ctx[6]["editMode"] && !/*claytons*/ ctx[0] && !/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].published) {
+    			if (dirty & /*$collectionsStore*/ 16 && raw0_value !== (raw0_value = /*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].name + "")) a.innerHTML = raw0_value;
+    			if (/*$configStore*/ ctx[5]["editMode"] && !/*claytons*/ ctx[0] && !/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].published) {
     				if (if_block0) ; else {
     					if_block0 = create_if_block_4$3(ctx);
     					if_block0.c();
@@ -25737,7 +25633,7 @@ Do you wish to proceed?`).then(ok => {
     				if_block0 = null;
     			}
 
-    			if (/*$configStore*/ ctx[6]["editMode"] && !/*claytons*/ ctx[0] && /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].collection !== /*collection*/ ctx[1]) {
+    			if (/*$configStore*/ ctx[5]["editMode"] && !/*claytons*/ ctx[0] && /*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].collection !== /*collection*/ ctx[1]) {
     				if (if_block1) ; else {
     					if_block1 = create_if_block_3$4(ctx);
     					if_block1.c();
@@ -25748,7 +25644,7 @@ Do you wish to proceed?`).then(ok => {
     				if_block1 = null;
     			}
 
-    			if (dirty & /*$collectionsStore, modules*/ 48 && raw1_value !== (raw1_value = /*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id].description + "")) p1.innerHTML = raw1_value;
+    			if (dirty & /*$collectionsStore*/ 16 && raw1_value !== (raw1_value = /*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id].description + "")) p1.innerHTML = raw1_value;
     			if (/*numWeighting*/ ctx[2] > 0) {
     				if (if_block2) {
     					if_block2.p(ctx, dirty);
@@ -25762,7 +25658,7 @@ Do you wish to proceed?`).then(ok => {
     				if_block2 = null;
     			}
 
-    			if (dirty & /*$collectionsStore, modules*/ 48 && raw2_value !== (raw2_value = generateModuleDate(/*$collectionsStore*/ ctx[5]["MODULES"][/*module*/ ctx[7].id]) + "")) p2.innerHTML = raw2_value;
+    			if (dirty & /*$collectionsStore*/ 16 && raw2_value !== (raw2_value = generateModuleDate(/*$collectionsStore*/ ctx[4]["MODULES"][/*module*/ ctx[8].id]) + "")) p2.innerHTML = raw2_value;
     			if (/*numLearningOutcomes*/ ctx[3]) {
     				if (if_block3) {
     					if_block3.p(ctx, dirty);
@@ -25789,7 +25685,7 @@ Do you wish to proceed?`).then(ok => {
     		block,
     		id: create_each_block$8.name,
     		type: "each",
-    		source: "(96:8) {#each modules as module}",
+    		source: "(95:8) {#each modules as module}",
     		ctx
     	});
 
@@ -25855,9 +25751,9 @@ Do you wish to proceed?`).then(ok => {
     	let $collectionsStore;
     	let $configStore;
     	validate_store(collectionsStore, 'collectionsStore');
-    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(5, $collectionsStore = $$value));
+    	component_subscribe($$self, collectionsStore, $$value => $$invalidate(4, $collectionsStore = $$value));
     	validate_store(configStore, 'configStore');
-    	component_subscribe($$self, configStore, $$value => $$invalidate(6, $configStore = $$value));
+    	component_subscribe($$self, configStore, $$value => $$invalidate(5, $configStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('AssessmentTable', slots, []);
     	let { collection } = $$props;
@@ -25869,12 +25765,26 @@ Do you wish to proceed?`).then(ok => {
 
     	let numWeighting = 0;
     	let numLearningOutcomes = 0;
+    	let modules = generateModulesData();
 
-    	// kludge to test reactive nature
-    	// set collection to currentCollection
-    	// TODO - this isn't right, the prop isn't being dynamically updated
-    	//collection = $configStore['currentCollection'];
-    	let modules;
+    	/*  $: {
+      } */
+    	function generateModulesData() {
+    		let modulesData = getRepresentationModules(collection, claytons, $collectionsStore["COLLECTIONS"][collection]["unallocated"]);
+
+    		// count the number of modules that have weighting and learning outcomes
+    		modulesData.forEach(module => {
+    			if ($collectionsStore["MODULES"][module.id].hasOwnProperty("metadata") && $collectionsStore["MODULES"][module.id]["metadata"].hasOwnProperty("weighting") && $collectionsStore["MODULES"][module.id]["metadata"]["weighting"] !== "") {
+    				$$invalidate(2, numWeighting++, numWeighting);
+    			}
+
+    			if ($collectionsStore["MODULES"][module.id].hasOwnProperty("metadata") && $collectionsStore["MODULES"][module.id]["metadata"].hasOwnProperty("learning outcomes") && $collectionsStore["MODULES"][module.id]["metadata"]["learning outcomes"] !== "") {
+    				$$invalidate(3, numLearningOutcomes++, numLearningOutcomes);
+    			}
+    		});
+
+    		return modulesData;
+    	}
 
     	$$self.$$.on_mount.push(function () {
     		if (collection === undefined && !('collection' in $$props || $$self.$$.bound[$$self.$$.props['collection']])) {
@@ -25912,6 +25822,7 @@ Do you wish to proceed?`).then(ok => {
     		numWeighting,
     		numLearningOutcomes,
     		modules,
+    		generateModulesData,
     		$collectionsStore,
     		$configStore
     	});
@@ -25921,40 +25832,21 @@ Do you wish to proceed?`).then(ok => {
     		if ('claytons' in $$props) $$invalidate(0, claytons = $$props.claytons);
     		if ('numWeighting' in $$props) $$invalidate(2, numWeighting = $$props.numWeighting);
     		if ('numLearningOutcomes' in $$props) $$invalidate(3, numLearningOutcomes = $$props.numLearningOutcomes);
-    		if ('modules' in $$props) $$invalidate(4, modules = $$props.modules);
+    		if ('modules' in $$props) $$invalidate(6, modules = $$props.modules);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*collection, claytons, $collectionsStore, modules, numWeighting, numLearningOutcomes*/ 63) {
-    			{
-    				$$invalidate(4, modules = getRepresentationModules(collection, claytons, $collectionsStore["COLLECTIONS"][collection]["unallocated"]));
-
-    				// count the number of modules that have weighting and learning outcomes
-    				modules.forEach(module => {
-    					if ($collectionsStore["MODULES"][module.id].hasOwnProperty("metadata") && $collectionsStore["MODULES"][module.id]["metadata"].hasOwnProperty("weighting") && $collectionsStore["MODULES"][module.id]["metadata"]["weighting"] !== "") {
-    						$$invalidate(2, numWeighting++, numWeighting);
-    					}
-
-    					if ($collectionsStore["MODULES"][module.id].hasOwnProperty("metadata") && $collectionsStore["MODULES"][module.id]["metadata"].hasOwnProperty("learning outcomes") && $collectionsStore["MODULES"][module.id]["metadata"]["learning outcomes"] !== "") {
-    						$$invalidate(3, numLearningOutcomes++, numLearningOutcomes);
-    					}
-    				});
-    			}
-    		}
-    	};
-
     	return [
     		claytons,
     		collection,
     		numWeighting,
     		numLearningOutcomes,
-    		modules,
     		$collectionsStore,
-    		$configStore
+    		$configStore,
+    		modules
     	];
     }
 
@@ -29797,7 +29689,7 @@ Do you wish to proceed?`).then(ok => {
     	function switch_props(ctx) {
     		return {
     			props: {
-    				collection: /*$configStore*/ ctx[1]["currentCollection"],
+    				collection: /*collectionName*/ ctx[1],
     				claytons: /*claytons*/ ctx[0]
     			},
     			$$inline: true
@@ -29823,7 +29715,7 @@ Do you wish to proceed?`).then(ok => {
     		},
     		p: function update(ctx, [dirty]) {
     			const switch_instance_changes = {};
-    			if (dirty & /*$configStore*/ 2) switch_instance_changes.collection = /*$configStore*/ ctx[1]["currentCollection"];
+    			if (dirty & /*collectionName*/ 2) switch_instance_changes.collection = /*collectionName*/ ctx[1];
     			if (dirty & /*claytons*/ 1) switch_instance_changes.claytons = /*claytons*/ ctx[0];
 
     			if (switch_value !== (switch_value = /*representationComponent*/ ctx[2])) {
@@ -29881,7 +29773,7 @@ Do you wish to proceed?`).then(ok => {
     	let $collectionsStore;
     	let $representationsStore;
     	validate_store(configStore, 'configStore');
-    	component_subscribe($$self, configStore, $$value => $$invalidate(1, $configStore = $$value));
+    	component_subscribe($$self, configStore, $$value => $$invalidate(3, $configStore = $$value));
     	validate_store(collectionsStore, 'collectionsStore');
     	component_subscribe($$self, collectionsStore, $$value => $$invalidate(4, $collectionsStore = $$value));
     	validate_store(representationsStore, 'representationsStore');
@@ -29920,7 +29812,7 @@ Do you wish to proceed?`).then(ok => {
     	});
 
     	$$self.$$set = $$props => {
-    		if ('collectionName' in $$props) $$invalidate(3, collectionName = $$props.collectionName);
+    		if ('collectionName' in $$props) $$invalidate(1, collectionName = $$props.collectionName);
     		if ('claytons' in $$props) $$invalidate(0, claytons = $$props.claytons);
     	};
 
@@ -29941,7 +29833,7 @@ Do you wish to proceed?`).then(ok => {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('collectionName' in $$props) $$invalidate(3, collectionName = $$props.collectionName);
+    		if ('collectionName' in $$props) $$invalidate(1, collectionName = $$props.collectionName);
     		if ('claytons' in $$props) $$invalidate(0, claytons = $$props.claytons);
     		if ('complete' in $$props) complete = $$props.complete;
     		if ('representationComponent' in $$props) $$invalidate(2, representationComponent = $$props.representationComponent);
@@ -29974,9 +29866,9 @@ Do you wish to proceed?`).then(ok => {
 
     	return [
     		claytons,
-    		$configStore,
-    		representationComponent,
     		collectionName,
+    		representationComponent,
+    		$configStore,
     		$collectionsStore,
     		$representationsStore
     	];
@@ -29985,7 +29877,7 @@ Do you wish to proceed?`).then(ok => {
     class CollectionRepresentation extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$8, create_fragment$8, safe_not_equal, { collectionName: 3, claytons: 0 });
+    		init(this, options, instance$8, create_fragment$8, safe_not_equal, { collectionName: 1, claytons: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
