@@ -160,8 +160,8 @@
         on:message={handleMessage}
         bind:includePageExists
         bind:outputPageExists
-        bind:pageNamesCollections
       />
+        <!-- bind:pageNamesCollections -->
     </div>
     <div id="cc-config-new-collection">
       <NewCollection />

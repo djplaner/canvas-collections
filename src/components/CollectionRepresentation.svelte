@@ -84,7 +84,7 @@
 
 <svelte:component
   this={representationComponent}
-  collection={collectionName}
+  bind:collection={collectionName}
   {claytons}
 />
 

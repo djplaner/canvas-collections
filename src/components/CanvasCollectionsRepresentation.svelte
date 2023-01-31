@@ -80,7 +80,7 @@
 
 {#if $collectionsStore["COLLECTIONS_ORDER"].length > 0}
   <CollectionsNavigation
-    activeCollectionName={$configStore["currentCollection"]}
+    bind:activeCollectionName={$configStore["currentCollection"]}
   />
   {#if !$collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter}
     <IncludePage collectionName={$configStore["currentCollection"]} />

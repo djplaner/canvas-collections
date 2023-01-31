@@ -60,7 +60,6 @@
     ccOn: false,
   };
 
-
   let collectionsConfigUrl = `/courses/${$configStore["courseId"]}/pages/canvas-collections-configuration`;
 
   let noCollections = true;

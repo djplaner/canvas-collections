@@ -20,8 +20,12 @@
     getRepresentationModules,
     //    modifyCanvasModulesList,
     generateModuleDate,
+    addCalendarDate,
     checkModuleMetaData,
   } from "./representationSupport";
+  import UniversityDateCalendar from "../../lib/university-date-calendar";
+
+  let calendar = new UniversityDateCalendar();
 
   export let collection: string;
   export let claytons: boolean;
@@ -34,9 +38,17 @@
   let numLearningOutcomes = 0;
 
   let modules = generateModulesData();
-/*  $: {
+  /*  $: {
   } */
 
+  function generateDate(module) {
+    if (module.date) {
+      if (module.date["week"] || (module.date["month"] && module.date["date"])) {
+        module.date = addCalendarDate(module.date,calendar);
+        return generateModuleDate(module);
+      }
+    }
+  }
 
   function generateModulesData() {
     let modulesData = getRepresentationModules(
@@ -69,7 +81,7 @@
       }
     });
 
-    return modulesData
+    return modulesData;
   }
 </script>
 
@@ -94,7 +106,7 @@
           >
             <span style="color: #ffffff;">Description</span></th
           >
-          {#if numWeighting > 0 }
+          {#if numWeighting > 0}
             <th
               role="columnheader"
               scope="col"
@@ -110,7 +122,7 @@
           >
             <span style="color: #ffffff;">Due Date</span></th
           >
-          {#if numLearningOutcomes }
+          {#if numLearningOutcomes}
             <th
               role="columnheader"
               scope="col"
@@ -124,7 +136,10 @@
       <tbody>
         {#each modules as module}
           <tr>
-            <td role="cell" style="display: table-cell; text-align:left; vertical-align:top;">
+            <td
+              role="cell"
+              style="display: table-cell; text-align:left; vertical-align:top;"
+            >
               <div style="margin:0; font-size:0.8rem">
                 <p>
                   <a href={getModuleUrl(module.id)}>
@@ -133,7 +148,10 @@
                 </p>
               </div>
             </td>
-            <td role="cell" style="display:table-cell; text-align:left; vertical-align:top;">
+            <td
+              role="cell"
+              style="display:table-cell; text-align:left; vertical-align:top;"
+            >
               {#if $configStore["editMode"] && !claytons && !$collectionsStore["MODULES"][module.id].published}
                 <div class="cc-published">Unpublished</div>
               {/if}
@@ -146,8 +164,11 @@
                 </p>
               </div>
             </td>
-            {#if numWeighting > 0 }
-              <td role="cell" style="display:table-cell; text-align:left; vertical-align:top;">
+            {#if numWeighting > 0}
+              <td
+                role="cell"
+                style="display:table-cell; text-align:left; vertical-align:top;"
+              >
                 <div style="margin:0; font-size:0.8rem">
                   <p>
                     {checkModuleMetaData(
@@ -160,10 +181,15 @@
                 </div>
               </td>
             {/if}
-            <td role="cell" style="display:table-cell; text-align: left; vertical-align:top">
+            <td
+              role="cell"
+              style="display:table-cell; text-align: left; vertical-align:top"
+            >
               <div style="margin:0; font-size:0.8rem">
                 <p>
-                  {@html generateModuleDate($collectionsStore["MODULES"][module.id])}
+                  {@html generateModuleDate(
+                    $collectionsStore["MODULES"][module.id]
+                  )}
                 </p>
               </div>
             </td>
@@ -201,18 +227,18 @@
           <th role="columnheader" scope="col"
             ><span class="cc-table-header-text">Description</span></th
           >
-          {#if numWeighting > 0 && !$configStore["editMode"] }
-          <th role="columnheader" scope="col"
-            ><span class="cc-table-header-text">Weighting</span></th
-          >
+          {#if numWeighting > 0 && !$configStore["editMode"]}
+            <th role="columnheader" scope="col"
+              ><span class="cc-table-header-text">Weighting</span></th
+            >
           {/if}
           <th role="columnheader" scope="col"
             ><span class="cc-table-header-text">Due Date</span></th
           >
-          {#if numLearningOutcomes > 0 && !$configStore["editMode"] }
-          <th role="columnheader" scope="col"
-            ><span class="cc-table-header-text">Learning Outcomes</span></th
-          >
+          {#if numLearningOutcomes > 0 && !$configStore["editMode"]}
+            <th role="columnheader" scope="col"
+              ><span class="cc-table-header-text">Learning Outcomes</span></th
+            >
           {/if}
         </tr>
       </thead>
@@ -248,21 +274,21 @@
                 </p>
               </div>
             </td>
-          {#if numWeighting > 0 && ! $configStore["editMode"] }
-            <td role="cell">
-              <span class="cc-responsive-table__heading" aria-hidden="true"
-                >Weighting</span
-              >
-              <div class="cc-table-cell-text">
-                <p>
-                  {checkModuleMetaData(
-                    $collectionsStore["MODULES"][module.id],
-                    "weighting",
-                    $configStore["editMode"]
-                  )}
-                </p>
-              </div>
-            </td>
+            {#if numWeighting > 0 && !$configStore["editMode"]}
+              <td role="cell">
+                <span class="cc-responsive-table__heading" aria-hidden="true"
+                  >Weighting</span
+                >
+                <div class="cc-table-cell-text">
+                  <p>
+                    {checkModuleMetaData(
+                      $collectionsStore["MODULES"][module.id],
+                      "weighting",
+                      $configStore["editMode"]
+                    )}
+                  </p>
+                </div>
+              </td>
             {/if}
             <td role="cell">
               <span class="cc-responsive-table__heading" aria-hidden="true"
@@ -274,21 +300,21 @@
                 </p>
               </div>
             </td>
-          {#if numLearningOutcomes > 0 && !$configStore["editMode"] }
-            <td role="cell">
-              <span class="cc-responsive-table__heading" aria-hidden="true"
-                >Learning Outcomes</span
-              >
-              <div class="cc-table-cell-text">
-                <p>
-                  {checkModuleMetaData(
-                    $collectionsStore["MODULES"][module.id],
-                    "learning outcomes",
-                    $configStore["editMode"]
-                  )}
-                </p>
-              </div>
-            </td>
+            {#if numLearningOutcomes > 0 && !$configStore["editMode"]}
+              <td role="cell">
+                <span class="cc-responsive-table__heading" aria-hidden="true"
+                  >Learning Outcomes</span
+                >
+                <div class="cc-table-cell-text">
+                  <p>
+                    {checkModuleMetaData(
+                      $collectionsStore["MODULES"][module.id],
+                      "learning outcomes",
+                      $configStore["editMode"]
+                    )}
+                  </p>
+                </div>
+              </td>
             {/if}
           </tr>
         {/each}

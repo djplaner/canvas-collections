@@ -19,8 +19,10 @@
    * }
    */
 
-//  import UniversityDateCalendar from "../../../lib/university-date-calendar";
+//import UniversityDateCalendar from "../../../lib/university-date-calendar";
 //  import { modifyCanvasModulesList } from "../representationSupport";
+
+import { addCalendarDate, isNotEmptyDate } from "../representationSupport";
 
   export let date: Object;
   export let dateHide: Object;
@@ -28,61 +30,10 @@
 
   if (date) {
     if (date["week"] || (date["month"] && date["date"])) {
-      date = addCalendarDate(date);
+      date = addCalendarDate(date, calendar);
     }
   }
 
-  /**
-   * @function addCalendarDate
-   * @param {Object} date - JSON date rep from collections
-   * @returns {Object} date - date + Calendar matching course site
-   * @description Original date from collections can include use of
-   * University generic dates (e.g. Monday, Week 5). Translate those
-   * generic dates into a specific date based on semester/period appropriate
-   * for the current course site and the university calendar
-   */
-  function addCalendarDate(date: Object): Object {
-    date = modifyDate(date);
-    if (date.hasOwnProperty("to") && isNotEmptyDate(date["to"])) {
-      date["to"] = modifyDate(date["to"]);
-    }
-    return date;
-  }
-
-  function isNotEmptyDate(date: object): boolean {
-    return (
-      (date.hasOwnProperty("week") && date["week"] !== "") ||
-      (date.hasOwnProperty("month") && date["month"] !== "") ||
-      (date.hasOwnProperty("date") && date["date"] !== "") ||
-      (date.hasOwnProperty("day") && date["day"] !== "") ||
-      (date.hasOwnProperty("time") && date["time"] !== "")
-    );
-  }
-
-  /**
-   * @function modifyDate
-   * @param date
-   * @returns {Object} date - date + Calendar matching course site
-   * @description Do the actual work for addCalendarDate
-   */
-  function modifyDate(date: Object): Object {
-    // can only add calendar date if a university week is specified
-    if (date.hasOwnProperty("week") && date["week"] !== "") {
-      // if no day, add the first day of the wek
-      if (!date.hasOwnProperty("day") || date["day"] === "") {
-        date["day"] = calendar.getFirstDayOfWeek();
-      }
-      // we've got a week, so we can add the calendar date
-      const actualDate = calendar.getDate(date["week"], false, date["day"]);
-      const fields = ["date", "month", "year"];
-      for (let i = 0; i < fields.length; i++) {
-        if (actualDate.hasOwnProperty(fields[i])) {
-          date[fields[i]] = actualDate[fields[i]];
-        }
-      }
-    }
-    return date;
-  }
 </script>
 
 {#if date}

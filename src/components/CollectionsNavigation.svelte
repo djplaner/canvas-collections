@@ -4,8 +4,9 @@
    * TODO
    */
   import { collectionsStore, configStore } from "../stores";
+  import CollectionRepresentation from "./CollectionRepresentation.svelte";
 
-  export let activeCollectionName : string;
+  export let activeCollectionName: string;
 
   let collectionNames = [];
   let activeCollection = {};
@@ -16,7 +17,7 @@
       activeCollection[collectionName] =
         collectionName === activeCollectionName ? "cc-active" : "";
     });
-    activeCollectionName = activeCollectionName
+    activeCollectionName = activeCollectionName;
   }
 
   // create activeCollection dict keyed on collection name
@@ -34,6 +35,19 @@
     $configStore["currentCollection"] = clickedCollectionName;
     activeCollection[clickedCollectionName] = "cc-active";
     activeCollectionName = clickedCollectionName;
+
+    // can we actively remove and replace the div.cc-representation
+    let ccRep = document.querySelector(".cc-representation");
+    if (ccRep) {
+      ccRep.innerHTML = "";
+      let newRep = new CollectionRepresentation({
+        target: ccRep,
+        props:  {
+          collectionName: $configStore["currentCollection"],
+          claytons: false
+        }
+      });
+    }
   }
 </script>
 

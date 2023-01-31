@@ -32,6 +32,11 @@
 
   // calculate the moduleIds belonging to collection
   let modules = generateModulesData()
+  let tmpCollection = collection
+
+  $: {
+    modules = generateModulesData()
+  }
 
   function generateModulesData() {
 
