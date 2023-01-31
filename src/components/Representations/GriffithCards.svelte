@@ -31,7 +31,7 @@
   };
 
   // calculate the moduleIds belonging to collection
-  let modules = generateModulesData()
+  let modules ;
   let tmpCollection = collection
 
   $: {

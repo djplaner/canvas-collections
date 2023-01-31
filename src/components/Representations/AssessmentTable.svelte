@@ -37,9 +37,10 @@
   let numWeighting = 0;
   let numLearningOutcomes = 0;
 
-  let modules = generateModulesData();
-  /*  $: {
-  } */
+  let modules ;
+    $: {
+    modules = generateModulesData();
+  } 
 
   function generateDate(module) {
     if (module.date) {
