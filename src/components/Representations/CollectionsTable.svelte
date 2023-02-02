@@ -1,5 +1,7 @@
 <script lang="ts">
   /**
+   * STATUS - kind of works enough for a kludge.  Needs more refinement
+   * 
    * CollectionsTable
    * - Show all collections in a table - don't include hidden collections ever
    * - before and after have a simple internal navigation ToC

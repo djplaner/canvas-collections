@@ -579,7 +579,7 @@
           <i class="icon-unpublish" />
         </sl-tooltip>
       {/if}
-      <small>Canvas Collections</small>
+      <small>Collections</small>
     </div>
 
     {#if noCollections}

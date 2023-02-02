@@ -28,5 +28,6 @@ export const configStore = writable({});
 export const representationsStore = writable({
 	"GriffithCards" : GriffithCards, "CollectionOnly": CollectionOnly, 
 	"AssessmentTable" : AssessmentTable,
-	"CollectionsTable" : CollectionsTable
+	// CollectionsTable is very alpha, removed for now
+//	"CollectionsTable" : CollectionsTable
 });
