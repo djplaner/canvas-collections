@@ -31,15 +31,19 @@
   };
 
   // calculate the moduleIds belonging to collection
-  let modules ;
-  let tmpCollection = collection
+  let modules;
+  let tmpCollection = collection;
 
   $: {
-    modules = generateModulesData()
+    modules = generateModulesData();
+    const changed = $configStore["currentCollectionChanged"];
+    if (changed) {
+      $configStore["currentCollectionChanged"] = false;
+    }
+    modules = generateModulesData();
   }
 
   function generateModulesData() {
-
     return getRepresentationModules(
       collection,
       claytons,
@@ -217,7 +221,8 @@
                 <div class="claytons-card-engage" style="padding-right: 1rem;">
                   <div
                     class="claytons-card-engage-button"
-                    style="float:right; position:relative; color:rgba(30,58,138,1); border-radius:0.25rem; padding: 0.5rem 1rem 0.5rem 1rem; border:1px solid rgba(30,58,138,1);">
+                    style="float:right; position:relative; color:rgba(30,58,138,1); border-radius:0.25rem; padding: 0.5rem 1rem 0.5rem 1rem; border:1px solid rgba(30,58,138,1);"
+                  >
                     <a
                       href={getModuleUrl(theModule.id)}
                       class="claytons-gu-engage"

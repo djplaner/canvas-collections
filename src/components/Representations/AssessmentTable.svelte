@@ -37,10 +37,16 @@
   let numWeighting = 0;
   let numLearningOutcomes = 0;
 
-  let modules;
+  let modules = getModulesData(collection, claytons);
+
   $: {
-    modules = generateModulesData();
+    const changed = $configStore["currentCollectionChanged"];
+    if (changed) {
+      $configStore["currentCollectionChanged"] = false;
+    }
+    modules = getModulesData(collection, claytons);
   }
+
 
   function generateDate(module) {
     if (module.date) {
@@ -54,15 +60,15 @@
     }
   }
 
-  function generateModulesData() {
-    let modulesData = getRepresentationModules(
+  function getModulesData(collection, claytons) {
+    let moduleData = getRepresentationModules(
       collection,
       claytons,
       $collectionsStore["COLLECTIONS"][collection]["unallocated"]
     );
 
     // count the number of modules that have weighting and learning outcomes
-    modulesData.forEach((module) => {
+    moduleData.forEach((module) => {
       if (
         $collectionsStore["MODULES"][module.id].hasOwnProperty("metadata") &&
         $collectionsStore["MODULES"][module.id]["metadata"].hasOwnProperty(
@@ -84,8 +90,7 @@
         numLearningOutcomes++;
       }
     });
-
-    return modulesData;
+    return moduleData
   }
 </script>
 

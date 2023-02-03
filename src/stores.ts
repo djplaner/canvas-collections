@@ -12,16 +12,15 @@ import CollectionsTable from "./components/Representations/CollectionsTable.svel
 // - DEFAULT_ACTIVE_COLLECTION
 // - MODULES - dict of dicts, keyed on module id
 // - VISIBILITY - string: no-one, students, staff, all
-export const collectionsStore = writable({});
+export const collectionsStore = writable({})
 
 // Array of Canvas module information in order of display
-export const modulesStore = writable([]);
+export const modulesStore = writable([])
 
 // Object providing basic info about context
 // - courseId
 // - editMode
-export const configStore = writable({});
-
+export const configStore = writable({})
 
 // List of available representations
 // TODO bit of a kludge for now

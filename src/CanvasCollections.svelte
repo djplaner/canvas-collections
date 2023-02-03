@@ -53,12 +53,14 @@
 
   let checked = false;
 
+  // Initialise some global configuration settings
   $configStore = {
     courseId: courseId,
     editMode: editMode,
     csrfToken: csrfToken,
-    modulesPage: modulesPage,
-    currentCollection: "",
+    modulesPage: modulesPage, // boolean, is this the modules page? (bad name right?)
+    currentCollection: "",   // name of the current collection
+    currentCollectionChanged: false, // has the current collection changed?
     needToSaveCollections: false,
     ccOn: false,
   };
@@ -200,8 +202,10 @@
 
       // if a student is viewing and no collections, then limit what is done
       if (!(!$configStore["ccOn"] && !$configStore["editMode"])) {
-        collectionsDataLoaded = true;
-        checkAllDataLoaded();
+        // encourage an update of the current collection's representation
+        $configStore["currentCollectionChanged"] = true
+        collectionsDataLoaded = true
+        checkAllDataLoaded()
       }
     } 
   }
@@ -257,6 +261,8 @@
             // set up auto refresh of canvasDetails
             refreshCanvasDetails = setInterval(() => {
               canvasDetails.refreshCanvasDetails(gotCanvasDetails);
+              // make sure the current collection's representation is refreshed 
+              $configStore["currentCollectionChanged"] = true
             }, TIME_BETWEEN_CANVAS_REFRESH);
           }
         }

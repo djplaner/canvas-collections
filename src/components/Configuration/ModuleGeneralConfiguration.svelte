@@ -65,8 +65,9 @@
    */
 
   function changeCollectionAllocation(e: Event) {
-    $collectionsStore["MODULES"][moduleId].collection = e.target.value;
-    calculateActualNum($modulesStore, $collectionsStore["MODULES"]);
+    $collectionsStore["MODULES"][moduleId].collection = e.target.value
+    calculateActualNum($modulesStore, $collectionsStore["MODULES"])
+    $configStore["currentCollectionChanged"] = true
 
     $configStore["needToSaveCollections"] = true;
   }
