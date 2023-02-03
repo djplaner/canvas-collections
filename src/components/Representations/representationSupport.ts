@@ -162,22 +162,39 @@ export function checkModuleMetaData(
 export function generateModuleDate(module) {
   // TODO need generateCalendarDate properly
 
-/*  if (!module.hasOwnProperty("date") || !isNotEmptyDate(module.date)) {
+  /*  if (!module.hasOwnProperty("date") || !isNotEmptyDate(module.date)) {
     return "";
   } */
-  let dateStr = module.date.label;
+  let dateStr = `${module.date.label}: `;
 
-  if (!module.dateHide["day"]) {
-    dateStr += ` ${module.date.day}`;
+  if (isNotEmptyDate(module.date)) {
+    dateStr += generateDateString(module.date, module.dateHide)
+  } 
+  if (isNotEmptyDate(module.date.to)) {
+    dateStr += ` to ${generateDateString(module.date.to, module.dateHide)}`
   }
-  if (!module.dateHide["week"]) {
-    dateStr += ` Week ${module.date.week}`;
+
+  return dateStr;
+}
+
+function generateDateString(date: object, dateHide: object): string {
+  let dateStr = "";
+
+  if (!dateHide["day"]) {
+    dateStr += ` ${date.day}`;
   }
-  if (!module.dateHide["calendarDate"]) {
-    dateStr += ` (${module.date.date} ${module.date.month})`;
+  if (!dateHide["week"]) {
+    dateStr += ` Week ${date.week}`;
   }
-  if (!module.dateHide["time"] && module.date.time !== "") {
-    dateStr += ` ${module.date.time}`;
+  if (!dateHide["calendarDate"]) {
+    if (!dateHide["week"]) {
+    dateStr += ` (${date.date} ${date.month})`;
+    } else {
+      dateStr += ` ${date.date} ${date.month}`;
+    }
+  }
+  if (!dateHide["time"] && date.time !== "") {
+    dateStr += ` ${date.time}`;
   }
 
   return dateStr;
@@ -356,44 +373,44 @@ export function deLabelModuleName(module) {
   return newName;
 }
 
-  /**
-   * @function addCalendarDate
-   * @param {Object} date - JSON date rep from collections
-   * @returns {Object} date - date + Calendar matching course site
-   * @description Original date from collections can include use of
-   * University generic dates (e.g. Monday, Week 5). Translate those
-   * generic dates into a specific date based on semester/period appropriate
-   * for the current course site and the university calendar
-   */
-  export function addCalendarDate(date: Object, calendar: any): Object {
-    date = modifyDate(date, calendar);
-    if (date.hasOwnProperty("to") && isNotEmptyDate(date["to"])) {
-      date["to"] = modifyDate(date["to"], calendar);
-    }
-    return date;
+/**
+ * @function addCalendarDate
+ * @param {Object} date - JSON date rep from collections
+ * @returns {Object} date - date + Calendar matching course site
+ * @description Original date from collections can include use of
+ * University generic dates (e.g. Monday, Week 5). Translate those
+ * generic dates into a specific date based on semester/period appropriate
+ * for the current course site and the university calendar
+ */
+export function addCalendarDate(date: Object, calendar: any): Object {
+  date = modifyDate(date, calendar);
+  if (date.hasOwnProperty("to") && isNotEmptyDate(date["to"])) {
+    date["to"] = modifyDate(date["to"], calendar);
   }
+  return date;
+}
 
-  /**
-   * @function modifyDate
-   * @param date
-   * @returns {Object} date - date + Calendar matching course site
-   * @description Do the actual work for addCalendarDate
-   */
-  function modifyDate(date: Object, calendar : any): Object {
-    // can only add calendar date if a university week is specified
-    if (date.hasOwnProperty("week") && date["week"] !== "") {
-      // if no day, add the first day of the wek
-      if (!date.hasOwnProperty("day") || date["day"] === "") {
-        date["day"] = calendar.getFirstDayOfWeek();
-      }
-      // we've got a week, so we can add the calendar date
-      const actualDate = calendar.getDate(date["week"], false, date["day"]);
-      const fields = ["date", "month", "year"];
-      for (let i = 0; i < fields.length; i++) {
-        if (actualDate.hasOwnProperty(fields[i])) {
-          date[fields[i]] = actualDate[fields[i]];
-        }
+/**
+ * @function modifyDate
+ * @param date
+ * @returns {Object} date - date + Calendar matching course site
+ * @description Do the actual work for addCalendarDate
+ */
+function modifyDate(date: Object, calendar: any): Object {
+  // can only add calendar date if a university week is specified
+  if (date.hasOwnProperty("week") && date["week"] !== "") {
+    // if no day, add the first day of the wek
+    if (!date.hasOwnProperty("day") || date["day"] === "") {
+      date["day"] = calendar.getFirstDayOfWeek();
+    }
+    // we've got a week, so we can add the calendar date
+    const actualDate = calendar.getDate(date["week"], false, date["day"]);
+    const fields = ["date", "month", "year"];
+    for (let i = 0; i < fields.length; i++) {
+      if (actualDate.hasOwnProperty(fields[i])) {
+        date[fields[i]] = actualDate[fields[i]];
       }
     }
-    return date;
   }
+  return date;
+}

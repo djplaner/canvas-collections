@@ -48,7 +48,7 @@
   }
 
 
-  function generateDate(module) {
+/*  function generateDate(module) {
     if (module.date) {
       if (
         module.date["week"] ||
@@ -58,7 +58,7 @@
         return generateModuleDate(module);
       }
     }
-  }
+  }*/
 
   function getModulesData(collection, claytons) {
     let moduleData = getRepresentationModules(
