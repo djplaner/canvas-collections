@@ -8,20 +8,19 @@ site_description: >-
 
 # Configuration
 theme:
-  logo: assets/logo.png
+  logo: assets/collections-logo.png
   name: material
+  extra_css:
+    - stylesheets/extra.css
   font:
     text: Arial
   plugins:
     - social
   palette:
-    - scheme: youtube
-#      primary: red
+    - scheme: collections
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    - scheme: slate
-      primary: red
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
