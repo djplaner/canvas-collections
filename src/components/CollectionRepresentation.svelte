@@ -15,15 +15,8 @@
   import {
     collectionsStore,
     configStore,
-    modulesStore,
     representationsStore,
   } from "../stores";
-
-  import { afterUpdate } from "svelte";
-
-//  import UniversityDateCalendar from "../lib/university-date-calendar";
-
-//  let calendar = new UniversityDateCalendar();
 
   import { modifyCanvasModulesList } from "./Representations/representationSupport";
 

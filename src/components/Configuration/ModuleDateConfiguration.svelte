@@ -15,7 +15,7 @@
 
   export let moduleId: Number;
 
-  let calendar = new UniversityDateCalendar();
+  let calendar = new UniversityDateCalendar($configStore["studyPeriod"]);
   // tmp kludge
   let currentStudyPeriod = `${calendar.getHumanReadableStudyPeriod()} (${calendar.getStudyPeriod()})`;
   let calculatedDate = calculateDate(

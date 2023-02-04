@@ -19,18 +19,19 @@
    * }
    */
 
-//import UniversityDateCalendar from "../../../lib/university-date-calendar";
-//  import { modifyCanvasModulesList } from "../representationSupport";
-
+import UniversityDateCalendar from "../../../lib/university-date-calendar";
+import { configStore } from "../../../stores";
 import { addCalendarDate, isNotEmptyDate } from "../representationSupport";
 
   export let date: Object;
   export let dateHide: Object;
-  export let calendar: UniversityDateCalendar;
+  //export let calendar: any;
+
+  let calendar = new UniversityDateCalendar($configStore["studyPeriod"]);
 
   if (date) {
     if (date["week"] || (date["month"] && date["date"])) {
-      date = addCalendarDate(date, calendar);
+      date = addCalendarDate(date, calendar );
     }
   }
 

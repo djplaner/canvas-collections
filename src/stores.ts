@@ -29,4 +29,4 @@ export const representationsStore = writable({
 	"AssessmentTable" : AssessmentTable,
 	// CollectionsTable is very alpha, removed for now
 //	"CollectionsTable" : CollectionsTable
-});
+})

@@ -63,6 +63,7 @@
     currentCollectionChanged: false, // has the current collection changed?
     needToSaveCollections: false,
     ccOn: false,
+    studyPeriod : null   // calculated by CanvasDetails
   };
 
 
@@ -147,10 +148,9 @@
     canvasDataLoaded = true;
     // canvasDetails.courseModules is an array of Canvas module objects
     // set $modulesStore to a dict of Canvas module objects keyed on the module id
-    $modulesStore = canvasDetails.courseModules; /*.reduce((acc, module) => {
-      acc[module.id] = module;
-      return acc;
-    }, {}); */
+    $modulesStore = canvasDetails.courseModules;
+
+    $configStore['studyPeriod'] = canvasDetails.studyPeriod;
     checkAllDataLoaded();
   }
 

@@ -13,10 +13,6 @@
 
   import { getRepresentationModules } from "./representationSupport";
 
-  import UniversityDateCalendar from "../../lib/university-date-calendar";
-
-  let calendar = new UniversityDateCalendar();
-
   export let collection: string;
   //  export let calendar: any;
   export let claytons: boolean;
@@ -140,7 +136,6 @@
               <DateWidget
                 date={$collectionsStore["MODULES"][theModule.id].date}
                 dateHide={$collectionsStore["MODULES"][theModule.id].dateHide}
-                {calendar}
               />
               <!--               $**DATE_WIDGET** -->
               {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
@@ -269,7 +264,6 @@
               <DateWidget
                 date={$collectionsStore["MODULES"][theModule.id].date}
                 dateHide={$collectionsStore["MODULES"][theModule.id].dateHide}
-                {calendar}
               />
               {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
                 <div class="cc-card-fyi">
