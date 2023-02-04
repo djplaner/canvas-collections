@@ -35,19 +35,6 @@
     $configStore["currentCollection"] = clickedCollectionName;
     activeCollection[clickedCollectionName] = "cc-active";
     activeCollectionName = clickedCollectionName;
-
-    // can we actively remove and replace the div.cc-representation
-    let ccRep = document.querySelector(".cc-representation");
-    if (ccRep) {
-      ccRep.innerHTML = "";
-      let newRep = new CollectionRepresentation({
-        target: ccRep,
-        props:  {
-          collectionName: $configStore["currentCollection"],
-          claytons: false
-        }
-      });
-    }
   }
 </script>
 
