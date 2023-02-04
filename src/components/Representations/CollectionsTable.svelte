@@ -1,7 +1,7 @@
 <script lang="ts">
   /**
    * STATUS - kind of works enough for a kludge.  Needs more refinement
-   * 
+   *
    * CollectionsTable
    * - Show all collections in a table - don't include hidden collections ever
    * - before and after have a simple internal navigation ToC
@@ -91,18 +91,16 @@
    *
    */
   function getCollectionsTableModules(): object {
-    let modulesObj = {
-      unallocated: addUnallocatedModules(
-        $configStore["editMode"]
-      ),
-    };
+    let unallocated = [];
+    unallocated = addUnallocatedModules(unallocated, $configStore["editMode"]);
+    let modulesObj = { unallocated: unallocated };
 
     // loop through all of the COLLECTIONS_ORDER
     // - create an attribute for that collection
     // - add all the modules for that collection
     $collectionsStore["COLLECTIONS_ORDER"].forEach((collectionName) => {
       modulesObj[collectionName] = getCollectionCanvasModules(collectionName);
-    })
+    });
 
     return modulesObj;
   }
@@ -175,7 +173,9 @@
               <div style="margin:0;">
                 <p>
                   <a href={getModuleUrl(module.id)}>
-                    {@html deLabelModuleName($collectionsStore["MODULES"][module.id])}
+                    {@html deLabelModuleName(
+                      $collectionsStore["MODULES"][module.id]
+                    )}
                   </a>
                 </p>
               </div>

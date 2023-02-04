@@ -27,16 +27,18 @@
   };
 
   // calculate the moduleIds belonging to collection
-  let modules;
+  let modules = generateModulesData();
   let tmpCollection = collection;
 
   $: {
-    modules = generateModulesData();
-    const changed = $configStore["currentCollectionChanged"];
-    if (changed) {
-      $configStore["currentCollectionChanged"] = false;
+    if (collection === $configStore["currentCollection"]) {
+      //modules = generateModulesData();
+      const changed = $configStore["currentCollectionChanged"];
+      if (changed) {
+        $configStore["currentCollectionChanged"] = false;
+      }
+      modules = generateModulesData();
     }
-    modules = generateModulesData();
   }
 
   function generateModulesData() {

@@ -39,7 +39,7 @@ export function getCollectionCanvasModules(collection) {
       // find the fyi module's not already added above, in this collection
       if (
         collectionsModules[moduleId].collection === collection &&
-        !addedModuleIds.includes(moduleId) &&
+        !addedModuleIds.includes(parseInt(moduleId)) &&
         collectionsModules[moduleId].fyi
       ) {
         // if the module belongs to the selected collection
@@ -60,19 +60,25 @@ export function getCollectionCanvasModules(collection) {
  * i.e. collection===null
  */
 
-export function addUnallocatedModules(editMode: boolean): any[] {
-  let modules = [];
+export function addUnallocatedModules(modules : any[], editMode: boolean): any[] {
+  const moduleIds = modules.map((module) => module.id);
 
   const cStore = get(collectionsStore);
   const collectionsModules = cStore["MODULES"];
 
+  // loop through all the collection's modules
   for (const module in collectionsModules) {
+    // if they are not allocated
     if (
       collectionsModules[module]["collection"] === null ||
       collectionsModules[module]["collection"] === ""
     ) {
+      // and if we're in edit mode or the module is published
       if (editMode || collectionsModules[module]["published"]) {
-        modules.push(collectionsModules[module]);
+        // add them to the list, if they aren't already
+        if (!moduleIds.includes(module)) {
+          modules.push(collectionsModules[module]);
+        }
       }
     }
   }
@@ -108,7 +114,7 @@ export function getRepresentationModules(
   if (editMode) {
     // student only if unallocated for this collection is true
     if (unallocated && !claytons) {
-      modules = modules.concat(addUnallocatedModules(editMode));
+      modules = addUnallocatedModules(modules,editMode));
     }
     //} else if ((claytons && unallocated) || !claytons) {
   } else {
@@ -116,7 +122,7 @@ export function getRepresentationModules(
     // - modules not allocated to this collection, if unallocated is true
     // - fyi modules, i.e. fyi is set
     if (unallocated) {
-      modules = modules.concat(addUnallocatedModules(editMode));
+      modules = addUnallocatedModules(modules,editMode);
     }
   }
 
@@ -168,10 +174,10 @@ export function generateModuleDate(module) {
   let dateStr = `${module.date.label}: `;
 
   if (isNotEmptyDate(module.date)) {
-    dateStr += generateDateString(module.date, module.dateHide)
-  } 
+    dateStr += generateDateString(module.date, module.dateHide);
+  }
   if (isNotEmptyDate(module.date.to)) {
-    dateStr += ` to ${generateDateString(module.date.to, module.dateHide)}`
+    dateStr += ` to ${generateDateString(module.date.to, module.dateHide)}`;
   }
 
   return dateStr;
@@ -188,7 +194,7 @@ function generateDateString(date: object, dateHide: object): string {
   }
   if (!dateHide["calendarDate"]) {
     if (!dateHide["week"]) {
-    dateStr += ` (${date.date} ${date.month})`;
+      dateStr += ` (${date.date} ${date.month})`;
     } else {
       dateStr += ` ${date.date} ${date.month}`;
     }

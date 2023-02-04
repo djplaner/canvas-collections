@@ -37,15 +37,16 @@
   let modules = getModulesData(collection, claytons);
 
   $: {
-    const changed = $configStore["currentCollectionChanged"];
-    if (changed) {
-      $configStore["currentCollectionChanged"] = false;
+    if (collection === $configStore["currentCollection"]) {
+      const changed = $configStore["currentCollectionChanged"];
+      if (changed) {
+        $configStore["currentCollectionChanged"] = false;
+      }
+      modules = getModulesData(collection, claytons);
     }
-    modules = getModulesData(collection, claytons);
   }
 
-
-/*  function generateDate(module) {
+  /*  function generateDate(module) {
     if (module.date) {
       if (
         module.date["week"] ||
@@ -87,7 +88,7 @@
         numLearningOutcomes++;
       }
     });
-    return moduleData
+    return moduleData;
   }
 </script>
 
