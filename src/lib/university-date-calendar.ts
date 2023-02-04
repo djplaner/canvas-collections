@@ -215,6 +215,10 @@ export default class UniversityDateCalendar {
     if (courseCode.match(/^DEV_/)) {
       courseCode = `(${courseCode})`;
     }
+    // check that the courseCode includes open/close brackets
+    if (!courseCode.match(/\(.*\)/)) {
+      return this.defaultPeriod
+    }
     // extract out each of the individual courseIds in courseCode
     // e.g. joined courses could have multiple
     const courseIds = courseCode
