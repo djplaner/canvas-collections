@@ -212,12 +212,8 @@ export default class UniversityDateCalendar {
 
   public getCurrentPeriod(courseCode) {
     // Kludge for DEV courses that don't have brackets
-    if ( courseCode.match(/^DEV_/) ) {
-      courseCode = `(${courseCode})`
-    } 
-    // still doesn't start with ( use the default period
-    if ( !courseCode.startsWith("(")) {
-      return this.defaultPeriod
+    if (courseCode.match(/^DEV_/)) {
+      courseCode = `(${courseCode})`;
     }
     // extract out each of the individual courseIds in courseCode
     // e.g. joined courses could have multiple
@@ -338,7 +334,48 @@ const MONTHS = [
  */
 
 const CALENDAR = {
-  // 2023
+  // 2023 ----------------
+  // T3
+  "3238": {
+    0: { start: "2023-10-30", stop: "2023-11-05" },
+    1: { start: "2023-11-06", stop: "2023-11-12" },
+    2: { start: "2023-11-13", stop: "2023-11-19" },
+    3: { start: "2023-11-20", stop: "2023-11-26" },
+    4: { start: "2023-11-27", stop: "2023-12-03" },
+    5: { start: "2023-12-04", stop: "2023-12-10" },
+    6: { start: "2023-12-11", stop: "2023-12-17" },
+    7: { start: "2023-12-18", stop: "2023-12-24" },
+    8: { start: "2024-01-08", stop: "2024-01-15" },
+    9: { start: "2024-01-15", stop: "2024-01-21" },
+    10: { start: "2024-01-22", stop: "2024-01-28" },
+    11: { start: "2024-01-29", stop: "2024-02-04" },
+    12: { start: "2024-02-05", stop: "2024-02-11" },
+    13: { start: "2024-02-12", stop: "2024-02-18" },
+    14: { start: "2024-02-19", stop: "2024-02-25" },
+    15: { start: "2024-02-26", stop: "2024-03-03" },
+    //    exam: { start: "2023-02-17", stop: "2023-02-26" },
+  },
+  // T2
+  "3235": {
+    0: { start: "2023-07-10", stop: "2023-07-16" },
+    1: { start: "2023-07-17", stop: "2023-07-23" },
+    2: { start: "2023-07-24", stop: "2023-07-30" },
+    3: { start: "2023-07-31", stop: "2023-08-06" },
+    4: { start: "2023-08-07", stop: "2023-08-13" },
+    5: { start: "2023-08-21", stop: "2023-08-27" },
+    6: { start: "2023-08-28", stop: "2023-09-03" },
+    7: { start: "2023-09-04", stop: "2023-09-10" },
+    8: { start: "2023-09-11", stop: "2023-09-17" },
+    9: { start: "2023-09-18", stop: "2023-09-24" },
+    10: { start: "2023-09-25", stop: "2023-10-01" },
+    11: { start: "2023-10-02", stop: "2023-10-09" },
+    12: { start: "2023-10-09", stop: "2023-10-15" },
+    13: { start: "2023-10-16", stop: "2023-10-22" },
+    14: { start: "2023-10-23", stop: "2023-10-29" },
+    15: { start: "2023-10-30", stop: "2023-11-05" },
+    exam: { start: "2023-10-19", stop: "2023-10-28" },
+  },
+  // T1
   "3231": {
     0: { start: "2023-02-27", stop: "2023-03-03" },
     1: { start: "2023-03-06", stop: "2023-03-12" },

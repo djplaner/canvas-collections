@@ -23,9 +23,9 @@
     addCalendarDate,
     checkModuleMetaData,
   } from "./representationSupport";
-  import UniversityDateCalendar from "../../lib/university-date-calendar";
+/*  import UniversityDateCalendar from "../../lib/university-date-calendar";
 
-  let calendar = new UniversityDateCalendar();
+  let calendar = new UniversityDateCalendar(); */
 
   export let collection: string;
   export let claytons: boolean;

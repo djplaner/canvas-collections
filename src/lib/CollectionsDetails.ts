@@ -1052,8 +1052,8 @@ const DEFAULT_CONFIGURATION_TEMPLATE = {
 const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 <div class="cc-config-explanation">
 <div style="float:left;padding:0.5em">
-  <img src="https://repository-images.githubusercontent.com/444951314/42343d35-e259-45ae-b74e-b9957222211f"
-      alt="canvas-collections logo" width="123" height="92" />
+  <img src="https://repository-images.githubusercontent.com/444951314/ca609cdf-d4ce-4294-aac1-27067209a10d"
+      alt="canvas-collections logo" width="120" height="68" />
 </div>
 <div style="padding:0.5em">
   <h3>Canvas Collections Configuration page</h3>
