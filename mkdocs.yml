@@ -10,6 +10,7 @@ site_description: >-
 theme:
   logo: assets/collections-logo.png
   name: material
+  custom_dir: .overrides
   extra_css:
     - stylesheets/extra.css
   font:

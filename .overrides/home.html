@@ -1,0 +1,44 @@
+{% extends "main.html" %}
+{% block tabs %}
+  {{ super() }}
+
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/components/tab-group/tab-group.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/components/icon/icon.js"></script>
+
+  <div class="container header-home">
+	<div class="div-header-home">
+		<h1 class="h1 centered">
+			Improve the visual identity and findability of your Canvas course site
+		</h1>
+
+		<p class="hero-subheading centered">
+			Use Canvas Collections to address known limitations of [Canvas Modules](https://www.instructure.com/canvas/resources/all/how-to-use-modules-to-build-courses-in-canvas).
+			<ul>
+				<li>one long overwhelming list;</li> 
+				<li>can't embed contextual information; and,</li> 
+				<li>lack visual appeal.</li> 
+			</ul>
+		</p>
+	</div>
+	<div class="div-header-content">
+		<h3 class="centered">Compare and contrast</h3>
+		<sl-tab-group>
+			<sl-tab slot="nav" panel="canvas">Canvas modules</sl-tab>
+			<sl-tab slot="nav" panel="collections"><sl-icon name="plus-circle"></sl-icon></sl-tab>
+
+			<sl-tab-panel name="canvas">
+				Canvas
+			</sl-tab-panel>
+			<sl-tab-panel name="collections">
+				Collections
+			</sl-tab-panel>
+		</sl-tab-group>
+
+	</div>
+  </div>
+
+
+
+{% endblock %}
+{% block content %}{% endblock %}
+{% block footer %}{% endblock %}
