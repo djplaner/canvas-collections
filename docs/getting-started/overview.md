@@ -1,15 +1,22 @@
 # Getting Started
 
-There are three steps to getting started with Canvas Collections
+A sequence of common steps to get you started with using Canvas Collections.
 
-1. [_Install_ the Canvas Collections code](./install/types-pre-requisites.md).
+| Sequence | Description |
+| -------- | ----------- |
+| [Install Collections](./install/types-pre-requisites.md) | Ensure you can use Collections with your course sites <br> (**Note:** Check below if you need to) |
+| [Collections 101](./101/overview.md) | Learn Collections' basics and have a play |
+| [Design Collections](./configure/configuration.md) | Design Collections to embody your context and design intent, configure collections with that design |
+| [Use Collections](./use/types.md) | Understand the students' experience with Collections |
+| [Configure & Use Claytons Collections](./claytons/overview.md) | Use _Claytons_ Collections to create a page with Collections |
 
-    Unless you have admin/theme access to your Canvas install you will use [the Individual install](install/individual.md). 
 
-2. [_Configure_ a Canvas course site with Collections](./configure/configuration.md).
+!!! tip "Is Collections already installed?"
+    When you view the _Modules_ page of your Canvas site as teacher/designer (i.e. you can see the _Student View_ button), do you the _Collections Configuration_ container (circled in red below)?
+    
+    If so, then Collections is already installed!  
 
-    Also see [the walk throughs](../walk-throughs/available.md) for a more detailed example of designing and configuring Canvas Collections for a course site.
+    ![Collections Configuration container circled - is it installed?](images/isItInstalled.png)  
 
-3. [_Use_ Collections to navigate the modules view of a Canvas course site](./use/types.md).
 
-    How you use Canvas Collections will depend on the type of install you have.
+

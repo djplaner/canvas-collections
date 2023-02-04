@@ -2,16 +2,18 @@
 
 An individual install adds Canvas Collections to a web browser. Once complete, every time you use that web browser you will be able to use Canvas Collections.
 
-An individual install is a two step process:
+Perform an individual install by:
 
-1. Install a userscript manager - for example, [TamperMonkey](https://www.tampermonkey.net/)
-2. Install the [canvas-collections userscript](https://github.com/djplaner/canvas-collections/raw/main/release/canvas-collections.user.js)
+1. [Installing a userscript manager](#install-a-userscript-manager) - for example, [TamperMonkey](https://www.tampermonkey.net/)
+2. Installing the [Canvas Collections userscript](https://github.com/djplaner/canvas-collections/raw/main/release/canvas-collections.user.js)
+3. Testing [if it worked](is-it-working.md).
 
-> ❓ You install a [userscript manager](https://en.wikipedia.org/wiki/Userscript_manager) into your web browser (not surprisingly) to help manage [userscripts](https://en.wikipedia.org/wiki/Userscript). Small Javascript programs that your browser will run when you view specific web pages. Userscripts customise those web pages to better suit your purposes. e.g. to modify the Canvas modules view by adding Collections.
+!!! Note "About userscripts and userscript managers"
 
-Once you've completed installation, you can test [if it is working](is-it-working.md).
+    You install a [userscript manager](https://en.wikipedia.org/wiki/Userscript_manager) into your web browser (not surprisingly) to help manage [userscripts](https://en.wikipedia.org/wiki/Userscript). Small Javascript programs that your browser will run when you view specific web pages. Userscripts customise those web pages to better suit your purposes. e.g. to modify the Canvas modules view by adding Collections.
 
-## Install a userscript manager - TamperMonkey
+
+## 1. Install a userscript manager
 
 [TamperMonkey](https://www.tampermonkey.net/) is a widely used userscript manager. It can be used on most modern web browsers. 
 
@@ -32,18 +34,18 @@ You will be taken to your web brower's [extension or add-on service](https://en.
 
 Each web browser’s browser extension installation process will be a little different. In general, it will provide you with details of what permissions the browser extension (Tampemonkey in this case) wishes to have and provides you with the option to install.
 
-## Install canvas-collections userscript
+## 2. Install Canvas Collections userscript
 
-With TamperMonkey installed you can now install [the canvas-collections userscript](https://github.com/djplaner/canvas-collections/raw/main/release/canvas-collections.user.js). Just click on that link.
+With TamperMonkey installed you can now install [the Canvas Collections userscript](https://github.com/djplaner/canvas-collections/raw/main/dist/canvas-collections.user.js)
 
-If all is working you should something like the following image. An image showing TamperMonkey providing you with details of the userscript and asking if you wish to install it.
+If all is working you should something like the following image. An image showing TamperMonkey providing you with details of the userscript and asking if you wish to install (or perhaps update) it.
 
 ![](pics/tamperMonkeyInstallCC.png)  
 
 
-## Turning canvas-collections off
+## Turning the Collections userscript off
 
-There are three ways to prevent canvas-collections from modifying your view of Canvas modules pages:
+There are three ways to prevent Canvas Collections from modifying your view of Canvas modules pages:
 
 1. Remove TamperMonkey (or your userscript manager)
 

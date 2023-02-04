@@ -14,11 +14,8 @@
 
   import { collectionsStore, modulesStore, configStore } from "../../stores";
   import {
-    getCollectionCanvasModules,
-    addUnallocatedModules,
     getModuleUrl,
     getRepresentationModules,
-    //    modifyCanvasModulesList,
     generateModuleDate,
     addCalendarDate,
     checkModuleMetaData,

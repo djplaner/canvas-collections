@@ -3,7 +3,7 @@ site_url: https://djplaner.github.io/canvas-collections/
 repo_url: https://github.com/djplaner/canvas-collections
 site_author: David Jones
 site_description: >-
-  Improve the visual identity and information architecture of the Canvas LMS
+  Improve the visual identity and information architecture of the Canvas LMS Modules page
 
 
 # Configuration
@@ -32,10 +32,12 @@ theme:
 
 markdown_extensions:
   - admonition
-  - pymdownx.details
-  - pymdownx.superfences
   - attr_list
   - def_list
+  - md_in_html
+  - tables
+  - pymdownx.details
+  - pymdownx.superfences
   - pymdownx.emoji:
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - pymdownx.tasklist:
@@ -47,28 +49,23 @@ extra:
       link: https://twitter.com/djplaner
 
 nav:
-  - Home: index.md
-  - Features & Use: 
-    - Overview: features.md
-    - Collections: features/collections.md
-    - Representations: features/representations.md
-    - Objects: features/objects.md
-  - Getting Started: #getting-started.md
+  - 🚧 Home: index.md
+  - 🚧 Getting Started: #getting-started.md
     - Overview: getting-started/overview.md
     - 1. Install: 
       - Types and Pre-requisites: getting-started/install/types-pre-requisites.md
       - Individual: getting-started/install/individual.md
       - Institutional: getting-started/install/institutional.md
       - Is it working?: getting-started/install/is-it-working.md
-    - 2. Configure: 
+    - 2. Play and learn with Collections:
+      - Collections 101: getting-started/play/collections-101.md
+    - 3. Design with Collections:
       - Configuration: getting-started/configure/configuration.md
       - Collections: getting-started/configure/collections.md
       - Modules: getting-started/configure/modules.md
-    - 3. Use: 
+    - 3. Use Claytons Collections:
       - Types of Use: getting-started/use/types.md
-    - 4. Development: 
-      - Local development: getting-started/development/local-development.md
-  - 'Walk throughs': 
+  - '🚧 Walk throughs': 
     - Available walk throughs: walk-throughs/available.md
     - New course:
       - Before & after: walk-throughs/new/before-and-after.md
@@ -88,7 +85,7 @@ nav:
 #    - Navigating the site: 
 #      - Student - live: walk-throughs/navigating/student-live.md
 #      - Student - Claytons: walk-throughs/navigating/student-claytons.md
-  - Reference: 
+  - 🚧 Reference: 
       - Overview: reference/overview.md
       - Visibility: reference/visibility.md
       - Collections:
@@ -100,5 +97,12 @@ nav:
         - Objects: reference/objects/overview.md
       - Development:
         - Component Structure: reference/development/component-structure.md
-  - 'Related Work': related-work.md
-  - 'Latest Version': latest-version.md
+  - 🚧 Development:
+      - Local development: getting-started/development/local-development.md
+  - '🚧 Related Work': related-work.md
+  - '🚧 Latest Version': latest-version.md
+  - ⚰️ Features & Use: 
+    - Overview: features.md
+    - Collections: features/collections.md
+    - Representations: features/representations.md
+    - Objects: features/objects.md
