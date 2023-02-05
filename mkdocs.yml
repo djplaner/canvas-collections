@@ -29,7 +29,8 @@ theme:
 plugins:
   - search
 
-#extra_css: 
+extra_css: 
+  - stylesheets/extra.css
 #  - https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css
 #extra_javascript: 
 #  - https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js
@@ -63,14 +64,13 @@ nav:
       - Individual: getting-started/install/individual.md
       - Institutional: getting-started/install/institutional.md
       - Is it working?: getting-started/install/is-it-working.md
-    - 2. Play and learn with Collections:
-      - Collections 101: getting-started/play/collections-101.md
-    - 3. Design with Collections:
+    - 2. Collections 101: getting-started/play/collections-101.md
+    - 3. Design for Collections:
       - Configuration: getting-started/configure/configuration.md
       - Collections: getting-started/configure/collections.md
       - Modules: getting-started/configure/modules.md
-    - 3. Use Claytons Collections:
-      - Types of Use: getting-started/use/types.md
+    - 4. Use Collections: getting-started/use/types.md
+#    - 5. Configure Claytons Collections: 
   - '🚧 Walk throughs': 
     - Available walk throughs: walk-throughs/available.md
     - New course:

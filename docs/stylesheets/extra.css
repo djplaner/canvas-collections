@@ -1,8 +1,23 @@
 [data-md-color-scheme="collections"] {
-  --md-primary-fg-color:        #f05454;
+  --md-primary-bg-color:        #000000;
   --md-primary-fg-color--light: #304753;
   --md-primary-fg-color--dark:  #121212;
-  /*--md-primary-bg-color: #f5f5f5; */
-  --md-primary-bg-color: #000000;
+  --md-primary-fg-color: #f5f5f5; 
   --md-accent-fg-color: #526cfe;
+}
+
+figure {
+/*  border-style: solid;
+  border-width: 1px;
+  border-color: #f05454;*/
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+figcaption {
+  font-size: 0.7rem;
+}
+
+img {
+  padding: 0.5rem;
 }

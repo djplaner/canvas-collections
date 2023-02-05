@@ -593,7 +593,7 @@
         <sl-switch id="cc-switch" on:sl-change={initialiseCollections} />
       </label>
     {/if}
-    {#if allDataLoaded && $configStore["ccOn"]}
+    {#if allDataLoaded && $configStore["editMode"]}
       <div class="cc-save">
         <button
           class={$configStore["needToSaveCollections"]
