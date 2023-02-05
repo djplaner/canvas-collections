@@ -84,8 +84,8 @@
 
   // track whether the intervals have been set
   // Making sure we don't get multiple intervals running
-  let saveIntervalOn: boolean = false;
-  let refreshIntervalOn: boolean = false;
+  let saveIntervalOn: boolean = true;
+  let refreshIntervalOn: boolean = true;
   // whether or data canvas and collections data loaded
   let canvasDataLoaded: boolean = false;
   let collectionsDataLoaded: boolean = false;
@@ -244,8 +244,8 @@
         if ($configStore["ccOn"]) {
           addCollectionsDisplay();
           // set up auto save for collections config
-          if ($configStore["editMode"] && AUTO_SAVE && !saveIntervalOn) {
-            saveIntervalOn = true;
+          if ($configStore["editMode"] && AUTO_SAVE && saveIntervalOn) {
+//            saveIntervalOn = true;
             // only if we're in editMode and auto save is on
             saveInterval = setInterval(() => {
               collectionsDetails.saveCollections(
@@ -256,11 +256,12 @@
               );
             }, TIME_BETWEEN_SAVES);
           }
-          if (!refreshIntervalOn && EXIT_SAVE) {
-            refreshIntervalOn = true;
+          if (refreshIntervalOn && EXIT_SAVE) {
+//            refreshIntervalOn = true;
             // set up auto refresh of canvasDetails
             refreshCanvasDetails = setInterval(() => {
-              canvasDetails.refreshCanvasDetails(gotCanvasDetails);
+              console.log("refresh is running")
+              canvasDetails.refreshCanvasDetails(gotCanvasDetails)
               // make sure the current collection's representation is refreshed 
               $configStore["currentCollectionChanged"] = true
             }, TIME_BETWEEN_CANVAS_REFRESH);
