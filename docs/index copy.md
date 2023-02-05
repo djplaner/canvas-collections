@@ -1,5 +1,9 @@
 # Canvas Collections 
 
+
+<h1>Html? <sl-icon name="plus-circle"></sl-icon> </h1>
+
+   <sl-icon name="plus-circle">fred</sl-icon>
 ## Why and what?
 
 The usability and visual design of a course web site impacts the experiences and outcomes of students. Existing functionality of [the Canvas LMS](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-is-Canvas/ta-p/45) places limits on both. Canvas Collections helps by extending [the Canvas Modules page](https://www.instructure.com/en-au/canvas/resources/all/how-to-use-modules-to-build-courses-in-canvas), the main Canvas tool for organising learning activities. 

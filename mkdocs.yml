@@ -1,34 +1,43 @@
 site_name: Canvas Collections
 site_url: https://djplaner.github.io/canvas-collections/
 repo_url: https://github.com/djplaner/canvas-collections
+edit_uri: edit/main/docs/
 site_author: David Jones
 site_description: >-
   Improve the visual identity and information architecture of the Canvas LMS Modules page
 
 
-# Configuration
 theme:
-  logo: assets/collections-logo.png
   name: material
-  custom_dir: .overrides
-  extra_css:
-    - stylesheets/extra.css
-  font:
-    text: Arial
-  plugins:
-    - social
   palette:
     - scheme: collections
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
+    - scheme: slate
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+  custom_dir: .overrides
+  logo: assets/collections-logo.png
   features:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
+    - header.autohide
+    - search.suggest
+#  font:
+#    text: Arial
+
+
+plugins:
+  - search
+
+#extra_css: 
+#  - https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css
+#extra_javascript: 
+#  - https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js
+
 
 markdown_extensions:
   - admonition
@@ -39,6 +48,7 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.superfences
   - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - pymdownx.tasklist:
       custom_checkbox: true
@@ -49,7 +59,7 @@ extra:
       link: https://twitter.com/djplaner
 
 nav:
-  - 🚧 Home: index.md
+  - Home: index.md
   - 🚧 Getting Started: #getting-started.md
     - Overview: getting-started/overview.md
     - 1. Install: 

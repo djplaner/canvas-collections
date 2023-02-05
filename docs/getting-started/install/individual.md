@@ -66,7 +66,7 @@ Click the _Enabled_ option shown in the image above to disable TamperMonkey - se
 
 ### Disable or remove the Canvas Collections userscript
 
-By accessing the TamperMonkey _dashboard_ you can disable specific userscripts, including Canvas Collections. The _dahsboard_ is an option provided via the TamperMonkey icons - see the following image.
+By accessing the TamperMonkey _dashboard_ you can disable specific userscripts, including Canvas Collections. The _dashboard_ is an option provided via the TamperMonkey icons - see the following image.
 
 ![](pics/toolbarDashboard.png)  
 
