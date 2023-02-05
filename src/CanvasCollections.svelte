@@ -36,7 +36,7 @@
   setBasePath("../node_modules/@shoelace-style/shoelace/dist/");
 
   const TIME_BETWEEN_SAVES = 10000;
-  const TIME_BETWEEN_CANVAS_REFRESH = 15000;
+  const TIME_BETWEEN_CANVAS_REFRESH = 1500000000;
   const AUTO_SAVE_BASE = false;
   const EXIT_SAVE_BASE = true;
   // change these based on being in student view
@@ -509,18 +509,17 @@
    * @description If when leaving the page there are unsaved changes, then
    * save them
    */
-  function beforeUnload() {
-    console.log('--------- beforeUnload')
-    console.log(`EXIT_SAVE: ${EXIT_SAVE} needToSave ${$configStore["needToSaveCollections"]} editMode ${$configStore['editMode']}`)
+  function beforeUnload(event) {
     if (EXIT_SAVE && $configStore["needToSaveCollections"] && $configStore['editMode']) {
-      //event.preventDefault();
       collectionsDetails.saveCollections(
         $collectionsStore,
         $configStore["editMode"],
         $configStore["needToSaveCollections"],
         completeSaveCollections
       );
+      event.preventDefault();
     }
+    // necessary for correct behaviour?
     return '...'
   }
 
