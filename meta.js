@@ -24,7 +24,7 @@ let meta = {
     "supportURL": "https://github.com/djplaner/canvas-collections/issues",
     "resource": {
 		//css: pathToFileURL(path.join(baseUrl, 'bundle.css'))
-		css: "https://raw.githack.com/djplaner/canvas-collections/main/dist/canvas-collections.css"
+		css: "https://raw.githubusercontent.com/djplaner/canvas-collections/main/dist/canvas-collections.css"
 	},
     "match": [
         "https://*/courses/*"
