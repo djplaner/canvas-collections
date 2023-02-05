@@ -229,7 +229,8 @@ export default class UniversityDateCalendar {
     // process each courseId separately and try to separate out two components
     // courseCode - e.g. 1252QCA
     // STRM - e.g. 3228
-    let courseIdsComponents = [];
+    let courseIdsComponents = []
+    let QCM_Course = false
 
     for (let courseId of courseIds) {
       // split up into the components
@@ -241,6 +242,9 @@ export default class UniversityDateCalendar {
         let match = component.match(/^[0-9][0-9][0-9][0-9][A-Z][A-Z][A-Z]$/);
         if (match) {
           obj["courseCode"] = match[0];
+          if (match[0].endsWith("QCM")) {
+            QCM_Course = true
+          }
           continue;
         }
         match = component.match(/^[0-9][0-9][0-9][0-9]$/);
@@ -259,12 +263,18 @@ export default class UniversityDateCalendar {
 
     if (STRMs.length === 0) {
       // if there aren't any, use the default
+      if (QCM_Course) {
+        return `${this.defaultPeriod}QCM`
+      }
       return this.defaultPeriod;
     } else if (STRMs.length > 1) {
       // more than one, report an error and use the first one
       console.error(`Multiple STRMs found in courseCode: ${courseCode}`);
     }
     // return the first STRM because there is at least one STRM
+    if (QCM_Course) {
+      return `${STRMs[0]}QCM`
+    }
     return STRMs[0];
   }
 }
