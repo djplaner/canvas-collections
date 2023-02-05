@@ -21,8 +21,12 @@ theme:
   custom_dir: .overrides
   features:
     - navigation.tabs
+    - navigation.instant
+    - navigation.footer
+    - navigation.tracking
     - navigation.tabs.sticky
     - navigation.sections
+    - content.tabs.link
     - header.autohide
     - search.suggest
 
@@ -36,6 +40,7 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js
 
 
+
 markdown_extensions:
   - admonition
   - attr_list
@@ -44,6 +49,8 @@ markdown_extensions:
   - tables
   - pymdownx.details
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true 
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
@@ -64,7 +71,10 @@ nav:
       - Individual: getting-started/install/individual.md
       - Institutional: getting-started/install/institutional.md
       - Is it working?: getting-started/install/is-it-working.md
-    - 2. 🚧 Collections 101: getting-started/play/collections-101.md
+    - 2. Collections 101: 
+      - Overview: getting-started/101/overview.md
+      - Features: getting-started/101/features.md
+      - Interface: getting-started/101/interface.md
     - 3. Design for Collections:
       - 🚧 Configuration: getting-started/configure/configuration.md
       - 🚧 Collections: getting-started/configure/collections.md
