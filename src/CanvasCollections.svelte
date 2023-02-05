@@ -37,7 +37,7 @@
 
   const TIME_BETWEEN_SAVES = 10000;
   const TIME_BETWEEN_CANVAS_REFRESH = 15000;
-  const AUTO_SAVE_BASE = true;
+  const AUTO_SAVE_BASE = false;
   const EXIT_SAVE_BASE = true;
   // change these based on being in student view
   let AUTO_SAVE = AUTO_SAVE_BASE;
@@ -84,8 +84,9 @@
 
   // track whether the intervals have been set
   // Making sure we don't get multiple intervals running
-  let saveIntervalOn: boolean = true;
-  let refreshIntervalOn: boolean = true;
+  // - these have to be set to false initially
+  let saveIntervalOn: boolean = false;
+  let refreshIntervalOn: boolean = false;
   // whether or data canvas and collections data loaded
   let canvasDataLoaded: boolean = false;
   let collectionsDataLoaded: boolean = false;
@@ -244,10 +245,11 @@
         if ($configStore["ccOn"]) {
           addCollectionsDisplay();
           // set up auto save for collections config
-          if ($configStore["editMode"] && AUTO_SAVE && saveIntervalOn) {
-//            saveIntervalOn = true;
+          if ($configStore["editMode"] && AUTO_SAVE && !saveIntervalOn) {
+            saveIntervalOn = true;
             // only if we're in editMode and auto save is on
             saveInterval = setInterval(() => {
+              console.log("save is running")
               collectionsDetails.saveCollections(
                 $collectionsStore,
                 $configStore["editMode"],
@@ -256,8 +258,8 @@
               );
             }, TIME_BETWEEN_SAVES);
           }
-          if (refreshIntervalOn && EXIT_SAVE) {
-//            refreshIntervalOn = true;
+          if (!refreshIntervalOn ) {
+            refreshIntervalOn = true;
             // set up auto refresh of canvasDetails
             refreshCanvasDetails = setInterval(() => {
               console.log("refresh is running")
@@ -507,9 +509,11 @@
    * @description If when leaving the page there are unsaved changes, then
    * save them
    */
-  function beforeUnload(event) {
-    if (EXIT_SAVE && $configStore["needToSaveCollections"] && !$configStore['editMode']) {
-      event.preventDefault();
+  function beforeUnload() {
+    console.log('--------- beforeUnload')
+    console.log(`EXIT_SAVE: ${EXIT_SAVE} needToSave ${$configStore["needToSaveCollections"]} editMode ${$configStore['editMode']}`)
+    if (EXIT_SAVE && $configStore["needToSaveCollections"] && $configStore['editMode']) {
+      //event.preventDefault();
       collectionsDetails.saveCollections(
         $collectionsStore,
         $configStore["editMode"],
@@ -517,6 +521,7 @@
         completeSaveCollections
       );
     }
+    return '...'
   }
 
   let HELP = {

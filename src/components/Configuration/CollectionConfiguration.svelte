@@ -117,6 +117,7 @@
     $collectionsStore["COLLECTIONS_ORDER"] =
       $collectionsStore["COLLECTIONS_ORDER"];
     $collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = collectionName;
+    $configStore["needToSaveCollections"] = true;
   }
 
   /**
@@ -134,6 +135,7 @@
     $collectionsStore["COLLECTIONS_ORDER"] =
       $collectionsStore["COLLECTIONS_ORDER"];
     $collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = collectionName;
+    $configStore["needToSaveCollections"] = true;
   }
 
   /**
@@ -180,6 +182,7 @@
         }
         // remove the collection from $collectionsStore["COLLECTIONS"]
         delete $collectionsStore["COLLECTIONS"][collectionName];
+        $configStore["needToSaveCollections"] = true;
         //$collectionsStore = $collectionsStore;
         // TODO is this really needed?
         //$collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = collectionName;
