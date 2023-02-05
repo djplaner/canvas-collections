@@ -35,11 +35,14 @@
   import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
   setBasePath("../node_modules/@shoelace-style/shoelace/dist/");
 
-  const TIME_BETWEEN_SAVES = 10000;
-  const TIME_BETWEEN_CANVAS_REFRESH = 1500000000;
-  const AUTO_SAVE_BASE = true;
-  let AUTO_REFRESH = false;
-  const EXIT_SAVE_BASE = true;
+  const TIME_BETWEEN_SAVES = 10000;    // 10 seconds
+  const TIME_BETWEEN_CANVAS_REFRESH = 60000;   // 60 seconds
+  // to turn/on/off interval based saving and refreshing
+  // set these to false
+  const AUTO_SAVE_BASE = true;    // regularly check to save collections
+  const EXIT_SAVE_BASE = true;    // check to save collections before leaving
+  let AUTO_REFRESH = true;        // regularly update Canvas course modules information
+  // refresh has no base, as it should run when students using
   // change these based on being in student view
   let AUTO_SAVE = AUTO_SAVE_BASE;
   let EXIT_SAVE = EXIT_SAVE_BASE;
@@ -98,6 +101,8 @@
   // the actual data objects for canvas and collections data
   let canvasDetails = null;
   let collectionsDetails = null;
+
+  let lastCanvasRefresh = Date.now();
 
   let ccPublished = true;
 
@@ -249,12 +254,10 @@
             saveIntervalOn = true;
             // only if we're in editMode and auto save is on
             saveInterval = setInterval(() => {
-              console.log("save is running");
               if (
                 $configStore["needToSaveCollections"] &&
                 $configStore["editMode"]
               ) {
-                console.log("trying to actually save")
                 collectionsDetails.saveCollections(
                   $collectionsStore,
                   $configStore["editMode"],
@@ -268,7 +271,9 @@
             refreshIntervalOn = true;
             // set up auto refresh of canvasDetails
             refreshCanvasDetails = setInterval(() => {
-              console.log("refresh is running");
+              const millis = Date.now() - lastCanvasRefresh;
+              console.log(` -- seconds elapshed since last refresh: ${millis / 1000}`)
+              lastCanvasRefresh = Date.now();
               canvasDetails.refreshCanvasDetails(gotCanvasDetails);
               // make sure the current collection's representation is refreshed
               $configStore["currentCollectionChanged"] = true;

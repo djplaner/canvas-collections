@@ -30,8 +30,6 @@
     claytons = false;
   }
 
-  console.log(`---------- CollectionRepresentation.svelte: collectionName=${collectionName} claytons=${claytons} ----------`)
-
 /*  if (claytons===false) {
     collectionName = $configStore["currentCollection"];
   }*/

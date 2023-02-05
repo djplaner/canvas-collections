@@ -1,6 +1,5 @@
 
 document.addEventListener("DOMContentLoaded", function () {
-	console.log("here i am");
 
 	/**
 	 * IIFE to add the shoelace script and stylesheet to the page.
@@ -20,7 +19,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	script.src = "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js";
 	document.head.appendChild(script);
 
-	console.log("here i am too");
 	//})();
 
 });
