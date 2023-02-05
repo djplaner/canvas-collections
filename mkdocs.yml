@@ -6,7 +6,6 @@ site_author: David Jones
 site_description: >-
   Improve the visual identity and information architecture of the Canvas LMS Modules page
 
-
 theme:
   name: material
   palette:
@@ -26,9 +25,6 @@ theme:
     - navigation.sections
     - header.autohide
     - search.suggest
-#  font:
-#    text: Arial
-
 
 plugins:
   - search
