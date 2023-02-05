@@ -37,7 +37,8 @@
 
   const TIME_BETWEEN_SAVES = 10000;
   const TIME_BETWEEN_CANVAS_REFRESH = 1500000000;
-  const AUTO_SAVE_BASE = false;
+  const AUTO_SAVE_BASE = true;
+  let AUTO_REFRESH = false;
   const EXIT_SAVE_BASE = true;
   // change these based on being in student view
   let AUTO_SAVE = AUTO_SAVE_BASE;
@@ -59,17 +60,16 @@
     editMode: editMode,
     csrfToken: csrfToken,
     modulesPage: modulesPage, // boolean, is this the modules page? (bad name right?)
-    currentCollection: "",   // name of the current collection
+    currentCollection: "", // name of the current collection
     currentCollectionChanged: false, // has the current collection changed?
     needToSaveCollections: false,
     ccOn: false,
-    studyPeriod : null   // calculated by CanvasDetails
+    studyPeriod: null, // calculated by CanvasDetails
   };
-
 
   $: {
     // modify save settings as we enter/leave student view
-    if (!$configStore['editMode']) {
+    if (!$configStore["editMode"]) {
       AUTO_SAVE = false;
       EXIT_SAVE = false;
     } else {
@@ -87,6 +87,9 @@
   // - these have to be set to false initially
   let saveIntervalOn: boolean = false;
   let refreshIntervalOn: boolean = false;
+  // store the intervals
+  let saveInterval = null;
+  let refreshCanvasDetails = null;
   // whether or data canvas and collections data loaded
   let canvasDataLoaded: boolean = false;
   let collectionsDataLoaded: boolean = false;
@@ -95,8 +98,6 @@
   // the actual data objects for canvas and collections data
   let canvasDetails = null;
   let collectionsDetails = null;
-  let saveInterval = null;
-  let refreshCanvasDetails = null;
 
   let ccPublished = true;
 
@@ -151,7 +152,7 @@
     // set $modulesStore to a dict of Canvas module objects keyed on the module id
     $modulesStore = canvasDetails.courseModules;
 
-    $configStore['studyPeriod'] = canvasDetails.studyPeriod;
+    $configStore["studyPeriod"] = canvasDetails.studyPeriod;
     checkAllDataLoaded();
   }
 
@@ -162,7 +163,6 @@
    * has been retrieved or if there were problems
    */
   function gotCollectionsDetails(status: string = "") {
-
     /*
     if (status === "no collections config") {
       // if collectionsDetails has errors and editMode are true
@@ -204,11 +204,11 @@
       // if a student is viewing and no collections, then limit what is done
       if (!(!$configStore["ccOn"] && !$configStore["editMode"])) {
         // encourage an update of the current collection's representation
-        $configStore["currentCollectionChanged"] = true
-        collectionsDataLoaded = true
-        checkAllDataLoaded()
+        $configStore["currentCollectionChanged"] = true;
+        collectionsDataLoaded = true;
+        checkAllDataLoaded();
       }
-    } 
+    }
   }
 
   /**
@@ -249,23 +249,29 @@
             saveIntervalOn = true;
             // only if we're in editMode and auto save is on
             saveInterval = setInterval(() => {
-              console.log("save is running")
-              collectionsDetails.saveCollections(
-                $collectionsStore,
-                $configStore["editMode"],
-                $configStore["needToSaveCollections"],
-                completeSaveCollections
-              );
+              console.log("save is running");
+              if (
+                $configStore["needToSaveCollections"] &&
+                $configStore["editMode"]
+              ) {
+                console.log("trying to actually save")
+                collectionsDetails.saveCollections(
+                  $collectionsStore,
+                  $configStore["editMode"],
+                  $configStore["needToSaveCollections"],
+                  completeSaveCollections
+                );
+              }
             }, TIME_BETWEEN_SAVES);
           }
-          if (!refreshIntervalOn ) {
+          if (!refreshIntervalOn && AUTO_REFRESH) {
             refreshIntervalOn = true;
             // set up auto refresh of canvasDetails
             refreshCanvasDetails = setInterval(() => {
-              console.log("refresh is running")
-              canvasDetails.refreshCanvasDetails(gotCanvasDetails)
-              // make sure the current collection's representation is refreshed 
-              $configStore["currentCollectionChanged"] = true
+              console.log("refresh is running");
+              canvasDetails.refreshCanvasDetails(gotCanvasDetails);
+              // make sure the current collection's representation is refreshed
+              $configStore["currentCollectionChanged"] = true;
             }, TIME_BETWEEN_CANVAS_REFRESH);
           }
         }
@@ -510,7 +516,11 @@
    * save them
    */
   function beforeUnload(event) {
-    if (EXIT_SAVE && $configStore["needToSaveCollections"] && $configStore['editMode']) {
+    if (
+      EXIT_SAVE &&
+      $configStore["needToSaveCollections"] &&
+      $configStore["editMode"]
+    ) {
       collectionsDetails.saveCollections(
         $collectionsStore,
         $configStore["editMode"],
@@ -520,7 +530,7 @@
       event.preventDefault();
     }
     // necessary for correct behaviour?
-    return '...'
+    return "...";
   }
 
   let HELP = {
