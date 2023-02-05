@@ -1,8 +1,8 @@
 # Getting Started
 
-A sequence of common steps to get you started with using Canvas Collections.
+Getting started with Canvas Collections typically involves these steps.
 
-| Sequence | Description |
+| Step | Description |
 | -------- | ----------- |
 | [Install Collections](./install/types-pre-requisites.md) | Ensure you can use Collections with your course sites <br> (**Note:** Check below if you need to) |
 | [Collections 101](./101/overview.md) | Learn Collections' basics and have a play |
