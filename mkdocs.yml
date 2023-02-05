@@ -8,6 +8,7 @@ site_description: >-
 
 theme:
   name: material
+  logo: assets/collections-logo.png
   palette:
     - scheme: collections
       toggle:
@@ -18,7 +19,6 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
   custom_dir: .overrides
-  logo: assets/collections-logo.png
   features:
     - navigation.tabs
     - navigation.tabs.sticky
@@ -71,44 +71,44 @@ nav:
       - 🚧 Modules: getting-started/configure/modules.md
     - 4. 🚧 Use Collections: getting-started/use/types.md
 #    - 5. 🚧 Configure Claytons Collections:
-  - '🚧 Walk throughs': 
+  - '🚧 How-tos': 
     - Available walk throughs: walk-throughs/available.md
-    - New course:
-      - Before & after: walk-throughs/new/before-and-after.md
-      - Design: walk-throughs/new/design.md
-      - Configure Collections: walk-throughs/new/configure-collections.md
-      - Configure Modules: walk-throughs/new/configure-modules.md
-      - Set up "Claytons": walk-throughs/new/set-up-claytons.md
-    - Making changes:
-      - Add a collection: walk-throughs/changes/add-a-collection.md
-      - Delete a collection: walk-throughs/changes/delete-a-collection.md
-      - Add a module: walk-throughs/changes/add-a-module.md
-    - Course copy:
-      - Course copy process: walk-throughs/course-copy/process.md
-    - ⚗️ Advanced:
-      - Multi-collection, one page Claytons: walk-throughs/advanced/multi-collection-one-page.md
-      - Fix Claytons Card CSS: walk-throughs/advanced/fix-claytons-card-css.md
+#    - New course:
+#      - Before & after: walk-throughs/new/before-and-after.md
+#      - Design: walk-throughs/new/design.md
+#      - Configure Collections: walk-throughs/new/configure-collections.md
+#      - Configure Modules: walk-throughs/new/configure-modules.md
+#      - Set up "Claytons": walk-throughs/new/set-up-claytons.md
+#    - Making changes:
+#      - Add a collection: walk-throughs/changes/add-a-collection.md
+#      - Delete a collection: walk-throughs/changes/delete-a-collection.md
+#      - Add a module: walk-throughs/changes/add-a-module.md
+#    - Course copy:
+#      - Course copy process: walk-throughs/course-copy/process.md
+#    - ⚗️ Advanced:
+#      - Multi-collection, one page Claytons: walk-throughs/advanced/multi-collection-one-page.md
+#      - Fix Claytons Card CSS: walk-throughs/advanced/fix-claytons-card-css.md
 #    - Navigating the site: 
 #      - Student - live: walk-throughs/navigating/student-live.md
 #      - Student - Claytons: walk-throughs/navigating/student-claytons.md
-  - 🚧 Reference: 
-      - Overview: reference/overview.md
-      - Visibility: reference/visibility.md
-      - Collections:
-        - Collections: reference/collections/overview.md
-      - Representations:
-        - Representations: reference/representations/overview.md
-        - Claytons: reference/representations/claytons/overview.md
-      - Objects (Modules):
-        - Objects: reference/objects/overview.md
-      - Development:
-        - Component Structure: reference/development/component-structure.md
-  - 🚧 Development:
-      - Local development: getting-started/development/local-development.md
+#  - 🚧 Reference: 
+#      - Overview: reference/overview.md
+#      - Visibility: reference/visibility.md
+#      - Collections:
+#        - Collections: reference/collections/overview.md
+#      - Representations:
+#        - Representations: reference/representations/overview.md
+#        - Claytons: reference/representations/claytons/overview.md
+#      - Objects (Modules):
+#        - Objects: reference/objects/overview.md
+#      - Development:
+#        - Component Structure: reference/development/component-structure.md
+#  - 🚧 Development:
+#      - Local development: getting-started/development/local-development.md
   - '🚧 Related Work': related-work.md
   - '🚧 Latest Version': latest-version.md
-  - ⚰️ Features & Use: 
-    - Overview: features.md
-    - Collections: features/collections.md
-    - Representations: features/representations.md
-    - Objects: features/objects.md
+#  - ⚰️ Features & Use: 
+#    - Overview: features.md
+#    - Collections: features/collections.md
+#    - Representations: features/representations.md
+#    - Objects: features/objects.md

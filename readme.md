@@ -91,7 +91,7 @@ Local development and testing currently takes place using a dev version of the u
 
 `npm run build` will build two "production" versions of Canvas Collections in the `dist` folder, including
 
-1. [`canvas-collections.user.js`](dist/canvas-collections.user.js) - production userscript that can be used by individual teachers/designers to experiment with Canvas Collections
+1. [`canvas-collections.user.js`](dist/canvas-collections.user.js) - production userscript that can be used by individual teachers/designers to experiment with Canvas Collections (use the "raw" version)
 2. [`canvas-collections.js`](dist/canvas-collections.js) (and `canvas-collection.css`) - production version of Canvas Collections that can be loaded into the Canvas themes editor 
 
 [`live-canvas-collections.js`](dist/live-canvas-collections.js) can be loaded into the Canvas themes editor to install Canvas Collections.  It's one example and relies upon a CDN version of the production code.
