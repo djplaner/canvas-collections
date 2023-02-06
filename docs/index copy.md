@@ -71,5 +71,5 @@ The rest of the site expands on this in some detail. Use the following table as 
 | [Getting Started](./getting-started/overview.md) | Step-by-step guide to installing and early use of Canvas Collections |
 | [Walk throughs](./walk-throughs/available.md) | Detailed walk throughs of common tasks using  Collections |
 | [Reference](./reference/overview.md) | Reference documentation for Collections |
-| [Related Work](./related-work.md) | Work by others that has inspired and informed Collections |
+| [Related Work](community/related-work.md) | Work by others that has inspired and informed Collections |
 

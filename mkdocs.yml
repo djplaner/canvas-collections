@@ -8,7 +8,7 @@ site_description: >-
 
 theme:
   name: material
-  logo: assets/collections-logo.png
+  logo: assets/squareLogo-cropped.png
   palette:
     - scheme: collections
       toggle:
@@ -82,7 +82,7 @@ nav:
     - 4. 🚧 Use Collections: getting-started/use/types.md
 #    - 5. 🚧 Configure Claytons Collections:
   - '🚧 How-tos': 
-    - Available walk throughs: walk-throughs/available.md
+    - Available how-tos: how-tos/available.md
 #    - New course:
 #      - Before & after: walk-throughs/new/before-and-after.md
 #      - Design: walk-throughs/new/design.md
@@ -101,22 +101,24 @@ nav:
 #    - Navigating the site: 
 #      - Student - live: walk-throughs/navigating/student-live.md
 #      - Student - Claytons: walk-throughs/navigating/student-claytons.md
-#  - 🚧 Reference: 
-#      - Overview: reference/overview.md
-#      - Visibility: reference/visibility.md
-#      - Collections:
-#        - Collections: reference/collections/overview.md
-#      - Representations:
-#        - Representations: reference/representations/overview.md
-#        - Claytons: reference/representations/claytons/overview.md
-#      - Objects (Modules):
-#        - Objects: reference/objects/overview.md
-#      - Development:
-#        - Component Structure: reference/development/component-structure.md
+  - 🚧 Reference: 
+      - Overview: reference/overview.md
+      - Visibility: reference/visibility.md
+      - Collections:
+        - Collections: reference/collections/overview.md
+      - Representations:
+        - Representations: reference/representations/overview.md
+        - Claytons: reference/representations/claytons/overview.md
+      - Objects (Modules):
+        - Objects: reference/objects/overview.md
+      - Development:
+        - Component Structure: reference/development/component-structure.md
 #  - 🚧 Development:
 #      - Local development: getting-started/development/local-development.md
-  - '🚧 Related Work': related-work.md
-  - '🚧 Latest Version': latest-version.md
+  - 'Community': 
+     - Getting involved: community/collections-community.md
+     - Related work: community/related-work.md
+  - 'Latest Version': latest-version.md
 #  - ⚰️ Features & Use: 
 #    - Overview: features.md
 #    - Collections: features/collections.md

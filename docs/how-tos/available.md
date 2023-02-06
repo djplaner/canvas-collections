@@ -1,6 +1,10 @@
 # Available walk-throughs
 
-Walk throughs are designed to provide step-by-step examples of completing common tasks with Canvas Collections. The currently available walk-throughs are summarised in the following table and available on the following pages.
+!!! note "Under construction"
+
+	This page is under construction. Please check back later for updates.
+
+Available from here will be a collection of scaffolds intended to show you _how to_ perform common tasks with Canvas Collections.
 
 | Walk-through | Description |
 | --- | --- |

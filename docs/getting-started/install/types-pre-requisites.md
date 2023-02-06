@@ -1,10 +1,10 @@
 # Install Canvas Collections
 
-## Installation Types
+## Installation modes
 
-There are two ways to install Canvas Collections, which one will you use?
+There are two modes in which you can install Canvas Collections: individual and institutional.
 
-| | [**Individual**](individual.md) | [**Institution**](institutional.md) |
+| | [**Individual**](individual.md) | [**Institutional**](institutional.md) |
 | --------------| -------------- | --------------- |
 | **Who installs it?** | You | Your institution |
 | **How is it installed?** | Installed as a [userscript](https://en.wikipedia.org/wiki/Userscript) in your browser | An institution's Canvas administrator installs it into Canvas using [the Theme Editor](https://community.canvaslms.com/t5/Video-Guide/Theme-Editor-Admins/ta-p/383021) |
