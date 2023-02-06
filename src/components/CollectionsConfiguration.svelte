@@ -15,7 +15,7 @@
   import FullClaytons from "./Configuration/FullClaytons.svelte";
 
   const visibilityOptions = ["no-one", "students", "teachers", "all"];
-  const CC_VERSION = "1.0.1b";
+  const CC_VERSION = "1.0.2";
 
   /**
    * Declare and populate variables to track whether includePage and outputPage
