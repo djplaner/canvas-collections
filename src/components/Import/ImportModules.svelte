@@ -32,7 +32,7 @@
   });
   // get lists of both moduleIds
   //  let importedModuleIds = Object.keys(collectionsDetails.collections.MODULES);
-  //  let currentModuleIds = Object.keys(currentModules);
+    let currentModuleIds = Object.keys(currentModules);
   //  let currentModuleDetails = {};
   //  let importModuleDetails = {};
   //  [currentModuleDetails, importModuleDetails] = initialiseModules();

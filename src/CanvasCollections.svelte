@@ -351,7 +351,7 @@
     if (status) {
       toastAlert(
         `<p>The import of Collection's 
-        <a href="/courses/${courseId}}/pages/canvas-collections-configuration" target="_blank" rel="noreferrer">
+        <a href="/courses/${courseId}/pages/canvas-collections-configuration" target="_blank" rel="noreferrer">
           configuration</a> has been successful.</p>`,
         "success"
       );
