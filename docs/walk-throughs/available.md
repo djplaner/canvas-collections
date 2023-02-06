@@ -4,7 +4,7 @@
 
 	This page is under construction. Please check back later for updates.
 
-Available from here will be a collection of scaffolds intended to show you _how to_ perform common tasks with Canvas Collections.
+Available from here will be a collection of scaffolds intended to walk you through common tasks with Canvas Collections.
 
 | Walk-through | Description |
 | --- | --- |

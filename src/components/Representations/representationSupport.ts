@@ -171,7 +171,10 @@ export function generateModuleDate(module) {
   /*  if (!module.hasOwnProperty("date") || !isNotEmptyDate(module.date)) {
     return "";
   } */
-  let dateStr = `${module.date.label}: `;
+  let dateStr = ""
+  if ( module.date.label!=="" ) {
+    dateStr=`${module.date.label}: `;
+  }
 
   if (isNotEmptyDate(module.date)) {
     dateStr += generateDateString(module.date, module.dateHide);
