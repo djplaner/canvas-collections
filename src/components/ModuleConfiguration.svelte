@@ -56,7 +56,10 @@
   };
 </script>
 
-<div class="cc-module-config border border-trbl" id="cc-module-config-{module}">
+<div class="cc-module-config border border-trbl" id="cc-module-config-{module}"
+      on:click={toggleModuleConfigShow}
+      on:keydown={toggleModuleConfigShow}
+>
   {#if !allocated}
     <div
       class="cc-module-no-collection"
@@ -71,8 +74,6 @@
       class={$collectionsStore["MODULES"][module].configVisible
         ? "icon-mini-arrow-down"
         : "icon-mini-arrow-right"}
-      on:click={toggleModuleConfigShow}
-      on:keydown={toggleModuleConfigShow}
     />
 
     Configure Collections for
