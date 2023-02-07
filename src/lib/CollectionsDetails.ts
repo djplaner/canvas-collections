@@ -194,7 +194,6 @@ export class CollectionsDetails {
    * The rest of the loading of collections will proceed
    */
   checkForImportedCollections(courseImages) {
-
     const imagesCourseId = parseInt(courseImages.id.replace("cc-course-", ""));
 
     if (this.config.courseId !== imagesCourseId) {
@@ -481,6 +480,7 @@ export class CollectionsDetails {
    * - each module has an attribute 'configVisible' set to false
    * - each module has an attribute 'actualNum' set to ""
    * - each module has a proper date structure
+   * - decode collection names
    */
 
   updateCollections() {
@@ -529,7 +529,7 @@ export class CollectionsDetails {
           module.label = "";
         }
         if (!module.hasOwnProperty("banner") || module.banner === "") {
-          module.banner="image"
+          module.banner = "image";
         }
         if (!module.hasOwnProperty("metadata")) {
           module.metadata = {};
@@ -537,6 +537,28 @@ export class CollectionsDetails {
         this.handleModuleDate(module);
         this.removeCanvasModuleDetails(module);
       }
+    }
+
+    // decode the keys for this.cc_configuration.COLLECTIONS
+    if (this.collections.hasOwnProperty("COLLECTIONS")) {
+      let collections = {};
+
+      // change the name in COLLECTIONS for the main objectsj
+      for (let collectionName in this.collections["COLLECTIONS"]) {
+        const collection = this.collections["COLLECTIONS"][collectionName];
+        collections[this.decodeHTML(collectionName)] = collection;
+      }
+      this.collections["COLLECTIONS"] = collections;
+      // decode the values in this.cc_configuration.COLLECTIONS_ORDER
+      this.collections["COLLECTIONS_ORDER"] = this.collections[
+        "COLLECTIONS_ORDER"
+      ].map((collectionName : string) => {
+        return this.decodeHTML(collectionName);
+      });
+      // decode the value in the string this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
+      this.collections["DEFAULT_ACTIVE_COLLECTION"] = this.decodeHTML(
+        this.collections["DEFAULT_ACTIVE_COLLECTION"]
+      );
     }
   }
 
@@ -639,10 +661,7 @@ export class CollectionsDetails {
    * @param html - HTML
    * @returns {string} - removed any HTML encodings and sanitised
    */
-  decodeHTML(html: string, iframeAllowed = false) {
-    let txt = document.createElement("textarea");
-    txt.innerHTML = html;
-    let value = txt.value;
+  decodeHTML(html: string, iframeAllowed = false ) {
 
     // do some sanitisation of the HTML https://github.com/apostrophecms/sanitize-html
     let allowedTags = sanitizeHtml.defaults.allowedTags;
@@ -653,10 +672,22 @@ export class CollectionsDetails {
         iframe: ["src", "width", "height", "frameborder", "allowfullscreen"],
       };
     }
-    value = sanitizeHtml(value, {
+    let value = sanitizeHtml(html, {
       allowedTags: allowedTags,
       allowedAttributes: allowedAttributes,
+      parser: {
+        decodeEntities: false,
+      }
     });
+
+    // after sanitisation, do this step as a kludge to decode entities
+    // e.g. & in a collection name can cause issues with collections display
+    // Assumption here is that santizeHtml has handled the heavy lifting
+    // but also encodes entities
+
+    let txt = document.createElement("textarea");
+    txt.innerHTML = value;
+    value = txt.value;
     return value;
   }
 
