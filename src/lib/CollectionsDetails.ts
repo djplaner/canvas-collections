@@ -1052,7 +1052,7 @@ const DEFAULT_CONFIGURATION_TEMPLATE = {
 const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 <div class="cc-config-explanation">
 <div style="float:left;padding:0.5em">
-  <img src="https://repository-images.githubusercontent.com/444951314/ca609cdf-d4ce-4294-aac1-27067209a10d"
+  <img src="https://github.com/djplaner/canvas-collections/raw/main/docs/assets/collections-logo.png"
       alt="canvas-collections logo" width="120" height="68" />
 </div>
 <div style="padding:0.5em">
