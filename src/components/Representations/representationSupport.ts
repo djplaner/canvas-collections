@@ -6,10 +6,14 @@ import { collectionsStore, configStore, modulesStore } from "../../stores";
 /**
  * @function getCollectionCanvasModules
  * @param collection - Collection name
+ * @param claytons - boolean, true if we're in claytons mode
  * @returns {module[]} - Array of modules
  * @description - Returns an array of module belonging to a given collection
  */
-export function getCollectionCanvasModules(collection) {
+export function getCollectionCanvasModules(
+  collection: string,
+  claytons: boolean = false
+) {
   let modules = [];
 
   // collection store is not the Canvas modules (collections modules)
@@ -27,8 +31,11 @@ export function getCollectionCanvasModules(collection) {
     if (collectionsModules[moduleId].collection === collection) {
       // if the module belongs to the selected collection
       // push the canvas module onto the array
-      modules.push(module);
-      addedModuleIds.push(moduleId);
+      // but not if we're in claytons and the module is unpublished
+      if (! ( claytons && !module.published )) {
+        modules.push(module);
+        addedModuleIds.push(moduleId);
+      }
     }
   });
 
@@ -60,7 +67,10 @@ export function getCollectionCanvasModules(collection) {
  * i.e. collection===null
  */
 
-export function addUnallocatedModules(modules : any[], editMode: boolean): any[] {
+export function addUnallocatedModules(
+  modules: any[],
+  editMode: boolean
+): any[] {
   const moduleIds = modules.map((module) => module.id);
 
   const cStore = get(collectionsStore);
@@ -109,12 +119,12 @@ export function getRepresentationModules(
   const editMode = config["editMode"];
 
   // is the problem that we're starting with the Canvas modules
-  modules = getCollectionCanvasModules(collectionName);
+  modules = getCollectionCanvasModules(collectionName claytons);
   // add unallocated modules if,
   if (editMode) {
     // student only if unallocated for this collection is true
     if (unallocated && !claytons) {
-      modules = addUnallocatedModules(modules,editMode);
+      modules = addUnallocatedModules(modules, editMode);
     }
     //} else if ((claytons && unallocated) || !claytons) {
   } else {
@@ -122,7 +132,7 @@ export function getRepresentationModules(
     // - modules not allocated to this collection, if unallocated is true
     // - fyi modules, i.e. fyi is set
     if (unallocated) {
-      modules = addUnallocatedModules(modules,editMode);
+      modules = addUnallocatedModules(modules, editMode);
     }
   }
 
@@ -171,9 +181,9 @@ export function generateModuleDate(module) {
   /*  if (!module.hasOwnProperty("date") || !isNotEmptyDate(module.date)) {
     return "";
   } */
-  let dateStr = ""
-  if ( module.date.label!=="" ) {
-    dateStr=`${module.date.label}: `;
+  let dateStr = "";
+  if (module.date.label !== "") {
+    dateStr = `${module.date.label}: `;
   }
 
   if (isNotEmptyDate(module.date)) {
