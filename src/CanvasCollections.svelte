@@ -35,13 +35,13 @@
   import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
   setBasePath("../node_modules/@shoelace-style/shoelace/dist/");
 
-  const TIME_BETWEEN_SAVES = 10000;    // 10 seconds
-  const TIME_BETWEEN_CANVAS_REFRESH = 60000;   // 60 seconds
+  const TIME_BETWEEN_SAVES = 10000; // 10 seconds
+  const TIME_BETWEEN_CANVAS_REFRESH = 60000; // 60 seconds
   // to turn/on/off interval based saving and refreshing
   // set these to false
-  const AUTO_SAVE_BASE = true;    // regularly check to save collections
-  const EXIT_SAVE_BASE = true;    // check to save collections before leaving
-  let AUTO_REFRESH = true;        // regularly update Canvas course modules information
+  const AUTO_SAVE_BASE = true; // regularly check to save collections
+  const EXIT_SAVE_BASE = true; // check to save collections before leaving
+  let AUTO_REFRESH = true; // regularly update Canvas course modules information
   // refresh has no base, as it should run when students using
   // change these based on being in student view
   let AUTO_SAVE = AUTO_SAVE_BASE;
@@ -272,7 +272,9 @@
             // set up auto refresh of canvasDetails
             refreshCanvasDetails = setInterval(() => {
               const millis = Date.now() - lastCanvasRefresh;
-              console.log(` -- seconds elapshed since last refresh: ${millis / 1000}`)
+              console.log(
+                ` -- seconds elapshed since last refresh: ${millis / 1000}`
+              );
               lastCanvasRefresh = Date.now();
               canvasDetails.refreshCanvasDetails(gotCanvasDetails);
               // make sure the current collection's representation is refreshed
@@ -558,6 +560,11 @@
       <p>To change, click the <i class="icon-mini-arrow-right"></i> icon to the right
         and use the <em>visibility</em> dropdown to select <em>students</em> or <em>all</em>.</p>`,
     },
+    nooneVisible: {
+      tooltip: `<p>Collections is turned <strong>off</strong>.</p><p> No-one is able to see Collections.</p>
+      <p>To change, click the <i class="icon-mini-arrow-right"></i> icon to the right
+        and use the <em>visibility</em> dropdown to select <em>students</em> or <em>all</em>.</p>`,
+    },
     switchTitle: {
       tooltip: "",
       url: "https://djplaner.github.io/canvas-collections/",
@@ -601,8 +608,13 @@
         </sl-tooltip>
       {:else}
         <sl-tooltip>
-          <div slot="content">{@html HELP.studentInvisible.tooltip}</div>
-          <i class="icon-unpublish" />
+          {#if $collectionsStore["VISIBILITY"] === "no-one"}
+            <div slot="content">{@html HELP.nooneVisible.tooltip}</div>
+            <i class="icon-unpublish cc-no-one" />
+          {:else}
+            <div slot="content">{@html HELP.studentInvisible.tooltip}</div>
+            <i class="icon-unpublish" />
+          {/if}
         </sl-tooltip>
       {/if}
       <small>Collections</small>
@@ -746,5 +758,9 @@
 
   i.icon-publish {
     color: #0b874b;
+  }
+
+  .cc-no-one {
+    color: #ff0000;
   }
 </style>
