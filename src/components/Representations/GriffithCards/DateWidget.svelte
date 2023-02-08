@@ -72,7 +72,7 @@ import { addCalendarDate, isNotEmptyDate } from "../representationSupport";
           </div>
         </div>
       {/if}
-      {#if date["day"] || date["to"]["day"]}
+      {#if !dateHide["day"] && (date["day"] || date["to"]["day"])}
         <div class="cc-card-date-dual-day">
           <div class="cc-card-date-day-from">
             {#if date["day"]}
