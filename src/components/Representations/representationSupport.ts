@@ -119,7 +119,7 @@ export function getRepresentationModules(
   const editMode = config["editMode"];
 
   // is the problem that we're starting with the Canvas modules
-  modules = getCollectionCanvasModules(collectionName claytons);
+  modules = getCollectionCanvasModules(collectionName, claytons);
   // add unallocated modules if,
   if (editMode) {
     // student only if unallocated for this collection is true

@@ -103,8 +103,9 @@ export class CanvasDetails {
     // don't see it
     this.studyPeriod = this.calendar.getCurrentPeriod(
       this.courseObject.course_code
-    );
-    this.calendar.setStudyPeriod(this.studyPeriod);
+    )
+    const success = this.calendar.setStudyPeriod(this.studyPeriod)
+    this.strm = this.calendar.getStudyPeriod()
     // aboutStudyPeriod is an object with human readable information about the
     // study period - typically strings for
     // - year - full year
@@ -112,7 +113,7 @@ export class CanvasDetails {
     // - type - string specifying the type of study period
     //		this.aboutStudyPeriod = this.calendar.parseStudyPeriod(this.studyPeriod);
 
-    this.parseStrm();
+    this.parseStrm()
   }
 
   /**

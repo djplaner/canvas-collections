@@ -7,21 +7,36 @@
 
 export default class UniversityDateCalendar {
   //private static instance: UniversityDateCalendar;
-  private defaultPeriod: string;
+  private studyPeriod: string;
 
   public constructor(strm = DEFAULT_PERIOD) {
     //public static getInstance(strm = DEFAULT_PERIOD): UniversityDateCalendar {
-    if (strm && CALENDAR[strm]) {
-      this.defaultPeriod = strm;
+    /*if (strm && CALENDAR[strm]) {
+      this.studyPeriod = strm;
+    } */
+    this.setStudyPeriod(strm)
+  }
+
+  /**
+   * @method setStudyPeriod
+   * @param studyPeriod 
+   * @description Check that the default study period actually exists in the calendar
+   * If so, set the default study period to the given study period and return true
+   */
+  public setStudyPeriod(studyPeriod : string) : boolean {
+    if (studyPeriod!=="" && CALENDAR.hasOwnProperty(studyPeriod)) {
+      this.studyPeriod = studyPeriod;
+      return true;
     }
+    // set studyPeriod to DEFAULT_PERIOD, if not already set
+    if (this.studyPeriod === undefined) {
+      this.studyPeriod = DEFAULT_PERIOD;
+    }
+    return false;
   }
 
-  public setStudyPeriod(studyPeriod) {
-    this.defaultPeriod = studyPeriod;
-  }
-
-  public getStudyPeriod() {
-    return this.defaultPeriod;
+  public getStudyPeriod() : string {
+    return this.studyPeriod;
   }
 
   /**
@@ -67,10 +82,10 @@ export default class UniversityDateCalendar {
       },
     };
 
-    // extract the first, middle two and last digital from defaultPeriod
-    const courseType = this.defaultPeriod[0];
-    const year = this.defaultPeriod.slice(1, 3);
-    const term = this.defaultPeriod[3];
+    // extract the first, middle two and last digital from studyPeriod
+    const courseType = this.studyPeriod[0];
+    const year = this.studyPeriod.slice(1, 3);
+    const term = this.studyPeriod[3];
 
     return `${termMap[courseType][term]} 20${year}`;
   }
@@ -84,7 +99,7 @@ export default class UniversityDateCalendar {
    * if no week specified, returns the object for the STRM that specifies the
    * weeks
    */
-  public getWeekDetails(week = "all", period = this.defaultPeriod) {
+  public getWeekDetails(week = "all", period = this.studyPeriod) {
     // by default return the object for the current period
     if (week === "all") {
       return CALENDAR[period];
@@ -180,7 +195,7 @@ export default class UniversityDateCalendar {
    * @returns {String} the first day of the week according to the calendar
    * @description University specific way of identifying the first day of the week
    */
-  getFirstDayOfWeek(week = 1, period = this.defaultPeriod) {
+  getFirstDayOfWeek(week = 1, period = this.studyPeriod) {
     return "Monday";
   }
 
@@ -217,7 +232,7 @@ export default class UniversityDateCalendar {
     }
     // check that the courseCode includes open/close brackets
     if (!courseCode.match(/\(.*\)/)) {
-      return this.defaultPeriod
+      return this.studyPeriod
     }
     // extract out each of the individual courseIds in courseCode
     // e.g. joined courses could have multiple
@@ -264,9 +279,9 @@ export default class UniversityDateCalendar {
     if (STRMs.length === 0) {
       // if there aren't any, use the default
       if (QCM_Course) {
-        return `${this.defaultPeriod}QCM`
+        return `${this.studyPeriod}QCM`
       }
-      return this.defaultPeriod;
+      return this.studyPeriod;
     } else if (STRMs.length > 1) {
       // more than one, report an error and use the first one
       console.error(`Multiple STRMs found in courseCode: ${courseCode}`);
