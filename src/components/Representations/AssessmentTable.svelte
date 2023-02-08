@@ -92,7 +92,7 @@
 {#if claytons}
   <div id="cc-assessment-table">
     <table
-      class="ic-Table--hover-row ic-Table ic-Table--striped -ic-Table-condensed"
+      class="ic-Table--hover-row ic-Table ic-Table--striped -ic-Table-condensed cc-table"
     >
       <thead>
         <tr>
@@ -100,6 +100,7 @@
             role="columnheader"
             scope="col"
             style="background-color: #c02123;"
+            class="cc-title-col"
           >
             <span style="color: #ffffff;">Title</span></th
           >
@@ -107,6 +108,7 @@
             role="columnheader"
             scope="col"
             style="background-color: #c02123; width: 20rem;"
+            class="cc-description-col"
           >
             <span style="color: #ffffff;">Description</span></th
           >
@@ -115,6 +117,7 @@
               role="columnheader"
               scope="col"
               style="background-color: #c02123;"
+              class="cc-weighting-col"
             >
               <span style="color: #ffffff;">Weighting</span></th
             >
@@ -123,6 +126,7 @@
             role="columnheader"
             scope="col"
             style="background-color: #c02123;"
+            class="cc-due-date-col"
           >
             <span style="color: #ffffff;">Due Date</span></th
           >
@@ -131,6 +135,7 @@
               role="columnheader"
               scope="col"
               style="background-color: #c02123;"
+              class="cc-learning-outcomes-col"
             >
               <span style="color: #ffffff;">Learning Outcomes</span></th
             >
@@ -222,30 +227,30 @@
 {:else}
   <div
     id="cc-assessment-table"
-    class="cc-assessment-container cc-representation"
+    class="cc-assessment-container cc-representation cc-table"
   >
     <table class="cc-responsive-table" role="table">
       <!-- <caption></caption> -->
       <thead role="rowgroup">
-        <tr role="row">
+        <tr role="row" class="cc-title-col">
           <th role="columnheader" scope="col"
             ><span class="cc-table-header-text">Title</span></th
           >
-          <th role="columnheader" scope="col"
+          <th role="columnheader" class="cc-description-col" scope="col"
             ><span class="cc-table-header-text">Description</span></th
           >
           {#if numWeighting > 0}
             <!-- && !$configStore["editMode"]} -->
-            <th role="columnheader" scope="col"
+            <th role="columnheader" class="cc-weighting-col" scope="col"
               ><span class="cc-table-header-text">Weighting</span></th
             >
           {/if}
-          <th role="columnheader" scope="col"
+          <th role="columnheader" scope="col" class="cc-due-date-col"
             ><span class="cc-table-header-text">Due Date</span></th
           >
           {#if numLearningOutcomes > 0}
             <!--&& !$configStore["editMode"]} -->
-            <th role="columnheader" scope="col"
+            <th role="columnheader" scope="col" class="cc-learning-outcomes-col"
               ><span class="cc-table-header-text">Learning Outcomes</span></th
             >
           {/if}
@@ -513,5 +518,29 @@
     font-weight: bold;
     text-align: center;
     width: 100%;
+  }
+
+  .cc-table {
+    table-layout: fixed;
+  }
+
+  .cc-title-col {
+    width: 20%;
+  }
+
+  .cc-description-col {
+    width: 40%;
+  }
+
+  .cc-weighting-col {
+    width: 10%;
+  }
+
+  .cc-due-date-col {
+    width: 15%;
+  }
+
+  .cc-learning-outcomes-col {
+    width: 10%;
   }
 </style>
