@@ -38,20 +38,20 @@
   import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
   setBasePath("../node_modules/@shoelace-style/shoelace/dist/");
 
-  const TIME_BETWEEN_SAVES = 10000; // save collections every 10 seconds 
-  const TIME_BETWEEN_CANVAS_REFRESH = 60000; // check for any changes in Canvas modules every 60 seconds
+  const TIME_BETWEEN_SAVES : number = 10000; // save collections every 10 seconds 
+  const TIME_BETWEEN_CANVAS_REFRESH : number = 60000; // check for any changes in Canvas modules every 60 seconds
   // check how many saves happened every X (12 - 2 minutes) saves
   // Also every 2 * canvas refreshes
-  const TIME_BETWEEN_NO_SAVE_CHECKS = TIME_BETWEEN_SAVES * 12 ; 
+  const TIME_BETWEEN_NO_SAVE_CHECKS : number = TIME_BETWEEN_SAVES * 12 ; 
   // to turn/on/off interval based saving and refreshing
   // set these to false
-  const AUTO_SAVE_BASE = true; // regularly check to save collections
-  const EXIT_SAVE_BASE = true; // check to save collections before leaving
-  let AUTO_REFRESH = true; // regularly update Canvas course modules information
+  const AUTO_SAVE_BASE : boolean = true; // regularly check to save collections
+  const EXIT_SAVE_BASE : boolean = true; // check to save collections before leaving
+  let AUTO_REFRESH : boolean = true; // regularly update Canvas course modules information
   // refresh has no base, as it should run when students using
   // change these based on being in student view
-  let AUTO_SAVE = AUTO_SAVE_BASE;
-  let EXIT_SAVE = EXIT_SAVE_BASE;
+  let AUTO_SAVE : boolean = AUTO_SAVE_BASE;
+  let EXIT_SAVE : boolean = EXIT_SAVE_BASE;
 
   export let courseId: number;
   export let editMode: boolean;
@@ -61,14 +61,11 @@
   //  export let currentCollection: number;
   export let showConfig: boolean;
 
-  let checked = false;
+  let checked : boolean = false;
+  const CURRENT_USER_ID : number = parseInt(ENV["current_user_id"]);
 
-  let editingOnHandler = editingOnController.getInstance()
-  let editingOnVariable = editingOnHandler.getMyVariable()
+  let editingOnHandler = new editingOnController(courseId, CURRENT_USER_ID)
 
-  $:{
-    editingOnVariable = editingOnHandler.getMyVariable()
-  }
 
   // Initialise some global configuration settings
   const configUpdates = {
@@ -681,7 +678,6 @@
 
 <svelte:window on:beforeunload={beforeUnload} />
 
-<p>{editingOnVariable}</p>
 {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
   <div class="cc-switch-container">
     <div class="cc-switch-title">
