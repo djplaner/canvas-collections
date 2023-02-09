@@ -76,7 +76,7 @@ To use
 	box-shadow: none;
 }
 
-.claytons-card-image {
+.cc-card-image {
 	height: 10rem;
 	width: 100%;
 }
@@ -192,7 +192,7 @@ To use
 	border-radius: 0.25rem;
 }
 
-.claytons-card-date {
+.cc-card-date {
 	text-align: center;
 	background-color: #f5f5f5;
 	border-radius: 0.25rem;
@@ -204,7 +204,7 @@ To use
 	right: 0;
 }
 
-.claytons-card-date-label {
+.cc-card-date-label {
 	color: white;
 	font-size: 0.75rem;
 	padding-top: 0.25rem;
@@ -216,14 +216,14 @@ To use
 	border-top-width: 1px;
 }
 
-.claytons-card-date-week {
+.cc-card-date-week {
 	color: black;
 	background-color: #fff9c2;
 	font-size: 0.75rem;
 	padding-top: 0.15rem;
 }
 
-.claytons-card-date-time {
+.cc-card-date-time {
 	font-size: 0.75rem;
 	color: black;
 	background-color: #fff382;
@@ -231,7 +231,7 @@ To use
 	padding-bottom: 0.25rem;
 }
 
-.claytons-card-date-month {
+.cc-card-date-month {
 	color: white;
 	background-color: red;
 	padding-top: 0.25rem;
@@ -244,7 +244,7 @@ To use
 	line-height: 1rem;
 }
 
-.claytons-card-date-date {
+.cc-card-date-date {
 	padding-top: 0.25rem;
 	padding-bottom: 0.25rem;
 	border-left-width: 1px;
@@ -295,4 +295,67 @@ To use
     text-align: center;
     color: white;
     background: black;
+  }
+
+
+  .cc-card-date-dual-date {
+    text-align: center;
+    padding-top: 0.25rem;
+    align-items: stretch;
+    display: flex;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-bottom-right-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    border-color: black;
+  }
+
+  .cc-card-date-date-from {
+    width: 50%;
+  }
+
+  .cc-card-date-date-to {
+    width: 50%;
+  }
+
+  .cc-card-date-time-from {
+    width: 50%;
+  }
+  .cc-card-date-time-to {
+    width: 50%;
+  }
+
+  .cc-card-date-day {
+    font-size: 0.7rem;
+  }
+
+  .cc-card-date-day-from {
+    width: 50%;
+  }
+  .cc-card-date-day-to {
+    width: 50%;
+  }
+
+  .cc-card-date-dual-day {
+    display: flex;
+    font-size: 0.7rem;
+  }
+
+    .cc-card-date-dual-month {
+    text-align: center;
+    align-items: stretch;
+    display: flex;
+    color: white;
+    background-color: red;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-color: black;
+    border-top-width: 1px;
+  }
+
+  .cc-card-date-month-from {
+    width: 50%;
+  }
+  .cc-card-date-month-to {
+    width: 50%;
   }
