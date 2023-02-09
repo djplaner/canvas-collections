@@ -66,6 +66,8 @@
 
   let editingOnHandler = new editingOnController(courseId, CURRENT_USER_ID)
 
+  let sessionId = editingOnHandler.getBrowserSessionId();
+
 
   // Initialise some global configuration settings
   const configUpdates = {
@@ -678,6 +680,7 @@
 
 <svelte:window on:beforeunload={beforeUnload} />
 
+<p>{sessionId}</p>
 {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
   <div class="cc-switch-container">
     <div class="cc-switch-title">

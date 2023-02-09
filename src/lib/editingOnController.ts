@@ -7,6 +7,8 @@
 
 import { getPageName } from "./CanvasSetup";
 
+import { v4 as uuidv4 } from "uuid";
+
 const EDITING_ON_PAGE_NAME = "Canvas Collections - editing";
 
 // the possible status for editing on 
@@ -44,7 +46,7 @@ export class editingOnController {
   public constructor(courseId: number, userId: number) {
     this.courseId = courseId;
     this.canvasUserId = userId;
-	this.browserSessionId = `${userId}-${new Date().getTime()}}`
+	this.browserSessionId = uuidv4() //`${userId}-${new Date().getTime()}}`
 
     getPageName(
       EDITING_ON_PAGE_NAME,
