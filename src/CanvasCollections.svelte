@@ -58,7 +58,7 @@
   let checked = false;
 
   // Initialise some global configuration settings
-  $configStore = {
+  const configUpdates = {
     courseId: courseId,
     editMode: editMode,
     csrfToken: csrfToken,
@@ -69,6 +69,10 @@
     ccOn: false,
     studyPeriod: null, // calculated by CanvasDetails
   };
+  // use configUpdates to update appropriate keys in configStore
+  Object.keys(configUpdates).forEach((key) => {
+    $configStore[key] = configUpdates[key];
+  });
 
   $: {
     // modify save settings as we enter/leave student view
@@ -577,7 +581,12 @@
           <p>Any Claytons Collections will be visible, if the relevant pages are published.</p>`,
       url: "https://djplaner.github.io/canvas-collections/reference/visibility/",
     },
-  };
+  }
+  HELP.ABOUT['notEditingTooltip'] = `${HELP.ABOUT.tooltip}
+      <p>Editing mode is <strong>off</strong>. You can see Collections, but not change it.</p>
+      <p>Hit the <em>Edit</em> button to turn editing mode on.</p>
+      `
+
 </script>
 
 <svelte:window on:beforeunload={beforeUnload} />
@@ -586,12 +595,17 @@
   <div class="cc-switch-container">
     <div class="cc-switch-title">
       <sl-tooltip>
-        <div slot="content">{@html HELP.switchTitle.tooltip}</div>
+        {#if $configStore["editingOn"] === null}
+          <div slot="content">{@html HELP.ABOUT.notEditingTooltip}</div>
+        {:else}
+          <div slot="content">{@html HELP.ABOUT.tooltip}</div>
+        {/if}
+<!--        <div slot="content">{@html HELP.switchTitle.tooltip}</div> -->
         <a target="_blank" rel="noreferrer" href={HELP.switchTitle.url}
           ><i class="icon-question cc-module-icon" /></a
         >
       </sl-tooltip>
-      {#if allDataLoaded && !noCollections}
+      {#if allDataLoaded && !noCollections && $configStore["editingOn"] !== null}
         <i
           id="configShowSwitch"
           class="{showConfig
@@ -625,7 +639,7 @@
         <sl-switch id="cc-switch" on:sl-change={initialiseCollections} />
       </label>
     {/if}
-    {#if allDataLoaded && $configStore["editMode"]}
+    {#if allDataLoaded && $configStore["editMode"] && $configStore["editingOn"] !== null}
       <div class="cc-save">
         <button
           class={$configStore["needToSaveCollections"]
