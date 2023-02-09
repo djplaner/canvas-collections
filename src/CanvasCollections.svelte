@@ -36,8 +36,10 @@
   import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
   setBasePath("../node_modules/@shoelace-style/shoelace/dist/");
 
-  const TIME_BETWEEN_SAVES = 10000; // 10 seconds
-  const TIME_BETWEEN_CANVAS_REFRESH = 60000; // 60 seconds
+  const TIME_BETWEEN_SAVES = 10000; // save collections every 10 seconds 
+  // check how many saves happened every X (12 - 2 minutes) saves
+  const TIME_BETWEEN_NO_SAVE_CHECKS = TIME_BETWEEN_SAVES * 12 ; 
+  const TIME_BETWEEN_CANVAS_REFRESH = 60000; // check for any changes in Canvas modules every 60 seconds
   // to turn/on/off interval based saving and refreshing
   // set these to false
   const AUTO_SAVE_BASE = true; // regularly check to save collections
@@ -93,19 +95,22 @@
   // track whether the intervals have been set
   // Making sure we don't get multiple intervals running
   // - save is only turned on once with editing, so set to true as if the interval has been set
-  let saveIntervalOn: boolean = true;
+  let saveIntervalOn: boolean = true
   // - refresh is one for everyone, so start with false so it is started
   let refreshIntervalOn: boolean = false;
   // store the intervals
-  let saveInterval = null;
-  let refreshCanvasDetails = null;
+  let saveInterval = null
+  let refreshCanvasDetails = null
+  // track numSaves used to track when to turn Collections editing off
+  let numSavesInterval = null
+  let numSaves: number = 0
   // whether or data canvas and collections data loaded
-  let canvasDataLoaded: boolean = false;
-  let collectionsDataLoaded: boolean = false;
-  let allDataLoaded: boolean = false;
-  let importedCollections: boolean = false;
+  let canvasDataLoaded: boolean = false
+  let collectionsDataLoaded: boolean = false
+  let allDataLoaded: boolean = false
+  let importedCollections: boolean = false
   // the actual data objects for canvas and collections data
-  let canvasDetails = null;
+  let canvasDetails = null
   let collectionsDetails = null;
 
   let lastCanvasRefresh = Date.now();
@@ -256,7 +261,7 @@
         if ($configStore["ccOn"]) {
           addCollectionsDisplay();
           // set up auto save for collections config
-          setSaveInterval();
+          //setSaveInterval();
           if (!refreshIntervalOn && AUTO_REFRESH) {
             refreshIntervalOn = true;
             // set up auto refresh of canvasDetails
@@ -405,7 +410,8 @@
   }
 
   function completeSaveCollections(status) {
-    console.log("Finishe save collections");
+    numSaves++
+    console.log(`Finished save collection num ${numSaves}`);
     if (status) {
       $configStore["needToSaveCollections"] = false;
     }
@@ -561,6 +567,7 @@
 
   function toggleEditingOn() {
     if ($configStore["editingOn"] === null) {
+      numSaves=0
       $configStore["editingOn"] = { user: "fred", secret: "hello" };
       modifyCanvasModulesList(
         $configStore["currentCollection"],
@@ -569,6 +576,7 @@
         ]
       );
 
+      setNumSavesInterval()
       // turn on save interval
       saveIntervalOn = false;
       setSaveInterval();
@@ -576,6 +584,7 @@
       $configStore["editingOn"] = null
       showConfig = false
       removeModuleConfiguration($collectionsStore["MODULES"])
+      clearInterval(numSavesInterval)
       // turn off save interval
       saveIntervalOn = true
       clearInterval(saveInterval)
@@ -591,6 +600,17 @@
       }
     }
   }
+
+  function setNumSavesInterval() {
+        numSavesInterval = setInterval(() => {
+          console.log(`numSavesInterval: numSaves=${numSaves}`)
+          if (numSaves===0) {
+            console.log("numSavesInterval: numSaves=0 -- turn him off")
+          }
+          numSaves=0
+      }, TIME_BETWEEN_NO_SAVE_CHECKS);
+  }
+
 
   let HELP = {
     ABOUT: {
