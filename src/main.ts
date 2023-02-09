@@ -12,7 +12,7 @@ const context = checkContext();
 let app = null;
 
 // Only do this on the modules page
-if (context.modulesPage) {
+if (context['modulesPage']) {
   // insert the app as the first content of div.right-of-crumbs
   const rightOfCrumbs = document.querySelector(".right-of-crumbs");
 

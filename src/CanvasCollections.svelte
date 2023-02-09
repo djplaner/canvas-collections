@@ -4,6 +4,7 @@
   import CanvasCollectionsRepresentation from "./components/CanvasCollectionsRepresentation.svelte";
   import CollectionsConfiguration from "./components/CollectionsConfiguration.svelte";
   import { onMount, onDestroy } from "svelte";
+  import { modifyCanvasModulesList } from "./components/Representations/representationSupport";
   import {
     addCollectionsRepresentation,
     removeCollectionsRepresentation,
@@ -561,14 +562,33 @@
   function toggleEditingOn() {
     if ($configStore["editingOn"] === null) {
       $configStore["editingOn"] = { user: "fred", secret: "hello" };
+      modifyCanvasModulesList(
+        $configStore["currentCollection"],
+        $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
+          "unallocated"
+        ]
+      );
+
       // turn on save interval
-      saveIntervalOn = false
-      setSaveInterval()
+      saveIntervalOn = false;
+      setSaveInterval();
     } else {
-      $configStore["editingOn"] = null;
+      $configStore["editingOn"] = null
+      showConfig = false
+      removeModuleConfiguration($collectionsStore["MODULES"])
       // turn off save interval
       saveIntervalOn = true
       clearInterval(saveInterval)
+
+      if ($configStore["needToSaveCollections"]) {
+        collectionsDetails.saveCollections(
+          $collectionsStore,
+          $configStore["editMode"],
+          $configStore["needToSaveCollections"],
+          completeSaveCollections
+        );
+        $configStore["needToSaveCollections"] = false;
+      }
     }
   }
 
@@ -582,15 +602,15 @@
              <li> Adding more contextual information about each module. </li>
           </ol>`,
     },
-    editOn : {
+    editOn: {
       tooltip: `<p>Editing Collections is <strong>off</strong>.</p>
       <p>Click this button to turn editing on. Only if no-one else (including you in another
         browser window) is already editing this course's Collections configuration.</p>
-      `
+      `,
     },
-    editOff : {
+    editOff: {
       tooltip: `<p>Editing Collections is <strong>on</strong>.</p>
-      <p>Click this button to turn editing off and allow other people to edit.</p>`
+      <p>Click this button to turn editing off and allow other people to edit.</p>`,
     },
     studentVisible: {
       tooltip: `<p>Students can see Collections.</p>
@@ -619,6 +639,9 @@
           <p>Any Claytons Collections will be visible, if the relevant pages are published.</p>`,
       url: "https://djplaner.github.io/canvas-collections/reference/visibility/",
     },
+    initialise: {
+      tooltip: `<p>Click this button to initialise and start using Collections for this course.</p>`
+    }
   };
   HELP.ABOUT["notEditingTooltip"] = `${HELP.ABOUT.tooltip}
       <p>Editing mode is <strong>off</strong>. You can see Collections, but not change it.</p>
@@ -632,7 +655,7 @@
   <div class="cc-switch-container">
     <div class="cc-switch-title">
       <sl-tooltip>
-        {#if $configStore["editingOn"] === null}
+        {#if $configStore["editingOn"] === null && !noCollections}
           <div slot="content">{@html HELP.ABOUT.notEditingTooltip}</div>
         {:else}
           <div slot="content">{@html HELP.ABOUT.tooltip}</div>
@@ -652,31 +675,37 @@
           on:keydown={toggleConfigShow}
         />
       {/if}
-      {#if isCollectionsOn(false, $collectionsStore["VISIBILITY"])}
-        <sl-tooltip>
-          <div slot="content">{@html HELP.studentVisible.tooltip}</div>
-          <i class="icon-Solid icon-publish" />
-        </sl-tooltip>
-      {:else}
-        <sl-tooltip>
-          {#if $collectionsStore["VISIBILITY"] === "no-one"}
-            <div slot="content">{@html HELP.nooneVisible.tooltip}</div>
-            <i class="icon-unpublish cc-no-one" />
-          {:else}
-            <div slot="content">{@html HELP.studentInvisible.tooltip}</div>
-            <i class="icon-unpublish" />
-          {/if}
-        </sl-tooltip>
+      <!-- only show publish/unpublish indicator if collections is on -->
+      {#if !noCollections}
+        {#if isCollectionsOn(false, $collectionsStore["VISIBILITY"])}
+          <sl-tooltip>
+            <div slot="content">{@html HELP.studentVisible.tooltip}</div>
+            <i class="icon-Solid icon-publish" />
+          </sl-tooltip>
+        {:else}
+          <sl-tooltip>
+            {#if $collectionsStore["VISIBILITY"] === "no-one"}
+              <div slot="content">{@html HELP.nooneVisible.tooltip}</div>
+              <i class="icon-unpublish cc-no-one" />
+            {:else}
+              <div slot="content">{@html HELP.studentInvisible.tooltip}</div>
+              <i class="icon-unpublish" />
+            {/if}
+          </sl-tooltip>
+        {/if}
       {/if}
       <small>Collections</small>
     </div>
 
     {#if noCollections}
       <label class="cc-switch" for="cc-switch">
+        <sl-tooltip class="cc-button-hover">
+          <div slot="content">{@html HELP.initialise.tooltip}</div>
         <sl-switch id="cc-switch" on:sl-change={initialiseCollections} />
+        </sl-tooltip>
       </label>
     {/if}
-    {#if $configStore["editingOn"] === null}
+    {#if $configStore["editingOn"] === null && !noCollections}
       <div class="cc-save">
         <sl-tooltip class="cc-button-hover">
           <div slot="content">{@html HELP.editOn.tooltip}</div>
@@ -692,7 +721,7 @@
           <div slot="content">{@html HELP.editOff.tooltip}</div>
           <button id="cc-editing-on-button" on:click={toggleEditingOn}
             >Edit Off</button
-        >
+          >
         </sl-tooltip>
         <button
           class={$configStore["needToSaveCollections"]
