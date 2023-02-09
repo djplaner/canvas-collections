@@ -91,8 +91,9 @@
 
   // track whether the intervals have been set
   // Making sure we don't get multiple intervals running
-  // - these have to be set to false initially
-  let saveIntervalOn: boolean = false;
+  // - save is only turned on once with editing, so set to true as if the interval has been set
+  let saveIntervalOn: boolean = true;
+  // - refresh is one for everyone, so start with false so it is started
   let refreshIntervalOn: boolean = false;
   // store the intervals
   let saveInterval = null;
@@ -254,31 +255,15 @@
         if ($configStore["ccOn"]) {
           addCollectionsDisplay();
           // set up auto save for collections config
-          if ($configStore["editMode"] && AUTO_SAVE && !saveIntervalOn) {
-            saveIntervalOn = true;
-            // only if we're in editMode and auto save is on
-            saveInterval = setInterval(() => {
-              if (
-                $configStore["needToSaveCollections"] &&
-                $configStore["editMode"]
-              ) {
-                collectionsDetails.saveCollections(
-                  $collectionsStore,
-                  $configStore["editMode"],
-                  $configStore["needToSaveCollections"],
-                  completeSaveCollections
-                );
-              }
-            }, TIME_BETWEEN_SAVES);
-          }
+          setSaveInterval();
           if (!refreshIntervalOn && AUTO_REFRESH) {
             refreshIntervalOn = true;
             // set up auto refresh of canvasDetails
             refreshCanvasDetails = setInterval(() => {
               const millis = Date.now() - lastCanvasRefresh;
-              console.log(
+              /*console.log(
                 ` -- seconds elapshed since last refresh: ${millis / 1000}`
-              );
+              ); */
               lastCanvasRefresh = Date.now();
               canvasDetails.refreshCanvasDetails(gotCanvasDetails);
               // make sure the current collection's representation is refreshed
@@ -289,6 +274,30 @@
       }
       // all data is essentially loaded, however, there may be noCollections
       allDataLoaded = true;
+    }
+  }
+
+  /**
+   * @function setSaveInterval
+   * @description Sets up an interval to check if collections needs to be saved
+   * iff canvas is in editMode, AUTO_SAVE is turned on, and there isn't already
+   * an interval running
+   */
+  function setSaveInterval() {
+    if ($configStore["editMode"] && AUTO_SAVE && !saveIntervalOn) {
+      // indicate we've set an interval
+      saveIntervalOn = true;
+      // only if we're in editMode and auto save is on
+      saveInterval = setInterval(() => {
+        if ($configStore["needToSaveCollections"] && $configStore["editMode"]) {
+          collectionsDetails.saveCollections(
+            $collectionsStore,
+            $configStore["editMode"],
+            $configStore["needToSaveCollections"],
+            completeSaveCollections
+          );
+        }
+      }, TIME_BETWEEN_SAVES);
     }
   }
 
@@ -395,6 +404,7 @@
   }
 
   function completeSaveCollections(status) {
+    console.log("Finishe save collections");
     if (status) {
       $configStore["needToSaveCollections"] = false;
     }
@@ -544,6 +554,24 @@
     return "...";
   }
 
+  /**
+   *
+   */
+
+  function toggleEditingOn() {
+    if ($configStore["editingOn"] === null) {
+      $configStore["editingOn"] = { user: "fred", secret: "hello" };
+      // turn on save interval
+      saveIntervalOn = false
+      setSaveInterval()
+    } else {
+      $configStore["editingOn"] = null;
+      // turn off save interval
+      saveIntervalOn = true
+      clearInterval(saveInterval)
+    }
+  }
+
   let HELP = {
     ABOUT: {
       tooltip: `<p>Use Canvas Collections to customise the modules page to better
@@ -553,6 +581,16 @@
              <li> Using different representations for each collection. </li>
              <li> Adding more contextual information about each module. </li>
           </ol>`,
+    },
+    editOn : {
+      tooltip: `<p>Editing Collections is <strong>off</strong>.</p>
+      <p>Click this button to turn editing on. Only if no-one else (including you in another
+        browser window) is already editing this course's Collections configuration.</p>
+      `
+    },
+    editOff : {
+      tooltip: `<p>Editing Collections is <strong>on</strong>.</p>
+      <p>Click this button to turn editing off and allow other people to edit.</p>`
     },
     studentVisible: {
       tooltip: `<p>Students can see Collections.</p>
@@ -581,12 +619,11 @@
           <p>Any Claytons Collections will be visible, if the relevant pages are published.</p>`,
       url: "https://djplaner.github.io/canvas-collections/reference/visibility/",
     },
-  }
-  HELP.ABOUT['notEditingTooltip'] = `${HELP.ABOUT.tooltip}
+  };
+  HELP.ABOUT["notEditingTooltip"] = `${HELP.ABOUT.tooltip}
       <p>Editing mode is <strong>off</strong>. You can see Collections, but not change it.</p>
       <p>Hit the <em>Edit</em> button to turn editing mode on.</p>
-      `
-
+      `;
 </script>
 
 <svelte:window on:beforeunload={beforeUnload} />
@@ -600,7 +637,7 @@
         {:else}
           <div slot="content">{@html HELP.ABOUT.tooltip}</div>
         {/if}
-<!--        <div slot="content">{@html HELP.switchTitle.tooltip}</div> -->
+        <!--        <div slot="content">{@html HELP.switchTitle.tooltip}</div> -->
         <a target="_blank" rel="noreferrer" href={HELP.switchTitle.url}
           ><i class="icon-question cc-module-icon" /></a
         >
@@ -639,8 +676,24 @@
         <sl-switch id="cc-switch" on:sl-change={initialiseCollections} />
       </label>
     {/if}
+    {#if $configStore["editingOn"] === null}
+      <div class="cc-save">
+        <sl-tooltip class="cc-button-hover">
+          <div slot="content">{@html HELP.editOn.tooltip}</div>
+          <button id="cc-editing-on-button" on:click={toggleEditingOn}
+            >Edit On</button
+          >
+        </sl-tooltip>
+      </div>
+    {/if}
     {#if allDataLoaded && $configStore["editMode"] && $configStore["editingOn"] !== null}
       <div class="cc-save">
+        <sl-tooltip class="cc-button-hover">
+          <div slot="content">{@html HELP.editOff.tooltip}</div>
+          <button id="cc-editing-on-button" on:click={toggleEditingOn}
+            >Edit Off</button
+        >
+        </sl-tooltip>
         <button
           class={$configStore["needToSaveCollections"]
             ? "cc-active-save-button"
@@ -736,7 +789,8 @@
     transition: background-color 0.2s ease-in-out;
   }
 
-  .cc-save-button {
+  .cc-save-button,
+  #cc-editing-on-button {
     background: #f5f5f5;
     color: #2d3b45;
     border: 1px solid;
@@ -776,5 +830,9 @@
 
   .cc-no-one {
     color: #ff0000;
+  }
+
+  .cc-button-hover {
+    --show-delay: 1000;
   }
 </style>
