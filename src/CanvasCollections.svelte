@@ -16,7 +16,11 @@
     calculateActualNum,
   } from "./lib/CollectionsDetails";
 
-  import { editingOnController } from "./lib/editingOnController";
+  import {
+    editingOnController,
+    EDITING_ON_STATUS,
+    EDITING_ON_PAGE_NAME_SLUG,
+  } from "./lib/editingOnController";
 
   import { toastAlert } from "./lib/ui";
 
@@ -38,20 +42,20 @@
   import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
   setBasePath("../node_modules/@shoelace-style/shoelace/dist/");
 
-  const TIME_BETWEEN_SAVES : number = 10000; // save collections every 10 seconds 
-  const TIME_BETWEEN_CANVAS_REFRESH : number = 60000; // check for any changes in Canvas modules every 60 seconds
+  const TIME_BETWEEN_SAVES: number = 10000; // save collections every 10 seconds
+  const TIME_BETWEEN_CANVAS_REFRESH: number = 60000; // check for any changes in Canvas modules every 60 seconds
   // check how many saves happened every X (12 - 2 minutes) saves
   // Also every 2 * canvas refreshes
-  const TIME_BETWEEN_NO_SAVE_CHECKS : number = TIME_BETWEEN_SAVES * 12 ; 
+  const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 12;
   // to turn/on/off interval based saving and refreshing
   // set these to false
-  const AUTO_SAVE_BASE : boolean = true; // regularly check to save collections
-  const EXIT_SAVE_BASE : boolean = true; // check to save collections before leaving
-  let AUTO_REFRESH : boolean = true; // regularly update Canvas course modules information
+  const AUTO_SAVE_BASE: boolean = true; // regularly check to save collections
+  const EXIT_SAVE_BASE: boolean = true; // check to save collections before leaving
+  let AUTO_REFRESH: boolean = true; // regularly update Canvas course modules information
   // refresh has no base, as it should run when students using
   // change these based on being in student view
-  let AUTO_SAVE : boolean = AUTO_SAVE_BASE;
-  let EXIT_SAVE : boolean = EXIT_SAVE_BASE;
+  let AUTO_SAVE: boolean = AUTO_SAVE_BASE;
+  let EXIT_SAVE: boolean = EXIT_SAVE_BASE;
 
   export let courseId: number;
   export let editMode: boolean;
@@ -61,13 +65,14 @@
   //  export let currentCollection: number;
   export let showConfig: boolean;
 
-  let checked : boolean = false;
-  const CURRENT_USER_ID : number = parseInt(ENV["current_user_id"]);
+  let checked: boolean = false;
+  const CURRENT_USER_ID: number = parseInt(ENV["current_user_id"]);
 
-  let editingOnHandler = new editingOnController(courseId, CURRENT_USER_ID)
-
-  let sessionId = editingOnHandler.getBrowserSessionId();
-
+  let editingOnHandler = new editingOnController(
+    courseId,
+    CURRENT_USER_ID,
+    csrfToken
+  );
 
   // Initialise some global configuration settings
   const configUpdates = {
@@ -104,22 +109,22 @@
   // track whether the intervals have been set
   // Making sure we don't get multiple intervals running
   // - save is only turned on once with editing, so set to true as if the interval has been set
-  let saveIntervalOn: boolean = true
+  let saveIntervalOn: boolean = true;
   // - refresh is one for everyone, so start with false so it is started
   let refreshIntervalOn: boolean = false;
   // store the intervals
-  let saveInterval = null
-  let refreshCanvasDetails = null
+  let saveInterval = null;
+  let refreshCanvasDetails = null;
   // track numSaves used to track when to turn Collections editing off
-  let numSavesInterval = null
-  let numSaves: number = 0
+  let numSavesInterval = null;
+  let numSaves: number = 0;
   // whether or data canvas and collections data loaded
-  let canvasDataLoaded: boolean = false
-  let collectionsDataLoaded: boolean = false
-  let allDataLoaded: boolean = false
-  let importedCollections: boolean = false
+  let canvasDataLoaded: boolean = false;
+  let collectionsDataLoaded: boolean = false;
+  let allDataLoaded: boolean = false;
+  let importedCollections: boolean = false;
   // the actual data objects for canvas and collections data
-  let canvasDetails = null
+  let canvasDetails = null;
   let collectionsDetails = null;
 
   let lastCanvasRefresh = Date.now();
@@ -419,7 +424,7 @@
   }
 
   function completeSaveCollections(status) {
-    numSaves++
+    numSaves++;
     console.log(`Finished save collection num ${numSaves}`);
     if (status) {
       $configStore["needToSaveCollections"] = false;
@@ -571,33 +576,23 @@
   }
 
   /**
-   *
+   * @function toggleEditingOn
+   * @description Called when the user clicks the 'edit on|off' buttons
+   * Click edit on
+   * - use controller to see if we can edit on for this course' collections
+   * - the call back setUpEditingOn will be called
+   * Clicked edit off
+   * - user controller to turn off edit on for collections
+   * - the call back setUpEditingOff will be called
    */
 
   function toggleEditingOn() {
     if ($configStore["editingOn"] === null) {
-      numSaves=0
-      $configStore["editingOn"] = { user: "fred", secret: "hello" };
-      modifyCanvasModulesList(
-        $configStore["currentCollection"],
-        $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
-          "unallocated"
-        ]
-      );
-
-      setNumSavesInterval()
-      // turn on save interval
-      saveIntervalOn = false;
-      setSaveInterval();
+      // try to turn editing on
+      editingOnHandler.turnEditOn(setUpEditingOn);
     } else {
-      $configStore["editingOn"] = null
-      showConfig = false
-      removeModuleConfiguration($collectionsStore["MODULES"])
-      clearInterval(numSavesInterval)
-      // turn off save interval
-      saveIntervalOn = true
-      clearInterval(saveInterval)
-
+      // try to turn editing off
+      // do one final save, if still required
       if ($configStore["needToSaveCollections"]) {
         collectionsDetails.saveCollections(
           $collectionsStore,
@@ -607,19 +602,104 @@
         );
         $configStore["needToSaveCollections"] = false;
       }
+      editingOnHandler.turnEditOff(setUpEditingOff);
+    }
+  }
+
+  /**
+   * @function setUpEditingOn
+   * @param editStatus
+   * @param editDetails
+   * @description Call back from attempt to turn editing
+   * - if the editStatus is YOU_EDITING then we can turn editing on
+   * - otherwise display some message to the user
+   */
+  function setUpEditingOn(editStatus: EDITING_ON_STATUS, editDetails: object) {
+    if (editStatus !== EDITING_ON_STATUS.YOU_EDITING) {
+      // didn't work let the user know
+
+      if (editStatus === EDITING_ON_STATUS.YOU_EDITING_ELSEWHERE) {
+        toastAlert(
+          `<p>Failed to turn editing on</p>
+          <p>You are already editing Collections for this course in another browser</p>`,
+          "danger"
+        );
+      } else if (editStatus === EDITING_ON_STATUS.SOMEONE_ELSE_EDITING) {
+        toastAlert(
+          `<p>Failed to turn editing on</p>
+        <p>Someone else is editing Collections</p>`,
+          "danger"
+        );
+      } else if (editStatus === EDITING_ON_STATUS.NO_ONE_EDITING) {
+        toastAlert(
+          `<p>Failed to turn editing on</p>
+        <p>Unknown reason - but apparently no-one else is editing.</p>`,
+          "danger"
+        );
+      }
+      return;
+    }
+    numSaves = 0;
+    $configStore["editingOn"] = { user: "fred", secret: "hello" };
+    modifyCanvasModulesList(
+      $configStore["currentCollection"],
+      $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
+        "unallocated"
+      ]
+    );
+
+    setNumSavesInterval();
+    // turn on save interval
+    saveIntervalOn = false;
+    setSaveInterval();
+  }
+
+  /**
+   * @function setUpEditingOff
+   * @param editStatus
+   * @param editDetails
+   * @description Call back from attempt to turn editing off
+   * - Successful "editingOff" should have editStatus be anything other than YOU_EDITING
+   * - If not successful,
+   *   - and still YOU_EDITING, then message user suggesting deleting the the editing page
+   *   - and someone else editing then just turn it off
+   */
+
+  function setUpEditingOff(editStatus: EDITING_ON_STATUS, editDetails: object) {
+    if (editStatus === EDITING_ON_STATUS.YOU_EDITING) {
+      toastAlert(
+        `<p>Failed to turn editing off</p>
+        <p>To allow others to edit, please try:</p>
+        <ol>
+            <li> to turn editing off again; or, </li>
+            <li> to manually delete 
+              <a href="/courses/${$configStore["courseId"]}/pages/${EDITING_ON_PAGE_NAME_SLUG}">
+              the Collections edit status page</a>.<li>
+        </ol>`,
+        "danger"
+      );
+      return;
+    } else {
+      // any other option means that this session turned editing off
+      $configStore["editingOn"] = null;
+      showConfig = false;
+      removeModuleConfiguration($collectionsStore["MODULES"]);
+      clearInterval(numSavesInterval);
+      // turn off save interval
+      saveIntervalOn = true;
+      clearInterval(saveInterval);
     }
   }
 
   function setNumSavesInterval() {
-        numSavesInterval = setInterval(() => {
-          console.log(`numSavesInterval: numSaves=${numSaves}`)
-          if (numSaves===0) {
-            console.log("numSavesInterval: numSaves=0 -- turn him off")
-          }
-          numSaves=0
-      }, TIME_BETWEEN_NO_SAVE_CHECKS);
+    numSavesInterval = setInterval(() => {
+      console.log(`numSavesInterval: numSaves=${numSaves}`);
+      if (numSaves === 0) {
+        console.log("numSavesInterval: numSaves=0 -- turn him off");
+      }
+      numSaves = 0;
+    }, TIME_BETWEEN_NO_SAVE_CHECKS);
   }
-
 
   let HELP = {
     ABOUT: {
@@ -669,8 +749,8 @@
       url: "https://djplaner.github.io/canvas-collections/reference/visibility/",
     },
     initialise: {
-      tooltip: `<p>Click this button to initialise and start using Collections for this course.</p>`
-    }
+      tooltip: `<p>Click this button to initialise and start using Collections for this course.</p>`,
+    },
   };
   HELP.ABOUT["notEditingTooltip"] = `${HELP.ABOUT.tooltip}
       <p>Editing mode is <strong>off</strong>. You can see Collections, but not change it.</p>
@@ -680,7 +760,6 @@
 
 <svelte:window on:beforeunload={beforeUnload} />
 
-<p>{sessionId}</p>
 {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
   <div class="cc-switch-container">
     <div class="cc-switch-title">
@@ -731,7 +810,7 @@
       <label class="cc-switch" for="cc-switch">
         <sl-tooltip class="cc-button-hover">
           <div slot="content">{@html HELP.initialise.tooltip}</div>
-        <sl-switch id="cc-switch" on:sl-change={initialiseCollections} />
+          <sl-switch id="cc-switch" on:sl-change={initialiseCollections} />
         </sl-tooltip>
       </label>
     {/if}
@@ -739,7 +818,7 @@
       <div class="cc-save">
         <sl-tooltip class="cc-button-hover">
           <div slot="content">{@html HELP.editOn.tooltip}</div>
-          <button id="cc-editing-on-button" on:click={toggleEditingOn}
+          <button id="cc-editing-on-button" on:click|stopPropagation={toggleEditingOn}
             >Edit On</button
           >
         </sl-tooltip>
@@ -892,6 +971,6 @@
   }
 
   .cc-button-hover {
-    --show-delay: 1000;
+    --show-delay: 3000;
   }
 </style>

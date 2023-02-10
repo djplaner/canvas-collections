@@ -3,20 +3,25 @@
  * @description Ensure only one browser window can be editing Collections at a time
  * - Manage the creation of a "Canvas Collections - editing" Canvas page that contains the
  *   canvas user id and a unique browser session id identifying the person editing
+ * Public methods:
+ * - turnEditOn - turn editing on
+ * - turnEditOff - turn editing off
+ * - getEditingOnStatus - get the status of editing on  TODO maybe make this private
  */
 
-import { getPageName } from "./CanvasSetup";
+import { getPageName, wf_deleteData, wf_postData } from "./CanvasSetup";
 
 import { v4 as uuidv4 } from "uuid";
 
 const EDITING_ON_PAGE_NAME = "Canvas Collections - editing";
+export const EDITING_ON_PAGE_NAME_SLUG = "canvas-collections-editing";
 
-// the possible status for editing on 
-enum EDITING_ON_STATUS {
-	  NO_ONE_EDITING = 0,
-	  SOMEONE_ELSE_EDITING = 1,
-	  YOU_EDITING_ELSEWHERE = 2,
-	  YOU_EDITING = 3
+// the possible status for editing on
+export enum EDITING_ON_STATUS {
+  NO_ONE_EDITING = 0,
+  SOMEONE_ELSE_EDITING = 1,
+  YOU_EDITING_ELSEWHERE = 2,
+  YOU_EDITING = 3,
 }
 
 export class editingOnController {
@@ -35,24 +40,31 @@ export class editingOnController {
   private canvasUserId: number = null;
   private browserSessionId: string = null;
 
-
   // used at end of turnEditOn
   private finishCallback: Function = null;
+  private csrfToken: string = null;
 
   /**
    * @constructor
    * @description Read the EDITING_ON_PAGE_NAME page and if it exists, set the editingDetails property
    */
-  public constructor(courseId: number, userId: number) {
+  public constructor(courseId: number, userId: number, csrf: string) {
     this.courseId = courseId;
     this.canvasUserId = userId;
-	this.browserSessionId = uuidv4() //`${userId}-${new Date().getTime()}}`
+    this.csrfToken = csrf;
+    // get current URL
+
+    this.browserSessionId = uuidv4();
 
     getPageName(
-      EDITING_ON_PAGE_NAME,
+      EDITING_ON_PAGE_NAME_SLUG,
       `${courseId}`,
       this.updateEditingDetails.bind(this)
     );
+  }
+
+  public getEditingOnStatus() {
+    return this.editingOnStatus;
   }
 
   /**
@@ -70,10 +82,10 @@ export class editingOnController {
     if (msg.hasOwnProperty("body") && msg.body.length > 0) {
       // page exists - parse the body content and set editingDetails
       this.editingDetails = JSON.parse(msg.body);
-	  this.setEditingOnStatus()
+      this.setEditingOnStatus();
     } else {
       // page doesn't exist - set editingDetails to null
-	  this.editingOnStatus = EDITING_ON_STATUS.NO_ONE_EDITING;
+      this.editingOnStatus = EDITING_ON_STATUS.NO_ONE_EDITING;
       this.editingDetails = {
         canvasUserId: null,
         browserSessionId: null,
@@ -84,28 +96,28 @@ export class editingOnController {
   /**
    * @method setEditingOnStatus
    * @description Set the editingOnStatus property based on the editingDetails property
-	*	  NO_ONE_EDITING canvasUserId===null
-	*     SOMEONE_ELSE_EDITING canvasUserId !== this.canvasUserId 
-	*  YOU_EDITING_ELSEWHERE canvasUserId matches but not browserSessionId
-	*  YOU_EDITING = canvasUserId and browserSessionId match
+   *	  NO_ONE_EDITING canvasUserId===null
+   *     SOMEONE_ELSE_EDITING canvasUserId !== this.canvasUserId
+   *  YOU_EDITING_ELSEWHERE canvasUserId matches but not browserSessionId
+   *  YOU_EDITING = canvasUserId and browserSessionId match
    */
   private setEditingOnStatus() {
-	// NO_ONE_EDITING canvasUserId===null
-	if (this.editingDetails.canvasUserId === null) {
-		this.editingOnStatus = EDITING_ON_STATUS.NO_ONE_EDITING;
-		return;
-	}
-	// SOMEONE_ELSE_EDITING canvasUserId !== this.canvasUserId 
-	if (this.editingDetails.canvasUserId !== this.canvasUserId) {
-		this.editingOnStatus = EDITING_ON_STATUS.SOMEONE_ELSE_EDITING;
-		return;
-	}
-	// YOU_EDITING_ELSEWHERE canvasUserId matches but not browserSessionId
-	if (this.editingDetails.browserSessionId !== this.browserSessionId) {
-		this.editingOnStatus = EDITING_ON_STATUS.YOU_EDITING_ELSEWHERE;
-		return;
-	}
-	return EDITING_ON_STATUS.YOU_EDITING;
+    // NO_ONE_EDITING canvasUserId===null
+    if (this.editingDetails.canvasUserId === null) {
+      this.editingOnStatus = EDITING_ON_STATUS.NO_ONE_EDITING;
+      return;
+    }
+    // SOMEONE_ELSE_EDITING canvasUserId !== this.canvasUserId
+    if (this.editingDetails.canvasUserId !== this.canvasUserId) {
+      this.editingOnStatus = EDITING_ON_STATUS.SOMEONE_ELSE_EDITING;
+      return;
+    }
+    // YOU_EDITING_ELSEWHERE canvasUserId matches but not browserSessionId
+    if (this.editingDetails.browserSessionId !== this.browserSessionId) {
+      this.editingOnStatus = EDITING_ON_STATUS.YOU_EDITING_ELSEWHERE;
+      return;
+    }
+    this.editingOnStatus = EDITING_ON_STATUS.YOU_EDITING;
   }
 
   /**
@@ -120,9 +132,8 @@ export class editingOnController {
   }
 
   public getBrowserSessionId(): string {
-	return this.browserSessionId;
+    return this.browserSessionId;
   }
-
 
   /**
    * @method getStatus
@@ -130,7 +141,7 @@ export class editingOnController {
    * @description getter for editingOnStatus
    */
   public getStatus(): EDITING_ON_STATUS {
-	return this.editingOnStatus;
+    return this.editingOnStatus;
   }
 
   /**
@@ -145,16 +156,12 @@ export class editingOnController {
    * - get the latest editing details again
    * - if they now contain our information, call the callback
    */
-  public turnEditOn(
-    userId: number,
-    sessionId: string,
-    finishCallback: Function
-  ) {
+  public turnEditOn(finishCallback: Function) {
     this.finishCallback = finishCallback;
 
     // get latest editing Details
     getPageName(
-      EDITING_ON_PAGE_NAME,
+      EDITING_ON_PAGE_NAME_SLUG,
       `${this.courseId}`,
       this.checkEditingDetails.bind(this)
     );
@@ -171,15 +178,127 @@ export class editingOnController {
    *      - create the page with our details (writeEditingDetails)
    */
   private checkEditingDetails(pageName, msg) {
-    // modify local details with what was found
-    // - at end this.editingDetails will contain the latest details
+    // change based on what we got back, all error handling in there
     this.updateEditingDetails(pageName, msg);
 
-      //
-      this.finishCallback(this.editingDetails);
+    if (this.editingOnStatus === EDITING_ON_STATUS.NO_ONE_EDITING) {
+      // no-one is editing, so go ahead and create the page
+      this.createEditingOnPage();
+    } else {
+      // we can't edit because either
+      // - I'm editing here
+      // - I'm editing elsewhere
+      // - someone else is editing
+      this.finishCallback(this.editingOnStatus, this.editingDetails);
+    }
   }
 
-  public turnEditOff() {
-	return;
-  } 
+  /**
+   * @method createEditingOnPage()
+   * @description Create the page with our details
+   */
+  private createEditingOnPage() {
+    let callUrl = `/api/v1/courses/${this.courseId}/pages/${EDITING_ON_PAGE_NAME_SLUG}`;
+
+    // create content as JSON string from editingDetails
+    let content = JSON.stringify({
+      canvasUserId: this.canvasUserId,
+      browserSessionId: this.browserSessionId,
+    });
+
+    let _body = {
+      wiki_page: {
+        title: EDITING_ON_PAGE_NAME,
+        body: content,
+      },
+    };
+
+    //      let method = "put";
+
+    const bodyString = JSON.stringify(_body);
+
+    wf_postData(callUrl, bodyString, this.csrfToken, "PUT").then((data) => {
+      this.checkCreation(data);
+    });
+  }
+
+  /**
+   * @method checkCreation
+   * @param data - the response from the Canvas API for creating the page
+   * @description callback after attempt to createEditingOnPage check the response,
+   * - if successful, try to get the editing details again to check, it's still me
+   */
+
+  private checkCreation(data) {
+    // update editing details - a way to check
+    // editing status will be set based on the created page
+    this.updateEditingDetails(EDITING_ON_PAGE_NAME, data);
+
+    // if we're editing, do a last double check and get the details in the file
+    if (this.editingOnStatus === EDITING_ON_STATUS.YOU_EDITING) {
+      console.log("checkCreation - YOU_EDITING - getDetails again");
+      console.log("TODO still need to double check this");
+      getPageName(
+        EDITING_ON_PAGE_NAME_SLUG,
+        `${this.courseId}`,
+        this.finalCheckForEditOnOff.bind(this)
+      );
+    } else {
+      // otherwise we'll finish the call back here
+      // other people are editing and the status/details should show that
+      this.finishCallback(this.editingOnStatus, this.editingDetails);
+    }
+  }
+
+  /**
+   * @method finalCheckForEditOnOff
+   * @param pageName - name of page that was read
+   * @param msg - the response from the Canvas API for reading the page
+   * @description Callback as the final stage of turning editing on/off
+   * - it appears we've successfully created the 'edit' page with our details
+   *    (or assume we deleted it)
+   * - we've asked for the file again to update editStatus with current settings
+   *   - turnEditOn
+   *     - Idea being to avoid danger of race conditions?
+   *     - should have our details
+   *   - turnEditOff
+   *     - should be no details, or maybe someone else
+   * - either way set the details and ask the App's callback to figure out
+   *   what to do with the information
+   */
+  private finalCheckForEditOnOff(pageName: string, msg: any) {
+    this.updateEditingDetails(pageName, msg);
+    this.finishCallback(this.editingOnStatus, this.editingDetails);
+  }
+
+  /**
+   * @method turnEditOff
+   * @param finishCallback - callback to call when editing is turned off
+   * @description Attempt to turn Collections editing off for the current user
+   * - delete the page
+   */
+  public turnEditOff(finishCallback: Function) {
+    this.finishCallback = finishCallback;
+    let callUrl = `/api/v1/courses/${this.courseId}/pages/${EDITING_ON_PAGE_NAME_SLUG}`;
+
+    wf_deleteData(callUrl, this.csrfToken).then((data) => {
+      this.checkDeletion(data);
+    });
+    return;
+  }
+
+  /**
+   * @method checkDeletion
+   * @param data  - the response from the Canvas API for deleting the page
+   * @description Callback after attempt to delete the page. Regardless of what happened
+   * get the edit page again and set the edit status appropriately.
+   * Hand it back to App to figure out what to do
+   */
+  private checkDeletion(data) {
+    getPageName(
+      EDITING_ON_PAGE_NAME_SLUG,
+      `${this.courseId}`,
+      this.finalCheckForEditOnOff.bind(this)
+    );
+  }
 }
