@@ -538,16 +538,24 @@
 
   /**
    * @function onDestroy
-   * @description If there is a saveInterval, then clear it
-   * TODO not really sure this is needed, as I don't explicitly destroy the
-   * component and it may not be a problem when navigating away
+   * @description Tidy up before leaving
+   * - clear the save and refresh intervals
+   * - ?? any other intervals
+   * - release editingOn lock
    */
   onDestroy(() => {
+    toastAlert("Canvas Collections is now off", "success");
+    if (editingOnHandler.getEditingOnStatus()===EDITING_ON_STATUS.YOU_EDITING) {
+      editingOnHandler.turnEditOff( () => {} )
+    }
     if (saveInterval) {
       clearInterval(saveInterval);
     }
     if (refreshCanvasDetails) {
       clearInterval(refreshCanvasDetails);
+    }
+    if (numSavesInterval) {
+      clearInterval(numSavesInterval);
     }
   });
 

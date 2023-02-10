@@ -28,10 +28,17 @@ if (context['modulesPage']) {
   div.style.display = "flex";
   rightOfCrumbs.appendChild(div);
 
+
   app = new CanvasCollections({
     target: div,
+    id: "canvas-collections",
     props: context,
   });
+
+  // make sure we tidy up
+  addEventListener('beforeunload', (event) => {
+    app.$destroy();
+  })
 } 
 
 export default app;
