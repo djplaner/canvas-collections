@@ -57,7 +57,7 @@ export class editingOnController {
     this.browserSessionId = uuidv4();
 
     getPageName(
-      EDITING_ON_PAGE_NAME_SLUG,
+      EDITING_ON_PAGE_NAME,
       `${courseId}`,
       this.updateEditingDetails.bind(this)
     );
@@ -65,6 +65,10 @@ export class editingOnController {
 
   public getEditingOnStatus() {
     return this.editingOnStatus;
+  }
+
+  public getSessionId() {
+	return this.browserSessionId;
   }
 
   /**
@@ -77,8 +81,6 @@ export class editingOnController {
    */
 
   private updateEditingDetails(pageName, msg) {
-    console.log(`----------------updateEditingDetails -- ${pageName}`);
-    console.log(msg);
     if (msg.hasOwnProperty("body") && msg.body.length > 0) {
       // page exists - parse the body content and set editingDetails
       this.editingDetails = JSON.parse(msg.body);
@@ -161,7 +163,7 @@ export class editingOnController {
 
     // get latest editing Details
     getPageName(
-      EDITING_ON_PAGE_NAME_SLUG,
+      EDITING_ON_PAGE_NAME,
       `${this.courseId}`,
       this.checkEditingDetails.bind(this)
     );
@@ -236,10 +238,8 @@ export class editingOnController {
 
     // if we're editing, do a last double check and get the details in the file
     if (this.editingOnStatus === EDITING_ON_STATUS.YOU_EDITING) {
-      console.log("checkCreation - YOU_EDITING - getDetails again");
-      console.log("TODO still need to double check this");
       getPageName(
-        EDITING_ON_PAGE_NAME_SLUG,
+        EDITING_ON_PAGE_NAME,
         `${this.courseId}`,
         this.finalCheckForEditOnOff.bind(this)
       );
@@ -296,7 +296,7 @@ export class editingOnController {
    */
   private checkDeletion(data) {
     getPageName(
-      EDITING_ON_PAGE_NAME_SLUG,
+      EDITING_ON_PAGE_NAME,
       `${this.courseId}`,
       this.finalCheckForEditOnOff.bind(this)
     );

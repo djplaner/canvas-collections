@@ -66,8 +66,9 @@
   export let showConfig: boolean;
 
   let checked: boolean = false;
-  const CURRENT_USER_ID: number = parseInt(ENV["current_user_id"]);
 
+  // set up editOn controller, need current Canvas user id
+  const CURRENT_USER_ID: number = parseInt(ENV["current_user_id"]);
   let editingOnHandler = new editingOnController(
     courseId,
     CURRENT_USER_ID,
@@ -425,7 +426,6 @@
 
   function completeSaveCollections(status) {
     numSaves++;
-    console.log(`Finished save collection num ${numSaves}`);
     if (status) {
       $configStore["needToSaveCollections"] = false;
     }
@@ -693,10 +693,6 @@
 
   function setNumSavesInterval() {
     numSavesInterval = setInterval(() => {
-      console.log(`numSavesInterval: numSaves=${numSaves}`);
-      if (numSaves === 0) {
-        console.log("numSavesInterval: numSaves=0 -- turn him off");
-      }
       numSaves = 0;
     }, TIME_BETWEEN_NO_SAVE_CHECKS);
   }
