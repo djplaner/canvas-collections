@@ -32,7 +32,7 @@ export function getCollectionCanvasModules(
       // if the module belongs to the selected collection
       // push the canvas module onto the array
       // but not if we're in claytons and the module is unpublished
-      if (! ( claytons && !module.published )) {
+      if (!(claytons && !module.published)) {
         modules.push(module);
         addedModuleIds.push(moduleId);
       }
@@ -275,7 +275,9 @@ export function modifyCanvasModulesList(collection, showUnallocated) {
           // in edit mode ensure that unallocated modules are visible and
           // have a ModuleConfiguration component
           module.style.display = "block";
-          addModuleConfiguration(parseInt(moduleId, 10));
+          if (config["editingOn"] !== null) {
+            addModuleConfiguration(parseInt(moduleId, 10));
+          }
         } else {
           if (showUnallocated) {
             // make sure that unallocated modules are visible
@@ -292,8 +294,10 @@ export function modifyCanvasModulesList(collection, showUnallocated) {
   moduleIds.forEach((moduleId) => {
     // make sure that these are displayed
 
-    if (editMode) {
-      addModuleConfiguration(moduleId);
+    // add module configuration if Canvas edit mode is on and
+    // the user has editingOn permission for Collections
+    if (editMode && config["editingOn"] !== null) {
+      addModuleConfiguration(moduleId, config);
     }
     // make each current collection moduleId is visible
     const module = document.getElementById(`context_module_${moduleId}`);
