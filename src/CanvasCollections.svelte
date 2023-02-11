@@ -764,8 +764,17 @@
     }
   }
 
+  /**
+   * @function setNumSavesInterval
+   * @description Set the interval to check if there have been any saves
+   * - reset numSaves
+   * - If there haven't been any saves since the last check turn off editing
+   */
   function setNumSavesInterval() {
     numSavesInterval = setInterval(() => {
+      if (numSaves===0) {
+        editingOnHandler.turnEditOff(setUpEditingOff);
+      }
       numSaves = 0;
     }, TIME_BETWEEN_NO_SAVE_CHECKS);
   }
