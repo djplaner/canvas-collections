@@ -121,8 +121,14 @@
   const HELP = {
     visibility: {
       tooltip:
-        "<p>Who can see Collections modification of the modules page.</p>",
-      url: "https://djplaner.github.io/canvas-collections/reference/visibility/",
+        `<p>For whom are Collections changes visible?</p>
+        <ul>
+          <li> no-one - no changes made for anyone</li>
+          <li> students - only student, not teachers</li>
+          <li> teachers - only teachers/designers</li>
+          <li> all - all users</li>
+          </ul>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/visibility/live/",
     },
   };
 </script>

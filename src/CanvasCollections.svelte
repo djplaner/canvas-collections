@@ -806,8 +806,11 @@
     },
     studentInvisible: {
       tooltip: `<p>Students <strong>cannot</strong> see Collections.</p>
-      <p>To change, click the <i class="icon-mini-arrow-right"></i> icon to the right
-        and use the <em>visibility</em> dropdown to select <em>students</em> or <em>all</em>.</p>`,
+      <p>To change:</p>
+      <ol>
+        <li> turn <em>Edit On</em> </li>
+        <li> click the <i class="icon-mini-arrow-right"></i> icon to the right </li>
+        <li> use the <em>visibility</em> dropdown to select <em>students</em> or <em>all</em>.</li></ol>`,
     },
     nooneVisible: {
       tooltip: `<p>Collections is turned <strong>off</strong>.</p><p> No-one is able to see Collections.</p>

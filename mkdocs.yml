@@ -107,7 +107,10 @@ nav:
   - 🚧 Reference: 
       - Overview: reference/overview.md
       - Lifecycle:
-        - Visibility: reference/lifecycle/visibility.md
+        - Visibility: 
+          - Overview: reference/lifecycle/visibility/overview.md
+          - Live Collections: reference/lifecycle/visibility/live.md
+          - Claytons Collections: reference/lifecycle/visibility/claytons.md
         - Student view: reference/lifecycle/student-view.md  # show both claytons and live
         - Staff:
           - Staff view: reference/lifecycle/staff-view.md
