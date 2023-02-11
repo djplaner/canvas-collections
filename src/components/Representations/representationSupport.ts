@@ -121,9 +121,9 @@ export function getRepresentationModules(
   // is the problem that we're starting with the Canvas modules
   modules = getCollectionCanvasModules(collectionName, claytons);
   // add unallocated modules if,
-  if (editMode) {
+  if (editMode ) {
     // student only if unallocated for this collection is true
-    if (unallocated && !claytons) {
+    if (unallocated ) { //&& !claytons) {
       modules = addUnallocatedModules(modules, editMode);
     }
     //} else if ((claytons && unallocated) || !claytons) {
