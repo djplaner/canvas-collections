@@ -39,6 +39,7 @@ Cards or tiles
 Other modifications
 
 - [Collapse all modules](https://community.canvaslms.com/t5/Canvas-Developers-Group/Collapse-Expand-Modules/ba-p/273122) thread on instructure community around some code shared by an Instructure employee that helps manage collapse all modules
+    - [Canvas Modules Compactor](https://www.youtube.com/watch?v=r8cTpzY8Rws) - YouTube video showing a browser extension for collapsing individual modules based on indentation
 - [Quick Module Navigation](https://community.canvaslms.com/t5/Canvas-Admin-Blog/Quick-Module-Navigation/ba-p/279697) - JS to enable click on button (on home page) to go directly to appropriate module with other modules collapsed
 
 ### Manual

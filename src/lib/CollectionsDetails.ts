@@ -149,40 +149,6 @@ export class CollectionsDetails {
         this.collections["COLLECTIONS"]
       );
     }
-
-    /*		for (let key in this.collections['MODULES']) {
-		// double check that we're not an import from another course
-		let courseImages = parsed.querySelector('div.cc-card-images');
-		const importConverted = this.checkConvertImport(courseImages);
-		// and make it gets saved if there was a change
-		if (importConverted) {
-			this.configConverted = importConverted;
-		}
-		const updatesConverted = this.checkConvertUpdates();
-		if ( updatesConverted ) {
-			this.configConverted = updatesConverted;
-		}
-
-		// also need to decode the collection names in
-		// - keys for this.cc_configuration.COLLECTIONS
-		// - values in this.cc_configuration.COLLECTIONS_ORDER
-		// - values in this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
-
-		// decode the keys for this.cc_configuration.COLLECTIONS
-		const collections = {};
-		for (let key in this.parentController.cc_configuration.COLLECTIONS) {
-			const collection = this.parentController.cc_configuration.COLLECTIONS[key];
-			collections[this.decodeHTML(key)] = collection;
-		}
-		this.parentController.cc_configuration.COLLECTIONS = collections;
-		// decode the values in this.cc_configuration.COLLECTIONS_ORDER
-		this.parentController.cc_configuration.COLLECTIONS_ORDER = this.parentController.cc_configuration.COLLECTIONS_ORDER.map((collection) => {
-			return this.decodeHTML(collection);
-		});
-		// decode the value in the string this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
-		this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION = this.decodeHTML(
-			this.parentController.cc_configuration.DEFAULT_ACTIVE_COLLECTION);
-    */
   }
 
   /**
@@ -663,6 +629,7 @@ export class CollectionsDetails {
    */
   decodeHTML(html: string, iframeAllowed = false ) {
 
+
     // do some sanitisation of the HTML https://github.com/apostrophecms/sanitize-html
     let allowedTags = sanitizeHtml.defaults.allowedTags;
     let allowedAttributes = {};
@@ -688,21 +655,21 @@ export class CollectionsDetails {
     let txt = document.createElement("textarea");
     txt.innerHTML = value;
     value = txt.value;
-    return value;
+    return value; 
   }
 
   encodeHTML(html: string, json = true) {
     let txt = document.createElement("textarea");
     txt.innerHTML = html;
     let value = txt.innerHTML;
-    /*		if (json) {
+    if (json) {
 			// for Canvas JSON, escape the quotes
 			return value.replaceAll(/"/g, '\"');
 
 		} else {
 			// for not JSON (i.e. HTML) encode the quotes
 			return value.replaceAll(/"/g, '&quot;');
-		} */
+		} 
     return value;
   }
 

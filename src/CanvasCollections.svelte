@@ -1,4 +1,11 @@
 <script lang="ts">
+  /**
+   * @file CanvasCollections.svelte
+   * Main component for the Canvas Collections app.
+   * - onMount
+   *   - get Canvas and Collections information
+   *   - call backs will update stores/interface
+   */
   import ProcessImportedCollections from "./components/ProcessImportedCollections.svelte";
   import { collectionsStore, modulesStore, configStore } from "./stores";
   import CanvasCollectionsRepresentation from "./components/CanvasCollectionsRepresentation.svelte";
@@ -136,7 +143,7 @@
     if ($configStore.hasOwnProperty("migrationOutcome")) {
       completeMigration();
     }
-    // recatively update the tooltip for the switch title depending on whether
+    // reactively update the tooltip for the switch title depending on whether
     // collections is on or off
     if (noCollections) {
       HELP.switchTitle.tooltip = `${HELP.ABOUT.tooltip} <p>Click on the</p>
@@ -189,7 +196,7 @@
 
   /**
    * @function gotCollectionsDetails
-   * @param {string} status - undefined if working, others a label for an error
+   * @param {string} status - undefined if working, otherwise a label for an error
    * @description Called by CollectionsDetails when the collections data
    * has been retrieved or if there were problems
    */
@@ -539,15 +546,34 @@
   /**
    * @function onDestroy
    * @description Tidy up before leaving
+   * - save if necessary
    * - clear the save and refresh intervals
    * - ?? any other intervals
    * - release editingOn lock
    */
   onDestroy(() => {
-    toastAlert("Canvas Collections is now off", "success");
-    if (editingOnHandler.getEditingOnStatus()===EDITING_ON_STATUS.YOU_EDITING) {
-      editingOnHandler.turnEditOff( () => {} )
+    // save if necessary
+    if (
+      EXIT_SAVE &&
+      $configStore["needToSaveCollections"] &&
+      $configStore["editMode"]
+    ) {
+      collectionsDetails.saveCollections(
+        $collectionsStore,
+        $configStore["editMode"],
+        $configStore["needToSaveCollections"],
+        completeSaveCollections
+      );
     }
+
+    // release editingOn lock
+    if (
+      editingOnHandler.getEditingOnStatus() === EDITING_ON_STATUS.YOU_EDITING
+    ) {
+      editingOnHandler.turnEditOff(() => {});
+    }
+
+    // clear some intervals
     if (saveInterval) {
       clearInterval(saveInterval);
     }
@@ -565,7 +591,7 @@
    * @description If when leaving the page there are unsaved changes, then
    * save them
    */
-  function beforeUnload(event) {
+  /*  function beforeUnload(event) {
     if (
       EXIT_SAVE &&
       $configStore["needToSaveCollections"] &&
@@ -581,7 +607,7 @@
     }
     // necessary for correct behaviour?
     return "...";
-  }
+  } */
 
   /**
    * @function toggleEditingOn
@@ -647,8 +673,39 @@
       }
       return;
     }
+
+    // first step in turning edit on is to refresh the CollectionsDetails
+    // on completion will call turnEditingOn
+    collectionsDataLoaded = false;
+    collectionsDetails = new CollectionsDetails(turnEditingOn, {
+      courseId: $configStore["courseId"],
+      csrfToken: $configStore["csrfToken"],
+    });
+  }
+
+  /**
+   * @function turnEditingOn
+   * @param status - empty if successful
+   *
+   */
+
+  function turnEditingOn(status: string = "") {
+    if (status !== "") {
+      // oops that didn't work
+      toastAlert(
+        `<p>Failed to update Collections configuration</p>
+        <p>Unknown reason </p>`,
+        "danger"
+      )
+      return;
+    }
+
+    collectionsDataLoaded=true
+
+
+    // should be right to turn editing on
     numSaves = 0;
-    $configStore["editingOn"] = { user: "fred", secret: "hello" };
+    $configStore["editingOn"] = editingOnHandler.getEditingDetails();
     modifyCanvasModulesList(
       $configStore["currentCollection"],
       $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
@@ -762,8 +819,6 @@
       `;
 </script>
 
-<svelte:window on:beforeunload={beforeUnload} />
-
 {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
   <div class="cc-switch-container">
     <div class="cc-switch-title">
@@ -822,8 +877,9 @@
       <div class="cc-save">
         <sl-tooltip class="cc-button-hover">
           <div slot="content">{@html HELP.editOn.tooltip}</div>
-          <button id="cc-editing-on-button" on:click|stopPropagation={toggleEditingOn}
-            >Edit On</button
+          <button
+            id="cc-editing-on-button"
+            on:click|stopPropagation={toggleEditingOn}>Edit On</button
           >
         </sl-tooltip>
       </div>

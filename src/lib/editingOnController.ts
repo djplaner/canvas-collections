@@ -67,8 +67,12 @@ export class editingOnController {
     return this.editingOnStatus;
   }
 
+  public getEditingDetails() {
+    return this.editingDetails;
+  }
+
   public getSessionId() {
-	return this.browserSessionId;
+    return this.browserSessionId;
   }
 
   /**
