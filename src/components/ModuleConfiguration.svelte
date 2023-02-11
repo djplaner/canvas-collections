@@ -28,7 +28,7 @@
     moduleConfiguration: {
       tooltip:
         "Click the arrow to open/close the Collections interface to configure data about this module",
-      url: "https://djplaner.github.io/canvas-collections/walk-throughs/new/configure-modules/",
+      url: "https://djplaner.github.io/canvas-collections/how-tos/new/configure-modules/",
     },
     generalTab: {
       tooltip:

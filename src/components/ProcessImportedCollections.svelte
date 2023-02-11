@@ -52,36 +52,38 @@
   }
 
   const HELP = {
-    copy: {
+    /*    copy: {
       tooltip: `<p>Collections configuration copied from another course will need to be modified.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/walk-throughs/course-copy/process/",
-    },
+      url: "https://djplaner.github.io/canvas-collections/reference/course-copy/process/",
+    }, */
     summary: {
-      tooltip: `<p>What was found? What might you do next?`,
-      url: "https://djplaner.github.io/canvas-collections/walk-throughs/course-copy/process/",
+      tooltip: `<p>It appears Collections has been copied from another course. Details on the 
+        source/destination courses below.</p><p>How do you wish to proceed?</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/lifecycle/course-copy/import/",
     },
     modules: {
-      tooltip: `<p>Changes required for module configuration in Collections</p>`,
-      url: "https://djplaner.github.io/canvas-collections/walk-throughs/course-copy/process/#modules",
+      tooltip: `<p>Analysis of the "imported" modules (in Collections configuration) and "current" modules
+        (in the current course). Decide if any action is required before import.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/lifecycle/course-copy/import/#modules",
     },
     images: {
       tooltip: `<p>Status of any course-based module module images in Collections configuration</p>`,
-      url: "https://djplaner.github.io/canvas-collections/walk-throughs/course-copy/process/#images",
+      url: "https://djplaner.github.io/canvas-collections/reference/lifecycle/course-copy/import/#images",
     },
     proceed: {
-      tooltip: `<p>Collections will update its configuration and you can proceed using Canvas Collections</p>`,
-      url: "https://djplaner.github.io/canvas-collections/walk-throughs/course-copy/process/#proceed",
+      tooltip: `<p>Start the Collections import process. Modify the Collections configuration to match the new course. 
+        (Note: use Canvas history to restore previous configuration, if there are problems)</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/lifecycle/course-copy/import/#proceed",
     },
     cancel: {
       tooltip: `<p>Cancel the import, return to the course make any changes, and then recommence the import.</p>
-	  <p><sl-icon name="info-circle"></sl-icon> You cannot use Collections in this courses until the migration process
-		is complete.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/walk-throughs/course-copy/process/#cancel",
+	  <p>You cannot use Collections in this courses until the migration process is complete.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/lifecycle/course-copy/import/#cancel",
     },
     refresh: {
       tooltip: `<p>Refresh Collections configuration to a blank state. Allowing you to start fresh 
 			and use the Collections interface to customise design for the new course.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/walk-throughs/course-copy/process/#refresh",
+      url: "https://djplaner.github.io/canvas-collections/reference/lifecycle/course-copy/import/#refresh",
     },
   };
 </script>
@@ -94,21 +96,8 @@
 >
   <div class="cc-process-import">
     <sl-tab-group placement="start">
-      <sl-tab slot="nav" panel="summary">
-        <sl-tooltip>
-          <div slot="content">{@html HELP.summary.tooltip}</div>
-          <a target="_blank" rel="noreferrer" href={HELP.summary.url}
-            ><i class="icon-question cc-module-icon" /></a
-          >
-        </sl-tooltip> &nbsp; Summary</sl-tab
-      >
+      <sl-tab slot="nav" panel="summary"> &nbsp; Summary</sl-tab>
       <sl-tab slot="nav" panel="modules">
-        <sl-tooltip>
-          <div slot="content">{@html HELP.modules.tooltip}</div>
-          <a target="_blank" rel="noreferrer" href={HELP.modules.url}
-            ><i class="icon-question cc-module-icon" /></a
-          >
-        </sl-tooltip>
         &nbsp; Modules &nbsp;
         {#if modulesCompleteStatus}
           <sl-badge variant="success">Ok</sl-badge>
@@ -117,12 +106,6 @@
         {/if}
       </sl-tab>
       <sl-tab slot="nav" panel="images">
-        <sl-tooltip>
-          <div slot="content">{@html HELP.images.tooltip}</div>
-          <a target="_blank" rel="noreferrer" href={HELP.images.url}
-            ><i class="icon-question cc-module-icon" /></a
-          >
-        </sl-tooltip>
         &nbsp; Images &nbsp;
         {#if imagesCompleteStatus}
           <sl-badge variant="success">Ok</sl-badge>
@@ -133,6 +116,15 @@
 
       <sl-tab-panel name="summary">
         <div class="cc-import-intro">
+          <h3>
+            <sl-tooltip>
+              <div slot="content">{@html HELP.summary.tooltip}</div>
+              <a target="_blank" rel="noreferrer" href={HELP.summary.url}>
+                <i class="icon-question cc-module-icon" />
+              </a>
+            </sl-tooltip>
+            Summary
+          </h3>
           <p>
             <a
               href="/courses/{currentCourseId}/pages/canvas-collections-configuration"
@@ -182,7 +174,6 @@
             </li>
           </ul>
 
-
           <div class="cc-footer">
             <sl-button
               slot="footer"
@@ -211,6 +202,16 @@
         <p />
       </sl-tab-panel>
       <sl-tab-panel name="modules">
+        <h3>
+          <sl-tooltip>
+            <div slot="content">{@html HELP.modules.tooltip}</div>
+            <a target="_blank" rel="noreferrer" href={HELP.modules.url}>
+              <i class="icon-question cc-module-icon" />
+            </a>
+          </sl-tooltip>
+          Modules
+        </h3>
+
         <ImportModules
           bind:modulesCompleteStatus
           {currentCourseId}
@@ -219,6 +220,16 @@
         />
       </sl-tab-panel>
       <sl-tab-panel name="images">
+        <h3>
+          <sl-tooltip>
+            <div slot="content">{@html HELP.images.tooltip}</div>
+            <a target="_blank" rel="noreferrer" href={HELP.images.url}>
+              <i class="icon-question cc-module-icon" />
+            </a>
+          </sl-tooltip>
+          Images
+        </h3>
+
         <ImportImages
           bind:imagesCompleteStatus
           {currentCourseId}
@@ -254,21 +265,21 @@
   }
 
   .cc-footer {
-	margin-top: 2rem;
+    margin-top: 2rem;
     text-align: right;
   }
 
   .cc-horizontal-list {
-	list-style : none;
+    list-style: none;
   }
 
   ul.cc-horizontal-list li {
-	display: inline-block;
-	padding-right: 1rem;
-	padding: 0 0.5rem;
+    display: inline-block;
+    padding-right: 1rem;
+    padding: 0 0.5rem;
   }
 
   ul.cc-horizontal-list li:not(:last-child) {
-	border-right: 1px solid #ccc;
+    border-right: 1px solid #ccc;
   }
 </style>
