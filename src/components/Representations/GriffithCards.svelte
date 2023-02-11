@@ -338,20 +338,26 @@
   }
 
   .cc-card-interface {
-    margin-top: 0.5em !important;
+    margin-top: 1rem !important;
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
+/*    margin-top: 0.5em !important;
     flex-wrap: wrap;
-    display: flex;
+    display: flex; */
   }
+
 
   .cc-clickable-card,
   .cc-unclickable-card {
-    padding: 0.75rem;
+    width: 100%;
+/*    padding: 0.75rem;
     flex-direction: column;
     display: flex;
-    width: 30%;
+    width: 30%; */
   }
 
-  @media (max-width: 640px) {
+  /*@media (max-width: 640px) {
     .cc-clickable-card,
     .cc-coming-soon-card {
       width: 50%;
@@ -363,7 +369,7 @@
     .cc-clickable-card {
       width: 100%;
     }
-  }
+  } */
 
   .cc-clickable-card:hover {
     cursor: pointer;
