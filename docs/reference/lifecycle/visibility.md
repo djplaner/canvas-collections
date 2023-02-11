@@ -1,5 +1,35 @@
 # Visibility
 
+
+## new tmp stuff
+
+## Collections visibility
+
+Collections visibility setting controls who is able to see the changes Collections makes to the Modules page. There are four settings.
+
+| Visibility setting | Description |
+| ------------------ | ----------- |
+| none | <p>No one can see the changes Collections makes to the Modules page.</p> <p>Teachers/designers are still able to see the Collections configuration element. They can also use that element to configure Collections</p> |
+| students | <p>Students can see the changes Collections makes to the Modules page. Teachers/designers cannot see those changes.</p><p> Teachers/designers are still able to see the Collections configuration element and use it to configure Collections |
+| teachers | <p>Students can not see Collections' changes.<p> <p>Teachers/designers can and they can use the Collections configuration element to configure Collections</p> <p> <em>Default setting:</em> When Collections is first turned on, visibility is set to <em>teachers</em>.|
+| all | <p>Everyone can see Collections' changes.</p> <p>Teachers/designers can use the Collections configuration element to configure Collections</p> |
+
+<figure markdown>
+<figcaption>Using Collection's Visibility settings</figcaption>
+  <sl-animated-image
+     src="../images/visibility.gif"
+	 alt="Demonstration of changing the visibility setting"></sl-animated-image>
+</figure>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>
+
+
+
+
+
+
+## Old stuff
 For whom Canvas Collection differs for 
 
 1. [Claytons Collections](#claytons-collections) - you've used Collections to create Canvas pages containing representations.

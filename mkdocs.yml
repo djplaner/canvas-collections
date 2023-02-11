@@ -81,26 +81,29 @@ nav:
       - 🚧 Modules: getting-started/configure/modules.md
     - 4. 🚧 Use Collections: getting-started/use/types.md
 #    - 5. 🚧 Configure Claytons Collections:
-  - '🚧 Walk-throughs': 
-    - Available walk-throughs: walk-throughs/available.md
-#    - New course:
-#      - Before & after: walk-throughs/new/before-and-after.md
-#      - Design: walk-throughs/new/design.md
-#      - Configure Collections: walk-throughs/new/configure-collections.md
-#      - Configure Modules: walk-throughs/new/configure-modules.md
-#      - Set up "Claytons": walk-throughs/new/set-up-claytons.md
-#    - Making changes:
-#      - Add a collection: walk-throughs/changes/add-a-collection.md
-#      - Delete a collection: walk-throughs/changes/delete-a-collection.md
-#      - Add a module: walk-throughs/changes/add-a-module.md
-#    - Course copy:
-#      - Course copy process: walk-throughs/course-copy/process.md
-#    - ⚗️ Advanced:
-#      - Multi-collection, one page Claytons: walk-throughs/advanced/multi-collection-one-page.md
-#      - Fix Claytons Card CSS: walk-throughs/advanced/fix-claytons-card-css.md
-#    - Navigating the site: 
-#      - Student - live: walk-throughs/navigating/student-live.md
-#      - Student - Claytons: walk-throughs/navigating/student-claytons.md
+  - 'How-tos': 
+    - Available how-tos: how-tos/available.md
+    - Navigating Collections:
+      - Overview: how-tos/navigating/overview.md
+      - "Live Collections": how-tos/navigating/navigating-live-collections.md
+      - "Claytons Collections": how-tos/navigating/navigating-claytons-collections.md
+    - Adding Collections to a course:
+      - Overview: how-tos/new/overview.md
+      - Before & after: how-tos/new/before-and-after.md
+      - Design: how-tos/new/design.md
+      - Configure Collections: how-tos/new/configure-collections.md
+      - Configure Modules: how-tos/new/configure-modules.md
+      - Set up "Claytons": how-tos/new/set-up-claytons.md
+    - Updating Collections:
+      - Overview: how-tos/changes/overview.md
+      - Add a collection: how-tos/changes/add-a-collection.md
+      - Delete a collection: how-tos/changes/delete-a-collection.md
+      - Add a module: how-tos/changes/add-a-module.md
+    - Collections & course copy:
+      - Course copy process: how-tos/course-copy/process.md
+    - ⚗️ Advanced:
+      - Multi-collection, one page Claytons: how-tos/advanced/multi-collection-one-page.md
+      - Fix Claytons Card CSS: how-tos/advanced/fix-claytons-card-css.md
   - 🚧 Reference: 
       - Overview: reference/overview.md
       - Lifecycle:
@@ -124,8 +127,8 @@ nav:
      - Getting involved: community/collections-community.md
      - Related work: community/related-work.md
   - 'Latest Version': latest-version.md
-#  - ⚰️ Features & Use: 
-#    - Overview: features.md
-#    - Collections: features/collections.md
-#    - Representations: features/representations.md
-#    - Objects: features/objects.md
+  - ⚰️ Features & Use: 
+    - Overview: features.md
+    - Collections: features/collections.md
+    - Representations: features/representations.md
+    - Objects: features/objects.md
