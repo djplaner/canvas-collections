@@ -68,6 +68,30 @@
   export let editMode: boolean;
   export let csrfToken: string;
   export let modulesPage: boolean;
+
+  onMount(async () => {
+    // Start the process of getting via Canvas API
+    // - CanvasDetails - Canvas module info
+    // - CollectionsDetails - content of the Collections configuration page
+    // - Will end up respectively using callBacks gotCanvasDetails & gotCollectionDetails
+    //   at the tail end of information retrieval
+    // - Both will call checkAllDataLoaded, when it detects both finished, if will
+    //   start everything else up
+    if (modulesPage) {
+      canvasDetails = new CanvasDetails(gotCanvasDetails, {
+        courseId: courseId,
+        csrfToken: csrfToken,
+      });
+
+      collectionsDetails = new CollectionsDetails(gotCollectionsDetails, {
+        courseId: courseId,
+        csrfToken: csrfToken,
+      });
+    }
+  });
+
+  // some additional set up/initialisation
+
   // this may need to come back?
   //  export let currentCollection: number;
   export let showConfig: boolean;
@@ -525,24 +549,6 @@
     removeModuleConfiguration($collectionsStore["MODULES"]);
   }
 
-  onMount(async () => {
-    // grab all the canvas course module related information
-    // canvasDetails
-    // - courseObject
-    // - modules
-    if (modulesPage) {
-      canvasDetails = new CanvasDetails(gotCanvasDetails, {
-        courseId: courseId,
-        csrfToken: csrfToken,
-      });
-
-      collectionsDetails = new CollectionsDetails(gotCollectionsDetails, {
-        courseId: courseId,
-        csrfToken: csrfToken,
-      });
-    }
-  });
-
   /**
    * @function onDestroy
    * @description Tidy up before leaving
@@ -696,12 +702,14 @@
         `<p>Failed to update Collections configuration</p>
         <p>Unknown reason </p>`,
         "danger"
-      )
+      );
       return;
     }
 
-    collectionsDataLoaded=true
+    // ?? to refresh??
+    gotCollectionsDetails(status);
 
+    collectionsDataLoaded = true;
 
     // should be right to turn editing on
     numSaves = 0;
