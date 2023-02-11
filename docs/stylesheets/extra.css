@@ -4,6 +4,7 @@
   --md-primary-fg-color--dark: #121212;
   --md-primary-fg-color: #f5f5f5;
   --md-accent-fg-color: #526cfe;
+  --md-default-fg-color--light: #111111;
 }
 
 figure {

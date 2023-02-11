@@ -103,18 +103,23 @@ nav:
 #      - Student - Claytons: walk-throughs/navigating/student-claytons.md
   - 🚧 Reference: 
       - Overview: reference/overview.md
-      - Visibility: reference/visibility.md
-      - Collections:
-        - Collections: reference/collections/overview.md
-      - Representations:
-        - Representations: reference/representations/overview.md
-        - Claytons: reference/representations/claytons/overview.md
-      - Objects (Modules):
-        - Objects: reference/objects/overview.md
-      - Development:
-        - Component Structure: reference/development/component-structure.md
-#  - 🚧 Development:
-#      - Local development: getting-started/development/local-development.md
+      - Lifecycle:
+        - Visibility: reference/lifecycle/visibility.md
+        - Student view: reference/lifecycle/student-view.md  # show both claytons and live
+        - Staff:
+          - Staff view: reference/lifecycle/staff-view.md
+          - Edit: reference/lifecycle/edit.md
+      - Conceptual model:
+        - Collections: reference/conceptual-model/collections/overview.md
+        - Representations:
+          - Representations: reference/conceptual-model/representations/overview.md
+          - Claytons: reference/conceptual-model/representations/claytons/overview.md
+        - Objects (Modules):
+          - Objects: reference/conceptual-model/objects/overview.md
+        - Development:
+          - Component Structure: reference/development/component-structure.md
+          - Local development: 
+            - Overview: getting-started/development/local-development.md
   - 'Community': 
      - Getting involved: community/collections-community.md
      - Related work: community/related-work.md
