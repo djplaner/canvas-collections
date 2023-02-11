@@ -7,7 +7,7 @@ References provide short descriptions of specific aspects of Collections.
 
     Information about the lifecycle of using Collections as experienced by the user.
 
-    - [Visibility](./lifecycle/visibility.md) - who can see Collections and when.
+    - [Visibility](./lifecycle/visibility/overview.md) - who can see Collections and when.
     - [Student View](./lifecycle/student-view.md) - how students experience Collections.
     - Staff - have a slightly broader lifecyle, including
       - [Staff view](./lifecycle/staff-view.md) - how staff view Collections.

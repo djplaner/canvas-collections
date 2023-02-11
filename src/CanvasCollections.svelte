@@ -801,8 +801,8 @@
     },
     studentVisible: {
       tooltip: `<p>Students can see Collections.</p>
-      <p>To change, click the <i class="icon-mini-arrow-right"></i> icon to the right
-        and use the <em>visibility</em> dropdown to select <em>teachers</em> or <em>none</em>.</p>`,
+      <p>To change, turn <em>edit on</em>; click the <i class="icon-mini-arrow-right"></i> 
+        icon to the right: and, use the <em>visibility</em> dropdown.</p>`
     },
     studentInvisible: {
       tooltip: `<p>Students <strong>cannot</strong> see Collections.</p>
@@ -814,8 +814,8 @@
     },
     nooneVisible: {
       tooltip: `<p>Collections is turned <strong>off</strong>.</p><p> No-one is able to see Collections.</p>
-      <p>To change, click the <i class="icon-mini-arrow-right"></i> icon to the right
-        and use the <em>visibility</em> dropdown to select <em>students</em> or <em>all</em>.</p>`,
+      <p>To change, turn <em>Edit on</em>; click the <i class="icon-mini-arrow-right"></i> 
+        icon to the right and use the <em>visibility</em> dropdown.</p>`,
     },
     switchTitle: {
       tooltip: "",
@@ -827,10 +827,7 @@
         <p>Meaning live Collections will <strong>not</strong> be visible in 
           "Student View" or for students.</p> 
           <p>Any Claytons Collections will be visible, if the relevant pages are published.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/visibility/",
-    },
-    initialise: {
-      tooltip: `<p>Click this button to initialise and start using Collections for this course.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/lifecycle/visibility/live/",
     },
   };
   HELP.ABOUT["notEditingTooltip"] = `${HELP.ABOUT.tooltip}
@@ -887,10 +884,7 @@
 
     {#if noCollections}
       <label class="cc-switch" for="cc-switch">
-        <sl-tooltip class="cc-button-hover">
-          <div slot="content">{@html HELP.initialise.tooltip}</div>
           <sl-switch id="cc-switch" on:sl-change={initialiseCollections} />
-        </sl-tooltip>
       </label>
     {/if}
     {#if $configStore["editingOn"] === null && !noCollections}
