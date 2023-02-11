@@ -98,13 +98,15 @@
 
 {#if claytons}
   <!-- <div class="claytons-card-interface claytons-representation">-->
-  <div style="flex-wrap: wrap; display:flex; margin-top: 0.5em">
+  <!-- <div style="flex-wrap: wrap; display:flex; margin-top: 0.5em"> -->
+    <div style="margin-top: 1rem !important; display:grid;grid-gap:1rem;grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%),1fr));">
     {#each modules as theModule}
       <!-- TODO need to handle styles for claytons-unclickable-card -->
       <div
         id="cc_module_{theModule.id}"
-        style="padding: 0.75rem; flex-direction: column; display:flex;width:30%"
+        style="width:100%"
       >
+        <!-- style="padding: 0.75rem; flex-direction: column; display:flex;width:30%" -->
         <div
           id="cc_module_{theModule.id}"
           class="claytons-card"
