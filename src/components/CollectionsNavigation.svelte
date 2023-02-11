@@ -64,17 +64,24 @@
 
   .cc-nav {
     font-size: small;
+    display: block;
+    width: 100%;
   }
 
   .cc-nav ul {
+    display: grid;
+    text-align: justify;
+    justify-items: stretch;
+    grid-gap: 0.1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(10rem,100%), 1fr));
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
     background-color: #eee;
-    display: table;
-    table-layout: fixed;
     width: 100%;
+/*    display: table;
+    table-layout: fixed; */
   }
 
   li.cc-active {
@@ -93,10 +100,10 @@
   }
 
   .cc-nav ul li {
-    display: table-cell;
+    display: block;
     width: 100%;
     /*   border-right: 1px solid #000; */
-    float: none;
+   /* float: none; */
   }
 
   li.cc-nav a {
