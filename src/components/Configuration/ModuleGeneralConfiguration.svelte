@@ -72,6 +72,22 @@
     $configStore["needToSaveCollections"] = true;
   }
 
+  /**
+   * @function trimLabel
+   * @param e
+   * @description Whenvever label has been changed be sure to trim whitespace
+   * from the end of the string
+   * - and probably need to rerun auto allocation 
+   */
+  function trimLabel(e: Event) {
+    // trim whitespace from the end of $collectionsStore["MODULES"][moduleId].label
+    $collectionsStore["MODULES"][moduleId].label = e.target.value.trimEnd();
+    calculateActualNum($modulesStore, $collectionsStore["MODULES"]);
+
+    $configStore["needToSaveCollections"] = true;
+
+  }
+
   const HELP = {
     configCollection: {
       tooltip: `To which of the available collections does this module belong?`,
@@ -203,7 +219,7 @@
           id="cc-module-config-{moduleId}-label"
           style="width:10rem"
           bind:value={$collectionsStore["MODULES"][moduleId].label}
-          on:change={() => ($configStore["needToSaveCollections"] = true)}
+          on:change={trimLabel}
           on:keydown|stopPropagation
         />
       </span>
