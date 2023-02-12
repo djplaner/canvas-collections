@@ -30,12 +30,15 @@
     claytons = false;
   }
 
+  console.log(`---------------- CollectionRepresentation -- ${collectionName} -- ${claytons} -----------------`)
+
 /*  if (claytons===false) {
     collectionName = $configStore["currentCollection"];
   }*/
 
   let representationComponent: any;
   $: {
+  console.log(`------Dynamic ---------- CollectionRepresentation -- ${collectionName} -- ${claytons} -----------------`)
     const localRep =
       $collectionsStore["COLLECTIONS"][collectionName]["representation"];
     if (!$representationsStore.hasOwnProperty(localRep)) {
@@ -60,8 +63,8 @@
           "unallocated"
         ]
       );
-    }
-  }
+    } 
+  } 
 
   if (!collectionName) {
     // TODO better error handling
@@ -71,11 +74,15 @@
   }
 
 
+/**
+ * Does collection need to be bound below?
+  bind:collection={collectionName}
+*/
 </script>
 
 <svelte:component
   this={representationComponent}
-  bind:collection={collectionName}
+  collection={collectionName}
   {claytons}
 />
 

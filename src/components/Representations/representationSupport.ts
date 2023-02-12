@@ -240,6 +240,10 @@ export function isNotEmptyDate(date: object): boolean {
  * 3. If editMode add ModuleConfiguration components to the module
  */
 export function modifyCanvasModulesList(collection, showUnallocated) {
+
+  if (collection==="") {
+    return;
+  }
   const collections = get(collectionsStore);
   const allModules = collections["MODULES"];
   const config = get(configStore);

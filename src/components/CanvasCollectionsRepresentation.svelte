@@ -76,19 +76,30 @@
       checkModuleScrollTo();
     }
   });
+
+  /** Question
+   * - Do these things need to be bound?
+   * - Given it's being passed via stores
+   * Collection Navication
+    bind:activeCollectionName={$configStore["currentCollection"]}
+   * CollectionRepresentation
+    bind:collectionName={$configStore["currentCollection"]} 
+  */
 </script>
 
 {#if $collectionsStore["COLLECTIONS_ORDER"].length > 0}
   <CollectionsNavigation
-    bind:activeCollectionName={$configStore["currentCollection"]}
+    activeCollectionName={$configStore["currentCollection"]}
   />
   {#if !$collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter}
     <IncludePage collectionName={$configStore["currentCollection"]} />
   {/if}
+  {#if $configStore["currentCollection"]!==""}
   <CollectionRepresentation
-    bind:collectionName={$configStore["currentCollection"]} 
+    collectionName={$configStore["currentCollection"]} 
     claytons={false}
   />
+  {/if}
   {#if $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]].includeAfter}
     <IncludePage collectionName={$configStore["currentCollection"]} />
   {/if}

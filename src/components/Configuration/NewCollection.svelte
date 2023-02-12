@@ -1,9 +1,15 @@
 <script lang="ts">
+  import CanvasCollectionsRepresentation from "../CanvasCollectionsRepresentation.svelte";
   import {
     representationsStore,
     collectionsStore,
     configStore,
   } from "../../stores";
+
+  import {
+    removeCollectionsRepresentation,
+    addCollectionsRepresentation,
+  } from "../../lib/CanvasSetup";
 
   import { toastAlert } from "../../lib/ui";
 
@@ -56,32 +62,51 @@
       return;
     }
 
-
     // create new collection in COLLECTIONS
     //let newCollection = createNewCollection()
-    let newCollection = { ...DEFAULT_NEW_COLLECTION }
+    let newCollection = { ...DEFAULT_NEW_COLLECTION };
     newCollection.name = collectionName;
     newCollection.representation = representation;
     $collectionsStore["COLLECTIONS"][collectionName] = newCollection;
 
     // add collectionName to COLLECTIONS_ORDER (at the end)
-    if ($collectionsStore["DEFAULT_ACTIVE_COLLECTION"]==="") {
+    if ($collectionsStore["DEFAULT_ACTIVE_COLLECTION"] === "") {
       $collectionsStore["DEFAULT_ACTIVE_COLLECTION"] = collectionName;
     }
     $collectionsStore["COLLECTIONS_ORDER"].push(collectionName);
+
+    // set the currentCOllection
+    if ($configStore["currentCollection"] === "") {
+      $configStore["currentCollection"] = collectionName;
+    }
 
     // reset the value of the input/select
     collectionName = "";
     representation = "";
 
+    // KLUDGE to work around start up issue
+    // - maybe only do this for the first one??
+    replaceCollectionsRepresentation();
+
     // set needToSaveCollections to true
     $configStore["needToSaveCollections"] = true;
   }
 
-  function createNewCollection() {
-    let newCollection = {}
+  function replaceCollectionsRepresentation() {
+    removeCollectionsRepresentation();
+    let div = addCollectionsRepresentation();
 
-    // loop through all fields in DEFAULT_NEW_COLLECTION and 
+    if (div) {
+      const representation = new CanvasCollectionsRepresentation({
+        target: div,
+      });
+    }
+  }
+
+  function createNewCollection() {
+    let newCollection = {};
+
+    // loop through all fields in DEFAULT_NEW_COLLECTION and
   }
 
   const HELP = {
@@ -91,8 +116,8 @@
     },
     representation: {
       url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/add-a-new-collection/#representation",
-      tooltip: "<p>Choose an initial representation. Can be changed later.</p>"
-    }
+      tooltip: "<p>Choose an initial representation. Can be changed later.</p>",
+    },
   };
 </script>
 
@@ -117,14 +142,10 @@
   <div class="cc-collection-representation">
     <label for="cc-config-new-collection-representation">Representation</label>
     <sl-tooltip>
-    <div slot="content">{@html HELP.representation.tooltip}</div>
-    <a
-      href={HELP.representation.url}
-      target="_blank"
-      rel="noreferrer"
-    >
-      <i class="icon-question cc-module-icon" />
-    </a>
+      <div slot="content">{@html HELP.representation.tooltip}</div>
+      <a href={HELP.representation.url} target="_blank" rel="noreferrer">
+        <i class="icon-question cc-module-icon" />
+      </a>
     </sl-tooltip>
 
     <select
