@@ -20,7 +20,7 @@
 
   import { modulesStore } from "../../stores";
 
-  export let modulesCompleteStatus = false;
+  export let modulesCompleteStatus = 0;
   export let currentCourseId = null;
   export let importCourseId = null;
   export let collectionsDetails = null;
@@ -102,9 +102,9 @@
     disabledImportNotMatched &&
     disableCurrentNotMatched
   ) {
-    modulesCompleteStatus = true;
+    modulesCompleteStatus = 1;
   }
-  modulesCompleteStatus = true;
+  modulesCompleteStatus = 1;
 
 /*  importedModuleIds.forEach((importedModuleId) => {
     if (importModuleDetails[importedModuleId].matched) {

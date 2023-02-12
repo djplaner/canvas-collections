@@ -8,13 +8,14 @@
   import { modulesStore } from "../../stores";
   import { wf_fetchData } from "../../lib/CanvasSetup";
 
-  export let imagesCompleteStatus = false;
+  export let imagesCompleteStatus = 0;
   export let currentCourseId;
   export let importCourseId;
   export let collectionsDetails;
 
   let imageDataGenerated = false;
   let numImagesReceived = 0;
+  let numOtherCourseImages = 0;
 
   const currentHostName = document.location.hostname;
   const baseApiUrl = `https://${currentHostName}/api/v1`;
@@ -24,10 +25,17 @@
   checkImagesExist();
 
   $: {
-    imageDataGenerated = numImagesReceived === images.length;
+    imageDataGenerated = ( numImagesReceived + numOtherCourseImages ) >= images.length;
+    console.log(
+      `imageDataGenerated: ${imageDataGenerated} numOtherImages ${numOtherCourseImages}  numImagesReceived: ${numImagesReceived} images.length: ${images.length}`
+    );
 
     if (imageDataGenerated) {
-      imagesCompleteStatus = true;
+      if (numImagesReceived === images.length) {
+        imagesCompleteStatus = 1;
+      } else {
+        imagesCompleteStatus = -1;
+      }
     }
   }
 
@@ -62,12 +70,13 @@
         const urlCourseId = matches[1];
         image.fileId = matches[2];
 
-        image["courseImage"] = true;
-
         if (urlCourseId !== currentCourseId) {
           // it's not the current course
+          image["courseImage"] = false;
           image["otherCourse"] = parseInt(urlCourseId);
+          numOtherCourseImages++;
         } else {
+          image["courseImage"] = true;
           // it is the current course, so we can try to retrieve it
           wf_fetchData(
             `${baseApiUrl}/courses/${currentCourseId}/files/${image.fileId}`
@@ -104,28 +113,36 @@
     </tr>
   {:else}
     {#each images as image}
-      <tr>
-        {#if image.courseImage}
+      {#if image.courseImage}
+        <tr>
           <td class="cc-success">
             <sl-icon name="check-circle" />
           </td>
-        {/if}
-        {#if image.otherCourse}
-          <td class="cc-error">
-            <sl-icon name="exclamation-triangle" /> Other course
+          <td>
+            {image.moduleName}
           </td>
-        {/if}
-        <td>
-          {image.moduleName}
-        </td>
-        <td>
-          <a href={image.src} target="_blank" rel="noreferrer">
-            {image.display_name}
-          </a>
-        </td>
-        <td> {image.size}</td>
-        <td> {image["content-type"]}</td>
-      </tr>
+          <td>
+            <a href={image.src} target="_blank" rel="noreferrer">
+              {image.display_name}
+            </a>
+          </td>
+          <td> {image.size}</td>
+          <td> {image["content-type"]}</td>
+        </tr>
+      {:else}
+        <!--        {#if image.otherCourse} -->
+        <tr>
+          <td class="cc-error">
+            <sl-icon name="exclamation-lg" /> Other course image
+          </td>
+          <td colspan="4"> 
+            <a href="{image.src}" target="_blank" rel="noreferrer">Image</a> is from
+            <a href="https://{currentHostName}/courses/{image.otherCourse}" target="_blank" rel="noreferrer">
+              another course</a>
+             </td>
+
+        </tr>
+      {/if}
     {/each}
   {/if}
 </table>

@@ -19,8 +19,8 @@
   const baseApiUrl = `https://${currentHostName}/api/v1`;
 
   // status placeholders for sub-component completion
-  let modulesCompleteStatus;
-  let imagesCompleteStatus;
+  let modulesCompleteStatus ;
+  let imagesCompleteStatus ; // 0 = not started, 1 = complete, -1 = error
 
   let currentCourseId = $configStore["courseId"];
   let importCourseId = collectionsDetails.getImportedCourseId();
@@ -99,16 +99,20 @@
       <sl-tab slot="nav" panel="summary"> &nbsp; Summary</sl-tab>
       <sl-tab slot="nav" panel="modules">
         &nbsp; Modules &nbsp;
-        {#if modulesCompleteStatus}
+        {#if modulesCompleteStatus === 1}
           <sl-badge variant="success">Ok</sl-badge>
+        {:else if modulesCompleteStatus === -1}
+          <sl-badge variant="warning">Warning</sl-badge>
         {:else}
           <sl-spinner />
         {/if}
       </sl-tab>
       <sl-tab slot="nav" panel="images">
         &nbsp; Images &nbsp;
-        {#if imagesCompleteStatus}
+        {#if imagesCompleteStatus === 1}
           <sl-badge variant="success">Ok</sl-badge>
+        {:else if imagesCompleteStatus === -1}
+          <sl-badge variant="warning">Warning</sl-badge>
         {:else}
           <sl-spinner />
         {/if}
@@ -231,7 +235,7 @@
         </h3>
 
         <ImportImages
-          bind:imagesCompleteStatus
+          bind:imagesCompleteStatus={imagesCompleteStatus}
           {currentCourseId}
           {importCourseId}
           {collectionsDetails}
