@@ -11,14 +11,14 @@
 
   const HELP = {
     existing: {
-      url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#existing-collections",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/existing-collections/",
       tooltip: "<p>The collections already defined for this course.</p>",
     }
   }
 </script>
 
 <!-- div id="cc-config-existing-collections"> -->
-  <strong>Existing Collections</strong>
+  <strong>Existing collections</strong>
        <sl-tooltip>
         <div slot="content">
           {@html HELP.existing.tooltip}

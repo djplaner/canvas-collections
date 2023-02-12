@@ -15,6 +15,7 @@ Below you'll find three parts to this answer.
 ## 1. Introducing the module configuration area
 
 Once
+
 1. Collections has been configured for a course; 
 2. some collections have been added; and,
 3. you have turned Collections _Edit On_.

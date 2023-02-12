@@ -265,9 +265,11 @@
     name: {
       tooltip: `<p>Each metadata value is given a name. Only certain characters can be used. No HTML tags allowed.<p>
 			<p>Changes will only take effect when you move focus away from the name field.</p>`,
+      href: `https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/metadata/#name`
     },
     value: {
       tooltip: `<p>The value for the metadata element. HTML tags are allowed.</p>`,
+      href: `https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/metadata/#value`
     },
   };
 </script>
@@ -280,14 +282,18 @@
           >Name
           <sl-tooltip>
             <div slot="content">{@html HELP.name.tooltip}</div>
+            <a href="{HELP.name.href}" target="_blank" rel="noreferrer">
             <i class="icon-question cc-module-icon" />
+            </a>
           </sl-tooltip>
         </th>
         <th
           >Value
           <sl-tooltip>
             <div slot="content">{@html HELP.value.tooltip}</div>
+            <a href="{HELP.value.href}" target="_blank" rel="noreferrer">
             <i class="icon-question cc-module-icon" />
+            </a>
           </sl-tooltip>
         </th>
         <th>Action</th>

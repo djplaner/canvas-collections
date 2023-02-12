@@ -33,7 +33,7 @@
     generalTab: {
       tooltip:
         "Configure common collections settings: collections, description, label, engage button etc.",
-      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/overview/#general",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/",
     },
     moduleDates: {
       tooltip: `<p>Choose from the three supported "date types" and configure it. Options include:</p> <ol> <li> <strong>Single date</strong> - a specific date (and time) </li>
@@ -42,17 +42,17 @@
 		</ol>
 		<p><em>Coming Soon</em> will be able to be used with one of the other options</em></p>
 		`,
-      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/overview/#dates",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/",
     },
     moduleBanner: {
       tooltip: `<p>Choose one of three possible banner types (for Card representations) and configure it. Options are:</p> <ol> <li> <strong>Image</strong> - a banner image</li> <li> <strong>Colour</strong> - a solid colour</li> <li> <strong>Iframe</strong> - HTML embed code (e.g. YouTube video)</li> </ol>
 		`,
-      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/overview/#banner",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/overview/banner/",
     },
     moduleMetaData: {
       tooltip: `Flexibly add, delete, and modify additional information about this module, which
 		may be used by collections and representations - or for your own purposes.`,
-      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/overview/#additional-metadata",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/overview/metadata/",
     },
   };
 </script>

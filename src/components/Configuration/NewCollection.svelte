@@ -86,17 +86,17 @@
 
   const HELP = {
     newCollection: {
-      url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#add-a-new-collection",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/add-a-new-collection/",
       tooltip: "<p>Create a new collection</p>",
     },
     representation: {
-      url: "https://djplaner.github.io/canvas-collections/reference/representations/overview/",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/add-a-new-collection/#representation",
       tooltip: "<p>Choose an initial representation. Can be changed later.</p>"
     }
   };
 </script>
 
-<strong>Add a new Collection</strong>
+<strong>Add a new collection</strong>
 <sl-tooltip>
   <div slot="content">{@html HELP.newCollection.tooltip}</div>
   <a href={HELP.newCollection.url} target="_blank" rel="noreferrer">

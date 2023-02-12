@@ -128,7 +128,7 @@
           <li> teachers - only teachers/designers</li>
           <li> all - all users</li>
           </ul>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/visibility/live/",
+      url: "https://djplaner.github.io/canvas-collections/reference/lifecycle/visibility/live/",
     },
   };
 </script>

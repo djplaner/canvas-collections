@@ -171,20 +171,20 @@
     studyPeriod: {
       tooltip: `The term is automatically identified from the course site. The academic
 		calendar for this term will be used to translate the generic date <em>Monday Week 1</em> into a calendar date.`,
-      href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#study-period",
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/#study-period",
     },
     dateStart: {
       tooltip: `Specify a single date, or becomes the start date in a date range when used 
 		with "stop" date.`,
-      href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#start-date",
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/#start-date",
     },
     stopDate: {
       tooltip: `Specify the 'stop' date for a date range. Date is relative to the specific study period.`,
-      href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#stop-date",
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/#stop-date",
     },
     calculatedDate: {
       tooltip: `Representation of the date as configured by <em>Start Date</em> and possible <em>Stop Date</em>.`,
-      href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#start-date",
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/#calculated-date",
     },
     hideDate: {
       tooltip: `Select to hide this portion of the date in the representation.`,

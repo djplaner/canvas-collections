@@ -75,30 +75,30 @@
   const HELP = {
     configCollection: {
       tooltip: `To which of the available collections does this module belong?`,
-      url: "https://djplaner.github.io/canvas-collections/getting-started/configure/modules/#module-properties",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#collection",
     },
     configFYI: {
       tooltip: `<p>Represent the module as a "for your information" (fyi) object. Only display collection related information.
 		Display no information about the corresponding module. Always display the object, even when the module is unpublished.</p>
 		<p>Optionally, provide some text to add to the representation.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#fyi-objects",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#fyi-objects",
     },
     configDescription: {
       tooltip: `Describe why, what or how the module relates to the students' learning`,
-      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#description",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#description",
     },
     configEngage: {
       tooltip: `For cards representations, specify <ol> <li> if there will be an "engage" button; and, </li> <li> what the button text will be. </li> </ol>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#engage-button",
     },
     configLabel: {
       tooltip: `Describe the type of object the module represents (e.g. lecture, theme etc.)`,
-      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#enage-button",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#label",
     },
     configAutoNum: {
       tooltip: `If and how a label specific number will be calculated for the module 
 		(e.g. <em>Lecture 1</em> or <em>Workshop 5</em>)<p>Auto number or specify a value.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#labels-and-numbers",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#labels-and-numbers",
     },
   };
 </script>

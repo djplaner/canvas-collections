@@ -66,7 +66,7 @@
   const HELP = {
     fullClaytons: {
       tooltip: "<p>Update all the specified output pages with static representations of each collection using the selected navigation options.</p>",
-      url: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/full-claytons/",
     },
     navBarOptions: {
       tooltip: `<p>There are three navigation bar options:</p>
@@ -76,7 +76,7 @@
 		  <li> Tabs - multiple collections on a page with tab navigation. </li>
 		</ol>`, 
       /*<li> 🚧 Table - multiple collections joined into a single table. </li> */
-      url: "https://djplaner.github.io/canvas-collections/reference/representations/claytons/overview/#navigation-bar-options",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/full-claytons/#navigation-bar-options",
     },
   };
 </script>

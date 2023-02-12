@@ -146,16 +146,16 @@ Do you wish to proceed?`
 		  <li> <strong>Colour</strong> - a solid colour</li>
 		  <li> <strong>Iframe</strong> - HTML embed code (e.g. YouTube video)</li>
 		  </ol>`,
-      href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#dates",
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/banner/",
     },
     moduleImageScale: {
       tooltip:
         "Specify how the image will be scaled to fit the available space.",
-      href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-scale",
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/banner/#image-scale",
     },
     moduleImageUrl: {
       tooltip: "Provide the URL for an image to associate with this module.",
-      href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#image-url",
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/banner/#image-url",
     },
     moduleIframe: {
       tooltip: `<p>Provide an iframe (embed HTML) to place in a card's banner section.</p> <p>Notes:</p>
@@ -164,12 +164,12 @@ Do you wish to proceed?`
             <li> any change will only take effect after you click outside the iframe box</li>
             </ol>
         `,
-      href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#iframe",
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/banner/#iframe",
     },
     moduleColour: {
       tooltip:
         "<p>Choose a background colour for the card's banner section by clicking on the circle.",
-      href: "https://djplaner.github.io/canvas-collections/reference/objects/overview/#iframe",
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/banner/#colour",
     },
   };
 </script>

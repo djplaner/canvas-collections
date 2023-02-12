@@ -351,51 +351,51 @@
   const HELP = {
     configName: {
       tooltip: `A collection's name will be used to navigate between collections`,
-      url: "https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/existing-collections/#name",
     },
     configRepresentation: {
       tooltip: `Specify how the collection will be displayed by choosing one of the available representations. Representations can be changed at any time.`,
-      url: "https://djplaner.github.io/canvas-collections/reference/representations/overview/",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/existing-collections/#representation",
     },
     configDefault: {
       tooltip: `The default collection will be the first people see when the visit for the first time.`,
-      url: "https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/existing-collections/#default",
     },
     configHide: {
       tooltip: `<p>Make collection invisible to students. 
 		(Note: can't hide the default collection)</p>
 		<p><i class="icon-warning"></i> Also unpublish all the collection's modules to be ensure they are hidden.`,
-      url: "https://djplaner.github.io/canvas-collections/getting-started/configure/collections/#collection-properties",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/existing-collections/#hide",
     },
     configUnallocated: {
       tooltip: `<p>When students view this collection, include modules not allocated to any collection.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#hide-a-collection",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/existing-collections/#add-unallocated",
     },
     configIncludePage: {
       tooltip: `Specify the name of an existing Canvas page and the content of that page
 		will be displayed before the current collection's representation 
 		(it is <strong>included</strong>)`,
-      url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#include-page",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/existing-collections/#include-page",
     },
     configIncludePageAfter: {
       tooltip: `<p>By default, include page contents placed <em>before</em> the collection. When selected
 		will place the include page contents <em>after</em> the collection.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#include-page",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/existing-collections/#include-page",
     },
     configOutputPage: {
       tooltip: `Update the <em>output page</em> with the collection's current representation.
 		<p><strong>Note:</strong> This is how you can use Collections with students without it being
 		installed by your institution.</p>
 		`,
-      url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#output-page",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/existing-collections/#output-page",
     },
-    configApplyLabels: {
+/*    configApplyLabels: {
       tooltip: `<p>🚧🧪☠️ <strong>Warning:</strong> This feature is experimental, under construction, and
 		potentially destructive. Only use as suggested and if you're certain.</p>
 		<p>Modify the names of Canvas modules by apply the Collection's label/number</p>
 		`,
       url: "https://djplaner.github.io/canvas-collections/reference/collections/overview/#apply-module-labels",
-    },
+    }, */
   };
 </script>
 
