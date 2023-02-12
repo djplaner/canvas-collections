@@ -10,7 +10,7 @@
    */
   import { collectionsStore, configStore } from "../../stores";
 
-  import { ccConfirm } from "../../lib/ui";
+  import { ccConfirm, toastAlert } from "../../lib/ui";
 
   import sanitizeHtml from "sanitize-html";
 
@@ -78,6 +78,18 @@
 
     // remove anything from sanitisedValue that isn't <iframe>.*</iframe>
     sanitisedValue = sanitisedValue.replace(/.*(<iframe.*<\/iframe>).*/, "$1");
+
+    // check that it actually contains an iframe, using regex match
+    if (!sanitisedValue.match(/<iframe.*<\/iframe>/)) {
+      // if not, tell them and make no more changes
+      toastAlert(
+        "The iframe value you provided does not contain an iframe tag.  Please check your input and try again.",
+        "warning"
+      );
+      return;
+    }
+
+
 
     if (iframeValue !== sanitisedValue) {
       // convert iframeValue to xmp but wrap at 40 characters
@@ -221,6 +233,7 @@ Do you wish to proceed?`
         <select
           id="cc-module-config-{moduleId}-imageSize"
           bind:value={$collectionsStore["MODULES"][moduleId].imageSize}
+             on:change={() => ($configStore["needToSaveCollections"] = true)}
         >
           {#each imageScaleOptions as imageScaleOption}
             <option value={imageScaleOption}>{imageScaleOption}</option>
@@ -245,9 +258,8 @@ Do you wish to proceed?`
       <span class="cc-module-input">
         <input
           class="cc-module-config-input"
-          on:click={() => ($configStore["needToSaveCollections"] = true)}
-          on:keydown|stopPropagation={() =>
-            ($configStore["needToSaveCollections"] = true)}
+          on:keydown|stopPropagation
+             on:change={() => ($configStore["needToSaveCollections"] = true)}
           type="text"
           id="cc-module-config-{moduleId}-image"
           bind:value={$collectionsStore["MODULES"][moduleId].image}

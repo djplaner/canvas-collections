@@ -30,13 +30,13 @@
     style="width: 100%; height:10rem; background-color:#ffffff;"
   >
     {#if $configStore["editMode"]}
-      <p>(<em>No iframe specified</em>)</p>
+      <p style="margin:2rem;">(<em>No iframe specified</em>)</p>
     {/if}
   </div>
 {:else}
   <div class="cc-banner-colour">
     {#if $configStore["editMode"]}
-      <p>(<em>No iframe specified</em>)</p>
+      <p style="margin:2rem">(<em>No iframe specified</em>)</p>
     {/if}
   </div>
 {/if}
