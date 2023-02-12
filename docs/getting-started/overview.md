@@ -1,4 +1,4 @@
-# Getting Started
+# Getting Started - Overview
 
 The first two steps in getting started with Canvas Collections are listed below. 
 

@@ -26,7 +26,7 @@ If all is working, as a teacher or designer you should see the Canvas Collection
 
 By default, Canvas Collections is turned off. Use the toggle to turn it on. Initially, you won't see much change, beyond a slight difference in the Collections configuration element.
 
-!!! note "Has to be on to make changes to the Modules page"
+!!! note "Has to be on to make changes"
 
 	Collections will only modify the Canvas module view when it is turned on.
 

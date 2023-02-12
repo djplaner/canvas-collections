@@ -1,8 +1,3 @@
 # Course copy process
 
-:construction: This page is under construction.
-
-!!! note ":construction:"
-
-    To come soon. An explanation of why and how Canvas Collections works with course copying.
-	**Spoiler:** It's generally fairly painless
+Take a look at the [Course Copy reference material](../../reference/lifecycle/course-copy/overview.md) for a description of the course copy (import) process.

@@ -69,7 +69,7 @@
 	}
 
 	.centered {
-		text-align: center;
+		padding-left: 2rem;
 	}
 
 	.hero-subheading.centered {
@@ -131,6 +131,15 @@
 	.getting-started {
 		text-align: center;
 		margin-top: 2rem;
+	}
+
+	sl-tab {
+		text-align: right;
+	}
+
+	sl-tab::part(base) {
+		padding: 0.5rem;
+		font-size: small;
 	}
 
 </style>
@@ -202,7 +211,7 @@
 						</p>
 						<p>The <a
 								href="https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383">
-								long requested ability to group modules</a>.
+								long requested ability to group modules</a> based on design intent.
 						</p>
 					</div>
 					<div class="div-iframe">
@@ -212,8 +221,7 @@
 				</sl-tab-panel>
 				<sl-tab-panel name="representations">
 					<p class="explanation">
-						Each collection can have a different representation. The representation can be changed at any time.</p>
-						<p class="explanation">Currently, there is a list of three representations. More can be added.</p>
+						Rather than a long scroll of neat textual boxes, represent a group of modules using one of a growing set of representations. A representation you can change at any time simply by selecting another option.</p>
 					</p>
 					<div class="div-iframe">
 						<iframe class="responsive-iframe" width="560" height="315"
@@ -223,9 +231,8 @@
 				</sl-tab-panel>
 				<sl-tab-panel name="objects">
 					<div class="explanation">
-						<p>Additional metadata has been added to each module (e.g. a description, dates,
-							images, label etc). Transforming a vanilla Canvas module into a design and context
-							specific <em>object</em>.
+						<p>With little ability to associate design/context specific information with a module all a student sees is yet another vanilla Canvas module. Nothing to easily distinguish between a lecture, an assessment, a resource, or some other domain specific resource.</p>
+						<p>Collections allows you to associate additional design specific information. That information is used to change what the students see. Making it easier for them to recognise the purpose.
 						</p>
 					</div>
 					<div class="div-iframe">
@@ -236,13 +243,9 @@
 				</sl-tab-panel>
 				<sl-tab-panel name="claytons">
 					<div class="explanation">
-						<p>Using Collections requires the Collections code to <a
-								href="getting-started/install/types-pre-requisites/">be installed</a>. Not always
-							possible for your students.</p>
-						<p>If so, Collections' "claytons" feature can be used to follow Canvas community best practice
-							Additional<a
-								href="https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236">create
-								an inviting course home page</a>. </p>
+						<p>Even if you can't get your <a href="./getting-started/install/institutional/">
+							institution to install Collections</a>, you can still use Collections to address the above problems. </p>
+						<p>"Claytons" Collections helps you follow populate Canvas community advice to create <a href="https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236">create an inviting course home page</a>. A Canvas page your students can use without Collections.</p>
 					</div>
 					<div class="div-iframe">
 						<iframe width="560" height="315" src="https://www.youtube.com/embed/d_ZBTpKdylQ"

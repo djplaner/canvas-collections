@@ -95,31 +95,31 @@ nav:
       - Configure Modules: how-tos/new/configure-modules.md
       - Set up "Claytons": how-tos/new/set-up-claytons.md
     - Updating Collections:
-      - Overview: how-tos/changes/overview.md
-      - Add a collection: how-tos/changes/add-a-collection.md
-      - Delete a collection: how-tos/changes/delete-a-collection.md
-      - Add a module: how-tos/changes/add-a-module.md
+      - 🚧 Coming soon: how-tos/changes/overview.md
+#      - Add a collection: how-tos/changes/add-a-collection.md
+#      - Delete a collection: how-tos/changes/delete-a-collection.md
+#      - Add a module: how-tos/changes/add-a-module.md
     - Collections & course copy:
       - Course copy process: how-tos/course-copy/process.md
-    - ⚗️ Advanced:
-      - Multi-collection, one page Claytons: how-tos/advanced/multi-collection-one-page.md
-      - Fix Claytons Card CSS: how-tos/advanced/fix-claytons-card-css.md
-  - 🚧 Reference: 
+#    - ⚗️ Advanced:
+#      - Multi-collection, one page Claytons: how-tos/advanced/multi-collection-one-page.md
+#      - Fix Claytons Card CSS: how-tos/advanced/fix-claytons-card-css.md
+  - Reference: 
       - Overview: reference/overview.md
       - Lifecycle:
         - Visibility: 
           - Overview: reference/lifecycle/visibility/overview.md
           - Live Collections: reference/lifecycle/visibility/live.md
           - Claytons Collections: reference/lifecycle/visibility/claytons.md
-        - Student view: reference/lifecycle/student-view.md  # show both claytons and live
-        - Staff:
+        - 🚧 Student view: reference/lifecycle/student-view.md  # show both claytons and live
+        - 🚧 Staff:
           - Staff view: reference/lifecycle/staff-view.md
           - Edit: reference/lifecycle/edit.md
         - Course copy: 
           - Overview: reference/lifecycle/course-copy/overview.md
           - Import process: reference/lifecycle/course-copy/import.md
       - Conceptual model:
-        - Collections: 
+        - 🚧 Collections: 
           - Overview: reference/conceptual-model/collections/overview.md
           - Visibility: reference/conceptual-model/collections/visibility.md
           - Existing collections: reference/conceptual-model/collections/existing-collections.md
@@ -137,13 +137,13 @@ nav:
         - Development:
           - Component Structure: reference/development/component-structure.md
           - Local development: 
-            - Overview: getting-started/development/local-development.md
+            - Overview: reference/development/local-development/overview.md
   - 'Community': 
      - Getting involved: community/collections-community.md
      - Related work: community/related-work.md
   - 'Latest Version': latest-version.md
-  - ⚰️ Features & Use: 
-    - Overview: features.md
-    - Collections: features/collections.md
-    - Representations: features/representations.md
-    - Objects: features/objects.md
+#  - ⚰️ Features & Use: 
+#    - Overview: features.md
+#    - Collections: features/collections.md
+#    - Representations: features/representations.md
+#    - Objects: features/objects.md
