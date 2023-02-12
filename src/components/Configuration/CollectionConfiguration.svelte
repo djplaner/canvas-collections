@@ -17,8 +17,8 @@
   import { createEventDispatcher } from "svelte";
 
   export let collectionName: string;
-  export let includePageExists: boolean;
-  export let outputPageExists: boolean;
+  export let includePageExists: boolean = true;
+  export let outputPageExists: boolean = true;
   //  export let pageNamesCollections: any;
   export let order: Number;
   export let numCollections: Number;
@@ -311,7 +311,8 @@
    * @function checkOutputPageExists
    * @param updateController
    * @description Need to dispatch a updatePage msg
-   * for every page updated
+   * for every page updated 
+   * CALLED after updateOutputPage has completed
    */
   function checkOutputPageExists(updateController) {
     // get the name of the collection modified (will only be one)
@@ -617,14 +618,14 @@
         />
       </span>
     </div>
-    {#if !includePageExists && $collectionsStore["COLLECTIONS"][collectionName].includePage}
+<!--    {#if !includePageExists && $collectionsStore["COLLECTIONS"][collectionName].includePage}
       <div class="cc-collection-two-line-error">
         Page <strong
           >{$collectionsStore["COLLECTIONS"][collectionName]
             .includePage}</strong
         > does not exist
       </div>
-    {/if}
+    {/if} -->
   </div>
   <!-- output page -->
   <div class="cc-collection-two-line">
@@ -663,13 +664,13 @@
         }}>Update</button
       >
     </div>
-    {#if !outputPageExists && $collectionsStore["COLLECTIONS"][collectionName].outputPage !== ""}
+<!--    {#if !outputPageExists && $collectionsStore["COLLECTIONS"][collectionName].outputPage !== ""}
       <div class="cc-collection-two-line-warning">
         Will create a new page named <strong
           >{$collectionsStore["COLLECTIONS"][collectionName].outputPage}</strong
         >
       </div>
-    {/if}
+    {/if} -->
   </div>
 
   <!--  <div class="cc-collection-form-reverse">

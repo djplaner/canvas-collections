@@ -30,7 +30,7 @@
     claytons = false;
   }
 
-  console.log(`---------------- CollectionRepresentation -- ${collectionName} -- ${claytons} -----------------`)
+  //console.log(`---------------- CollectionRepresentation -- ${collectionName} -- ${claytons} -----------------`)
 
 /*  if (claytons===false) {
     collectionName = $configStore["currentCollection"];
@@ -38,7 +38,7 @@
 
   let representationComponent: any;
   $: {
-  console.log(`------Dynamic ---------- CollectionRepresentation -- ${collectionName} -- ${claytons} -----------------`)
+  //console.log(`------Dynamic ---------- CollectionRepresentation -- ${collectionName} -- ${claytons} -----------------`)
     const localRep =
       $collectionsStore["COLLECTIONS"][collectionName]["representation"];
     if (!$representationsStore.hasOwnProperty(localRep)) {
