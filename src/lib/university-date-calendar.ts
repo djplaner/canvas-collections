@@ -14,17 +14,17 @@ export default class UniversityDateCalendar {
     /*if (strm && CALENDAR[strm]) {
       this.studyPeriod = strm;
     } */
-    this.setStudyPeriod(strm)
+    this.setStudyPeriod(strm);
   }
 
   /**
    * @method setStudyPeriod
-   * @param studyPeriod 
+   * @param studyPeriod
    * @description Check that the default study period actually exists in the calendar
    * If so, set the default study period to the given study period and return true
    */
-  public setStudyPeriod(studyPeriod : string) : boolean {
-    if (studyPeriod!=="" && CALENDAR.hasOwnProperty(studyPeriod)) {
+  public setStudyPeriod(studyPeriod: string): boolean {
+    if (studyPeriod !== "" && CALENDAR.hasOwnProperty(studyPeriod)) {
       this.studyPeriod = studyPeriod;
       return true;
     }
@@ -35,7 +35,7 @@ export default class UniversityDateCalendar {
     return false;
   }
 
-  public getStudyPeriod() : string {
+  public getStudyPeriod(): string {
     return this.studyPeriod;
   }
 
@@ -232,7 +232,7 @@ export default class UniversityDateCalendar {
     }
     // check that the courseCode includes open/close brackets
     if (!courseCode.match(/\(.*\)/)) {
-      return this.studyPeriod
+      return this.studyPeriod;
     }
     // extract out each of the individual courseIds in courseCode
     // e.g. joined courses could have multiple
@@ -244,8 +244,8 @@ export default class UniversityDateCalendar {
     // process each courseId separately and try to separate out two components
     // courseCode - e.g. 1252QCA
     // STRM - e.g. 3228
-    let courseIdsComponents = []
-    let QCM_Course = false
+    let courseIdsComponents = [];
+    let QCM_Course = false;
 
     for (let courseId of courseIds) {
       // split up into the components
@@ -258,7 +258,7 @@ export default class UniversityDateCalendar {
         if (match) {
           obj["courseCode"] = match[0];
           if (match[0].endsWith("QCM")) {
-            QCM_Course = true
+            QCM_Course = true;
           }
           continue;
         }
@@ -279,7 +279,7 @@ export default class UniversityDateCalendar {
     if (STRMs.length === 0) {
       // if there aren't any, use the default
       if (QCM_Course) {
-        return `${this.studyPeriod}QCM`
+        return `${this.studyPeriod}QCM`;
       }
       return this.studyPeriod;
     } else if (STRMs.length > 1) {
@@ -288,7 +288,7 @@ export default class UniversityDateCalendar {
     }
     // return the first STRM because there is at least one STRM
     if (QCM_Course) {
-      return `${STRMs[0]}QCM`
+      return `${STRMs[0]}QCM`;
     }
     return STRMs[0];
   }
@@ -363,6 +363,25 @@ const MONTHS = [
  */
 
 const CALENDAR = {
+  // OUA - Study Period 1 - 2023
+  "2231": {
+    0: { start: "2023-02-20", stop: "2023-02-26" },
+    1: { start: "2023-02-27", stop: "2023-03-05" },
+    2: { start: "2023-03-06", stop: "2023-03-12" },
+    3: { start: "2023-03-13", stop: "2023-03-19" },
+    4: { start: "2023-03-20", stop: "2023-03-26" },
+    5: { start: "2023-03-27", stop: "2023-04-02" },
+    6: { start: "2023-04-03", stop: "2023-04-09" },
+    7: { start: "2023-04-10", stop: "2023-04-16" },
+    8: { start: "2023-04-17", stop: "2023-04-23" },
+    9: { start: "2023-04-24", stop: "2023-04-30" },
+    10: { start: "2023-05-01", stop: "2023-05-07" },
+    11: { start: "2023-05-08", stop: "2023-05-14" },
+    12: { start: "2023-05-15", stop: "2023-05-21" },
+    13: { start: "2023-05-22", stop: "2023-05-28" },
+    14: { start: "2023-05-29", stop: "2023-06-04" },
+    15: { start: "2023-06-05", stop: "2023-06-11" }
+  },
   // 2023 ----------------
   // T3
   "3238": {
@@ -384,7 +403,7 @@ const CALENDAR = {
     15: { start: "2024-02-26", stop: "2024-03-03" },
     //    exam: { start: "2023-02-17", stop: "2023-02-26" },
   },
-    // T3
+  // T3
   "2236": {
     0: { start: "2023-10-30", stop: "2023-11-05" },
     1: { start: "2023-11-06", stop: "2023-11-12" },
@@ -444,7 +463,7 @@ const CALENDAR = {
     15: { start: "2023-10-30", stop: "2023-11-05" },
     exam: { start: "2023-10-19", stop: "2023-10-28" },
   },
-   // T2 2023, QCM/QCGU - the con calendar
+  // T2 2023, QCM/QCGU - the con calendar
   "3235QCM": {
     0: { start: "2023-07-17", stop: "2023-07-23" },
     1: { start: "2023-07-24", stop: "2023-07-23" },
@@ -484,7 +503,7 @@ const CALENDAR = {
     15: { start: "2023-06-19", stop: "2023-07-25" },
     exam: { start: "2023-06-08", stop: "2023-06-17" },
   },
-    // SS 2023
+  // SS 2023
   "2232": {
     0: { start: "2023-02-27", stop: "2023-03-03" },
     1: { start: "2023-03-06", stop: "2023-03-12" },
@@ -505,7 +524,7 @@ const CALENDAR = {
     exam: { start: "2023-06-08", stop: "2023-06-17" },
   },
   // T1 2023, QCM/con calendar
-    "3231QCM": {
+  "3231QCM": {
     0: { start: "2023-02-20", stop: "2023-02-26" },
     1: { start: "2023-02-27", stop: "2023-03-05" },
     2: { start: "2023-03-06", stop: "2023-03-12" },
