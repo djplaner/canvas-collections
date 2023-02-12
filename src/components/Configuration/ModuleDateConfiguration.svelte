@@ -245,6 +245,10 @@
             id="cc-module-config-{moduleId}-date-label"
             style="width:10rem"
             bind:value={$collectionsStore["MODULES"][moduleId]["date"]["label"]}
+            on:change={() => {
+              $configStore["needToSaveCollections"] = true;
+            }}
+
           />
         {:else}
           <input

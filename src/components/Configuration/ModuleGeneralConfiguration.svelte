@@ -156,6 +156,7 @@
             on:keydown|stopPropagation
             id="cc-module-config-{moduleId}-fyi"
             bind:checked={$collectionsStore["MODULES"][moduleId].fyi}
+            on:change={() => ($configStore["needToSaveCollections"] = true)}
             style="position:relative; top:-0.25rem; "
           />
         </span>
@@ -167,15 +168,14 @@
             id="cc-module-config-{moduleId}-fyiText"
             bind:value={$collectionsStore["MODULES"][moduleId].fyiText}
             style="width:10rem;"
-            on:click={() => ($configStore["needToSaveCollections"] = true)}
-            on:keydown|stopPropagation={() =>
-              ($configStore["needToSaveCollections"] = true)}
+            on:change={() => ($configStore["needToSaveCollections"] = true)}
+            on:keydown|stopPropagation
           />
         {:else}
           <input
             type="text"
             id="cc-module-config-{moduleId}-fyiText"
-            bind:value={$collectionsStore["MODULES"][moduleId].fyiText}
+            value={$collectionsStore["MODULES"][moduleId].fyiText}
             style="width:10rem; "
             disabled
           />
@@ -203,9 +203,8 @@
           id="cc-module-config-{moduleId}-label"
           style="width:10rem"
           bind:value={$collectionsStore["MODULES"][moduleId].label}
-          on:click={() => ($configStore["needToSaveCollections"] = true)}
-          on:keydown|stopPropagation={() =>
-            ($configStore["needToSaveCollections"] = true)}
+          on:change={() => ($configStore["needToSaveCollections"] = true)}
+          on:keydown|stopPropagation
         />
       </span>
     </div>
@@ -238,10 +237,7 @@
           <input
             type="text"
             id="cc-module-config-{moduleId}-num"
-            bind:value={$collectionsStore["MODULES"][moduleId].actualNum}
-            on:click={() => ($configStore["needToSaveCollections"] = true)}
-            on:keydown|stopPropagation={() =>
-              ($configStore["needToSaveCollections"] = true)}
+            value={$collectionsStore["MODULES"][moduleId].actualNum}
             style="width:3rem;"
             disabled
           />
@@ -250,9 +246,9 @@
             type="text"
             id="cc-module-config-{moduleId}-num"
             bind:value={$collectionsStore["MODULES"][moduleId].actualNum}
-            on:click={() => ($configStore["needToSaveCollections"] = true)}
-            on:keydown|stopPropagation={() =>
+            on:change={() =>
               ($configStore["needToSaveCollections"] = true)}
+            on:keydown|stopPropagation
             style="width:3rem;"
           />
         {/if}
@@ -306,8 +302,8 @@
             id="cc-module-config-{moduleId}-engageText"
             bind:value={$collectionsStore["MODULES"][moduleId].engageText}
             style="width:10rem;"
-            on:click={() => ($configStore["needToSaveCollections"] = true)}
-            on:keydown|stopPropagation={() =>
+            on:keydown|stopPropagation
+            on:change={() =>
               ($configStore["needToSaveCollections"] = true)}
           />
         {/if}
