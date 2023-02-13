@@ -19,5 +19,5 @@ As shown in the following figure, the Canvas Theme editor provides methods to up
 
 <figure markdown>
 <figcaption>CSS and JavaScript file uploads in the Canvas Theme editor</figcaption>
-![CSS and JavaScript file uploads in the Canvas Theme editor](pics/themeEditor.png)  
+[![CSS and JavaScript file uploads in the Canvas Theme editor](pics/themeEditor.png)](pics/themeEditor.png))  
 </figure>

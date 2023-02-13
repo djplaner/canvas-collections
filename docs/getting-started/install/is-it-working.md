@@ -19,7 +19,7 @@ If all is working, as a teacher or designer you should see the Canvas Collection
 
 <figure markdown>
 <figcaption>Can you see Collections?</figcaption>
-![Screenshot of Canvas modules page with the Collections configuration element in the top right-hand corner](pics/cc_off.png)  
+[![Screenshot of Canvas modules page with the Collections configuration element in the top right-hand corner](pics/cc_off.png)](pics/cc_off.png)  
 </figure>
 
 ## Turning it on
@@ -34,6 +34,6 @@ By default, Canvas Collections is turned off. Use the toggle to turn it on. Init
 
 <figure markdown>
 <figcaption>After you turn Collections on for the first time</figcaption>
-![](pics/cc_on.png)  
+[![](pics/cc_on.png)](pics/cc_on.png)  
 </figure>
 

@@ -16,7 +16,7 @@ Once you have these basics, move onto the [how-tos](../how-tos/available.md). In
 
         <figure markdown>
         <figcaption>If you can see this, then Collections is already installed?</figcaption>
-        ![Collections Configuration container circled - is it installed?](images/isItInstalled.png)  
+        [![Collections Configuration container circled - is it installed?](images/isItInstalled.png)](images/isItInstalled.png)  
         </figure>
 
 === "Collections101 - Collections conceptual model"

@@ -21,7 +21,7 @@ There are three steps for an individual installation
 
     <figure markdown>
     <figcaption>Tampermonkey home page for Firefox</figcaption>
-    ![Tampermonkey home page for Firefox](pics/tamperMonkeyHome.png)  
+    [![Tampermonkey home page for Firefox](pics/tamperMonkeyHome.png)](pics/tamperMonkeyHome.png)  
     </figure>
 
     #### Click on the left-hand _Download_ button
@@ -44,7 +44,7 @@ There are three steps for an individual installation
 
     <figure markdown>
     <figcaption>Installing the Canvas Collections userscript</figcaption>
-    ![Tampermonkey asking to update Canvas Collections userscript](pics/tamperMonkeyInstallCC.png)  
+    [![Tampermonkey asking to update Canvas Collections userscript](pics/tamperMonkeyInstallCC.png)](pics/tamperMonkeyInstallCC.png))  
     </figure>
 
     #### Turning the Collections userscript off
@@ -62,7 +62,7 @@ There are three steps for an individual installation
 
     <figure markdown>
     <figcaption>Opening the Tampermonkey browser dropdown</figcaption>
-    ![Opening the Tampermonkey browser dropdown](pics/toolBarIcon.png)  
+    [![Opening the Tampermonkey browser dropdown](pics/toolBarIcon.png)](pics/toolBarIcon.png)  
     </figure>
 
     #### Disable TamperMonkey
@@ -71,7 +71,7 @@ There are three steps for an individual installation
 
     <figure markdown>
     <figcaption>Tampermonkey disabled</figcaption>
-    ![Tampermonkey disabled](pics/toolbarDisabled.png)  
+    [![Tampermonkey disabled](pics/toolbarDisabled.png)](pics/toolbarDisabled.png)
     </figure>
 
     #### Disable or remove the Canvas Collections userscript
@@ -80,7 +80,7 @@ There are three steps for an individual installation
 
     <figure markdown>
     <figcaption>How to open the Tampermonkey dashboard</figcaption>
-    ![How to open the Tampermonkey dashboard](pics/toolbarDashboard.png)  
+    [![How to open the Tampermonkey dashboard](pics/toolbarDashboard.png)](pics/toolbarDashboard.png)  
     </figure>
 
     Clicking on the _dashboard_ option will open the TamperMonkey dashboard. The dashboard will show you all the userscripts you have installed and provide options to 
@@ -94,7 +94,7 @@ There are three steps for an individual installation
 
     <figure markdown>
     <figcaption>Viewing the Tampermonkey dashboard</figcaption>
-    ![Viewing the Tampermonkey dashboard](pics/dashboard.png)  
+    [![Viewing the Tampermonkey dashboard](pics/dashboard.png)](pics/dashboard.png)
     </figure>
 
 === "3. Is it working?"

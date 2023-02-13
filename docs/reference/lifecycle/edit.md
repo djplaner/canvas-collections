@@ -21,7 +21,7 @@ Before you can edit Collections, you must
 
 	<figure markdown>
 	<figcaption>Staff view mode</figcaption>
-	![](images/viewMode.png)  
+	[![](images/viewMode.png)](images/viewMode.png)  
 	</figure>
 
 === "Someone else is editing"
@@ -32,7 +32,7 @@ Before you can edit Collections, you must
 
 	<figure markdown>
 	<figcaption>Someone else (you) is editing</figcaption>
-	![](images/alreadyEditing.png)  
+	[![](images/alreadyEditing.png)](images/alreadyEditing.png)
 	</figure>
 
 === "You are editing"
@@ -50,12 +50,12 @@ Before you can edit Collections, you must
 
 	<figure markdown>
 	<figcaption>You are editing</figcaption>
-	![](images/editing.png)  
+	[![](images/editing.png)](images/editing.png)
 	</figure>
 
 	<figure markdown>
 	<figcaption>A Canvas module with a collapsed Collections' module configuration element</figcaption> 
-	![](images/moduleConfiguration.png)  
+	[![](images/moduleConfiguration.png)](images/moduleConfiguration.png)  
 	</figure>
 
 === "Turn _edit off_"

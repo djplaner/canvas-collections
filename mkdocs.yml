@@ -73,8 +73,10 @@ nav:
       - Is it working?: getting-started/install/is-it-working.md
     - 2. Collections 101: 
       - Overview: getting-started/101/overview.md
-      - Features: getting-started/101/features.md
-      - Interface: getting-started/101/interface.md
+      - Concepts: getting-started/101/concepts.md
+      - Interface: 
+        - Navigation: getting-started/101/interface/navigation.md
+        - Configuration: getting-started/101/interface/configuration.md
     - 3. Design for Collections:
       - 🚧 Configuration: getting-started/configure/configuration.md
       - 🚧 Collections: getting-started/configure/collections.md

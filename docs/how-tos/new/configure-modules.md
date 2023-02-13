@@ -65,7 +65,7 @@ Each module configuration area has four tabs. Each tab helps you configure a dif
 
     <figure markdown>
     <figcaption>The banner tab of the module configuration area</figcaption>
-    ![](bannerTab.png)  
+    [![](bannerTab.png)](bannerTab.png)  
     </figure>
 
 === "Metadata"
@@ -74,7 +74,7 @@ Each module configuration area has four tabs. Each tab helps you configure a dif
 
     <figure markdown>
     <figcaption>The metadata tab of the module configuration area</figcaption>
-    ![](pics/metaBanner.png)  
+    [![](pics/metaBanner.png)](pics/metaBanner.png)  
     </figure>
 
 

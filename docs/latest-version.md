@@ -11,5 +11,5 @@ If you have a teacher/designer role (i.e. you can see the _Student View_ button)
 
 <figure markdown>
 <figcaption>Where to find Collection's version number</figcaption>
-![Where to find Collection's version number](pics/version.png)  
+[![Where to find Collection's version number](pics/version.png)](pics/version.png)  
 </figure>

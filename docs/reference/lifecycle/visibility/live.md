@@ -17,7 +17,7 @@ Who is able to see and use Collections in its live form depends on two elements:
 
      <figure markdown>
      <figcaption>Collections is turned off</figcaption>
-     ![Screenshot of Collections element that is turned off](images/turnOn.png)  
+     [![Screenshot of Collections element that is turned off](images/turnOn.png)](images/turnOn.png)
      </figure>
 
 === "Published or unpublished"
@@ -30,7 +30,7 @@ Who is able to see and use Collections in its live form depends on two elements:
 
      <figure markdown>
      <figcaption>Collections when first turned on, with an unpublished configuration page</figcaption>
-     ![](images/unpublished.png)  
+     [![](images/unpublished.png)](images/unpublished.png)  
      </figure>
 
 === "Visibility settings"

@@ -16,5 +16,5 @@ The figure below is an example of a typical Collections configuration dialog. Th
 
 <figure markdown>
 <figcaption>A typical Collections configuration dialog</figcaption>
-![A typical Collections configuration dialog](pics/collectionsConfiguration.png)  
+[![A typical Collections configuration dialog](pics/collectionsConfiguration.png)](pics/collectionsConfiguration.png)  
 </figure>
