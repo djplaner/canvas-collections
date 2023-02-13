@@ -1,49 +1,51 @@
 # Canvas Collections 
 
-> :construction: A new version of Canvas Collections is just about ready. Early Feb 2023 should reveal all.
+:confetti_ball: Version 1.1.0 - the first really usable version of Collections - is now available. See the [Collections site](https://djplaner.github.io/canvas-collections/) more for details  :confetti_ball:
+
 ## Why?
 
-Frustrated by the limitations of the [Canvas LMS' modules](https://www.instructure.com/en-au/canvas/resources/all/how-to-use-modules-to-build-courses-in-canvas)? Wanting to achieve more than a long list of modules with little or now visual or content difference?
+Frustrated by the limitations of the [Canvas LMS' modules](https://www.instructure.com/en-au/canvas/resources/all/how-to-use-modules-to-build-courses-in-canvas)? Wanting to achieve more than a long list of modules with no design of context specific information?
 
-## What?
+For example, look at the standard Canvas modules page on the left. This course was designed with three driving questions. Can you tell what those questions are from the modules page?
 
-Canvas Collections can help by providing three new features to Canvas Modules:
+Try with the image on the right. It shows the same modules page with Collections installed.
 
-1. **Collections** - group modules together based on your design needs.
-2. **Representations** - select different visual designs for each collection.
-3. **Objects** - transform vanilla modules into context and design specific objects (e.g. theme, chapter, person etc) through the addition of design specific metadata and affordances.
-
-## What's the difference?
-
-The following images show the Module's view for the same Canvas course site with the same 11 modules.
-
-The left hand image shows the default Canvas interface. A long scroll down the 11 modules.
-
-The right hand image adds Canvas Collections with three collections titled: Why? What? and How?. Each collection can be navigated to separately. Each collection is using a _card_ representation. Hence collections adds a card for each module. Each module has had an image and a description added to help explain the purpose of the module.
+See the [Collection site] for more.
 
 | Vanilla Canvas | Canvas Collections |
 | -------------- | ------------------ |
 | [View full-size image](docs/assets/vanillaModules.gif) | [View full-size image](docs/assets/withCanvasCollections.gif) |
 | ![Vanilla Canvas Course Site](docs/assets/vanillaModules.gif) | ![Same site with Canvas Collections](docs/assets/withCanvasCollections.gif) |
 
+## How?
+
+Canvas Collections adds three three new features to Canvas Modules:
+
+1. **Collections** - group modules together based on your design needs.
+2. **Representations** - select different visual designs for each collection.
+3. **Objects** - add more information to transform vanilla Canvas modules into context and design specific objects (e.g. theme, chapter, person etc).
 
 ## How can you use Canvas Collections?
 
-You can experiment with Collections as an individual teacher, or an institution can install it for all.
+You will need [to install Collections](https://djplaner.github.io/canvas-collections/getting-started/install/types-pre-requisites/). You can do this as [an individual](https://djplaner.github.io/canvas-collections/getting-started/install/individual/) or as [an institution](https://djplaner.github.io/canvas-collections/getting-started/install/institution/)
 
 ## Need to know more?
 
 Want to learn more about Canvas Collections? What else can you do? How do you try it out?
 
-See the [Canvas Collections online help/documentation site](https://djplaner.github.io/canvas-collections/)
+See the [Canvas Collections site](https://djplaner.github.io/canvas-collections/)
 
 
 # For the developers
 
-Canvas Collections development is intended to produce both
+Canvas Collections development will produce both
 
 1. Userscript version for individual users; and,
 2. CDN version for institutions.
+
+Some basic info follows.
+
+## Local development
 
 Local development and testing currently takes place using a dev version of the userscript. Which requires that you have/are familiar with using
 
