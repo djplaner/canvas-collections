@@ -2,7 +2,9 @@
 
 The first two steps in getting started with Canvas Collections are listed below. 
 
-Once you have these basics, move onto the [how-tos](../how-tos/available.md). In particular, the how-tos for [navigating a Collections course](../how-tos/navigating/overview.md) and [adding Collections to a course](../how-tos/new/overview.md).
+!!! tip "Where next?"
+
+    Once you have these basics, move onto the [how-tos](../how-tos/available.md). In particular, the how-tos for [navigating a Collections course](../how-tos/navigating/overview.md) and [adding Collections to a course](../how-tos/new/overview.md).
 
 === "Install Collections"
 

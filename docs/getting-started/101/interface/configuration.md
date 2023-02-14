@@ -56,5 +56,20 @@ The task of configuration Collections is more complex than navigating. Consequen
 
 === "Module configuration element"
 
+	With _Edit on_, each Canvas module will have its own Collections module configuration element, which include the following sub-components.
+
+	| Sub-component | Description |
+	| ---- | ----- |
+	| Collapsible header | <p>The entire configuration element is collapsible. Click on the header to collapse or expand the element.</p> |
+	| Configuration tabs | <p>There are currently four tabs. Each tab contains a different  configuration area. </p> |
+	| Configuration areas | <p>Four including:</p><oL> <li> [General](../../../../reference/conceptual-model/objects/general/) - descriptions, labels, and other common data.</li> <li> [Dates](../../../../reference/conceptual-model/objects/dates/) - specify a date or date range.</li> <li> [Banner](../../../../reference/conceptual-model/banner/) - configure the banner (image, iframe, or background colour) for cards. </li> [Metadata](../../../../reference/conceptual-model/metadata/) - additional ad hoc meta data used by some representations.</li> </ol> </p> |
+
+
+	<figure markdown>
+	<figcaption>One Collection's module configuration element</figcaption>
+	[![](images/moduleConfiguration.png)](images/moduleConfiguration.png)  
+	</figure>
+
+
 
 

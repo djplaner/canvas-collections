@@ -38,8 +38,12 @@ There are three steps for an individual installation
 
     ### Install the Canvas Collections userscript
 
-    With TamperMonkey installed you can now install [the Canvas Collections userscript](https://github.com/djplaner/canvas-collections/raw/main/dist/canvas-collections.user.js)
+    With TamperMonkey installed you can now 
 
+    <div align="center">
+    <sl-button variant="success" size="small" href="https://github.com/djplaner/canvas-collections/raw/main/dist/canvas-collections.user.js">Install the **Collections userscript**</sl-button>
+    </div>
+    
     If all is working you should something like the following image. An image showing TamperMonkey providing you with details of the userscript and asking if you wish to install (or perhaps update) it.
 
     <figure markdown>
@@ -100,3 +104,8 @@ There are three steps for an individual installation
 === "3. Is it working?"
 
     It you've successfully completed these steps, the check out the [Is it working? page](./is-it-working.md) for how to check if Canvas Collections is working.
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>

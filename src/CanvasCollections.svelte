@@ -714,12 +714,21 @@
     // should be right to turn editing on
     numSaves = 0;
     $configStore["editingOn"] = editingOnHandler.getEditingDetails();
-    modifyCanvasModulesList(
-      $configStore["currentCollection"],
-      $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
-        "unallocated"
-      ]
-    );
+
+    // only do this if # collections > 0 && currentCollection defined
+
+    if (
+      $collectionsStore.hasOwnProperty("COLLECTIONS_ORDER") &&
+      $collectionsStore["COLLECTIONS_ORDER"].length > 0 &&
+      $configStore["currentCollection"] !== ""
+    ) {
+      modifyCanvasModulesList(
+        $configStore["currentCollection"],
+        $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
+          "unallocated"
+        ]
+      );
+    }
 
     setNumSavesInterval();
     // turn on save interval
@@ -772,7 +781,7 @@
    */
   function setNumSavesInterval() {
     numSavesInterval = setInterval(() => {
-      if (numSaves===0) {
+      if (numSaves === 0) {
         editingOnHandler.turnEditOff(setUpEditingOff);
       }
       numSaves = 0;
@@ -802,7 +811,7 @@
     studentVisible: {
       tooltip: `<p>Students can see Collections.</p>
       <p>To change, turn <em>edit on</em>; click the <i class="icon-mini-arrow-right"></i> 
-        icon to the right: and, use the <em>visibility</em> dropdown.</p>`
+        icon to the right: and, use the <em>visibility</em> dropdown.</p>`,
     },
     studentInvisible: {
       tooltip: `<p>Students <strong>cannot</strong> see Collections.</p>
@@ -884,7 +893,7 @@
 
     {#if noCollections}
       <label class="cc-switch" for="cc-switch">
-          <sl-switch id="cc-switch" on:sl-change={initialiseCollections} />
+        <sl-switch id="cc-switch" on:sl-change={initialiseCollections} />
       </label>
     {/if}
     {#if $configStore["editingOn"] === null && !noCollections}

@@ -20,9 +20,8 @@
 
   import { modifyCanvasModulesList } from "./Representations/representationSupport";
 
-
-  export let collectionName: string 
-  export let claytons: boolean
+  export let collectionName: string;
+  export let claytons: boolean;
 
   let complete: boolean = false;
 
@@ -32,49 +31,50 @@
 
   //console.log(`---------------- CollectionRepresentation -- ${collectionName} -- ${claytons} -----------------`)
 
-/*  if (claytons===false) {
+  /*  if (claytons===false) {
     collectionName = $configStore["currentCollection"];
   }*/
 
   let representationComponent: any;
   $: {
-  //console.log(`------Dynamic ---------- CollectionRepresentation -- ${collectionName} -- ${claytons} -----------------`)
-    const localRep =
-      $collectionsStore["COLLECTIONS"][collectionName]["representation"];
-    if (!$representationsStore.hasOwnProperty(localRep)) {
-      alert(
-        `CollectionRepresentation component requires a valid representation prop. ${localRep} is not valid`
-      );
-    }
-    representationComponent = $representationsStore[localRep];
+    //console.log(`------Dynamic ---------- CollectionRepresentation -- ${collectionName} -- ${claytons} -----------------`)
 
-    // don't modify canvas modules if
-    // - collections is one
-    // - the current collection's representation is CollectionsTable
     if (
-      $configStore["ccOn"] &&
-      $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
+      collectionName !== "" &&
+      $collectionsStore["COLLECTIONS"].hasOwnProperty(collectionName) &&
+      $collectionsStore["COLLECTIONS"][collectionName].hasOwnProperty(
         "representation"
-      ] !== "CollectionsTable"
+      )
     ) {
-      modifyCanvasModulesList(
-        $configStore["currentCollection"],
-        $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
-          "unallocated"
-        ]
-      );
-    } 
-  } 
+      const localRep =
+        $collectionsStore["COLLECTIONS"][collectionName]["representation"];
+      if (!$representationsStore.hasOwnProperty(localRep)) {
+        alert(
+          `CollectionRepresentation component requires a valid representation prop. ${localRep} is not valid`
+        );
+      }
+      representationComponent = $representationsStore[localRep];
 
-  if (!collectionName) {
-    // TODO better error handling
-    throw new Error(
-      "CollectionRepresentation component requires a collection prop"
-    );
+      // don't modify canvas modules if
+      // - collections is one
+      // - the current collection's representation is CollectionsTable
+      if (
+        $configStore["ccOn"] &&
+        $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
+          "representation"
+        ] !== "CollectionsTable"
+      ) {
+        modifyCanvasModulesList(
+          $configStore["currentCollection"],
+          $collectionsStore["COLLECTIONS"][$configStore["currentCollection"]][
+            "unallocated"
+          ]
+        );
+      }
+    }
   }
 
-
-/**
+  /**
  * Does collection need to be bound below?
   bind:collection={collectionName}
 */

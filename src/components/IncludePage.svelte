@@ -15,18 +15,26 @@
   import { collectionsStore, configStore } from "../stores";
 
   //export let collectionName: string = ""
-  export let collectionName: string = ""
+  export let collectionName: string = "";
 
-  let pageName : string = ""
-  let pageContent: string = ""
+  let pageName: string = "";
+  let pageContent: string = "";
 
   // reactively update the page as the collection's includePage changes
   $: {
-    pageName = $collectionsStore["COLLECTIONS"][collectionName].includePage
-    if (pageName!=="") {
-      getPageName(pageName, $configStore["courseId"], addIncludePage)
-    } else {
-      pageContent=""
+    if (
+      collectionName !== "" &&
+      $collectionsStore["COLLECTIONS"].hasOwnProperty(collectionName) &&
+      $collectionsStore["COLLECTIONS"][collectionName].hasOwnProperty(
+        "includePage"
+      )
+    ) {
+      pageName = $collectionsStore["COLLECTIONS"][collectionName].includePage;
+      if (pageName !== "") {
+        getPageName(pageName, $configStore["courseId"], addIncludePage);
+      } else {
+        pageContent = "";
+      }
     }
   }
 
@@ -44,7 +52,6 @@
       pageContent = "";
     }
   }
-
 </script>
 
 <div class="cc-include-page" id="cc-include-page">

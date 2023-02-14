@@ -31,8 +31,10 @@ export function getCollectionCanvasModules(
     if (collectionsModules[moduleId].collection === collection) {
       // if the module belongs to the selected collection
       // push the canvas module onto the array
-      // but not if we're in claytons and the module is unpublished
-      if (!(claytons && !module.published)) {
+      // Wrong?? ---> but not if we're in claytons and the module is unpublished
+      // only in editMode will we see unpublished modules
+      // we normally want to see them, but not in claytons...unless it's an fyi
+      if (!(claytons && !module.published && !collectionsModules[module.id]['fyi'])) {
         modules.push(module);
         addedModuleIds.push(moduleId);
       }
@@ -104,6 +106,9 @@ export function addUnallocatedModules(
  * will need to display that collection, may include
  * - all the modules in the collection
  * - all the modules without collections (if that switch is set)
+ * 
+ * Doing an update
+ *   Why? / Claytons true / editMode true  / unallocated false
  *
  */
 export function getRepresentationModules(
