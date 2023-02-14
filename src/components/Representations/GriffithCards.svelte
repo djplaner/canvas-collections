@@ -94,18 +94,27 @@
     // is it unallocated
     return $collectionsStore["MODULES"][moduleId].collection !== collection;
   }
+
+  // HELP tooltips
+
+  const HELP = {
+    noFyiText: {
+      tooltip: `<p>Module set as an FYI module, but no explanatory FYI text has been provided.</p>
+      <p>This reminder only visible to staff.</p> `,
+      href: `https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#fyi`,
+    },
+  };
 </script>
 
 {#if claytons}
   <!-- <div class="claytons-card-interface claytons-representation">-->
   <!-- <div style="flex-wrap: wrap; display:flex; margin-top: 0.5em"> -->
-    <div style="margin-top: 1rem !important; display:grid;grid-gap:1rem;grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%),1fr));">
+  <div
+    style="margin-top: 1rem !important; display:grid;grid-gap:1rem;grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%),1fr));"
+  >
     {#each modules as theModule}
       <!-- TODO need to handle styles for claytons-unclickable-card -->
-      <div
-        id="cc_module_{theModule.id}"
-        style="width:100%"
-      >
+      <div id="cc_module_{theModule.id}" style="width:100%">
         <!-- style="padding: 0.75rem; flex-direction: column; display:flex;width:30%" -->
         <div
           id="cc_module_{theModule.id}"
@@ -269,16 +278,31 @@
                 date={$collectionsStore["MODULES"][theModule.id].date}
                 dateHide={$collectionsStore["MODULES"][theModule.id].dateHide}
               />
-              {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
-                <div class="cc-card-fyi">
-                  <span class="cc-fyi-text">
-                    {#if $collectionsStore["MODULES"][theModule.id].fyiText}
-                      {@html $collectionsStore["MODULES"][theModule.id].fyiText}
-                    {:else}
-                      &nbsp;
-                    {/if}
-                  </span>
-                </div>
+              {#if $collectionsStore["MODULES"][theModule.id].fyi}
+                {#if $collectionsStore["MODULES"][theModule.id].fyiText !== "" || $configStore["editMode"] }
+                  <div class="cc-card-fyi">
+                    <span class="cc-fyi-text">
+                      {#if $collectionsStore["MODULES"][theModule.id].fyiText}
+                        {@html $collectionsStore["MODULES"][theModule.id]
+                          .fyiText}
+                      {:else}
+                        (<em>FYI card, no FYI text</em>
+                        <sl-tooltip hoist>
+                          <div slot="content">{@html HELP.noFyiText.tooltip}</div>
+                          <a
+                            style="text-decoration: none;"
+                            href={HELP.noFyiText.href}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            ❔</a
+                          >
+                        </sl-tooltip>
+                        )
+                      {/if}
+                    </span>
+                  </div>
+                {/if}
               {/if}
               {#if isUnPublishedUnallocated(theModule.id)}
                 <div class="cc-card-published">
@@ -344,16 +368,15 @@
     display: grid;
     grid-gap: 1rem;
     grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
-/*    margin-top: 0.5em !important;
+    /*    margin-top: 0.5em !important;
     flex-wrap: wrap;
     display: flex; */
   }
 
-
   .cc-clickable-card,
   .cc-unclickable-card {
     width: 100%;
-/*    padding: 0.75rem;
+    /*    padding: 0.75rem;
     flex-direction: column;
     display: flex;
     width: 30%; */
@@ -698,5 +721,10 @@
 
   .cc-card-link {
     position: absolute;
+  }
+
+  sl-tooltip {
+    text-align: left;
+    white-space: normal;
   }
 </style>
