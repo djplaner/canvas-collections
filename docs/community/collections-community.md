@@ -1,19 +1,37 @@
 # Canvas Collections Community
 
-Canvas Collections has only been possible due to the Canvas and Griffith University communities. They've provided the motivation, support, and [related work](./related-work.md) that has made this possible. The value Collections can provide will be proportional to the quality of the community which contributes to it.
+Collections has only been possible due to the Canvas, Griffith University, and broader open source communities. They've provided the motivation, support, [related work](./related-work.md), knowledge, and tools that made Collections possible. Thank you.
 
-## How to contribute
+Similarly, for Collections to be truly valuable will depend on the community which contributes to it. Here are some early suggestions for how you can contribute.
 
-It's still early days. Here are the current suggestions.
+=== "Using Collections?"
 
-### People using Collections
+	| Contribution | How to |
+	| ---- | ----- |
+	| Ask a question  | Join the [discussions area](https://github.com/djplaner/canvas-collections/discussions) |
+	| Report a bug | [Create a bug report](https://github.com/djplaner/canvas-collections/issues/new?assignees=&labels=bug&template=bug_report.md&title=) |
+	| Ask for a new features | [Create a feature request](https://github.com/djplaner/canvas-collections/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=) |
+	| Share you experience | If you've used Collections, please do share your experience in [the discussions area](https://github.com/djplaner/canvas-collections/discusions) |
 
-If you've got a question or a suggestion, the [discussions area](https://github.com/djplaner/canvas-collections/discussions) is probably the best place to start.
 
-If you've found a bug, please [raise an issue](https://github.com/djplaner/canvas-collections/issues).
+=== "Modifying Collections?"
 
-But when in doubt, start a [discussion](https://github.com/djplaner/canvas-collections/discussions).
+	Collections is open source. Licence update coming soon. It is explicitly designed to be easy to be modified to suit your context and requirements. It's hosted on GitHub, feel free to fork it and make changes. If you do, please consider contributing them back to the project.
 
-### People developing Collections
+	**Getting started with Collections development**
 
-For now, the above advice applies. You may also want to reach out to [the Collections maintainer directly](https://github.com/djplaner). Beyond that, there'll be more development resources coming here RSN.
+	The [Collections readme](https://github.com/djplaner/canvas-collections#canvas-collections) provides some [very basic information](https://github.com/djplaner/canvas-collections#for-the-developers) on how to get started with Collections development. More to come, hopefully.
+
+	If you've questions, please use [the discussions area](https://github.com/djplaner/canvas-collections/discussions) of reach out to [the Collections maintainer directly](https://github.com/djplaner). 
+
+	**Possible modifications**
+
+	| Possibility | Description |
+	| ---- | ----- |
+	| Write a new representation | <p>[Representations](../../reference/conceptual-model/representations/overview/) are the most visual aspect of Collections. They are designed as stand alone Svelte components. Meaning it is fairly easy to create new representations to suit your needs.</p> |
+	| Improve an existing representation | <p>e.g. modify the Cards representation to include a drop-down of module items on the card.</p> |
+	| Improve date handling | <p>Currently date handling is very specific to Griffith. It needs further abstraction to more easily support other institutions and their calendars.</p><p>There's also an argument to be made for adding a standard calendar entry method.</p> |
+	| Fix bugs | <p>There will be bugs. Please, find them, report them, and if possible fix them.</p>|
+	| Write tests | <p>Collections is currently without a testing framework. This needs to change.</p> |
+
+
