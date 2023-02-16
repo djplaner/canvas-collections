@@ -359,3 +359,24 @@ To use
   .cc-card-date-month-to {
     width: 50%;
   }
+
+
+  .cc-object-fit-cover {
+    object-fit: cover;
+  }
+
+  .cc-object-fit-contain {
+    object-fit: contain;
+  }
+
+  .cc-object-fit-fill {
+    object-fit: fill;
+  }
+
+  .cc-object-fit-scale-down {
+    object-fit: scale-down;
+  }
+
+  .cc-object-fit-none {
+    object-fit: none;
+  }
