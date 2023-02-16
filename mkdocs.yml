@@ -23,7 +23,7 @@ theme:
     - navigation.tabs
     - navigation.instant
     - navigation.footer
-    - navigation.tracking
+#    - navigation.tracking
     - navigation.tabs.sticky
     - navigation.sections
     - content.tabs.link

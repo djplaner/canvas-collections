@@ -152,18 +152,16 @@
               />
               <!--               $**DATE_WIDGET** -->
               {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
-                <div
-                  class="claytons-card-fyi"
-                  style="position:absolute;background:rgba(0,0,0,0.75);color:white;width:100%;padding: 0.25rem;font-size:x-small;text-align:center;"
-                >
-                  <span class="claytons-fyi-text">
-                    {#if $collectionsStore["MODULES"][theModule.id].fyiText}
+                {#if $collectionsStore["MODULES"][theModule.id].fyiText}
+                  <div
+                    class="claytons-card-fyi"
+                    style="position:absolute;background:rgba(0,0,0,0.75);color:white;width:100%;padding: 0.25rem;font-size:x-small;text-align:center;"
+                  >
+                    <span class="claytons-fyi-text">
                       {@html $collectionsStore["MODULES"][theModule.id].fyiText}
-                    {:else}
-                      &nbsp;
-                    {/if}
-                  </span>
-                </div>
+                    </span>
+                  </div>
+                {/if}
               {/if}
             </div>
             <div
@@ -279,7 +277,7 @@
                 dateHide={$collectionsStore["MODULES"][theModule.id].dateHide}
               />
               {#if $collectionsStore["MODULES"][theModule.id].fyi}
-                {#if $collectionsStore["MODULES"][theModule.id].fyiText !== "" || $configStore["editMode"] }
+                {#if $collectionsStore["MODULES"][theModule.id].fyiText !== "" || $configStore["editMode"]}
                   <div class="cc-card-fyi">
                     <span class="cc-fyi-text">
                       {#if $collectionsStore["MODULES"][theModule.id].fyiText}
@@ -288,7 +286,9 @@
                       {:else}
                         (<em>FYI card, no FYI text</em>
                         <sl-tooltip hoist>
-                          <div slot="content">{@html HELP.noFyiText.tooltip}</div>
+                          <div slot="content">
+                            {@html HELP.noFyiText.tooltip}
+                          </div>
                           <a
                             style="text-decoration: none;"
                             href={HELP.noFyiText.href}
