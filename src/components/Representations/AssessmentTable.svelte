@@ -229,6 +229,13 @@
     id="cc-assessment-table"
     class="cc-assessment-container cc-representation cc-table"
   >
+    {#if $configStore["editMode"]}
+      {#if modules.length === 0}
+        <div class="cc-no-modules">
+          <p>No modules have been added to this collection.</p>
+        </div>
+      {/if}
+    {:else}
     <table class="cc-responsive-table" role="table">
       <!-- <caption></caption> -->
       <thead role="rowgroup">
@@ -336,6 +343,7 @@
         {/each}
       </tbody>
     </table>
+    {/if}
   </div>
 {/if}
 
