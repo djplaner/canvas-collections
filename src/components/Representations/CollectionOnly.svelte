@@ -21,14 +21,10 @@
     );
 </script>
 
-{#if $configStore['editMode']}
-
-  {#if modules.length===0} 
+{#if $configStore['editMode'] && modules.length===0} 
   <div class="cc-no-modules">
 	<p>No modules have been added to this collection.</p>
   </div>
-  {/if}
-
 {/if}
 
 <style>
