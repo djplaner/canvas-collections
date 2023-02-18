@@ -11,6 +11,7 @@
   import BannerImage from "./GriffithCards/BannerImage.svelte";
   import DateWidget from "./GriffithCards/DateWidget.svelte";
 
+//  import "@shoelace-style/shoelace/dist/components/card/card.js";
   import { getRepresentationModules } from "./representationSupport";
 
   export let collection: string;
@@ -19,6 +20,10 @@
   if (!claytons) {
     claytons = false;
   }
+
+  // early test (kludge) for shoelace cards
+  // uncomment the shoelace import above
+  const shoelace = false;
 
   const BANNER_TRANSLATION = {
     image: BannerImage,
@@ -106,7 +111,47 @@
   };
 </script>
 
-{#if claytons}
+{#if shoelace}
+  <div class="cc-card-interface cc-representation">
+    {#each modules as theModule}
+      <sl-card class="shoelace-card-overview">
+        <img
+          slot="image"
+          src="{$collectionsStore["MODULES"][theModule.id].image}"
+          alt="A kitten sits patiently between a terracotta pot and decorative grasses."
+        />
+
+        <strong>{theModule.name}</strong><br />
+        This kitten is as cute as he is playful. Bring him home today!<br />
+        <small>6 weeks old</small>
+
+        {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
+          <div slot="footer">
+            <sl-button href={getModuleUrl(theModule.id)} variant="primary" pill
+              >{$collectionsStore["MODULES"][theModule.id]
+                .engageText}</sl-button
+            >
+          </div>
+        {/if}
+      </sl-card>
+    {/each}
+    <style>
+      .shoelace-card-overview {
+/*        max-width: 300px; */
+      }
+
+      .shoelace-card-overview small {
+        color: var(--sl-color-neutral-500);
+      }
+
+      .shoelace-card-overview [slot="footer"] {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    </style>
+  </div>
+{:else if claytons}
   <!-- <div class="claytons-card-interface claytons-representation">-->
   <!-- <div style="flex-wrap: wrap; display:flex; margin-top: 0.5em"> -->
   <div

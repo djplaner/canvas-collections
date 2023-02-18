@@ -6,7 +6,7 @@ Collections will make up to four navigation changes to the Canvas modules page. 
 
 	<figure markdown>
 	<figcaption>An example modules page modified with Collection's navigation interface elements</figcaption>
-	![Screenshot of Canvas modules page with Collections' navigation elements](../images/navigationInterfaceElements.png)
+	[![Screenshot of Canvas modules page with Collections' navigation elements](../images/navigationInterfaceElements.png)](../images/navigationInterfaceElements.png)
 	</figure>
 
 

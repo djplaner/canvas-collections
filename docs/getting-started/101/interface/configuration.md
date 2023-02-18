@@ -43,7 +43,7 @@ The task of configuration Collections is more complex than navigating. Consequen
 
 	| Sub-component | Description |
 	| ---- | ----- |
-	| Title & version | <p>Are you using the [latest version of Collections](../../../../latest-version/)?</p> | 
+	| Title & version | <p>Are you using the [latest version of Collections](../../../../about/latest-version/)?</p> | 
 	| [Visibility](../../../../reference/lifecycle/visibility/live/) | <p>Allows visibility - who can see the Collections navigation interface - to be set to one of four values</p> | 
 	| [Existing Collections](../../../../reference/conceptual-model/collections/existing-collections/) | <p>A list of all the current collections configurated for the course. Allowing you to modify them, delete them, change the order etc.</p> |
 	| [Add a new collection](../../../../reference/conceptual-model/collections/add-new-collection/) | <p>Choose a name and a representation and add another collection to the course.</p> | 

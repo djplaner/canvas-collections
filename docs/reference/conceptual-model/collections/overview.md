@@ -6,7 +6,7 @@ The figure below is an example of a typical Collections configuration dialog. Th
 
 | Component | Description |
 | --- | --- |
-| Version number | <p>Next to the <em>Configure Canvas Collections</em> title is the version number of Collections being used (e.g. <strong><small>1.1.0</small></strong>). This is useful for reporting bugs and identifying if you've the [latest Collections' version](../../../latest-version.md).</p> |
+| Version number | <p>Next to the <em>Configure Canvas Collections</em> title is the version number of Collections being used (e.g. <strong><small>1.1.0</small></strong>). This is useful for reporting bugs and identifying if you've the [latest Collections' version](../../../about/latest-version.md).</p> |
 | [Visibility](./visibility.md) | <p>Specify to whom Collections will be visible.</p> |
 | [Existing collections](./existing-collections.md) | <p>A list of the collections for this course. Use this to move and delete collections, change various collections values. </p> |
 | [Add a new collection](./add-new-collection.md) | <p>Use this to add a new collection to the course.</p> |

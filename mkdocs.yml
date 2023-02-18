@@ -40,22 +40,23 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js
 
 
-
 markdown_extensions:
   - admonition
   - attr_list
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_index: !!python/name:materialx.emoji.twemoji 
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - def_list
   - md_in_html
   - tables
-  - pymdownx.details
-  - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true 
-  - pymdownx.tasklist:
-      custom_checkbox: true
+#  - pymdownx.tasklist:
+#      custom_checkbox: true
 
 extra:
   social:
@@ -143,7 +144,9 @@ nav:
   - 'Community': 
      - Getting involved: community/collections-community.md
      - Related work: community/related-work.md
-  - 'Latest Version': latest-version.md
+  - 'About':
+     - Rationale: about/rationale.md
+     - 'Latest Version': about/latest-version.md
 #  - ⚰️ Features & Use: 
 #    - Overview: features.md
 #    - Collections: features/collections.md
