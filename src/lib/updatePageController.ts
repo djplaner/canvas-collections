@@ -178,6 +178,7 @@ export class updatePageController {
             "outputPage"
           ) &&
           this.collectionsStore["COLLECTIONS"][collectionName].outputPage !== ""
+          && !this.collectionsStore["COLLECTIONS"][collectionName].hide
         ) {
           return collectionName;
         }
@@ -239,7 +240,8 @@ export class updatePageController {
       // if there's an output page
       if (
         collections[collectionName].hasOwnProperty("outputPage") &&
-        collections[collectionName].outputPage !== ""
+        collections[collectionName].outputPage !== "" &&
+        !collections[collectionName].hide
       ) {
         // if the page is not in the pages dictionary
         if (!pages.hasOwnProperty(collections[collectionName].outputPage)) {
