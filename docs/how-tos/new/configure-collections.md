@@ -1,83 +1,73 @@
-# Configure the collections for a new course
+# Configure the collections for a course
 
-When starting with a new course, the first step in configuring Canvas Collections is to configure the course's collections. As outlined on the [design](design.md) page, the collections are the primary way to organise the course's modules and the sample course is intended to have three collections: Why? What? and How?.
+!!! questions "How do you use Collections to configure collections for a course?"
 
-## Go to the course's module view
+    You've completed the [design](./design.md) step and now you need to configure the collections for your course. 
+    
+    How do you do it?
+    
+The following illustrates the process using the example course from the [design](./design.md) step. It assumes you've 
 
-Canvas Collections typically only works on a Canvas course site's Modules view. So the first step is to go to the Modules view.
+1. Already installed Canvas Collections.
+2. Are the teacher/designer for a Canvas course with existing modules.
+3. Have navigated to the Modules view of the course.
 
-## Turn on collections
+The process illustrated is summarised in the following table.
 
-Next, if Collections is turned off, click the Collections toggle to turn it on.
+| Step | Description |
+| ---- | ----------- |
+| 1. Turn on Collections | <p>Initially, Collections is turned off for a course. The first time you start using Collections on a course you must turn it on</p> |
+| 2. Turn on editing | <p>Once Collections is turned on you will be able to see Collections navigation interface elements. Before any configuration takes place, this is likely to be quite bare.</p> <p>Before you can make any changes you must turn _Edit on_. At any one time, only one person in one browser window can be editing Collections for a given course. </p> |
+| 3. Add a new collection | <p>With _Edit on_ you can start adding new collection(s) by providing a collection name and choosing an initial representation.</p>  |
+| 4. Check the collection | <p>Optionally, once created you can check that it has been created.</p>|
 
-| Collections off | Collections on |
-| --------------- | -------------- |
-| ![Collections off](../../getting-started/install/pics/cc_off.png) | ![Collections on](../../getting-started/install/pics/cc_on.png) |
+=== "1. Turn on collections"
 
-## Open the Collection Configuration area
+    On the Modules page, if Collections is installed, you will see the Collections element. If Collections has not been previously turned on for the course, you will see a switch. Click that switch to turn Collections on.
 
-With Collection's turned on, there will be a small arrow appearing near the Collections' toggle - see the following image. 
+	<figure markdown>
+	<figcaption>Turning Collections on</figcaption>
+	<sl-animated-image src="../images/turnCollectionsOn.gif" alt="Turning Collections on">
+	</figure>
 
-![](pics/arrow.png)  
 
-Clicking on that arrow will open the Collection Configuration area. As shown in the following image, Collection Configuration area has two main parts:
+=== "2.  Turn on editing"
 
-1. _Existing collections_; and,
+    Any any one time, only one person can edit Collections for a course. Before you can make changes - like adding a new collection - you must turn _Edit on_
 
-    Will show the details of any existing collections (if there are any) and provide a way to edit, move, and delete them.
-2. _Add a new collection_
+    !!! warning "Students can't see an _unpublished_ Collections"
 
-    The simple form used to create a new collection for this course.
+        The newly created Collections configuration (just a normal Canvas page) will be _unpublished_. This means students will not be able to use _live_ Collections.  You need to publish it before they can.
 
-![](pics/collectionsConfigOpen.png)  
+        Collections inline help provides more detail (see the animated image below for more)
 
-## Add the first collection
+	<figure markdown>
+	<figcaption>Turn on editing</figcaption>
+	<sl-animated-image src="../images/turnEditOn.gif" alt="Turn on editing">
+	</figure>
 
-Adding a collection to a course involves completing the _Add a new collection_ form and hitting the **Add** button. To complete the form you need to be able to answer two questions
 
-1. What will the collection's name be?
+=== "3. Add a collection"
 
-    The name will be visible to users and should be a short, descriptive, and unique name for the collection.
-2. What will the collections's representation be?
+    With _Edit on_ you can start adding new collection(s) by providing a collection name and choosing an initial representation.
 
-    Which of [the available representations](../../reference/representations/overview.md) will be used to present the collection's modules to users.
+	<figure markdown>
+	<figcaption>Add a collection</figcaption>
+	<sl-animated-image src="../images/addCollection.gif" alt="Add a collection">
+	</figure>
 
-The first collection of the sample course is titled _Why?_ and will use the standard _GriffithCards_ representation.
+=== "4. Check the collection (and goto 3)"
 
-![](pics/addFirstCollection.png)  
+    Once created you can check what's been created and/or you can continue to add more collections.
 
-## Examine the change: existing collections 
+	<figure markdown>
+	<figcaption>Check and add all collections</figcaption>
+	<sl-animated-image src="../images/checkAndAdd.gif" alt="Check and add all collections">
+	</figure>
 
-Clicking the **Add** button in the above image will immediately update the _Existing Collections_ view of the Collection configuration area. With the details of the new collection visible.
 
-![](pics/firstAddedCollection.png)  
 
-## Examine the change: the Collections' navigation bar - for staff
 
-Beyond the Collection configuration area, the most obvious change is the addition of a new navigation bar.  For staff, the will see the navigation bar and all other modules, whether they are published or not.
 
-As can be seen by the _No collection allocated_ warnings under each module, at this stage we've only added a collection. We've not yet allocated any modules to that collection.
-
-![](pics/oneCollNavBar.png)  
-
-## Examine the change: navigation bar - for students
-
-That no modules are allocated to collections creates a problem for students. If they are using Canvas Collections, they will only see the modules that are allocated to collections. Whether they are published or not. As illustrated by the "student view" of the course below.
-
-| **NOTE:** This only applies if students are using collections. If you are using the [individual](../../getting-started/install/individual.md) version of Canvas Collections, only you can see the live changes.
-
-![](pics/StudentViewNoModules.png)  
-
-## Add the remaining collections
-
-Now the remaining collections can be added to the course using the Collection's configuration area, resulting in the following.
-
-![](pics/threeCollections.png)  
-
-And a more complete navigation bar which can be used to navigate from collection to collection. However, this has no effect on the displayed modules because they have not yet be allocated to collections.
-
-![](pics/navThreeCollections.png)  
-
-## What's next? Configuring the modules
-
-[Configuring the modules](./configure-modules.md) includes allocation of modules to collections.
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>

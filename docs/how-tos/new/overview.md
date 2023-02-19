@@ -22,5 +22,5 @@ The answer to this question involves the steps outlined in the table below.
 | [Design](./design.md) | <p>Design how your course site will use Collections.</p> |
 | [Configure collections](./configure-collections.md) | <p>Use Collections to add the initial set of collections for your course.</p> |
 | [Configure objects](./configure-modules.md) | <p>Use Collections to provide more information about each Canvas module to start their transformation from vanilla Canvas module to an object specific to your course design.</p> |
-| [Select representations](./select-representations.md) | <p>Use Collections to select the best representation for each collection.</p> |
-| [Set up 'Claytons'](./claytons.md) | <p>Use Collections to create/update static Canvas page(s) for your course. (if needed)</p> |
+| [Configure representations](./configure-representations.md) | <p>Use Collections to select (and re-select) the best representation for each collection.</p> |
+| [Set up 'Claytons'](./set-up-claytons.md) | <p>Use Collections to create/update static Canvas page(s) for your course. (if needed)</p> |

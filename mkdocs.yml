@@ -96,6 +96,7 @@ nav:
       - Design: how-tos/new/design.md
       - Configure Collections: how-tos/new/configure-collections.md
       - Configure Modules: how-tos/new/configure-modules.md
+      - Configure Representations: how-tos/new/configure-representations.md
       - Set up "Claytons": how-tos/new/set-up-claytons.md
     - Updating Collections:
       - 🚧 Coming soon: how-tos/changes/overview.md
@@ -118,6 +119,7 @@ nav:
         - 🚧 Staff:
           - Staff view: reference/lifecycle/staff-view.md
           - Edit: reference/lifecycle/edit.md
+          - Module Configuration: reference/lifecycle/module-configuration.md
         - Course copy: 
           - Overview: reference/lifecycle/course-copy/overview.md
           - Import process: reference/lifecycle/course-copy/import.md

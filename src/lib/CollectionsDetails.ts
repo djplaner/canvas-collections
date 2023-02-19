@@ -457,6 +457,8 @@ export class CollectionsDetails {
         this.collections["VISIBILITY"] = "all";
       }
       delete this.collections["STATUS"];
+    } else {
+      this.collections["VISIBILITY"] = "no-one";
     }
 
     // modify settings for each collection

@@ -1,77 +1,75 @@
 # Setting up Claytons Collections
 
-[Claytons Collections](../../getting-started/use/types.md#claytons-collections) is a way of using Canvas Collections to create and maintain a Canvas Page (e.g. advice such as [creating an inviting home page](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236)). It is a way to use [Collections' features](../../features.md) without students and others having access to Collections.
+!!! question "How do you improve navigation when you can't use _live_ Collections?"
 
-Setting up Claytons Collections involves the following steps:
+    _Live_ Collections only works if the code is installed. For students, this should be done institutionally. Not easy for all.
 
-1. Configure Canvas Collections for your course site.
-2. Decide how many Collections you'll configure with Claytons.
-3. Create a Canvas page for each Collection.
-4. Specify the collection's output page.
-5. Use Collections to update the pages.
+    If you can't use _live_ Collections, you can use _Claytons_ Collections to modify a Canvas page with an interface like Collections.
 
-The last step is one you repeat every time you make a change to Collections.
+Assuming you've already [configured Collections](./overview.md) for your course, setting up Claytons Collections involves the following steps.
 
-## Configure Canvas Collections
+| Step | Description |
+| ---- | ----------- |
+| 1. How many collections? | <p>You can include some or all of your course's collections in Claytons.</p> |
+| 2. What Canvas pages? | <p>Claytons Collections writes representations of one or more collections to one or more pages. You can have multiple collections on one page, one collection on multiple pages, or some combination</p> |
+| 3. Configure Claytons | <p>Use the Collections configuration element to specify which collections go to which Canvas pages. </p> |
+| 4. Generate Claytons | <p>Update the chosen pages with the current representation of the chosen collections.</p> |
 
-The [Configure Collections walk through](./configure-collections.md) steps through this process. This example will use the Canvas course configured in that walk through an pictured below. It has three collections: _Why?_, _What?_, and _How?_.
+!!! tip "Repeat the last step every time you make a change to Collections"
 
-![](pics/claytonsOriginalCourse.png)  
+    Without this step, the Claytons pages will not reflect the changes you've made to Collections.
 
-## How many collections for Claytons?
+## Example - before, after and how
 
-Claytons Collections is simply a method of copying the representation of a single Collection (e.g. _Why?_) to a matching Canvas page. Hence, an early decisions is how many and which of your course's collections you wish to use with Claytons.
+The following steps demonstrate how to convert the example course into a Claytons course. The following images show the before and after states of the example course.
 
-In this example, all three will be used.
+<figure markdown>
+<figcaption>_Live_ Collections to be emulated with _Claytons_</figcaption>
+<sl-image-comparer>
+  <img slot="after" src="../images/afterCollections.gif" alt="Live Collections to be emulated with Claytons">
+  <img slot="before" src="../images/afterClaytons.gif" alt="Claytons version">
+</sl-image-comparer>
+</figure>
 
-## Create (or identify) a Canvas page for each Collection
+=== "1. How many collections?"
 
-Since Claytons copies a representation of a collection to a Canvas page, each collection needs a matching Canvas page. Use the standard process for [creating a Canvas page](https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-create-a-new-page-in-a-course/ta-p/1031). 
+    For the example course used here, the aim is produce a new home page that fully emulates _live_ Collections.
+    
+    The example course has four collections. We want to use all four.
 
-Use any name you like for each page, common advice would include:
 
-- Using the same name as the collection will reinforce the information architecture and possibly minimise confusion.
-- If you wish students to see the page, it will need to be published.
-- Using existing pages is fine.
+=== "2. What Canvas pages?"
 
-    Collections will not overwrite any existing content on the page. By default it will add the collections' representation to the bottom of the page.
+    To emulate _live_ Collections, we need to place all the collections into a single page. The aim being is that this page will become the new home page for the course.
 
-The following image shows that this advice as been followed. There are three new pages, each matching the three collections in the example. Each page has been published.
+    Hence, the new Claytons Canvas page will be called _New Home Page_. A page that doesn't exist yet in the course.
+    
+=== "3. Configure Claytons"
 
-![](pics/threePagesCreated.png)  
+    The main configuration required is to specify the _output page_ for each collection. The _output page_ is the name of the Canvas page to which the collection's representation will be written.
 
-## Specify the collection's output page 
+    In this example, an output page is provided for each collection. This is not necessary. Only add output pages for the collections you wish to include in the Claytons version.
 
-This step links a collection to the page that was just created, enabling it be updated.
+    <figure markdown>
+    <figcaption>Configure Claytons by specifying the output page for Collections</figcaption>
+    <sl-animated-image src="../images/configureClaytons.gif" alt="Configure Claytons by specifying the output page for Collections">
+    </figure>
 
-It is done using the Collections configuration dialog and requires that you enter the name of the appropriate page as the _Output Page_. for a collection.
+=== "4. Generate Claytons"
 
-The following image shows progress in specifying the output pages for the example course. The _Output page_ sections have been circled in red. The _Why?_ collection has had its output page specified and there is a matching _Update_ button. The _What?_ collection has had its output page entered, but not yet finished. This is why there is no _Update_ button.
+    With everything configured, the final step is to generate the Claytons pages. This is done using the **Full "Claytons"** section of the collections configuration element. The main task is to choose [the _Navigation Bar Option_](../../reference/conceptual-model/representations/claytons/overview.md#navigation-bar-options) most appropriate.
 
-![](pics/specifyOutputPage.png)  
+    For the example, the aim is to emaulate _live_ Collections. Masking _Tabs_ the best navigation bar option.
 
-## Use Collections to update the pages
+    Once the option is chosen, Collections will create the page (if necessary) and update its content with static HTML.
 
-There are two methods for updating the pages:
+    <figure markdown>
+    <figcaption>Generate Claytons</figcaption>
+    <sl-animated-image src="../images/generateClaytons.gif" alt="Generate Claytons">
+    </figure>
 
-1. Update the _output page_ for a single collection; or,
-2. Full "Claytons".
 
-### Update the output page
 
-Used to update a single collection's output page.  Will not include the collection's navigation bar. Is done by clicking the _Update_ button next to a collection's _Output page_. 
 
-![](pics/useOutputUpdateAnimation.gif)
-
-### Full "Claytons"
-
-The "Full Claytons" differs from "update" in two ways:
-
-1. All _output pages_ are updated.
-2. Each _output page_ will contain the collection's representation **AND** a navigation bar that enables navigation between the pages.
-
-"Full Claytons" has its own _Update_ button in the Collections configuration dialog. Click this and Collections will update each page in turn. 
-
-The following image looks at each individual page before applying "Full Claytons". Showing the pages don't have any content. It then shows the process of applying "Full Claytons". Then it revisits one of the pages and reloads the page to see the updated content. The navigation bar - added by "Full Claytons" - is then used to navigate to the other pages.
-
-![](pics/fullClaytonsAnimation.gif)
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>
