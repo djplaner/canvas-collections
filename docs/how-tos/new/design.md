@@ -86,15 +86,23 @@ As you read, think about your course, your context, your design intent, and the 
 	</figure>
 
 === "What representation(s)?"
-### Reusing metadata in different representations
 
-Collections can use different representations to change visual appearance. For example, the following image (_AssessmentTable_ representation) is the same collection (partially) shown in the above image (_GriffithCards_ representation). It illustrates how a different representation reuses some metadata (description and date) and ignores other metadata (image, engage). It also shows how _additional metadata_ (e.g. _learning outcomes_ and _weighting_ can be used in one representation (assessment table) but ignored in another (Griffith Cards).
+	!!! question "What representation(s) do you want to use for the objects/activities?"
 
-![](pics/sameMetaDataAssessment.png)  
+	Collections provides a growing [list of representations](../../reference/conceptual-model/representations/overview.md) for collections. Representations 
+	
+	- provide an alternative visualisation to a collection's list of modules;
+	- can be quickly changed at any time without losing any information; and,
+	- may make use of different types of object meta data.
 
-### Adding different metadata - please suggest
+	Which representation is best will depend on your design intent and context. The following animated image demonstrates the process of changing a collection's representation between three different representations, including: _Assessment Table_, _Griffith Cards_, and _Collections Only_.
 
-This support will continue to be expanded over time. In particular, in response to your suggestions. One way to make a suggestion is to [raise an issue describing the suggestion](https://github.com/djplaner/canvas-collections/issues/new) on the Collections repository. 
+	<figure markdown>
+	<figcaption>Example changing a collection's representation</figcaption>
+	<sl-animated-image src="../images/changingRepresentations.gif" alt="Example changing a collection's representation">
+	</figure>
 
 
-=== "How best to represent them?"
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>
