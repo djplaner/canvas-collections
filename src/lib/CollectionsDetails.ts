@@ -457,7 +457,7 @@ export class CollectionsDetails {
         this.collections["VISIBILITY"] = "all";
       }
       delete this.collections["STATUS"];
-    } else {
+    } else if ( !this.collections.hasOwnProperty("VISIBILITY")){
       this.collections["VISIBILITY"] = "no-one";
     }
 

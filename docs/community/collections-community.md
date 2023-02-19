@@ -1,8 +1,17 @@
-# Canvas Collections Community
+# Collections Community
 
-Collections has only been possible due to the Canvas, Griffith University, and broader open source communities. They've provided the motivation, support, [related work](../about/related-work.md), knowledge, and tools that made Collections possible. Thank you.
+## Building on the shoulders of giants
 
-Similarly, for Collections to be truly valuable will depend on the community which contributes to it. Here are some early suggestions for how you can contribute.
+Collections has only been possible due to the Canvas, Griffith University, and broader open source communities. They've provided the motivation, support, [related work](../about/related-work.md), knowledge, and tools that made Collections possible. 
+
+🙏 Thank you.
+
+## Getting involved?
+
+!!! question "How can contribute to Collections?"
+
+	1. Using Collections? - Share your experience, report bugs, and ask for new features.
+	2. Modifying Collections? - Learn how to get started with Collections development and, please, contribute your work back.
 
 === "Using Collections?"
 

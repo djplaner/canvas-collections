@@ -1,10 +1,21 @@
 # Getting Started - Overview
 
-The first two steps in getting started with Canvas Collections are listed below. 
+!!! question "How do I get started with Canvas Collections?"
 
-!!! tip "Where next?"
+    There are three options below, your choice of
 
-    Once you have these basics, move onto the [how-tos](../how-tos/available.md). In particular, the how-tos for [navigating a Collections course](../how-tos/navigating/overview.md) and [adding Collections to a course](../how-tos/new/overview.md).
+    1. _Install Collections_ - dive straight in, install it, use it, learn it.
+    2. _Watch - Why, What, How?_ - watch 9 minute video demonstrating the why, what and how of Canvas Collections. 
+    3. _Learn - Collections101_ - learn the conceptual model underpinning Canvas Collections.
+
+!!! question "Then what?"
+
+    If you've installed Collections, then the growing [list of how-tos](../how-tos/available.md) may help, including:
+    
+    - How to [navigate Collections](../how-tos/navigate/overview.md); and,
+    - How to [add Collections to a course](../how-tos/new/overview.md).
+
+    Please also consider [contributing to the Collections community](../community/collections-community.md)
 
 === "Install Collections"
 
@@ -21,9 +32,22 @@ The first two steps in getting started with Canvas Collections are listed below.
         [![Collections Configuration container circled - is it installed?](images/isItInstalled.png)](images/isItInstalled.png)  
         </figure>
 
-=== "Collections101 - Collections conceptual model"
+=== "Watch - Why, What, How?"
+
+    <div class="div-iframe">
+	<iframe class="responsive-iframe" src="https://www.youtube.com/embed/_oSmPTUOhh8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+
+=== "Learn - Collections101"
 
     Understanding [the conceptual model](./101/overview.md) underpinning Canvas Collections will help you understand the relationship with Canvas modules and how to use Collections.
+
+    | 101 section | Description |
+    | --- | --- |
+    | [Overview](101/overview.md) | Overview of the concepts underpinning Collections and its interface |
+    | [Concepts](101/concepts.md) | Introduction to the main concepts of Collections: Canvas Modules; Collections; Representations; Objects; and Claytons. |
+    | [Interface](101/interface.md) | Description of Collections' [navigation](101/navigation.md) and [configuration](101/configuration.md) interfaces.|
+
 
 
 

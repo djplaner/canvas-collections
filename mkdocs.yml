@@ -32,6 +32,8 @@ theme:
 
 plugins:
   - search
+  - social:
+      cards: !ENV [CARDS, false]
 
 extra_css: 
   - stylesheets/extra.css 
@@ -78,19 +80,13 @@ nav:
       - Interface: 
         - Navigation: getting-started/101/interface/navigation.md
         - Configuration: getting-started/101/interface/configuration.md
-    - 3. Design for Collections:
-      - 🚧 Configuration: getting-started/configure/configuration.md
-      - 🚧 Collections: getting-started/configure/collections.md
-      - 🚧 Modules: getting-started/configure/modules.md
-    - 4. 🚧 Use Collections: getting-started/use/types.md
-#    - 5. 🚧 Configure Claytons Collections:
   - 'How-tos': 
     - Available how-tos: how-tos/available.md
-    - Navigating Collections:
+    - Navigate Collections:
       - Overview: how-tos/navigating/overview.md
       - "Live Collections": how-tos/navigating/navigating-live-collections.md
       - "Claytons Collections": how-tos/navigating/navigating-claytons-collections.md
-    - Adding Collections to a course:
+    - Add Collections to a course:
       - Overview: how-tos/new/overview.md
       - Before & after: how-tos/new/before-and-after.md
       - Design: how-tos/new/design.md
@@ -98,13 +94,13 @@ nav:
       - Configure Modules: how-tos/new/configure-modules.md
       - Configure Representations: how-tos/new/configure-representations.md
       - Set up "Claytons": how-tos/new/set-up-claytons.md
-    - Updating Collections:
+    - Update Collections:
       - 🚧 Coming soon: how-tos/changes/overview.md
 #      - Add a collection: how-tos/changes/add-a-collection.md
 #      - Delete a collection: how-tos/changes/delete-a-collection.md
 #      - Add a module: how-tos/changes/add-a-module.md
-    - Collections & course copy:
-      - Course copy process: how-tos/course-copy/process.md
+    - Copy Collections:
+      - 🚧 Course copy process: how-tos/course-copy/process.md
 #    - ⚗️ Advanced:
 #      - Multi-collection, one page Claytons: how-tos/advanced/multi-collection-one-page.md
 #      - Fix Claytons Card CSS: how-tos/advanced/fix-claytons-card-css.md
@@ -116,10 +112,10 @@ nav:
           - Live Collections: reference/lifecycle/visibility/live.md
           - Claytons Collections: reference/lifecycle/visibility/claytons.md
         - 🚧 Student view: reference/lifecycle/student-view.md  # show both claytons and live
-        - 🚧 Staff:
-          - Staff view: reference/lifecycle/staff-view.md
+        - Staff:
+          - 🚧 Staff view: reference/lifecycle/staff-view.md
           - Edit: reference/lifecycle/edit.md
-          - Module Configuration: reference/lifecycle/module-configuration.md
+          - 🚧 Module Configuration: reference/lifecycle/module-configuration.md
         - Course copy: 
           - Overview: reference/lifecycle/course-copy/overview.md
           - Import process: reference/lifecycle/course-copy/import.md
@@ -145,7 +141,7 @@ nav:
           - Local development: 
             - Overview: reference/development/local-development/overview.md
   - 'Community': 
-     - Getting involved: community/collections-community.md
+     - Collections Community: community/collections-community.md
   - 'About':
      - Related work: about/related-work.md
      - Rationale: about/rationale.md
