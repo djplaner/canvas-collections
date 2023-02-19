@@ -1,6 +1,14 @@
 # Navigating Collections: Overview
 
-Collections aims to improve the navigation experience of the Canvas Modules page. To do so it provides two different navigation experiencs: _Live_ and _Claytons_.  The following provide an introduction to what both experiences are like.
+!!! question "How do you navigate Collections?"
+
+	Collections aims to improve the navigation experience of the Canvas Modules page. 
+	
+	What does that look like? How do you navigate a course using Collections?
+	
+## Two navigation experiences
+
+Collections provides two (slightly) different navigation experiences.
 
 === "_Live_ Collections"
 

@@ -124,13 +124,14 @@ nav:
       - Conceptual model:
         - 🚧 Collections: 
           - Overview: reference/conceptual-model/collections/overview.md
+          - 🚧 Live: reference/conceptual-model/collections/live.md
+          - 🚧 Full Claytons: reference/conceptual-model/collections/full-claytons.md
+          - 🚧 Claytons: reference/conceptual-model/representations/claytons/overview.md
           - Visibility: reference/conceptual-model/collections/visibility.md
           - Existing collections: reference/conceptual-model/collections/existing-collections.md
           - Add a new collection: reference/conceptual-model/collections/add-new-collection.md
-          - Full Claytons: reference/conceptual-model/collections/full-claytons.md
         - Representations:
           - Representations: reference/conceptual-model/representations/overview.md
-          - Claytons: reference/conceptual-model/representations/claytons/overview.md
         - Objects (Modules):
           - Objects: reference/conceptual-model/objects/overview.md
           - General: reference/conceptual-model/objects/general.md
@@ -143,8 +144,8 @@ nav:
             - Overview: reference/development/local-development/overview.md
   - 'Community': 
      - Getting involved: community/collections-community.md
-     - Related work: community/related-work.md
   - 'About':
+     - Related work: about/related-work.md
      - Rationale: about/rationale.md
      - 'Latest Version': about/latest-version.md
 #  - ⚰️ Features & Use: 

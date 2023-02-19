@@ -19,7 +19,7 @@ This explanation divides the conceptual model into two parts:
 		The use of upper or lower case C is deliberate (and perhaps a touch patchy) in this site, the difference is
 
 		- **C**ollections - refers to _Canvas Collections_, the entire tool.
-		- **c**ollections - refers to one or more _collection_ of Canvas modules, which Collections (the tool) helps you create and manage.
+		- **c**ollections - refers to one or more _collection_ of Canvas modules you create and manage using Collections (the tool).
 
 	Collections is made up of [four main concepts](concepts.md). The below provides a summary. For more detail see the [concepts page](concepts.md).
 

@@ -1,11 +1,16 @@
 # Navigating _Live_ Collections
 
-_Live Collections_ adds navigation elements to the Canvas Modules page to support two main navigation tasks with _Live_ Collections:
+!!! question "How do you navigate _live_ Collections?"
 
-1. Switching between collections.
-2. Navigating to a module.
+	[_Live Collections_](../../reference/conceptual-model/collections/live.md) is where Collections actively modifies the Canvas modules page as you are viewing it (it's a live modification).
+	
+	1. What does that look like? What are the navigation elements you see?
+	2. How do you use _live_ Collections to navigate a course's modules?
+	    - How do you switch between collections?
+	    - How do you navigate to a specific module?
 
-=== "_Live_ Collections navigation elements"
+
+=== "What does it look like?"
 
 	The following image shows the navigation elements added to the Canvas Modules page by _Live_ Collections. See the [Navigation 101 page](../../../docs/getting-started/101/interface/navigation.md) for more details.
 
@@ -14,7 +19,7 @@ _Live Collections_ adds navigation elements to the Canvas Modules page to suppor
 	[![Screenshot of Canvas modules page with Collections' navigation elements](../../../getting-started/101/images/navigationInterfaceElements.png)](../../../getting-started/101/images/navigationInterfaceElements.png)
 	</figure>
 
-=== "Switching between collections"
+=== "How do you switch between collections?"
 
 	The Collections navigation bar displays a list of all the _collections_ of modules in the course. You navigate between collections by using the navigation bar.
 
@@ -30,7 +35,7 @@ _Live Collections_ adds navigation elements to the Canvas Modules page to suppor
 	</figure>
 
 
-=== "Navigating to a module"
+=== "How do you navigate to a module?"
 
 	Canvas modules are grouped into Collections. To navigate to a specific module, you must first navigate to the collection that contains the module. Each collection may have an additional visual representation or the modules it contains. Below the representation will be the standard Canvas list of modules, including just the modules allocated to the collection.
 	
@@ -40,7 +45,6 @@ _Live Collections_ adds navigation elements to the Canvas Modules page to suppor
 	<figcaption>Finding a module within a collection using _Live_ Collections</figcaption>
 	  	<sl-animated-image src="../images/findingModule.gif" alt="Finding a module within a collection with Live collections">
 	</figure>
-
 
 
 

@@ -1,9 +1,13 @@
 # Navigating _Claytons_ Collections
 
-_Claytons_ Collections generates collections' representations on a [normal Canvas page](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-are-Pages/ta-p/5) (i.e. not on the Modules view). This creates some differences with _Live_ Collections, but the same two navigtation tasks apply:
+!!! question "How do you navigate _Claytons_ Collections?"
 
-1. Switching between collections.
-2. Navigating to a module
+    [_Claytons_ Collections](../../reference/conceptual-model/collections/full-claytons.md) is where Collections has been used to [generate full navigation using pages](https://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/). i.e. it creates static HTML representations of the Collections' navigation interface on a [normal Canvas page](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-are-Pages/ta-p/5) 
+
+	1. What does _Claytons_ Collections look like? What navigation elements are there?
+	2. How do you use _Claytons_ Collections to navigate a course's modules?
+	    - How do you switch between collections?
+	    - How do you navigate to a specific module?
 
 !!! warning "_Claytons_ may not always be up to date"
 
@@ -12,7 +16,7 @@ _Claytons_ Collections generates collections' representations on a [normal Canva
 	Hence it is important for the teacher/designer using Claytons to update the Claytons view when other changes are made.
 
 
-=== "_Claytons_ Navigation Elements"
+=== "What does it look like?"
 
 	_Claytons_ Collections provides almost all the same navigation elements as _Live_ Collection. There are two differences:
 
@@ -27,7 +31,7 @@ _Claytons_ Collections generates collections' representations on a [normal Canva
 	</figure>
 
 
-=== "Switching between collections"
+=== "How do you switch between collections?"
 
 	In _Claytons_ Collections, switching between collections is also done with the navigation bar.  However, as it provides none of the smarts of the _Live_ version.
 
@@ -37,7 +41,7 @@ _Claytons_ Collections generates collections' representations on a [normal Canva
 	  	<sl-animated-image src="../images/switchCollectionsClaytons.gif" alt="Switching between collections with Claytons collections" />
 	</figure>
 
-=== "Navigating to a module"
+=== "How do you navigate to a module"
 
 	Navigating to a module from _Claytons_ Collections involves clicking on one of the module representations. This will navigate to the Modules view with the chosen module immediately visible.
 

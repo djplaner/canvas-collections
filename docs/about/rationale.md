@@ -1,6 +1,6 @@
 # Rationale - Canvas Collections
 
-## Search for usable short arc design tools that scale
+## Usable short arc design tools that scale
 
 The underpinning rationale for Canvas Collections and related tools is the search for usable, short arc design tools that can scale. Tools that will help higher education deal with the challenge of improving the quality of learning and teaching while faced with reduced funding and increasing complexity.
 
@@ -23,9 +23,9 @@ See the [design principles for Contextually Appropriate Scaffolding Assemblages 
 	1. So _easy_ to use that people _can_ use it.
 	2. So _productive_ that people _will_ use it.
 
-=== "Scale as adaptation, reinvention and generativity"
+=== "Scale as adaptation..."
 
-	There is a lack of conceptual clarity around scale (Morel et al, 2019). Scale does not mean just consistency. The following table summarises Morel et al's (2019) scale typology. 
+	Improving the quality of learning and teaching at scale is a key issue for contemporary higher education (Ryan et al, 2021). However, there is a lack of conceptual clarity around scale which Morel and colleagues (2019) seek to address by providing a typology of scale (summarised in the following table)
 
 	| Scale conceptualisation | Description |
 	| --- | --- |
@@ -34,9 +34,11 @@ See the [design principles for Contextually Appropriate Scaffolding Assemblages 
 	| Adaptation | Widespread use of an innovation that is modified in response to local needs. | 
 	| Reinvention | Intentional and systematic experimentation with an innovation. Innovation as catalyst for further innovation. |
 
-	One-size-fits-all approaches don't work in education (Clark & Dede, 2009). 
+	This work adopts the position of Clark & Dede (2009) that one-size-fits-all approaches don't work in education. No-one design is going to work with fidelity across settings and produce the expected outcomes. Instead, it is essential that designs - like Canvas Collections - are designed to support adaptation and reinvention. That they are generative - the capacity of a technology to generate unprompted change in varied and uncoordinated groups (Zittrain, 2006). Drawing on [Resnick's (2020) metaphor](https://mres.medium.com/designing-for-wide-walls-323bdb4e7277)), Collections aims to provide a:
 
-	Generativity is the capacity of a technology to generate unprompted change in varied and uncoordinated groups (Zittrain, 2006, p. 1980)
+	- Low floor - easy to get started;
+	- High ceiling - enable more advanced usage, including reinvention; and,
+	- Wide walls - support for multiple diverse uses (adaptation)
 
 
 ## References

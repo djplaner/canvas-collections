@@ -1,6 +1,6 @@
 # Canvas Collections Community
 
-Collections has only been possible due to the Canvas, Griffith University, and broader open source communities. They've provided the motivation, support, [related work](./related-work.md), knowledge, and tools that made Collections possible. Thank you.
+Collections has only been possible due to the Canvas, Griffith University, and broader open source communities. They've provided the motivation, support, [related work](../about/related-work.md), knowledge, and tools that made Collections possible. Thank you.
 
 Similarly, for Collections to be truly valuable will depend on the community which contributes to it. Here are some early suggestions for how you can contribute.
 

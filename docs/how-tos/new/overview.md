@@ -1,35 +1,26 @@
-# Add collections to a course - overview
+# Add Collections to a course - overview
 
-How do you design and modify a Canvas course to use Collections? Follow this _how-to_ to learn.
 
-=== "Before & After"
+!!! question "How do you add a course to Collections?"
 
-	Start by getting an understanding of what a Canvas course site will look like [before and after](./before-and-after.md) Collections is configured for it.
+	Collections provides the ability to improve the Canvas modules page, begging the question
 
-	Revise the basics of Collections and get an overview of what you will do to configure your course.
+	How do you design and modify a Canvas course to use Collections? 
 
-=== "Design"
+The answer to this question involves the steps outlined in the table below.
 
-	First, you need to [design](./design.md) how your course site will use Collections.
+!!! tip "The difference between _**C**ollections_ and _**c**ollections_"
 
-=== "Configure collections"
+	The use of upper or lower case C is deliberate (and perhaps a touch patchy), the difference is
 
-	Key to using Collections is identifying the _collections_ appropriate for your course.
-	
-	Walk through the process of [how to add and configure collections](./configure-collections.md) to a course.
+	- **C**ollections - refers to _Canvas Collections_, the entire tool.
+	- **c**ollections - refers to one or more _collection_ of Canvas modules you create and manage using Collections (the tool).
 
-=== "Configure Modules/Objects"
-
-	Once you've added some collections, you can allocate Canvas modules to those collections. 
-
-	Walk through that process, as well as the other options to [configure the modules/objects](./configure-modules.md) for your course.
-
-=== "Select representations"
-
-	For each _collection_, [select the representations](./select-representations.md) the best fits your design intent. You can always change it later.
-
-=== "Set up 'Claytons'"
-
-	If your unable to install Collections in Canvas, the Claytons mode of Collections can help.
-	
-	Walk through the process of [setting up "Claytons"](./claytons.md) and use Collections create/update static Canvas page(s).
+| Step | Description |
+| ---- | ----------- |
+| [Before & After](./before-and-after.md) | <p>Understand what a Canvas course site will look like before and after Collections is configured. Revise some of Collections basics and get an overview of what you will to configure your course.</p> |
+| [Design](./design.md) | <p>Design how your course site will use Collections.</p> |
+| [Configure collections](./configure-collections.md) | <p>Use Collections to add the initial set of collections for your course.</p> |
+| [Configure objects](./configure-modules.md) | <p>Use Collections to provide more information about each Canvas module to start their transformation from vanilla Canvas module to an object specific to your course design.</p> |
+| [Select representations](./select-representations.md) | <p>Use Collections to select the best representation for each collection.</p> |
+| [Set up 'Claytons'](./claytons.md) | <p>Use Collections to create/update static Canvas page(s) for your course. (if needed)</p> |
