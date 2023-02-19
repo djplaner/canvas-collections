@@ -24,7 +24,7 @@ Assuming you've already [configured Collections](./overview.md) for your course,
 The following steps demonstrate how to convert the example course into a Claytons course. The following images show the before and after states of the example course.
 
 <figure markdown>
-<figcaption>_Live_ Collections to be emulated with _Claytons_</figcaption>
+<figcaption><em>Live</em> Collections to be emulated with <em>Claytons</em></figcaption>
 <sl-image-comparer>
   <img slot="after" src="../images/afterCollections.gif" alt="Live Collections to be emulated with Claytons">
   <img slot="before" src="../images/afterClaytons.gif" alt="Claytons version">
