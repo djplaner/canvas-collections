@@ -14,6 +14,10 @@ Canvas Collections seeks to address long-term limitations in Canvas. Limitations
 
 ## Collections
 
+### Module compactor
+
+The [Module Compactor](https://www.youtube.com/watch?v=r-j3AgH9Obo&t=24s) is a Chrome extension that offers different functionality to compress and group modules.
+
 ### Filter modules
 
 [Module filters](https://community.canvaslms.com/t5/Canvas-Developers-Group/Module-Filters/ba-p/278855) - [blog post](https://lyonsinbeta.com/2019/6/experiments-in-product) - JS (from [another instructure employee](https://lyonsinbeta.com/)) to filter items on Modules page. Has some discussion about adding this type of functionality. [github](https://github.com/lyonsinbeta/canvas-module-filters). Doesn't appear to worry/handle dynamic loading of Module content

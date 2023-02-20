@@ -151,9 +151,13 @@
             >
               <div style="margin:0; font-size:0.8rem">
                 <p>
-                  <a href={getModuleUrl(module.id)}>
+                  {#if !$collectionsStore["MODULES"][module.id].fyi}
+                    <a href={getModuleUrl(module.id)}>
+                      {@html $collectionsStore["MODULES"][module.id].name}
+                    </a>
+                  {:else}
                     {@html $collectionsStore["MODULES"][module.id].name}
-                  </a>
+                  {/if}
                 </p>
               </div>
             </td>
@@ -270,10 +274,13 @@
               >
               <div class="cc-table-cell-text">
                 <p>
-                  <a href={getModuleUrl(module.id)}>
-                    <!-- {$modulesStore[module.id].name} -->
+                  {#if !$collectionsStore["MODULES"][module.id].fyi}
+                    <a href={getModuleUrl(module.id)}>
+                      {$collectionsStore["MODULES"][module.id].name}
+                    </a>
+                  {:else}
                     {$collectionsStore["MODULES"][module.id].name}
-                  </a>
+                  {/if}
                 </p>
               </div>
             </td>
@@ -281,9 +288,6 @@
               <span class="cc-responsive-table__heading" aria-hidden="true"
                 >Description</span
               >
-              {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
-                <div class="cc-published">Unpublished</div>
-              {/if}
               {#if $configStore["editMode"] && $collectionsStore["MODULES"][module.id].collection !== collection}
                 <div class="cc-unallocated">No collection allocated</div>
               {/if}
@@ -292,6 +296,22 @@
                   {@html $collectionsStore["MODULES"][module.id].description}
                 </p>
               </div>
+              {#if $collectionsStore["MODULES"][module.id].fyi}
+                {#if $collectionsStore["MODULES"][module.id].fyiText !== "" || $configStore["editMode"]}
+                  <div class="cc-card-fyi">
+                    <span class="cc-fyi-text">
+                      {#if $collectionsStore["MODULES"][module.id].fyiText}
+                        {@html $collectionsStore["MODULES"][module.id].fyiText}
+                      {:else}
+                        (<em>FYI, no FYI text</em>
+                      {/if}
+                    </span>
+                  </div>
+                {/if}
+              {/if}
+              {#if $configStore["editMode"] && !$collectionsStore["MODULES"][module.id].published}
+                <div class="cc-published">Unpublished</div>
+              {/if}
             </td>
             {#if numWeighting > 0}
               <!-- && !$configStore["editMode"]} -->
@@ -547,5 +567,12 @@
 
   .cc-learning-outcomes-col {
     width: 10%;
+  }
+
+  .cc-card-fyi {
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    font-size: x-small;
+    text-align: center;
   }
 </style>
