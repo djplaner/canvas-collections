@@ -3,6 +3,9 @@
    * Generate a navigation interface for the current settings of collections
    * TODO
    */
+
+   import "luxbar/build/luxbar.min.css";
+
   import { collectionsStore, configStore } from "../stores";
   import CollectionRepresentation from "./CollectionRepresentation.svelte";
 
@@ -10,6 +13,8 @@
 
   let collectionNames = [];
   let activeCollection = {};
+
+  const LUXBAR = true
 
   $: {
     collectionNames = $collectionsStore["COLLECTIONS_ORDER"];
@@ -38,6 +43,44 @@
   }
 </script>
 
+{#if LUXBAR} 
+<header id="luxbar" class="luxbar-default">
+    <input type="checkbox" class="luxbar-checkbox" id="luxbar-checkbox"/>
+    <div class="luxbar-menu luxbar-menu-right luxbar-menu-material-red">
+        <ul class="luxbar-navigation">
+            <li class="luxbar-header">
+                <label class="luxbar-hamburger luxbar-hamburger-doublespin" 
+                id="luxbar-hamburger" for="luxbar-checkbox"> <span></span> </label>
+            </li>
+<!--            <li class="luxbar-item"><a href="#">Item 1</a></li>
+
+            <li class="luxbar-item"><a href="#">Item 2</a></li>
+
+            <li class="luxbar-item"><a href="#">Item 3</a></li>
+
+            <li class="luxbar-item"><a href="#">Item 4</a></li> -->
+
+      {#each collectionNames as collectionName, i}
+      {#if !($collectionsStore["COLLECTIONS"][collectionName].hide && !$configStore["editMode"])}
+        <li class="luxbar-item {activeCollection[collectionName]}">
+          <a
+            href="#cc-collection-{i}"
+            on:click|stopPropagation={() => navigateCollections(collectionName)}
+            >{collectionName}</a
+          >
+          {#if $collectionsStore["COLLECTIONS"][collectionName].hide}
+            <div class="cc-collection-hidden">Hidden</div>
+          {/if}
+        </li>
+      {/if}
+    {/each}
+
+        </ul>
+    </div>
+</header>
+
+{:else} 
+
 <div class="cc-nav">
   <ul>
     {#each collectionNames as collectionName, i}
@@ -56,6 +99,8 @@
     {/each}
   </ul>
 </div>
+
+ {/if} 
 
 <style>
   .cc-content {

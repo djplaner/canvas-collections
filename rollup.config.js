@@ -9,6 +9,9 @@ import sveltePreprocess from 'svelte-preprocess';
 import MagicString from 'magic-string';
 import path from 'path';
 import copy from 'rollup-plugin-copy';
+import json from '@rollup/plugin-json';
+//import externalGlobals from "rollup-plugin-external-globals";
+//import builtins from 'rollup-plugin-node-builtins';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -31,6 +34,7 @@ export default {
 				dev: !production
 			}
 		}),
+//		builtins(),
 
 		css({
 			output: 'canvas-collections.css'
@@ -72,6 +76,12 @@ export default {
 			include: 'node_modules/**',
 			esmExternals: true
 		}),
+/*		externalGlobals( {
+			"emitter": "emitter",
+			"async_hooks": "async_hooks",
+			"coffee-script": "coffeeScript",
+		}), */
+		json(),  
 		typescript({
 			rootDir: './src',
 			sourceMap: !production,

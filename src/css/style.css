@@ -1,4 +1,3 @@
-
 /*
 CSS file designed to improve Claytons design. 
 
@@ -51,7 +50,8 @@ To use
 }
 
 /*.claytons-clickable-card:hover { */
-.claytons-card-banner-container:hover, .cc-card-label:hover {
+.claytons-card-banner-container:hover,
+.cc-card-label:hover {
 	/*cursor: pointer; */
 	opacity: 0.8;
 }
@@ -125,7 +125,7 @@ To use
 
 .claytons-card-description:hover {
 	cursor: auto !important;
-} 
+}
 
 .claytons-card-description {
 	font-size: 0.75rem;
@@ -281,102 +281,105 @@ To use
 
 .claytons-gu-engage {
 	text-decoration: none;
-} 
+}
 
 .claytons-card-link-title {
 	text-decoration: none !important;
 	color: inherit !important;
 }
 
-  .claytons-assessment-table-fyi-text {
-    width:100%;
-    padding: 0.25rem;
-    font-size: x-small;
-    text-align: center;
-    color: white;
-    background: black;
-  }
+.claytons-assessment-table-fyi-text {
+	width: 100%;
+	padding: 0.25rem;
+	font-size: x-small;
+	text-align: center;
+	color: white;
+	background: black;
+}
 
 
-  .cc-card-date-dual-date {
-    text-align: center;
-    padding-top: 0.25rem;
-    align-items: stretch;
-    display: flex;
-    border-left-width: 1px;
-    border-right-width: 1px;
-    border-bottom-right-radius: 0.25rem;
-    border-bottom-left-radius: 0.25rem;
-    border-color: black;
-  }
+.cc-card-date-dual-date {
+	text-align: center;
+	padding-top: 0.25rem;
+	align-items: stretch;
+	display: flex;
+	border-left-width: 1px;
+	border-right-width: 1px;
+	border-bottom-right-radius: 0.25rem;
+	border-bottom-left-radius: 0.25rem;
+	border-color: black;
+}
 
-  .cc-card-date-date-from {
-    width: 50%;
-  }
+.cc-card-date-date-from {
+	width: 50%;
+}
 
-  .cc-card-date-date-to {
-    width: 50%;
-  }
+.cc-card-date-date-to {
+	width: 50%;
+}
 
-  .cc-card-date-time-from {
-    width: 50%;
-  }
-  .cc-card-date-time-to {
-    width: 50%;
-  }
+.cc-card-date-time-from {
+	width: 50%;
+}
 
-  .cc-card-date-day {
-    font-size: 0.7rem;
-  }
+.cc-card-date-time-to {
+	width: 50%;
+}
 
-  .cc-card-date-day-from {
-    width: 50%;
-  }
-  .cc-card-date-day-to {
-    width: 50%;
-  }
+.cc-card-date-day {
+	font-size: 0.7rem;
+}
 
-  .cc-card-date-dual-day {
-    display: flex;
-    font-size: 0.7rem;
-  }
+.cc-card-date-day-from {
+	width: 50%;
+}
 
-    .cc-card-date-dual-month {
-    text-align: center;
-    align-items: stretch;
-    display: flex;
-    color: white;
-    background-color: red;
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    border-color: black;
-    border-top-width: 1px;
-  }
+.cc-card-date-day-to {
+	width: 50%;
+}
 
-  .cc-card-date-month-from {
-    width: 50%;
-  }
-  .cc-card-date-month-to {
-    width: 50%;
-  }
+.cc-card-date-dual-day {
+	display: flex;
+	font-size: 0.7rem;
+}
+
+.cc-card-date-dual-month {
+	text-align: center;
+	align-items: stretch;
+	display: flex;
+	color: white;
+	background-color: red;
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
+	border-color: black;
+	border-top-width: 1px;
+}
+
+.cc-card-date-month-from {
+	width: 50%;
+}
+
+.cc-card-date-month-to {
+	width: 50%;
+}
 
 
-  .cc-object-fit-cover {
-    object-fit: cover;
-  }
+.cc-object-fit-cover {
+	object-fit: cover;
+}
 
-  .cc-object-fit-contain {
-    object-fit: contain;
-  }
+.cc-object-fit-contain {
+	object-fit: contain;
+}
 
-  .cc-object-fit-fill {
-    object-fit: fill;
-  }
+.cc-object-fit-fill {
+	object-fit: fill;
+}
 
-  .cc-object-fit-scale-down {
-    object-fit: scale-down;
-  }
+.cc-object-fit-scale-down {
+	object-fit: scale-down;
+}
 
-  .cc-object-fit-none {
-    object-fit: none;
-  }
+.cc-object-fit-none {
+	object-fit: none;
+}

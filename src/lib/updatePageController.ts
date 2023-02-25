@@ -19,6 +19,8 @@
 
 import CollectionRepresentation from "../components/CollectionRepresentation.svelte";
 
+//import {juice } from "juice";
+
 import { get } from "svelte/store";
 import { configStore, collectionsStore } from "../stores";
 
@@ -177,8 +179,9 @@ export class updatePageController {
           this.collectionsStore["COLLECTIONS"][collectionName].hasOwnProperty(
             "outputPage"
           ) &&
-          this.collectionsStore["COLLECTIONS"][collectionName].outputPage !== ""
-          && !this.collectionsStore["COLLECTIONS"][collectionName].hide
+          this.collectionsStore["COLLECTIONS"][collectionName].outputPage !==
+            "" &&
+          !this.collectionsStore["COLLECTIONS"][collectionName].hide
         ) {
           return collectionName;
         }
@@ -591,20 +594,37 @@ export class updatePageController {
       // remove spaces from collectionName
       let escCollectionName = collectionName.replace(/ /g, "-");
 
-      navBarHTML = `${navBarHTML}
+/*      navBarHTML = `${navBarHTML}
+      <li class="luxbar-header">
+        <a href="#cc-output-${escCollectionName}">${collectionName}</a>
+      </li>
+      `; */
+
+            navBarHTML = `${navBarHTML}
 <li style="display: table-cell; width: 100%; float: none;">
     <a style="float: none;text-decoration: none; display: block; text-align: center; padding: 1.5em 1em; font-size: 1.3em;white-space:break-spaces;" 
-        href="#cc-output-${escCollectionName}">${collectionName}</a></li>`;
+        href="#cc-output-${escCollectionName}">${collectionName}</a></li>`; 
     }
 
-    return `
+/*    return `
+  <div id="cc-nav">
+    <div class="luxbar-menu luaxbar-menu-right luxbar-menu-material-red">
+      <ul class="luxbar-navigation">
+        ${navBarHTML}
+      </ul>
+    </div>
+    ${collectionDivHTML}
+  </div>
+
+    `; */
+        return `
 <div id="cc-nav" class="enhanceable_content tabs" style="font-size: small;">
   <ul class="cc-nav" style="list-style-type: none; margin: 0; padding: 0; overflow: hidden; background-color: #eeeeee; display: table; table-layout: fixed; width: 100%;">
     ${navBarHTML}
   </ul>
 
   ${collectionDivHTML}
-</div>`;
+</div>`; 
   }
 
   /**
