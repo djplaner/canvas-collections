@@ -155,8 +155,8 @@ To use
 }
 
 .claytons-card-fyi {
-	position: absolute;
-	bottom: 0;
+	/*position: absolute;  Canvas RCE removes the bottom property
+	bottom: 0; */
 	background: rgba(0, 0, 0, 0.75);
 	color: white;
 	width: 100%;

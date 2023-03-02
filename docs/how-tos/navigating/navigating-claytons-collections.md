@@ -13,7 +13,9 @@
 
 	_Claytons_ Collections is a static representation of the collections. It is not automatically updated when changes are made to either a course's modules or Collections configuration. This means that _Claytons_ may not always be up to date. 
 
-	Hence it is important for the teacher/designer using Claytons to update the Claytons view when other changes are made.
+	Hence it is important for the teacher/designer using Claytons to update the Claytons view when other changes are made. 
+
+	❗ This includes after a course copy
 
 
 === "What does it look like?"
