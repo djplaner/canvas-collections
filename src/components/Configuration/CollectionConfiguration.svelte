@@ -37,13 +37,19 @@
     }
   });
 
-  const modules = getCollectionCanvasModules(collectionName);
-  let moduleCount = modules.length;
-  let moduleName = moduleCount === 1 ? "module" : "modules";
+  let modules = {}
+  let moduleCount = 0
+  let moduleName = "modules"
+  let availableRepresentations : any
+  $: {
+    modules = getCollectionCanvasModules(collectionName);
+    moduleCount = modules.length;
+    moduleName = moduleCount === 1 ? "module" : "modules";
 
-  let availableRepresentations = Object.getOwnPropertyNames(
+    availableRepresentations = Object.getOwnPropertyNames(
     $representationsStore
-  );
+    );
+  }
 
   //  let defaultCollection = false
   //  $: defaultCollection = $collectionsStore["DEFAULT_COLLECTION"] === collectionName
