@@ -25,6 +25,8 @@
     "auto",
   ];
 
+  let module = $collectionsStore["MODULES"][moduleId];
+
   /**
    * @function updateBannerColour
    * @description Called when user changes shoelace colour picker
@@ -88,8 +90,6 @@
       );
       return;
     }
-
-
 
     if (iframeValue !== sanitisedValue) {
       // convert iframeValue to xmp but wrap at 40 characters
@@ -169,6 +169,12 @@ Do you wish to proceed?`
       tooltip: "Provide the URL for an image to associate with this module.",
       href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/banner/#image-url",
     },
+    moduleImageBackgroundColour: {
+      tooltip:
+        "Use the current banner colour to change the image background colour from white.",
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/banner/#image-background-colour",
+    },
+
     moduleIframe: {
       tooltip: `<p>Provide an iframe (embed HTML) to place in a card's banner section.</p> <p>Notes:</p>
         <ol>
@@ -233,7 +239,7 @@ Do you wish to proceed?`
         <select
           id="cc-module-config-{moduleId}-imageSize"
           bind:value={$collectionsStore["MODULES"][moduleId].imageSize}
-             on:change={() => ($configStore["needToSaveCollections"] = true)}
+          on:change={() => ($configStore["needToSaveCollections"] = true)}
         >
           {#each imageScaleOptions as imageScaleOption}
             <option value={imageScaleOption}>{imageScaleOption}</option>
@@ -259,11 +265,52 @@ Do you wish to proceed?`
         <input
           class="cc-module-config-input"
           on:keydown|stopPropagation
-             on:change={() => ($configStore["needToSaveCollections"] = true)}
+          on:change={() => ($configStore["needToSaveCollections"] = true)}
           type="text"
           id="cc-module-config-{moduleId}-image"
           bind:value={$collectionsStore["MODULES"][moduleId].image}
         />
+      </span>
+    </div>
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label
+          for="cc-module-config-collection-representation-{moduleId}-image-backgroundColour"
+        >
+          Background Colour
+        </label>
+        <sl-tooltip id="cc-about-module-image-url">
+          <div slot="content">
+            {@html HELP.moduleImageBackgroundColour.tooltip}
+          </div>
+          <a
+            target="_blank"
+            href={HELP.moduleImageBackgroundColour.href}
+            rel="noreferrer"><i class="icon-question cc-module-icon" /></a
+          >
+        </sl-tooltip>
+      </span>
+      <span class="cc-module-input">
+        <input
+          on:keydown|stopPropagation
+          on:change={() => ($configStore["needToSaveCollections"] = true)}
+          type="checkbox"
+          id="cc-module-config-{moduleId}-image"
+          bind:checked={$collectionsStore["MODULES"][moduleId]
+            .imageBackgroundColour}
+          on:change={() => ($configStore["needToSaveCollections"] = true)}
+        />
+        {#if $collectionsStore["MODULES"][moduleId].imageBackgroundColour}
+            {#if $collectionsStore["MODULES"][moduleId].bannerColour !== ""}
+              <span
+                class="cc-banner-colour"
+                style="background: {$collectionsStore['MODULES'][moduleId]
+                  .bannerColour}">&nbsp;&nbsp;</span
+              >
+            {:else}
+              <span class="cc-banner-colour">No colour set</span>
+            {/if}
+        {/if}
       </span>
     </div>
   </sl-tab-panel>
@@ -325,7 +372,7 @@ Do you wish to proceed?`
 
   .cc-module-form {
     display: grid;
-    grid-template-columns: 8em 1fr;
+    grid-template-columns: 10em 1fr;
     grid-gap: 1em;
   }
 
@@ -347,5 +394,13 @@ Do you wish to proceed?`
   .cc-module-iframe {
     width: 90%;
     height: 10em;
+  }
+
+  .cc-banner-colour {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    margin-top: 0.5em;
   }
 </style>

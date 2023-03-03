@@ -490,6 +490,9 @@ export class CollectionsDetails {
         if (!module.hasOwnProperty("configVisible")) {
           module.configVisible = false;
         }
+        if (!module.hasOwnProperty("imageBackgroundColour")) {
+          module.imageBackgroundColour = false;
+        }
         if (!module.hasOwnProperty("actualNum")) {
           module.actualNum = "";
         }
@@ -1003,6 +1006,7 @@ export class CollectionsDetails {
       banner: "image",
       image: "",
       imageSize: "",
+      imageBackgroundColour: false,
       includePage: "",
       includePageAfter: false,
       outputPage: "",

@@ -1,63 +1,76 @@
 ## Banner
 
-The card design for Collection's cards representation uses the idea of a banner as the top part of the card (i.e. the top section of the card circled in red in the following image). Typically used to provide a visual representation of the module, contributing to the overall visual design of the course, and possibly helping students build conceptual associations. 
+!!! warning "The _banner_ option only applies to one (some) representations"
 
-As illustrated in the following image, there are three common types of banner:
+    How an object is represented is the responsibility of the chosen [_representation_](../representations/overview.md). Currently, only the _Griffith Cards_ representation uses the banner options.
+
+Collection's cards representation uses the idea of a banner as the top section of the card (circled in red in the following image). It is used provide an additional visual representation of the module with the intent to enhance
+
+1. the visual design of the course; and,
+2. student learning (see [dual-coding theory](https://en.wikipedia.org/wiki/Dual-coding_theory).
+
+<figure markdown>
+<figcaption>Card representation with the <em>banner</em> section highlighted</figcaption>
+![Three cards showing different types of banners (image, colour and iframe) with the banner section circled in red](pics/threeBannerOptions.png)  
+</figure>
+
+### Three types of banner
+
+As illustrated in the image above, there are three common types of banner:
 
 1. Image - the URL of an image is provided and is displayed in the banner.
 
-    By default, the banner is set to a default image.
-2. Iframe - an iframe (aka HTML embed code) - e.g. a YouTube embed.
+    The first image above uses an image to reinforce the primary purpose of Collections.
 
-    (The second card in the image below has a YouTube video banner which is currently not displaying)
-3. Colour - the banner background is set to a single colour.
+2. Iframe - a [HTML iframe element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe) used to embed another web page
 
-![](pics/threeBannerOptions.png)  
+    The second card above shows an embedded Canvas Studio video.
 
-### Configuring the banner
+4. Colour - the banner background is set to a single colour.
 
-You are able to configure 0 or more of the banner options. By default, a new module will be configured to use a placeholder image. The banner option that is current visible in the module configuration area will be the option used on the matching card - as illustrated in the following animated image.
-
-!!! note "Some representations ignore the banner options"
-
-    Currently, on the _Griffith Cards_ representation actively uses the banner options.
-
-The following animated image steps through the following:
-
-1. Showing a card representation of a module (using an iframe banner) and its corresponding configuration.
-2. Illustrates how when the current banner choice is changed from image to iframe to colour how the card representation changes to match.
+    The last card above has a plain colour background.
 
 
-![](pics/animatedBannerChanges.gif)
+### Choosing the banner type
 
+The Collections' module configuration area includes a _banner_ tab. This allows you to 
 
-### Image
+1. Choose the type of banner to use; and,
+2. Configure the chosen banner.
+
+The following animated image demonstrates where to find the _banner_ tab and how which ever _banner_ option you've chosen last, is the option used by the representation.
+
+<figure markdown>
+<figcaption>Switching between different types of banner</figcaption>
+  <sl-animated-image src="../pics/animatedBannerChanges.gif" />
+</figure>
+
+### Configuring the chosen banner type
+#### Image
 
 Images are specified by two pieces of metadata:
 
 1. Image url - the web location where the image can be viewed.
 2. Image scale - how the image should be scaled to fit within the available space.
 
-#### Image url
+##### Image url
 
-Designed to contain either:
+Specifies the location (Universal Resource Locator - URL) for an image to display in the banner. The URL can be to an image stored in Canvas files, or to an image stored on another web site. The only constraint is that all visitors to the course site are able to access the image.
 
-1. The URL for an image to be displayed.
+!!! warning "Use of the placeholder image"
 
-    See the [Image URL](../../../walk-throughs/new/configure-modules/#image-url) section of the [Configure Modules walk-through](../../../walk-throughs/new/configure-modules) for more information, including demonstration of how to get the URL of an image in the Canvas files area.
+    If the _image_ banner type is chosen and no _image url_ is specified, a placeholder image is used. 
 
-2. The embed code for [an iframe](https://www.hostinger.com/tutorials/what-is-iframe/) (e.g. a YouTube/Vimeo/Stream/Studio etc video)
+<figure markdown>
+<figcaption>The placeholder image</figcaption>
+![](pics/placeholderImage.png)  
+</figure>
 
-    Copy and paste the full embed code from a video-hosting (or some other) service and it will be embedded where the image would normally appear.
+##### Image scale
 
-#### Image scale
+It is likely that your chosen image does not have the same [aspect ratio](https://en.wikipedia.org/wiki/Aspect_ratio_(image)) as the banner section of the card. This is especially true given that the size of the banner section is not fixed. It is responsive to the size of the browser window and the configuration of the Cards representation.
 
-For an iframe, _Image Scale_ is ignored. Instead, iframes are automatically set to use ```width="100%" height="100%"``` to ensure they are scaled to fit the available space.
-
-For an image, _Image scale_ modifies the scaling of the image using the standard [CSS property called object-fit](https://www.w3schools.com/cssref/css3_pr_object-fit.asp). The following table outlines the possible values for object-fit. These values appear in the Image scale drop down when configuring a module. 
-
-See the [Image Scale](../../../walk-throughs/new/configure-modules/#image-scale) section of the [Configure Modules walk-through](../../../walk-throughs/new/configure-modules) for more information, including an animation of the impact of the different values.
-
+_Image scale_ is used to inform the browser how to scale your image to fit the available space.  _Image scale_ modifies the scaling of the image using the standard [CSS property called object-fit](https://www.w3schools.com/cssref/css3_pr_object-fit.asp). The following table outlines the possible values for object-fit. These values appear in the Image scale drop down when configuring a module. 
 
 | Value | 	Description |
 | --- | --- |
@@ -68,23 +81,47 @@ See the [Image Scale](../../../walk-throughs/new/configure-modules/#image-scale)
 | none |	The image is not scaled. |
 | scale-down | 	The image is scaled to fit the available space, maintaining the aspect ratio. The image is not cropped. |
 
-### Iframe
+<figure markdown>
+<figcaption>Experimenting with image scale values</figcaption>
+  <sl-animated-image src="../pics/animatedImageScale.gif" alt="Experimenting with image scale values" />
+</figure>
 
-The iframe banner option allows you to copy and paste a [HTML iframe element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe). Meaning you're able to embed other web content such as another web page, but more commonly a video (e.g. from YouTube or Studio). Collections will perform some checks on the iframe code and will modify it to work within the context of a card.
 
-The following animated image demonstrates the process of using the iframe banner option. Before starting, a [public embed code (aka iframe) for a Canvas Studio video](https://community.canvaslms.com/t5/Studio/How-do-I-get-a-public-link-or-embed-code-for-media-in-Canvas/ta-p/1712) was created and then copied into the clipboard. The image shows the process from there, including:
+##### (Image) Background Colour
 
-1. Moving to the Module's configuration area.
-2. Opening the _banner_ section and moving to the _iframe_ option.
-3. Pasting the video iframe code into the available text area and resizing the text area to better see the code.
-4. Reading the alert box Collections generates when it detects a change in the iframe code.
-5. A return to the module to view the video and press play.
+When using an image banner it can be useful to change the background of the banner from the default white. If selected, the _Background Colour_ option will use the colour specified by the [_Colour_ feature (see below)](#colour) as the colour in the background of your image.
 
-![](pics/iframeAnimated.gif)
+<figure markdown>
+<figcaption>Changing the image background colour</figcaption>
+  <sl-animated-image src="../pics/animatedImageBackgroundColour.gif" alt="Changing the image background colour" />
+</figure>
 
-### Colour
 
-The colour banner option allows you to choose a fixed colour for the banner. This has proven useful in situations where a module represents a topic/purposes for which no photo or video is available or suitable. The colour is chosen using a colour picker - as demonstrated in the following animated image.
+#### Iframe
 
-![](pics/colourPickerAnimated.gif)
+The _iframe_ banner type allows you to embed another web page into the banner section using the [HTML iframe element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe). Most useful for embedding video (e.g. from YouTube or Studio).
+
+!!! note "Collections will check and modify the iframe code"
+
+    Collections will perform some checks on the iframe code, including attempting to ensure the iframe will fit within the banner section. 
+    
+    You will be given a choice to check the modifications before proceedig.
+
+<figure markdown>
+<figcaption>Using the iframe banner type to embed a YouTube video</figcaption>
+  <sl-animated-image src="../pics/iframeAnimated.gif" alt="Using the iframe banner type to embed a YouTube video" />
+</figure>
+
+#### Colour
+
+The _colour_ banner type enables the use of a fixed colour for the banner. Useful in situations where a module represents a topic/purposes for which no photo or video is available or suitable. The colour is chosen using a colour component that allows you to specify the colour in numerous different ways.
+
+<figure markdown>
+<figcaption>Selecting a banner colour</figcaption>
+  <sl-animated-image src="../pics/colourPickerAnimated.gif" alt="Selecting a banner colour" />
+</figure>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>
 

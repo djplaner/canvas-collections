@@ -54,6 +54,14 @@
     );
   }
 
+  function computeCardBackgroundColour(moduleId) {
+    const module = $collectionsStore["MODULES"][moduleId];
+    if (module.imageBackgroundColour && module.bannerColour !== "") {
+      return `background: ${module.bannerColour};`;
+    }
+    return "";
+  }
+
   /**
    * @function cardClick
    * @param event
@@ -173,7 +181,7 @@
             <div
               class="claytons-card-banner-container"
               data-moduleid={theModule.id}
-              style="position:relative;"
+              style="position:relative; {computeCardBackgroundColour(theModule.id)}"
             >
               {#if !$collectionsStore["MODULES"][theModule.id].fyi}
                 <a
@@ -308,7 +316,11 @@
       >
         <div id="cc_module_{theModule.id}" class="cc-card">
           <div class="cc-card-flex">
-            <div class="cc-card-banner-container" data-moduleid={theModule.id}>
+            <div
+              class="cc-card-banner-container"
+              data-moduleid={theModule.id}
+              style={computeCardBackgroundColour(theModule.id)}
+            >
               {#if !$collectionsStore["MODULES"][theModule.id].fyi}
                 <a
                   class="cc-card-link"
