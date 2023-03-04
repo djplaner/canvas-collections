@@ -111,14 +111,17 @@ nav:
           - Overview: reference/lifecycle/visibility/overview.md
           - Live Collections: reference/lifecycle/visibility/live.md
           - Claytons Collections: reference/lifecycle/visibility/claytons.md
-        - 🚧 Student view: reference/lifecycle/student-view.md  # show both claytons and live
-        - Staff:
-          - 🚧 Staff view: reference/lifecycle/staff-view.md
-          - Edit: reference/lifecycle/edit.md
-          - 🚧 Module Configuration: reference/lifecycle/module-configuration.md
-        - Course copy: 
-          - Overview: reference/lifecycle/course-copy/overview.md
-          - Import process: reference/lifecycle/course-copy/import.md
+        - Student view: reference/lifecycle/student-view.md  # show both claytons and live
+        - Staff view:
+          - Overview: reference/lifecycle/staff-view.md
+          - Navigating: reference/lifecycle/navigating.md
+          - Editing: 
+            - Overview: reference/lifecycle/editing/editing.md
+            - Edit Life Cycle: reference/lifecycle/editing/lifecycle.md
+            - Configure Collections: reference/lifecycle/editing/collections.md
+            - Configure Modules: reference/lifecycle/editing/modules.md
+            - Claytons: reference/lifecycle/editing/claytons.md
+        - Course copy: reference/lifecycle/course-copy/overview.md
       - Conceptual model:
         - 🚧 Collections: 
           - Overview: reference/conceptual-model/collections/overview.md
