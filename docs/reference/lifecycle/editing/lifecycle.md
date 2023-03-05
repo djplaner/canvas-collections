@@ -1,17 +1,8 @@
-# Editing Collections
+# The edit life cycle
 
-## Pre-requisites
+To modify the configuration of Collections for a Canvas course you will need to turn _Edit on_. The life cycle that follows may involve each of the following steps.
 
-Before you can edit Collections, you must
-
-1. Be able to see [the _Student View_ button](https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-view-a-course-as-a-test-student-using-Student-View/ta-p/1122) on the course modules page.
-2. Successfully turn _edit on_.
-
-!!! note "Only one person can edit at a time"
-
-	For each course, only one person is able to edit the Collections configuration information at a time.
-
-## The edit life cycle
+For more information on how to configure Collections once you've turned _Edit on_, see the [Configure Collections](collections.md) and [Configure Modules](modules.md) pages.
 
 === "Try to turn _edit on_"
 
@@ -21,7 +12,7 @@ Before you can edit Collections, you must
 
 	<figure markdown>
 	<figcaption>Staff view mode</figcaption>
-	[![](images/viewMode.png)](images/viewMode.png)  
+	[![Staff view mode](images/viewMode.png)](images/viewMode.png)  
 	</figure>
 
 === "Someone else is editing"
