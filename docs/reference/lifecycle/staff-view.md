@@ -4,10 +4,22 @@ The teacher/designer experience of Collections depends on the type of Collection
 
 === "_Claytons_ Collections" 
 
-	Claytons Collections is static HTML representation of Collections saved to a Canvas page. The teacher/designer experience is the same as any other page. They can view, modify, and delete it.
+	Claytons Collections is static HTML representation of Collections saved to a Canvas page. The teacher/designer experience is the same as any other page. They can view, modify, and delete it. 
 	
-	See [the _Navigating Claytons Collections_ page](../../../how-tos/navigating/navigating-claytons-collections.md) for more information
+	The image and table below provide an example and description of the Claytons Collections view for teachers/designers. The elements listed here are also visible in _Live_ Collections and are explained in more detail the "_Live_ Collections - _navigate_ mode" tab. In Claytons, however, the elements are implemented using the limited HTML and CSS allowed by the Canvas Rich Content Editor (RCE).
+	
+	!!! info "See [the _Navigating Claytons Collections_ page](../../../how-tos/navigating/navigating-claytons-collections.md) for more"
 
+	| Interface Element | Description |
+	| ----------------- | ----------- |
+	| Navigation Bar | Shows a list of all collections and allows navigation back and forth between collections. |
+	| Include page (optional) | <p>Each collection and have a single <em>Include page</em>. i.e. a Canvas page, the content of which will be inserted before or after the <em>Current collection's representation</em>.</p><p><strong>Note: Only the current collection's include page is shown.</p> |
+	| Current collection's representation | <p>Each collection chooses from one of the [available representations](../../conceptual-model/representations/overview/). Representations are designed to provide a bespoke visualisation of the Canvas modules allocated to the current collection.</p>|
+
+	<figure markdown>
+	<figcaption></figcaption>
+	[![](images/claytons.png)](images/claytons.png)
+	</figure>
 
 === "_Live_ Collections - _navigate_ mode"
 
