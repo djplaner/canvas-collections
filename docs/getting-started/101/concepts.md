@@ -1,7 +1,6 @@
-# Features - Canvas Collections
+# Concepts - Canvas Collections
 
-Adapted from the [Collections landing page](../../index.md) the following descriptions and videos provide an overview of what Canvas Collections can add to the Canvas Modules page.
-
+Adapted from the [Collections landing page](../../index.md) the following descriptions and videos provide an overview of the primary concepts that make up Canvas Collections and video examples of what they look like as you interact with Canvas with Collections installed.
 
 === "Canvas Modules"
 
@@ -29,8 +28,10 @@ Adapted from the [Collections landing page](../../index.md) the following descri
 
 === "Claytons"
 
-	Using Collections requires the Collections code to [be installed](../install/types-pre-requisites.md). Not always possible for your students.
+	All the previous examples on this page are for _live_ Collections. i.e. the Collections code [is installed](../install/types-pre-requisites.md) and is actively modifying how you are seeing your Canvas site's module page.  This may not always be possible.
+
+	_Claytons_ Collections provides the ability to use the Collections representations on a static Canvas page. Using Claytons collections does **note** require the Collections code to be installed.
 	
-	If so, Collections' _Claytons_ feature can be used to follow Canvas community best practice to [create an inviting course home page](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236). A home page that can emulate the features of Collections, without requiring Collections.
+	_Claytons_ Collections can be used to follow Canvas community best practice to [create an inviting course home page](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236). A home page that can emulate the features of Collections, without requiring Collections.
 
 	<div class="div-iframe"> <iframe width="560" height="315" src="https://www.youtube.com/embed/d_ZBTpKdylQ" title="YouTube video player" frameborder="0" class="responsive-iframe" allowfullscreen></iframe> </div> 

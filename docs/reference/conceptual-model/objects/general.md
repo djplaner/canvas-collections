@@ -1,3 +1,5 @@
+# General tab - module configuration element
+
 ## Description
 
 A description of the object that will be displayed in most representations to provide students with a way to answer what, why, how or some other question about the module. How (and perhaps if) the description is shown to the student will depend on the relevant collection's representation.

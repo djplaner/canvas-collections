@@ -44,14 +44,14 @@ For more information on how to configure Collections once you've turned _Edit on
 	[![](images/editing.png)](images/editing.png)
 	</figure>
 
-	<figure markdown>
-	<figcaption>A Canvas module with a collapsed Collections' module configuration element</figcaption> 
-	[![](images/moduleConfiguration.png)](images/moduleConfiguration.png)  
-	</figure>
-
 === "Turn _edit off_"
 
 	Clicking on the _edit off_ button will turn editing off. Returning the Collections element to the view mode and removing the Collections' module configuration elements.
+
+	<figure markdown>
+	<figcaption>Turning editing off</figcaption>
+	<sl-animated-image src="../images/animatedTurnEditOff.gif" alt="Turning editing off">
+	</figure>
 
 === "Automatic _edit off_"
 
@@ -59,3 +59,6 @@ For more information on how to configure Collections once you've turned _Edit on
 
 	1. Leave the Modules page for which editing was turned on.
 	2. You have not made any edits to Collections for a given time period (the default is 2 minutes).
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>

@@ -94,8 +94,8 @@ nav:
       - Configure Modules: how-tos/new/configure-modules.md
       - Configure Representations: how-tos/new/configure-representations.md
       - Set up "Claytons": how-tos/new/set-up-claytons.md
-    - Update Collections:
-      - 🚧 Coming soon: how-tos/changes/overview.md
+#    - Update Collections:
+#      - 🚧 Coming soon: how-tos/changes/overview.md
 #      - Add a collection: how-tos/changes/add-a-collection.md
 #      - Delete a collection: how-tos/changes/delete-a-collection.md
 #      - Add a module: how-tos/changes/add-a-module.md
@@ -120,15 +120,13 @@ nav:
             - Edit Life Cycle: reference/lifecycle/editing/lifecycle.md
             - Configure Collections: reference/lifecycle/editing/collections.md
             - Configure Modules: reference/lifecycle/editing/modules.md
-            - Claytons: reference/lifecycle/editing/claytons.md
         - Course copy: reference/lifecycle/course-copy/overview.md
       - Conceptual model:
-        - 🚧 Collections: 
+        - Collections' Conceptual Model: reference/conceptual-model/overview.md
+        - collections: 
           - Overview: reference/conceptual-model/collections/overview.md
-          - 🚧 Live: reference/conceptual-model/collections/live.md
-          - 🚧 Full Claytons: reference/conceptual-model/collections/full-claytons.md
-          - 🚧 Claytons: reference/conceptual-model/representations/claytons/overview.md
-          - Visibility: reference/conceptual-model/collections/visibility.md
+#          - 🚧 Live: reference/conceptual-model/collections/live.md
+#          - Visibility: reference/lifecycle/visibility/overview.md
           - Existing collections: reference/conceptual-model/collections/existing-collections.md
           - Add a new collection: reference/conceptual-model/collections/add-new-collection.md
         - Representations:
@@ -139,10 +137,13 @@ nav:
           - Dates: reference/conceptual-model/objects/dates.md
           - Banner: reference/conceptual-model/objects/banner.md
           - Metadata: reference/conceptual-model/objects/metadata.md
-        - Development:
-          - Component Structure: reference/development/component-structure.md
-          - Local development: 
-            - Overview: reference/development/local-development/overview.md
+        - Claytons:
+          - 🚧 Full Claytons: reference/conceptual-model/collections/full-claytons.md
+          - 🚧 Claytons: reference/conceptual-model/representations/claytons/overview.md
+      - Development:
+        - Component Structure: reference/development/component-structure.md
+        - Local development: 
+          - Overview: reference/development/local-development/overview.md
   - 'Community': 
      - Collections Community: community/collections-community.md
   - 'About':
