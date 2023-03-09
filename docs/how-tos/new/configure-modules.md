@@ -7,7 +7,11 @@
     1. Allocation modules their collections?
     2. Provide additional data about the modules?
     
-Below you'll find three steps to answer those questions.
+Canvas Collections provides a _Module configuration area_ for each module. This is how you configure how individual modules work with Collections.
+
+There are three typical steps in using the _Module configuration area_. These are illustrated below.
+
+!!! info "See the [reference page on the module configuration area](../../../reference/conceptual-model/objects/overview/) for more information"
 
 | Step | Description |
 | ---- | ----------- |
