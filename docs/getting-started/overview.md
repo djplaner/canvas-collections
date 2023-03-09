@@ -5,17 +5,19 @@
     There are three options below, your choice of
 
     1. _Install Collections_ - dive straight in, install it, use it, learn it.
-    2. _Watch - Why, What, How?_ - watch 9 minute video demonstrating the why, what and how of Canvas Collections. 
+    2. _Watch - Why, What, How?_ - [watch a 9 minute video](https://www.youtube.com/watch?v=_oSmPTUOhh8) demonstrating the why, what and how of Canvas Collections. 
     3. _Learn - Collections101_ - learn the conceptual model underpinning Canvas Collections.
 
 !!! question "Then what?"
 
-    If you've installed Collections, then the growing [list of how-tos](../how-tos/available.md) may help, including:
+    If you've installed Collections, then the growing [list of how-tos](../how-tos/available.md) that provide more detailed introductions to common tasks, including:
     
     - How to [navigate Collections](../how-tos/navigate/overview.md); and,
     - How to [add Collections to a course](../how-tos/new/overview.md).
 
-    Please also consider [contributing to the Collections community](../community/collections-community.md)
+    The [Reference section](../reference/overview.md) provides more detailed information about Collections, including: the Collections lifecycle; conceptual model; features; and, how to start Collections development.
+    
+    Please also consider [contributing to the Collections community](../community/collections-community.md). If only to report a bug or suggest a new feature.
 
 === "Install Collections"
 

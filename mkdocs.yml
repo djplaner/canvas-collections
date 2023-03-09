@@ -99,8 +99,8 @@ nav:
 #      - Add a collection: how-tos/changes/add-a-collection.md
 #      - Delete a collection: how-tos/changes/delete-a-collection.md
 #      - Add a module: how-tos/changes/add-a-module.md
-    - Copy Collections:
-      - 🚧 Course copy process: how-tos/course-copy/process.md
+#    - Copy Collections:
+#      - 🚧 Course copy process: how-tos/course-copy/process.md
 #    - ⚗️ Advanced:
 #      - Multi-collection, one page Claytons: how-tos/advanced/multi-collection-one-page.md
 #      - Fix Claytons Card CSS: how-tos/advanced/fix-claytons-card-css.md
