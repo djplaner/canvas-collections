@@ -128,7 +128,7 @@ nav:
 #          - 🚧 Live: reference/conceptual-model/collections/live.md
 #          - Visibility: reference/lifecycle/visibility/overview.md
           - Existing collections: reference/conceptual-model/collections/existing-collections.md
-          - Add a new collection: reference/conceptual-model/collections/add-new-collection.md
+          - Add a new collection: reference/conceptual-model/collections/add-a-new-collection.md
         - Representations:
           - Representations: reference/conceptual-model/representations/overview.md
         - Objects (Modules):

@@ -103,7 +103,7 @@ The _Existing collection_ element provides
 
 Each collection can also define a Canvas page as the _output page_. You can use Collections to update the contents of the _output page_ with the current representation of that collection. This can be done on as for a single collection, or use _Full Claytons_ to do it for all collections with an _output page_ defined.
 
-The _Existing collection_ element provides 
+The _Existing collections_ element provides 
 
 - an _output page_ text box in which you enter the title of the Canvas page; and,
 - an _Update_ button you use to update the _output page_ with the current representation of the collection.
@@ -113,7 +113,29 @@ The _Existing collection_ element provides
 <sl-animated-image src="../pics/animatedOutputPage.gif" alt="Using the output page feature" />
 </figure>
 
+## Other functions
 
+The _Existing collections_ element also allows you to change the order of the collections and delete a collection.
+
+### Changing the order of collections
+
+Each of the collections in the _Existing collections_ element will have up/down arrow icons in the top right corner of that collection's section. Use these arrows to move the collection up or down the list of collections.
+
+<figure markdown>
+<figcaption>Changing the order of collections</figcaption>
+<sl-animated-image src="../pics/animatedChangeCollectionOrder.gif" alt="Changing the order of collections" />
+</figure>
+
+### Deleting a collection
+
+If you no longer require a collection you can delete a collection. Each collection in the _Existing collections_ element will include a trash can icon in the top left corner. Click on that icon to delete the collection.
+
+!!! tip "Deleting a collection will not delete any of the modules that have been allocated to the collection, or modify any other module based configuration information."
+
+<figure markdown>
+<figcaption>Deleting a collection</figcaption>
+<sl-animated-image src="../pics/animatedDeleteCollection.gif" alt="Deleting a collection" />
+</figure>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
 <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>
