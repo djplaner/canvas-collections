@@ -30,10 +30,9 @@ export function getCollectionCanvasModules(
     canvasModuleIds[module.id] = module;
   });
 
-  // get a list of all the collections modules, including unallocated modules
-  // if the collection is configured that way
 
-  let addedModuleIds = [];
+  // construct a list of module ids ordered on collectionsModule.moduleOrder
+  let orderedModuleIds = {};
   // iterate over the collectionsModules dictionary (keyed on module id)
   for (const moduleId in collectionsModules) {
     if (collectionsModules[moduleId].collection === collection ||
@@ -42,7 +41,8 @@ export function getCollectionCanvasModules(
             collectionsModules[moduleId].collection === "" )
         )
       ) {
-      addedModuleIds.push(moduleId);
+      //addedModuleIds.push(moduleId);
+      orderedModuleIds[collectionsModules[moduleId].moduleOrder] = moduleId;
     }
   }
 
@@ -51,16 +51,17 @@ export function getCollectionCanvasModules(
   // information for unpublished Canvas modules. Which is only a problem
   // for FYI objects.  For those, add the Collection module information
 
-  addedModuleIds.forEach((moduleId) => {
+  for (const moduleOrder in orderedModuleIds) {
+    const moduleId = orderedModuleIds[moduleOrder];
     // if moduleId is in the canvasModuleIds 
     if (canvasModuleIds.hasOwnProperty(moduleId)) {
       modules.push(canvasModuleIds[moduleId]);
-    } else {
-      // if the module is not in the Canvas modules, it must be an FYI
-      // module, so add it to the list
+    } else if (collectionsModules[moduleId].fyi){
+      // if it's not in the canvasModules and its an fyi, add it.
       modules.push(collectionsModules[moduleId]);
     }
-  });
+  }
+
 
 
   // loop through the canvas modules to check if they're published or not
@@ -169,7 +170,7 @@ export function getRepresentationModules(
   // is the problem that we're starting with the Canvas modules
   modules = getCollectionCanvasModules(collectionName, claytons, unallocated);
   // add unallocated modules if,
-  if (editMode ) {
+/*  if (editMode ) {
     // student only if unallocated for this collection is true
     if (unallocated ) { //&& !claytons) {
       modules = addUnallocatedModules(modules, editMode);
@@ -182,7 +183,7 @@ export function getRepresentationModules(
     if (unallocated) {
       modules = addUnallocatedModules(modules, editMode);
     }
-  }
+  } */
 
   return modules;
 }
