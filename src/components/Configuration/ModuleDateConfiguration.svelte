@@ -60,11 +60,11 @@
     // 3. week and day and time
     // - must have a week
 
-    if (dateInfo.week === "") {
-      return "No date set";
-    }
 
-    let dateString = dateJsonToString(dateInfo);
+    let dateString = "<em>undefined</em> ";
+    if (dateInfo.week !== "") {
+      dateString = dateJsonToString(dateInfo);
+    }
 
     if (dateInfo.hasOwnProperty("to") && dateInfo.to.week !== "") {
       // date range
@@ -73,7 +73,7 @@
     return dateString;
   }
 
-  function dateJsonToString(dateInfo: Object): String {
+  function dateJsonToString(dateInfo: Object): string {
     let calcDate = {};
     if (dateInfo.day === "") {
       // no day
@@ -218,7 +218,7 @@
         <i class="icon-question cc-module-icon" />
       </a>
     </sl-tooltip>
-    {calculateDate($collectionsStore["MODULES"][moduleId].date)}
+    {@html calculateDate($collectionsStore["MODULES"][moduleId].date)}
   </p>
 </div>
 
