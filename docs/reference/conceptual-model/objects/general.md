@@ -77,26 +77,32 @@ The following tabs provide more detail about and examples of using FYI objects.
     5. Demonstrate the FYI objects don't need a message
 
 
-    ![](./pics/animatedFYIObject.gif)
-
-
+    <figure markdown>
+    <figcaption>Example of creating an FYI object (unpublished module)</figcaption>
+    <sl-animated-image src="../pics/animatedFYIObject.gif" alt="Example of creating an FYI object (unpublished module)" />
+    </figure>
 
 ### Label 
 
+The label helps identify a Canvas module as a specific type of object (e.g. _Lecture_, _Workshop_, _Assignment_). It helps them visitors develop a conceptual understanding of why, what, and how to engage with the module/object.
 
 ### Label and numbers
 
-The label helps identify a Canvas module as a specific type of object (e.g. _Lecture_, _Workshop_, _Assignment_). It helps them visitors develop a conceptual understanding of why, what, and how to engage with the module/object.
+Often a collection will have multiple modules all representing different objects of the same type (e.g. multiple lectures, or weeks). In this case, it's useful to be able to number the objects of the same type (e.g. _Lecture 1_, _Lecture 2_ etc).
 
-A module can have a label and a label number (e.g. _Lecture 1_, _Lecture 2_ etc)
+The _general tab_ provides space for you to specify a _label_ and a _number_ for each module.
 
-A label is simple any sequence of characters (including emojis).
+A label is any sequence of characters (including emojis).
 
 There are two options for the number: 
-1. _Auto-number_ - the number is automatically calculated based on the order of the modules in the collection. The first lecture will be _Lecture 1_ the second _Lecture 2_ and so on.   
-2. _Explicitly specified string_ - i.e. you can manually specify any sequence of characters, including emojis, or leave it blank.
 
-Labels and numbers can also work with the names of Canvas modules, as illustrated in the following.
+1. _Auto-number_ - the number is automatically calculated based on the order of the modules in the collection. The first lecture will be _Lecture 1_ the second _Lecture 2_ and so on.   
+2. _User specified_ - i.e. you can manually specify any sequence of characters, including emojis, or leave it blank.
+
+Depending on the representation you've chosen for a collection, the _label_ and _number_ might be used to:
+
+1. Display the label and number in the module's representation.
+2. Modify the module name as shown by the representation (i.e. it may remove the label and number from the module name).
 
 <figure markdown>
 <figcaption>Adding a label and number to three modules</figcaption>
@@ -106,17 +112,26 @@ Labels and numbers can also work with the names of Canvas modules, as illustrate
 ### Engage
 
 
-Card representations can include an _Engage_ button as an explicit affordance for the visitor to click on the card. When configuring the _Engage_ button you can choose to:
+Card representations can include an _Engage_ button as an explicit affordance for the visitor to click on the card and thereby access the module. 
 
-1. Turn the button on or off.
+The _general tab_ allows you to configure the _Engage_ button by:
+
+1. Turning the button on or off.
 
     Even if the _Engage_ button is turned off, the visitor can still click on a normal card to access the module. (unless it is an FYI object for which the _Engage_ button is always off).
 
-2. Change the button text.
+2. Changing the button text.
 
 The following animated image demonstrates the process of configuring the _Engage_ button, including: turning off the _Engage_ button; turning it back on again; changing the label; and, finally returning back to the default.
 
-![](pics/animatedEngage.gif)
+
+!!! note "FYI Objects (as shown above) don't have an _Engage_ button"
+
+<figure markdown>
+<figcaption>Example of changing the "Engage" button for a module</figcaption>
+<sl-animated-image src="../pics/animatedEngage.gif" alt="Example of changing the 'Engage' button for a module" />
+</figure>
+
 
 ### Description
 

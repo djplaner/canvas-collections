@@ -981,7 +981,7 @@ export class CollectionsDetails {
    * This function will update the moduleOrder property for each module in the collection,
    * this will only be done in editMode
    */
-  private updateModuleOrder(canvasModules: []) {
+ updateModuleOrder(canvasModules: []) {
     // canvasModules are in order of appearance
     // collections modules are keyed on canvas module id
     let collectionsModules = this["collections"]["MODULES"];
