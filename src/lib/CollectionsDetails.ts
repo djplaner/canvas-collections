@@ -457,7 +457,7 @@ export class CollectionsDetails {
         this.collections["VISIBILITY"] = "all";
       }
       delete this.collections["STATUS"];
-    } else if ( !this.collections.hasOwnProperty("VISIBILITY")){
+    } else if (!this.collections.hasOwnProperty("VISIBILITY")) {
       this.collections["VISIBILITY"] = "no-one";
     }
 
@@ -523,7 +523,7 @@ export class CollectionsDetails {
       // decode the values in this.cc_configuration.COLLECTIONS_ORDER
       this.collections["COLLECTIONS_ORDER"] = this.collections[
         "COLLECTIONS_ORDER"
-      ].map((collectionName : string) => {
+      ].map((collectionName: string) => {
         return this.decodeHTML(collectionName);
       });
       // decode the value in the string this.cc_configuration.DEFAULT_ACTIVE_COLLECTION
@@ -632,9 +632,7 @@ export class CollectionsDetails {
    * @param html - HTML
    * @returns {string} - removed any HTML encodings and sanitised
    */
-  decodeHTML(html: string, iframeAllowed = false ) {
-
-
+  decodeHTML(html: string, iframeAllowed = false) {
     // do some sanitisation of the HTML https://github.com/apostrophecms/sanitize-html
     let allowedTags = sanitizeHtml.defaults.allowedTags;
     let allowedAttributes = {};
@@ -649,7 +647,7 @@ export class CollectionsDetails {
       allowedAttributes: allowedAttributes,
       parser: {
         decodeEntities: false,
-      }
+      },
     });
 
     // after sanitisation, do this step as a kludge to decode entities
@@ -660,7 +658,7 @@ export class CollectionsDetails {
     let txt = document.createElement("textarea");
     txt.innerHTML = value;
     value = txt.value;
-    return value; 
+    return value;
   }
 
   encodeHTML(html: string, json = true) {
@@ -668,13 +666,12 @@ export class CollectionsDetails {
     txt.innerHTML = html;
     let value = txt.innerHTML;
     if (json) {
-			// for Canvas JSON, escape the quotes
-			return value.replaceAll(/"/g, '\"');
-
-		} else {
-			// for not JSON (i.e. HTML) encode the quotes
-			return value.replaceAll(/"/g, '&quot;');
-		} 
+      // for Canvas JSON, escape the quotes
+      return value.replaceAll(/"/g, '"');
+    } else {
+      // for not JSON (i.e. HTML) encode the quotes
+      return value.replaceAll(/"/g, "&quot;");
+    }
     return value;
   }
 
@@ -949,6 +946,10 @@ export class CollectionsDetails {
       });
     }
 
+    if (editMode) {
+      this.updateModuleOrder(canvasModules);
+    }
+
     // Loop through all the collections modules checking against canvas module id
     // - if in !editMode set canvas published to true if canvas module exists
     // - otherwise if canvas module doesn't exist, remove that entry from collections
@@ -969,6 +970,57 @@ export class CollectionsDetails {
     }
     if (changeMade) {
       this.configStore["needToSaveCollections"] = true;
+    }
+  }
+
+  /**
+   * @function updateModuleOrder
+   * @param canvasModules - array of canvas module information
+   * @description Each Collection module will have a property moduleOrder
+   * an integer that represents the order or appearance of the module in the collection
+   * This function will update the moduleOrder property for each module in the collection,
+   * this will only be done in editMode
+   */
+  private updateModuleOrder(canvasModules: []) {
+    // canvasModules are in order of appearance
+    // collections modules are keyed on canvas module id
+    let collectionsModules = this["collections"]["MODULES"];
+    const collections = this["collections"]["COLLECTIONS"];
+
+    // for each collection want to track how many modules seen
+    // so far
+
+    let collectionModuleCount = {};
+    // initialise all the collections counts to 0
+    for (const collectionName in collections) {
+      collectionModuleCount[collectionName] = 0;
+    }
+
+    // loop through the canvas modules
+    for (let i = 0; i < canvasModules.length; i++) {
+      const module = canvasModules[i];
+      let collectionsModule = collectionsModules[module.id];
+
+      // loop through all the collections
+      for (const collectionName in collections) {
+        const unallocated = collections[collectionName].unallocated;
+        const allocatedCollection = collectionsModule.collection;
+        /* if the module is allocated to the collection
+           - increment the count for that collection
+           - set the moduleOrder property to the count
+           The module is allocated to the collection if
+           - the the module is allocated to the a collection
+           - any collection is "unallocated" set and the module is not allocated
+         */
+
+        if (
+          allocatedCollection === collectionName ||
+          (unallocated && allocatedCollection === "")
+        ) {
+          collectionModuleCount[collectionName]++;
+          collectionsModule.moduleOrder = collectionModuleCount[collectionName];
+        }
+      }
     }
   }
 

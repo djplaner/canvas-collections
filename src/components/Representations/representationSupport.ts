@@ -12,7 +12,8 @@ import { collectionsStore, configStore, modulesStore } from "../../stores";
  */
 export function getCollectionCanvasModules(
   collection: string,
-  claytons: boolean = false
+  claytons: boolean = false,
+  unallocated: boolean = false
 ) {
   let modules = [];
 
@@ -22,28 +23,70 @@ export function getCollectionCanvasModules(
   const editMode = figStore["editMode"];
   const collectionsModules = cStore["MODULES"];
   const canvasModules = get(modulesStore);
-
-  // track the module ids we add to the list
-  let addedModuleIds = [];
+  // construct a dictionary canvasModuleIds: key is module id from canvasModules
+  // elements and values are the module details from canvasModules
+  const canvasModuleIds = {};
   canvasModules.forEach((module) => {
+    canvasModuleIds[module.id] = module;
+  });
+
+  // get a list of all the collections modules, including unallocated modules
+  // if the collection is configured that way
+
+  let addedModuleIds = [];
+  // iterate over the collectionsModules dictionary (keyed on module id)
+  for (const moduleId in collectionsModules) {
+    if (collectionsModules[moduleId].collection === collection ||
+        ( unallocated && 
+          ( collectionsModules[moduleId].collection === null ||
+            collectionsModules[moduleId].collection === "" )
+        )
+      ) {
+      addedModuleIds.push(moduleId);
+    }
+  }
+
+  // Now populate the modules array with the details of the modules
+  // preferably the Canvas module details, but students won't have this
+  // information for unpublished Canvas modules. Which is only a problem
+  // for FYI objects.  For those, add the Collection module information
+
+  addedModuleIds.forEach((moduleId) => {
+    // if moduleId is in the canvasModuleIds 
+    if (canvasModuleIds.hasOwnProperty(moduleId)) {
+      modules.push(canvasModuleIds[moduleId]);
+    } else {
+      // if the module is not in the Canvas modules, it must be an FYI
+      // module, so add it to the list
+      modules.push(collectionsModules[moduleId]);
+    }
+  });
+
+
+  // loop through the canvas modules to check if they're published or not
+  // track the module ids we add to the list
+/*  canvasModules.forEach((module) => {
     // for each canvas module
     const moduleId = module.id;
     if (collectionsModules[moduleId].collection === collection) {
-      // if the module belongs to the selected collection
-      // push the canvas module onto the array
-      // Wrong?? ---> but not if we're in claytons and the module is unpublished
-      // only in editMode will we see unpublished modules
-      // we normally want to see them, but not in claytons...unless it's an fyi
-      if (!(claytons && !module.published && !collectionsModules[module.id]['fyi'])) {
+//      if (!(claytons && !module.published && !collectionsModules[module.id]['fyi'])) {
+
+      if (editMode ) {
+        modules.push(module);
+        addedModuleIds.push(moduleId);
+      } else {
+        // for students, modules will not contain any Canvas information
+
+//      } if ( module.published || collectionsModules[module.id]['fyi']) {
         modules.push(module);
         addedModuleIds.push(moduleId);
       }
     }
-  });
+  }); */
 
   // Add in any FYI modules
 
-  if (!editMode) {
+/*  if (!editMode) {
     for (const moduleId in collectionsModules) {
       // find the fyi module's not already added above, in this collection
       if (
@@ -56,7 +99,7 @@ export function getCollectionCanvasModules(
         modules.push(collectionsModules[moduleId]);
       }
     }
-  }
+  } */
   return modules;
 }
 
@@ -124,7 +167,7 @@ export function getRepresentationModules(
   const editMode = config["editMode"];
 
   // is the problem that we're starting with the Canvas modules
-  modules = getCollectionCanvasModules(collectionName, claytons);
+  modules = getCollectionCanvasModules(collectionName, claytons, unallocated);
   // add unallocated modules if,
   if (editMode ) {
     // student only if unallocated for this collection is true
