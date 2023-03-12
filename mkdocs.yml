@@ -138,8 +138,8 @@ nav:
           - Banner: reference/conceptual-model/objects/banner.md
           - Metadata: reference/conceptual-model/objects/metadata.md
         - Claytons:
-          - 🚧 Full Claytons: reference/conceptual-model/collections/full-claytons.md
           - 🚧 Claytons: reference/conceptual-model/representations/claytons/overview.md
+          - 🚧 Full Claytons: reference/conceptual-model/collections/full-claytons.md
       - Development:
         - Component Structure: reference/development/component-structure.md
         - Local development: 

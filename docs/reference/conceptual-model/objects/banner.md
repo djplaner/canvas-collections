@@ -1,4 +1,6 @@
-## Banner
+## Banner tab - the module configuration area
+
+The _banner tab_ is one of four tabs that form the [_module configuration area_](overview.md). It provides the interface to configure a banner (image, iframe, or colour) associated with a specific module (see below).
 
 !!! warning "The _banner_ option only applies to one (some) representations"
 
@@ -7,7 +9,7 @@
 Collection's cards representation uses the idea of a banner as the top section of the card (circled in red in the following image). It is used provide an additional visual representation of the module with the intent to enhance
 
 1. the visual design of the course; and,
-2. student learning (see [dual-coding theory](https://en.wikipedia.org/wiki/Dual-coding_theory).
+2. student learning (see [dual-coding theory](https://en.wikipedia.org/wiki/Dual-coding_theory)).
 
 <figure markdown>
 <figcaption>Card representation with the <em>banner</em> section highlighted</figcaption>

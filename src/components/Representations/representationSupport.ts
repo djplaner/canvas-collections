@@ -30,17 +30,40 @@ export function getCollectionCanvasModules(
     canvasModuleIds[module.id] = module;
   });
 
+  // get a list of module ids in the chosen collection
+  // if unallocated, including modules that don't belong to this collection
+  let collectionModules = [];
+  for (const moduleId in collectionsModules) {
+    if (
+      collectionsModules[moduleId].collection === collection ||
+      (unallocated &&
+        (collectionsModules[moduleId].collection === null ||
+          collectionsModules[moduleId].collection === ""))
+    ) {
+      collectionModules.push(collectionsModules[moduleId]);
+    }
+  }
 
-  // construct a list of module ids ordered on collectionsModule.moduleOrder
+  if (!checkSequentialModuleOrder(collectionModules)) {
+    updateSequentialModuleOrder(collectionModules, canvasModules)
+  }
+
+  collectionModules.forEach((module) => {
+    console.log(`OK? ${module.name} == ${module.moduleOrder}`);
+  });
+
+  // create a dict keyed on moduleOrder of collections with ids in collectionModuleIds
+
   let orderedModuleIds = {};
+
   // iterate over the collectionsModules dictionary (keyed on module id)
   for (const moduleId in collectionsModules) {
-    if (collectionsModules[moduleId].collection === collection ||
-        ( unallocated && 
-          ( collectionsModules[moduleId].collection === null ||
-            collectionsModules[moduleId].collection === "" )
-        )
-      ) {
+    if (
+      collectionsModules[moduleId].collection === collection ||
+      (unallocated &&
+        (collectionsModules[moduleId].collection === null ||
+          collectionsModules[moduleId].collection === ""))
+    ) {
       //addedModuleIds.push(moduleId);
       orderedModuleIds[collectionsModules[moduleId].moduleOrder] = moduleId;
     }
@@ -53,20 +76,18 @@ export function getCollectionCanvasModules(
 
   for (const moduleOrder in orderedModuleIds) {
     const moduleId = orderedModuleIds[moduleOrder];
-    // if moduleId is in the canvasModuleIds 
+    // if moduleId is in the canvasModuleIds
     if (canvasModuleIds.hasOwnProperty(moduleId)) {
       modules.push(canvasModuleIds[moduleId]);
-    } else if (collectionsModules[moduleId].fyi){
+    } else if (collectionsModules[moduleId].fyi) {
       // if it's not in the canvasModules and its an fyi, add it.
       modules.push(collectionsModules[moduleId]);
     }
   }
 
-
-
   // loop through the canvas modules to check if they're published or not
   // track the module ids we add to the list
-/*  canvasModules.forEach((module) => {
+  /*  canvasModules.forEach((module) => {
     // for each canvas module
     const moduleId = module.id;
     if (collectionsModules[moduleId].collection === collection) {
@@ -87,7 +108,7 @@ export function getCollectionCanvasModules(
 
   // Add in any FYI modules
 
-/*  if (!editMode) {
+  /*  if (!editMode) {
     for (const moduleId in collectionsModules) {
       // find the fyi module's not already added above, in this collection
       if (
@@ -102,6 +123,64 @@ export function getCollectionCanvasModules(
     }
   } */
   return modules;
+}
+
+function checkSequentialModuleOrder(modules) {
+  const moduleOrder = modules
+    .map((module) => module.moduleOrder)
+    .sort((a, b) => a - b);
+
+  return moduleOrder.every(
+    (order, i) =>
+      i === moduleOrder.length - 1 || order === moduleOrder[i + 1] - 1
+  );
+}
+
+/**
+ * @function updateSequentialModuleOrder
+ * @param collectionModules - array of Collections data about modules belonging to a collection
+ * @param canvasModules - array of Canvas module data
+ * @description The collectionModules data doesn't have moduleOrder information that is
+ * sequential. Causing problems with display of the representations. Need to fix this by
+ * using the order in which they appear in the canvas module data.  This will be largely
+ * in order. However, for students, unpublished modules will not appear.  Just add these
+ * to the end
+ */
+function updateSequentialModuleOrder(collectionModules, canvasModules) {
+
+  let collectionModulesIds = collectionModules.map((module) => module.id);
+  let count = 0; // track the sequence we're up to
+  let moduleIdToOrder= {};  // map a module id to a particular sequential order
+
+  // loop through the canvas modules, and populate moduleIdToOrder with sequential order
+  canvasModules.forEach((module) => {
+    // check if module.id is in collectionModulesIds
+    if (collectionModulesIds.includes(module.id)) {
+      count++;
+      moduleIdToOrder[module.id] = count;
+    }
+  });
+
+  let moduleIdsNotSet = {};  // track the collections modules without set moduleOrder
+  // loop through the collection modules
+  collectionModules.forEach((module) => {
+    // does moduleIdToOrder contain module.id
+    if (moduleIdToOrder.hasOwnProperty(module.id)) {
+      // set the moduleOrder to the value in moduleIdToOrder
+      module.moduleOrder = moduleIdToOrder[module.id];
+    } else {
+      // add it to the moduleIdsNotSet
+      moduleIdsNotSet[module.id] = module;
+    }
+  });
+
+  // loop through the moduleIdsNotSet
+  for (const moduleId in moduleIdsNotSet) {
+    // increment the count
+    count++;
+    // set the moduleOrder to the count
+    moduleIdsNotSet[moduleId].moduleOrder = count;
+  }
 }
 
 /**
@@ -150,7 +229,7 @@ export function addUnallocatedModules(
  * will need to display that collection, may include
  * - all the modules in the collection
  * - all the modules without collections (if that switch is set)
- * 
+ *
  * Doing an update
  *   Why? / Claytons true / editMode true  / unallocated false
  *
@@ -170,7 +249,7 @@ export function getRepresentationModules(
   // is the problem that we're starting with the Canvas modules
   modules = getCollectionCanvasModules(collectionName, claytons, unallocated);
   // add unallocated modules if,
-/*  if (editMode ) {
+  /*  if (editMode ) {
     // student only if unallocated for this collection is true
     if (unallocated ) { //&& !claytons) {
       modules = addUnallocatedModules(modules, editMode);
@@ -289,8 +368,7 @@ export function isNotEmptyDate(date: object): boolean {
  * 3. If editMode add ModuleConfiguration components to the module
  */
 export function modifyCanvasModulesList(collection, showUnallocated) {
-
-  if (collection==="") {
+  if (collection === "") {
     return;
   }
   const collections = get(collectionsStore);

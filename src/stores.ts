@@ -23,8 +23,7 @@ export const modulesStore = writable([])
 export const configStore = writable({
     courseId: null,
     editMode: false,    // whether or not canvas is in edit mode (i.e. "Student View" is visible)
-	editingOn: null,   // whether a current browser is editing COllections
-	                   // might eventually hold details of who is, current user or not
+	editingOn: null,   // EDITING_ON_STATUS details of who is currently editing
     csrfToken: null,
     modulesPage: false, // boolean, is this the modules page? (bad name right?)
     currentCollection: null, // name of the current collection

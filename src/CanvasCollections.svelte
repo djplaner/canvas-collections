@@ -109,7 +109,8 @@
   // Initialise some global configuration settings
   const configUpdates = {
     courseId: courseId,
-    editMode: editMode,
+    editMode: editMode,  // is this staff view true or student view false
+    editingOn: null,
     csrfToken: csrfToken,
     modulesPage: modulesPage, // boolean, is this the modules page? (bad name right?)
     currentCollection: "", // name of the current collection
@@ -344,6 +345,7 @@
         if ($configStore["needToSaveCollections"] && $configStore["editMode"]) {
           collectionsDetails.saveCollections(
             $collectionsStore,
+            $configStore["editingOn"],
             $configStore["editMode"],
             $configStore["needToSaveCollections"],
             completeSaveCollections
@@ -407,6 +409,7 @@
 
       collectionsDetails.saveCollections(
         $collectionsStore,
+        $configStore['editingOn'],
         true,
         true,
         completeImportCollections
@@ -491,6 +494,7 @@
 
     collectionsDetails.saveCollections(
       $collectionsStore,
+      $configStore["editingOn"],
       true,
       true,
       completeInitialiseConfigPage
@@ -566,6 +570,7 @@
     ) {
       collectionsDetails.saveCollections(
         $collectionsStore,
+        $configStore["editingOn"].getEditingOnStatus(),
         $configStore["editMode"],
         $configStore["needToSaveCollections"],
         completeSaveCollections
@@ -628,14 +633,16 @@
 
   function toggleEditingOn() {
     if ($configStore["editingOn"] === null) {
-      // try to turn editing on
+      // no current setting for editingOn so try to turn editing on
       editingOnHandler.turnEditOn(setUpEditingOn);
     } else {
+      // found an existing setting for it
       // try to turn editing off
       // do one final save, if still required
       if ($configStore["needToSaveCollections"]) {
         collectionsDetails.saveCollections(
           $collectionsStore,
+          $configStore["editingOn"].getEditingOnStatus(),
           $configStore["editMode"],
           $configStore["needToSaveCollections"],
           completeSaveCollections
@@ -713,7 +720,8 @@
 
     // should be right to turn editing on
     numSaves = 0;
-    $configStore["editingOn"] = editingOnHandler.getEditingDetails();
+    //$configStore["editingOn"] = editingOnHandler.getEditingDetails();
+    $configStore["editingOn"] = editingOnHandler.getEditingOnStatus();
 
     // only do this if # collections > 0 && currentCollection defined
 
@@ -923,6 +931,7 @@
           disabled={!$configStore["needToSaveCollections"]}
           on:click={collectionsDetails.saveCollections(
             $collectionsStore,
+            $configStore["editingOn"],
             $configStore["editMode"],
             $configStore["needToSaveCollections"],
             completeSaveCollections

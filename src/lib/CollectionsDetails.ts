@@ -22,6 +22,8 @@ import sanitizeHtml from "sanitize-html";
 import { configStore } from "../stores";
 import { get } from "svelte/store";
 
+import { EDITING_ON_STATUS } from "./editingOnController";
+
 export class CollectionsDetails {
   // parsed collections JSON
   public collections: object;
@@ -676,7 +678,7 @@ export class CollectionsDetails {
   }
 
   /**
-   * @function saveCollections(editMode,needToSave)
+   * @function saveCollections()
    * @param {Object} collectionsStore latest detail from collections in memory
    * @param {boolean} editMode true if in edit mode
    * @param {boolean} needToSave true if need to save
@@ -687,11 +689,12 @@ export class CollectionsDetails {
 
   saveCollections(
     collectionsStore: {},
+    editingOn: EDITING_ON_STATUS, 
     editMode: boolean,
     needToSave: boolean,
     callBack: Function
   ) {
-    if (editMode && needToSave) {
+    if (editingOn===EDITING_ON_STATUS.YOU_EDITING && editMode && needToSave) {
       let callUrl = `/api/v1/courses/${this["config"]["courseId"]}/pages/canvas-collections-configuration`;
 
       const content = this.generateConfigPageContent(collectionsStore);

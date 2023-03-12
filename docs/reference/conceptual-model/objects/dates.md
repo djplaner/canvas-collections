@@ -83,6 +83,12 @@ The _date tab_ allows you to combine start and stop dates to specify either:
 
 Both the _start_ and _stop_ date are specified using the same combination of properties.
 
+!!! note "Choosing a _week_ is the minimum required for a date to be considered configured"
+
+    i.e. once _start_ date has a week chosen, calculation of current date will commence.  
+
+#### Date properties
+
 | Property | Description |
 | --- | --- |
 | Date label | A text label that will be added before the date (range). e.g. "Starts" or "Due". |
@@ -91,27 +97,18 @@ Both the _start_ and _stop_ date are specified using the same combination of pro
 | Time | Time of day (if any) for the date. |
 | Date | A read only text book that displays the current date as specified by the specific data component |
 
-!!! note "Choosing a _week_ is the minimum required for a date to be considered configured"
 
-    i.e. once _start_ date has a week chosen, calculation of current date will commence.  
-
-
-### Calculated Date
-
-:construction: add detail about this
-
-### Representation of dates
+#### Representation of dates
 
 How dates are displayed to the student depends on the combination of:
 
 1. The design of the current representation for a collection.
-2. What dates have been configured.
+1. What dates have been configured.
 
-The following animated image demonstrates how the representation of a date changes through the following stages:
+The following animated image shows how to use the _date tab_ and the different ways dates can be displayed.
 
-1. No date has been configured for the cards representation.
-2. A start date is partially and then fully configured.
-3. The representation is changed to the assessment table representation and then back to the cards.
-4. A stop date is partially and then almost fully configured (the week is not specified, hence no final date).
 
-![](./pics/configureDatesAnimated.gif)
+<figure markdown>
+<figcaption>Animated demonstration of changing dates</figcaption>
+<sl-animated-image src="../pics/configureDatesAnimated.gif" alt="Animated demonstration of changing dates" />
+</figure>
