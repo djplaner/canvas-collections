@@ -566,11 +566,12 @@
     if (
       EXIT_SAVE &&
       $configStore["needToSaveCollections"] &&
+//      $configStore["editingOn"] === EDITING_ON_STATUS.YOU_EDITING 
       $configStore["editMode"]
     ) {
       collectionsDetails.saveCollections(
         $collectionsStore,
-        $configStore["editingOn"].getEditingOnStatus(),
+        $configStore["editingOn"],
         $configStore["editMode"],
         $configStore["needToSaveCollections"],
         completeSaveCollections

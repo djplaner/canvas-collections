@@ -94,6 +94,8 @@ nav:
       - Configure Modules: how-tos/new/configure-modules.md
       - Configure Representations: how-tos/new/configure-representations.md
       - Set up "Claytons": how-tos/new/set-up-claytons.md
+    - Fix common problems:
+      - Failed to turn editing on: how-tos/problems/failed-to-turn-editing-on.md
 #    - Update Collections:
 #      - 🚧 Coming soon: how-tos/changes/overview.md
 #      - Add a collection: how-tos/changes/add-a-collection.md

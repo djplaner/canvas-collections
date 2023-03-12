@@ -4,6 +4,10 @@ To modify the configuration of Collections for a Canvas course you will need to 
 
 For more information on how to configure Collections once you've turned _Edit on_, see the [Configure Collections](collections.md) and [Configure Modules](modules.md) pages.
 
+!!! note "Only one person, in one browser window can edit Collections for a course"
+
+	To ensure that the Collections configuration information is not corrupted, only one person in one browser window can edit the Collections configuration information for a course at a time.
+
 === "Try to turn _edit on_"
 
 	Initially, when viewing the course Modules page you will be in view mode. In the top right hand corner, you should be able to see both the Collections element (circled in red in the figure below) and next to it the _Student View_ button.

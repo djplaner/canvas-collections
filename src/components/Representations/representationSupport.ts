@@ -45,18 +45,18 @@ export function getCollectionCanvasModules(
   }
 
   if (!checkSequentialModuleOrder(collectionModules)) {
-    updateSequentialModuleOrder(collectionModules, canvasModules)
+    updateSequentialModuleOrder(collectionModules, canvasModules);
   }
 
-  collectionModules.forEach((module) => {
-    console.log(`OK? ${module.name} == ${module.moduleOrder}`);
-  });
+  // At this stage, the collectionsModules array has the "correct" moduleOrder
 
   // create a dict keyed on moduleOrder of collections with ids in collectionModuleIds
 
   let orderedModuleIds = {};
 
   // iterate over the collectionsModules dictionary (keyed on module id)
+  // TODO
+  // - Claytons - does it include unpublished modules?
   for (const moduleId in collectionsModules) {
     if (
       collectionsModules[moduleId].collection === collection ||
@@ -64,8 +64,10 @@ export function getCollectionCanvasModules(
         (collectionsModules[moduleId].collection === null ||
           collectionsModules[moduleId].collection === ""))
     ) {
-      //addedModuleIds.push(moduleId);
-      orderedModuleIds[collectionsModules[moduleId].moduleOrder] = moduleId;
+      // only do this if we're not in Claytons mode and the module is published
+      if (!(claytons && !canvasModuleIds[moduleId].published)) {
+        orderedModuleIds[collectionsModules[moduleId].moduleOrder] = moduleId;
+      }
     }
   }
 
@@ -85,43 +87,6 @@ export function getCollectionCanvasModules(
     }
   }
 
-  // loop through the canvas modules to check if they're published or not
-  // track the module ids we add to the list
-  /*  canvasModules.forEach((module) => {
-    // for each canvas module
-    const moduleId = module.id;
-    if (collectionsModules[moduleId].collection === collection) {
-//      if (!(claytons && !module.published && !collectionsModules[module.id]['fyi'])) {
-
-      if (editMode ) {
-        modules.push(module);
-        addedModuleIds.push(moduleId);
-      } else {
-        // for students, modules will not contain any Canvas information
-
-//      } if ( module.published || collectionsModules[module.id]['fyi']) {
-        modules.push(module);
-        addedModuleIds.push(moduleId);
-      }
-    }
-  }); */
-
-  // Add in any FYI modules
-
-  /*  if (!editMode) {
-    for (const moduleId in collectionsModules) {
-      // find the fyi module's not already added above, in this collection
-      if (
-        collectionsModules[moduleId].collection === collection &&
-        !addedModuleIds.includes(parseInt(moduleId)) &&
-        collectionsModules[moduleId].fyi
-      ) {
-        // if the module belongs to the selected collection
-        // push the canvas module onto the array
-        modules.push(collectionsModules[moduleId]);
-      }
-    }
-  } */
   return modules;
 }
 
@@ -147,10 +112,9 @@ function checkSequentialModuleOrder(modules) {
  * to the end
  */
 function updateSequentialModuleOrder(collectionModules, canvasModules) {
-
   let collectionModulesIds = collectionModules.map((module) => module.id);
   let count = 0; // track the sequence we're up to
-  let moduleIdToOrder= {};  // map a module id to a particular sequential order
+  let moduleIdToOrder = {}; // map a module id to a particular sequential order
 
   // loop through the canvas modules, and populate moduleIdToOrder with sequential order
   canvasModules.forEach((module) => {
@@ -161,7 +125,7 @@ function updateSequentialModuleOrder(collectionModules, canvasModules) {
     }
   });
 
-  let moduleIdsNotSet = {};  // track the collections modules without set moduleOrder
+  let moduleIdsNotSet = {}; // track the collections modules without set moduleOrder
   // loop through the collection modules
   collectionModules.forEach((module) => {
     // does moduleIdToOrder contain module.id
