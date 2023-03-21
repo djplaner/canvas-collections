@@ -1,71 +1,59 @@
 # "Claytons" Collections
 
-## Why?
+> _add info about css_ 
 
-The standard "live" version of Canvas Collections requires that you have installed Collections (either [individually](../../../getting-started/install/individual.md) or [institutionally](../../../getting-started/install/institutional.md)). Otherwise the Canvas modules view will remain "vanilla". 
+## Why and what?
 
-Institutional installation is a decision for your entire institution and requires work by your institution's information technology folk.
+Canvas Collections is able to modify the default Canvas modules view to provide a more useful and engaging experience for students and teachers. There are two ways Canvas Collections can make this modification:
 
-Individual installation requires each person (students and teachers) to install a userscript manager and the Collections userscript.
+=== "'Live' Canvas Collections"
 
-"Claytons" Collections is a way to have Collections without having to install it. 
+    The standard "live" version of Canvas Collections requires that you have installed the Collections code - either [individually](../../../getting-started/install/individual.md) or [institutionally](../../../getting-started/install/institutional.md). This code runs and updated the Canvas modules view as you are watching (i.e. live). 
 
-## What?
+    If you or your students are unable to install the Collections code, then you can use the "Claytons" Collections to create a similar experience.
 
-"Claytons" Collections is the Collections you have when you're not having Collections (a play on [a marketing campaign for a drink](https://en.wikipedia.org/wiki/Claytons)). It's a way of one person install and using Collections to create normal Canvas pages that look like Collections, but can be viewed without Collections.
+=== "'Claytons' Canvas Collections"
 
-It is a way of semi-automating common advice from the Canvas community to manually create pages to workaround the limitations of Canvas' module view. Some examples of that advice, include: [create full navigation using pages](http://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/), [create an inviting course home page](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236), and [home sweet home pages without tables](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Home-Sweet-Homepages-without-Tables/ba-p/275079).
+    "Claytons" Collections is the Collections you have when you're not having Collections (a play on [a marketing campaign for a drink](https://en.wikipedia.org/wiki/Claytons)). It's a way for one person to install and use 'live' Collections to create normal Canvas pages that contains the Collections visual representation. As a Canvas page, this can be viewed without the Collections code.
+
+    It is a way of semi-automating common advice from the Canvas community to manually create pages to workaround the limitations of Canvas' module view. Some examples of that advice, include: [create full navigation using pages](http://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/), [create an inviting course home page](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236), and [home sweet home pages without tables](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Home-Sweet-Homepages-without-Tables/ba-p/275079).
 
 ## How does it work? 
 
 There are two steps to using "Claytons" Collections:
 
-1. Specify an  _output page_ for any collection to be included.
-
-    You can use "Claytons" for one or more collection by specifying the name of an **existing** Canvas page within your course site.
+1. Specify an  [_output page_](../../collections/existing-collections.md#output-page) for any of [the existing collections](../../collections/existing-collections.md) .
 
 2. Update the _output page_ for your collection.
 
-    Any changes you make using Canvas Collections are **not** automatically reflected in the _output page_. You will need to manually update the _output page_ to see the changes. There are two different ways to update an _output page_: (1) update a single page; or, (2) update all pages (Full Claytons).
+!!! warning "Updating the contents of an _output page_ is a manual process"
 
-### Relationship to existing _output page_ content 
+    Any changes you make using Canvas Collections are **not** automatically reflected in the _output page_. You will need to manually update the _output page_ to see the changes. There are two different ways to update an _output page_: 
+    
+    1. update the output page for a single collection; or, 
+    2. update the output page for all collections (Full Claytons).
 
-If a page does not already contain existing content for a collection, the collection's content will be placed at the end of the existing content.
+### What does it do to existing content in an _output page_?
 
-If a page already has content for the current collection, it will replace the existing content with the new content.
+Collections recognises two different situations, depending on whether or not the _output page_:
 
-!!! note 
+1. does _not_ already contain a Claytons content for the given collection; or,
 
-    When updating an _output page_ Collections does not modify or remove any non-Collection content. 
+    Collections will place the collection's content after any existing content on the page. 
+2. already contains Claytons content for the given collection. 
 
-### Relationship between Collections and _output pages_
+    Collections will replace the old Claytons content with the latest version.
+
+!!! note "Collections does not modify or remove any non-Collection content." 
+
+### Can an output page be used by more than one collection?
+
+Yes.
 
 A single Canvas page can be an _output page_ for a single collection or multiple collections.
 
-A single collection can have an _output page_ identified, or multiple can. 
+If an _output page_ is used by multiple collections, then the content of all the collections will be added to the _output page_. How this works will depend on the chosen [navigation option](../../collections/full-claytons.md#navigation-options).
 
-## How to
-
-### Specify an _output page_
-
-Each collection's area in [the _Existing Collections_ area](../../collections/overview#existing-collections) of the Collections configuration area has an _output page_ text box (see following image).  Enter the name of an existing page in the text box. The "name" of the page is "Page Title" you will see when you edit the page. 
-
-In the following image the _Course Content_ collection has been configured with an _output page_ with the name _Home Page_.
-
-![](pics/outputPage.png)  
-
-### Update a "single" collection 
-
-In the image above there is an _Update_ button next to the _output page_ name. Clicking this button will update the _output page_ with the current content of that collection.  
-
-The following animated image demonstrates the process, including these steps:
-
-1. Show the existing Canvas page with some content already in it.
-2. Open up the Collections configuration area and find the _output page_ for the _Why?_ collection.
-3. Click the _update_ button and observe the alert generated informing of the updates successful completion.
-4. Going back to the Canvas page and reloading it to see that the _Why?_ collection's representation has been added to the bottom of the page.
-
-![](pics/animatedUpdatePage.gif)
 
 ### Update all Collections (Full Claytons)
 
