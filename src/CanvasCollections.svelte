@@ -109,7 +109,7 @@
   // Initialise some global configuration settings
   const configUpdates = {
     courseId: courseId,
-    editMode: editMode,  // is this staff view true or student view false
+    editMode: editMode, // is this staff view true or student view false
     editingOn: null,
     csrfToken: csrfToken,
     modulesPage: modulesPage, // boolean, is this the modules page? (bad name right?)
@@ -392,12 +392,44 @@
   function completeMigration() {
     // save the outcome and remove it from configStore so this is only called once
     const outcome = $configStore["migrationOutcome"];
-    $configStore["lastMigrationOutcome"] = outcome;
-    delete $configStore["migrationOutcome"];
+    // do this later
+    //$configStore["lastMigrationOutcome"] = outcome;
+    //delete $configStore["migrationOutcome"];
 
     if (outcome === "cancel") {
       return;
-    } else if (outcome === "refresh") {
+    }
+
+    if (outcome === "refresh" || outcome === "proceed") {
+      // need to get editing status to continue
+      // setUpImport is the call back function once the handler is done
+      editingOnHandler.turnEditOn(setUpImport);
+    }
+  }
+
+  /**
+   * @function setUpImport
+   * @param editStatus
+   * @param editDetails
+   * @description Handler for trying to turn edit on for an import
+   * Check the user's chosen outcome for import and carry that out
+   */
+  function setUpImport(editStatus: EDITING_ON_STATUS, editDetails: object) {
+    // can only work if the user is editing
+    if (editStatus !== EDITING_ON_STATUS.YOU_EDITING) {
+      // didn't work let the user know
+      showEditStatusWarnings(editStatus);
+      return;
+    }
+
+    $configStore["editingOn"] = editStatus;
+
+    // get the outcome
+    const outcome = $configStore["migrationOutcome"];
+    $configStore["lastMigrationOutcome"] = outcome;
+    delete $configStore["migrationOutcome"];
+
+    if (outcome === "refresh") {
       // TODO probably with the dialog not closing
       importedCollections = false;
       collectionsDetails.resetImport();
@@ -411,7 +443,7 @@
 
       collectionsDetails.saveCollections(
         $collectionsStore,
-        $configStore['editingOn'],
+        $configStore["editingOn"],
         true,
         true,
         completeImportCollections
@@ -568,7 +600,7 @@
     if (
       EXIT_SAVE &&
       $configStore["needToSaveCollections"] &&
-//      $configStore["editingOn"] === EDITING_ON_STATUS.YOU_EDITING 
+      //      $configStore["editingOn"] === EDITING_ON_STATUS.YOU_EDITING
       $configStore["editMode"]
     ) {
       collectionsDetails.saveCollections(
@@ -657,6 +689,34 @@
   }
 
   /**
+   * @function showEditStatusWarnings
+   * @param editStatus
+   * @description generate some toast explaining the results of trying to get edit mode.
+   * Called by at least two different callbacks for turning editing on
+   */
+  function showEditStatusWarnings(editStatus: EDITING_ON_STATUS) {
+    if (editStatus === EDITING_ON_STATUS.YOU_EDITING_ELSEWHERE) {
+      toastAlert(
+        `<p>Failed to turn editing on</p>
+          <p>You are already editing Collections for this course in another browser</p>`,
+        "danger"
+      );
+    } else if (editStatus === EDITING_ON_STATUS.SOMEONE_ELSE_EDITING) {
+      toastAlert(
+        `<p>Failed to turn editing on</p>
+        <p>Someone else is editing Collections</p>`,
+        "danger"
+      );
+    } else if (editStatus === EDITING_ON_STATUS.NO_ONE_EDITING) {
+      toastAlert(
+        `<p>Failed to turn editing on</p>
+        <p>Unknown reason - but apparently no-one else is editing.</p>`,
+        "danger"
+      );
+    }
+  }
+
+  /**
    * @function setUpEditingOn
    * @param editStatus
    * @param editDetails
@@ -667,26 +727,7 @@
   function setUpEditingOn(editStatus: EDITING_ON_STATUS, editDetails: object) {
     if (editStatus !== EDITING_ON_STATUS.YOU_EDITING) {
       // didn't work let the user know
-
-      if (editStatus === EDITING_ON_STATUS.YOU_EDITING_ELSEWHERE) {
-        toastAlert(
-          `<p>Failed to turn editing on</p>
-          <p>You are already editing Collections for this course in another browser</p>`,
-          "danger"
-        );
-      } else if (editStatus === EDITING_ON_STATUS.SOMEONE_ELSE_EDITING) {
-        toastAlert(
-          `<p>Failed to turn editing on</p>
-        <p>Someone else is editing Collections</p>`,
-          "danger"
-        );
-      } else if (editStatus === EDITING_ON_STATUS.NO_ONE_EDITING) {
-        toastAlert(
-          `<p>Failed to turn editing on</p>
-        <p>Unknown reason - but apparently no-one else is editing.</p>`,
-          "danger"
-        );
-      }
+      showEditStatusWarnings(editStatus);
       return;
     }
 
