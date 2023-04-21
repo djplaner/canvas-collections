@@ -223,7 +223,9 @@
    * @function gotCollectionsDetails
    * @param {string} status - undefined if working, otherwise a label for an error
    * @description Called by CollectionsDetails when the collections data
-   * has been retrieved or if there were problems
+   * has been retrieved or if there were problems.  Does various checks
+   * on the retrieved data and - if all is good - starts up the rest of the pipeline
+   * to do any necessary updates of Collections
    */
   function gotCollectionsDetails(status: string = "") {
     /*

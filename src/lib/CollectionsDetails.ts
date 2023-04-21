@@ -312,6 +312,7 @@ export class CollectionsDetails {
           JSON.stringify(modules[importedModuleId])
         );
         modules[currentModuleId].id = currentModuleId;
+        // what about the rest of the properties?
         delete modules[importedModuleId];
       }
     });
