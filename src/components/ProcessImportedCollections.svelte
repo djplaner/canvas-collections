@@ -30,8 +30,6 @@
   let currentCourseDetails = null;
   let importCourseDetails = null;
 
-  console.log(`editing status is ${$configStore["editingOn"]}}`);
-
   wf_fetchData(`${baseApiUrl}/courses/${currentCourseId}`).then((msg) => {
     if (msg.status === 200) {
       currentCourseDetails = msg.body;

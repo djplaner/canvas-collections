@@ -290,7 +290,10 @@
       // to after the initial processing
       // - but we do probably want to wait until both canvas and collections data is loaded
       if (collectionsDetails.isImportedCollection()) {
-        addProcessImportedCollections();
+        // if we're a teacher
+        if ($configStore["editMode"]) {
+          addProcessImportedCollections();
+        }
       } else if (!noCollections) {
         // Only do all this if able to load collections configuration, otherwise
         // leave the interface and set up as basic until user hits the switch
