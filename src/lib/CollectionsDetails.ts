@@ -312,6 +312,7 @@ export class CollectionsDetails {
           JSON.stringify(modules[importedModuleId])
         );
         modules[currentModuleId].id = currentModuleId;
+        // what about the rest of the properties?
         delete modules[importedModuleId];
       }
     });
@@ -332,6 +333,9 @@ export class CollectionsDetails {
         let currentModule = modules[currentModuleId];
         // update the image src
         if (currentModule && currentModule.hasOwnProperty("image")) {
+          // currentModule.image actually equals the imported image - it hasn't been
+          // modified -- is this because I replaced the contents of the file with
+          // a copy and paste - not a real migration?? YEP
           currentModule.image = importedImage.src;
         }
       }
