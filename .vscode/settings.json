@@ -9,5 +9,10 @@
 	  "tag:yaml.org,2002:python/name:materialx.emoji.to_svg",
 	  "tag:yaml.org,2002:python/name:materialx.emoji.twemoji",
 	  "tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format"
-	]
+	],
+	"license.author": "David Jones",
+	"license.default": "gpl-3.0",
+	"licenser.author": "David Jones",
+	"licenser.license": "GPLv3",
+	"licenser.projectName": "Canvas Collections"
   }
