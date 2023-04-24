@@ -1,4 +1,4 @@
-// Copyright (C) 2023 s2986288
+// Copyright (C) 2023 David Jones
 // 
 // This file is part of Canvas Collections.
 // 
