@@ -1,5 +1,5 @@
 <!--
- Copyright (C) 2023 David Jones
+ Copyright (C) 2023 Griffith University
  
  This file is part of Canvas Collections.
  
@@ -257,10 +257,10 @@
         <p>No modules have been added to this collection.</p>
       </div>
     {/if}
-    <table class="cc-responsive-table" role="table">
+    <table class="cc-responsive-table">
       <!-- <caption></caption> -->
-      <thead role="rowgroup">
-        <tr role="row" class="cc-title-col">
+      <thead>
+        <tr class="cc-title-col">
           <th role="columnheader" scope="col"
             ><span class="cc-table-header-text">Title</span></th
           >
@@ -286,7 +286,7 @@
       </thead>
       <tbody>
         {#each modules as module}
-          <tr role="row">
+          <tr >
             <td role="cell">
               <span class="cc-responsive-table__heading" aria-hidden="true"
                 >Title</span
@@ -395,11 +395,11 @@
     border-spacing: 0;
   }
 
-  .cc-assessment-container caption {
+/*  .cc-assessment-container caption {
     font-size: 0.5em;
     font-weight: 700;
     text-align: left;
-  }
+  } */
 
   td.descriptionCell {
     width: 20rem;
@@ -536,14 +536,14 @@
     margin-top: 0.5rem !important;
   }
 
-  .cc-assessment-table-fyi-text {
+/*  .cc-assessment-table-fyi-text {
     width: 100%;
     padding: 0.25rem;
     font-size: x-small;
     text-align: center;
     color: white;
     background: black;
-  }
+  } */
 
   .cc-published {
     background: rgb(255, 0, 0, 0.75);

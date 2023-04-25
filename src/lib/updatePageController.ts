@@ -1,4 +1,4 @@
-// Copyright (C) 2023 David Jones
+// Copyright (C) 2023 Griffith University
 // 
 // This file is part of Canvas Collections.
 // 
