@@ -184,6 +184,32 @@
   }
 
   /**
+   * @function setShoelaceDate
+   * @param {boolean} to - true if the date is the to date for moduleId
+   * @description Kludge experiment to modify the current modules start|stop date 
+   * so it can be displayed in the shoelace input[type=date] component
+   * i.e. 
+   * - add the year
+   * - convert month label to month number
+  */
+
+  function setShoelaceDate( to = false) {
+    let date = $collectionsStore["MODULES"][moduleId]["date"];
+    let month = $collectionsStore["MODULES"][moduleId]["date"]["month"];
+
+    if (to) {
+      date = $collectionsStore["MODULES"][moduleId]["date"]["to"];
+      month = $collectionsStore["MODULES"][moduleId]["date"]["to"]["month"];
+    }
+
+    console.log(`setShoelaceDate ${to} ${date} ${month}`);
+
+    return `date`;
+
+  }
+
+
+  /**
    * Define the tooltip and help site links for this module
    */
   const HELP = {
@@ -395,15 +421,16 @@
         <sl-tooltip class="cc-about-module-studyPeriod">
           <div slot="content">{@html HELP.calendarDate.tooltip}</div>
 
-          <input
+          <sl-input
             id="cc-module-config-{moduleId}-calendar-date"
-            type="text"
+            type="date"
             disabled
-            value="{$collectionsStore['MODULES'][moduleId]['date'][
-              'date'
-            ]} {$collectionsStore['MODULES'][moduleId]['date']['month']}"
+            value="{setShoelaceDate()}"
           />
         </sl-tooltip>
+<!--            value="{$collectionsStore['MODULES'][moduleId]['date'][
+              'date'
+            ]} {$collectionsStore['MODULES'][moduleId]['date']['month']}" --> 
       </span>
     </div>
   </div>
@@ -486,15 +513,17 @@
       <span class="cc-module-input">
         <sl-tooltip class="cc-about-module-studyPeriod">
           <div slot="content">{@html HELP.calendarDate.tooltip}</div>
-          <input
+          <sl-input
             id="cc-module-config-{moduleId}-calendar-date-to"
-            type="text"
+            type="date"
             disabled
-            value="{$collectionsStore['MODULES'][moduleId]['date']['to'][
-              'date'
-            ]} {$collectionsStore['MODULES'][moduleId]['date']['to']['month']}"
+            value="{setShoelaceDate(true)}"
           />
-        </sl-tooltip>
+        </sl-tooltip> <br />
+            <!-- value="{$collectionsStore['MODULES'][moduleId]['date']['to'][
+              'date'
+            ] || ''} {$collectionsStore['MODULES'][moduleId]['date']['to']['month'] || ''}" -->
+        <sl-input id="fred-{moduleId}" type="date"></sl-input>
       </span>
     </div>
   </div>
