@@ -17,6 +17,7 @@
  along with Canvas Collections.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+
 <script lang="ts">
   /**
    * Define the component for configuring and individual module

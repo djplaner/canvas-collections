@@ -16,7 +16,6 @@
  You should have received a copy of the GNU General Public License
  along with Canvas Collections.  If not, see <http://www.gnu.org/licenses/>.
 -->
-
 <script lang="ts">
   /**
    * Implement the tabbed interface that allows for the configuration of
@@ -78,7 +77,6 @@
     // 2. week and day
     // 3. week and day and time
     // - must have a week
-
 
     let dateString = "<em>undefined</em> ";
     if (dateInfo.week !== "") {
@@ -186,28 +184,41 @@
   /**
    * @function setShoelaceDate
    * @param {boolean} to - true if the date is the to date for moduleId
-   * @description Kludge experiment to modify the current modules start|stop date 
+   * @description Kludge experiment to modify the current modules start|stop date
    * so it can be displayed in the shoelace input[type=date] component
-   * i.e. 
+   * i.e.
    * - add the year
    * - convert month label to month number
-  */
+   */
 
-  function setShoelaceDate( to = false) {
-    let date = $collectionsStore["MODULES"][moduleId]["date"];
+  function setShoelaceDate(to = false) {
+    let date = $collectionsStore["MODULES"][moduleId]["date"]["date"];
     let month = $collectionsStore["MODULES"][moduleId]["date"]["month"];
 
     if (to) {
-      date = $collectionsStore["MODULES"][moduleId]["date"]["to"];
+      date = $collectionsStore["MODULES"][moduleId]["date"]["to"]["date"];
       month = $collectionsStore["MODULES"][moduleId]["date"]["to"]["month"];
     }
 
-    console.log(`setShoelaceDate ${to} ${date} ${month}`);
+    // convert month (e.g. Mar) to month number (e.g. 03) self-contained
+    const months = { Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', 
+      Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12', };
+    let monthNumber;
 
-    return `date`;
+    if (month in months) {
+      monthNumber = months[month];
+    } else {
+      // can't return proper date without month
+      return '';
+    }
 
+    //console.log(`setShoelaceDate ${to} ${date} ${month} 2023`);
+    console.log(`setShoeLaceDate 2023-${monthNumber}-${date}`);
+
+//    return `2023-04-10`;
+
+    return `2023-${monthNumber}-${date}`;
   }
-
 
   /**
    * Define the tooltip and help site links for this module
@@ -293,7 +304,6 @@
             on:change={() => {
               $configStore["needToSaveCollections"] = true;
             }}
-
           />
         {:else}
           <input
@@ -305,17 +315,18 @@
         {/if}
       </span>
     </div>
+
     <div class="cc-module-form">
       <span class="cc-module-label">
-        <label for="cc-module-config-{moduleId}-day">Day of week</label>
+        <label for="cc-module-config-{moduleId}-day">Calendar date</label>
 
         <sl-tooltip id="cc-about-module-date-stop">
           <div slot="content">{@html HELP.hideDate.tooltip}</div>
           <input
-            on:keydown|stopPropagation
             type="checkbox"
+            on:keydown|stopPropagation
             bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
-              "day"
+              "calendarDate"
             ]}
             on:click={() => {
               $configStore["needToSaveCollections"] = true;
@@ -324,48 +335,14 @@
         </sl-tooltip>
       </span>
       <span class="cc-module-input">
-        <select
-          id="cc-module-config-{moduleId}-day"
-          bind:value={$collectionsStore["MODULES"][moduleId]["date"]["day"]}
-          on:change={updateDate}
-        >
-          <option value="">Not chosen</option>
-          {#each daysOfWeek as day}
-            <option value={day}>{day}</option>
-          {/each}
-        </select>
+        <sl-input
+          id="cc-module-config-{moduleId}-calendar-date"
+          type="date"
+          value="{setShoelaceDate()}"
+        />
       </span>
     </div>
-    <div class="cc-module-form">
-      <span class="cc-module-label">
-        <label for="cc-module-config-{moduleId}-week">Week</label>
-        <sl-tooltip id="cc-about-module-date-stop">
-          <div slot="content">{@html HELP.hideDate.tooltip}</div>
-          <input
-            type="checkbox"
-            on:keydown|stopPropagation
-            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
-              "week"
-            ]}
-            on:click={() => {
-              $configStore["needToSaveCollections"] = true;
-            }}
-          />
-        </sl-tooltip>
-      </span>
-      <span class="cc-module-input">
-        <select
-          id="cc-module-config-{moduleId}-week"
-          bind:value={$collectionsStore["MODULES"][moduleId]["date"]["week"]}
-          on:change={updateDate}
-        >
-          <option value="">Not chosen</option>
-          {#each weeksOfTerm as week}
-            <option value={week.toString()}>{week}</option>
-          {/each}
-        </select>
-      </span>
-    </div>
+
     <div class="cc-module-form">
       <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-time">Time</label>
@@ -400,39 +377,6 @@
         </aeon-datepicker>
       </span>
     </div>
-    <div class="cc-module-form">
-      <span class="cc-module-label">
-        <label for="cc-module-config-{moduleId}-calendar-date">Date</label>
-        <sl-tooltip id="cc-about-module-date-stop">
-          <div slot="content">{@html HELP.hideDate.tooltip}</div>
-          <input
-            type="checkbox"
-            on:keydown|stopPropagation
-            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
-              "calendarDate"
-            ]}
-            on:click={() => {
-              $configStore["needToSaveCollections"] = true;
-            }}
-          />
-        </sl-tooltip>
-      </span>
-      <span class="cc-module-input">
-        <sl-tooltip class="cc-about-module-studyPeriod">
-          <div slot="content">{@html HELP.calendarDate.tooltip}</div>
-
-          <sl-input
-            id="cc-module-config-{moduleId}-calendar-date"
-            type="date"
-            disabled
-            value="{setShoelaceDate()}"
-          />
-        </sl-tooltip>
-<!--            value="{$collectionsStore['MODULES'][moduleId]['date'][
-              'date'
-            ]} {$collectionsStore['MODULES'][moduleId]['date']['month']}" --> 
-      </span>
-    </div>
   </div>
   <div class="cc-date-col" id="cc-module-config-{moduleId}-date-stop">
     <div class="cc-date-heading">
@@ -447,42 +391,20 @@
     <div class="cc-module-form" style="height: 2.375rem" />
     <div class="cc-module-form">
       <span class="cc-module-label">
-        <label for="cc-module-config-{moduleId}-day-to">Day of week</label>
+        <label for="cc-module-config-{moduleId}-calendar-date-to">Date</label>
       </span>
       <span class="cc-module-input">
-        <select
-          id="cc-module-config-{moduleId}-day-to"
-          bind:value={$collectionsStore["MODULES"][moduleId]["date"]["to"][
-            "day"
-          ]}
-          on:change={updateDate}
-        >
-          <option value="">Not chosen</option>
-          {#each daysOfWeek as day}
-            <option value={day}>{day}</option>
-          {/each}
-        </select>
+        <sl-tooltip class="cc-about-module-studyPeriod">
+          <div slot="content">{@html HELP.calendarDate.tooltip}</div>
+          <sl-input
+            id="cc-module-config-{moduleId}-calendar-date-to"
+            type="date"
+            value={setShoelaceDate(true)}
+          />
+        </sl-tooltip> <br />
       </span>
     </div>
-    <div class="cc-module-form">
-      <span class="cc-module-label">
-        <label for="cc-module-config-{moduleId}-week-to">Week</label>
-      </span>
-      <span class="cc-module-input">
-        <select
-          id="cc-module-config-{moduleId}-week-to"
-          bind:value={$collectionsStore["MODULES"][moduleId]["date"]["to"][
-            "week"
-          ]}
-          on:change={updateDate}
-        >
-          <option value="">Not chosen</option>
-          {#each weeksOfTerm as week}
-            <option value={week.toString()}>{week}</option>
-          {/each}
-        </select>
-      </span>
-    </div>
+
     <div class="cc-module-form">
       <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-time-to">Time</label>
@@ -504,26 +426,6 @@
             on:change={updateDate}
           />
         </aeon-datepicker>
-      </span>
-    </div>
-    <div class="cc-module-form">
-      <span class="cc-module-label">
-        <label for="cc-module-config-{moduleId}-calendar-date-to">Date</label>
-      </span>
-      <span class="cc-module-input">
-        <sl-tooltip class="cc-about-module-studyPeriod">
-          <div slot="content">{@html HELP.calendarDate.tooltip}</div>
-          <sl-input
-            id="cc-module-config-{moduleId}-calendar-date-to"
-            type="date"
-            disabled
-            value="{setShoelaceDate(true)}"
-          />
-        </sl-tooltip> <br />
-            <!-- value="{$collectionsStore['MODULES'][moduleId]['date']['to'][
-              'date'
-            ] || ''} {$collectionsStore['MODULES'][moduleId]['date']['to']['month'] || ''}" -->
-        <sl-input id="fred-{moduleId}" type="date"></sl-input>
       </span>
     </div>
   </div>
