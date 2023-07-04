@@ -182,43 +182,107 @@
   }
 
   /**
-   * @function setShoelaceDate
+   * @function updateModuleDate
    * @param {boolean} to - true if the date is the to date for moduleId
-   * @description Kludge experiment to modify the current modules start|stop date
-   * so it can be displayed in the shoelace input[type=date] component
-   * i.e.
-   * - add the year
-   * - convert month label to month number
+   * @description The date (for either from/to dates) has been updated with
+   * shoelace date input.  Aim here is to update the relevant date information
+   *
+   * Two tasks
+   * 1. Set calendarDate for from/to to YYYY-MM-DD
+   * 2. Split that date into the following components and update appropriate values
+   * - year
+   * - date - date of the month
+   * - month - three letter month name
+   * - day - of the week
    */
 
-  function setShoelaceDate(to = false) {
-    let date = $collectionsStore["MODULES"][moduleId]["date"]["date"];
+  function updateModuleDate(event, to =  false) {
+    // get the value updated
+    let id = `cc-module-config-${moduleId}-calendar-date`;
+    let date = {};
+    if (to===true) {
+      id = id + "-to";
+    }
+
+    console.log(`update element ${id}`);
+
+    const dateInput = document.getElementById(id) as HTMLInputElement;
+
+    if (dateInput===null ) {
+      console.log("Couldn't get element")
+      return;
+    }
+
+    console.log(`dateInput value is ${dateInput.value}`);
+    // Get the date value and split into components
+    const value=dateInput.value;
+    date["calendarDate"]=value;
+
+    const dateObj = new Date(value);
+    date["year"] = dateObj.getFullYear().toString();
+    date["month"] = dateObj.toLocaleString("default", { month: "short" });
+    date["day"] = dateObj.toLocaleString("default", { weekday: "short" });
+    date["date"] = dateObj.getDate().toString();
+
+    // loop fields of date and update appropriate collectionsStore
+    Object.keys(date).forEach((field) => {
+      if (to===true) {
+        $collectionsStore["MODULES"][moduleId]["date"]["to"][field] = date[field];
+      } else {
+        $collectionsStore["MODULES"][moduleId]["date"][field] = date[field];
+      }
+    });
+
+/*    let date = $collectionsStore["MODULES"][moduleId]["date"]["date"];
     let month = $collectionsStore["MODULES"][moduleId]["date"]["month"];
 
     if (to) {
       date = $collectionsStore["MODULES"][moduleId]["date"]["to"]["date"];
       month = $collectionsStore["MODULES"][moduleId]["date"]["to"]["month"];
-    }
+    } 
 
     // convert month (e.g. Mar) to month number (e.g. 03) self-contained
-    const months = { Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', 
-      Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12', };
+    const months = {
+      Jan: "01",
+      Feb: "02",
+      Mar: "03",
+      Apr: "04",
+      May: "05",
+      Jun: "06",
+      Jul: "07",
+      Aug: "08",
+      Sep: "09",
+      Oct: "10",
+      Nov: "11",
+      Dec: "12",
+    };
     let monthNumber;
 
     if (month in months) {
       monthNumber = months[month];
     } else {
       // can't return proper date without month
-      return '';
+      return "";
     }
 
-    //console.log(`setShoelaceDate ${to} ${date} ${month} 2023`);
-    console.log(`setShoeLaceDate 2023-${monthNumber}-${date}`);
+    //console.log(`updateModuleDate ${to} ${date} ${month} 2023`);
+    console.log(`updateModuleDate 2023-${monthNumber}-${date}`);
 
-//    return `2023-04-10`;
+    //    return `2023-04-10`;
 
-    return `2023-${monthNumber}-${date}`;
+    return `2023-${monthNumber}-${date}`; */
   }
+
+  /**
+   * @function updateModuleDateTo
+   * @description Kludge workaround because I can't figure out the correct format to pass
+   * a parameter from sl-input:on-change 
+   */
+
+  function updateModuleDateTo() {
+    updateModuleDate({}, true);
+  }
+
 
   /**
    * Define the tooltip and help site links for this module
@@ -318,9 +382,9 @@
 
     <div class="cc-module-form">
       <span class="cc-module-label">
-        <label for="cc-module-config-{moduleId}-day">Calendar date</label>
+        <label for="cc-module-config-{moduleId}-day">Select date</label>
 
-        <sl-tooltip id="cc-about-module-date-stop">
+<!--        <sl-tooltip id="cc-about-module-date-stop">
           <div slot="content">{@html HELP.hideDate.tooltip}</div>
           <input
             type="checkbox"
@@ -332,13 +396,16 @@
               $configStore["needToSaveCollections"] = true;
             }}
           />
-        </sl-tooltip>
+        </sl-tooltip> -->
       </span>
       <span class="cc-module-input">
         <sl-input
           id="cc-module-config-{moduleId}-calendar-date"
           type="date"
-          value="{setShoelaceDate()}"
+          value={$collectionsStore["MODULES"][moduleId]["date"][
+            "calendarDate"
+          ] || ""}
+          on:sl-change={updateModuleDate}
         />
       </span>
     </div>
@@ -377,7 +444,76 @@
         </aeon-datepicker>
       </span>
     </div>
-  </div>
+    <div class="cc-module-date-display">
+      <span class="cc-module-label-display">
+        <label for="cc-module-config-{moduleId}-day">Day</label>
+
+        <sl-tooltip id="cc-about-module-date-stop">
+          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <input
+            on:keydown|stopPropagation
+            type="checkbox"
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+              "day"
+            ]}
+            on:click={() => {
+              $configStore["needToSaveCollections"] = true;
+            }}
+          />
+        </sl-tooltip>
+      </span>
+      <span class="cc-module-input-display">
+        <p>{$collectionsStore["MODULES"][moduleId]["date"]["day"]} </p>
+      </span>
+<!--    </div> -->
+
+<!--    <div class="cc-module-form"> -->
+      <span class="cc-module-label-display">
+        <label for="cc-module-config-{moduleId}-date">Date</label>
+
+        <sl-tooltip id="cc-about-module-date-stop">
+          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <input
+            on:keydown|stopPropagation
+            type="checkbox"
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+              "date"
+            ]}
+            on:click={() => {
+              $configStore["needToSaveCollections"] = true;
+            }}
+          />
+        </sl-tooltip>
+      </span>
+      <span class="cc-module-input-display">
+        <p>{$collectionsStore["MODULES"][moduleId]["date"]["date"]} </p>
+      </span>
+<!--    </div> -->
+
+<!--    <div class="cc-module-form"> -->
+      <span class="cc-module-label-display">
+        <label for="cc-module-config-{moduleId}-month">Month</label>
+
+        <sl-tooltip id="cc-about-module-date-stop">
+          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <input
+            on:keydown|stopPropagation
+            type="checkbox"
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+              "month"
+            ]}
+            on:click={() => {
+              $configStore["needToSaveCollections"] = true;
+            }}
+          />
+        </sl-tooltip>
+      </span>
+      <span class="cc-module-input-display">
+        <p>{$collectionsStore["MODULES"][moduleId]["date"]["month"]} </p>
+      </span>
+    </div>
+
+  </div> 
   <div class="cc-date-col" id="cc-module-config-{moduleId}-date-stop">
     <div class="cc-date-heading">
       Stop date
@@ -399,8 +535,8 @@
           <sl-input
             id="cc-module-config-{moduleId}-calendar-date-to"
             type="date"
-            value={setShoelaceDate(true)}
-          />
+            on:sl-change={updateModuleDateTo}
+            value={$collectionsStore["MODULES"][moduleId]["date"]["to"]["calendarDate"] || ""} ></sl-input>
         </sl-tooltip> <br />
       </span>
     </div>
@@ -443,6 +579,13 @@
     grid-gap: 1em;
   }
 
+  .cc-module-date-display {
+    display: grid;
+    grid-template-columns: 8em 1fr 8em 1fr 8em 1fr;
+    grid-template-rows: 1fr;
+    grid-gap: 1em;
+  }
+
   .cc-module-label {
     grid-column: 1/ 2;
     text-align: right;
@@ -456,6 +599,10 @@
   .cc-module-input select,
   .cc-module-input input {
     width: 90%;
+  }
+
+  .cc-module-input p {
+    margin-top: 0.4em;
   }
 
   .cc-date-row {
