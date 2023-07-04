@@ -196,11 +196,11 @@
    * - day - of the week
    */
 
-  function updateModuleDate(event, to =  false) {
+  function updateModuleDate(event, to = false) {
     // get the value updated
     let id = `cc-module-config-${moduleId}-calendar-date`;
     let date = {};
-    if (to===true) {
+    if (to === true) {
       id = id + "-to";
     }
 
@@ -208,15 +208,15 @@
 
     const dateInput = document.getElementById(id) as HTMLInputElement;
 
-    if (dateInput===null ) {
-      console.log("Couldn't get element")
+    if (dateInput === null) {
+      console.log("Couldn't get element");
       return;
     }
 
     console.log(`dateInput value is ${dateInput.value}`);
     // Get the date value and split into components
-    const value=dateInput.value;
-    date["calendarDate"]=value;
+    const value = dateInput.value;
+    date["calendarDate"] = value;
 
     const dateObj = new Date(value);
     date["year"] = dateObj.getFullYear().toString();
@@ -226,14 +226,15 @@
 
     // loop fields of date and update appropriate collectionsStore
     Object.keys(date).forEach((field) => {
-      if (to===true) {
-        $collectionsStore["MODULES"][moduleId]["date"]["to"][field] = date[field];
+      if (to === true) {
+        $collectionsStore["MODULES"][moduleId]["date"]["to"][field] =
+          date[field];
       } else {
         $collectionsStore["MODULES"][moduleId]["date"][field] = date[field];
       }
     });
 
-/*    let date = $collectionsStore["MODULES"][moduleId]["date"]["date"];
+    /*    let date = $collectionsStore["MODULES"][moduleId]["date"]["date"];
     let month = $collectionsStore["MODULES"][moduleId]["date"]["month"];
 
     if (to) {
@@ -276,13 +277,12 @@
   /**
    * @function updateModuleDateTo
    * @description Kludge workaround because I can't figure out the correct format to pass
-   * a parameter from sl-input:on-change 
+   * a parameter from sl-input:on-change
    */
 
   function updateModuleDateTo() {
     updateModuleDate({}, true);
   }
-
 
   /**
    * Define the tooltip and help site links for this module
@@ -343,17 +343,7 @@
 </div>
 
 <div class="cc-date-row">
-  <div class="cc-date-col" id="cc-module-config-{moduleId}-date-start">
-    <div class="cc-date-heading">
-      Start date
-      <sl-tooltip id="cc-about-module-date-start">
-        <div slot="content">{@html HELP.dateStart.tooltip}</div>
-        <a target="_blank" rel="noreferrer" href={HELP.dateStart.href}
-          ><i class="icon-question cc-module-icon" /></a
-        >
-      </sl-tooltip>
-    </div>
-    <div class="cc-module-form">
+      <div class="cc-module-form">
       <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-date-label">Date label</label>
       </span>
@@ -379,24 +369,24 @@
         {/if}
       </span>
     </div>
+  </div>
+
+<div class="cc-date-row-no-header">
+  <div class="cc-date-col" id="cc-module-config-{moduleId}-date-start">
+
+    <div class="cc-date-heading">
+      Start date
+      <sl-tooltip id="cc-about-module-date-start">
+        <div slot="content">{@html HELP.dateStart.tooltip}</div>
+        <a target="_blank" rel="noreferrer" href={HELP.dateStart.href}
+          ><i class="icon-question cc-module-icon" /></a
+        >
+      </sl-tooltip>
+    </div>
 
     <div class="cc-module-form">
       <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-day">Select date</label>
-
-<!--        <sl-tooltip id="cc-about-module-date-stop">
-          <div slot="content">{@html HELP.hideDate.tooltip}</div>
-          <input
-            type="checkbox"
-            on:keydown|stopPropagation
-            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
-              "calendarDate"
-            ]}
-            on:click={() => {
-              $configStore["needToSaveCollections"] = true;
-            }}
-          />
-        </sl-tooltip> -->
       </span>
       <span class="cc-module-input">
         <sl-input
@@ -412,8 +402,8 @@
 
     <div class="cc-module-form">
       <span class="cc-module-label">
-        <label for="cc-module-config-{moduleId}-time">Time</label>
-        <sl-tooltip id="cc-about-module-date-stop">
+        <label for="cc-module-config-{moduleId}-time">Select time</label>
+        <sl-tooltip id="cc-about-module-hide-start-time">
           <div slot="content">{@html HELP.hideDate.tooltip}</div>
           <input
             type="checkbox"
@@ -444,6 +434,7 @@
         </aeon-datepicker>
       </span>
     </div>
+
     <div class="cc-module-date-display">
       <span class="cc-module-label-display">
         <label for="cc-module-config-{moduleId}-day">Day</label>
@@ -463,11 +454,9 @@
         </sl-tooltip>
       </span>
       <span class="cc-module-input-display">
-        <p>{$collectionsStore["MODULES"][moduleId]["date"]["day"]} </p>
+        <p>{$collectionsStore["MODULES"][moduleId]["date"]["day"]}</p>
       </span>
-<!--    </div> -->
 
-<!--    <div class="cc-module-form"> -->
       <span class="cc-module-label-display">
         <label for="cc-module-config-{moduleId}-date">Date</label>
 
@@ -486,11 +475,11 @@
         </sl-tooltip>
       </span>
       <span class="cc-module-input-display">
-        <p>{$collectionsStore["MODULES"][moduleId]["date"]["date"]} </p>
+        <p>{$collectionsStore["MODULES"][moduleId]["date"]["date"]}</p>
       </span>
-<!--    </div> -->
+      <!--    </div> -->
 
-<!--    <div class="cc-module-form"> -->
+      <!--    <div class="cc-module-form"> -->
       <span class="cc-module-label-display">
         <label for="cc-module-config-{moduleId}-month">Month</label>
 
@@ -509,11 +498,11 @@
         </sl-tooltip>
       </span>
       <span class="cc-module-input-display">
-        <p>{$collectionsStore["MODULES"][moduleId]["date"]["month"]} </p>
+        <p>{$collectionsStore["MODULES"][moduleId]["date"]["month"]}</p>
       </span>
     </div>
+  </div>
 
-  </div> 
   <div class="cc-date-col" id="cc-module-config-{moduleId}-date-stop">
     <div class="cc-date-heading">
       Stop date
@@ -524,26 +513,40 @@
         >
       </sl-tooltip>
     </div>
-    <div class="cc-module-form" style="height: 2.375rem" />
     <div class="cc-module-form">
       <span class="cc-module-label">
-        <label for="cc-module-config-{moduleId}-calendar-date-to">Date</label>
+        <label for="cc-module-config-{moduleId}-calendar-date-to"
+          >Select date</label
+        >
       </span>
       <span class="cc-module-input">
-        <sl-tooltip class="cc-about-module-studyPeriod">
-          <div slot="content">{@html HELP.calendarDate.tooltip}</div>
-          <sl-input
-            id="cc-module-config-{moduleId}-calendar-date-to"
-            type="date"
-            on:sl-change={updateModuleDateTo}
-            value={$collectionsStore["MODULES"][moduleId]["date"]["to"]["calendarDate"] || ""} ></sl-input>
-        </sl-tooltip> <br />
+        <sl-input
+          id="cc-module-config-{moduleId}-calendar-date-to"
+          type="date"
+          on:sl-change={updateModuleDateTo}
+          value={$collectionsStore["MODULES"][moduleId]["date"]["to"][
+            "calendarDate"
+          ] || ""}
+        />
       </span>
     </div>
 
     <div class="cc-module-form">
       <span class="cc-module-label">
-        <label for="cc-module-config-{moduleId}-time-to">Time</label>
+        <label for="cc-module-config-{moduleId}-time-to">Select time</label>
+        <sl-tooltip id="cc-about-module-hide-stop-time">
+          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <input
+            type="checkbox"
+            on:keydown|stopPropagation
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+              "toTime"
+            ]}
+            on:click={() => {
+              $configStore["needToSaveCollections"] = true;
+            }}
+          />
+        </sl-tooltip>
       </span>
       <span class="cc-module-input">
         <style>
@@ -575,21 +578,20 @@
 
   .cc-module-form {
     display: grid;
-    grid-template-columns: 8em 1fr;
+    grid-template-columns: 1fr 3fr;
     grid-gap: 1em;
-  }
-
-  .cc-module-date-display {
-    display: grid;
-    grid-template-columns: 8em 1fr 8em 1fr 8em 1fr;
-    grid-template-rows: 1fr;
-    grid-gap: 1em;
+    margin-bottom: 0.4em;
   }
 
   .cc-module-label {
     grid-column: 1/ 2;
     text-align: right;
+  }
+
+  .cc-module-label label {
     margin-top: 0.4em;
+    font-weight: bold;
+    color: #333;
   }
 
   .cc-module-input {
@@ -601,8 +603,29 @@
     width: 90%;
   }
 
-  .cc-module-input p {
+  .cc-module-date-display {
+    display: grid;
+    grid-template-columns: 1fr 0.8fr 1fr 0.8fr 1fr 0.8fr;
+    grid-template-rows: 1fr;
+    grid-gap: 0.8em;
+  }
+
+  .cc-module-input-display p {
+    color: #666;
+  }
+
+  .cc-module-label-display {
+    text-align: right;
     margin-top: 0.4em;
+  }
+
+  .cc-module-label-display label {
+    margin-top: 0.4em;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .cc-date-row-no-header {
   }
 
   .cc-date-row {
@@ -620,8 +643,8 @@
   }
 
   .cc-date-heading {
-    padding: 0.5rem;
-    text-align: center;
+    padding: 0.5rem 0rem 0.5rem 2rem;
+    /*text-align: center;*/
     font-size: 0.9em;
     font-weight: bold;
   }
