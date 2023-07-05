@@ -7,10 +7,11 @@
 // @updateURL	 https://raw.githubusercontent.com/djplaner/canvas-collections/main/dev/canvas-collections.dev.user.js
 // @downloadURL	 https://raw.githubusercontent.com/djplaner/canvas-collections/main/dev/canvas-collections.dev.user.js
 // @author      David Jones
-// @resource    css file:///C:/Users/djones/code/svelte/canvas-collections/dev/canvas-collections.css
+// @resource css file:/Users/davidjones/Documents/GitHub/canvas-collections/dev/canvas-collections.css
 // @match       https://*/courses/*
 // @run-at      document-idle
 // @require     file:///C:/Users/djones/code/svelte/canvas-collections/dev/canvas-collections.js
+// @require file:/Users/davidjones/Documents/GitHub/canvas-collections/dev/canvas-collections.js
 // @grant       GM_addStyle
 // @grant       GM_getResourceText
 // @grant       GM_xmlhttpRequest
