@@ -29,20 +29,21 @@
 
   import { collectionsStore, configStore } from "../../stores";
 
-  import UniversityDateCalendar from "../../lib/university-date-calendar";
+  //import UniversityDateCalendar from "../../lib/university-date-calendar";
+  import DateWidget from "../Representations/GriffithCards/DateWidget.svelte";
 
   export let moduleId: Number;
 
-  let calendar = new UniversityDateCalendar($configStore["studyPeriod"]);
+  //let calendar = new UniversityDateCalendar($configStore["studyPeriod"]);
   // tmp kludge
-  let currentStudyPeriod = `${calendar.getHumanReadableStudyPeriod()} (${calendar.getStudyPeriod()})`;
-  let calculatedDate = calculateDate(
+  //let currentStudyPeriod = `${calendar.getHumanReadableStudyPeriod()} (${calendar.getStudyPeriod()})`;
+  /*let calculatedDate = calculateDate(
     $collectionsStore["MODULES"][moduleId].date
-  );
+  ); */
   let originalDate = $collectionsStore["MODULES"][moduleId].date;
 
   // TODO move these into UniversityDateCalendar?
-  const daysOfWeek = calendar.getDaysOfWeek();
+  /*const daysOfWeek = calendar.getDaysOfWeek();
   const weeksOfTerm = [
     0,
     1,
@@ -61,57 +62,7 @@
     14,
     15,
     "exam",
-  ];
-
-  /**
-   * @function calculateDate
-   * @param {Object} dateInfo - module date json
-   * @return {String} - human readable date
-   * @description Conert json date into a human readable date using the
-   * calendar to calculate
-   * Return "No set date" if no date is set
-   */
-  function calculateDate(dateInfo: Object): String {
-    // valid date combinations will be
-    // 1. week
-    // 2. week and day
-    // 3. week and day and time
-    // - must have a week
-
-    let dateString = "<em>undefined</em> ";
-    if (dateInfo.week !== "") {
-      dateString = dateJsonToString(dateInfo);
-    }
-
-    if (dateInfo.hasOwnProperty("to") && dateInfo.to.week !== "") {
-      // date range
-      dateString = `${dateString} to ${dateJsonToString(dateInfo.to)}`;
-    }
-    return dateString;
-  }
-
-  function dateJsonToString(dateInfo: Object): string {
-    let calcDate = {};
-    if (dateInfo.day === "") {
-      // no day
-      calcDate = calendar.getDate(dateInfo.week);
-    } else {
-      calcDate = calendar.getDate(dateInfo.week, false, dateInfo.day);
-    }
-    let dateString = `${calcDate["date"]} ${calcDate["month"]} ${calcDate["year"]}`;
-
-    if (calcDate.hasOwnProperty("day")) {
-      dateString = `${calcDate["day"]} ${dateString}`;
-    }
-    if (dateInfo.time !== "") {
-      // no time
-      dateString = `${dateInfo.time} ${dateString}`;
-    }
-    if (dateInfo.hasOwnProperty("label") && dateInfo.label !== "") {
-      dateString = `${dateInfo.label} ${dateString}`;
-    }
-    return dateString;
-  }
+  ]; */
 
   /**
    * @function updateDate
@@ -120,12 +71,12 @@
    * - set needToSave to true
    */
 
-  function updateDate() {
+  /*  function updateDate() {
     // also need to recalculate the date and month
     modifyDate();
     //calculatedDate = calculateDate($collectionsStore["MODULES"][moduleId].date);
     $configStore["needToSaveCollections"] = true;
-  }
+  } */
 
   /**
    * @function modifyDate
@@ -136,7 +87,7 @@
    * - compare the resulting JSON and make any chances necessary
    */
 
-  function modifyDate() {
+  /*  function modifyDate() {
     // calculate new date for from
     let newFrom = {};
 
@@ -179,7 +130,7 @@
           newTo[field];
       }
     });
-  }
+  } */
 
   /**
    * @function updateModuleDate
@@ -316,64 +267,45 @@
   };
 </script>
 
-<div class="cc-current-studyPeriod">
-  <p>
-    <strong>Current Term:</strong>
-    <sl-tooltip class="cc-about-module-studyPeriod">
-      <div slot="content">{@html HELP.studyPeriod.tooltip}</div>
-      <a target="_blank" rel="noreferrer" href={HELP.studyPeriod.href}
-        ><i class="icon-question cc-module-icon" /></a
-      >
-    </sl-tooltip>
-    {currentStudyPeriod}
-  </p>
-</div>
-
-<div class="cc-calculated-date">
-  <p>
-    <strong>Current Date:</strong>
-    <sl-tooltip>
-      <div slot="content">{@html HELP.calculatedDate.tooltip}</div>
-      <a href={HELP.calculatedDate.href} target="_blank" rel="noreferrer">
-        <i class="icon-question cc-module-icon" />
-      </a>
-    </sl-tooltip>
-    {@html calculateDate($collectionsStore["MODULES"][moduleId].date)}
-  </p>
-</div>
-
 <div class="cc-date-row">
-      <div class="cc-module-form">
-      <span class="cc-module-label">
-        <label for="cc-module-config-{moduleId}-date-label">Date label</label>
-      </span>
-      <span class="cc-module-input">
-        {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("label")}
-          <input
-            type="text"
-            on:keydown|stopPropagation
-            id="cc-module-config-{moduleId}-date-label"
-            style="width:10rem"
-            bind:value={$collectionsStore["MODULES"][moduleId]["date"]["label"]}
-            on:change={() => {
-              $configStore["needToSaveCollections"] = true;
-            }}
-          />
-        {:else}
-          <input
-            type="text"
-            id="cc-module-config-{moduleId}-date-label"
-            style="width:10rem"
-            value=""
-          />
-        {/if}
-      </span>
-    </div>
+  <div class="cc-module-form">
+    <span class="cc-module-label">
+      <label for="cc-module-config-{moduleId}-date-label">Date label</label>
+    </span>
+    <span class="cc-module-input">
+      {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("label")}
+        <input
+          type="text"
+          on:keydown|stopPropagation
+          id="cc-module-config-{moduleId}-date-label"
+          style="width:10rem"
+          bind:value={$collectionsStore["MODULES"][moduleId]["date"]["label"]}
+          on:change={() => {
+            $configStore["needToSaveCollections"] = true;
+          }}
+        />
+      {:else}
+        <input
+          type="text"
+          id="cc-module-config-{moduleId}-date-label"
+          style="width:10rem"
+          value=""
+        />
+      {/if}
+    </span>
   </div>
+  <div class="cc-module-form">
+    <p>Hello</p>
+    <DateWidget
+      date={$collectionsStore["MODULES"][moduleId]["date"]}
+      dateHide={$collectionsStore["MODULES"][moduleId]["dateHide"]}
+      flow="normal"
+    />
+  </div>
+</div>
 
 <div class="cc-date-row-no-header">
   <div class="cc-date-col" id="cc-module-config-{moduleId}-date-start">
-
     <div class="cc-date-heading">
       Start date
       <sl-tooltip id="cc-about-module-date-start">
@@ -429,7 +361,6 @@
             id="cc-module-config-{moduleId}-time"
             name="time"
             bind:value={$collectionsStore["MODULES"][moduleId]["date"]["time"]}
-            on:change={updateDate}
           />
         </aeon-datepicker>
       </span>
@@ -562,7 +493,6 @@
             bind:value={$collectionsStore["MODULES"][moduleId]["date"]["to"][
               "time"
             ]}
-            on:change={updateDate}
           />
         </aeon-datepicker>
       </span>
@@ -571,11 +501,6 @@
 </div>
 
 <style>
-  .cc-calculated-date,
-  .cc-current-studyPeriod {
-    font-size: 0.9em;
-  }
-
   .cc-module-form {
     display: grid;
     grid-template-columns: 1fr 3fr;
@@ -598,7 +523,6 @@
     grid-column: 2/ 3;
   }
 
-  .cc-module-input select,
   .cc-module-input input {
     width: 90%;
   }
@@ -625,12 +549,6 @@
     color: #333;
   }
 
-  .cc-date-row-no-header {
-  }
-
-  .cc-date-row {
-    border-top: 1px solid #ccc;
-  }
   .cc-date-row:after {
     content: "";
     display: table;

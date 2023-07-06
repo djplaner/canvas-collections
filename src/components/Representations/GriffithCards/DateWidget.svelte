@@ -16,14 +16,13 @@
  You should have received a copy of the GNU General Public License
  along with Canvas Collections.  If not, see <http://www.gnu.org/licenses/>.
 -->
-
 <script lang="ts">
   /**
    * Implement component for cards date component by
    * - modifying the date to add a specific calendar date
    *   using UniversityDateCalendar
    * - display either a single or dual date
-   * 
+   *
    * Passed a date object in the following format can specify a
    * single date or a data period (from/to)
    * {
@@ -38,33 +37,38 @@
    * }
    */
 
-import UniversityDateCalendar from "../../../lib/university-date-calendar";
-import { configStore } from "../../../stores";
-import { addCalendarDate, isNotEmptyDate } from "../representationSupport";
+  import UniversityDateCalendar from "../../../lib/university-date-calendar";
+  import { configStore } from "../../../stores";
+  import { addCalendarDate, isNotEmptyDate } from "../representationSupport";
 
   export let date: Object;
   export let dateHide: Object;
+  export let flow = "";
   //export let calendar: any;
+
+  let cardStyle = "cc-card-date";
+  if ( flow!=="") {
+    cardStyle = "cc-card-date-normal";
+  }
 
   let calendar = new UniversityDateCalendar($configStore["studyPeriod"]);
 
   if (date) {
     if (date["week"] || (date["month"] && date["date"])) {
-      date = addCalendarDate(date, calendar );
+      date = addCalendarDate(date, calendar);
     }
   }
-
 </script>
 
 {#if date}
   {#if date["to"] && isNotEmptyDate(date["to"])}
-    <div class="cc-card-date">
-      {#if isNotEmptyDate(date) && date["label"]} 
+    <div class={cardStyle}>
+      {#if isNotEmptyDate(date) && date["label"]}
         <div class="cc-card-date-label">
           {date["label"]}
         </div>
       {/if}
-      {#if !dateHide["week"] && date["week"] && date["week"]!=="" || date["to"]["week"]}
+      {#if (!dateHide["week"] && date["week"] && date["week"] !== "") || date["to"]["week"]}
         <div class="cc-card-date-week">
           {#if date["week"] && date["to"]["week"] && date["week"] !== date["to"]["week"]}
             Weeks
@@ -77,7 +81,7 @@ import { addCalendarDate, isNotEmptyDate } from "../representationSupport";
           {/if}
         </div>
       {/if}
-      {#if !dateHide["time"] && date["time"] || date["to"]["time"]}
+      {#if (!dateHide["time"] && date["time"]) || date["to"]["time"]}
         <div class="cc-card-date-dual-time">
           <div class="cc-card-date-time-from">
             {#if date["time"]}
@@ -135,7 +139,7 @@ import { addCalendarDate, isNotEmptyDate } from "../representationSupport";
       {/if}
     </div>
   {:else}
-    <div class="cc-card-date">
+    <div class={cardStyle}>
       {#if isNotEmptyDate(date) && date["label"]}
         <div class="cc-card-date-label">
           {date["label"]}
@@ -171,6 +175,15 @@ import { addCalendarDate, isNotEmptyDate } from "../representationSupport";
 {/if}
 
 <style>
+  .cc-card-date-normal {
+    text-align: center;
+    background-color: #f5f5f5;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    width: 5rem;
+    display: block;
+  }
+
   .cc-card-date {
     text-align: center;
     background-color: #f5f5f5;
