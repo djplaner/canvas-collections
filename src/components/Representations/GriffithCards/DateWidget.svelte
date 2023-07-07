@@ -20,9 +20,8 @@
   /**
    * Implement component for cards date component by
    * - display either a single or dual date
-   *
-   * Passed a date object in the following format can specify a
-   * single date or a data period (from/to)
+   * 
+   * Date is passed as a date object in the following format can specify a
    * {
    *    // "from" date (if dual)
    *   "label": "", "day": "Monday", "week": "3", "time": "",
@@ -32,6 +31,19 @@
    *	"date": 20,
    *	"month": "Mar",
    *	"year": 2023
+   * }
+   * Also passed a dateHide object that specifies which of the 
+   * date components to hide
+   * {
+   *   calendarDate: false, 
+   *   day: false, 
+   *   time: false,
+   *   week: false,
+   *   toCalendarDate: false,  # deprecated???
+   *   toDay: false,
+   *   toTime: false,
+   *   toWeek: false,
+   *   label: false
    * }
    * 
    * TODO
@@ -44,6 +56,9 @@
   export let date: Object;
   export let dateHide: Object;
   export let flow = "";
+
+  console.log("------- date hide");
+  console.log(dateHide);
 
   let cardStyle = "cc-card-date";
   if ( flow!=="") {
@@ -60,57 +75,57 @@
           {date["label"]}
         </div>
       {/if}
-      {#if (!dateHide["time"] && date["time"]) || date["to"]["time"]}
+      {#if (!dateHide["time"] && date["time"]) || (!dateHide["toTime"] && date["to"]["time"]) } 
         <div class="cc-card-date-dual-time">
           <div class="cc-card-date-time-from">
-            {#if date["time"]}
+            {#if date["time"] && !dateHide["time"]}
               {date["time"]}
             {/if}
           </div>
           <div class="cc-card-date-time-to">
-            {#if date["to"]["time"]}
+            {#if date["to"]["time"] && !dateHide["toTime"]}
               {date["to"]["time"]}
             {/if}
           </div>
         </div>
       {/if}
-      {#if !dateHide["day"] && (date["day"] || date["to"]["day"])}
+      {#if (!dateHide["day"] && (date["day"]) || (!dateHide["toDay"] && date["to"]["day"]))}
         <div class="cc-card-date-dual-day">
           <div class="cc-card-date-day-from">
-            {#if date["day"]}
+            {#if date["day"] && !dateHide["day"]}
               {date["day"].substring(0, 3)}
             {/if}
           </div>
           <div class="cc-card-date-day-to">
-            {#if date["to"]["day"]}
+            {#if date["to"]["day"] && !dateHide["toDay"]}
               {date["to"]["day"].substring(0, 3)}
             {/if}
           </div>
         </div>
       {/if}
-      {#if date["month"] || date["to"]["month"]}
+      {#if (!dateHide["month"] && date["month"]) || (!dateHide["toMonth"] && date["to"]["month"])}
         <div class="cc-card-date-dual-month">
           <div class="cc-card-date-month-from">
-            {#if date["month"]}
+            {#if date["month"] && !dateHide["month"]}
               {date["month"]}
             {/if}
           </div>
           <div class="cc-card-date-month-to">
-            {#if date["to"]["month"]}
+            {#if date["to"]["month"] && !dateHide["toMonth"]}
               {date["to"]["month"]}
             {/if}
           </div>
         </div>
       {/if}
-      {#if date["date"] || date["to"]["date"]}
+      {#if (!dateHide["date"] && date["date"]) || (!dateHide["toDate"] && date["to"]["date"])}
         <div class="cc-card-date-dual-date">
           <div class="cc-card-date-date-from">
-            {#if date["date"]}
+            {#if date["date"] && !dateHide["date"]}
               {date["date"]}
             {/if}
           </div>
           <div class="cc-card-date-date-to">
-            {#if date["to"]["date"]}
+            {#if date["to"]["date"] && !dateHide["toDate"]}
               {date["to"]["date"]}
             {/if}
           </div>

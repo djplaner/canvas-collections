@@ -233,7 +233,7 @@
       tooltip: `Select to hide this portion of the date in the representation.`,
     },
     outputDate: {
-      tooltip: `A live representation of the configured date.`
+      tooltip: `A live representation of the configured date.`,
     },
     calendarDate: {
       tooltip: `<p>Calculated automatically based on the academic calendar and the current term.<p>
@@ -482,7 +482,7 @@
             on:keydown|stopPropagation
             type="checkbox"
             bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
-              "day"
+              "toDay"
             ]}
             on:click={() => {
               $configStore["needToSaveCollections"] = true;
@@ -500,7 +500,7 @@
             on:keydown|stopPropagation
             type="checkbox"
             bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
-              "date"
+              "toDate"
             ]}
             on:click={() => {
               $configStore["needToSaveCollections"] = true;
@@ -520,7 +520,7 @@
             on:keydown|stopPropagation
             type="checkbox"
             bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
-              "month"
+              "toMonth"
             ]}
             on:click={() => {
               $configStore["needToSaveCollections"] = true;
@@ -538,7 +538,6 @@
         {$collectionsStore["MODULES"][moduleId]["date"]["month"]}
       </span>
     </div>
-
   </div>
 
   <div class="cc-date-col" id="cc-module-config-{moduleId}-date-output">
@@ -547,31 +546,39 @@
       Date output
       <sl-tooltip id="cc-about-module-date-output">
         <div slot="content">{@html HELP.outputDate.tooltip}</div>
-          <i class="icon-question cc-module-icon" />
+        <i class="icon-question cc-module-icon" />
       </sl-tooltip>
     </div>
 
-      <div class="cc-module-form" style="padding-left: 2em;">
-        <DateWidget
-          date={$collectionsStore["MODULES"][moduleId]["date"]}
-          dateHide={$collectionsStore["MODULES"][moduleId]["dateHide"]}
-          flow="normal"
-        />
-      </div>
+    <div class="cc-module-form" style="padding-left: 2em;">
+      <DateWidget
+        date={$collectionsStore["MODULES"][moduleId]["date"]}
+        dateHide={$collectionsStore["MODULES"][moduleId]["dateHide"]}
+        flow="normal"
+      />
+    </div>
   </div>
 </div>
 
 <style>
   .cc-date-row {
+    max-width: 200em;
+    margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(2, 1fr) 0.5fr;
-    grid-template-rows: 1fr;
-    grid-column-gap: 2em;
-    grid-row-gap: 0px;
+    gap: 1rem;
+  }
+
+  @media (min-width: 70em) {
+    .cc-date-row {
+      grid-template-columns: repeat(2, 1fr) 0.5fr;
+      grid-template-rows: 1fr;
+      grid-column-gap: 2em;
+      grid-row-gap: 0px;
+    }
   }
   .cc-module-form {
     display: grid;
-    grid-template-columns: 8em 12em; 
+    grid-template-columns: 8em 12em;
     grid-column-gap: 1em;
     grid-row-gap: 0px;
     margin-bottom: 0.4em;
@@ -592,11 +599,16 @@
   }
 
   .cc-module-date-display {
+    max-width: 100em;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 2fr;
-    grid-column-gap: 0.5em;
-    grid-row-gap: 0px;
+    margin: 0 auto;
+    gap: 0.5em;
+  }
+
+  @media (min-width: 200px) {
+    .cc-module-date-display {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   .cc-module-label-display {
@@ -613,7 +625,7 @@
     text-align: center;
   }
 
-/*  .cc-date-row:after {
+  /*  .cc-date-row:after {
     content: "";
     display: table;
     clear: both;
@@ -631,7 +643,7 @@
     white-space: normal;
   }
 
-  input { 
+  input {
     margin: 0px;
   }
 </style>
