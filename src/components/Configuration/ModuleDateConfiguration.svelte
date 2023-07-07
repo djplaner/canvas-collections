@@ -21,48 +21,20 @@
    * Implement the tabbed interface that allows for the configuration of
    * the to and from dates for a specific module (prop: moduleId)
    *
+   * Currently only using straight calendar dates
+   *
    * TODO
-   * - current study period (from UniversityDateCalendar)
-   * - display the full string representation of the current dates
-   * - show the current settings from from and to
+   * - Add support for institution's providing university study periods and using
+   *   generic dates (e.g. Friday, Week 3)
    */
 
   import { collectionsStore, configStore } from "../../stores";
 
-  //import UniversityDateCalendar from "../../lib/university-date-calendar";
   import DateWidget from "../Representations/GriffithCards/DateWidget.svelte";
 
   export let moduleId: Number;
 
-  //let calendar = new UniversityDateCalendar($configStore["studyPeriod"]);
-  // tmp kludge
-  //let currentStudyPeriod = `${calendar.getHumanReadableStudyPeriod()} (${calendar.getStudyPeriod()})`;
-  /*let calculatedDate = calculateDate(
-    $collectionsStore["MODULES"][moduleId].date
-  ); */
   let originalDate = $collectionsStore["MODULES"][moduleId].date;
-
-  // TODO move these into UniversityDateCalendar?
-  /*const daysOfWeek = calendar.getDaysOfWeek();
-  const weeksOfTerm = [
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    "exam",
-  ]; */
 
   /**
    * @function updateDate
@@ -260,6 +232,9 @@
     hideDate: {
       tooltip: `Select to hide this portion of the date in the representation.`,
     },
+    outputDate: {
+      tooltip: `A live representation of the configured date.`
+    },
     calendarDate: {
       tooltip: `<p>Calculated automatically based on the academic calendar and the current term.<p>
         <p>Use the above to change.</p>`,
@@ -267,7 +242,8 @@
   };
 </script>
 
-<div class="cc-date-row">
+<!-- Date label across the top -->
+<div class="cc-date-label">
   <div class="cc-module-form">
     <span class="cc-module-label">
       <label for="cc-module-config-{moduleId}-date-label">Date label</label>
@@ -294,17 +270,13 @@
       {/if}
     </span>
   </div>
-  <div class="cc-module-form">
-    <p>Hello</p>
-    <DateWidget
-      date={$collectionsStore["MODULES"][moduleId]["date"]}
-      dateHide={$collectionsStore["MODULES"][moduleId]["dateHide"]}
-      flow="normal"
-    />
-  </div>
 </div>
 
-<div class="cc-date-row-no-header">
+<!-- Three columns: start date, stop date, date output -->
+
+<div class="cc-date-row">
+  <!-- Start date -->
+
   <div class="cc-date-col" id="cc-module-config-{moduleId}-date-start">
     <div class="cc-date-heading">
       Start date
@@ -323,6 +295,7 @@
       <span class="cc-module-input">
         <sl-input
           id="cc-module-config-{moduleId}-calendar-date"
+          size="small"
           type="date"
           value={$collectionsStore["MODULES"][moduleId]["date"][
             "calendarDate"
@@ -384,9 +357,6 @@
           />
         </sl-tooltip>
       </span>
-      <span class="cc-module-input-display">
-        <p>{$collectionsStore["MODULES"][moduleId]["date"]["day"]}</p>
-      </span>
 
       <span class="cc-module-label-display">
         <label for="cc-module-config-{moduleId}-date">Date</label>
@@ -404,9 +374,6 @@
             }}
           />
         </sl-tooltip>
-      </span>
-      <span class="cc-module-input-display">
-        <p>{$collectionsStore["MODULES"][moduleId]["date"]["date"]}</p>
       </span>
       <!--    </div> -->
 
@@ -429,11 +396,18 @@
         </sl-tooltip>
       </span>
       <span class="cc-module-input-display">
-        <p>{$collectionsStore["MODULES"][moduleId]["date"]["month"]}</p>
+        {$collectionsStore["MODULES"][moduleId]["date"]["day"]}
+      </span>
+      <span class="cc-module-input-display">
+        {$collectionsStore["MODULES"][moduleId]["date"]["date"]}
+      </span>
+      <span class="cc-module-input-display">
+        {$collectionsStore["MODULES"][moduleId]["date"]["month"]}
       </span>
     </div>
   </div>
 
+  <!-- stop date -->
   <div class="cc-date-col" id="cc-module-config-{moduleId}-date-stop">
     <div class="cc-date-heading">
       Stop date
@@ -454,6 +428,7 @@
         <sl-input
           id="cc-module-config-{moduleId}-calendar-date-to"
           type="date"
+          size="small"
           on:sl-change={updateModuleDateTo}
           value={$collectionsStore["MODULES"][moduleId]["date"]["to"][
             "calendarDate"
@@ -497,19 +472,112 @@
         </aeon-datepicker>
       </span>
     </div>
+    <div class="cc-module-date-display">
+      <span class="cc-module-label-display">
+        <label for="cc-module-config-{moduleId}-day">Day</label>
+
+        <sl-tooltip id="cc-about-module-date-stop">
+          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <input
+            on:keydown|stopPropagation
+            type="checkbox"
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+              "day"
+            ]}
+            on:click={() => {
+              $configStore["needToSaveCollections"] = true;
+            }}
+          />
+        </sl-tooltip>
+      </span>
+
+      <span class="cc-module-label-display">
+        <label for="cc-module-config-{moduleId}-date">Date</label>
+
+        <sl-tooltip id="cc-about-module-date-stop">
+          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <input
+            on:keydown|stopPropagation
+            type="checkbox"
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+              "date"
+            ]}
+            on:click={() => {
+              $configStore["needToSaveCollections"] = true;
+            }}
+          />
+        </sl-tooltip>
+      </span>
+      <!--    </div> -->
+
+      <!--    <div class="cc-module-form"> -->
+      <span class="cc-module-label-display">
+        <label for="cc-module-config-{moduleId}-month">Month</label>
+
+        <sl-tooltip id="cc-about-module-date-stop">
+          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <input
+            on:keydown|stopPropagation
+            type="checkbox"
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+              "month"
+            ]}
+            on:click={() => {
+              $configStore["needToSaveCollections"] = true;
+            }}
+          />
+        </sl-tooltip>
+      </span>
+      <span class="cc-module-input-display">
+        {$collectionsStore["MODULES"][moduleId]["date"]["day"]}
+      </span>
+      <span class="cc-module-input-display">
+        {$collectionsStore["MODULES"][moduleId]["date"]["date"]}
+      </span>
+      <span class="cc-module-input-display">
+        {$collectionsStore["MODULES"][moduleId]["date"]["month"]}
+      </span>
+    </div>
+
+  </div>
+
+  <div class="cc-date-col" id="cc-module-config-{moduleId}-date-output">
+    <!-- date output -->
+    <div class="cc-date-heading">
+      Date output
+      <sl-tooltip id="cc-about-module-date-output">
+        <div slot="content">{@html HELP.outputDate.tooltip}</div>
+          <i class="icon-question cc-module-icon" />
+      </sl-tooltip>
+    </div>
+
+      <div class="cc-module-form" style="padding-left: 2em;">
+        <DateWidget
+          date={$collectionsStore["MODULES"][moduleId]["date"]}
+          dateHide={$collectionsStore["MODULES"][moduleId]["dateHide"]}
+          flow="normal"
+        />
+      </div>
   </div>
 </div>
 
 <style>
+  .cc-date-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr) 0.5fr;
+    grid-template-rows: 1fr;
+    grid-column-gap: 2em;
+    grid-row-gap: 0px;
+  }
   .cc-module-form {
     display: grid;
-    grid-template-columns: 1fr 3fr;
-    grid-gap: 1em;
+    grid-template-columns: 8em 12em; 
+    grid-column-gap: 1em;
+    grid-row-gap: 0px;
     margin-bottom: 0.4em;
   }
 
   .cc-module-label {
-    grid-column: 1/ 2;
     text-align: right;
   }
 
@@ -519,49 +587,40 @@
     color: #333;
   }
 
-  .cc-module-input {
-    grid-column: 2/ 3;
-  }
-
   .cc-module-input input {
     width: 90%;
   }
 
   .cc-module-date-display {
     display: grid;
-    grid-template-columns: 1fr 0.8fr 1fr 0.8fr 1fr 0.8fr;
-    grid-template-rows: 1fr;
-    grid-gap: 0.8em;
-  }
-
-  .cc-module-input-display p {
-    color: #666;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 2fr;
+    grid-column-gap: 0.5em;
+    grid-row-gap: 0px;
   }
 
   .cc-module-label-display {
-    text-align: right;
-    margin-top: 0.4em;
+    text-align: center;
   }
 
   .cc-module-label-display label {
-    margin-top: 0.4em;
     font-weight: bold;
     color: #333;
   }
 
-  .cc-date-row:after {
+  .cc-module-input-display {
+    font-size: 0.875em;
+    text-align: center;
+  }
+
+/*  .cc-date-row:after {
     content: "";
     display: table;
     clear: both;
-  }
-
-  .cc-date-col {
-    float: left;
-    width: 50%;
-  }
+  } */
 
   .cc-date-heading {
-    padding: 0.5rem 0rem 0.5rem 2rem;
+    padding: 0.5rem 0rem 0.5rem 1rem;
     /*text-align: center;*/
     font-size: 0.9em;
     font-weight: bold;
@@ -570,5 +629,9 @@
   sl-tooltip {
     text-align: left;
     white-space: normal;
+  }
+
+  input { 
+    margin: 0px;
   }
 </style>

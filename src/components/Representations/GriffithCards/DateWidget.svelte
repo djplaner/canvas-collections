@@ -19,8 +19,6 @@
 <script lang="ts">
   /**
    * Implement component for cards date component by
-   * - modifying the date to add a specific calendar date
-   *   using UniversityDateCalendar
    * - display either a single or dual date
    *
    * Passed a date object in the following format can specify a
@@ -35,29 +33,23 @@
    *	"month": "Mar",
    *	"year": 2023
    * }
+   * 
+   * TODO
+   * - Implement university calendar support
    */
 
-  import UniversityDateCalendar from "../../../lib/university-date-calendar";
-  import { configStore } from "../../../stores";
-  import { addCalendarDate, isNotEmptyDate } from "../representationSupport";
+//  import { configStore } from "../../../stores";
+  import { isNotEmptyDate } from "../representationSupport";
 
   export let date: Object;
   export let dateHide: Object;
   export let flow = "";
-  //export let calendar: any;
 
   let cardStyle = "cc-card-date";
   if ( flow!=="") {
     cardStyle = "cc-card-date-normal";
   }
 
-  let calendar = new UniversityDateCalendar($configStore["studyPeriod"]);
-
-  if (date) {
-    if (date["week"] || (date["month"] && date["date"])) {
-      date = addCalendarDate(date, calendar);
-    }
-  }
 </script>
 
 {#if date}
@@ -66,19 +58,6 @@
       {#if isNotEmptyDate(date) && date["label"]}
         <div class="cc-card-date-label">
           {date["label"]}
-        </div>
-      {/if}
-      {#if (!dateHide["week"] && date["week"] && date["week"] !== "") || date["to"]["week"]}
-        <div class="cc-card-date-week">
-          {#if date["week"] && date["to"]["week"] && date["week"] !== date["to"]["week"]}
-            Weeks
-          {:else}
-            Week
-          {/if}
-          {date["week"]}
-          {#if date["week"] && date["to"]["week"] && date["week"] !== date["to"]["week"]}
-            - {date["to"]["week"]}
-          {/if}
         </div>
       {/if}
       {#if (!dateHide["time"] && date["time"]) || date["to"]["time"]}
@@ -143,11 +122,6 @@
       {#if isNotEmptyDate(date) && date["label"]}
         <div class="cc-card-date-label">
           {date["label"]}
-        </div>
-      {/if}
-      {#if !dateHide["week"] && date["week"] && !dateHide["week"]}
-        <div class="cc-card-date-week">
-          Week {date["week"]}
         </div>
       {/if}
       {#if !dateHide["time"] && date["time"]}
