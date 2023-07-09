@@ -524,13 +524,13 @@
         </sl-tooltip>
       </span>
       <span class="cc-module-input-display">
-        {$collectionsStore["MODULES"][moduleId]["date"]["day"]}
+        {$collectionsStore["MODULES"][moduleId]["date"]["to"]["day"]}
       </span>
       <span class="cc-module-input-display">
-        {$collectionsStore["MODULES"][moduleId]["date"]["date"]}
+        {$collectionsStore["MODULES"][moduleId]["date"]["to"]["date"]}
       </span>
       <span class="cc-module-input-display">
-        {$collectionsStore["MODULES"][moduleId]["date"]["month"]}
+        {$collectionsStore["MODULES"][moduleId]["date"]["to"]["month"]}
       </span>
     </div>
   </div>

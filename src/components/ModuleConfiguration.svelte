@@ -58,9 +58,7 @@
     moduleDates: {
       tooltip: `<p>Choose from the three supported "date types" and configure it. Options include:</p> <ol> <li> <strong>Single date</strong> - a specific date (and time) </li>
 		  <li> <strong>Date range</strong> - a start and end date (and time) </li>
-		  <li> 🏗 <strong>Coming soon</strong> 🏗 - (soon you'll be able to) specify a single date (and time) when the module will be available.</li>
 		</ol>
-		<p><em>Coming Soon</em> will be able to be used with one of the other options</em></p>
 		`,
       url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/",
     },

@@ -69,7 +69,7 @@
 </script>
 
 {#if date}
-  {#if date["to"] && isNotEmptyDate(date["to"])}
+  {#if date["to"] && isNotEmptyDate(date["to"]) }
     <div class={cardStyle}>
       {#if isNotEmptyDate(date) && date["label"] && dateShow["label"]}
         <div class="cc-card-date-label">
