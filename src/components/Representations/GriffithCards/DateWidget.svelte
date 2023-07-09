@@ -32,8 +32,8 @@
    *	"month": "Mar",
    *	"year": 2023
    * }
-   * Also passed a dateHide object that specifies which of the 
-   * date components to hide
+   * Also passed a dateShow object that specifies which of the 
+   * date components to show
    * {
    *   calendarDate: false, 
    *   day: false, 
@@ -54,11 +54,11 @@
   import { isNotEmptyDate } from "../representationSupport";
 
   export let date: Object;
-  export let dateHide: Object;
+  export let dateShow: Object;
   export let flow = "";
 
-//  console.log("------- date hide");
-//  console.log(dateHide);
+  console.log("------- date show");
+  console.log(dateShow);
 
   let cardStyle = "cc-card-date";
   if ( flow!=="") {
@@ -75,57 +75,57 @@
           {date["label"]}
         </div>
       {/if}
-      {#if (!dateHide["time"] && date["time"]) || (!dateHide["toTime"] && date["to"]["time"]) } 
+      {#if (dateShow["time"] && date["time"]) || (dateShow["toTime"] && date["to"]["time"]) } 
         <div class="cc-card-date-dual-time">
           <div class="cc-card-date-time-from">
-            {#if date["time"] && !dateHide["time"]}
+            {#if date["time"] && dateShow["time"]}
               {date["time"]}
             {/if}
           </div>
           <div class="cc-card-date-time-to">
-            {#if date["to"]["time"] && !dateHide["toTime"]}
+            {#if date["to"]["time"] && dateShow["toTime"]}
               {date["to"]["time"]}
             {/if}
           </div>
         </div>
       {/if}
-      {#if (!dateHide["day"] && (date["day"]) || (!dateHide["toDay"] && date["to"]["day"]))}
+      {#if (dateShow["day"] && (date["day"]) || (dateShow["toDay"] && date["to"]["day"]))}
         <div class="cc-card-date-dual-day">
           <div class="cc-card-date-day-from">
-            {#if date["day"] && !dateHide["day"]}
+            {#if date["day"] && dateShow["day"]}
               {date["day"].substring(0, 3)}
             {/if}
           </div>
           <div class="cc-card-date-day-to">
-            {#if date["to"]["day"] && !dateHide["toDay"]}
+            {#if date["to"]["day"] && dateShow["toDay"]}
               {date["to"]["day"].substring(0, 3)}
             {/if}
           </div>
         </div>
       {/if}
-      {#if (!dateHide["month"] && date["month"]) || (!dateHide["toMonth"] && date["to"]["month"])}
+      {#if (dateShow["month"] && date["month"]) || (dateShow["toMonth"] && date["to"]["month"])}
         <div class="cc-card-date-dual-month">
           <div class="cc-card-date-month-from">
-            {#if date["month"] && !dateHide["month"]}
+            {#if date["month"] && dateShow["month"]}
               {date["month"]}
             {/if}
           </div>
           <div class="cc-card-date-month-to">
-            {#if date["to"]["month"] && !dateHide["toMonth"]}
+            {#if date["to"]["month"] && dateShow["toMonth"]}
               {date["to"]["month"]}
             {/if}
           </div>
         </div>
       {/if}
-      {#if (!dateHide["date"] && date["date"]) || (!dateHide["toDate"] && date["to"]["date"])}
+      {#if (dateShow["date"] && date["date"]) || (dateShow["toDate"] && date["to"]["date"])}
         <div class="cc-card-date-dual-date">
           <div class="cc-card-date-date-from">
-            {#if date["date"] && !dateHide["date"]}
+            {#if date["date"] && dateShow["date"]}
               {date["date"]}
             {/if}
           </div>
           <div class="cc-card-date-date-to">
-            {#if date["to"]["date"] && !dateHide["toDate"]}
+            {#if date["to"]["date"] && dateShow["toDate"]}
               {date["to"]["date"]}
             {/if}
           </div>
@@ -139,22 +139,22 @@
           {date["label"]}
         </div>
       {/if}
-      {#if !dateHide["time"] && date["time"]}
+      {#if dateShow["time"] && date["time"]}
         <div class="cc-card-date-time">
           {date["time"]}
         </div>
       {/if}
-      {#if !dateHide["day"] && date["day"]}
+      {#if dateShow["day"] && date["day"]}
         <div class="cc-card-date-day">
           {date["day"]}
         </div>
       {/if}
-      {#if !dateHide["calendarDate"] && date["month"]}
+      {#if dateShow["calendarDate"] && date["month"]}
         <div class="cc-card-date-month">
           {date["month"]}
         </div>
       {/if}
-      {#if !dateHide["calendarDate"] && date["date"]}
+      {#if dateShow["calendarDate"] && date["date"]}
         <div class="cc-card-date-date">
           {date["date"]}
         </div>

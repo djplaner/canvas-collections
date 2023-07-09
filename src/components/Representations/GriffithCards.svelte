@@ -220,7 +220,7 @@
               />
               <DateWidget
                 date={$collectionsStore["MODULES"][theModule.id].date}
-                dateHide={$collectionsStore["MODULES"][theModule.id].dateHide}
+                dateShow={$collectionsStore["MODULES"][theModule.id].dateShow}
               />
               <!--               $**DATE_WIDGET** -->
               {#if $collectionsStore["MODULES"][theModule.id].fyi && $collectionsStore["MODULES"][theModule.id].fyiText !== ""}
@@ -355,7 +355,7 @@
               />
               <DateWidget
                 date={$collectionsStore["MODULES"][theModule.id].date}
-                dateHide={$collectionsStore["MODULES"][theModule.id].dateHide}
+                dateShow={$collectionsStore["MODULES"][theModule.id].dateShow}
               />
               {#if $collectionsStore["MODULES"][theModule.id].fyi}
                 {#if $collectionsStore["MODULES"][theModule.id].fyiText !== "" || $configStore["editMode"]}

@@ -158,7 +158,7 @@ export class CollectionsDetails {
 
     // initialise the controller etc
     //this.ccOn = this.collections.STATUS === "on";
-    this.ccPublished = this.collectionsPageResponse.published;
+    this.ccPublished = this.collectionsPageResponse["published"];
 
     this.finishedCallBack();
 
@@ -181,7 +181,7 @@ export class CollectionsDetails {
   checkForImportedCollections(courseImages) {
     const imagesCourseId = parseInt(courseImages.id.replace("cc-course-", ""));
 
-    if (this.config.courseId !== imagesCourseId) {
+    if (this.config["courseId"] !== imagesCourseId) {
       this.courseImages = courseImages;
       this.importedCourseId = imagesCourseId;
       this.convertCourseImagesDiv();
@@ -470,6 +470,7 @@ export class CollectionsDetails {
    * - each module has an attribute 'actualNum' set to ""
    * - each module has a proper date structure
    * - decode collection names
+   * - replace dateHide with dateShow for each module
    */
 
   updateCollections() {
@@ -527,6 +528,15 @@ export class CollectionsDetails {
         }
         if (!module.hasOwnProperty("metadata")) {
           module.metadata = {};
+        }
+        if (module.hasOwnProperty("dateHide")) {
+          // convert dateHide to dateShow 
+          module.dateShow = module.dateHide;
+          delete module.dateHide;
+          // for each data member in module.dateShow negate the value
+          for (let key in module.dateShow) {
+            module.dateShow[key] = !module.dateShow[key];
+          }
         }
         this.handleModuleDate(module);
         this.removeCanvasModuleDetails(module);
@@ -601,21 +611,18 @@ export class CollectionsDetails {
    */
 
   handleModuleDate(module) {
-    if (!module.hasOwnProperty("dateHide")) {
-      module.dateHide = {
-        day: false,
-        week: false,
-        time: false,
-        calendarDate: false,
+    if (!module.hasOwnProperty("dateShow")) {
+      module.dateShow = {
+        day: true,
+        week: true,
+        time: true,
+        date: true,
+        toDay: true,
+        toWeek: true,
+        toTime: true,
+        toDate: true,
       };
-    } else {
-      ["date", "month"].forEach((field) => {
-        if (module.dateHide.hasOwnProperty(field)) {
-          delete module.dateHide[field];
-          module.dateHide.calendarDate = false;
-        }
-      });
-    }
+    } 
     if (!module.hasOwnProperty("date")) {
       module.date = {
         label: "",
@@ -978,7 +985,7 @@ export class CollectionsDetails {
     // - if in !editMode set canvas published to true if canvas module exists
     // - otherwise if canvas module doesn't exist, remove that entry from collections
 
-    const canvasModuleIds = canvasModules.map((module) => module.id);
+    const canvasModuleIds = canvasModules.map((module) => module["id"]);
     let changeMade = false;
     for (const moduleId in collectionsModules) {
       if (!editMode) {
@@ -1072,12 +1079,15 @@ export class CollectionsDetails {
           time: "",
         },
       },
-      dateHide: {
-        day: false,
-        week: false,
-        time: false,
-        month: false,
-        date: false,
+      dateShow: {
+        day: true,
+        time: true,
+        month: true,
+        date: true,
+        toDay: true,
+        toTime: true,
+        toMonth: true,
+        toDate: true,
       },
       banner: "image",
       image: "",

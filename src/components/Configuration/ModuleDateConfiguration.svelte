@@ -48,12 +48,8 @@
    */
 
   function checkDate() {
-    console.log(`----- check date `)
-    console.log($collectionsStore["MODULES"][moduleId]["date"])
-
     checkCalendarDate($collectionsStore["MODULES"][moduleId]["date"])
     checkCalendarDate($collectionsStore["MODULES"][moduleId]["date"]["to"])
-
   }
 
   /**
@@ -115,7 +111,6 @@
     const dateObj = new Date(calendarDate);
     if (dateObj instanceof Date && !isNaN(dateObj.valueOf())) {
       date["calendarDate"] = calendarDate;
-      console.log(`>>>>>> Set calendarDate to ${calendarDate}`)
     }
   }
 
@@ -205,8 +200,8 @@
       tooltip: `Representation of the date as configured by <em>Start Date</em> and possible <em>Stop Date</em>.`,
       href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/#calculated-date",
     },
-    hideDate: {
-      tooltip: `Select to hide this portion of the date in the representation.`,
+    showDate: {
+      tooltip: `Select to show this portion of the date in the representation.`,
     },
     outputDate: {
       tooltip: `A live representation of the configured date.`,
@@ -284,12 +279,12 @@
     <div class="cc-module-form">
       <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-time">Select time</label>
-        <sl-tooltip id="cc-about-module-hide-start-time">
-          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+        <sl-tooltip id="cc-about-module-show-start-time">
+          <div slot="content">{@html HELP.showDate.tooltip}</div>
           <input
             type="checkbox"
             on:keydown|stopPropagation
-            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateShow"][
               "time"
             ]}
             on:click={() => {
@@ -320,11 +315,11 @@
         <label for="cc-module-config-{moduleId}-day">Day</label>
 
         <sl-tooltip id="cc-about-module-date-stop">
-          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <div slot="content">{@html HELP.showDate.tooltip}</div>
           <input
             on:keydown|stopPropagation
             type="checkbox"
-            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateShow"][
               "day"
             ]}
             on:click={() => {
@@ -338,11 +333,11 @@
         <label for="cc-module-config-{moduleId}-date">Date</label>
 
         <sl-tooltip id="cc-about-module-date-stop">
-          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <div slot="content">{@html HELP.showDate.tooltip}</div>
           <input
             on:keydown|stopPropagation
             type="checkbox"
-            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateShow"][
               "date"
             ]}
             on:click={() => {
@@ -358,11 +353,11 @@
         <label for="cc-module-config-{moduleId}-month">Month</label>
 
         <sl-tooltip id="cc-about-module-date-stop">
-          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <div slot="content">{@html HELP.showDate.tooltip}</div>
           <input
             on:keydown|stopPropagation
             type="checkbox"
-            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateShow"][
               "month"
             ]}
             on:click={() => {
@@ -416,12 +411,12 @@
     <div class="cc-module-form">
       <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-time-to">Select time</label>
-        <sl-tooltip id="cc-about-module-hide-stop-time">
-          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+        <sl-tooltip id="cc-about-module-show-stop-time">
+          <div slot="content">{@html HELP.showDate.tooltip}</div>
           <input
             type="checkbox"
             on:keydown|stopPropagation
-            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateShow"][
               "toTime"
             ]}
             on:click={() => {
@@ -453,11 +448,11 @@
         <label for="cc-module-config-{moduleId}-day">Day</label>
 
         <sl-tooltip id="cc-about-module-date-stop">
-          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <div slot="content">{@html HELP.showDate.tooltip}</div>
           <input
             on:keydown|stopPropagation
             type="checkbox"
-            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateShow"][
               "toDay"
             ]}
             on:click={() => {
@@ -471,11 +466,11 @@
         <label for="cc-module-config-{moduleId}-date">Date</label>
 
         <sl-tooltip id="cc-about-module-date-stop">
-          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <div slot="content">{@html HELP.showDate.tooltip}</div>
           <input
             on:keydown|stopPropagation
             type="checkbox"
-            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateShow"][
               "toDate"
             ]}
             on:click={() => {
@@ -491,11 +486,11 @@
         <label for="cc-module-config-{moduleId}-month">Month</label>
 
         <sl-tooltip id="cc-about-module-date-stop">
-          <div slot="content">{@html HELP.hideDate.tooltip}</div>
+          <div slot="content">{@html HELP.showDate.tooltip}</div>
           <input
             on:keydown|stopPropagation
             type="checkbox"
-            bind:checked={$collectionsStore["MODULES"][moduleId]["dateHide"][
+            bind:checked={$collectionsStore["MODULES"][moduleId]["dateShow"][
               "toMonth"
             ]}
             on:click={() => {
@@ -529,7 +524,7 @@
     <div style="padding-left: 2em;">
       <DateWidget
         date={$collectionsStore["MODULES"][moduleId]["date"]}
-        dateHide={$collectionsStore["MODULES"][moduleId]["dateHide"]}
+        dateShow={$collectionsStore["MODULES"][moduleId]["dateShow"]}
         flow="normal"
       />
     </div>
