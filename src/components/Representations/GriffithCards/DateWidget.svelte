@@ -57,8 +57,8 @@
   export let dateHide: Object;
   export let flow = "";
 
-  console.log("------- date hide");
-  console.log(dateHide);
+//  console.log("------- date hide");
+//  console.log(dateHide);
 
   let cardStyle = "cc-card-date";
   if ( flow!=="") {

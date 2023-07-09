@@ -34,75 +34,90 @@
 
   export let moduleId: Number;
 
-  let originalDate = $collectionsStore["MODULES"][moduleId].date;
+  //let originalDate = $collectionsStore["MODULES"][moduleId].date;
+
+  checkDate()
 
   /**
-   * @function updateDate
-   * @description Called whenever any change has been made to the date
-   * - update the calculateDate
-   * - set needToSave to true
+   * @function checkDate
+   * @description When component is initialised, check the date and
+   * perform some tidy ups, including 
+   * - setting the calendar date
+   *   Mainly a transition from before calendar date was set. Check if
+   *   there is a day, month, year and set calendar date appropriately
    */
 
-  /*  function updateDate() {
-    // also need to recalculate the date and month
-    modifyDate();
-    //calculatedDate = calculateDate($collectionsStore["MODULES"][moduleId].date);
-    $configStore["needToSaveCollections"] = true;
-  } */
+  function checkDate() {
+    console.log(`----- check date `)
+    console.log($collectionsStore["MODULES"][moduleId]["date"])
+
+    checkCalendarDate($collectionsStore["MODULES"][moduleId]["date"])
+    checkCalendarDate($collectionsStore["MODULES"][moduleId]["date"]["to"])
+
+  }
 
   /**
-   * @function modifyDate
-   * @description Something has changed about the module's date. Need to recalculate the
-   * and update the calendar date for one of the from or to dates
-   * - call getDate on from
-   * - call getDate on to - if it exists
-   * - compare the resulting JSON and make any chances necessary
+   * @function checkCalendarDate
+   * @param {Object} date
+   * @description 
+   * - if no "calendarDate" data member
+   *   - check if there are month, date and year members
+   *     - if so, set calendar date based on those members
    */
 
-  /*  function modifyDate() {
-    // calculate new date for from
-    let newFrom = {};
-
-    if ($collectionsStore["MODULES"][moduleId]["date"].day === "") {
-      // no day
-      newFrom = calendar.getDate(
-        $collectionsStore["MODULES"][moduleId]["date"].week
-      );
-    } else {
-      newFrom = calendar.getDate(
-        $collectionsStore["MODULES"][moduleId]["date"].week,
-        false,
-        $collectionsStore["MODULES"][moduleId]["date"].day
-      );
-    }
-    // calculate new date for to
-    let newTo = {};
-    if ($collectionsStore["MODULES"][moduleId]["date"].hasOwnProperty("to")) {
-      if ($collectionsStore["MODULES"][moduleId]["date"].to.day === "") {
-        newTo = calendar.getDate(
-          $collectionsStore["MODULES"][moduleId]["date"].to.week
-        );
-      } else {
-        newTo = calendar.getDate(
-          $collectionsStore["MODULES"][moduleId]["date"].to.week,
-          false,
-          $collectionsStore["MODULES"][moduleId]["date"].to.day
-        );
+  function checkCalendarDate( date : Object) {
+    // check if there is a calendar date member
+    if ( ! Object.hasOwnProperty.call(date, "calendarDate")) {
+      // no calendar date member
+      // check if there are month, date and year members
+      if (Object.hasOwnProperty.call(date, "month") &&
+        Object.hasOwnProperty.call(date, "date") &&
+        Object.hasOwnProperty.call(date, "year")) {
+        // set calendar date
+        setCalendarDate(date)
       }
     }
+  }
 
-    // date and month specific the calendar date, this is what we need to check and update
-    const fieldsToCheck = ["date", "month"];
-    fieldsToCheck.forEach((field) => {
-      if (newFrom[field] !== originalDate[field]) {
-        $collectionsStore["MODULES"][moduleId]["date"][field] = newFrom[field];
-      }
-      if (newTo[field] !== originalDate["to"][field]) {
-        $collectionsStore["MODULES"][moduleId]["date"]["to"][field] =
-          newTo[field];
-      }
-    });
-  } */
+  /**
+   * @function setCalendarDate
+   * @param date
+   * @description Check that the date, month and year members
+   * are in the form we expect, then convert the short month to a number
+   * and set calendarDate to YYYY-MM-DD
+   */
+
+  function setCalendarDate(date : Object) {
+    const months = {
+      Jan: "01",
+      Feb: "02",
+      Mar: "03",
+      Apr: "04",
+      May: "05",
+      Jun: "06",
+      Jul: "07",
+      Aug: "08",
+      Sep: "09",
+      Oct: "10",
+      Nov: "11",
+      Dec: "12",
+    };
+    let monthNumber;
+
+    if (date["month"] in months) {
+      monthNumber = months[date["month"]];
+    } else { 
+      return;
+    }
+
+    const calendarDate = `${date["year"]}-${monthNumber}-${date["date"]}`
+    // create dateObj from calendarDate, if valid date set date["calendarDate"]
+    const dateObj = new Date(calendarDate);
+    if (dateObj instanceof Date && !isNaN(dateObj.valueOf())) {
+      date["calendarDate"] = calendarDate;
+      console.log(`>>>>>> Set calendarDate to ${calendarDate}`)
+    }
+  }
 
   /**
    * @function updateModuleDate
@@ -156,45 +171,6 @@
         $collectionsStore["MODULES"][moduleId]["date"][field] = date[field];
       }
     });
-
-    /*    let date = $collectionsStore["MODULES"][moduleId]["date"]["date"];
-    let month = $collectionsStore["MODULES"][moduleId]["date"]["month"];
-
-    if (to) {
-      date = $collectionsStore["MODULES"][moduleId]["date"]["to"]["date"];
-      month = $collectionsStore["MODULES"][moduleId]["date"]["to"]["month"];
-    } 
-
-    // convert month (e.g. Mar) to month number (e.g. 03) self-contained
-    const months = {
-      Jan: "01",
-      Feb: "02",
-      Mar: "03",
-      Apr: "04",
-      May: "05",
-      Jun: "06",
-      Jul: "07",
-      Aug: "08",
-      Sep: "09",
-      Oct: "10",
-      Nov: "11",
-      Dec: "12",
-    };
-    let monthNumber;
-
-    if (month in months) {
-      monthNumber = months[month];
-    } else {
-      // can't return proper date without month
-      return "";
-    }
-
-    //console.log(`updateModuleDate ${to} ${date} ${month} 2023`);
-    console.log(`updateModuleDate 2023-${monthNumber}-${date}`);
-
-    //    return `2023-04-10`;
-
-    return `2023-${monthNumber}-${date}`; */
   }
 
   /**
