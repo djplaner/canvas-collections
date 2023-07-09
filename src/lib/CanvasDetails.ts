@@ -22,7 +22,7 @@
  */
 
 import { wf_fetchData } from "./CanvasSetup";
-import UniversityDateCalendar from "./university-date-calendar";
+//import UniversityDateCalendar from "./university-date-calendar";
 
 export class CanvasDetails {
   public courseObject: object;
@@ -82,7 +82,7 @@ export class CanvasDetails {
       (msg) => {
         if (msg.status === 200) {
           this.courseObject = msg.body;
-          this.generateSTRM()
+          //this.generateSTRM()
           this.requestModuleInformation();
         }
       }
@@ -107,9 +107,9 @@ export class CanvasDetails {
    * In particular to handle the "YP" course ids
    */
 
-  generateSTRM() {
+/*  generateSTRM() {
     if (!this.hasOwnProperty("calendar")) {
-      this.calendar = new UniversityDateCalendar();
+//      this.calendar = new UniversityDateCalendar();
     }
 
     // TODO this is where we might check if there is an existing default
@@ -121,7 +121,7 @@ export class CanvasDetails {
     this.studyPeriod = this.calendar.getCurrentPeriod(
       this.courseObject.course_code
     )
-    const success = this.calendar.setStudyPeriod(this.studyPeriod)
+//    const success = this.calendar.setStudyPeriod(this.studyPeriod)
     this.strm = this.calendar.getStudyPeriod()
     // aboutStudyPeriod is an object with human readable information about the
     // study period - typically strings for
@@ -132,14 +132,14 @@ export class CanvasDetails {
 
     this.parseStrm()
   }
-
+*/
   /**
    * @descr Parse the STRM and set the type, year, period
    * Based on Griffith STRM definition
    * https://intranet.secure.griffith.edu.au/computing/using-learning-at-griffith/staff/administration/course-ID
    */
 
-  parseStrm() {
+/*  parseStrm() {
     this.type = undefined;
     this.year = undefined;
     this.period = undefined;
@@ -183,6 +183,7 @@ export class CanvasDetails {
     }
     this.period = translate[this.period];
   }
+  */
 
   requestModuleInformation() {
     wf_fetchData(
@@ -195,3 +196,5 @@ export class CanvasDetails {
     });
   }
 }
+
+

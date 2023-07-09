@@ -36,41 +36,43 @@
 
   //let originalDate = $collectionsStore["MODULES"][moduleId].date;
 
-  checkDate()
+  checkDate();
 
   /**
    * @function checkDate
    * @description When component is initialised, check the date and
-   * perform some tidy ups, including 
+   * perform some tidy ups, including
    * - setting the calendar date
    *   Mainly a transition from before calendar date was set. Check if
    *   there is a day, month, year and set calendar date appropriately
    */
 
   function checkDate() {
-    checkCalendarDate($collectionsStore["MODULES"][moduleId]["date"])
-    checkCalendarDate($collectionsStore["MODULES"][moduleId]["date"]["to"])
+    checkCalendarDate($collectionsStore["MODULES"][moduleId]["date"]);
+    checkCalendarDate($collectionsStore["MODULES"][moduleId]["date"]["to"]);
   }
 
   /**
    * @function checkCalendarDate
    * @param {Object} date
-   * @description 
+   * @description
    * - if no "calendarDate" data member
    *   - check if there are month, date and year members
    *     - if so, set calendar date based on those members
    */
 
-  function checkCalendarDate( date : Object) {
+  function checkCalendarDate(date: Object) {
     // check if there is a calendar date member
-    if ( ! Object.hasOwnProperty.call(date, "calendarDate")) {
+    if (!Object.hasOwnProperty.call(date, "calendarDate")) {
       // no calendar date member
       // check if there are month, date and year members
-      if (Object.hasOwnProperty.call(date, "month") &&
+      if (
+        Object.hasOwnProperty.call(date, "month") &&
         Object.hasOwnProperty.call(date, "date") &&
-        Object.hasOwnProperty.call(date, "year")) {
+        Object.hasOwnProperty.call(date, "year")
+      ) {
         // set calendar date
-        setCalendarDate(date)
+        setCalendarDate(date);
       }
     }
   }
@@ -83,7 +85,7 @@
    * and set calendarDate to YYYY-MM-DD
    */
 
-  function setCalendarDate(date : Object) {
+  function setCalendarDate(date: Object) {
     const months = {
       Jan: "01",
       Feb: "02",
@@ -102,11 +104,11 @@
 
     if (date["month"] in months) {
       monthNumber = months[date["month"]];
-    } else { 
+    } else {
       return;
     }
 
-    const calendarDate = `${date["year"]}-${monthNumber}-${date["date"]}`
+    const calendarDate = `${date["year"]}-${monthNumber}-${date["date"]}`;
     // create dateObj from calendarDate, if valid date set date["calendarDate"]
     const dateObj = new Date(calendarDate);
     if (dateObj instanceof Date && !isNaN(dateObj.valueOf())) {
@@ -151,11 +153,20 @@
     const value = dateInput.value;
     date["calendarDate"] = value;
 
-    const dateObj = new Date(value);
-    date["year"] = dateObj.getFullYear().toString();
-    date["month"] = dateObj.toLocaleString("default", { month: "short" });
-    date["day"] = dateObj.toLocaleString("default", { weekday: "short" });
-    date["date"] = dateObj.getDate().toString();
+    // check for clearing of calendarDate which means clearing all
+    // other date components
+    if (value === "") {
+      date["year"] = "";
+      date["month"] = "";
+      date["day"] = "";
+      date["date"] = "";
+    } else {
+      const dateObj = new Date(value);
+      date["year"] = dateObj.getFullYear().toString();
+      date["month"] = dateObj.toLocaleString("default", { month: "short" });
+      date["day"] = dateObj.toLocaleString("default", { weekday: "short" });
+      date["date"] = dateObj.getDate().toString();
+    }
 
     // loop fields of date and update appropriate collectionsStore
     Object.keys(date).forEach((field) => {
@@ -218,6 +229,19 @@
   <div class="cc-module-form">
     <span class="cc-module-label">
       <label for="cc-module-config-{moduleId}-date-label">Date label</label>
+      <sl-tooltip id="cc-about-module-show-label">
+        <div slot="content">{@html HELP.showDate.tooltip}</div>
+        <input
+          type="checkbox"
+          on:keydown|stopPropagation
+          bind:checked={$collectionsStore["MODULES"][moduleId]["dateShow"][
+            "label"
+          ]}
+          on:click={() => {
+            $configStore["needToSaveCollections"] = true;
+          }}
+        />
+      </sl-tooltip>
     </span>
     <span class="cc-module-input">
       {#if $collectionsStore["MODULES"][moduleId].hasOwnProperty("date") && $collectionsStore["MODULES"][moduleId].date.hasOwnProperty("label")}
@@ -543,7 +567,7 @@
     .cc-date-row {
       grid-template-columns: repeat(2, 1fr) 0.5fr;
       grid-template-rows: 1fr;
-      grid-column-gap: 0px; 
+      grid-column-gap: 0px;
       grid-row-gap: 0px;
     }
   }

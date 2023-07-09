@@ -57,8 +57,9 @@
   export let dateShow: Object;
   export let flow = "";
 
-  console.log("------- date show");
-  console.log(dateShow);
+  console.log("---- Date Widget")
+  console.log( date )
+  console.log( dateShow )
 
   let cardStyle = "cc-card-date";
   if ( flow!=="") {
@@ -70,7 +71,7 @@
 {#if date}
   {#if date["to"] && isNotEmptyDate(date["to"])}
     <div class={cardStyle}>
-      {#if isNotEmptyDate(date) && date["label"]}
+      {#if isNotEmptyDate(date) && date["label"] && dateShow["label"]}
         <div class="cc-card-date-label">
           {date["label"]}
         </div>
@@ -134,7 +135,7 @@
     </div>
   {:else}
     <div class={cardStyle}>
-      {#if isNotEmptyDate(date) && date["label"]}
+      {#if isNotEmptyDate(date) && date["label"] && dateShow["label"]}
         <div class="cc-card-date-label">
           {date["label"]}
         </div>

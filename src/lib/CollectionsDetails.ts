@@ -537,6 +537,10 @@ export class CollectionsDetails {
           for (let key in module.dateShow) {
             module.dateShow[key] = !module.dateShow[key];
           }
+          // if there's no "label" element set one to rue
+          if (!module.dateShow.hasOwnProperty("label")) {
+            module.dateShow["label"] = true;
+          }
         }
         this.handleModuleDate(module);
         this.removeCanvasModuleDetails(module);
@@ -613,6 +617,7 @@ export class CollectionsDetails {
   handleModuleDate(module) {
     if (!module.hasOwnProperty("dateShow")) {
       module.dateShow = {
+        label: true,
         day: true,
         week: true,
         time: true,
@@ -1080,6 +1085,7 @@ export class CollectionsDetails {
         },
       },
       dateShow: {
+        label: true,
         day: true,
         time: true,
         month: true,
