@@ -550,7 +550,7 @@
       </sl-tooltip>
     </div>
 
-    <div class="cc-module-form" style="padding-left: 2em;">
+    <div style="padding-left: 2em;">
       <DateWidget
         date={$collectionsStore["MODULES"][moduleId]["date"]}
         dateHide={$collectionsStore["MODULES"][moduleId]["dateHide"]}
@@ -572,14 +572,14 @@
     .cc-date-row {
       grid-template-columns: repeat(2, 1fr) 0.5fr;
       grid-template-rows: 1fr;
-      grid-column-gap: 2em;
+      grid-column-gap: 0px; 
       grid-row-gap: 0px;
     }
   }
   .cc-module-form {
     display: grid;
-    grid-template-columns: 8em 12em;
-    grid-column-gap: 1em;
+    grid-template-columns: 6em 10em;
+    grid-column-gap: 0.5em;
     grid-row-gap: 0px;
     margin-bottom: 0.4em;
   }
@@ -592,6 +592,7 @@
     margin-top: 0.4em;
     font-weight: bold;
     color: #333;
+    font-size: 0.8em;
   }
 
   .cc-module-input input {
@@ -602,12 +603,13 @@
     max-width: 100em;
     display: grid;
     margin: 0 auto;
-    gap: 0.5em;
+    gap: 0em;
   }
 
   @media (min-width: 200px) {
     .cc-module-date-display {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, 4em);
+      padding-left: 3em;
     }
   }
 
@@ -618,6 +620,8 @@
   .cc-module-label-display label {
     font-weight: bold;
     color: #333;
+    font-size: 0.8em;
+    margin-bottom: 0px;
   }
 
   .cc-module-input-display {
