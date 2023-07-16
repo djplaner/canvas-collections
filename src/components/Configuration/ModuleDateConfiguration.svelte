@@ -34,24 +34,18 @@
 
   export let moduleId: Number;
 
-  //let originalDate = $collectionsStore["MODULES"][moduleId].date;
-
   let noStopDateSet = false;
   let noStopDateSetClass = "";
 
   checkDate();
 
+  // Grey out/disable the stop date options if no stop date set
   $: { 
     noStopDateSet = ( 
       (! $collectionsStore["MODULES"][moduleId]["date"]["to"].hasOwnProperty("calendarDate") ) || 
       ( $collectionsStore["MODULES"][moduleId]["date"]["to"]["calendarDate"] === "" ));
     noStopDateSetClass = noStopDateSet ? "cc-no-stop-date-set" : "";
-  console.log( `Module ${moduleId} stop date ${$collectionsStore["MODULES"][moduleId]["date"]["to"]["calendarDate"]}`);
-  console.log(`noStopDate is ${noStopDateSet}`)
-  console.log($collectionsStore["MODULES"][moduleId]["date"]);
   }
-
-
 
   /**
    * @function checkDate
@@ -80,13 +74,12 @@
     // check if there is a calendar date member
     if (!Object.hasOwnProperty.call(date, "calendarDate")) {
       // no calendar date member
-      // check if there are month, date and year members
+      // set the calendarDate member if there are month, date and year members
       if (
         Object.hasOwnProperty.call(date, "month") &&
         Object.hasOwnProperty.call(date, "date") &&
         Object.hasOwnProperty.call(date, "year")
       ) {
-        // set calendar date
         setCalendarDate(date);
       }
     }
@@ -163,7 +156,6 @@
       return;
     }
 
-    console.log(`dateInput value is ${dateInput.value}`);
     // Get the date value and split into components
     const value = dateInput.value;
     date["calendarDate"] = value;
@@ -445,7 +437,7 @@
       </span>
     </div>
 
-    <div class="cc-module-form">
+    <div class="cc-module-form {noStopDateSetClass}">
       <span class="cc-module-label">
         <label for="cc-module-config-{moduleId}-time-to">Select time</label>
         <sl-tooltip id="cc-about-module-show-stop-time">
@@ -459,6 +451,7 @@
             on:click={() => {
               $configStore["needToSaveCollections"] = true;
             }}
+            disabled={noStopDateSet}
           />
         </sl-tooltip>
       </span>
@@ -495,6 +488,7 @@
             on:click={() => {
               $configStore["needToSaveCollections"] = true;
             }}
+            disabled={noStopDateSet}
           />
         </sl-tooltip>
       </span>
@@ -513,6 +507,7 @@
             on:click={() => {
               $configStore["needToSaveCollections"] = true;
             }}
+            disabled={noStopDateSet}
           />
         </sl-tooltip>
       </span>
@@ -533,6 +528,7 @@
             on:click={() => {
               $configStore["needToSaveCollections"] = true;
             }}
+            disabled={noStopDateSet}
           />
         </sl-tooltip>
       </span>
