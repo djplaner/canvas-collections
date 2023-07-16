@@ -64,6 +64,7 @@
   import "@shoelace-style/shoelace/dist/components/tooltip/tooltip.js";
   import "@shoelace-style/shoelace/dist/components/spinner/spinner.js";
   import "@shoelace-style/shoelace/dist/components/switch/switch.js";
+  import '@shoelace-style/shoelace/dist/components/input/input.js';
 
   import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
   setBasePath("../node_modules/@shoelace-style/shoelace/dist/");
@@ -72,7 +73,7 @@
   const TIME_BETWEEN_CANVAS_REFRESH: number = 60000; // check for any changes in Canvas modules every 60 seconds
   // check how many saves happened every X (12 - 2 minutes) saves
   // Also every 2 * canvas refreshes
-  const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 12;
+  const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 112;
   // to turn/on/off interval based saving and refreshing
   // set these to false
   const AUTO_SAVE_BASE: boolean = true; // regularly check to save collections
@@ -83,10 +84,12 @@
   let AUTO_SAVE: boolean = AUTO_SAVE_BASE;
   let EXIT_SAVE: boolean = EXIT_SAVE_BASE;
 
+  // Properties set by main.ts
   export let courseId: number;
   export let editMode: boolean;
   export let csrfToken: string;
   export let modulesPage: boolean;
+  export let baseApiUrl: string;
 
   onMount(async () => {
     // Start the process of getting via Canvas API
@@ -137,6 +140,7 @@
     needToSaveCollections: false,
     ccOn: false,
     studyPeriod: null, // calculated by CanvasDetails
+    baseApiUrl: baseApiUrl,
   };
   // use configUpdates to update appropriate keys in configStore
   Object.keys(configUpdates).forEach((key) => {

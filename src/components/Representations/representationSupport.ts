@@ -296,45 +296,51 @@ export function generateModuleDate(module) {
   }
 
   if (isNotEmptyDate(module.date)) {
-    dateStr += generateDateString(module.date, module.dateHide);
+    dateStr += generateDateString(module.date, module.dateShow);
   }
   if (isNotEmptyDate(module.date.to)) {
-    dateStr += ` to ${generateDateString(module.date.to, module.dateHide)}`;
+    dateStr += ` to ${generateDateString(module.date.to, module.dateShow)}`;
   }
 
   return dateStr;
 }
 
-function generateDateString(date: object, dateHide: object): string {
+function generateDateString(date: object, dateShow: object): string {
   let dateStr = "";
 
-  if (!dateHide["day"]) {
+  if (dateShow["day"]) {
     dateStr += ` ${date.day}`;
   }
-  if (!dateHide["week"]) {
+  if (dateShow["week"]) {
     dateStr += ` Week ${date.week}`;
   }
-  if (!dateHide["calendarDate"]) {
-    if (!dateHide["week"]) {
+  if (dateShow["calendarDate"]) {
+    if (dateShow["week"]) {
       dateStr += ` (${date.date} ${date.month})`;
     } else {
       dateStr += ` ${date.date} ${date.month}`;
     }
   }
-  if (!dateHide["time"] && date.time !== "") {
+  if (dateShow["time"] && date.time !== "") {
     dateStr += ` ${date.time}`;
   }
 
   return dateStr;
 }
 
+/**
+ * @function isNotEmptyDate
+ * @param date 
+ * @returns true iff there are no components for the date defined
+ */
 export function isNotEmptyDate(date: object): boolean {
   return (
-    (date.hasOwnProperty("week") && date["week"] !== "") ||
+    date.hasOwnProperty("calendarDate") && date["calendarDate"] !== ""
+/*    (date.hasOwnProperty("week") && date["week"] !== "") ||
     (date.hasOwnProperty("month") && date["month"] !== "") ||
     (date.hasOwnProperty("date") && date["date"] !== "") ||
     (date.hasOwnProperty("day") && date["day"] !== "") ||
-    (date.hasOwnProperty("time") && date["time"] !== "")
+    (date.hasOwnProperty("time") && date["time"] !== "") */
   );
 }
 

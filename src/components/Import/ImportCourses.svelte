@@ -37,7 +37,8 @@
 
   export let currentCourseId
   export let importCourseId
-  export let baseApiUrl
+  
+  let baseApiUrl = $configStore["baseApiUrl"]
 
   let currentCourseDetails = {};
   let importCourseDetails = {}

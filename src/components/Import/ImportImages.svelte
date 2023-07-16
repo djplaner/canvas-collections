@@ -24,7 +24,7 @@
    * need to be processesdd as part of the import process. Provide an interface to
    * do that processing
    */
-  import { modulesStore } from "../../stores";
+  import { configStore } from "../../stores";
   import { wf_fetchData } from "../../lib/CanvasSetup";
 
   export let imagesCompleteStatus = 0;
@@ -37,7 +37,7 @@
   let numOtherCourseImages = 0;
 
   const currentHostName = document.location.hostname;
-  const baseApiUrl = `https://${currentHostName}/api/v1`;
+  const baseApiUrl = $configStore["baseApiUrl"]
 
   let images = collectionsDetails.getImportedImages(); //convertCourseImages(courseImages);
 

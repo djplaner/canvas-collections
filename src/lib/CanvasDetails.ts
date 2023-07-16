@@ -21,8 +21,11 @@
  * about the course and its modules via Canvas API calls
  */
 
+import { configStore } from "../stores";
+import { get } from "svelte/store";
+
 import { wf_fetchData } from "./CanvasSetup";
-import UniversityDateCalendar from "./university-date-calendar";
+//import UniversityDateCalendar from "./university-date-calendar";
 
 export class CanvasDetails {
   public courseObject: object;
@@ -33,8 +36,9 @@ export class CanvasDetails {
 
   private config: object;
   //  private csrfToken: string;
+  private configStore = get(configStore);
   private currentHostName: string;
-  private baseApiUrl: string;
+  private baseApiUrl = this.configStore["baseApiUrl"];
   //  private courseId: number;
   private finishedCallBack: Function;
   //  private calendar: UniversityDateCalendar;
@@ -56,7 +60,7 @@ export class CanvasDetails {
     //    this.courseId = this.CONFIG.courseId;
 
     this.currentHostName = document.location.hostname;
-    this.baseApiUrl = `https://${this.currentHostName}/api/v1`;
+//    this.baseApiUrl = this.configStore["baseApiUrl"] //`https://${this.currentHostName}/api/v1`;
     // convert courseId to integer
     this["config"]["courseId"] = parseInt(this["config"]["courseId"]);
 
@@ -82,7 +86,7 @@ export class CanvasDetails {
       (msg) => {
         if (msg.status === 200) {
           this.courseObject = msg.body;
-          this.generateSTRM()
+          //this.generateSTRM()
           this.requestModuleInformation();
         }
       }
@@ -107,9 +111,9 @@ export class CanvasDetails {
    * In particular to handle the "YP" course ids
    */
 
-  generateSTRM() {
+/*  generateSTRM() {
     if (!this.hasOwnProperty("calendar")) {
-      this.calendar = new UniversityDateCalendar();
+//      this.calendar = new UniversityDateCalendar();
     }
 
     // TODO this is where we might check if there is an existing default
@@ -121,7 +125,7 @@ export class CanvasDetails {
     this.studyPeriod = this.calendar.getCurrentPeriod(
       this.courseObject.course_code
     )
-    const success = this.calendar.setStudyPeriod(this.studyPeriod)
+//    const success = this.calendar.setStudyPeriod(this.studyPeriod)
     this.strm = this.calendar.getStudyPeriod()
     // aboutStudyPeriod is an object with human readable information about the
     // study period - typically strings for
@@ -132,14 +136,14 @@ export class CanvasDetails {
 
     this.parseStrm()
   }
-
+*/
   /**
    * @descr Parse the STRM and set the type, year, period
    * Based on Griffith STRM definition
    * https://intranet.secure.griffith.edu.au/computing/using-learning-at-griffith/staff/administration/course-ID
    */
 
-  parseStrm() {
+/*  parseStrm() {
     this.type = undefined;
     this.year = undefined;
     this.period = undefined;
@@ -183,6 +187,7 @@ export class CanvasDetails {
     }
     this.period = translate[this.period];
   }
+  */
 
   requestModuleInformation() {
     wf_fetchData(
@@ -195,3 +200,5 @@ export class CanvasDetails {
     });
   }
 }
+
+

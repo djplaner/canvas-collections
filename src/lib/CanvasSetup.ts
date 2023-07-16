@@ -19,6 +19,9 @@
  * Define suite of methods to interact with Canvas during app set up
  */
 
+// Kludge 
+let BASE_API_URL="";
+
 /**
  * @function checkContext
  * @returns {Object} containing editMode, courseId, modulesPage
@@ -36,10 +39,16 @@ export function checkContext(): object {
     csrfToken: null,
     currentCollection: 0,
     showConfig: false,
+    baseApiUrl: ""
   };
 
   // replace # at end of string
   let url = new URL(window.location.href);
+
+  // Kludge for local development (without SSL)
+  // - set 
+  context["baseApiUrl"] = `${url.protocol}//${url.hostname}/api/v1/`;
+  BASE_API_URL = context["baseApiUrl"];
 
   // check if there's a cc-collection-\d+ in the hash
   // this is the case for internal navigation within collections
@@ -131,7 +140,7 @@ function setCsrfToken(): string {
  */
 
 export async function requestCourseObject(courseId: number, csrfToken: string) {
-  let callUrl = `/api/v1/courses/${courseId}`;
+  let callUrl = `${BASE_API_URL}/api/v1/courses/${courseId}`;
 
 
   const response = await fetch(callUrl, {
@@ -182,7 +191,7 @@ export const wf_fetchData = async (reqUrl) => {
     };
     return msg;
   } catch (e) {
-    console.error(`Could not fetch requested information: ${e}`);
+    console.error(`Could not fetchData(${reqUrl}) requested information: ${e}`);
   }
 };
 
@@ -382,9 +391,10 @@ export function getPageName(
         .replace(/\s+/g, separator);
     };
     const slugifiedPageName = pageName.slugify();
-    const apiUrl = `https://${document.location.hostname}/api/v1/courses/${courseId}/pages/${slugifiedPageName}`;
 
-    wf_fetchData(apiUrl).then((msg) => {
+    const url = `${BASE_API_URL}/courses/${courseId}/pages/${slugifiedPageName}`;
+
+    wf_fetchData(url).then((msg) => {
         callBack(pageName, msg.body);
     });
   }

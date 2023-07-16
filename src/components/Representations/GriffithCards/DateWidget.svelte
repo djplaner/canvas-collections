@@ -16,16 +16,12 @@
  You should have received a copy of the GNU General Public License
  along with Canvas Collections.  If not, see <http://www.gnu.org/licenses/>.
 -->
-
 <script lang="ts">
   /**
    * Implement component for cards date component by
-   * - modifying the date to add a specific calendar date
-   *   using UniversityDateCalendar
    * - display either a single or dual date
    * 
-   * Passed a date object in the following format can specify a
-   * single date or a data period (from/to)
+   * Date is passed as a date object in the following format can specify a
    * {
    *    // "from" date (if dual)
    *   "label": "", "day": "Monday", "week": "3", "time": "",
@@ -36,98 +32,96 @@
    *	"month": "Mar",
    *	"year": 2023
    * }
+   * Also passed a dateShow object that specifies which of the 
+   * date components to show
+   * {
+   *   calendarDate: false, 
+   *   day: false, 
+   *   time: false,
+   *   week: false,
+   *   toCalendarDate: false,  # deprecated???
+   *   toDay: false,
+   *   toTime: false,
+   *   toWeek: false,
+   *   label: false
+   * }
+   * 
+   * TODO
+   * - Implement university calendar support
    */
 
-import UniversityDateCalendar from "../../../lib/university-date-calendar";
-import { configStore } from "../../../stores";
-import { addCalendarDate, isNotEmptyDate } from "../representationSupport";
+  import { isNotEmptyDate } from "../representationSupport";
 
   export let date: Object;
-  export let dateHide: Object;
-  //export let calendar: any;
+  export let dateShow: Object;
+  export let flow = "";
 
-  let calendar = new UniversityDateCalendar($configStore["studyPeriod"]);
-
-  if (date) {
-    if (date["week"] || (date["month"] && date["date"])) {
-      date = addCalendarDate(date, calendar );
-    }
+  let cardStyle = "cc-card-date";
+  if ( flow!=="") {
+    cardStyle = "cc-card-date-normal";
   }
 
 </script>
 
 {#if date}
-  {#if date["to"] && isNotEmptyDate(date["to"])}
-    <div class="cc-card-date">
-      {#if isNotEmptyDate(date) && date["label"]} 
+  {#if date["to"] && isNotEmptyDate(date["to"]) }
+    <div class={cardStyle}>
+      {#if isNotEmptyDate(date) && date["label"] && dateShow["label"]}
         <div class="cc-card-date-label">
           {date["label"]}
         </div>
       {/if}
-      {#if !dateHide["week"] && date["week"] && date["week"]!=="" || date["to"]["week"]}
-        <div class="cc-card-date-week">
-          {#if date["week"] && date["to"]["week"] && date["week"] !== date["to"]["week"]}
-            Weeks
-          {:else}
-            Week
-          {/if}
-          {date["week"]}
-          {#if date["week"] && date["to"]["week"] && date["week"] !== date["to"]["week"]}
-            - {date["to"]["week"]}
-          {/if}
-        </div>
-      {/if}
-      {#if !dateHide["time"] && date["time"] || date["to"]["time"]}
+      {#if (dateShow["time"] && date["time"]) || (dateShow["toTime"] && date["to"]["time"]) } 
         <div class="cc-card-date-dual-time">
           <div class="cc-card-date-time-from">
-            {#if date["time"]}
+            {#if date["time"] && dateShow["time"]}
               {date["time"]}
             {/if}
           </div>
           <div class="cc-card-date-time-to">
-            {#if date["to"]["time"]}
+            {#if date["to"]["time"] && dateShow["toTime"]}
               {date["to"]["time"]}
             {/if}
           </div>
         </div>
       {/if}
-      {#if !dateHide["day"] && (date["day"] || date["to"]["day"])}
+      {#if (dateShow["day"] && (date["day"]) || (dateShow["toDay"] && date["to"]["day"]))}
         <div class="cc-card-date-dual-day">
           <div class="cc-card-date-day-from">
-            {#if date["day"]}
+            {#if date["day"] && dateShow["day"]}
               {date["day"].substring(0, 3)}
             {/if}
           </div>
           <div class="cc-card-date-day-to">
-            {#if date["to"]["day"]}
+            {#if date["to"]["day"] && dateShow["toDay"]}
               {date["to"]["day"].substring(0, 3)}
             {/if}
           </div>
         </div>
       {/if}
-      {#if date["month"] || date["to"]["month"]}
+      {#if (dateShow["month"] && date["month"]) || (dateShow["toMonth"] && date["to"]["month"])}
         <div class="cc-card-date-dual-month">
           <div class="cc-card-date-month-from">
-            {#if date["month"]}
+            {#if date["month"] && dateShow["month"]}
               {date["month"]}
             {/if}
           </div>
           <div class="cc-card-date-month-to">
-            {#if date["to"]["month"]}
+            {#if date["to"]["month"] && dateShow["toMonth"]}
               {date["to"]["month"]}
             {/if}
           </div>
         </div>
       {/if}
-      {#if date["date"] || date["to"]["date"]}
+      {#if (dateShow["date"] && date["date"]) || (dateShow["toDate"] && date["to"]["date"])}
         <div class="cc-card-date-dual-date">
           <div class="cc-card-date-date-from">
-            {#if date["date"]}
+            {#if date["date"] && dateShow["date"]}
               {date["date"]}
             {/if}
           </div>
           <div class="cc-card-date-date-to">
-            {#if date["to"]["date"]}
+            {#if date["to"]["date"] && dateShow["toDate"]}
               {date["to"]["date"]}
             {/if}
           </div>
@@ -135,33 +129,28 @@ import { addCalendarDate, isNotEmptyDate } from "../representationSupport";
       {/if}
     </div>
   {:else}
-    <div class="cc-card-date">
-      {#if isNotEmptyDate(date) && date["label"]}
+    <div class={cardStyle}>
+      {#if isNotEmptyDate(date) && date["label"] && dateShow["label"]}
         <div class="cc-card-date-label">
           {date["label"]}
         </div>
       {/if}
-      {#if !dateHide["week"] && date["week"] && !dateHide["week"]}
-        <div class="cc-card-date-week">
-          Week {date["week"]}
-        </div>
-      {/if}
-      {#if !dateHide["time"] && date["time"]}
+      {#if dateShow["time"] && date["time"]}
         <div class="cc-card-date-time">
           {date["time"]}
         </div>
       {/if}
-      {#if !dateHide["day"] && date["day"]}
+      {#if dateShow["day"] && date["day"]}
         <div class="cc-card-date-day">
           {date["day"]}
         </div>
       {/if}
-      {#if !dateHide["calendarDate"] && date["month"]}
+      {#if dateShow["calendarDate"] && date["month"]}
         <div class="cc-card-date-month">
           {date["month"]}
         </div>
       {/if}
-      {#if !dateHide["calendarDate"] && date["date"]}
+      {#if dateShow["calendarDate"] && date["date"]}
         <div class="cc-card-date-date">
           {date["date"]}
         </div>
@@ -171,6 +160,15 @@ import { addCalendarDate, isNotEmptyDate } from "../representationSupport";
 {/if}
 
 <style>
+  .cc-card-date-normal {
+    text-align: center;
+    background-color: #f5f5f5;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    width: 5rem;
+    display: block;
+  }
+
   .cc-card-date {
     text-align: center;
     background-color: #f5f5f5;
