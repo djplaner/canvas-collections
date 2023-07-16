@@ -85,7 +85,7 @@ export class CollectionsDetails {
     this.ccPublished = true;
 
     this.currentHostName = document.location.hostname;
-    this.baseApiUrl = `https://${this.currentHostName}/api/v1`;
+    this.baseApiUrl = this.configStore["baseApiUrl"]; //`https://${this.currentHostName}/api/v1`;
     // convert courseId to integer - probably unnecessary at this stage
     this["config"]["courseId"] = parseInt(this.config["courseId"]);
 

@@ -21,7 +21,7 @@ import { writable } from "svelte/store";
 import GriffithCards from "./components/Representations/GriffithCards.svelte";
 import CollectionOnly from "./components/Representations/CollectionOnly.svelte";
 import AssessmentTable from "./components/Representations/AssessmentTable.svelte";
-import CollectionsTable from "./components/Representations/CollectionsTable.svelte";
+//import CollectionsTable from "./components/Representations/CollectionsTable.svelte";
 
 // currently collectionStore will contain the parsed collections JSON
 // - COLLECTIONS - dict of dicts, keyed on module name, one per collection
@@ -33,6 +33,7 @@ export const collectionsStore = writable({})
 
 // Array of Canvas module information in order of display
 export const modulesStore = writable([])
+
 
 // Object providing basic info about context
 // - courseId
@@ -48,6 +49,7 @@ export const configStore = writable({
     needToSaveCollections: false,
     ccOn: false,       // older way to check if collection is on
     studyPeriod: null, // calculated by CanvasDetails
+    baseApiUrl: "",    // base URL for Canvas API (CanvasSetup)
 })
 
 // List of available representations

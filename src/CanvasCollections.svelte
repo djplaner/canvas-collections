@@ -84,10 +84,14 @@
   let AUTO_SAVE: boolean = AUTO_SAVE_BASE;
   let EXIT_SAVE: boolean = EXIT_SAVE_BASE;
 
+  // Properties set by main.ts
   export let courseId: number;
   export let editMode: boolean;
   export let csrfToken: string;
   export let modulesPage: boolean;
+  export let baseApiUrl: string;
+
+  alert(`Canvas Collections: course ${courseId} editMode ${editMode} csrfToken ${csrfToken} modulePage ${modulesPage} basePaiURL ${baseApiUrl}`);
 
   onMount(async () => {
     // Start the process of getting via Canvas API
@@ -138,6 +142,7 @@
     needToSaveCollections: false,
     ccOn: false,
     studyPeriod: null, // calculated by CanvasDetails
+    baseApiUrl: baseApiUrl,
   };
   // use configUpdates to update appropriate keys in configStore
   Object.keys(configUpdates).forEach((key) => {

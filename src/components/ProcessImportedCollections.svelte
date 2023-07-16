@@ -37,7 +37,7 @@
   export let collectionsDetails;
 
   const currentHostName = document.location.hostname;
-  const baseApiUrl = `https://${currentHostName}/api/v1`;
+  const baseApiUrl = $configStore["baseApiUrl"]
 
   // status placeholders for sub-component completion
   let modulesCompleteStatus;
