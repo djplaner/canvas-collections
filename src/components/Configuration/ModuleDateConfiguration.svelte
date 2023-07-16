@@ -36,7 +36,22 @@
 
   //let originalDate = $collectionsStore["MODULES"][moduleId].date;
 
+  let noStopDateSet = false;
+  let noStopDateSetClass = "";
+
   checkDate();
+
+  $: { 
+    noStopDateSet = ( 
+      (! $collectionsStore["MODULES"][moduleId]["date"]["to"].hasOwnProperty("calendarDate") ) || 
+      ( $collectionsStore["MODULES"][moduleId]["date"]["to"]["calendarDate"] === "" ));
+    noStopDateSetClass = noStopDateSet ? "cc-no-stop-date-set" : "";
+  console.log( `Module ${moduleId} stop date ${$collectionsStore["MODULES"][moduleId]["date"]["to"]["calendarDate"]}`);
+  console.log(`noStopDate is ${noStopDateSet}`)
+  console.log($collectionsStore["MODULES"][moduleId]["date"]);
+  }
+
+
 
   /**
    * @function checkDate
@@ -337,8 +352,7 @@
     <div class="cc-module-date-display">
       <span class="cc-module-label-display">
         <label for="cc-module-config-{moduleId}-day">Day</label>
-
-        <sl-tooltip id="cc-about-module-date-stop">
+        <sl-tooltip id="cc-about-module-day-stop">
           <div slot="content">{@html HELP.showDate.tooltip}</div>
           <input
             on:keydown|stopPropagation
@@ -375,8 +389,7 @@
       <!--    <div class="cc-module-form"> -->
       <span class="cc-module-label-display">
         <label for="cc-module-config-{moduleId}-month">Month</label>
-
-        <sl-tooltip id="cc-about-module-date-stop">
+        <sl-tooltip id="cc-about-module-month-stop">
           <div slot="content">{@html HELP.showDate.tooltip}</div>
           <input
             on:keydown|stopPropagation
@@ -467,7 +480,7 @@
         </aeon-datepicker>
       </span>
     </div>
-    <div class="cc-module-date-display">
+    <div class="cc-module-date-display {noStopDateSetClass}">
       <span class="cc-module-label-display">
         <label for="cc-module-config-{moduleId}-day">Day</label>
 
@@ -644,5 +657,9 @@
 
   input {
     margin: 0px;
+  }
+
+  .cc-no-stop-date-set {
+    opacity: 0.5;
   }
 </style>
