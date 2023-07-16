@@ -91,8 +91,6 @@
   export let modulesPage: boolean;
   export let baseApiUrl: string;
 
-  alert(`Canvas Collections: course ${courseId} editMode ${editMode} csrfToken ${csrfToken} modulePage ${modulesPage} basePaiURL ${baseApiUrl}`);
-
   onMount(async () => {
     // Start the process of getting via Canvas API
     // - CanvasDetails - Canvas module info

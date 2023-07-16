@@ -50,16 +50,11 @@
    * - Implement university calendar support
    */
 
-//  import { configStore } from "../../../stores";
   import { isNotEmptyDate } from "../representationSupport";
 
   export let date: Object;
   export let dateShow: Object;
   export let flow = "";
-
-  console.log("---- Date Widget")
-  console.log( date )
-  console.log( dateShow )
 
   let cardStyle = "cc-card-date";
   if ( flow!=="") {
