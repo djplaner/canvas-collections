@@ -145,12 +145,12 @@
           {date["day"]}
         </div>
       {/if}
-      {#if dateShow["calendarDate"] && date["month"]}
+      {#if dateShow["month"] && date["month"]}
         <div class="cc-card-date-month">
           {date["month"]}
         </div>
       {/if}
-      {#if dateShow["calendarDate"] && date["date"]}
+      {#if dateShow["date"] && date["date"]}
         <div class="cc-card-date-date">
           {date["date"]}
         </div>

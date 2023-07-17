@@ -21,3 +21,13 @@
 
 A nascent attempt at documenting the life cycle for Canvas Collections.
 
+## 1. main.ts does the set up
+
+- `CanvasSetup::checkContext` extracts some details about what should be the Canvas course into a `context` object
+- If on a Canvas course site's module page it attempts to insert the canvas-collections component in the appropriate place passing the `context` object as properties
+- Also sets up an event listener to destroy the canvas-collections component if the page is being unloaded
+
+## 2. Canvas Collections component starts up
+
+- a bunch config variables and imports done
+- configStore gets initialised with context variables passed from main.ts

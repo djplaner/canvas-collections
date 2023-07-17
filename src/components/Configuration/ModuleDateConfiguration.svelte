@@ -147,12 +147,9 @@
       id = id + "-to";
     }
 
-    console.log(`update element ${id}`);
-
     const dateInput = document.getElementById(id) as HTMLInputElement;
 
     if (dateInput === null) {
-      console.log("Couldn't get element");
       return;
     }
 
