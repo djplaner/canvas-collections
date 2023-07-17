@@ -73,7 +73,7 @@
   const TIME_BETWEEN_CANVAS_REFRESH: number = 60000; // check for any changes in Canvas modules every 60 seconds
   // check how many saves happened every X (12 - 2 minutes) saves
   // Also every 2 * canvas refreshes
-  const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 112;
+  const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 2;
   // to turn/on/off interval based saving and refreshing
   // set these to false
   const AUTO_SAVE_BASE: boolean = true; // regularly check to save collections
