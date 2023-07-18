@@ -10,7 +10,7 @@ For example, look at the standard Canvas modules page on the left. This course w
 
 Try with the image on the right. It shows the same modules page with Collections installed.
 
-See the [Collection site] for more.
+See the [Collection site] for more.  
 
 | Vanilla Canvas | Canvas Collections |
 | -------------- | ------------------ |
