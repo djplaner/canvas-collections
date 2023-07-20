@@ -32,7 +32,7 @@
 
 	<figure markdown>
 	<figcaption>Example course after Collections has been configured</figcaption>
-	<sl-animated-image src="../images/afterCollections.gif" alt="Example course after Collections has been configured">
+	<sl-animated-image src="../../../assets/withCanvasCollections.gif" alt="Example course after Collections has been configured">
 	</figure>
 
 
