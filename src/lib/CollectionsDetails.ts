@@ -44,6 +44,7 @@ import { EDITING_ON_STATUS } from "./editingOnController";
 export class CollectionsDetails {
   // parsed collections JSON
   public collections: object;
+  private editMode: boolean;
 
   // settings arising from collections
   // - is collections turned on for this course?
@@ -74,9 +75,10 @@ export class CollectionsDetails {
   private numCurrentMatched: number;
   private numImportsMatched: number;
 
-  constructor(finishedCallBack: Function, config: object) {
+  constructor(finishedCallBack: Function, config: object, editMode: boolean) {
     this.finishedCallBack = finishedCallBack;
     this.config = config;
+    this.editMode = editMode;
     this.configStore = get(configStore);
 
     this.collectionsPageResponse = null;
@@ -109,6 +111,16 @@ export class CollectionsDetails {
         this.finishedCallBack("no collections config");
       }
     });
+  }
+
+  /**
+   * @function checkCollectionsConfigCreated
+   */
+
+  checkCollectionsConfigCreated() {
+    console.log("--------------------");
+    console.log("tried to create ")
+
   }
 
   /**
@@ -751,7 +763,7 @@ export class CollectionsDetails {
       ).then((data) => {
         callBack(data !== null);
       });
-    }
+    } 
   }
 
   /**

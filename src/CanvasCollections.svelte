@@ -64,7 +64,7 @@
   import "@shoelace-style/shoelace/dist/components/tooltip/tooltip.js";
   import "@shoelace-style/shoelace/dist/components/spinner/spinner.js";
   import "@shoelace-style/shoelace/dist/components/switch/switch.js";
-  import '@shoelace-style/shoelace/dist/components/input/input.js';
+  import "@shoelace-style/shoelace/dist/components/input/input.js";
 
   import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
   setBasePath("../node_modules/@shoelace-style/shoelace/dist/");
@@ -105,10 +105,14 @@
         csrfToken: csrfToken,
       });
 
-      collectionsDetails = new CollectionsDetails(gotCollectionsDetails, {
-        courseId: courseId,
-        csrfToken: csrfToken,
-      });
+      collectionsDetails = new CollectionsDetails(
+        gotCollectionsDetails,
+        {
+          courseId: courseId,
+          csrfToken: csrfToken,
+        },
+        editMode
+      );
     }
   });
 
@@ -554,7 +558,8 @@
 
     collectionsDetails.saveCollections(
       $collectionsStore,
-      $configStore["editingOn"],
+      //$configStore["editingOn"],
+      EDITING_ON_STATUS.YOU_EDITING, 
       true,
       true,
       completeInitialiseConfigPage
@@ -567,7 +572,7 @@
    * @description Called after an attempt to save the new config page
    * Inform the user of the outcome
    */
-  function completeInitialiseConfigPage(status) {
+  function completeInitialiseConfigPage(status:boolean) {
     if (status) {
       toastAlert(
         `<p>Canvas Collections is now on.</p>

@@ -31,3 +31,8 @@ A nascent attempt at documenting the life cycle for Canvas Collections.
 
 - a bunch config variables and imports done
 - configStore gets initialised with context variables passed from main.ts
+- Attempts to load collections (configuation) and Canvas (modules) details via two classes
+  - CollectionsDetails
+    - Attempts to load the `Collections Configuration` page
+    - Will create an empty one if there isn't one
+  - CanvasDetails
