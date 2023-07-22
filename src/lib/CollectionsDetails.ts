@@ -101,14 +101,13 @@ export class CollectionsDetails {
    */
 
   requestCollectionsPage() {
-    wf_fetchData(
-      `${this.baseApiUrl}/courses/${this.config["courseId"]}/pages/canvas-collections-configuration`
-    ).then((msg) => {
+    const theUrl =`${this.baseApiUrl}courses/${this.config["courseId"]}/pages/canvas-collections-configuration`
+    wf_fetchData( theUrl ).then((msg) => {
       if (msg.status === 200) {
         this.collectionsPageResponse = msg.body;
         this.parseCollectionsPage();
       } else {
-        this.finishedCallBack("no collections config");
+        this.finishedCallBack("noCollectionsConfig");
       }
     });
   }
@@ -138,11 +137,13 @@ export class CollectionsDetails {
         if (this.collectionsPageResponse["status"] === "unauthorized") {
           this.ccOn = false;
           this.ccPublished = false;
-          this.finishedCallBack();
+          // TODO this may not be the best thing
+          this.finishedCallBack("unauthorised");
           return null;
         }
       } else {
-        throw new Error("No body in collectionsPageResponse");
+        this.finishedCallBack("noBodyInConfig")
+        //throw new Error("No body in collectionsPageResponse");
       }
     }
 
@@ -740,7 +741,7 @@ export class CollectionsDetails {
     callBack: Function
   ) {
     if (editingOn===EDITING_ON_STATUS.YOU_EDITING && editMode && needToSave) {
-      let callUrl = `/api/v1/courses/${this["config"]["courseId"]}/pages/canvas-collections-configuration`;
+      let callUrl = `${this.baseApiUrl}courses/${this["config"]["courseId"]}/pages/canvas-collections-configuration`;
 
       const content = this.generateConfigPageContent(collectionsStore);
 

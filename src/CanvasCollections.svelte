@@ -559,7 +559,7 @@
     collectionsDetails.saveCollections(
       $collectionsStore,
       //$configStore["editingOn"],
-      EDITING_ON_STATUS.YOU_EDITING, 
+      EDITING_ON_STATUS.YOU_EDITING,
       true,
       true,
       completeInitialiseConfigPage
@@ -572,7 +572,7 @@
    * @description Called after an attempt to save the new config page
    * Inform the user of the outcome
    */
-  function completeInitialiseConfigPage(status:boolean) {
+  function completeInitialiseConfigPage(status: boolean) {
     if (status) {
       toastAlert(
         `<p>Canvas Collections is now on.</p>
@@ -765,10 +765,14 @@
     // first step in turning edit on is to refresh the CollectionsDetails
     // on completion will call turnEditingOn
     collectionsDataLoaded = false;
-    collectionsDetails = new CollectionsDetails(turnEditingOn, {
-      courseId: $configStore["courseId"],
-      csrfToken: $configStore["csrfToken"],
-    });
+    collectionsDetails = new CollectionsDetails(
+      turnEditingOn,
+      {
+        courseId: $configStore["courseId"],
+        csrfToken: $configStore["csrfToken"],
+      },
+      true
+    );
   }
 
   /**
@@ -779,10 +783,15 @@
 
   function turnEditingOn(status: string = "") {
     if (status !== "") {
+      const reasons = {
+        noCollectionsConfig: "Collections configuration page not found.",
+        noBodyInConfig: "No body found in Collections configuration page",
+        unauthorised: "Not authorised to open configuration page",
+      };
       // oops that didn't work
       toastAlert(
         `<p>Failed to update Collections configuration</p>
-        <p>Unknown reason </p>`,
+        <p>Reason: <em>${reasons[status]}</em> </p>`,
         "danger"
       );
       return;
