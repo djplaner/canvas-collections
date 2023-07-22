@@ -292,7 +292,7 @@ export function generateModuleDate(module) {
   } */
   let dateStr = "";
   if (module.date.label !== "") {
-    dateStr = `${module.date.label}: `;
+    dateStr = `${module.date.label}`;
   }
 
   if (isNotEmptyDate(module.date)) {
@@ -305,26 +305,50 @@ export function generateModuleDate(module) {
   return dateStr;
 }
 
+/**
+ * @function generateDateString
+ * @param date 
+ * @param dateShow 
+ * @return string - a text representation of the string. What date components
+ * are included depends on the dateShow object
+ *  12:00am Mon 5 Jan
+ * 
+ */
 function generateDateString(date: object, dateShow: object): string {
   let dateStr = "";
 
-  if (dateShow["day"]) {
-    dateStr += ` ${date.day}`;
-  }
-  if (dateShow["week"]) {
-    dateStr += ` Week ${date.week}`;
-  }
-  if (dateShow["calendarDate"]) {
-    if (dateShow["week"]) {
-      dateStr += ` (${date.date} ${date.month})`;
-    } else {
-      dateStr += ` ${date.date} ${date.month}`;
+  const order = [ "time", "day", "date", "month"];
+
+  // loop through each order and add date component if dateShow
+  order.forEach( (component) => {
+    if (dateShow[component] && date[component]!=="") {
+      dateStr += ` ${date[component]}`
+    }
+  })
+
+  return dateStr;
+}
+
+/**
+ * @function generateDateToString 
+ * @param date 
+ * @param dateShow
+ * @return string - text representation of the to date
+ * Kludge because of bad data structure design and laziness. The dateShow
+ * components for the to date don't match date string
+ */
+function generateDateToString( date: object, dateShow: object) : string {
+  let dateStr = "";
+
+  const compontents = {
+    toTime: "time", toDay: "day", toDate: "date", toMonth: "month"
+  };
+
+  for (const component in compontents) {
+    if (dateShow[component] && date[compontents[component]]!=="") {
+      dateStr += ` ${date[compontents[component]]}`
     }
   }
-  if (dateShow["time"] && date.time !== "") {
-    dateStr += ` ${date.time}`;
-  }
-
   return dateStr;
 }
 
