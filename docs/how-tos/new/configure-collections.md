@@ -33,7 +33,7 @@ The process illustrated is summarised in the following table.
 
 === "2.  Turn on editing"
 
-    Any any one time, only one person can edit Collections for a course. Before you can make changes - like adding a new collection - you must turn _Edit on_
+    At any one time, only one person can edit Collections for a course. Before you can make changes - like adding a new collection - you must turn _Edit on_
 
     !!! warning "Students can't see an _unpublished_ Collections"
 

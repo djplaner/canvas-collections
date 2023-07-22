@@ -616,7 +616,7 @@ export class updatePageController {
 
     return `
 <div id="cc-nav" class="enhanceable_content tabs" style="font-size: small;">
-  <ul class="cc-nav" style="list-style-type: none; margin: 0; padding: 0; overflow: hidden; background-color: var(--ic-brand-button--primary-text); color: var(--ic-brand-button--primary-bgd); display: table; table-layout: fixed; width: 100%;">
+  <ul class="cc-nav" style="list-style-type: none; margin: 0; padding: 0; overflow: hidden; background-color: #eeeeee; display: table; table-layout: fixed; width: 100%;">
     ${navBarHTML}
   </ul>
 
