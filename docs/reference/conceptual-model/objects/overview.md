@@ -20,7 +20,7 @@ The _Module Configuration_ area is divided into a number of tabs. The following 
 
 <figure markdown>
 <figcaption>Finding the module configuration areas</figcaption>
-<sl-animated-image src="../../../../how-tos/new/pics/findModuleConfig.gif" alt="Finding the module configuration area" />
+<sl-animated-image src="../../../../how-tos/new/images/moduleConfiguration.gif" alt="Finding the module configuration area" />
 </figure>
 
 

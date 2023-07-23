@@ -25,6 +25,8 @@ There are three typical steps in using the _Module configuration area_. These ar
     
     The following animated image illustrates how to find it and what it looks like. The following steps will show more, but there's more information in [Collections 101](../../getting-started/101/interface/configuration.md) and the [Reference area](../../reference/overview.md)
 
+
+
     <figure markdown>
     <figcaption>Finding the module configuration areas</figcaption>
     <sl-animated-image src="../images/moduleConfiguration.gif" alt="Finding the module configuration area" />
