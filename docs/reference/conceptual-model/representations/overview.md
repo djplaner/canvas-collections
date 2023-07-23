@@ -15,7 +15,10 @@ _Representations_ control how an individual collection is displayed.  Currently 
 
 The vanilla [Canvas Modules page](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-are-Modules/ta-p/6) shows a linear list of all the modules in a course (for students all the _published_ modules). The following animated image shows the Modules page for a sample Canvas course containing 13 modules. This same course is used in the demonstrations below.
 
-![](pics/animatedVanillaCanvas.gif)
+<figure markdown>
+<figcaption>Vanilla Canvas Modules (no Collections)</figcaption>
+<sl-animated-image src="../../../../assets/vanillaModules.gif" alt="Vanilla Canvas Modules (no Collections)" />
+</figure>
 
 ### Collections Only
 
@@ -37,7 +40,10 @@ In this example, each collection is using the _Collections Only_ representation.
 
 The above three elements are the bare minimum changes that Collections (when turned on) makes to the Canvas Collections page. The remaining 
 
-![](pics/animatedCollectionsOnly.gif)
+<figure markdown>
+<figcaption>Modules page with Collections, but not representations</figcaption>
+<sl-animated-image src="../pics/animatedCollectionsOnly.gif" alt="Modules page with Collections, but not representations" />
+</figure>
 
 ### GriffithCards
 
@@ -47,7 +53,11 @@ Everything else (e.g. the navigation bar, include pages, and the modules belongi
 
 The card component can help transform the vanilla Canvas module into a [design and context specific object](../objects/overview.md) by displaying additional attributes, including (but not limited to): a textual description; a label and sequence number; associated dates; and, a card image.
 
-![](pics/animatedGriffithCards.gif)
+<figure markdown>
+<figcaption>Collections using the Griffith Cards representation</figcaption>
+<sl-animated-image src="../pics/animatedGriffithCards.gif" alt="Collections using the Griffith Cards representation" />
+</figure>
+
 
 ### AssessmentTable
 
@@ -65,4 +75,12 @@ Rather than representing each module as a card, the _AssessmentTable_ representa
 
 The following animated image shows the same course as above, but using the _AssessmentTable_ representation. The first module of the _Why?_ collection has been configured with metadata for _weighting_ and _learningOutcomes_ and this information is displayed. None of the modules for the _What?_ and _How?_ collections have _learningOutcomes_, hence that column is not visible for these collections. 
 
-![](pics/animatedAssessmentTable.gif)
+<figure markdown>
+<figcaption>Collections enabled modules page showing the assessment table representation</figcaption>
+<sl-animated-image src="../pics/animatedAssessmentTable.gif" alt="Collections enabled modules page showing the assessment table representation" />
+</figure>
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>

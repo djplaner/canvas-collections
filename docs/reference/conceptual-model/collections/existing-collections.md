@@ -4,7 +4,7 @@ _Existing Collections_ is one component of an open [_Collections configuration d
 
 <figure markdown>
 <figcaption>An example "existing collections" view</figcaption>
-[![An example "existing collectios" view](pics/existingCollections.png)](pics/existingCollections.png)
+[![An example "existing collections" view](pics/existingCollections.png)](pics/existingCollections.png)
 </figure>
 
 ## Features and Properties
