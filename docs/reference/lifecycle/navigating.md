@@ -14,12 +14,16 @@ A teacher/designer can use the live Canvas Collections navigation interface to p
 
 	<figure markdown>
 	<figcaption>Switching between collections</figcaption>
-	<sl-animated-image alt="Switching between collections" src="../images/animatedSwitching.gif" />
+	<sl-animated-image alt="Switching between collections" src="../../../how-tos/navigating/images/switchCollections.gif" />
 	</figure>
 
 === "Return to the last collection you were looking at"
 
-	Collections will remember the last collection you were looking at for a course. The next time you return the _modules_ page for that course, Collections will show you the last collection you were looking at.
+	The first time you visit a Collections' page you will see the default collection.  But, Collections will remember the last collection you viewed. When you return to the Collections' page that collection will be active.
+	
+	!!! warning "Only for the same browser, on the same computer"
+
+		Collections' "memory" only works for the specific version of the browser you are using on the current computer.
 
 	<figure markdown>
 	<figcaption>Returning to the last collection you were looking at</figcaption>
@@ -28,7 +32,9 @@ A teacher/designer can use the live Canvas Collections navigation interface to p
 
 === "Navigate directly to a collection"
 
-	Each collection has its unique URL. You can use that URL to navigate directly to a collection.
+	Each collection has its unique URL. You can use that URL to navigate directly to a collection. 
+	
+	For example, including that link in a Canvas page to take students to a specific collection.
 
 	<figure markdown>
 	<figcaption>Direct navigation to a collection</figcaption>

@@ -729,7 +729,7 @@
     if (editStatus === EDITING_ON_STATUS.YOU_EDITING_ELSEWHERE) {
       toastAlert(
         `<p>Failed to turn editing on</p>
-          <p>You are already editing Collections for this course in another browser</p>`,
+          <p>You are already editing Collections for this course in another browser (or browser tab).</p>`,
         "danger"
       );
     } else if (editStatus === EDITING_ON_STATUS.SOMEONE_ELSE_EDITING) {
