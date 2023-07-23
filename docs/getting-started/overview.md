@@ -12,7 +12,7 @@
 
     If you've installed Collections, then the growing [list of how-tos](../how-tos/available.md) that provide more detailed introductions to common tasks, including:
     
-    - How to [navigate Collections](../how-tos/navigate/overview.md); and,
+    - How to [navigate Collections](../how-tos/navigating/overview.md); and,
     - How to [add Collections to a course](../how-tos/new/overview.md).
 
     The [Reference section](../reference/overview.md) provides more detailed information about Collections, including: the Collections lifecycle; conceptual model; features; and, how to start Collections development.
@@ -48,7 +48,7 @@
     | --- | --- |
     | [Overview](101/overview.md) | Overview of the concepts underpinning Collections and its interface |
     | [Concepts](101/concepts.md) | Introduction to the main concepts of Collections: Canvas Modules; Collections; Representations; Objects; and Claytons. |
-    | [Interface](101/interface.md) | Description of Collections' [navigation](101/navigation.md) and [configuration](101/configuration.md) interfaces.|
+    | Interface | Description of Collections' [navigation](./101/interface/navigation.md) and [configuration](./101/interface/configuration.md) interfaces.|
 
 
 

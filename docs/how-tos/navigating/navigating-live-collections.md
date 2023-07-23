@@ -12,7 +12,7 @@
 
 === "What does it look like?"
 
-	The following image shows the navigation elements added to the Canvas Modules page by _Live_ Collections. See the [Navigation 101 page](../../../docs/getting-started/101/interface/navigation.md) for more details.
+	The following image shows the navigation elements added to the Canvas Modules page by _Live_ Collections. See the [Navigation 101 page](../../getting-started/101/interface/navigation.md) for more details.
 
 	<figure markdown>
 	<figcaption>_Live_ Collections navigation elements</figcaption>

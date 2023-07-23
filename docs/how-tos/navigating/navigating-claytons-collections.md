@@ -29,7 +29,7 @@
 
 	<figure markdown>
 	<figcaption>_Claytons_ Navigation Elements</figcaption>
-	[![Claytons Navigation Elements](../images/claytonsNavElements.png)](../images/claytonsNavElements.png)
+	[![Claytons Navigation Elements](../images/claytonsNavElements.png)](./images/claytonsNavElements.png)
 	</figure>
 
 

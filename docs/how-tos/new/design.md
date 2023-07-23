@@ -46,7 +46,7 @@ As you read, think about your course, your context, your design intent, and the 
 
 	!!! note "Basic configuration ready at this point"
 
-		If you're able to prepare a table something like the above, you're ready to [start configuring collections](../configure-collections.md).
+		If you're able to prepare a table something like the above, you're ready to [start configuring collections](../new/configure-collections.md).
 
 
 	**Another approach - "object" categories**
