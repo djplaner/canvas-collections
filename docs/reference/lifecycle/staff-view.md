@@ -2,6 +2,7 @@
 
 The teacher/designer experience of Collections depends on the type of Collections (i.e. _Live_ or _Claytons_) and the mode when using _live_ Collections (i.e. _navigate_ or _edit_).
 
+
 === "_Claytons_ Collections" 
 
 	Claytons Collections is static HTML representation of Collections saved to a Canvas page. The teacher/designer experience is the same as any other page. They can view, modify, and delete it. 
@@ -18,7 +19,7 @@ The teacher/designer experience of Collections depends on the type of Collection
 
 	<figure markdown>
 	<figcaption></figcaption>
-	[![](images/claytons.png)](images/claytons.png)
+	[![](../../how-tos/navigating/images/claytonsNavElements.png)](../../how-tos/navigating/images/claytonsNavElements.png)
 	</figure>
 
 === "_Live_ Collections - _navigate_ mode"
@@ -41,11 +42,10 @@ The teacher/designer experience of Collections depends on the type of Collection
 
 	<figure markdown>
 	<figcaption>Labelled Collections teacher/designer navigation interface</figcaption>
-	[![Labelled Collections teacher/designer navigation interface](images/navigateMode.png)](images/navigateMode.png)
+	[![Labelled Collections teacher/designer navigation interface](../../getting-started/101/images/navigationInterfaceElements.png)](../../getting-started/101/images/navigationInterfaceElements.png)
 	</figure>
 
 	!!! note "Click on the image to enlarge it"
-	
 
 === "_Live_ Collections - _edit_ mode"
 

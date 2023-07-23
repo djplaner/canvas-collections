@@ -4,8 +4,9 @@ A teacher/designer can use the live Canvas Collections navigation interface to p
 
 <figure markdown>
 <figcaption>Labelled Collections teacher/designer navigation interface</figcaption>
-[![Labelled Collections teacher/designer navigation interface](images/navigateMode.png)](editing/images/labelled-collections-navigation.png)
+[![Labelled Collections teacher/designer navigation interface](images/navigateMode.png)](images/navigateMode.png)
 </figure>
+
 
 ===	"Switch between collections"
 
