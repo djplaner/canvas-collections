@@ -44,7 +44,7 @@ Teachers/designers for a course are able to edit Collections to update the confi
 
 === "Create Claytons Collections"
 
-	If required and once you've configured Collections and Modules, you can then create any required [Claytons Collections](claytons.md).
+	If required and once you've configured Collections and Modules, you can then create any required [Claytons Collections](../../conceptual-model/representations/claytons/overview.md).
 
 
 

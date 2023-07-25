@@ -1,6 +1,6 @@
 # Student View
 
-Students experience with both _live_ and _Claytons_ Collections is almost the same as teachers/designers experience of [navigating Collections](../../../how-tos/navigating/overview.md). Any differences are summarised in the following table.
+Students experience with both _live_ and _Claytons_ Collections is almost the same as teachers/designers experience of [navigating Collections](../../how-tos/navigating/overview.md). Any differences are summarised in the following table.
 
 | Collections Type | Possible differences: student & teacher/designer |
 | ---------------- | -------------------- |
@@ -9,5 +9,5 @@ Students experience with both _live_ and _Claytons_ Collections is almost the sa
 
 For more detail and animated examples, see the:
 
-- [Navigating _Live_ Collections page](../../../how-tos/navigating/navigating-live-collections.md); and,
-- [Navigating _Claytons_ Collections page](../../../how-tos/navigating/navigating-claytons-collections.md).
+- [Navigating _Live_ Collections page](../../how-tos/navigating/navigating-live-collections.md); and,
+- [Navigating _Claytons_ Collections page](../../how-tos/navigating/navigating-claytons-collections.md).

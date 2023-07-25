@@ -69,7 +69,7 @@ With _Edit on_ you can open the _Collections element_ to configure both
 
 	To add a new collection you provide the collection's name and choose a representation.
 
-	!!! info "See [the _Add a new collection_ page](../../conceptual-model/collections/add-new-collection.md) for more."
+	!!! info "See [the _Add a new collection_ page](../../conceptual-model/collections/add-a-new-collection.md) for more."
 
 	<figure markdown>
 	<figcaption>Add a new collection</figcaption>
