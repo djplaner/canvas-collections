@@ -28,7 +28,8 @@
 	}
 
 	p {
-		font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+		/* font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; */
+		font-family: Helvetica, Arial, sans-serif;
 		font-size: 0.8rem;
 		line-height: 1.5;
 	}
@@ -47,8 +48,9 @@
 	tr:nth-child(even) {
 		background-color: #f2f2f2;
 	}
-	 
-	td, th {
+
+	td,
+	th {
 		vertical-align: top;
 		text-align: left;
 		padding: 0.25rem;
@@ -58,7 +60,7 @@
 		font-weight: bold;
 	}
 
-	td > p {
+	td>p {
 		margin-top: 0px;
 	}
 
@@ -76,37 +78,23 @@
 	}
 
 	.section {
-		padding-left: 2rem;
+		padding-left: 0.125rem;
 	}
 
-	.what-section {
-		min-height: 90vh;
-		padding-top: 1rem;
-		padding-bottom: 0;
-		justify-content: center;
+	@media (min-width:600px) {
+		.section {
+			padding-left: 1rem;
+		}
 	}
 
-	.container {
-		display: flex;
-		width: 90%;
-		max-width: 1100px;
-		margin-top: -25px;
-		padding-top: 0;
-		justify-content: space-between;
-		align-items: center;
+	@media (min-width:900px) {
+		.section {
+			padding-left: 2rem;
+		}
 	}
 
-	.div-header-home {
-		flex-direction: row;
-		padding-left: 2rem;
-	}
 
-	.h1.centered {
-		font-size: 1.4rem;
-		width: 90%;
-		font-weight: 700;
-		text-align: left;
-	}
+
 
 	h1 {
 		color: #f05454;
@@ -118,21 +106,6 @@
 		color: #304753;
 	}
 
-	.centered {
-		padding-left: 2rem;
-	}
-
-	.hero-subheading.centered {
-		max-width: none;
-		text-align: left;
-	}
-
-	.hero-subheading {}
-
-	p.hero-subheading,
-	ul.hero-subheading {
-		font-size: 0.8rem;
-	}
 
 	.explanation {
 		padding-top: 0em;
@@ -168,6 +141,11 @@
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 	}
 
+	.sl-button {
+		text-align: center;
+		margin-top: 2rem;
+	}
+
 	sl-tab-group {
 		--indicator-color: #f05454;
 	}
@@ -188,7 +166,7 @@
 	}
 
 	sl-card::part(header) {
-		min-height: 7rem;
+		min-height: 25%;
 		background-color: var(--md-primary-fg-color);
 	}
 
@@ -223,23 +201,28 @@
 		width: 80%;
 		margin-left: 2rem;
 		margin-bottom: 0.5rem;
-		padding: 0.5rem;
 		font-size: 0.8rem;
-		background-color: #dddddd;
+		background-color: #ffff99;
 	}
 
 	.note-title {
 		margin-top: 0px;
 		margin-left: 0px;
+		background-color: #eeee00;
+	}
+
+	.note>p {
+		margin: 0.5rem;
 	}
 
 	.note-title::before {
-		content: "Note: ";
+		content: "ⓘ";
+		font-size: 1.2rem;
+		margin-right: 1rem;
+		padding-left: 0.5rem;
 		font-weight: bold;
-		background-color: #ffff00;
 		color: #000000;
 	}
-
 </style>
 
 <div class="section">
@@ -281,21 +264,26 @@
 							design (2016)</a> of modules.
 					</p>
 					<div class="note">
-						<p class="note-title"><strong>C</strong>ollections versus
+						<div class="note-title"><strong>C</strong>ollections versus
 							<strong>c</strong>ollections
-						</p>
+						</div>
 						<p><strong>C</strong>ollections (uppercase <strong>C</strong>) refers to the software package
 							Canvas Collections.
 							<strong>c</strong>ollections (lowercase <strong>c</strong>) refers to the Collections'
 							capability to group modules together.
 						</p>
 					</div>
-					<sl-button variant="primary" size="medium" href="reference/conceptual-model/collections/overview/">
-						Learn more about collections
-					</sl-button>
+					<div class="sl-button">
+						<sl-button variant="primary" size="medium"
+							href="reference/conceptual-model/collections/overview/">
+							Learn more about collections
+						</sl-button>
+					</div>
 				</div>
 				<div class="reason">
 					<div class="div-iframe">
+						<!--						<iframe class="responsive-iframe" src="https://www.youtube.com/embed/liPB22FHYOk"
+							title="YouTube video player" frameborder="0" allowfullscreen></iframe> -->
 						<iframe class="responsive-iframe" src="https://www.youtube.com/embed/d_ZBTpKdylQ"
 							title="YouTube video player" frameborder="0" allowfullscreen></iframe>
 					</div>
@@ -333,9 +321,11 @@
 					</p>
 
 
-					<sl-button variant="primary" size="medium"
-						href="reference/conceptual-model/representations/overview/">Learn more about
-						Representations</sl-button>
+					<div class="sl-button">
+						<sl-button variant="primary" size="medium"
+							href="reference/conceptual-model/representations/overview/">Learn more about
+							Representations</sl-button>
+					</div>
 				</div>
 				<div class="reason">
 					<div class="div-iframe">
@@ -360,7 +350,10 @@
 							text (2022)</a> or other module specific meta-data to help scaffold student engagement with
 						modules.
 					</p>
-					<sl-button variant="primary" size="medium" href="">Learn more about Objects (meta-data)</sl-button>
+					<div class="sl-button">
+						<sl-button variant="primary" size="medium" href="">Learn more about Objects
+							(meta-data)</sl-button>
+					</div>
 				</div>
 				<div class="reason">
 					<div class="div-iframe">
@@ -578,10 +571,12 @@
 						</tr>
 						<tr>
 							<td><strong>How to do it</strong></td>
-							<td style="text-align: center"><sl-button variant="success" size="small" href="../individual/" data-optional=""
-									data-valid="">Install "individual" Collections</sl-button></td>
-							<td style="text-align: center"><sl-button variant="success" size="small" href="../institutional/" data-optional=""
-									data-valid="">Install "institutional" Collections</sl-button></td>
+							<td style="text-align: center"><sl-button variant="success" size="small"
+									href="../individual/" data-optional="" data-valid="">Install "individual"
+									Collections</sl-button></td>
+							<td style="text-align: center"><sl-button variant="success" size="small"
+									href="../institutional/" data-optional="" data-valid="">Install "institutional"
+									Collections</sl-button></td>
 						</tr>
 					</tbody>
 				</table>
@@ -605,10 +600,16 @@
 						Configuring Collections requires that you first answer those questions and then use the
 						Collections interface to configure Collections to serve your answers.
 					</p>
+					<div class="sl-button">
+						<sl-button variant="primary" size="medium" href="how-tos/new/design/">Learn more about
+							configuring Collections
+						</sl-button>
+					</div>
 				</div>
 				<div class="reason">
-					<sl-button variant="primary" size="medium" href="how-tos/new/design/">Learn more about configuring
-						Collections</sl-button>
+					<div class="div-iframe">
+						<iframe class="responsive-iframe" src="https://www.youtube.com/embed/UolePwLRr3w" title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+					</div>
 				</div>
 			</div>
 		</sl-tab-panel>
