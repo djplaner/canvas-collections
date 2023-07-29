@@ -1,5 +1,16 @@
 {% extends "main.html" %}
+
+<!-- {% block extrahead %}
+
+  <link
+    rel="stylesheet"
+    href="{{ 'assets/stylesheets/custom.css' | url }}"
+  />
+{% endblock %} -->
+
 {% block tabs %}
+
+
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
 <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>
@@ -8,12 +19,47 @@
 		background-color: #ffffff;
 		font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
 		font-feature-settings: "kern", "liga";
-		font-size: 0.8rem;
-		line-height: 1.5;
+		/* font-size: 0.8rem;
+		line-height: 1.5; */
 	}
 
 	a {
 		text-decoration: underline;
+	}
+
+	p {
+		font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+		font-size: 0.8rem;
+		line-height: 1.5;
+	}
+
+	table {
+		background-color: var(--md-default-bg-color);
+		border: .05rem solid var(--md-typeset-table-color);
+		border-radius: 0.1rem;
+		display: inline-block;
+		font-size: 0.8rem;
+		max-width: 100%;
+		overflow: auto;
+		touch-action: auto;
+	}
+
+	tr:nth-child(even) {
+		background-color: #f2f2f2;
+	}
+	 
+	td, th {
+		vertical-align: top;
+		text-align: left;
+		padding: 0.25rem;
+	}
+
+	th {
+		font-weight: bold;
+	}
+
+	td > p {
+		margin-top: 0px;
 	}
 
 	.hero-grid {
@@ -114,12 +160,20 @@
 	}
 
 	.reasons-grid {
-		padding-left: 2rem;
+		padding-left: 0rem;
 		display: grid;
 		row-gap: 1rem;
 		/*column-gap: 1rem;
 		margin-top: 1rem; */
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	}
+
+	sl-tab-group {
+		--indicator-color: #f05454;
+	}
+
+	sl-tab>p {
+		font-size: 0.9rem;
 	}
 
 	sl-card {
@@ -164,193 +218,202 @@
 		padding: 0.5rem;
 		font-size: small;
 	}
+
+	.note {
+		width: 80%;
+		margin-left: 2rem;
+		margin-bottom: 0.5rem;
+		padding: 0.5rem;
+		font-size: 0.8rem;
+		background-color: #dddddd;
+	}
+
+	.note-title {
+		margin-top: 0px;
+		margin-left: 0px;
+	}
+
+	.note-title::before {
+		content: "Note: ";
+		font-weight: bold;
+		background-color: #ffff00;
+		color: #000000;
+	}
+
 </style>
 
-<h1> Improve your Canvas course site design </h1>
 <div class="section">
-	<h2>What does Collections do?</h2>
+	<h1>How does Canvas Collections improve Canvas course site design?</h1>
 
 	<p>
 		<a href="https://www.instructure.com/en-au/canvas/resources/all/how-to-use-modules-to-build-courses-in-canvas">Canvas
 			Modules</a> are the <a
 			href="https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-is-Canvas/ta-p/45">Canvas LMS'</a>
-		main tool for organising learning activities. Canvas Collections introduces new functionality to address long
-		known limitations with Canvas Modules.
+		main tool for organising learning activities. There are long known limitations with Canvas Modules. Canvas
+		Collections introduces three new capabilities to address these.
 	</p>
-	<table>
-		<tr>
-			<th>Collections </th>
-			<th>Canvas modules limitation</th>
-			<th>Solution</th>
-		</tr>
-		<tr>
-			<td> <a href="reference/conceptual-model/collections/overview/">collections</a> </td>
-			<td>
-				Challenges <a
-					href="https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Too-many-Modules-Options-for-resorting-structuring-content/td-p/55983">structuring
-					content (2015)</a> due to the <a
-					href="https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idi-p/357681/page/2">linear
-					design (2016)</a> of modules.
-			</td>
-			<td>Organise modules into different collections of modules that suit your design intent. Users can navigate
-				between different collections, focusing only on the current collection.</td>
-		</tr>
-		<tr>
-			<td> <a href="reference/conceptual-model/representations/overview/">Representations</a> </td>
-			<td>
-				The modules user interface <a
-					href="https://community.canvaslms.com/t5/Idea-Conversations/More-editing-functions/idc-p/475281/highlight/true#M53223">"is
-					a design nightmare, presenting information as one big list/outline"</a>. More visual interfaces like
-				<a
-					href="https://community.canvaslms.com/t5/Canvas-Question-Forum/Course-module-tiles-visual-UI/m-p/522985">tiles
-					or cards (2022)</a> have been requested and <a
-					href="https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/">extensions
-					developed (2017)</a>. Having more control over the visual representation requested to <a
-					href="https://community.canvaslms.com/t5/Idea-Conversations/More-editing-functions/idi-p/349215">visualise
-					priorities (2020)</a>, <a
-					href="https://community.canvaslms.com/t5/Canvas-Question-Forum/Can-I-colour-code-the-activites-in-modules/m-p/233615">improve
-					visual cues</a>, and <a
-					href="https://community.canvaslms.com/t5/Canvas-Ideas/Modules-Add-Images-to-Modules/idi-p/372245">enable
-					the modules page to act as a course home page (2016)</a>.
-			</td>
-			<td>For each collection, choose from a number of different representations. Or, develop a new one
-				specifically for your purpose. </td>
-		</tr>
-		<tr>
-			<td> <a href="reference/conceptual-model/objects/overview/">Objects</a> </td>
-			<td> There is no ability to provide <a
-					href="https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-add-connective-text-not-quot-text-headers-quot/m-p/510878">connective
-					test (2022)</a> or other module specific meta-data to help scaffold student engagement with modules.
-			</td>
-			<td>
-				Transform vanilla modules into course specific objects by associating additional meta-data with each
-				individual module. Meta-data that can modify the visual appearance of the modules page through the
-				chosen representation.
-			</td>
-		</tr>
-	</table>
-	<ul>
-		<li> one long <a href="https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/"
-				target="_blank" rel="noreferrer">overwhelming list</a>;</li>
-		<li> cannot <a href="https://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/"
-				target="_blank" rel="noreferrer">embed contextual information</a>; and,</li>
-		<li><a href="https://it.umn.edu/services-technologies/how-tos/canvas-decide-how-organize-your-course"
-				target="_blank" rel="noreferrer">lack visual appeal</a>.</li>
-	</ul>
-	<p>Canvas Collections helps address these limitations.</p>
 
-	<p>
-		<sl-button variant="success" size="large" href="getting-started/overview/">Get Started with
-			Collections</sl-button>
-	</p>
-</div>
-<div class="section">
-
-
-	<h3 class="centered">Compare and contrast</h3>
-	<sl-tab-group placement="start">
-		<sl-tab slot="nav" panel="canvas"> Canvas Modules </sl-tab>
-		<sl-tab slot="nav" panel="collections"><sl-icon name="plus-circle"></sl-icon> &nbsp; Collections
+	<sl-tab-group>
+		<sl-tab slot="nav" panel="collections">
+			<p>collections
+			</p>
 		</sl-tab>
-		<sl-tab slot="nav" panel="representations"><sl-icon name="plus-circle"></sl-icon> &nbsp;
-			Representations
+		<sl-tab slot="nav" panel="representations">
+			<p>Representations</p>
 		</sl-tab>
-		<sl-tab slot="nav" panel="objects"><sl-icon name="plus-circle"></sl-icon> &nbsp; Objects
+		<sl-tab slot="nav" panel="objects">
+			<p>Objects (meta-data)</p>
 		</sl-tab>
-		<sl-tab slot="nav" panel="claytons"><sl-icon name="plus-circle"></sl-icon> &nbsp; Claytons
-		</sl-tab>
-		<sl-tab slot="nav" panel="configure"><sl-icon name="plus-circle"></sl-icon> &nbsp; Simple to
-			configure</sl-tab>
 
-		<!-- 1.3 -->
-		<sl-tab-panel name="canvas">
-			<div class="explanation">
-				<p>A course with 11 modules. A long scroll. A need
-					to remember where things are. Little visual distinction beyond
-					use of emojis in module names. Little design or contextual information visible.
-				</p>
-			</div>
-			<div class="div-iframe">
-				<iframe class="responsive-iframe" src="https://www.youtube.com/embed/OOvlyd--JkM"
-					title="YouTube video player" frameborder="0" allowfullscreen></iframe>
-			</div>
-
-		</sl-tab-panel>
 		<sl-tab-panel name="collections">
-			<div class="explanation">
-				<p>11 modules now grouped into three, design specific <em>collections</em>. Navigate between
-					<em>collections</em>.
-				</p>
-				<p>A <a
-						href="https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383">
-						long requested ability from the Canvas Community to group modules</a> based on design
-					intent.
-				</p>
-			</div>
-			<div class="div-iframe">
-				<iframe class="responsive-iframe" src="https://www.youtube.com/embed/d_ZBTpKdylQ"
-					title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+			<div class="reasons-grid">
+				<div class="reason">
+					<p>
+						Organise modules into different collections of modules that suit your design intent. Users can
+						navigate
+						between different collections, focusing only on the current collection.
+					</p>
+					<p>
+						Adds the capability to <a
+							href="https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Too-many-Modules-Options-for-resorting-structuring-content/td-p/55983">structure
+							module content (2015)</a> breaking the limitation of Canvas' <a
+							href="https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idi-p/357681/page/2">linear
+							design (2016)</a> of modules.
+					</p>
+					<div class="note">
+						<p class="note-title"><strong>C</strong>ollections versus
+							<strong>c</strong>ollections
+						</p>
+						<p><strong>C</strong>ollections (uppercase <strong>C</strong>) refers to the software package
+							Canvas Collections.
+							<strong>c</strong>ollections (lowercase <strong>c</strong>) refers to the Collections'
+							capability to group modules together.
+						</p>
+					</div>
+					<sl-button variant="primary" size="medium" href="reference/conceptual-model/collections/overview/">
+						Learn more about collections
+					</sl-button>
+				</div>
+				<div class="reason">
+					<div class="div-iframe">
+						<iframe class="responsive-iframe" src="https://www.youtube.com/embed/d_ZBTpKdylQ"
+							title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+					</div>
+				</div>
 			</div>
 		</sl-tab-panel>
 		<sl-tab-panel name="representations">
-			<p class="explanation">
-				Rather than a long scroll of neat textual boxes, represent a group of modules using one of a
-				growing set of representations. A representation you can change at any time simply by selecting
-				another option.</p>
-			</p>
-			<div class="div-iframe">
-				<iframe class="responsive-iframe" width="560" height="315"
-					src="https://www.youtube.com/embed/liPB22FHYOk" title="YouTube video player" frameborder="0"
-					allowfullscreen></iframe>
+			<div class="reasons-grid">
+				<div class="reason">
+					<p>
+						For each collection, select from one of three different visual designs to represent the
+						collection's modules. Or, develop your own
+					</p>
+					<p>
+						The modules user interface has been described as <a
+							href="https://community.canvaslms.com/t5/Idea-Conversations/More-editing-functions/idc-p/475281/highlight/true#M53223">"
+							a design nightmare, presenting information as one big list/outline"</a>. More visual
+						interfaces like
+						<a
+							href="https://community.canvaslms.com/t5/Canvas-Question-Forum/Course-module-tiles-visual-UI/m-p/522985">tiles
+							or cards (2022)</a> have been requested and <a
+							href="https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/">extensions
+							developed (2017)</a>.
+					</p>
+					<p>
+						Having more control over the visual representation requested to <a
+							href="https://community.canvaslms.com/t5/Idea-Conversations/More-editing-functions/idi-p/349215">visualise
+							priorities (2020)</a>, <a
+							href="https://community.canvaslms.com/t5/Canvas-Question-Forum/Can-I-colour-code-the-activites-in-modules/m-p/233615">improve
+							visual cues</a>, and <a
+							href="https://community.canvaslms.com/t5/Canvas-Ideas/Modules-Add-Images-to-Modules/idi-p/372245">enable
+							the modules page to act as a course home page (2016)</a>.
+					</p>
+
+					</p>
+
+
+					<sl-button variant="primary" size="medium"
+						href="reference/conceptual-model/representations/overview/">Learn more about
+						Representations</sl-button>
+				</div>
+				<div class="reason">
+					<div class="div-iframe">
+						<iframe class="responsive-iframe" src="https://www.youtube.com/embed/liPB22FHYOk"
+							title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+					</div>
+
+				</div>
 			</div>
 		</sl-tab-panel>
 		<sl-tab-panel name="objects">
-			<div class="explanation">
-				<p>With little ability to associate design/context specific information with a module all a
-					student sees is yet another vanilla Canvas module. Nothing to easily distinguish between a
-					lecture, an assessment, a resource, or some other domain specific resource.</p>
-				<p>Collections allows you to associate additional design specific information. That information
-					is used to change what the students see. Making it easier for them to recognise the purpose.
-				</p>
-			</div>
-			<div class="div-iframe">
-				<iframe class="responsive-iframe" src="https://www.youtube.com/embed/5OaJmZ6FPVc"
-					title="YouTube video player" frameborder="0" allowfullscreen></iframe>
-			</div>
+			<div class="reasons-grid">
+				<div class="reason">
+					<p>
+						Transform vanilla modules into course specific objects by associating additional meta-data with
+						each individual module. Meta-data that can modify the visual appearance of the modules page
+						through the chosen representation.
+					</p>
+					<p>
+						Canvas provides no way to provide <a
+							href="https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-add-connective-text-not-quot-text-headers-quot/m-p/510878">connective
+							text (2022)</a> or other module specific meta-data to help scaffold student engagement with
+						modules.
+					</p>
+					<sl-button variant="primary" size="medium" href="">Learn more about Objects (meta-data)</sl-button>
+				</div>
+				<div class="reason">
+					<div class="div-iframe">
+						<iframe class="responsive-iframe" src="https://www.youtube.com/embed/5OaJmZ6FPVc"
+							title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+					</div>
 
-		</sl-tab-panel>
-		<sl-tab-panel name="claytons">
-			<div class="explanation">
-				<p>Even if you can't get your <a href="./getting-started/install/institutional/">
-						institution to install Collections</a>, you can still use Collections to address the
-					above problems. </p>
-				<p>"Claytons" Collections helps you follow populate Canvas community advice to create <a
-						href="https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236">create
-						an inviting course home page</a>. A Canvas page your students can use without
-					Collections.</p>
-			</div>
-			<div class="div-iframe">
-				<iframe width="560" height="315" src="https://www.youtube.com/embed/d_ZBTpKdylQ"
-					title="YouTube video player" frameborder="0" class="responsive-iframe" allowfullscreen></iframe>
-			</div>
-
-		</sl-tab-panel>
-		<sl-tab-panel name="configure">
-			<div class="explanation">
-				<p>Configure Collections for your course using an interface integrated into the Canvas Modules
-					page.</p>
-			</div>
-			<div class="div-iframe">
-				<iframe class="responsive-iframe" width="560" height="315"
-					src="https://www.youtube.com/embed/UolePwLRr3w" title="YouTube video player" frameborder="0"
-					allowfullscreen></iframe>
+				</div>
 			</div>
 		</sl-tab-panel>
 	</sl-tab-group>
 </div>
 
-<div class="why-section">
-	<h1>Why is it important?</h1>
+
+<!--	<p>
+		<sl-button variant="success" size="large" href="getting-started/overview/">Get Started with
+			Collections</sl-button>
+	</p>
+</div>
+
+
+
+<sl-tab-panel name="claytons">
+	<div class="explanation">
+		<p>Even if you can't get your <a href="./getting-started/install/institutional/">
+				institution to install Collections</a>, you can still use Collections to address the
+			above problems. </p>
+		<p>"Claytons" Collections helps you follow populate Canvas community advice to create <a
+				href="https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236">create
+				an inviting course home page</a>. A Canvas page your students can use without
+			Collections.</p>
+	</div>
+	<div class="div-iframe">
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/d_ZBTpKdylQ" title="YouTube video player"
+			frameborder="0" class="responsive-iframe" allowfullscreen></iframe>
+	</div>
+
+</sl-tab-panel>
+<sl-tab-panel name="configure">
+	<div class="explanation">
+		<p>Configure Collections for your course using an interface integrated into the Canvas Modules
+			page.</p>
+	</div>
+	<div class="div-iframe">
+		<iframe class="responsive-iframe" width="560" height="315" src="https://www.youtube.com/embed/UolePwLRr3w"
+			title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+	</div>
+</sl-tab-panel>
+</sl-tab-group>
+</div> -->
+
+<div class="section">
+	<h1>Why is this important?</h1>
 	<div class="reasons-grid">
 		<div class="reason">
 			<sl-card class="card-header">
@@ -434,16 +497,166 @@
 </div>
 
 <div class="section">
-	<h1>How do I use Collections?</h1>
+	<h1>How to use Collections?</h1>
+
+	<p>That depends on your context and your role in your Canvas course site. There are three main steps.</p>
 
 	<sl-tab-group>
-		<sl-tab slot="nav" panel="install">Install</sl-tab>
-		<sl-tab slot="nav" panel="configure">Configure</sl-tab>
-		<sl-tab slot="nav" panel="navigate">Navigate</sl-tab>
+		<sl-tab slot="nav" panel="install">
+			<p>Install (you or your institution)</p>
+		</sl-tab>
+		<sl-tab slot="nav" panel="configure">
+			<p>Configure (you in a teacher or designer role)</p>
+		</sl-tab>
+		<sl-tab slot="nav" panel="navigate">
+			<p>Navigate (you as in any role)</p>
+		</sl-tab>
 
-		<sl-tab-panel name="install">This is the install tab panel.</sl-tab-panel>
-		<sl-tab-panel name="configure">This is the configure tab panel.</sl-tab-panel>
-		<sl-tab-panel name="navigate">This is the navigate tab panel.</sl-tab-panel>
+		<sl-tab-panel name="install">
+			<div class="class-center">
+				<p>There are two ways to install Canvas Collections: individual and institutional. Each intended for a
+					different context. Each with its own advantages and disadvantages. Select the one that best suits
+					your need.</p>
+				<table>
+					<thead>
+						<tr>
+							<th></th>
+							<th>Individual</th>
+							<th>Institutional</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><strong>Purpose</strong></td>
+							<td>
+								<p>For teachers/designers to experiment with Collections.</p>
+								<p>Possibly also to create visual home/landing pages for use without Collections.</p>
+							</td>
+							<td>
+								<p>For institutions to make Canvas Collections available to all teachers/designers.</p>
+							</td>
+						</tr>
+						<tr>
+							<td><strong>Who installs it?</strong></td>
+							<td>
+								<p>You.</p>
+								<p> Anyone (with teacher/designer roles in Canvas) is able use the <a
+										href="../individual/">individual installation</a> method.</p>
+							</td>
+							<td>
+								<p>Your institution.</p>
+								<p>Typically the institution's Canvas administrator. Since at an institutional level,
+									Collections is installed directly into Canvas and is available to all users.</p>
+							</td>
+						</tr>
+						<tr>
+							<td><strong>Who can use it?</strong></td>
+							<td>
+								<p>The person using the individual installation method can use Collections to configure
+									and navigate courses. Also use it to create visual landing pages.</p>
+							</td>
+							<td>
+								<p>Once installed institutionally, exactly how people can use Collections will depend on
+									the role they have in Canvas courses.</p>
+								<p> Teachers/designers will be able to configure Collections for courses. Students will
+									only be able to use Collections, if the course already has Collections configured.
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td><strong>How is it installed?</strong></td>
+							<td>
+								<p>You install the Canvas Collections <a
+										href="https://en.wikipedia.org/wiki/Userscript">userscript</a> into your
+									browser.</p>
+							</td>
+							<td>
+								<p>An institution's Canvas administrator installs it into Canvas using <a
+										href="https://community.canvaslms.com/t5/Video-Guide/Theme-Editor-Admins/ta-p/383021">the
+										Theme Editor</a></p>
+							</td>
+						</tr>
+						<tr>
+							<td><strong>How to do it</strong></td>
+							<td style="text-align: center"><sl-button variant="success" size="small" href="../individual/" data-optional=""
+									data-valid="">Install "individual" Collections</sl-button></td>
+							<td style="text-align: center"><sl-button variant="success" size="small" href="../institutional/" data-optional=""
+									data-valid="">Install "institutional" Collections</sl-button></td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+		</sl-tab-panel>
+		<sl-tab-panel name="configure">
+			<div class="reasons-grid">
+				<div class="reason">
+					<p>
+						Collections is designed to help improve <a
+							href="https://xd.adobe.com/ideas/process/information-architecture/information-ux-architect/">the
+							information architecture</a> of your course site's Modules. Raising questions like
+					</p>
+					<ol>
+						<li> What is the conceptual model/design intent/information architecture of your course/modules?
+						</li>
+						<li> How to best use Collections to make clear and actionable to students?</li>
+					</ol>
+					<p>
+						Configuring Collections requires that you first answer those questions and then use the
+						Collections interface to configure Collections to serve your answers.
+					</p>
+				</div>
+				<div class="reason">
+					<sl-button variant="primary" size="medium" href="how-tos/new/design/">Learn more about configuring
+						Collections</sl-button>
+				</div>
+			</div>
+		</sl-tab-panel>
+		<sl-tab-panel name="navigate">
+			<div class="reasons-grid">
+				<div class="reason">
+					<p>
+						Once Collections is installed and configured Collections will modify the interface of your
+						course site. There are two types of interface modifications: <strong>live</strong> Collections
+						and <strong>static</strong> (aka Claytons) Collections.
+					</p>
+					<table>
+						<tr>
+							<th>Live</th>
+							<th>Static (Claytons)</th>
+						</tr>
+						<tr>
+							<td>
+								<p>
+									Collections code is <em>live</em>for the visitor. It is modifying the Canvas user
+									interface dynamically as the visitor navigates the modules page.
+								</p>
+								<p>
+									Requires your institutional to have installed Collections in Canvas, or the visitor
+									to have installed Collections as a userscript.
+								</p>
+							</td>
+							<td>
+								<p>
+									Collections code is <strong>not</strong> live for the visitor. Instead the course
+									teacher/designer has used Collections to modify one or more Canvas pages with a
+									<em>static</em> version of the Collections' interface.
+								</p>
+							</td>
+						</tr>
+					</table>
+					<sl-button variant="primary" size="medium" href="">Learn more about navigating with
+						Collections</sl-button>
+				</div>
+				<div class="reason">
+					<div class="div-iframe">
+						<iframe class="responsive-iframe" src="https://www.youtube.com/embed/5OaJmZ6FPVc"
+							title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+					</div>
+				</div>
+			</div>
+
+		</sl-tab-panel>
 	</sl-tab-group>
 
 
