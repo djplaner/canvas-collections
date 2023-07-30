@@ -1,4 +1,4 @@
-# Objects (aka Activities)
+# Objects
 
 ## Transforming vanilla Canvas modules into design specific objects
 
@@ -20,7 +20,7 @@ The _Module Configuration_ area is divided into a number of tabs. The following 
 
 <figure markdown>
 <figcaption>Finding the module configuration areas</figcaption>
-<sl-animated-image src="../../../../how-tos/new/images/moduleConfiguration.gif" alt="Finding the module configuration area" />
+<sl-animated-image src="../../../../configure/images/moduleConfiguration.gif" alt="Finding the module configuration area" />
 </figure>
 
 
