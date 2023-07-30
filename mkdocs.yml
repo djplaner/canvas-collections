@@ -41,7 +41,6 @@ extra_css:
 extra_javascript: 
   - https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js
 
-
 markdown_extensions:
   - admonition
   - attr_list
@@ -68,34 +67,34 @@ extra:
 nav:
   - Home: index.md
   - Getting Started: #getting-started.md
-    - Overview: getting-started/overview.md
+    - How to start?: getting-started/how-to-start.md
     - 1. Install: 
-      - Types and Pre-requisites: getting-started/install/types-pre-requisites.md
+      - Is it installed?: getting-started/install/is-it-installed.md
+      - How to install?: getting-started/install/how-to-install.md
       - Individual: getting-started/install/individual.md
       - Institutional: getting-started/install/institutional.md
-      - Is it working?: getting-started/install/is-it-working.md
     - 2. Collections 101: 
       - Overview: getting-started/101/overview.md
       - Concepts: getting-started/101/concepts.md
-      - Interface: 
-        - Navigation: getting-started/101/interface/navigation.md
-        - Configuration: getting-started/101/interface/configuration.md
-  - 'How-tos': 
-    - Available how-tos: how-tos/available.md
-    - Navigate Collections:
-      - Overview: how-tos/navigating/overview.md
-      - "Live Collections": how-tos/navigating/navigating-live-collections.md
-      - "Claytons Collections": how-tos/navigating/navigating-claytons-collections.md
-    - Add Collections to a course:
-      - Overview: how-tos/new/overview.md
-      - Before & after: how-tos/new/before-and-after.md
-      - Design: how-tos/new/design.md
-      - Configure Collections: how-tos/new/configure-collections.md
-      - Configure Modules: how-tos/new/configure-modules.md
-      - Configure Representations: how-tos/new/configure-representations.md
-      - Set up "Claytons": how-tos/new/set-up-claytons.md
-    - Fix common problems:
-      - Failed to turn editing on: how-tos/problems/failed-to-turn-editing-on.md
+      - Navigation: getting-started/101/interface/navigation.md
+      - Configuration: getting-started/101/interface/configuration.md
+      - Why, what, how?: getting-started/101/why-what-how.md
+  - Configure:
+    - Configure Collections: configure/overview.md
+    - Before & after: configure/before-and-after.md
+    - Steps:
+       - 1. Design: configure/design.md
+       - 2. Configure collections: configure/configure-collections.md
+       - 3. Configure Modules: configure/configure-modules.md
+       - 4. Configure Representations: configure/configure-representations.md
+    - Claytons:
+       - Configure "Claytons": configure/set-up-claytons.md
+  - 'Navigate': 
+      - Navigation Options: navigate/navigate-options.md
+      - "Live Collections": navigate/navigating-live-collections.md
+      - "Claytons Collections": navigate/navigating-claytons-collections.md
+#    - Add Collections to a course:
+#      - Overview: how-tos/new/overview.md
 #    - Update Collections:
 #      - 🚧 Coming soon: how-tos/changes/overview.md
 #      - Add a collection: how-tos/changes/add-a-collection.md
@@ -143,6 +142,8 @@ nav:
           - Claytons: reference/conceptual-model/representations/claytons/overview.md
           - Update single collection: reference/conceptual-model/collections/update-single-collection.md
           - Full Claytons: reference/conceptual-model/collections/full-claytons.md
+      - Fix common problems:
+        - Failed to turn editing on: how-tos/problems/failed-to-turn-editing-on.md
       - Development:
         - Component Structure: reference/development/component-structure.md
         - Local development: 
@@ -150,6 +151,7 @@ nav:
   - 'Community': 
      - Collections Community: community/collections-community.md
   - 'About':
+     - About Collections: about/about-collections.md
      - Related work: about/related-work.md
      - Rationale: about/rationale.md
      - 'Latest Version': about/latest-version.md
