@@ -1,5 +1,11 @@
 # Navigation
 
+Navigation in Collections has two flavours: live and Claytons (static). The following summarises the live navigation experience.
+
+See the [navigate section](../../../navigate/navigate-options.md) for more detail.
+
+## Navigating live Collections
+
 Collections will make up to four navigation changes to the Canvas modules page. Who sees these changes is defined by Collections' [visibility setting](../../../../reference/lifecycle/visibility/overview/). 
 
 === "Visual example"

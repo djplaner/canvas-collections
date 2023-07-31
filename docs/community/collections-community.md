@@ -8,6 +8,8 @@ Collections has only been possible due to the Canvas, Griffith University, and b
 
 ## Getting involved?
 
+Collections is new. Participation is welcome.
+
 !!! question "How can contribute to Collections?"
 
 	1. Using Collections? - Share your experience, report bugs, and ask for new features.

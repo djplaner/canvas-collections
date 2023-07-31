@@ -1,10 +1,12 @@
 # Configuration
 
-The task of configuration Collections is more complex than navigating. Consequently, the Collections configuration interface elements are more complex.
+Configuring Collections is more complex than navigating Collections. Meaning the Collections configuration interface is more complex.
 
 !!! note "Only visible to certain people at certain times"
 
 	The configuration interface is only visible to people who are [able to edit collections](../../../../reference/lifecycle/edit/).
+
+See the [Configure section](../../../configure/overview.md) for more.
 	
 === "Overview"
 
