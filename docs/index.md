@@ -1,5 +1,5 @@
 ---
-template: home.html
+template: home2.html
 title: Canvas Collections
 ---
 
