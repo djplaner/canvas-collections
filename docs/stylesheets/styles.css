@@ -316,6 +316,26 @@ section {
   transform: scale(1.03);
 }
 
+.hero-link {
+  color: #d90647; 
+  padding: 0.5rem;
+  background-color: #ffffff;
+  font-size: 1.125rem;
+  font-weight: 700;
+  /*text-align: center;
+  box-shadow: 10px 0 40px rgba(0, 0, 0, 0.15);
+  display: inline-block; */
+  cursor: pointer;
+}
+
+.hero-link:hover {
+  background: #d90647;
+  color: #ffffff;
+  transition: 0.3s;
+  transform: scale(1.03);
+}
+
+
 .red_dot {
   background: linear-gradient(to bottom, #d90647 10%, #eb402c 100%);
   background-clip: border-box;
@@ -506,7 +526,7 @@ nav {
 }
 
 .hero-img {
-  max-width: 28% !important;
+  max-width: 40% !important;
   float: right;
   z-index: 1;
   position: absolute;
@@ -873,6 +893,10 @@ nav {
 
   .btn {
     padding: 10px 20px;
+    font-size: 16px;
+  }
+
+  .hero-link {
     font-size: 16px;
   }
 
