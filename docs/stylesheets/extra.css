@@ -1,10 +1,20 @@
 [data-md-color-scheme="collections"] {
+  /* Original
   --md-primary-bg-color: #000000;
   --md-primary-fg-color--light: #304753;
   --md-primary-fg-color--dark: #121212;
   --md-primary-fg-color: #f5f5f5;
   --md-accent-fg-color: #526cfe;
   --md-default-fg-color--light: #111111;
+  */
+  /* landing page new */
+  --md-primary-bg-color: #ffffff;
+  --md-primary-fg-color--light: #304753;
+  --md-primary-fg-color--dark: #121212;
+  --md-primary-fg-color: #d90647;
+  --md-accent-fg-color: #526cfe;
+  --md-default-fg-color--light: #111111;
+
 }
 
 figure {

@@ -66,7 +66,7 @@ extra:
 
 nav:
   - Home: index.md
-  - Start: #getting-started.md
+  - Getting started: #getting-started.md
     - How to start?: getting-started/how-to-start.md
     - 1. Collections 101: 
       - Overview: getting-started/101/overview.md
