@@ -224,6 +224,15 @@ html {
     color: #d90647;
   }
 
+  sl-icon.feature-link-icon {
+    font-size: 0.7rem;
+  }
+
+  .learn-more-link {
+    color: #d90647;
+    font-size: 1rem;
+  }
+
   li { 
     list-style: disc;
     margin-left: 0.2em;
@@ -710,6 +719,18 @@ nav {
   border-bottom: 1px solid #e0e0e0;
 }
 
+#features h2 {
+  text-align: center;
+}
+
+#features h3 {
+  font-size: 2.75rem;
+}
+
+#features h4 {
+  font-size: 1.25rem;
+}
+
 .features_3 {
   float: right;
 }
@@ -728,6 +749,7 @@ nav {
 /* Testimonial Section Styling */
 #testimonial {
   margin-top: 50px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 #testimonial .stylish_heading {
@@ -774,10 +796,11 @@ nav {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 700;
+  line-height: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .message {
-  margin-bottom: 20px;
   font-style: italic;
   line-height: 1.5;
   font-size: 18px;
@@ -802,48 +825,88 @@ nav {
 }
 
 .role {
-  font-size: 16px;
-  line-height: 1;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
-
 /* End: Testimonial Section Styling */
 
 /* How To Section Styling */
 #howto {
-  background: #d90647;
-  /* Old browsers */
-  background: -moz-linear-gradient(top,
-      #d90647 37%,
-      #eb402c 98%);
-  /* FF3.6-15 */
-  background: -webkit-linear-gradient(top,
-      #d90647 37%,
-      #eb402c 98%);
-  /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to bottom,
-      #d90647 37%,
-      #eb402c 98%);
-  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d90647', endColorstr='#eb402c', GradientType=0);
-  /* IE6-9 */
-  background-repeat: no-repeat;
-  color: #ffffff;
-  height: 24.375rem;
+  /*height: 24.375rem; */
   width: 100%;
   position: relative;
-  margin-top: 6.25rem;
+}
+
+#howto .stylish_heading {
+  text-align: center;
 }
 
 #howto p {
-  color: #ffffff;
   font-size: 16px;
   line-height: 1.75;
+  margin-left: 2rem;
+  margin-right: 2rem;
 }
 
 #howto h4 {
   font-size: 1.5rem;
   font-weight: 900;
 }
+
+.row {
+  margin-top: 6.25rem;
+}
+
+	sl-tab-group {
+		--indicator-color: #d90647;
+	}
+
+	sl-tab-group::part(active-tab-indicator)>p {
+		color: #d90647;
+	}
+
+	sl-tab>p {
+		font-size: 0.64rem;
+		font-weight: bold;
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+		line-height: 1.5;
+		/*color: var(--md-default-fg-color--light); */
+	}
+
+  	table {
+		background-color: var(--md-default-bg-color);
+		border: .05rem solid var(--md-typeset-table-color);
+		border-radius: 0.1rem;
+		display: inline-block;
+		font-size: 0.8rem;
+		max-width: 100%;
+		overflow: auto;
+		touch-action: auto;
+	}
+
+	tr:nth-child(even) {
+		background-color: #f2f2f2;
+	}
+
+	td,
+	th {
+		vertical-align: top;
+		text-align: left;
+		padding: 0.25rem;
+	}
+
+	th {
+		font-weight: bold;
+	}
+
+	td>p {
+		margin-top: 0px;
+	}
+
+
 
 .first-col {
   text-align: right;

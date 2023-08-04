@@ -16,7 +16,10 @@ Canvas Collections seeks to address long-term limitations in Canvas. Limitations
 
 ### Module compactor
 
-The [Module Compactor](https://www.youtube.com/watch?v=r-j3AgH9Obo&t=24s) is a Chrome extension that offers different functionality to compress and group modules.
+The [Module Organiser (aka Compactor)](https://chrome.google.com/webstore/detail/canvas-modules-organiser/eohlnkgmgakcdngcommoblmjlbbnpejc) is a Chrome extension that offers various capabilities to better organise Canvas module. Some of these capabilities are similar to those offered by Canvas Collections, including:
+
+- Organising modules by Tabs ([v0.9 of the Organiser](https://www.youtube.com/watch?v=qx6nEBTjFiQ&list=PLP3asN9BirNAnaGPVgQGSviop-G_L-GhN&index=4)) is similar to collections.
+- Tagging modules is one way of adding more (meta-)data to a module. 
 
 ### Filter modules
 
