@@ -4,11 +4,12 @@ repo_url: https://github.com/djplaner/canvas-collections
 edit_uri: edit/main/docs/
 site_author: David Jones
 site_description: >-
-  Improve the visual identity and information architecture of the Canvas LMS Modules page
+  Improve Canvas course site design by adding structure, visuals, context, and generativity to the Modules view
 
 theme:
   name: material
-  logo: assets/squareLogo-cropped.png
+#  logo: assets/squareLogo-cropped.png
+  logo: assets/collections-logo.jpg
   palette:
     - scheme: collections
       toggle:
