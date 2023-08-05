@@ -9,98 +9,98 @@ You can install Canvas Collection into your web browser as a userscript. From th
 
 There are three steps for an individual installation
 
-=== "1. Install a userscript manager"
+## 1. Install a userscript manager
 
-    [TamperMonkey](https://www.tampermonkey.net/) is a widely used userscript manager. It can be used on most modern web browsers. 
+[TamperMonkey](https://www.tampermonkey.net/) is a widely used userscript manager. It can be used on most modern web browsers. 
 
-    **1.1 - Visit the [Tampermonkey home page](https://www.tampermonkey.net/)**
+### 1.1 - Visit the [Tampermonkey home page](https://www.tampermonkey.net/)
 
-    You should see instructions for downloading (installing) TamperMonkey for your web browser. e.g. the following image for the Firefox browser
+You should see instructions for downloading (installing) TamperMonkey for your web browser. e.g. the following image for the Firefox browser
 
-    <figure markdown>
-    <figcaption>Tampermonkey home page for Firefox</figcaption>
-    [![Tampermonkey home page for Firefox](pics/tamperMonkeyHome.png)](pics/tamperMonkeyHome.png)  
-    </figure>
+<figure markdown>
+<figcaption>Tampermonkey home page for Firefox</figcaption>
+[![Tampermonkey home page for Firefox](pics/tamperMonkeyHome.png)](pics/tamperMonkeyHome.png)  
+</figure>
 
-    **1.2 - Click on the left-hand _Download_ button**
+### 1.2 - Click on the left-hand _Download_ button
 
-    As shown above, you can choose to download the stable (left-hand download button) version of TamperMonkey or the BETA (right-hand download button) version. The stable version is recommended.
+As shown above, you can choose to download the stable (left-hand download button) version of TamperMonkey or the BETA (right-hand download button) version. The stable version is recommended.
 
-    You will be taken to your web brower's [extension or add-on service](https://en.wikipedia.org/wiki/Browser_extension).
+You will be taken to your web brower's [extension or add-on service](https://en.wikipedia.org/wiki/Browser_extension).
 
-    **1.3 - Follow the instructions to add Tampermonkey to your web browser**
+### 1.3 - Follow the instructions to add Tampermonkey to your web browser
 
-    Each web browser’s browser extension installation process will be a little different. In general, it will provide you with details of what permissions the browser extension (Tampemonkey in this case) wishes to have and provides you with the option to install.
+Each web browser’s browser extension installation process will be a little different. In general, it will provide you with details of what permissions the browser extension (Tampemonkey in this case) wishes to have and provides you with the option to install.
 
-=== "2. Install the Collections userscript"
+## 2. Install the Collections userscript
 
-    With TamperMonkey installed you can now 
+With TamperMonkey installed you can now 
 
-    <div align="center">
-    <sl-button variant="success" size="small" href="https://github.com/djplaner/canvas-collections/raw/main/dist/canvas-collections.user.js">Install the **Collections userscript**</sl-button>
-    </div>
+<div align="center">
+<sl-button variant="success" size="small" href="https://github.com/djplaner/canvas-collections/raw/main/dist/canvas-collections.user.js">Install the <strong>Collections userscript</strong></sl-button>
+</div>
     
-    If all is working you should something like the following image. An image showing TamperMonkey providing you with details of the userscript and asking if you wish to install (or perhaps update) it.
+If all is working you should something like the following image. An image showing TamperMonkey providing you with details of the userscript and asking if you wish to install (or perhaps update) it.
 
-    <figure markdown>
-    <figcaption>Installing the Canvas Collections userscript</figcaption>
-    [![Tampermonkey asking to update Canvas Collections userscript](pics/tamperMonkeyInstallCC.png)](pics/tamperMonkeyInstallCC.png))  
-    </figure>
+<figure markdown>
+<figcaption>Installing the Canvas Collections userscript</figcaption>
+[![Tampermonkey asking to update Canvas Collections userscript](pics/tamperMonkeyInstallCC.png)](pics/tamperMonkeyInstallCC.png))  
+</figure>
 
 
-=== "3. Does it work?"
+## 3. Does it work?
 
-    It you've successfully completed these steps, the check out the [Is it installed? page](../install/is-it-installed.md) for how to check if Canvas Collections is working.
+It you've successfully completed these steps, the check out the [Is it installed? page](../install/is-it-installed.md) for how to check if Canvas Collections is working.
 
-=== "4. Uninstall Collections"
+## 4. Uninstall Collections
 
-    There are three ways to prevent Canvas Collections from modifying your view of Canvas modules pages:
+There are three ways to prevent Canvas Collections from modifying your view of Canvas modules pages:
 
-    1. Remove TamperMonkey (or your userscript manager)
+1. Remove TamperMonkey (or your userscript manager)
 
-        The [TamperMonkey home page](https://www.tampermonkey.net/) includes a video (at the bottom of the page) that demonstrates how to remove it from your specific web browser.
+    The [TamperMonkey home page](https://www.tampermonkey.net/) includes a video (at the bottom of the page) that demonstrates how to remove it from your specific web browser.
 
-    2. Disable TamperMonkey (or your userscript manager)
-    3. Disable or remove the canvas-collection userscript
+2. Disable TamperMonkey (or your userscript manager)
+3. Disable or remove the canvas-collection userscript
 
-    The last two ways rely on using the TamperMonkey icon added to your web browser's toolbar - see the following image.
+The last two ways rely on using the TamperMonkey icon added to your web browser's toolbar - see the following image.
 
-    <figure markdown>
-    <figcaption>Opening the Tampermonkey browser dropdown</figcaption>
-    [![Opening the Tampermonkey browser dropdown](pics/toolBarIcon.png)](pics/toolBarIcon.png)  
-    </figure>
+<figure markdown>
+<figcaption>Opening the Tampermonkey browser dropdown</figcaption>
+[![Opening the Tampermonkey browser dropdown](pics/toolBarIcon.png)](pics/toolBarIcon.png)  
+</figure>
 
-    **Disable TamperMonkey**
+### Disable TamperMonkey
 
-    Click the _Enabled_ option shown in the image above to disable TamperMonkey - see the following image. With TamperMonkey disabled, Canvas Collections will not be run.
+Click the _Enabled_ option shown in the image above to disable TamperMonkey - see the following image. With TamperMonkey disabled, Canvas Collections will not be run.
 
-    <figure markdown>
-    <figcaption>Tampermonkey disabled</figcaption>
-    [![Tampermonkey disabled](pics/toolbarDisabled.png)](pics/toolbarDisabled.png)
-    </figure>
+<figure markdown>
+<figcaption>Tampermonkey disabled</figcaption>
+[![Tampermonkey disabled](pics/toolbarDisabled.png)](pics/toolbarDisabled.png)
+</figure>
 
-    #### Disable or remove the Canvas Collections userscript
+### Disable or remove the Canvas Collections userscript
 
-    By accessing the TamperMonkey _dashboard_ you can disable specific userscripts, including Canvas Collections. The _dashboard_ is an option provided via the TamperMonkey icons - see the following image.
+By accessing the TamperMonkey _dashboard_ you can disable specific userscripts, including Canvas Collections. The _dashboard_ is an option provided via the TamperMonkey icons - see the following image.
 
-    <figure markdown>
-    <figcaption>How to open the Tampermonkey dashboard</figcaption>
-    [![How to open the Tampermonkey dashboard](pics/toolbarDashboard.png)](pics/toolbarDashboard.png)  
-    </figure>
+<figure markdown>
+<figcaption>How to open the Tampermonkey dashboard</figcaption>
+[![How to open the Tampermonkey dashboard](pics/toolbarDashboard.png)](pics/toolbarDashboard.png)  
+</figure>
 
-    Clicking on the _dashboard_ option will open the TamperMonkey dashboard. The dashboard will show you all the userscripts you have installed and provide options to 
+Clicking on the _dashboard_ option will open the TamperMonkey dashboard. The dashboard will show you all the userscripts you have installed and provide options to 
 
-    - enable/disable a userscript; and,
+- enable/disable a userscript; and,
 
-        Note the _Enabled_ column in the following image. Click on the switch to enable/disable a userscript.
-    - remove a userscript.
+    Note the _Enabled_ column in the following image. Click on the switch to enable/disable a userscript.
+- remove a userscript.
 
-        Note the trashcan icon in the _Actions_ column in the following image. Click on the trashcan icon to remove a userscript.
+    Note the trashcan icon in the _Actions_ column in the following image. Click on the trashcan icon to remove a userscript.
 
-    <figure markdown>
-    <figcaption>Viewing the Tampermonkey dashboard</figcaption>
-    [![Viewing the Tampermonkey dashboard](pics/dashboard.png)](pics/dashboard.png)
-    </figure>
+<figure markdown>
+<figcaption>Viewing the Tampermonkey dashboard</figcaption>
+[![Viewing the Tampermonkey dashboard](pics/dashboard.png)](pics/dashboard.png)
+</figure>
 
 
 
