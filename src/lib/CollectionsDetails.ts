@@ -101,8 +101,8 @@ export class CollectionsDetails {
    */
 
   requestCollectionsPage() {
-    const theUrl =`${this.baseApiUrl}courses/${this.config["courseId"]}/pages/canvas-collections-configuration`
-    wf_fetchData( theUrl ).then((msg) => {
+    const theUrl = `${this.baseApiUrl}courses/${this.config["courseId"]}/pages/canvas-collections-configuration`
+    wf_fetchData(theUrl).then((msg) => {
       if (msg.status === 200) {
         this.collectionsPageResponse = msg.body;
         this.parseCollectionsPage();
@@ -468,8 +468,8 @@ export class CollectionsDetails {
         // need to check the URL for image as the RCE screws with the URL
         // TODO is this needed?
         /*if (module.hasOwnProperty('image') && module.image.startsWith('/')) {
-				module.image = `https://${window.location.hostname}${module.image}`;
-			}*/
+        module.image = `https://${window.location.hostname}${module.image}`;
+      }*/
       }
     }
   }
@@ -640,7 +640,7 @@ export class CollectionsDetails {
         toTime: true,
         toDate: true,
       };
-    } 
+    }
     if (!module.hasOwnProperty("date")) {
       module.date = {
         label: "",
@@ -735,12 +735,12 @@ export class CollectionsDetails {
 
   saveCollections(
     collectionsStore: {},
-    editingOn: EDITING_ON_STATUS, 
+    editingOn: EDITING_ON_STATUS,
     editMode: boolean,
     needToSave: boolean,
     callBack: Function
   ) {
-    if (editingOn===EDITING_ON_STATUS.YOU_EDITING && editMode && needToSave) {
+    if (editingOn === EDITING_ON_STATUS.YOU_EDITING && editMode && needToSave) {
       let callUrl = `${this.baseApiUrl}courses/${this["config"]["courseId"]}/pages/canvas-collections-configuration`;
 
       const content = this.generateConfigPageContent(collectionsStore);
@@ -764,7 +764,7 @@ export class CollectionsDetails {
       ).then((data) => {
         callBack(data !== null);
       });
-    } 
+    }
   }
 
   /**
@@ -791,8 +791,8 @@ export class CollectionsDetails {
     let content = CONFIGURATION_PAGE_HTML_TEMPLATE;
 
     /*		if (
-			this.parentController.hasOwnProperty('cc_configuration') &&
-			this.parentController.cc_configuration.hasOwnProperty('MODULES')) { */
+      this.parentController.hasOwnProperty('cc_configuration') &&
+      this.parentController.cc_configuration.hasOwnProperty('MODULES')) { */
 
     // files URL might be
     // - direct or
@@ -1030,7 +1030,7 @@ export class CollectionsDetails {
    * This function will update the moduleOrder property for each module in the collection,
    * this will only be done in editMode
    */
- updateModuleOrder(canvasModules: []) {
+  updateModuleOrder(canvasModules: []) {
     // canvasModules are in order of appearance
     // collections modules are keyed on canvas module id
     let collectionsModules = this["collections"]["MODULES"];
@@ -1161,8 +1161,11 @@ const DEFAULT_CONFIGURATION_TEMPLATE = {
 const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 <div class="cc-config-explanation">
 <div style="float:left;padding:0.5em">
-  <img src="https://github.com/djplaner/canvas-collections/raw/main/docs/assets/collections-logo.png"
+  <figure style="background-color: #d90647; text-align: center; padding:0.5rem">
+  <img src="https://github.com/djplaner/canvas-collections/raw/main/docs/assets/collections-logo.jpg"
       alt="canvas-collections logo" width="120" height="68" />
+      <figcaption style="color:#ffffff">Canvas Collections</figcaption>
+  </figure>
 </div>
 <div style="padding:0.5em">
   <h3>Canvas Collections Configuration page</h3>
@@ -1181,13 +1184,13 @@ const CONFIGURATION_PAGE_HTML_TEMPLATE = `
 `;
 
 /*const DEFAULT_CONFIGURATION_TEMPLATE = {
-	"STATUS": "off",
-	"DEFAULT_ACTIVE_COLLECTION": "",
-	"COLLECTIONS": {
-	},
-	"COLLECTIONS_ORDER": [],
-	"MODULES": {
-	}
+  "STATUS": "off",
+  "DEFAULT_ACTIVE_COLLECTION": "",
+  "COLLECTIONS": {
+  },
+  "COLLECTIONS_ORDER": [],
+  "MODULES": {
+  }
 }; */
 
 /**
