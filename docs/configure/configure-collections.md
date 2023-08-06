@@ -1,18 +1,12 @@
-# Configure the collections for a course
+# 2. Configure the collections for a course
 
-!!! questions "How do you use Collections to configure collections for a course?"
-
-    You've completed the [design](./design.md) step and now you need to configure the collections for your course. 
+You've [designed how your course will use Collections](./design.md). Based on that design, now you need to configure the collections for your course. 
     
-    How do you do it?
+How do you do it?
     
-The following illustrates the process using the example course from the [design](./design.md) step. It assumes you've 
+## A four step process
 
-1. Already installed Canvas Collections.
-2. Are the teacher/designer for a Canvas course with existing modules.
-3. Have navigated to the Modules view of the course.
-
-The process illustrated is summarised in the following table.
+The process illustrated below can be summarised as follows.
 
 | Step | Description |
 | ---- | ----------- |

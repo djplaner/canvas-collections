@@ -1,91 +1,111 @@
 {% extends "main.html" %}
+
+<!-- {% block extrahead %}
+
+  <link
+    rel="stylesheet"
+    href="{{ 'assets/stylesheets/custom.css' | url }}"
+  />
+{% endblock %} -->
+
 {% block tabs %}
+
+
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
 <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>
 <style>
 	body {
 		background-color: #ffffff;
-		font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+		font-family: "Roboto", -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
 		font-feature-settings: "kern", "liga";
-		font-size: 0.8rem;
-		line-height: 1.5;
+		font-size: 13px;
+		/* font-size: 0.8rem;
+		line-height: 1.5; */
+	}
+
+	h1 {
+		/*	line-height: 2;
+		color: #f05454;
+		font-size: 1.4rem; */
+		font-weight: 300;
+		letter-spacing: -.01rem;
+		color: var(--md-default-fg-color--light);
+		font-size: 2em;
+		line-height: 1.3;
+		margin: 0 0 1.25em;
+	}
+
+	h2 {
+		font-size: 1rem;
 	}
 
 	a {
 		text-decoration: underline;
 	}
 
-	.hero-grid {
-		display: grid;
-		column-gap: 0.5rem;
-		margin-top: 1rem;
+
+	p,
+	li {
+		/* font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; */
+		font-size: 0.8rem;
+		line-height: 1.6;
 	}
 
-	@media (min-width: 600px) {
-		.hero-grid {
-			grid-template-columns: repeat(2, 1fr);
-			grid-template-columns: 40% 60%;
+	table {
+		background-color: var(--md-default-bg-color);
+		border: .05rem solid var(--md-typeset-table-color);
+		border-radius: 0.1rem;
+		display: inline-block;
+		font-size: 0.8rem;
+		max-width: 100%;
+		overflow: auto;
+		touch-action: auto;
+	}
+
+	tr:nth-child(even) {
+		background-color: #f2f2f2;
+	}
+
+	td,
+	th {
+		vertical-align: top;
+		text-align: left;
+		padding: 0.25rem;
+	}
+
+	th {
+		font-weight: bold;
+	}
+
+	td>p {
+		margin-top: 0px;
+	}
+
+
+	.section {
+		padding-top: 1.25rem;
+		padding-left: 0.125rem;
+	}
+
+	@media (min-width:600px) {
+		.section {
+			padding-left: 1rem;
 		}
 	}
 
-	.what-section {
-		min-height: 90vh;
-		padding-top: 1rem;
-		padding-bottom: 0;
-		justify-content: center;
+	@media (min-width:900px) {
+		.section {
+			padding-left: 2rem;
+			padding-right: 2rem;
+		}
 	}
 
-	.container {
+	div.vertical-centered {
 		display: flex;
-		width: 90%;
-		max-width: 1100px;
-		margin-top: -25px;
-		padding-top: 0;
-		justify-content: space-between;
+		justify-content: center;
 		align-items: center;
-	}
-
-	.div-header-home {
-		flex-direction: row;
-		padding-left: 2rem;
-	}
-
-	.h1.centered {
-		font-size: 1.4rem;
-		width: 90%;
-		font-weight: 700;
-		text-align: left;
-	}
-
-	h1 {
-		color: #f05454;
-		font-size: 1.4rem;
-	}
-
-	h3 {
-		font-size: 1.0rem;
-		color: #304753;
-	}
-
-	.centered {
-		padding-left: 2rem;
-	}
-
-	.hero-subheading.centered {
-		max-width: none;
-		text-align: left;
-	}
-
-	.hero-subheading {}
-
-	p.hero-subheading,
-	ul.hero-subheading {
-		font-size: 0.8rem;
-	}
-
-	.explanation {
-		padding-top: 0em;
+		height: 100%;
 	}
 
 	.div-iframe {
@@ -105,23 +125,60 @@
 		height: 100%;
 	}
 
-	.why-section h1 {
-		text-align: center;
-	}
-
 	.reasons-grid {
-		padding-left: 2rem;
+		padding-left: 0rem;
 		display: grid;
-		column-gap: 1rem;
-		margin-top: 1rem;
+		row-gap: 1rem;
+		/*column-gap: 1rem;
+		margin-top: 1rem; */
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 	}
 
+	.sl-button {
+		text-align: center;
+		margin-top: 2rem;
+	}
+
+	sl-tab-group {
+		--indicator-color: var(--md-accent-fg-color);
+	}
+
+	sl-tab-group::part(active-tab-indicator)>p {
+		color: var(--md-accent-fg-color);
+	}
+
+	sl-tab>p {
+		font-size: 0.64rem;
+		font-weight: bold;
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+		line-height: 1.5;
+		/*color: var(--md-default-fg-color--light); */
+	}
+
+	sl-card {
+		--border-radius: 1rem;
+		display: flex;
+		min-height: 100%;
+	}
+
+	sl-card::part(base) {
+		height: auto;
+		min-height: 100%;
+	}
+
+	sl-card::part(header) {
+		min-height: 25%;
+		background-color: var(--md-primary-fg-color);
+	}
+
 	.reason {
-		box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+		/*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
 		transition: 0.3s;
 		padding: 2px 16px;
-		border-radius: 1rem;
+		height: auto;
+		min-height: 100%;
+		/*border-radius: 1rem;*/
 	}
 
 	.reference {
@@ -141,201 +198,531 @@
 		padding: 0.5rem;
 		font-size: small;
 	}
+
+	.note {
+		width: 80%;
+		margin-left: 2rem;
+		margin-bottom: 0.5rem;
+		font-size: 0.8rem;
+		background-color: #ffff99;
+	}
+
+	.note-title {
+		margin-top: 0px;
+		margin-left: 0px;
+		background-color: #eeee00;
+	}
+
+	.note>p {
+		margin: 0.5rem;
+	}
+
+	.note-title::before {
+		content: "ⓘ";
+		font-size: 1.2rem;
+		margin-right: 1rem;
+		padding-left: 0.5rem;
+		font-weight: bold;
+		color: #000000;
+	}
 </style>
 
-<div class="hero-grid">
-	<div class="div-header-home">
-		<h1 class="h1 centered">
-			Improve your Canvas site's design
-		</h1>
+<div class="home-body">
 
-		<p class="hero-subheading">
+	<div class="section">
+		<h1>Improve your Canvas course site's design?</h1>
+
+		<p>
 			<a
 				href="https://www.instructure.com/en-au/canvas/resources/all/how-to-use-modules-to-build-courses-in-canvas">Canvas
 				Modules</a> are the <a
 				href="https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-is-Canvas/ta-p/45">Canvas LMS'</a>
-			main tool for organising learning activities. But Modules have known limitations:
+			main tool for organising learning activities. There are long known limitations with Canvas Modules.
 		</p>
-		<ul class="hero-subheading">
-			<li> one long <a
-					href="https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/"
-					target="_blank" rel="noreferrer">overwhelming list</a>;</li>
-			<li> cannot <a href="https://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/"
-					target="_blank" rel="noreferrer">embed contextual information</a>; and,</li>
-			<li><a href="https://it.umn.edu/services-technologies/how-tos/canvas-decide-how-organize-your-course"
-					target="_blank" rel="noreferrer">lack visual appeal</a>.</li>
-		</ul>
-		<p class="hero-subheading">Canvas Collections helps address these limitations.</p>
-		<div class="getting-started">
-			<sl-button variant="success" size="large" href="getting-started/overview/">Get Started with
-				Collections</sl-button>
-		</div>
+		<p> Canvas
+			Collections provide three new capabilities to address those limitations.
+		</p>
+
+		<sl-tab-group>
+			<sl-tab slot="nav" panel="modules">
+				<p>Modules limitations</p>
+			</sl-tab>
+			<sl-tab slot="nav" panel="collections">
+				<p><sl-icon name="plus-circle"></sl-icon> collections
+				</p>
+			</sl-tab>
+			<sl-tab slot="nav" panel="representations">
+				<p><sl-icon name="plus-circle"></sl-icon> Representations</p>
+			</sl-tab>
+			<sl-tab slot="nav" panel="objects">
+				<p><sl-icon name="plus-circle"></sl-icon> Objects (meta-data)</p>
+			</sl-tab>
+
+			<sl-tab-panel name="modules">
+				<div class="reasons-grid">
+					<div class="reason">
+						<p>
+							The video shows a standard Canvas Modules area to illustrate the known structural, visual,
+							and contextual limitations.
+						</p>
+						<h2>Structure</h2>
+						<p>
+							No way to <a
+								href="https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Too-many-Modules-Options-for-resorting-structuring-content/td-p/55983"><strong>structure</strong>
+								module content (2015)</a> based on purpose. Instead limited to a <a
+								href="https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idi-p/357681/page/2">linear
+								design (2016)</a>. The Modules area <a
+								href="https://community.canvaslms.com/t5/Idea-Conversations/More-editing-functions/idc-p/475281/highlight/true#M53223">"is
+								a design nightmare, presenting information as one big list/outline" (2021)</a>.
+							Providing more structure <a
+								href="https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383">"would
+								allow MANY more options for student Voice, Choice and Pacing options!" (2016)</a>.
+						</p>
+						<h2>Visual</h2>
+						<p>
+							The Modules area is like <a
+								href="https://community.canvaslms.com/t5/Canvas-Question-Forum/Visual-based-Module-Outline-PLEASE/m-p/395779/highlight/true#M140332">"a
+								chain of folders circa Windows 95" (2020)</a>.
+							More visual interfaces like <a
+								href="https://community.canvaslms.com/t5/Canvas-Question-Forum/Course-module-tiles-visual-UI/m-p/522985">tiles
+								or cards (2022)</a> have been requested and <a
+								href="https://learntech.medsci.ox.ac.uk/wordpress-blog/a-dashboard-view-of-modules-in-canvas/">extensions
+								developed (2017)</a>.
+						</p>
+						<p>
+							Having more control over the visual representation would help <a
+								href="https://community.canvaslms.com/t5/Idea-Conversations/More-editing-functions/idi-p/349215">students'
+								visualise priorities (2020)</a>, <a
+								href="https://community.canvaslms.com/t5/Canvas-Question-Forum/Can-I-colour-code-the-activites-in-modules/m-p/233615">improve
+								visual cues (2020)</a>, and <a
+								href="https://community.canvaslms.com/t5/Canvas-Ideas/Modules-Add-Images-to-Modules/idi-p/372245">enable
+								the modules page to act as a course home page (2016)</a>.
+						</p>
+						<h2>Context</h2>
+						<p>
+							Beyond naming modules and their items there is no way to provide additional context about a
+							module. Meaning there is not way to provide <a
+								href="https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-add-connective-text-not-quot-text-headers-quot/m-p/510878">connective
+								text (2022)</a> or other module specific information to help students answer questions
+							like why, how, and when should I engage with the module.
+						</p>
+					</div>
+					<div class="reason">
+						<div class="vertical-centered">
+							<div class="div-iframe">
+								<iframe class="responsive-iframe" src="https://www.youtube.com/embed/OOvlyd--JkM"
+									title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</sl-tab-panel>
+			<sl-tab-panel name="collections">
+				<div class="reasons-grid">
+					<div class="reason">
+						<h2>Provide more structure</h2>
+						<p>
+							Use Canvas Collections' <em>collections</em> capability to add more structure to the Modules
+							area.
+						</p>
+						<p>
+							Organise modules into different <em>collections</em> as best fits your design intent.
+							Visitors navigate between different <em>collections</em>. Each <em>collection</em> showing
+							only its modules.
+						</p>
+						<p>
+							The video shows the same Canvas course's Modules area, but with four <em>collections</em>:
+							<em>Why?</em>, <em>What?</em>, <em>How?</em>, and <em>Questions & Suggestions</em>.
+						</p>
+						<div class="note">
+							<div class="note-title"><strong>C</strong>ollections versus
+								<strong>c</strong>ollections
+							</div>
+							<p><strong>C</strong>ollections (uppercase <strong>C</strong>) refers to the software
+								package
+								Canvas Collections.
+								<strong>c</strong>ollections (lowercase <strong>c</strong>) refers to the Collections'
+								capability to group modules together.
+							</p>
+						</div>
+						<div class="sl-button">
+							<sl-button variant="primary" size="medium"
+								href="reference/conceptual-model/collections/overview/">
+								Learn more about collections
+							</sl-button>
+						</div>
+					</div>
+					<div class="reason">
+						<div class="vertical-centered">
+						<div class="div-iframe">
+							<iframe class="responsive-iframe" src="https://www.youtube.com/embed/d_ZBTpKdylQ"
+								title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+						</div>
+						</div>
+					</div>
+				</div>
+			</sl-tab-panel>
+			<sl-tab-panel name="representations">
+				<div class="reasons-grid">
+					<div class="reason">
+						<h2>Provide more visual options</h2>
+						<p>
+							For each collection, select from one of three different <em>representations</em> to move
+							beyond the <a
+								href="https://community.canvaslms.com/t5/Canvas-Question-Forum/Visual-based-Module-Outline-PLEASE/m-p/395779/highlight/true#M140332">Windows'95
+								chain of folders limitation</a>
+						</p>
+						<p>
+							A collection's <em>representation</em> can be changed to another at any time. More
+							<em>representations</em> can be developed and added.
+						</p>
+						<p>
+							The video shows the same Canvas course with the same four collections. It starts with each
+							collection having the <em>Collections Only representation</em>. The Collections'
+							configuration is then modified with one collection using the <em>Griffith Cards
+								representation</em> and another the <em>Assessment Table representation</em>.
+						</p>
+						<div class="sl-button">
+							<sl-button variant="primary" size="medium"
+								href="reference/conceptual-model/representations/overview/">Learn more about
+								Representations</sl-button>
+						</div>
+					</div>
+					<div class="reason">
+						<div class="vertical-centered">
+				
+						</div>
+
+					</div>
+				</div>
+			</sl-tab-panel>
+			<sl-tab-panel name="objects">
+				<div class="reasons-grid">
+					<div class="reason">
+						<h2>Provide more context</h2>
+						<p>
+							For each module, add more data about the module.
+						</p>
+						<p>
+							For example, add a <em>description</em>, a <em>banner</em>, a <em>label</em>, a <em>start
+								date</em> (and perhaps a <em>stop date</em>), and other meta-data. Meta-data that can
+							modify the visual appearance of the modules page through the chosen representation. Use this
+							data to transform vanilla modules into course specific <em>objects</em> (e.g. lecture,
+							workshop, topic etc).
+						</p>
+						<p>
+							The video shows the same Canvas course now all but that last collection using the Griffith
+							Cards representation. Each module's representation now showing the additional contextual
+							data added to each module, including descriptions, banner images, dates, and labels and
+							label numbers.
+						</p>
+						<div class="sl-button">
+							<sl-button variant="primary" size="medium"
+								href="reference/conceptual-model/objects/overview/">Learn more about Objects
+								(meta-data)</sl-button>
+						</div>
+					</div>
+					<div class="reason">
+						<div class="vertical-centered">
+						<div class="div-iframe">
+							<iframe class="responsive-iframe" src="https://www.youtube.com/embed/5OaJmZ6FPVc"
+								title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+						</div>
+					</div>
+
+					</div>
+				</div>
+			</sl-tab-panel>
+		</sl-tab-group>
 	</div>
-	<div class="div-header-content">
-		<div class="header-content">
 
-			<h3 class="centered">Compare and contrast</h3>
-			<sl-tab-group placement="start">
-				<sl-tab slot="nav" panel="canvas"> Canvas Modules </sl-tab>
-				<sl-tab slot="nav" panel="collections"><sl-icon name="plus-circle"></sl-icon> &nbsp; Collections
-				</sl-tab>
-				<sl-tab slot="nav" panel="representations"><sl-icon name="plus-circle"></sl-icon> &nbsp;
-					Representations
-				</sl-tab>
-				<sl-tab slot="nav" panel="objects"><sl-icon name="plus-circle"></sl-icon> &nbsp; Objects
-				</sl-tab>
-				<sl-tab slot="nav" panel="claytons"><sl-icon name="plus-circle"></sl-icon> &nbsp; Claytons
-				</sl-tab>
-				<sl-tab slot="nav" panel="configure"><sl-icon name="plus-circle"></sl-icon> &nbsp; Simple to
-					configure</sl-tab>
 
-				<!-- 1.3 -->
-				<sl-tab-panel name="canvas">
-					<div class="explanation">
-						<p>A course with 11 modules. A long scroll. A need
-							to remember where things are. Little visual distinction beyond
-							use of emojis in module names. Little design or contextual information visible.
-						</p>
-					</div>
-					<div class="div-iframe">
-						<iframe class="responsive-iframe" src="https://www.youtube.com/embed/OOvlyd--JkM"
-							title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+	<div class="section">
+		<h1>Why is this important?</h1>
+		<div class="reasons-grid">
+			<div class="reason">
+				<sl-card class="card-header">
+					<div slot="header">
+						<h2>Findability improves self-efficacy & motivation</h2>
 					</div>
 
-				</sl-tab-panel>
-				<sl-tab-panel name="collections">
-					<div class="explanation">
-						<p>11 modules now grouped into three, design specific <em>collections</em>. Navigate between
-							<em>collections</em>.
-						</p>
-						<p>A <a
-								href="https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383">
-								long requested ability from the Canvas Community to group modules</a> based on design intent.
-						</p>
-					</div>
-					<div class="div-iframe">
-						<iframe class="responsive-iframe" src="https://www.youtube.com/embed/d_ZBTpKdylQ"
-							title="YouTube video player" frameborder="0" allowfullscreen></iframe>
-					</div>
-				</sl-tab-panel>
-				<sl-tab-panel name="representations">
-					<p class="explanation">
-						Rather than a long scroll of neat textual boxes, represent a group of modules using one of a
-						growing set of representations. A representation you can change at any time simply by selecting
-						another option.</p>
+					<p>
+						<a href="https://en.wikipedia.org/wiki/Findability">Findability</a> has been found to be the
+						only
+						and
+						most significant predictor of student motivation and self-efficacy (Simunich et al, 2015; <a
+							href="https://er.educause.edu/articles/2017/6/student-feedback-on-quality-matters-standards-for-online-course-design">Crews
+							et al, 2017</a>).
 					</p>
-					<div class="div-iframe">
-						<iframe class="responsive-iframe" width="560" height="315"
-							src="https://www.youtube.com/embed/liPB22FHYOk" title="YouTube video player" frameborder="0"
-							allowfullscreen></iframe>
+					<p class="reference">
+						Simunich, B., Robins, D. B., & Kelly, V. (2015). The Impact of Findability on Student
+						Motivation,
+						Self-Efficacy, and Perceptions of Online Course Quality. American Journal of Distance Education,
+						29(3),
+						174–185. <a
+							href="https://doi.org/10.1080/08923647.2015.1058604">https://doi.org/10.1080/08923647.2015.1058604</a>
+					</p>
+				</sl-card>
+			</div>
+			<div class="reason">
+				<sl-card class="card-header">
+					<div slot="header">
+						<h2>Aesthetics & usability improve outcomes & motivation</h2>
 					</div>
-				</sl-tab-panel>
-				<sl-tab-panel name="objects">
-					<div class="explanation">
-						<p>With little ability to associate design/context specific information with a module all a
-							student sees is yet another vanilla Canvas module. Nothing to easily distinguish between a
-							lecture, an assessment, a resource, or some other domain specific resource.</p>
-						<p>Collections allows you to associate additional design specific information. That information
-							is used to change what the students see. Making it easier for them to recognise the purpose.
-						</p>
+					<p>
+						Heidig et al (2015) found that perceived aesthetics and usability positively affected learner
+						emotional
+						states. Contributing to small improvements in learning outcomes and larger impacts in intrinsic
+						motivation.
+					</p>
+					<p class="reference">
+						Heidig, S., Müller, J., & Reichelt, M. (2015). Emotional design in multimedia learning:
+						Differentiation
+						on relevant design features and their effects on emotions and learning. Computers in Human
+						Behavior,
+						44,
+						81–95.
+						<a
+							href="https://doi.org/10.1016/j.chb.2014.11.009">https://doi.org/10.1016/j.chb.2014.11.009</a>
+					</p>
+				</sl-card>
+			</div>
+			<div class="reason">
+				<sl-card class="card-header">
+					<div slot="header">
+						<h2>Course organisation improves retention</h2>
 					</div>
-					<div class="div-iframe">
-						<iframe class="responsive-iframe" src="https://www.youtube.com/embed/5OaJmZ6FPVc"
-							title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+					<p>Mulijana & Luo's (2019) systematic literature review found that course organisation improves
+						student
+						satisfaction and motivation, and promotes cognitive presence. </p>
+					<p class="reference">
+						Muljana, P., & Luo, T. (2019). Factors Contributing to Student Retention in Online Learning and
+						Recommended Strategies for Improvement: A Systematic Literature Review. Journal of Information
+						Technology Education: Research, 18. <a
+							href="https://doi.org/10.28945/4182">https://doi.org/10.28945/4182</a>
+					</p>
+				</sl-card>
+			</div>
+			<div class="reason">
+				<sl-card class="card-header">
+					<div slot="header">
+						<h2>Flexibility necessary for scale</h2>
 					</div>
 
-				</sl-tab-panel>
-				<sl-tab-panel name="claytons">
-					<div class="explanation">
-						<p>Even if you can't get your <a href="./getting-started/install/institutional/">
-								institution to install Collections</a>, you can still use Collections to address the
-							above problems. </p>
-						<p>"Claytons" Collections helps you follow populate Canvas community advice to create <a
-								href="https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236">create
-								an inviting course home page</a>. A Canvas page your students can use without
-							Collections.</p>
-					</div>
-					<div class="div-iframe">
-						<iframe width="560" height="315" src="https://www.youtube.com/embed/d_ZBTpKdylQ"
-							title="YouTube video player" frameborder="0" class="responsive-iframe"
-							allowfullscreen></iframe>
-					</div>
+					<p>
+						Achieving scale in education requires designs that can flexibly adapt to effective use in a wide
+						variety
+						of contexts across a spectrum of learners and teachers.
+					</p>
+					<p class="reference">
+						Clarke, J., & Dede, C. (2009). Design for Scalability: A Case Study of the River City
+						Curriculum.
+						Journal of Science Education and Technology, 18(4), 353–365.
+						<a href="https://doi.org/10.1007/s10956-009-9156-4">
+							https://doi.org/10.1007/s10956-009-9156-4</a>
 
-				</sl-tab-panel>
-				<sl-tab-panel name="configure">
-					<div class="explanation">
-						<p>Configure Collections for your course using an interface integrated into the Canvas Modules
-							page.</p>
-					</div>
-					<div class="div-iframe">
-						<iframe class="responsive-iframe" width="560" height="315"
-							src="https://www.youtube.com/embed/UolePwLRr3w" title="YouTube video player" frameborder="0"
-							allowfullscreen></iframe>
-					</div>
-				</sl-tab-panel>
-			</sl-tab-group>
+					</p>
+				</sl-card>
+			</div>
 		</div>
-
 	</div>
-</div>
 
-<div class="why-section">
-	<h1>Improve your students' learning experience and outcomes</h1>
-	<div class="reasons-grid">
-		<div class="reason">
-			<h3>Findability improves self-efficacy & motivation</h3>
+	<div class="section">
+		<h1>How to use Collections?</h1>
 
-			<p>
-				<a href="https://en.wikipedia.org/wiki/Findability">Findability</a> has been found to be the only and
-				most significant predictor of student motivation and self-efficacy (Simunich et al, 2015; <a
-					href="https://er.educause.edu/articles/2017/6/student-feedback-on-quality-matters-standards-for-online-course-design">Crews
-					et al, 2017</a>).
-			</p>
-			<p class="reference">
-				Simunich, B., Robins, D. B., & Kelly, V. (2015). The Impact of Findability on Student Motivation,
-				Self-Efficacy, and Perceptions of Online Course Quality. American Journal of Distance Education, 29(3),
-				174–185. <a
-					href="https://doi.org/10.1080/08923647.2015.1058604">https://doi.org/10.1080/08923647.2015.1058604</a>
-			</p>
-		</div>
-		<div class="reason">
-			<h3>Aesthetics & usability improve outcomes & motivation</h3>
-			<p>
-				Heidig et al (2015) found that perceived aesthetics and usability positively affected learner emotional
-				states. Contributing to small improvements in learning outcomes and larger impacts in intrinsic
-				motivation.
-			</p>
-			<p class="reference">
-				Heidig, S., Müller, J., & Reichelt, M. (2015). Emotional design in multimedia learning: Differentiation
-				on relevant design features and their effects on emotions and learning. Computers in Human Behavior, 44,
-				81–95.
-				<a href="https://doi.org/10.1016/j.chb.2014.11.009">https://doi.org/10.1016/j.chb.2014.11.009</a>
-			</p>
-		</div>
-		<div class="reason">
-			<h3>Course organisation improves retention</h3>
-			<p>Mulijana & Luo's (2019) systematic literature review found that course organisation improves student
-				satisfaction and motivation, and promotes cognitive presence. </p>
-			<p class="reference">
-				Muljana, P., & Luo, T. (2019). Factors Contributing to Student Retention in Online Learning and
-				Recommended Strategies for Improvement: A Systematic Literature Review. Journal of Information
-				Technology Education: Research, 18. <a
-					href="https://doi.org/10.28945/4182">https://doi.org/10.28945/4182</a>
-			</p>
-		</div>
-		<div class="reason">
-			<h3>Flexibility necessary for scale</h3>
+		<p>That depends on your context and your role in your Canvas course site. There are three main steps.</p>
 
-			<p>
-				Achieving scale in education requires designs that can flexibly adapt to effective use in a wide variety of contexts across a spectrum of learners and teachers.
-			</p>
-			<p class="reference">
-				Clarke, J., & Dede, C. (2009). Design for Scalability: A Case Study of the River City Curriculum. Journal of Science Education and Technology, 18(4), 353–365. 
-				<a href="https://doi.org/10.1007/s10956-009-9156-4">
-				https://doi.org/10.1007/s10956-009-9156-4</a>
+		<sl-tab-group>
+			<sl-tab slot="nav" panel="install">
+				<p>Install (you or your institution)</p>
+			</sl-tab>
+			<sl-tab slot="nav" panel="configure">
+				<p>Configure (you in a teacher or designer role)</p>
+			</sl-tab>
+			<sl-tab slot="nav" panel="navigate">
+				<p>Navigate (you as in any role)</p>
+			</sl-tab>
 
-			</p>
-		</div>
+			<sl-tab-panel name="install">
+				<div class="class-center">
+					<p>There are two ways to install Canvas Collections: individual and institutional. Each intended for
+						a
+						different context. Each with its own advantages and disadvantages. Select the one that best
+						suits
+						your need.</p>
+					<table>
+						<thead>
+							<tr>
+								<th></th>
+								<th>Individual</th>
+								<th>Institutional</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><strong>Purpose</strong></td>
+								<td>
+									<p>For teachers/designers to experiment with Collections.</p>
+									<p>Possibly also to create visual home/landing pages for use without Collections.
+									</p>
+								</td>
+								<td>
+									<p>For institutions to make Canvas Collections available to all teachers/designers.
+									</p>
+								</td>
+							</tr>
+							<tr>
+								<td><strong>Who installs it?</strong></td>
+								<td>
+									<p>You.</p>
+									<p> Anyone (with teacher/designer roles in Canvas) is able use the <a
+											href="getting-started/install/individual/">individual installation</a>
+										method.
+									</p>
+								</td>
+								<td>
+									<p>Your institution.</p>
+									<p>Typically the institution's Canvas administrator. Since at an institutional
+										level,
+										Collections is installed directly into Canvas and is available to all users.</p>
+								</td>
+							</tr>
+							<tr>
+								<td><strong>Who can use it?</strong></td>
+								<td>
+									<p>The person using the individual installation method can use Collections to
+										configure
+										and navigate courses. Also use it to create visual landing pages.</p>
+								</td>
+								<td>
+									<p>Once installed institutionally, exactly how people can use Collections will
+										depend on
+										the role they have in Canvas courses.</p>
+									<p> Teachers/designers will be able to configure Collections for courses. Students
+										will
+										only be able to use Collections, if the course already has Collections
+										configured.
+									</p>
+								</td>
+							</tr>
+							<tr>
+								<td><strong>How is it installed?</strong></td>
+								<td>
+									<p>You install the Canvas Collections <a
+											href="https://en.wikipedia.org/wiki/Userscript">userscript</a> into your
+										browser.</p>
+								</td>
+								<td>
+									<p>An institution's Canvas administrator installs it into Canvas using <a
+											href="https://community.canvaslms.com/t5/Video-Guide/Theme-Editor-Admins/ta-p/383021">the
+											Theme Editor</a></p>
+								</td>
+							</tr>
+							<tr>
+								<td><strong>How to do it</strong></td>
+								<td style="text-align: center"><sl-button variant="success" size="small"
+										href="getting-started/install/individual/" data-optional=""
+										data-valid="">Install
+										"individual"
+										Collections</sl-button></td>
+								<td style="text-align: center"><sl-button variant="success" size="small"
+										href="getting-started/install/institutional/" data-optional=""
+										data-valid="">Install
+										"institutional"
+										Collections</sl-button></td>
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+			</sl-tab-panel>
+			<sl-tab-panel name="configure">
+				<div class="reasons-grid">
+					<div class="reason">
+						<p>
+							Collections is designed to help improve <a
+								href="https://xd.adobe.com/ideas/process/information-architecture/information-ux-architect/">the
+								information architecture</a> of your course site's Modules. Raising questions like
+						</p>
+						<ol>
+							<li> What is the conceptual model/design intent/information architecture of your
+								course/modules?
+							</li>
+							<li> How to best use Collections to make clear and actionable to students?</li>
+						</ol>
+						<p>
+							Configuring Collections requires that you first answer those questions and then use the
+							Collections interface to configure Collections to serve your answers.
+						</p>
+						<div class="sl-button">
+							<sl-button variant="primary" size="medium" href="configure/overview/">Learn more about configuring Collections
+							</sl-button>
+						</div>
+					</div>
+					<div class="reason">
+						<div class="vertical-centered">
+						<div class="div-iframe">
+							<iframe class="responsive-iframe" src="https://www.youtube.com/embed/UolePwLRr3w"
+								title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+						</div>
+						</div>
+					</div>
+				</div>
+			</sl-tab-panel>
+			<sl-tab-panel name="navigate">
+				<div class="reasons-grid">
+					<div class="reason">
+						<p>
+							Once Collections is installed and configured Collections will modify the interface of your
+							course site. There are two types of interface modifications: <strong>live</strong>
+							Collections
+							and <strong>static</strong> (aka Claytons) Collections.
+						</p>
+						<table>
+							<tr>
+								<th>Live</th>
+								<th>Static (Claytons)</th>
+							</tr>
+							<tr>
+								<td>
+									<p>
+										Collections code is <em>live</em>for the visitor. It is modifying the Canvas
+										user
+										interface dynamically as the visitor navigates the modules page.
+									</p>
+									<p>
+										Requires your institutional to have installed Collections in Canvas, or the
+										visitor
+										to have installed Collections as a userscript.
+									</p>
+								</td>
+								<td>
+									<p>
+										Collections code is <strong>not</strong> live for the visitor. Instead the
+										course
+										teacher/designer has used Collections to modify one or more Canvas pages with a
+										<em>static</em> version of the Collections' interface.
+									</p>
+								</td>
+							</tr>
+						</table>
+						<sl-button variant="primary" size="medium" href="navigate/overview/">Learn more about navigating with Collections</sl-button>
+					</div>
+					<div class="reason">
+						<div class="vertical-centered">
+						<div class="div-iframe">
+							<iframe class="responsive-iframe" src="https://www.youtube.com/embed/5OaJmZ6FPVc"
+								title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+						</div>
+					</div>
+					</div>
+				</div>
+
+			</sl-tab-panel>
+		</sl-tab-group>
+
+
 	</div>
 </div>
 

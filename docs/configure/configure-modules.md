@@ -1,23 +1,26 @@
-# Configure the modules
+# 3. Configure the modules
 
-!!! question "How do you configure modules to work with Collections?"
-
-    You've [added some collections](./configure-collections.md) to your course, now how do you:
+You've [added some collections](./configure-collections.md) to your course, now how do you:
     
-    1. Allocation modules their collections?
-    2. Provide additional data about the modules?
+1. Allocate modules their collections?
+2. Provide additional data about the modules?
     
 Canvas Collections provides a _Module configuration area_ for each module. This is how you configure how individual modules work with Collections.
 
+!!! info "For more on module configuration"
+
+    See the [reference page on the module configuration area](../../../reference/conceptual-model/objects/overview/).
+
+## A sample process
+
 There are three typical steps in using the _Module configuration area_. These are illustrated below.
 
-!!! info "See the [reference page on the module configuration area](../../../reference/conceptual-model/objects/overview/) for more information"
 
 | Step | Description |
 | ---- | ----------- |
-| [**1. Find the module configuration area**](#1-introducing-the-module-configuration-area) | <p>Where do you find it? What can it do?</p>|
-| [**2. Allocate a module to a collection**](#2-allocate-a-module-to-a-collection) | <p>How to modify a module so it belongs (is allocated) to a particular collection.</p> |
-| [**3. Add more metadata to a module**](#3-add-more-metadata-to-a-module) | <p>Start transforming a vanilla Canvas module into a design specific object by adding a description, label, banner and other metadata.</p> |
+| 1. Find the module configuration area | <p>Where do you find it? What can it do?</p>|
+| 2. Allocate a module to a collection | <p>How to modify a module so it belongs (is allocated) to a particular collection.</p> |
+| 3. Add more metadata to a module | <p>Start transforming a vanilla Canvas module into a design specific object by adding a description, label, banner and other metadata.</p> |
 
 === "1. Find: module config"
 

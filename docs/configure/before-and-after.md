@@ -1,8 +1,6 @@
 # New course: before and after
 
-!!! question 
-
-	What does a Canvas course site look like before and after Collections is configured?
+What does a Canvas course site look like before and after Collections is configured?
 
 
 === "Before"
@@ -32,9 +30,8 @@
 
 	<figure markdown>
 	<figcaption>Example course after Collections has been configured</figcaption>
-	<sl-animated-image src="../../../assets/withCanvasCollections.gif" alt="Example course after Collections has been configured">
+	<sl-animated-image src="../../assets/withCanvasCollections.gif" alt="Example course after Collections has been configured">
 	</figure>
-
 
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />

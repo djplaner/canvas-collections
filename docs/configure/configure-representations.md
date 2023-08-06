@@ -1,10 +1,10 @@
-# Configure Representations
+# 4. Configure Representations
 
-!!! question "How to select the representation that works for you?"
+You've just about completed configuration Collections. 
 
-	When [configuring collections](./configure-collections.md) you will have chosen an initial representation.
+When your first [configured the course's collections](./configure-collections.md) you will have chosen an initial representation.
 
-	But, representations can be changed at any time using the _collections configuration element_.
+Representations can be changed at any time using the _collections configuration element_.
 
 
 <figure markdown>

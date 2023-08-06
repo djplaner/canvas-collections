@@ -1,15 +1,16 @@
-# Designing the use of Canvas Collections
+# 1. Designing with Canvas Collections
 
-!!! question "How to design the use of Collections for your course?"
+Collections is designed improve the [information architecture](https://xd.adobe.com/ideas/process/information-architecture/information-ux-architect/) of your course site's Modules. Leading to questions like
 
-	Collections is designed improve the [information architecture](https://xd.adobe.com/ideas/process/information-architecture/information-ux-architect/) of your course site's Modules. Leading to questions like
+1. What is the conceptual model/design intent/information architecture of your course/modules? 
+2. How to best use Collections to make clear and actionable to students?
 
-	1. What is the conceptual model/design intent/information architecture of your course/modules? 
-	2. How to best use Collections to make clear and actionable to students?
+To answer these questions, the following explains three Collections specific questions.
 
-## Three, not necessarily sequential steps
+!!! tip "Find what works for you"
 
-There is no single, best answer to these questions. No one best process for answering them. The process used here will focus on three steps/questions. Answering these well will likely be an iterative process, rather than sequential. You will decide, experiment, revisit and refine.
+	There is no single, best answer to these questions. No one best process for answering them. The process used here will focus on three steps/questions. Answering these well will likely be an iterative process, rather than sequential. You will decide, experiment, revisit and refine.
+
 
 The first two questions are the crux and focus on establishing the conceptual model/information architecture for Collections. Changes to these answers can be made, but might be somewhat involved.  Arguably, the first question is the main one to answer. The second can be answered later.
 
@@ -17,7 +18,9 @@ The third question is more practical and Collections enables you to change easil
 
 The following explains the answers to these questions for the example course. There are quite diverse and detailed methods for answering these questions. Covering those is beyond the scope here.
 
-As you read, think about your course, your context, your design intent, and the outcomes you wish to achieve. How might you answer these questions?
+!!! tip "Think about your course"
+
+	As you read, think about your course, your context, your design intent, and the outcomes you wish to achieve. How might you answer these questions?
 
 === "1. What collections?"
 

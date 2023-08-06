@@ -1,0 +1,487 @@
+<!--
+ Copyright (C) 2023 David Jones
+ 
+ This file is part of Canvas Collections.
+ 
+ Canvas Collections is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ Canvas Collections is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with Canvas Collections.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+{% extends "main.html" %}
+
+
+{% block tabs %}
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.6.0/cdn/themes/light.css" />
+<script type="module"
+    src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.6.0/cdn/shoelace-autoloader.js"></script>
+
+
+<link rel="stylesheet" href="stylesheets/extra.css" />
+<link rel="stylesheet" href="stylesheets/grid.css" />
+<link rel="stylesheet" href="stylesheets/styles.css" />
+
+<div class="landing-body">
+    <!-- Header Section -->
+    <header id="home">
+        <div id="hero">
+            <div class="row">
+                <div class="col span_1_of_2">
+                    <div class="hero-description">
+                        <h1>
+                            Canvas Collections
+                        </h1>
+                        <p>
+                            Improve Canvas course site design<br />
+                            Transform Modules by adding <br />
+                        </p>
+                        <div class="hero-links">
+                            <a href="#structure" class="hero-link">Structure</a>
+                            <a href="#visuals" class="hero-link">Visuals</a>
+                            <a href="#context" class="hero-link">Context</a>
+                            <a href="#generativity" class="hero-link">Generativity</a>
+                        </div>
+                        <div class="hero-links">
+                            <a href="getting-started/how-to-start/" class="btn"><span class="download-btn">Get
+                                    Started</span></a>
+                            <a href="#features" class="btn"><span class="download-btn">Learn more <sl-icon
+                                        name="arrow-down"></sl-icon></span></a>
+                        </div>
+                        <!--            <a href="#download" class="btn"
+              ><span class="download-btn">Learn more</span></a
+            > -->
+                    </div>
+                </div>
+                <div class="col span_1_of_2">
+                    <!-- <img class="hero-img" src="assets/withCanvasCollections.gif" alt="" /> -->
+                    <sl-animated-image class="hero-img" src="assets/withCanvasCollections.gif"
+                        alt="Animation of navigating a Canvas modules page with Collections configured. Shows the user navigating between four collections: Why? Why? How? and Question & Suggestions. Showing different visual representations for each collection."></sl-animated-image>
+                </div>
+            </div>
+        </div>
+        <div class="shape-divider">
+            <div class="custom-shape-divider-bottom-1603385849">
+                <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"
+                    preserveAspectRatio="none">
+                    <path d="M1200 120L0 16.48 0 0 1200 0 1200 120z" class="shape-fill"></path>
+                </svg>
+            </div>
+        </div>
+        <button onclick="topFunction()" id="scrollUp" title="Go to top">
+            <svg width="1.5rem" height="1.5rem" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                    d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
+            </svg>
+        </button>
+    </header>
+    <!-- End: Header Section -->
+
+    <!-- Features Section -->
+    <section id="features">
+
+        <!-- Add Structure -->
+        <h2 class="stylish_heading">
+            Features <span class="red_dot">.</span>
+        </h2>
+
+        <div class="row" id="structure">
+            <div class="col span_1_of_2">
+                <div class="section-description">
+                    <div class="features-video">
+                        <div class="div-iframe">
+                            <iframe class="responsive-iframe" src="https://www.youtube-nocookie.com/embed/jStWBra8Nak"
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col span_1_of_2">
+                <div class="section-description features-description col1">
+                    <h3 class="stylish_heading">
+                        Add structure
+                    </h3>
+                    <h4>How?</h4>
+                    <p class="little-description">
+                        Organise modules into different <em>collections</em>. <br /> Navigate between
+                        <em>collections</em>.
+                    </p>
+                    <h4>Why?</h4>
+                    <ul class="little-description">
+                        <li> Move beyond <a class="feature-link" target="_blank"
+                                href="https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Too-many-Modules-Options-for-resorting-structuring-content/td-p/55983">
+                                "linear design" <sl-icon class="feature-link-icon"
+                                    name="box-arrow-up-right"></sl-icon></a> (2016) </li>
+                        <li> Move beyond the <a class="feature-link" target="_blank"
+                                href="https://community.canvaslms.com/t5/Idea-Conversations/More-editing-functions/idc-p/475281/highlight/true#M53223">"...design
+                                nightmare (of)...one big list..." <sl-icon class="feature-link-icon"
+                                    name="box-arrow-up-right"></sl-icon></a> (2021)</li>
+                    </ul>
+                    <p><a class="learn-more-link" href="reference/conceptual-model/collections/overview/">Learn more
+                            about
+                            collections <sl-icon class="learn-more-link" name="arrow-right"></sl-icon></a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Visuals -->
+
+        <div class="row" id="visuals">
+            <div class="col span_1_of_2">
+                <div class="section-description features-description">
+                    <h3 class="stylish_heading">
+                        Add visuals
+                    </h3>
+                    <h4>How?</h4>
+                    <p class="little-description">
+                        Select a <em>representation</em> for each <em>collection</em>. <br />
+                        Change the <em>representation</em> at any time.
+                    </p>
+                    <h4>Why?</h4>
+                    <ul class="little-description">
+                        <li> Move beyond <a class="feature-link" target="_blank"
+                                href="https://community.canvaslms.com/t5/Canvas-Question-Forum/Visual-based-Module-Outline-PLEASE/m-p/395779/highlight/true#M140332">"a
+                                chain of folders circa Windows 95" <sl-icon class="feature-link-icon"
+                                    name="box-arrow-up-right"></sl-icon></a> (2020)
+                        </li>
+                        <li> Use a <a class="feature-link" target="blank"
+                                href="https://community.canvaslms.com/t5/Canvas-Ideas/Modules-Add-Images-to-Modules/idi-p/372245">grid
+                                of tiles/cards view of Modules <sl-icon class="feature-link-icon"
+                                    name="box-arrow-up-right"></sl-icon></a> (2016) using tiles/cards </li>
+                        <li> Mesh the needs of a <a
+                                href="https://community.canvaslms.com/t5/Canvas-Ideas/Modules-Add-Images-to-Modules/idi-p/372245"
+                                class="feature-link" target="blank">home page with module structure <sl-icon
+                                    class="feature-link-icon" name="box-arrow-up-right"></sl-icon></a> (2016).</li>
+                    </ul>
+                    <p><a class="learn-more-link" href="reference/conceptual-model/representations/overview/">Learn more
+                            about
+                            <em>representations</em> <sl-icon class="learn-more-link" name="arrow-right"></sl-icon></a>
+                    </p>
+                </div>
+            </div>
+            <div class="col span_1_of_2">
+                <div class="section-description">
+                    <div class="features-video">
+                        <div class="div-iframe">
+                            <iframe class="responsive-iframe" src="https://www.youtube-nocookie.com/embed/pMJH5xLRVcw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add context -->
+
+        <div class="row" id="context">
+            <div class="col span_1_of_2">
+                <div class="section-description features-description">
+                    <div class="features-video">
+                        <div class="div-iframe">
+                            <iframe class="responsive-iframe" src="https://www.youtube-nocookie.com/embed/g2QLHfPuUNc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col span_1_of_2">
+                <div class="section-description">
+                    <h3 class="stylish_heading">
+                        Add context
+                    </h3>
+                    <h4>How?</h4>
+                    <p class="little-description">
+                        Add (meta-)data about each module.<br />
+                        Transform modules into context specific <em>objects</em>. <br />
+                        Add an <em>include page</em> to each <em>collection</em>.
+                    </p>
+                    <h4>Why?</h4>
+                    <ul class="little-description">
+                        <li> Add <a
+                                href="https://community.canvaslms.com/t5/Canvas-Ideas/Modules-Add-Images-to-Modules/idc-p/372263/highlight/true#M9258"
+                                class="feature-link" target="_blank">"instructions or a greeting" <sl-icon
+                                    class="feature-link-icon" name="box-arrow-up-right"></sl-icon></a> (2017) per
+                            module.</li>
+                        <li> Provide <a class="feature-link" target="_blank"
+                                href="https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-add-connective-text-not-quot-text-headers-quot/m-p/510878">connective
+                                text (2022) <sl-icon class="feature-link-icon" name="box-arrow-up-right"></sl-icon></a>
+                        </li>
+                    </ul>
+                    <p><a class="learn-more-link" href="reference/conceptual-model/objects/overview/">Learn more about
+                            <em>objects</em> <sl-icon class="learn-more-link" name="arrow-right"></sl-icon></a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Generativity -->
+
+        <div class="row" id="generativity">
+            <div class="col span_1_of_2">
+                <div class="section-description features-description">
+                    <h3 class="stylish_heading">
+                        Add generativity
+                    </h3>
+                    <h4>How?</h4>
+                    <p class="little-description">
+                        Creatively combine Collections' features in unexpected ways. <br />
+                        Contribute to the (very nascent) <a href="community/collections-community/"
+                            class="feature-link">Collections' community</a>.
+                    </p>
+                    <h4>Why?</h4>
+                    <ul class="little-description">
+                        <li> Leverage and contribute features to tailor Canvas to your pedagogy (<a
+                                href="https://community.canvaslms.com/t5/Idea-Conversations/More-editing-functions/idc-p/475281/highlight/true#M53223"
+                                class="feature-link" target="_blank">not the other way around <sl-icon
+                                    class="feature-link-icon" name="box-arrow-up-right"></sl-icon></a> (2020))
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col span_1_of_2">
+                <div class="section-description">
+                    <div class="features-video">
+                        <figure>
+                            <p><img src="assets/featuresGenerative.png"
+                                    alt="Screenshot of Zittrain (2008) answering the question 'What maks something generative?'. Lists five factors 1) how extensively it leverages a set of possible tasks; 2) how well it can be adapted to a range of tasks; 3) how easily new contributors can master it; 4) how accessible it is to those ready and able to build on it; 5) how transferable any changes are to others, including nonexperts" />
+                            </p>
+                            <figcaption><a
+                                    href="http://yupnet.org/zittrain/2008/03/01/chapter-4-the-generative-pattern/#11"
+                                    class="feature-link" target="_blank">(Zittrain, 2008, p. 71) <sl-icon
+                                        class="feature-link-icon" name="box-arrow-up-right"></sl-icon></a>
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- end context -->
+    <!-- End: Features Section -->
+
+    <!-- Testimonial Section -->
+    <section id="testimonial">
+        <h2 class="stylish_heading">
+            Why <span class="red_dot">?</span>
+        </h2>
+        <div class="grid-row">
+            <div class="grid-cell">
+                <div class="bubble">
+                    <p class="company-name">Course organisation improves retention</p>
+                    <p class="message">
+                        Course organisation improves student satisfaction and motivation, and promotes cognitive
+                        presence.
+                        Course
+                        organisation is one of three instructor level factors affecting retention.
+                    </p>
+                </div>
+                <div class="client-info">
+                    <div class="name">
+                        <p class="role">
+                            Muljana, P., & Luo, T. (2019). <a class="feature-link" target="_blank"
+                                href="https://doi.org/10.28945/4182">Factors Contributing to Student Retention in Online
+                                Learning and
+                                Recommended Strategies for Improvement: A Systematic Literature Review <sl-icon
+                                    class="feature-link-icon" name="box-arrow-up-right"></sl-icon></a>. Journal of
+                            Information Technology
+                            Education: Research, 18.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-cell">
+                <div class="bubble">
+                    <p class="company-name">Aesthetics & usability improve outcomes & motivation</p>
+                    <p class="message">
+                        Perceived aesthetics and usability positively affected learner emotional states. Contributing to
+                        small
+                        improvements in learning outcomes and larger impacts in intrinsic motivation.
+                    </p>
+                </div>
+                <div class="client-info">
+                    <div class="name">
+                        <p class="role">
+                            Heidig, S., Müller, J., & Reichelt, M. (2015).
+                            <a class="feature-link" target="_blank"
+                                href="https://doi.org/10.1016/j.chb.2014.11.009">Emotional design
+                                in multimedia learning: Differentiation on relevant design features and their effects on
+                                emotions and
+                                learning <sl-icon class="feature-link-icon" name="box-arrow-up-right"></sl-icon></a>.
+                            Computers in Human
+                            Behavior, 44, 81–95.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell">
+                <div class="bubble">
+                    <p class="company-name">Findability improves self-efficacy & motivation</p>
+                    <p class="message">
+                        <a href="https://en.wikipedia.org/wiki/Findability">Findability</a> has been found to be the
+                        only
+                        and most
+                        significant predictor of student motivation and self-efficacy (Simunich et al, 2015; <a
+                            class="feature-link" target="_blank"
+                            href="https://er.educause.edu/articles/2017/6/student-feedback-on-quality-matters-standards-for-online-course-design">Crews
+                            et al, 2017 <sl-icon class="feature-link-icon" name="box-arrow-up-right"></sl-icon></a>).
+                    </p>
+                </div>
+                <div class="client-info">
+                    <div class="name">
+                        <p class="role">
+                            Simunich, B., Robins, D. B., & Kelly, V. (2015). <a class="feature-link" target="_blank"
+                                href="https://doi.org/10.1080/08923647.2015.1058604">The Impact of Findability on
+                                Student
+                                Motivation,
+                                Self-Efficacy, and Perceptions of Online Course Quality <sl-icon
+                                    class="feature-link-icon" name="box-arrow-up-right"></sl-icon></a>. American Journal
+                            of Distance Education, 29(3),
+                            174–185.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-cell">
+                <div class="bubble">
+                    <p class="company-name">Scale requires flexibility</p>
+                    <p class="message">
+                        Achieving scale in education requires designs that can flexibly adapt to effective use in a wide
+                        variety of contexts across a spectrum of learners and teachers.
+                    </p>
+                </div>
+                <div class="client-info">
+                    <p class="role">
+                        Clarke, J., & Dede, C. (2009). <a class="feature-link" target="_blank"
+                            href="https://doi.org/10.1007/s10956-009-9156-4">Design for Scalability: A Case Study of the
+                            River City Curriculum <sl-icon class="feature-link-icon"></sl-icon></a>. Journal of Science
+                        Education and Technology, 18(4), 353–365.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End: Testimonial Section -->
+
+    <!-- How To Section  -->
+    <section id="howto">
+        <h2 class="stylish_heading">
+            How to use Collections <span class="red_dot">.</span>
+        </h2>
+
+
+
+        <h3 class="stylish_heading"> 1. Install </h3>
+        <div class="row">
+            <div class="col span_1_of_2">
+                <div class="section-description features-description">
+                    <h4>You</h4>
+                    <p class="little-description">
+                        Install Collections in your web browser. <br />
+                        Only you will see dynamic Collections in a configured course.<br />
+                        Experiment with Collections. <br />
+                        Create visual home page using static Collections.
+                    <div class="learn-button">
+                        <sl-button variant="primary" size="small" href="getting-started/install/individual/"
+                            data-optional="" data-valid="">Install "individual" Collections</sl-button>
+                    </div>
+                </div>
+            </div>
+            <div class="col span_1_of_2">
+                <div class="section-description">
+                    <h4>Your institution</h4>
+                    <p class="little-description">
+                        Install Collections in Canvas.<br />
+                        Anyone can see dynamic Collections in a configured course.<br />
+                    </p>
+                    <div class="learn-button">
+                        <sl-button variant="primary" size="small" href="getting-started/install/institutional/"
+                            data-optional="" data-valid="">Install "institutional" Collections</sl-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="stylish_heading"> 2. Configure </h3>
+        <div class="row">
+            <div class="col span_1_of_2">
+                <div class="section-description">
+                    <p class="little-description">
+                        Realise your course's design intent and <a
+                            href="https://xd.adobe.com/ideas/process/information-architecture/information-ux-architect/">information
+                            architecture</a> with Collections.<br />
+                        Configure the <em>collections</em>, <em>representations</em>, and <em>objects</em>.
+                    </p>
+                    <div class="learn-button">
+                        <sl-button variant="primary" size="small" href="configure/overview/" data-optional=""
+                            data-valid="">Learn more about configuring Collections</sl-button>
+                    </div>
+                </div>
+            </div>
+            <div class="col span_1_of_2">
+                <div class="section-description">
+                    <div class="features-video">
+                        <div class="div-iframe">
+                            <iframe class="responsive-iframe" src="https://www.youtube-nocookie.com/embed/UolePwLRr3w"
+                                title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="stylish_heading"> 3. Navigate </h3>
+        <div class="row">
+            <div class="col span_1_of_2">
+                <div class="section-description features-description">
+                    <h4>Static (Claytons) Collections</h4>
+                    <p class="little-description">
+                        Collections is <strong>not</strong> used for navigation. <br />
+                        Navigate via static Canvas pages created using Collections.
+                    </p>
+                    <div class="learn-button">
+                        <sl-button variant="primary" size="small" href="navigate/navigating-claytons-collections/"
+                            data-optional="" data-valid="">Learn more about navigating static Collections</sl-button>
+                    </div>
+                </div>
+            </div>
+            <div class="col span_1_of_2">
+                <div class="section-description features-description">
+                    <h4>Dynamic (live) Collections</h4>
+                    <p class="little-description">
+                        Collections is used for navigation.<br />
+                        Navigate modules using Collections full functionality.
+                    </p>
+                    <div class="learn-button">
+                        <sl-button variant="primary" size="small" href="navigate/navigating-live-collections/"
+                            data-optional="" data-valid="">Learn more about navigating live Collections</sl-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- End: How To Section -->
+
+
+
+
+    {% endblock %}
+    {% block content %}{% endblock %}
+    {% block container %}{% endblock %} <!-- nope -->
+    {% block hero %}{% endblock %} <!-- nope -->
+    {% block site_nav %}{% endblock %}

@@ -1,4 +1,4 @@
-# Setting up Claytons Collections
+# Configure "Claytons" (static) Collections
 
 !!! question "How do you improve navigation when you can't use _live_ Collections?"
 
