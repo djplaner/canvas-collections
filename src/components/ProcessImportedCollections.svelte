@@ -80,7 +80,7 @@
     summary: {
       tooltip: `<p>It appears Collections has been copied from another course. Details on the 
         source/destination courses below.</p><p>How do you wish to proceed?</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/lifecycle/course-copy/import/",
+      url: "https://djplaner.github.io/canvas-collections/reference/lifecycle/course-copy/how-does-import-work/",
     },
     modules: {
       tooltip: `<p>Analysis of the "imported" modules (in Collections configuration) and "current" modules

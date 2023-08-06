@@ -28,7 +28,7 @@ Collections' configuration information stores the _course identifier_ for its or
 
 <figure markdown>
 <figcaption>Example Collections copy/import dialog</figcaption>
-![Example Collections copy/import dialog](images/copyDialog.png)
+![Example Collections copy/import dialog](images/importSummary.png)
 </figure>
 
 ## What does it look like?
@@ -37,9 +37,9 @@ The Collections copy/import dialog consists of three tabs that provide you with 
 
 | Tab | Description |
 | --- | ----------- |
-| Summary | Provide an overview and explanation and offer the three choices of: proceed; cancel; and, refresh |
-| Modules | Shows the results of Collections' attempts to match the _imported_ modules (from Collections configuration) with the _current_ modules in the desination course. Three possibilities are shown <ol> <li> Imported modules that matched current modules</li> <li> Imported modules that were not match </li> <li> Current modules that were not matched </li> </ol> |
-| Images | A list of Collections' card images that are from another course's files area |
+| [Summary](import.md#summary) | Provide an overview and explanation and offer the three choices of: proceed; cancel; and, refresh |
+| [Modules](import.md#modules) | Shows the results of Collections' attempts to match the _imported_ modules (from Collections configuration) with the _current_ modules in the desination course. Three possibilities are shown <ol> <li> Imported modules that matched current modules</li> <li> Imported modules that were not match </li> <li> Current modules that were not matched </li> </ol> |
+| [Images](import.md#image) | A list of Collections' card images that are from another course's files area |
 
 <figure markdown>
 <figcaption>Example Collections copy/import process</figcaption>
