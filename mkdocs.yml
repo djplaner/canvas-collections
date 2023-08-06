@@ -122,7 +122,10 @@ nav:
             - Edit Life Cycle: reference/lifecycle/editing/lifecycle.md
             - Configure Collections: reference/lifecycle/editing/collections.md
             - Configure Modules: reference/lifecycle/editing/modules.md
-        - Course copy: reference/lifecycle/course-copy/overview.md
+        - Course copy: 
+            - Importing Collections: reference/lifecycle/course-copy/overview.md
+            - How does import work: reference/lifecycle/course-copy/how-does-import-work.md
+            - Import reference: reference/lifecycle/course-copy/import.md
       - Conceptual model:
         - Collections' Conceptual Model: reference/conceptual-model/overview.md
         - collections: 

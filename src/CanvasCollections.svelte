@@ -882,13 +882,7 @@
 
   let HELP = {
     ABOUT: {
-      tooltip: `<p>Use Canvas Collections to customise the modules page to better
-          fit your design, by:</p>
-          <ol>
-             <li> Grouping modules into different collections. </li>
-             <li> Using different representations for each collection. </li>
-             <li> Adding more contextual information about each module. </li>
-          </ol>`,
+      tooltip: `<p>Use Canvas Collections to add more structure, visuals, and context to the modules page. Click to find out more.`,
     },
     editOn: {
       tooltip: `<p>Editing Collections is <strong>off</strong>.</p>

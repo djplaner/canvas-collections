@@ -124,7 +124,7 @@
     },
     configEngage: {
       tooltip: `For cards representations, specify <ol> <li> if there will be an "engage" button; and, </li> <li> what the button text will be. </li> </ol>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#engage-button",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#engage",
     },
     configLabel: {
       tooltip: `Describe the type of object the module represents (e.g. lecture, theme etc.)`,
@@ -133,7 +133,7 @@
     configAutoNum: {
       tooltip: `If and how a label specific number will be calculated for the module 
 		(e.g. <em>Lecture 1</em> or <em>Workshop 5</em>)<p>Auto number or specify a value.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#labels-and-numbers",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#label-and-numbers",
     },
   };
 </script>

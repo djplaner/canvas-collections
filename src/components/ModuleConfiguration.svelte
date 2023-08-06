@@ -47,30 +47,28 @@
   const HELP = {
     moduleConfiguration: {
       tooltip:
-        "Click the arrow to open/close the Collections interface to configure data about this module",
-      url: "https://djplaner.github.io/canvas-collections/how-tos/new/configure-modules/",
+        "<p>Click to open/close the Collections interface to configure data about this module</p>",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/overview/"
     },
     generalTab: {
       tooltip:
-        "Configure common collections settings: collections, description, label, engage button etc.",
+        "<p>Configure common collections settings: collection, description, label, engage button etc.</p>",
       url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/",
     },
     moduleDates: {
-      tooltip: `<p>Choose from the three supported "date types" and configure it. Options include:</p> <ol> <li> <strong>Single date</strong> - a specific date (and time) </li>
-		  <li> <strong>Date range</strong> - a start and end date (and time) </li>
-		</ol>
+      tooltip: `<p>Specify a date/time (or date/time range) for the module, including a label.</p>
 		`,
       url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/",
     },
     moduleBanner: {
       tooltip: `<p>Choose one of three possible banner types (for Card representations) and configure it. Options are:</p> <ol> <li> <strong>Image</strong> - a banner image</li> <li> <strong>Colour</strong> - a solid colour</li> <li> <strong>Iframe</strong> - HTML embed code (e.g. YouTube video)</li> </ol>
 		`,
-      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/overview/banner/",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/banner/"
     },
     moduleMetaData: {
-      tooltip: `Flexibly add, delete, and modify additional information about this module, which
+      tooltip: `Add, delete, and modify any additional information about this module, which
 		may be used by collections and representations - or for your own purposes.`,
-      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/overview/metadata/",
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/metadata/"
     },
   };
 </script>
@@ -99,7 +97,7 @@
     <em>{@html $collectionsStore["MODULES"][module].name}</em>
     <sl-tooltip>
       <div slot="content">
-        {HELP.moduleConfiguration.tooltip}
+        {@html HELP.moduleConfiguration.tooltip}
       </div>
       <a
         href={HELP.moduleConfiguration.url}
