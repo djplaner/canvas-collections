@@ -1,47 +1,25 @@
 # Collections: Institutional installation
 
-An institutional installation of Canvas Collections involves two steps:
+## Background
 
-1. Identify the URLs for Collections' code and CSS files.
-2. Use the Canvas theme editor to add those URLs to an appropriate  Canvas theme.
+An institutional installation of Canvas Collections involves using the [Canvas Theme Editor](https://community.canvaslms.com/t5/Admin-Guide/How-do-I-create-a-theme-for-an-account-using-the-Theme-Editor/ta-p/242) to add the Collections JavaScript and CSS files to your institution's Canvas instance.
 
-## 1. Identify the URLs for Collections' code and CSS files
+Typically, your institution will have specific policies and practices governing which, how and where such files will be hosted. The following provides the bare basics of how to achieve this.
 
-These files implement Canvas Collections. An institutional installation of Collections will require you to identify the URLs for the version of Collections code and CSS files to be used.
+## 1. Download (or build) the required files
 
-The two files required are:
+The Collections GitHub repository does include a recent copy of these files which you can download and use. The files are:
 
-1. [canvas-collections.js](https://github.com/djplaner/canvas-collections/blob/main/dist/canvas-collections.js) - the code implementing Collections, and
-2. [canvas-collections.css](https://github.com/djplaner/canvas-collections/blob/main/dist/canvas-collections.css) - the CSS declarations specifying the look and feel of Collections.
+1. [canvas-collections.js](https://raw.githubusercontent.com/djplaner/canvas-collections/main/dist/canvas-collections.js) - the code implementing Collections, and
+2. [canvas-collections.css](https://raw.githubusercontent.com/djplaner/canvas-collections/main/dist/canvas-collections.css) - the CSS declarations specifying the look and feel of Collections.
 
-=== 
+You can also build your own version of these files. See the [local development page](../../reference/development/local-development/overview.md) for more.
 
-### Standard Institutional practice
-
-Most institutions will have specific policies and practices governing which, how and where such files will be hosted. 
-
-### Public Content Delivery Network (CDN) Alternatives
-
-Various free Content Delivery Network (CDN) services also provide URLs you can use.
-
-For example, copy and pasting the [Raw GitHack](https://raw.githack.com)
-
-
-
-
+## 2. Upload those files using the theme editor
 
 The [Canvas theme editor](https://community.canvaslms.com/t5/Video-Guide/Theme-Editor-Admins/ta-p/383021) allows authorised people to include additional Javascript and CSS into a Canvas theme. This theme is then applied to course sites and Collections is available for use.
 
-## The required files
-
-The [`dist`](https://github.com/djplaner/canvas-collections/tree/main/dist) folder in the Canvas Collections GitHub repo contains the necessary files:
-
-
-These are produced when building Canvas Collections.
-
-## One approach - upload these two files
-
-As shown in the following figure, the Canvas Theme editor provides methods to upload a CSS and JavaScript file to a theme. Install Collections by uploading the Collections files via these means
+The figure below shows the relevant portion of the Themes Editor. Use the relevant file upload elements to upload the files you downloaded in step 1.
 
 <figure markdown>
 <figcaption>CSS and JavaScript file uploads in the Canvas Theme editor</figcaption>
