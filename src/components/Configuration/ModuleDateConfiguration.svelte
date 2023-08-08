@@ -202,14 +202,18 @@
 		calendar for this term will be used to translate the generic date <em>Monday Week 1</em> into a calendar date.`,
       href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/#study-period",
     },
+    dateLabel: {
+      tooltip: `A short textual label to add before the date details (no HTML).`,
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/#date-label",
+    },
     dateStart: {
       tooltip: `Specify a single date, or becomes the start date in a date range when used 
 		with "stop" date.`,
-      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/#start-date",
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/#start-and-stop-date",
     },
     stopDate: {
       tooltip: `Specify the 'stop' date for a date range. Date is relative to the specific study period.`,
-      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/#stop-date",
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/#start-and-stop-date",
     },
     calculatedDate: {
       tooltip: `Representation of the date as configured by <em>Start Date</em> and possible <em>Stop Date</em>.`,
@@ -220,6 +224,7 @@
     },
     outputDate: {
       tooltip: `A live representation of the configured date.`,
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/dates/#date-output",
     },
     calendarDate: {
       tooltip: `<p>Calculated automatically based on the academic calendar and the current term.<p>
@@ -235,6 +240,12 @@
       <label for="cc-module-config-{moduleId}-date-label">Date label</label>
       <sl-tooltip id="cc-about-module-show-label">
         <div slot="content">{@html HELP.showDate.tooltip}</div>
+      <sl-tooltip id="cc-about-module-date-label">
+        <div slot="content">{@html HELP.dateLabel.tooltip}</div>
+        <a target="_blank" rel="noreferrer" href={HELP.dateLabel.href}
+          ><i class="icon-question cc-module-icon" /></a
+        >
+      </sl-tooltip>
         <input
           type="checkbox"
           on:keydown|stopPropagation
@@ -267,6 +278,7 @@
           value=""
         />
       {/if}
+
     </span>
   </div>
 </div>
