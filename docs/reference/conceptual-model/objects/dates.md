@@ -66,7 +66,9 @@ For a selected date, each of the following components can be hidden by turning o
 
 The final component of the _dates_ tab is the _date output_. It provides a representation of the module's configured date/time (range) using the GriffithCards date representation. Provided to give immediate feedback on the current date configuration.
 
-## Example - navigate
+## Examples 
+
+### Navigate
 
 What visitors to a course site see in terms of dates depends on a combination of:
 
@@ -75,7 +77,7 @@ What visitors to a course site see in terms of dates depends on a combination of
 
 For example, the following two figures demonstrate the appearance of the date configuration in the figure at the top of this page using the two most common representations.
 
-### GriffithCards representation
+#### GriffithCards representation
 
 The _GriffithCards_ representation uses a very "card" specific representation of dates. But one that is broadly task independent.
 
@@ -84,7 +86,7 @@ The _GriffithCards_ representation uses a very "card" specific representation of
 ![GriffithCards representation of a start date](pics/cardsDateRepresentation.png)
 </figure>
 
-### AssessmentTable representation
+#### AssessmentTable representation
 
 The _AssessmentTable_ representation is designed for a more specific and less visual purpose.
 
@@ -93,7 +95,7 @@ The _AssessmentTable_ representation is designed for a more specific and less vi
 ![AssessmentTable representation of the same start date](pics/assessmentTableDateRep.png)
 </figure>
 
-## Example - configure
+### Configure
 
 The following animated image shows how to use the _date tab_ and the different ways dates can be displayed.
 
