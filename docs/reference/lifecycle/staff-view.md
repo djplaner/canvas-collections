@@ -9,7 +9,7 @@ The teacher/designer experience of Collections depends on the type of Collection
 	
 	The image and table below provide an example and description of the Claytons Collections view for teachers/designers. The elements listed here are also visible in _Live_ Collections and are explained in more detail the "_Live_ Collections - _navigate_ mode" tab. In Claytons, however, the elements are implemented using the limited HTML and CSS allowed by the Canvas Rich Content Editor (RCE).
 	
-	!!! info "See [the _Navigating Claytons Collections_ page](../../how-tos/navigating/navigating-claytons-collections.md) for more"
+	!!! info "See [the _Navigating Claytons Collections_ page](../../navigate/navigating-claytons-collections.md) for more"
 
 	| Interface Element | Description |
 	| ----------------- | ----------- |
@@ -19,7 +19,7 @@ The teacher/designer experience of Collections depends on the type of Collection
 
 	<figure markdown>
 	<figcaption></figcaption>
-	[![](../../how-tos/navigating/images/claytonsNavElements.png)](../../how-tos/navigating/images/claytonsNavElements.png)
+	[![](../../navigate/images/claytonsNavElements.png)](../../navigate/images/claytonsNavElements.png)
 	</figure>
 
 === "_Live_ Collections - _navigate_ mode"
@@ -30,7 +30,7 @@ The teacher/designer experience of Collections depends on the type of Collection
 
 		[_Navigating_ reference](navigating.md) for details.
 
-		[_Navigating Live Collections_ how-to](../../../how-tos/navigating/navigating-live-collections.md) for examples.
+		[_Navigating Live Collections_ how-to](../../navigate/navigating-live-collections.md) for examples.
 
 	| Interface Element | Description |
 	| ----------------- | ----------- |

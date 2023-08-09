@@ -2,7 +2,7 @@
 
 !!! question "How do you navigate _Claytons_ Collections?"
 
-    [_Claytons_ Collections](../../reference/conceptual-model/collections/full-claytons.md) is where Collections has been used to [generate full navigation using pages](https://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/). i.e. it creates static HTML representations of the Collections' navigation interface on a [normal Canvas page](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-are-Pages/ta-p/5) 
+	[_Claytons_ Collections](../reference/conceptual-model/collections/full-claytons.md) is where Collections has been used to [generate full navigation using pages](https://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/). i.e. it creates static HTML representations of the Collections' navigation interface on a [normal Canvas page](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-are-Pages/ta-p/5) 
 
 	1. What does _Claytons_ Collections look like? What navigation elements are there?
 	2. How do you use _Claytons_ Collections to navigate a course's modules?

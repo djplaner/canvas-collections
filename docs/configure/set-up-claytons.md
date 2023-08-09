@@ -76,7 +76,7 @@ These tabs demonstrate one example of stepping through the four steps from the t
 
 === "4. Generate Claytons"
 
-    With everything configured, the final step is to generate the Claytons pages. This is done using the **Full "Claytons"** section of the collections configuration element. The main task is to choose [the _Navigation Bar Option_](../../reference/conceptual-model/representations/claytons/overview.md#navigation-bar-options) most appropriate.
+    With everything configured, the final step is to generate the Claytons pages. This is done using the **Full "Claytons"** section of the collections configuration element. The main task is to choose [the _Navigation Bar Option_](../reference/conceptual-model/representations/claytons/overview.md#navigation-bar-options) most appropriate.
 
     For the example, the aim is to emulate _live_ Collections. Making _Tabs_ the best navigation bar option.
 

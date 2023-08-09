@@ -2,7 +2,7 @@
 
 !!! question "How do you navigate _live_ Collections?"
 
-	[_Live Collections_](../../reference/conceptual-model/collections/live.md) is where Collections actively modifies the Canvas modules page as you are viewing it (it's a live modification).
+	_Live Collections_ is where Collections actively modifies the Canvas modules page as you are viewing it (it's a live modification).
 	
 	1. What does that look like? What are the navigation elements you see?
 	2. How do you use _live_ Collections to navigate a course's modules?
@@ -12,11 +12,11 @@
 
 === "What does it look like?"
 
-	The following image shows the navigation elements added to the Canvas Modules page by _Live_ Collections. See the [Navigation 101 page](../../getting-started/101/interface/navigation.md) for more details.
+	The following image shows the navigation elements added to the Canvas Modules page by _Live_ Collections. See the [Navigation 101 page](../getting-started/101/interface/navigation.md) for more details.
 
 	<figure markdown>
 	<figcaption>_Live_ Collections navigation elements</figcaption>
-	[![Screenshot of Canvas modules page with Collections' navigation elements](../../../getting-started/101/images/navigationInterfaceElements.png)](../../../getting-started/101/images/navigationInterfaceElements.png)
+	[![Screenshot of Canvas modules page with Collections' navigation elements](../getting-started/101/images/navigationInterfaceElements.png)](../getting-started/101/images/navigationInterfaceElements.png)
 	</figure>
 
 === "How do you switch between collections?"

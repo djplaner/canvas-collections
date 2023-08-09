@@ -28,7 +28,7 @@ Adapted from the [Collections landing page](../../index.md) the following descri
 
 === "Claytons"
 
-	All the previous examples on this page are for _live_ Collections. i.e. the Collections code [is installed](../install/types-pre-requisites.md) and is actively modifying how you are seeing your Canvas site's module page.  This may not always be possible.
+	All the previous examples on this page are for _live_ Collections. i.e. the Collections code [is installed](../install/how-to-install.md) and is actively modifying how you are seeing your Canvas site's module page.  This may not always be possible.
 
 	_Claytons_ Collections provides the ability to use the Collections representations on a static Canvas page. Using Claytons collections does **note** require the Collections code to be installed.
 	

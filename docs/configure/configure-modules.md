@@ -26,9 +26,7 @@ There are three typical steps in using the _Module configuration area_. These ar
 
     Collections will add to each Canvas module (just under the module title) a module configuration element. This is how you configure each module. 
     
-    The following animated image illustrates how to find it and what it looks like. The following steps will show more, but there's more information in [Collections 101](../../getting-started/101/interface/configuration.md) and the [Reference area](../../reference/overview.md)
-
-
+    The following animated image illustrates how to find it and what it looks like. The following steps will show more, but there's more information in [Collections 101](../getting-started/101/interface/configuration.md) and the [Reference area](../reference/overview.md)
 
     <figure markdown>
     <figcaption>Finding the module configuration areas</figcaption>
@@ -56,7 +54,7 @@ There are three typical steps in using the _Module configuration area_. These ar
     
         For example, _Collections Only_ representation ignores it. Some metadata is designed specifically for the _Cards_ representation.
 
-    The following animated image illustrates some examples of this transformation. The [Objects section in Reference](../../reference/conceptual-model/objects/overview.md) provides more detail on the metadata you can add and its effect on the representation. 
+    The following animated image illustrates some examples of this transformation. The [Objects section in Reference](../reference/conceptual-model/objects/overview.md) provides more detail on the metadata you can add and its effect on the representation. 
 
     <figure markdown>
     <figcaption>Adding metadata to modules</figcaption>

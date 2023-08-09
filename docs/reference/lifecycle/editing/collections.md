@@ -22,7 +22,7 @@ With _Edit on_ you can open the _Collections element_ to configure both
 
 	<figure markdown>
 	<figcaption>Canvas Collections element</figcaption>
-	[![Canvas Collections element](images/collectionsElement.png)](editing/images/collectionsElement.png)
+	[![Canvas Collections element](../editing/images/collectionsElement.png)](../editing/images/collectionsElement.png)
 	</figure>
 
 === "Title and version number"

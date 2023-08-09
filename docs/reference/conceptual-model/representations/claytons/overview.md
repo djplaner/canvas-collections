@@ -8,7 +8,7 @@ Canvas Collections is able to modify the default Canvas modules view to provide 
 
 === "'Live' Canvas Collections"
 
-    The standard "live" version of Canvas Collections requires that you have installed the Collections code - either [individually](../../../getting-started/install/individual.md) or [institutionally](../../../getting-started/install/institutional.md). This code runs and updated the Canvas modules view as you are watching (i.e. live). 
+    The standard "live" version of Canvas Collections requires that you have installed the Collections code - either [individually](../../../../getting-started/install/individual.md) or [institutionally](../../../../getting-started/install/institutional.md). This code runs and updated the Canvas modules view as you are watching (i.e. live). 
 
     If you or your students are unable to install the Collections code, then you can use the "Claytons" Collections to create a similar experience.
 

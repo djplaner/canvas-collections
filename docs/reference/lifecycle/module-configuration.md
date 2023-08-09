@@ -15,7 +15,7 @@
 
     <figure>
     <figcaption>The dates tab of the module configuration area</figcaption>
-    ![](pics/dateTab.png)  
+    ![](../../configure/pics/dateTab.png)  
     </figure>
 
 === "Banner"
@@ -28,7 +28,7 @@
 
     <figure markdown>
     <figcaption>The banner tab of the module configuration area</figcaption>
-    [![](bannerTab.png)](bannerTab.png)  
+    [![](../../reference/lifecycle/editing/images/bannerTab.png)](../../reference/lifecycle/editing/images/bannerTab.png)  
     </figure>
 
 === "Metadata"
@@ -37,5 +37,5 @@
 
     <figure markdown>
     <figcaption>The metadata tab of the module configuration area</figcaption>
-    [![](pics/metaBanner.png)](pics/metaBanner.png)  
+    [![](../../configure/pics/metaBanner.png)](../../configure/pics/metaBanner.png)  
     </figure>

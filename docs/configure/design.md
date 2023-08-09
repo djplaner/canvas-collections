@@ -45,11 +45,11 @@ The following explains the answers to these questions for the example course. Th
 	| Why? | <ul><li>Improve Canvas' organisation of course content</li> <li> Provide "card interface" functionality in Canvas. </li> <li> Platform for generative development.</li> </ul> |
 	| What? | <ul> <li> What is Canvas Collections? </li> <li> What is the student experience? </li> <li> What is the teacher experience?</li> <li> What functionality is provided? </li> </ul> |
 	| How? | <ul> <li>How does Canvas Collections work? </li> <li> How do you install Canvas Collections? </li> <li> How do you configure Canvas Collections? </li> <li> How do you design a Blackboard course migration? </li> </ul>  |
-	| Questions & Suggestions | <p>This collection ended up without any modules. The aim was to provide direct access to a padlet. This was achieved by using [the _include page_ feature](../../reference/conceptual-model/collections/existing-collections.md#include-page_1) of Collections. </p> |
+	| Questions & Suggestions | <p>This collection ended up without any modules. The aim was to provide direct access to a padlet. This was achieved by using [the _include page_ feature](../reference/conceptual-model/collections/existing-collections.md#include-page) of Collections. </p> |
 
 	!!! note "Basic configuration ready at this point"
 
-		If you're able to prepare a table something like the above, you're ready to [start configuring collections](../new/configure-collections.md).
+		If you're able to prepare a table something like the above, you're ready to [start configuring collections](../configure/configure-collections.md).
 
 
 	**Another approach - "object" categories**
@@ -72,7 +72,7 @@ The following explains the answers to these questions for the example course. Th
 
 	As a fairly simple course focused more on self-paced information access and not connected to a formal course the modules in the example course aren't representative of something formal like a week, lecture, tutorial, theme.
 
-	Collections provides methods to [add extra information about modules](../../reference/conceptual-model/objects/overview.md). The question here is what type of information is necessary for your course. The answer to this question will be driven by your design intent and context.
+	Collections provides methods to [add extra information about modules](../reference/conceptual-model/objects/overview.md). The question here is what type of information is necessary for your course. The answer to this question will be driven by your design intent and context.
 
 	For example, the figure below is an annotated screenshot of the first three "objects" in the _Why?_ collection from the example course. The following table provides a description of the information displayed.
 
@@ -85,14 +85,14 @@ The following explains the answers to these questions for the example course. Th
 
 	<figure markdown>
 	<figcaption>Annotated screenshot of the first three "objects" in the _Why?_ collection from the example course.</figcaption>
-	[![](../images/objectsExample.png)](../images/objectsExample.png)
+	[![](./images/objectsExample.png)](./images/objectsExample.png)
 	</figure>
 
 === "What representation(s)?"
 
 	!!! question "What representation(s) do you want to use for the objects/activities?"
 
-	Collections provides a growing [list of representations](../../reference/conceptual-model/representations/overview.md) for collections. Representations 
+		Collections provides a growing [list of representations](../reference/conceptual-model/representations/overview.md) for collections. Representations 
 	
 	- provide an alternative visualisation to a collection's list of modules;
 	- can be quickly changed at any time without losing any information; and,
