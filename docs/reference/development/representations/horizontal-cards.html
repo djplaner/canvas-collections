@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Horizontal Cards</title>
+</head>
+
+<body>
+
+    <h3>Simple div of divs with floats - implementing three columns</h3>
+
+    <div class="horizontal-card-row"
+        style="width:90%;border:1px solid #ccc; box-shadow: rgba(0, 0, 0, 0.35) 0px 0.4rem 1rem;border-radius:1rem;padding:1rem;margin:1rem;overflow:hidden;">
+
+        <div class="horizontal-card-date-normal" style="float:left; padding-right:1rem;">
+            <div class="cc-card-date svelte-1n5uhlh"
+                style="border-radius: 0.25rem;overflow:hidden;width:5rem;display:block;background-color:#f5f5f5;">
+                <div class="cc-card-date-dual-day svelte-1n5uhlh"
+                    style="color:white;background-color:black;font-size:0.75rem;padding-top:0.25rem;padding-bottom:0.25rem;border-color:black;border-left-width:1px;border-right-width:1px;border-top-width:1px">
+                    <div class="cc-card-date-day-from svelte-1n5uhlh">Mon</div>
+                    <div class="cc-card-date-day-to svelte-1n5uhlh">Fri</div>
+                </div>
+                <div class="cc-card-date-dual-month svelte-1n5uhlh">
+                    <div class="cc-card-date-month-from svelte-1n5uhlh">Jul</div>
+                    <div class="cc-card-date-month-to svelte-1n5uhlh">Jul</div>
+                </div>
+                <div class="cc-card-date-dual-date svelte-1n5uhlh">
+                    <div class="cc-card-date-date-from svelte-1n5uhlh">10</div>
+                    <div class="cc-card-date-date-to svelte-1n5uhlh">28</div>
+                </div>
+            </div>
+        </div>
+        <div class="horizontal-card-image" style="float:right; padding-left:1rem; text-align: right; width:30%;">
+            <img role="presentation" src="https://www.memecreator.org/static/images/memes/4983581.jpg"
+                data-moduleid="$1"
+                alt="Image representing '🤔 Reason 1: Improve Canvas\' organisation of course content'"
+                style="width:100%">
+        </div>
+        <div class="content">
+            <div class="cc-card-label svelte-1bswwix width:100%">
+                <span class="cc-card-label svelte-1bswwix">🤔 Reason 1</span>
+                <h3 class="cc-card-title svelte-1bswwix" data-moduleid="1"><a
+                        href="http://canvas.docker/courses/1/modules#module_1">Improve Canvas' organisation of course
+                        content</a>
+                </h3>
+            </div>
+
+            <div class="horizontal-card-description">
+                What are the limitations of Canvas' module view? How does Collections help?
+
+                <div class="claytons-card-engage" >
+                    <div class="claytons-card-engage-button"
+                        style="margin-top:2rem; margin-right: 2rem; float: right; color: rgb(30, 58, 138); border-radius: 0.25rem; padding: 0.5rem 1rem; border: 1px solid rgb(30, 58, 138);">
+                        <a href="http://canvas.docker/courses/1/modules#module_1" class="claytons-gu-engage"
+                            style="text-decoration: none;">Engage</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!--            <div class="claytons-card-footer" style="height: 4rem; position: relative;"> -->
+            <!--            </div> -->
+        </div>
+    </div>
+
+    <h3>Two rows of divs with label and title on top</h3>
+
+    <div class="horizontal-card-row"
+        style="width:90%;box-shadow: rgba(0, 0, 0, 0.35) 0px 0.4rem 1rem;border-radius:0.25rem;padding:1rem;margin:1rem;overflow:hidden;">
+
+        <div class="cc-card-label svelte-1bswwix width:100%">
+            <span class="cc-card-label svelte-1bswwix">🤔 Reason 1</span>
+            <h3 class="cc-card-title svelte-1bswwix" data-moduleid="1">Improve Canvas'
+                organisation of course
+                content
+            </h3>
+        </div>
+        <div class="content-row">
+            <div class="horizontal-card-date" style="float:left; padding-right:1rem;">
+                <div class="cc-card-date svelte-1n5uhlh"
+                    style="border-radius: 0.25rem;overflow:hidden;width:5rem;display:block;background-color:#f5f5f5;">
+                    <div class="cc-card-date-dual-day svelte-1n5uhlh"
+                        style="color:white;background-color:black;font-size:0.75rem;padding-top:0.25rem;padding-bottom:0.25rem;border-color:black;border-left-width:1px;border-right-width:1px;border-top-width:1px">
+                        <div class="cc-card-date-day-from svelte-1n5uhlh">Mon</div>
+                        <div class="cc-card-date-day-to svelte-1n5uhlh">Fri</div>
+                    </div>
+                    <div class="cc-card-date-dual-month svelte-1n5uhlh">
+                        <div class="cc-card-date-month-from svelte-1n5uhlh">Jul</div>
+                        <div class="cc-card-date-month-to svelte-1n5uhlh">Jul</div>
+                    </div>
+                    <div class="cc-card-date-dual-date svelte-1n5uhlh">
+                        <div class="cc-card-date-date-from svelte-1n5uhlh">10</div>
+                        <div class="cc-card-date-date-to svelte-1n5uhlh">28</div>
+                    </div>
+                </div>
+            </div>
+            <div class="horizontal-card-image" style="float:right; padding-left:1rem; text-align: right; width:30%;">
+                <img role="presentation" src="https://www.memecreator.org/static/images/memes/4983581.jpg"
+                    data-moduleid="$1"
+                    alt="Image representing '🤔 Reason 1: Improve Canvas\' organisation of course content'"
+                    style="width:100%">
+            </div>
+            <div class="content">
+                <div class="horizontal-card-description">
+                    What are the limitations of Canvas' module view? How does Collections help?
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Two rows of divs with label, title and date on top</h3>
+
+    <div class="horizontal-card-row"
+        style="width:90%;box-shadow: rgba(0, 0, 0, 0.35) 0px 0.4rem 1rem;border-radius:0.25rem;padding:1rem;margin:1rem;overflow:hidden;">
+
+        <div class="top-row">
+            <div class="horizontal-card-date" style="float:left; padding-right:1rem;">
+                <div class="cc-card-date svelte-1n5uhlh"
+                    style="border-radius: 0.25rem;overflow:hidden;width:5rem;display:block;background-color:#f5f5f5;">
+                    <div class="cc-card-date-dual-day svelte-1n5uhlh"
+                        style="color:white;background-color:black;font-size:0.75rem;padding-top:0.25rem;padding-bottom:0.25rem;border-color:black;border-left-width:1px;border-right-width:1px;border-top-width:1px">
+                        <div class="cc-card-date-day-from svelte-1n5uhlh">Mon</div>
+                        <div class="cc-card-date-day-to svelte-1n5uhlh">Fri</div>
+                    </div>
+                    <div class="cc-card-date-dual-month svelte-1n5uhlh">
+                        <div class="cc-card-date-month-from svelte-1n5uhlh">Jul</div>
+                        <div class="cc-card-date-month-to svelte-1n5uhlh">Jul</div>
+                    </div>
+                    <div class="cc-card-date-dual-date svelte-1n5uhlh">
+                        <div class="cc-card-date-date-from svelte-1n5uhlh">10</div>
+                        <div class="cc-card-date-date-to svelte-1n5uhlh">28</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="cc-card-label svelte-1bswwix width:100%">
+                <span class="cc-card-label svelte-1bswwix">🤔 Reason 1</span>
+                <h3 class="cc-card-title svelte-1bswwix" data-moduleid="1">Improve Canvas'
+                    organisation of course
+                    content
+                </h3>
+            </div>
+        </div>
+        <div class="content-row">
+            <div class="horizontal-card-image" style="float:right; padding-left:1rem; text-align: right; width:30%;">
+                <img role="presentation" src="https://www.memecreator.org/static/images/memes/4983581.jpg"
+                    data-moduleid="$1"
+                    alt="Image representing '🤔 Reason 1: Improve Canvas\' organisation of course content'"
+                    style="width:100%">
+            </div>
+            <div class="content">
+                <div class="horizontal-card-description">
+                    What are the limitations of Canvas' module view? How does Collections help?
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <h3>Div of divs using grid</h3>
+
+    <p>Challenge with the grid is influencing the width of the elements across multiple media sizes - not sure it can be
+        done inline?</p>
+
+    <div class="horizontal-card-row"
+        style="width:90%;box-shadow: rgba(0, 0, 0, 0.35) 0px 0.4rem 1rem;border-radius:0.25rem;padding:1rem;margin:1rem;overflow:hidden;display:grid;row-gap:0.5rem;column-gap:0.5rem;grid-template-columns: repeat(auto-fit,minmax(13rem,1fr))">
+
+        <div class="horizontal-card-date" style="padding-right:1rem;">
+            <div class="cc-card-date svelte-1n5uhlh"
+                style="border-radius: 0.25rem;overflow:hidden;width:5rem;display:block;background-color:#f5f5f5;">
+                <div class="cc-card-date-dual-day svelte-1n5uhlh"
+                    style="color:white;background-color:black;font-size:0.75rem;padding-top:0.25rem;padding-bottom:0.25rem;border-color:black;border-left-width:1px;border-right-width:1px;border-top-width:1px">
+                    <div class="cc-card-date-day-from svelte-1n5uhlh">Mon</div>
+                    <div class="cc-card-date-day-to svelte-1n5uhlh">Fri</div>
+                </div>
+                <div class="cc-card-date-dual-month svelte-1n5uhlh">
+                    <div class="cc-card-date-month-from svelte-1n5uhlh">Jul</div>
+                    <div class="cc-card-date-month-to svelte-1n5uhlh">Jul</div>
+                </div>
+                <div class="cc-card-date-dual-date svelte-1n5uhlh">
+                    <div class="cc-card-date-date-from svelte-1n5uhlh">10</div>
+                    <div class="cc-card-date-date-to svelte-1n5uhlh">28</div>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="cc-card-label svelte-1bswwix">
+                <span class="cc-card-label svelte-1bswwix">🤔 Reason 1</span>
+                <h3 class="cc-card-title svelte-1bswwix" data-moduleid="1">Improve Canvas' organisation of course
+                    content</h3>
+            </div>
+            <div class="horizontal-card-description">
+                What are the limitations of Canvas' module view? How does Collections help?
+            </div>
+        </div>
+        <div class="horizontal-card-image" style="padding-left:1rem; text-align: right">
+            <img role="presentation" src="https://www.memecreator.org/static/images/memes/4983581.jpg"
+                data-moduleid="$1"
+                alt="Image representing '🤔 Reason 1: Improve Canvas\' organisation of course content'"
+                style="width:50%">
+        </div>
+    </div>
+
+
+
+
+
+</body>
+
+</html>

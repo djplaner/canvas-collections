@@ -150,8 +150,11 @@ nav:
         - Failed to turn editing on: how-tos/problems/failed-to-turn-editing-on.md
       - Development:
         - Component Structure: reference/development/component-structure.md
+        - Data Structures: reference/development/data-structures.md
         - Local development: 
           - Overview: reference/development/local-development/overview.md
+        - Representations:
+          - Develop a representation: reference/development/representations/representation-development.md
   - 'Community': 
      - Collections Community: community/collections-community.md
   - 'About':

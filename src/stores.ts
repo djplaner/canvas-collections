@@ -21,6 +21,7 @@ import { writable } from "svelte/store";
 import GriffithCards from "./components/Representations/GriffithCards.svelte";
 import CollectionOnly from "./components/Representations/CollectionOnly.svelte";
 import AssessmentTable from "./components/Representations/AssessmentTable.svelte";
+import HorizontalCards from "./components/Representations/HorizontalCards.svelte";
 //import CollectionsTable from "./components/Representations/CollectionsTable.svelte";
 
 // currently collectionStore will contain the parsed collections JSON
@@ -57,6 +58,7 @@ export const configStore = writable({
 export const representationsStore = writable({
 	"GriffithCards" : GriffithCards, "CollectionOnly": CollectionOnly, 
 	"AssessmentTable" : AssessmentTable,
+    "HorizontalCards": HorizontalCards,
 	// CollectionsTable is very alpha, removed for now
 //	"CollectionsTable" : CollectionsTable
 })
