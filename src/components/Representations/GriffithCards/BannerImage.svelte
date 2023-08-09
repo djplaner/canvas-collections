@@ -48,7 +48,7 @@
     )}"
     src={$collectionsStore["MODULES"][moduleId].image}
     data-moduleid="${moduleId}"
-    alt="Image representing '{$collectionsStore['MODULES'][
+    alt="Card image for the module named: '{$collectionsStore['MODULES'][
       moduleId
     ].name.replace(/(["'])/g, '\\$1')}
 	'"
@@ -61,7 +61,7 @@
     style="height:10rem;width:100%"
     src={$collectionsStore["MODULES"][moduleId].image}
     data-moduleid="${moduleId}"
-    alt="Image representing '{$collectionsStore['MODULES'][
+    alt="Card image for the module named: '{$collectionsStore['MODULES'][
       moduleId
     ].name.replace(/(["'])/g, '\\$1')}
 	'"
@@ -71,7 +71,7 @@
     class="cc-card-image"
     src="https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png"
     data-moduleid={moduleId}
-    alt="Image representing '{$collectionsStore['MODULES'][
+    alt="Card image for the module named: '{$collectionsStore['MODULES'][
       moduleId
     ].name.replace(/(["'])/g, '\\$1')}'"
   />
