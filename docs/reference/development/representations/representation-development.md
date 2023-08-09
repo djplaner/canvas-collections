@@ -19,7 +19,18 @@
 
 # Developing a new representation
 
-An example of a suggested process for developing a new representation using the initial development of the _HorizontalCard_ representation as an example
+An example of one process for developing a new representation. Illustrated using the development of [the _HorizontalCards_ representation](../../conceptual-model/representations/overview.md#horizontalcards) as an example. Steps summarised in the following table and expanded below.
+
+Once finished your representation, you may want to consider contributing it back to [the Collections community](../../../community/collections-community.md)
+
+| Step | Description |
+| --- | --- |
+| [1. Design the representation](#1-design-the-representation) | Have some idea of the aim and what it will look like using standard HTML design tools. Don't go anywhere near Collections to start. |
+| [2. Test in the RCE](#2-test-in-the-rce) | Especially if you wish to implement a Claytons version, which is restricted to the list of HTML/CSS allowed by the Canvas RCE. |
+| [3. Add the skeleton representation component](#3-add-the-skeleton-representation-component) | Modify and re-build the Collections source code to have a version of your representation that doesn't yet do anything. |
+| [4. Refine it](#4-refine-it) | Step through the process of turning the skeleton component into something functional |
+| [5. Add the Claytons version](#5-add-the-claytons-version) | Modify the original work to provide the option of a purpose designed Claytons version |
+| [6. Test it](#6-test-it) | The on-going process to test and refine your representation |
 
 __maybe give overview of the steps, in a table??__
 
@@ -47,7 +58,7 @@ If you're lucky you are (have access to) a designer. Saving that borrow inspirat
 Here's the [initial set of designs of the _HorizontalCard_ representation](horizontal-cards.html).  Given the aim to be Claytons friendly, the initial designs have focused on that and hence don't take full advantage of some CSS capabilities. The grid format appears somewhat problematic. Hence starting with the first example.
 
 
-## 2. Test the Claytons in the RCE
+## 2. Test in the RCE
 
 Given the RCE only [allows some HTML/CSS](https://community.canvaslms.com/t5/Canvas-Resource-Documents/Canvas-HTML-Editor-Allowlist/ta-p/387066) a manual test is required. As shown below `box-shadow` is not one of the allowed style properties, hence no nice drop shadow when shown in the RCE.
 
