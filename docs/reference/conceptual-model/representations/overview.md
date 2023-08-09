@@ -1,6 +1,6 @@
 # Representations
 
-_Representations_ control how an individual collection is displayed.  Currently available representations are summarised in the table and the demonstrations below. Representations for a given collection can be changed at any time. New representations can be added.
+_Representations_ control how an individual collection is displayed.  Currently available representations are summarised in the table and the demonstrations below. Representations for a given collection can be changed at any time. New representations can be [developed and added](../../development/representations/representation-development.md).
 
 ## Current representations
 
@@ -89,8 +89,8 @@ As shown below, the _HorizontalCards_ representation is related to [_GriffithCar
 2. _HorizontalCards_ does not require any external CSS when used in Claytons collections.
 
 <figure markdown>
-<figcaption>Collections enabled modules page showing the assessment table representation</figcaption>
-<sl-animated-image src="../pics/animatedAssessmentTable.gif" alt="Collections enabled modules page showing the assessment table representation" />
+<figcaption>Collections enabled modules page showing the HorizontalCards representation</figcaption>
+<sl-animated-image src="../pics/animatedHorizontalCards.gif" alt="Collections enabled modules page showing the HorizontalCards representation" />
 </figure>
 
 
