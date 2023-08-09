@@ -9,8 +9,8 @@ _Representations_ control how an individual collection is displayed.  Currently 
 | [CollectionsOnly](#collections-only) | The bare minimum representation. The [vanilla Canvas Modules page](#vanilla-canvas) is modified by adding: 1) the Collections navigation bar; 2) any [include pages](../collections/overview.md#include-page); and, 3) showing only modules belonging to the current collection. |
 | [GriffithCards](#griffithcards) | Builds on _CollectionsOnly_ by adding a card component for each module belonging to the current collection. The card component includes a number of additional features to transform the generic Canvas module into a design and context specific object. |
 | [AssessmentTable](#assessmenttable) | Rather than a card, each module is represented by a row in a table. The table is designed to summarises assessment for a course with columns for weighting and learning outcomes. |
+| [HorizontalCards](#horizontalcards) | A variation on GriffithCards where there is a single column of horizontal cards. One for each module. Specially designed to function in Claytons mode without any external CSS. _Early release version_ |
 
-## Different Representations
 ### Vanilla Canvas
 
 The vanilla [Canvas Modules page](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-are-Modules/ta-p/6) shows a linear list of all the modules in a course (for students all the _published_ modules). The following animated image shows the Modules page for a sample Canvas course containing 13 modules. This same course is used in the demonstrations below.
@@ -81,6 +81,20 @@ The following animated image shows the same course as above, but using the _Asse
 </figure>
 
 
+### HorizontalCards
+
+As shown below, the _HorizontalCards_ representation is related to [_GriffithCards_](#griffithcards). One card per module, often with very similar components. The main differences being 
+
+1. The cards are displayed one per row; and,
+2. _HorizontalCards_ does not require any external CSS when used in Claytons collections.
+
+<figure markdown>
+<figcaption>Collections enabled modules page showing the assessment table representation</figcaption>
+<sl-animated-image src="../pics/animatedAssessmentTable.gif" alt="Collections enabled modules page showing the assessment table representation" />
+</figure>
+
+
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
 <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>
+

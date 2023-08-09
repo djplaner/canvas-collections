@@ -179,6 +179,8 @@ Some of the features used by representations are more complex than simple variab
 
 The following table summarises the additional complexities required by `HorizontalCards` and one by an existing Collections feature ([FYI modules](../../conceptual-model/objects/general.md#fyi-objects)). Due to its design it borrows heavily from the _GriffithCards_ representation. With a different representation you may be creating your own components.
 
+Yep, it gets a bit complicated here. But we end up with the figure below.  
+
 | Value required | Existing Value | Additional complexity |
 | --- | --- | --- |
 | Module date | A dual date from July 10 to 28 | [`DateWidget` component](https://github.com/djplaner/canvas-collections/blob/main/src/components/Representations/GriffithCards/DateWidget.svelte)|
@@ -186,9 +188,75 @@ The following table summarises the additional complexities required by `Horizont
 | Engage button | Button visible with `Engage` | More complex conditional Svelte statements to show (or not) the button as configured |
 | [FYI objects](../../conceptual-model/objects/general.md#fyi-objects) | n/a | If a module is an FYI object, display a message and don't link to it | 
 
-### 4.4 The more difficult work
+The following figure demonstrates the following "complications" completed:
+
+- When viewed by a teacher, any unpublished module is labelled unpublished (invisible to students).
+- Banners can include images or iframes.
+- If not date is configured, the date widget is empty.
+- FYI cards get messages and no link to the module (for students an FYI module will normally be invisible/unpublished)
+
+
+<figure markdown>
+<figcaption>HorizontalCards showing off additional complications completed</figcaption>
+![HorizontalCards showing off additional complications completed](images/complicationsDone.png)
+</figure>
+
 
 ## 5. Add the Claytons version
 
+Representations are generally expected to support [the Claytons mode](../../conceptual-model/representations/claytons/overview.md) of Collections. The ability to update a Canvas page with a static representation of one or more collections. A static representation that plays nicely with the Canvas RCE. Either by relying on external CSS or limiting itself to the HTML/CSS supported by the RCE.
+
+Supporting Claytons does require some additional work from people writing representations. In summary, the work involves creating another collection of HTML/Svelte commands grouped under a ```{if claytons}``` statement.
+
+Depending on the design of your representation you may not need a Claytons Version. A simple way to check is to 
+
+1. Create a Claytons version using your representation.
+2. Ensure you turn off the Collections code and CSS (these provide some CSS and thus don't provide a good test.)
+
+The following demonstrates the current state of the Claytons version of _HorizontalCards_.  Visible problems appear to be
+
+- The _engage_ buttons placement is off.
+- The _FYI_ banner message has lost its styling.
+- The dates have no CSS applied.
+
+    Due to the dates being implemented using the ```DateWidget```. Which currently does not actively support Claytons.
+- The banners height is not consistent.
+
+    This is due to the banner's relying on the ```object-fit``` CSS property, which is not supported by the RCE.
+
+To address these is likely to require work on a distinctly different collection of HTML than the live representation. Hence the first step is often to...
+
+<figure markdown>
+<figcaption>Claytons version of HorizontalCards - no updates</figcaption>
+![Claytons version of HorizontalCards - no updates](images/vanillaClaytons.png)
+</figure>
+
+### 5.1 Create the ```{if ! claytons}...{:else}...{/if}```
+
+The boolean ```claytons``` variable is available in every representation. If true the user has requested a Claytons version. One way to provide this is to have a separate collection of HTML/Svelte specifically for Claytons.
+
+This can be started by creating the above Svelte if structure. If ```claytons``` is false then the live existing HTML/CSS is used. If it is true, then the newly developed claytons HTML/CSS is used.
+
+### 5.2 Make the necessary changes
+
+The changes necessary for _HorizontalCards_ includes
+
+- Additional inline styling for the FYI card notice.
+- Engage button placement left alone as no good, quick solution obvious.
+- Update the date component to support Claytons
+- Add a fixed height to each card
+
+Giving the figure below.
+
+!!! tip "Juice CSS Inline is helpful"
+
+    The main requirement for Claytons is generating [inline CSS](https://www.freecodecamp.org/news/inline-style-in-html/). The [Juice CSS Inline tool](https://automattic.github.io/juice/) has been helpful.
+
+<figure markdown>
+<figcaption>First draft of the HorizontalCards Claytons version</figcaption>
+![First draft of the HorizontalCards Claytons version](images/firstDraft.png)
+</figure>
 
 ## 6. Test it
+
+There are quite a few moving parts. First with the representation and Collections itself, but even more so with the wide variety of considerations for a representation (e.g. accessibility, responsive design etc.)

@@ -24,7 +24,7 @@
    */
 
   import { collectionsStore, modulesStore, configStore } from "../../stores";
-  import { getModuleUrl, deLabelModuleName } from "./representationSupport";
+  import { getModuleUrl, deLabelModuleName, isUnPublishedUnallocated} from "./representationSupport";
   import BannerIframe from "./GriffithCards/BannerIframe.svelte";
   import BannerColour from "./GriffithCards/BannerColour.svelte";
   import BannerImage from "./GriffithCards/BannerImage.svelte";
@@ -35,10 +35,7 @@
 
   export let collection: string;
   //  export let calendar: any;
-  export let claytons: boolean;
-  if (!claytons) {
-    claytons = false;
-  }
+  export let claytons: boolean = false;
 
   // early test (kludge) for shoelace cards
   // uncomment the shoelace import above
@@ -102,7 +99,7 @@
     }
   }
 
-  /**
+    /**
    * @function isUnPublishedUnallocated
    * @param moduleId - of the current module
    * @returns true if the module is unpublished or unallocated & if that information
@@ -113,7 +110,7 @@
    * - only staff (editMode) should see unpublished/unallocated messages
    * - students (!editMode) should not see unpublished/unallocated messages
    */
-  function isUnPublishedUnallocated(moduleId) {
+/*  function isUnPublishedUnallocated(moduleId) {
     if (!$configStore["editMode"]) {
       return false;
     }
@@ -125,7 +122,9 @@
 
     // is it unallocated
     return $collectionsStore["MODULES"][moduleId].collection !== collection;
-  }
+  } */
+
+
 
   // HELP tooltips
 
@@ -385,7 +384,7 @@
                   </div>
                 {/if}
               {/if}
-              {#if isUnPublishedUnallocated(theModule.id)}
+              {#if isUnPublishedUnallocated(theModule.id, collection)}
                 <div class="cc-card-published">
                   {#if !$collectionsStore["MODULES"][theModule.id].published}
                     Unpublished.
@@ -701,61 +700,6 @@
     width: 50%;
   }
 
-  .cc-card-date-date {
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    border-left-width: 1px;
-    border-bottom-right-radius: 0.25rem;
-    border-bottom-left-radius: 0.25rem;
-    border-color: black;
-    font-size: 0.9rem;
-    font-weight: bold;
-    line-height: 1rem;
-  }
-
-  .cc-card-date-dual-date {
-    text-align: center;
-    padding-top: 0.25rem;
-    align-items: stretch;
-    display: flex;
-    border-left-width: 1px;
-    border-right-width: 1px;
-    border-bottom-right-radius: 0.25rem;
-    border-bottom-left-radius: 0.25rem;
-    border-color: black;
-  }
-
-  .cc-card-date-date-from {
-    width: 50%;
-  }
-
-  .cc-card-date-date-to {
-    width: 50%;
-  }
-
-  .cc-card-date-time-from {
-    width: 50%;
-  }
-  .cc-card-date-time-to {
-    width: 50%;
-  }
-
-  .cc-card-date-day {
-    font-size: 0.7rem;
-  }
-
-  .cc-card-date-day-from {
-    width: 50%;
-  }
-  .cc-card-date-day-to {
-    width: 50%;
-  }
-
-  .cc-card-date-dual-day {
-    display: flex;
-    font-size: 0.7rem;
-  }
-
   .cc-progress {
     float: right;
   }
@@ -763,11 +707,11 @@
   .cc-card-fyi {
     position: absolute;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.75);
-    color: white;
+    background: #ccc;
+    color:black;
     width: 100%;
     padding: 0.25rem;
-    font-size: x-small;
+    font-size: 0.8rem;
     text-align: center;
   }
 
@@ -782,12 +726,6 @@
     padding-bottom: 0.25rem;
     text-align: center;
     width: 100%;
-  }
-
-  .cc-coming-soon-message {
-    font-size: 0.75rem;
-    padding: 0.5em;
-    background-color: #feee88;
   }
 
   .gu-engage {

@@ -93,10 +93,6 @@
     }
   }
 
-  /**
- * Does collection need to be bound below?
-  bind:collection={collectionName}
-*/
 </script>
 
 <svelte:component

@@ -501,6 +501,36 @@ export function getModuleUrl(moduleId: Number) {
   return docUrl.toString();
 }
 
+  /**
+   * @function isUnPublishedUnallocated
+   * @param moduleId - of the current module
+   * @param collection - name of the current collection
+   * @returns true if the module is unpublished or unallocated & if that information
+   * should be shown.  In particular, is used to figure out if to show a small
+   * message on a card about unpublished/unallocated
+   *
+   * Conditions include
+   * - only staff (editMode) should see unpublished/unallocated messages
+   * - students (!editMode) should not see unpublished/unallocated messages
+   */
+  export function isUnPublishedUnallocated(moduleId, collection) {
+    const config = get(configStore);
+    const collectionStore = get(collectionsStore);
+
+    if (!config["editMode"]) {
+      return false;
+    }
+
+    // is it unpublished
+    if (!collectionStore["MODULES"][moduleId].published) {
+      return true;
+    }
+
+    // is it unallocated
+    return collectionStore["MODULES"][moduleId].collection !== collection;
+  }
+
+
 /**
  * @function deLabelModuleName
  * @param module - module object
