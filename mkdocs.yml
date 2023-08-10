@@ -134,8 +134,7 @@ nav:
 #          - Visibility: reference/lifecycle/visibility/overview.md
           - Existing collections: reference/conceptual-model/collections/existing-collections.md
           - Add a new collection: reference/conceptual-model/collections/add-a-new-collection.md
-        - Representations:
-          - Representations: reference/conceptual-model/representations/overview.md
+        - Representations: reference/conceptual-model/representations/overview.md
         - Objects (Modules):
           - Objects: reference/conceptual-model/objects/overview.md
           - General: reference/conceptual-model/objects/general.md
@@ -151,6 +150,7 @@ nav:
       - Development:
         - Component Structure: reference/development/component-structure.md
         - Data Structures: reference/development/data-structures.md
+        - Configuration Page: reference/development/config-format.md
         - Local development: 
           - Overview: reference/development/local-development/overview.md
         - Representations:

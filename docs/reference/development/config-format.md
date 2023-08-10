@@ -1,20 +1,25 @@
-# Format of the Canvas Collections configuration file
+# Canvas Collections configuration page
 
-The configuration details of Canvas Collections for a specific course is stored in a JSON file (call `cc_config.json`) placed in the Canvas course's Files area. 
+:under_construction: This page is under construction. It is intended to provide a reference for the JSON configuration file used by Canvas Collections.
 
-Eventually, the Canvas Collections configuration interface will allow appropriate people to create and modify the configuration. 
+## Where
 
-> **Work in Progress**: :construction: The format of the configuration file is currently under development. Some likely changes outlined below. 
+The configuration details of Canvas Collections for a specific course is stored in a Canvas page called ```Canvas Collections Configuration```. It contains a ```div``` element with the class ```cc_json``` which contains a JSON data structure containing the Collections configuration.
 
-## About JSON
+<figure markdown>
+<figcaption>Example "Canvas Collections Configuration" page</figcaption>
+![Example "Canvas Collections Configuration" page](images/configurationPage.png)
+</figure>
+
+
+## Introducting the Collections configuration JSON
+
+### About JSON
 
 - explain about JSON file format - link to an explanation
 - explain about json editors
 
-## How to modify Canvas Collections configuration
-
-
-## Top level attributes
+### Top level attributes
 
 The configuration file defines a number of attributes which control how Canvas Collections behaves. Currently the top level attributes include:
 

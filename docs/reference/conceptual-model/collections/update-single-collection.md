@@ -8,7 +8,7 @@ Each collection's area in [the _Existing Collections_ area](../../collections/ov
 
 In the following image the _Course Content_ collection has been configured with an _output page_ with the name _Home Page_.
 
-![](pics/outputPage.png)  
+![](../representations/claytons/pics/outputPage.png)  
 
 ### Update a "single" collection 
 
@@ -21,4 +21,4 @@ The following animated image demonstrates the process, including these steps:
 3. Click the _update_ button and observe the alert generated informing of the updates successful completion.
 4. Going back to the Canvas page and reloading it to see that the _Why?_ collection's representation has been added to the bottom of the page.
 
-![](pics/animatedUpdatePage.gif)
+![](../representations/claytons/pics/animatedUpdatePage.gif)
