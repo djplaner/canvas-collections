@@ -22,3 +22,4 @@ Canvas Collections is combination of JavaScript and CSS that modifies the Canvas
 2. Learn [how to install it](install/how-to-install.md).
 
 
+

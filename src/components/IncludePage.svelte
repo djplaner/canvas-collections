@@ -50,7 +50,7 @@
     ) {
       pageName = $collectionsStore["COLLECTIONS"][collectionName].includePage;
       if (pageName !== "") {
-        console.log(`getting ${pageName} for ${collectionName}`);
+        getPageName( pageName, $configStore["courseId"], addIncludePage);
       } else {
         pageContent = "";
       }
