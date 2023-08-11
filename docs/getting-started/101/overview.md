@@ -2,13 +2,16 @@
 
 !!! tip "The difference between _**C**ollections_ and _**c**ollections_"
 
-	The use of upper or lower case C is deliberate (and perhaps a touch patchy) in this site, the difference is
+	The use of upper or lower case C is deliberate, the difference is
 
 	- **C**ollections - refers to _Canvas Collections_, the entire tool.
 	- **c**ollections - refers to one or more _collection_ of Canvas modules you create and manage using Collections (the tool).
 
-To learn more about Canvas Collections, learn about
+The following table summarises the introduction Collections 101 provides.
 
-- the [main concepts](concepts.md) that make up Collections;
-- how Collections' [navigation](./interface/navigation.md) and [configuration](./interface/configuration.md) interfaces work; and
-- the [why, what, and how](why-what-how.md) of Collections.
+| Page | Description |
+| --- | --- |
+| [Concepts](concepts.md) |  Introduces the four core concepts for Collections: Canvas Modules (the starting place); collections (add structure); representations (add visuals); objects (add context); and, Claytons (static) Collections |
+| [Navigate](./interface/navigation.md) | Explain how you navigate the Canvas Modules page once Collections is installed. Covers both "_live_" and "_Claytons_" navigation |
+| [Configure](./interface/configuration.md) | Explain how you configure a course to use Collections | interfaces work |
+<!--  | - the [why, what, and how](why-what-how.md) of Collections. -->

@@ -8,6 +8,8 @@ Adapted from the [Collections landing page](../../index.md) the following descri
 
 	<div class="div-iframe"><iframe class="responsive-iframe" src="https://www.youtube.com/embed/OOvlyd--JkM" title="YouTube video player" frameborder="0" allowfullscreen></iframe></div>
 
+	 <div class="div-iframe"><iframe class="responsive-iframe" src="https://www.youtube-nocookie.com/embed/jStWBra8Nak" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe> </div> </div>
+
 === "Collections"
 
 	"Collections" is the ability to purposefully group related modules together. For example, this course's 11 modules are now grouped into three, design specific <em>collections</em>. The collection's names - _Why?_, _What?_, and _How?_ - are designed to help students navigate between <em>collections</em>.  </p> <p>Within the Canvas community, this <a href="https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383">is a long requested feature (a 2016 request)</a>.  </p> 

@@ -24,3 +24,29 @@ This 8m50s video provides an introduction to the why, what and how of Canvas Col
 <div class="div-iframe">
 <iframe class="responsive-iframe" src="https://www.youtube.com/embed/_oSmPTUOhh8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
+
+
+Introduce Canvas Collections 
+- Why / What and How
+
+Process 
+
+Intro
+- home page
+- Explain high level description - replace this with home page
+
+
+Demonstration
+
+- Vanilla modules -- can do better explanation
+
+Move onto Canvas Collections
+
+Navigate
+
+- Show the course
+
+
+Configuration
+
+- Edit on and explain
