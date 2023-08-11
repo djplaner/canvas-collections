@@ -1,6 +1,6 @@
 # Install Canvas Collections
 
-There are two ways to install Canvas Collections: individual and institutional. Each intended for a different context. Each with its own advantages and disadvantages. Select the one that best suits your need.
+Depending on your need and access, you must decided between two ways to install Canvas Collections: [individual](./individual.md) or [institutional](./institutional.md). The following table explains the differences.
 
 | | Individual | Institutional |
 | ---- | ---- | ---- |

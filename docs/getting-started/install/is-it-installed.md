@@ -1,6 +1,8 @@
-# Is Collections working? 
+# Is Collections installed? 
 
-For Canvas Collections to work, you need to 
+## Pre-requisites for Collections
+
+For you to configure a course to use Canvas Collections you need to 
 
 1. Have [installed Canvas Collections](how-to-install.md)
 2. Have a [teacher](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-is-the-Teacher-role/ta-p/86) or [designer](https://community.canvaslms.com/t5/Canvas-Basics-Guide/What-is-the-Designer-role/ta-p/14) role in a Canvas course.
@@ -11,7 +13,7 @@ For Canvas Collections to work, you need to
 	
 	Then Collections considers you have a teacher or designer role. Meaning you can configure Collections.
 
-Then...
+Then, to see if Collections is installed...
 
 ## Go to the Module view of the course site
 
@@ -30,7 +32,10 @@ By default, Canvas Collections is turned off. Use the toggle to turn it on. Init
 
 	Collections will only modify the Canvas module view when it is turned on.
 
-	Who will be able to see those changes is controlled by the visibility setting.
+	What changes you see will depend on
+	
+	1. What changes have been configured.
+	2. If [Collections' visibility setting](../../reference/lifecycle/visibility/live.md) is set appropriately.
 
 <figure markdown>
 <figcaption>After you turn Collections on for the first time</figcaption>
