@@ -29,6 +29,7 @@ import { checkContext } from "./lib/CanvasSetup";
 const context = checkContext();
 let app = null;
 
+alert("fred")
 // Only do this on the modules page
 if (context['modulesPage']) {
   // insert the app as the first content of div.right-of-crumbs

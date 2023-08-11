@@ -627,6 +627,7 @@
    * - release editingOn lock
    */
   onDestroy(() => {
+    console.log("---------------- onDestroy")
     // save if necessary
     if (
       EXIT_SAVE &&
@@ -647,6 +648,7 @@
     if (
       editingOnHandler.getEditingOnStatus() === EDITING_ON_STATUS.YOU_EDITING
     ) {
+      console.log("------ turn off editing")
       editingOnHandler.turnEditOff(() => {});
     }
 

@@ -10,8 +10,7 @@
 // @resource css file:/Users/davidjones/Documents/GitHub/canvas-collections/dev/canvas-collections.css
 // @match       https://*/courses/*
 // @run-at      document-idle
-// @require     file:///C:/Users/djones/code/svelte/canvas-collections/dev/canvas-collections.js
-// @require file:/Users/davidjones/Documents/GitHub/canvas-collections/dev/canvas-collections.js
+// @require file:/Users/davidjones/Documents/GitHub/canvas-collections/dev/canvas-collections.
 // @grant       GM_addStyle
 // @grant       GM_getResourceText
 // @grant       GM_xmlhttpRequest

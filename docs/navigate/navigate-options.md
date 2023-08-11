@@ -10,28 +10,28 @@
 
 Collections provides two (slightly) different navigation experiences.
 
-=== "_Live_ Collections"
+### 1. "_Live_ Collections"
 
-	_Live_ Collections modifies the Canvas Modules page. Navigating _Live_ Collections requires the Collections code to [be installed](../getting-started/install/how-to-install.md).
+_Live_ Collections modifies the Canvas Modules page. Navigating _Live_ Collections requires the Collections code to [be installed](../getting-started/install/how-to-install.md).
 
-	[Learn more about navigating _Live_ Collections](./navigating-live-collections.md)
+[Learn more about navigating _Live_ Collections](./navigating-live-collections.md)
 
-	<figure markdown>
-	<figcaption>Example navigating Live Collections</figcaption>
-	<sl-animated-image src="../images/navigatingLive.gif" alt="Example navigating live collections">
-	</figure>
+<figure markdown>
+<figcaption>Example navigating Live Collections</figcaption>
+<sl-animated-image src="../images/navigatingLive.gif" alt="Example navigating live collections">
+</figure>
 
 
-=== "_Claytons_ Collections"
+### 2. _Claytons_ Collections
 
-	_Claytons_ Collections emulates _Live_ Collections by generating static HTML onto Canvas page(s). Navigating _Claytons_ Collections does not involve the Collections code.
+_Claytons_ Collections emulates _Live_ Collections by generating static HTML onto Canvas page(s). Navigating _Claytons_ Collections does not involve the Collections code.
 
-	[Learn more about navigating _Claytons_ Collections](./navigating-claytons-collections.md)
+[Learn more about navigating _Claytons_ Collections](./navigating-claytons-collections.md)
 
-	<figure markdown>
-	<figcaption>Example navigating Claytons Collections</figcaption>
-	<sl-animated-image src="../images/navigatingClaytons.gif" alt="Example navigating live collections">
-	</figure>
+<figure markdown>
+<figcaption>Example navigating Claytons Collections</figcaption>
+<sl-animated-image src="../images/navigatingClaytons.gif" alt="Example navigating live collections">
+</figure>
 
 
 

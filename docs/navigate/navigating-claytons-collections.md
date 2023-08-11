@@ -18,41 +18,40 @@
 	❗ This includes after a course copy
 
 
-=== "What does it look like?"
+## What does it look like?
 
-	_Claytons_ Collections provides almost all the same navigation elements as _Live_ Collection. There are two differences:
+_Claytons_ Collections provides almost all the same navigation elements as _Live_ Collection. There are two differences:
 
-	1. The representation is done using static HTML, no live code.
-	2. As it is displayed on a normal Canvas page, there is no list of Canvas modules.
+1. The representation is done using static HTML, no live code.
+2. As it is displayed on a normal Canvas page, there is no list of Canvas modules.
 
-	    Instead, clicking on the _Engage_ button will navigate to the Modules view whether the module is available.
+    Instead, clicking on the _Engage_ button will navigate to the Modules view whether the module is available.
 
-	<figure markdown>
-	<figcaption>_Claytons_ Navigation Elements</figcaption>
-	[![Claytons Navigation Elements](images/claytonsNavElements.png)](images/claytonsNavElements.png)
-	</figure>
-
-
-=== "How do you switch between collections?"
-
-	In _Claytons_ Collections, switching between collections is also done with the navigation bar.  However, as it provides none of the smarts of the _Live_ version.
+<figure markdown>
+<figcaption>_Claytons_ Navigation Elements</figcaption>
+[![Claytons Navigation Elements](images/claytonsNavElements.png)](images/claytonsNavElements.png)
+</figure>
 
 
-	<figure markdown>
-	<figcaption>Switching between collections with _Claytons_ Collections</figcaption>
-	  	<sl-animated-image src="../images/switchCollectionsClaytons.gif" alt="Switching between collections with Claytons collections" />
-	</figure>
+## How do you switch between collections?
 
-=== "How do you navigate to a module"
+In _Claytons_ Collections, switching between collections is also done with the navigation bar.  However, as it provides none of the smarts of the _Live_ version.
 
-	Navigating to a module from _Claytons_ Collections involves clicking on one of the module representations. This will navigate to the Modules view with the chosen module immediately visible.
+<figure markdown>
+<figcaption>Switching between collections with _Claytons_ Collections</figcaption>
+<sl-animated-image src="../images/switchCollectionsClaytons.gif" alt="Switching between collections with Claytons collections" />
+</figure>
 
-	One way to return to the _Claytons_ page would be to hit the browser back button.
+## How do you navigate to a module
 
-	<figure markdown>
-	<figcaption>Navigate modules with _Claytons_ Collections</figcaption>
-	  	<sl-animated-image src="../images/navigateModulesClaytons.gif" alt="Navigate with Claytons collections" />
-	</figure>
+Navigating to a module from _Claytons_ Collections involves clicking on one of the module representations. This will navigate to the Modules view with the chosen module immediately visible.
+
+One way to return to the _Claytons_ page would be to hit the browser back button.
+
+<figure markdown>
+<figcaption>Navigate modules with _Claytons_ Collections</figcaption>
+<sl-animated-image src="../images/navigateModulesClaytons.gif" alt="Navigate with Claytons collections" />
+</figure>
 
 
 

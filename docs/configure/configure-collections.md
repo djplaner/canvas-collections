@@ -1,10 +1,8 @@
 # 2. Configure the collections for a course
 
-You've [designed how your course will use Collections](./design.md). Based on that design, now you need to configure the collections for your course. 
-    
-How do you do it?
-    
-## A four step process
+Having answered [these three design questions](./design.md) you're ready to start configuring Collections. The first step is to create and configure the collections for your course.
+
+## Four steps to configure collections
 
 The process illustrated below can be summarised as follows.
 
@@ -15,49 +13,49 @@ The process illustrated below can be summarised as follows.
 | 3. Add a new collection | <p>With _Edit on_ you can start adding new collection(s) by providing a collection name and choosing an initial representation.</p>  |
 | 4. Check the collection | <p>Optionally, once created you can check that it has been created.</p>|
 
-=== "1. Turn on collections"
+### 1. Turn on collections
 
-    On the Modules page, if Collections is installed, you will see the Collections element. If Collections has not been previously turned on for the course, you will see a switch. Click that switch to turn Collections on.
+On the Modules page, if Collections is installed, you will see the Collections element. If Collections has not been previously turned on for the course, you will see a switch. Click that switch to turn Collections on.
 
-	<figure markdown>
-	<figcaption>Turning Collections on</figcaption>
-	<sl-animated-image src="../images/turnCollectionsOn.gif" alt="Turning Collections on">
-	</figure>
-
-
-=== "2.  Turn on editing"
-
-    At any one time, only one person can edit Collections for a course. Before you can make changes - like adding a new collection - you must turn _Edit on_
-
-    !!! warning "Students can't see an _unpublished_ Collections"
-
-        The newly created Collections configuration (just a normal Canvas page) will be _unpublished_. This means students will not be able to use _live_ Collections.  You need to publish it before they can.
-
-        Collections inline help provides more detail (see the animated image below for more)
-
-	<figure markdown>
-	<figcaption>Turn on editing</figcaption>
-	<sl-animated-image src="../images/turnEditOn.gif" alt="Turn on editing">
-	</figure>
+<figure markdown>
+<figcaption>Turning Collections on</figcaption>
+<sl-animated-image src="../images/turnCollectionsOn.gif" alt="Turning Collections on">
+</figure>
 
 
-=== "3. Add a collection"
+### 2.  Turn on editing
 
-    With _Edit on_ you can start adding new collection(s) by providing a collection name and choosing an initial representation.
+At any one time, only one person can edit Collections for a course. Before you can make changes - like adding a new collection - you must turn _Edit on_
 
-	<figure markdown>
-	<figcaption>Add a collection</figcaption>
-	<sl-animated-image src="../images/addCollection.gif" alt="Add a collection">
-	</figure>
+!!! warning "Students can't see an _unpublished_ Collections"
 
-=== "4. Check the collection (and goto 3)"
+     The newly created Collections configuration (just a normal Canvas page) will be _unpublished_. This means students will not be able to use _live_ Collections.  You need to publish it before they can.
 
-    Once created you can check what's been created and/or you can continue to add more collections.
+     Collections inline help provides more detail (see the animated image below for more)
 
-	<figure markdown>
-	<figcaption>Check and add all collections</figcaption>
-	<sl-animated-image src="../images/checkAndAdd.gif" alt="Check and add all collections">
-	</figure>
+<figure markdown>
+<figcaption>Turn on editing</figcaption>
+<sl-animated-image src="../images/turnEditOn.gif" alt="Turn on editing">
+</figure>
+
+
+### 3. Add a collection
+
+With _Edit on_ you can start adding new collection(s) by providing a collection name and choosing an initial representation.
+
+<figure markdown>
+<figcaption>Add a collection</figcaption>
+<sl-animated-image src="../images/addCollection.gif" alt="Add a collection">
+</figure>
+
+### 4. Check the collection (and goto 3)
+
+Once created you can check what's been created and/or you can continue to add more collections.
+
+<figure markdown>
+<figcaption>Check and add all collections</figcaption>
+<sl-animated-image src="../images/checkAndAdd.gif" alt="Check and add all collections">
+</figure>
 
 
 

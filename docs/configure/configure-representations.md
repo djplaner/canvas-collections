@@ -1,10 +1,6 @@
 # 4. Configure Representations
 
-You've just about completed configuration Collections. 
-
-When your first [configured the course's collections](./configure-collections.md) you will have chosen an initial representation.
-
-Representations can be changed at any time using the _collections configuration element_.
+When your first [configured the course's collections](./configure-collections.md) you will have chosen an initial representation.  Representations can be changed at any time using the _collections configuration element_ as shown below.
 
 
 <figure markdown>
