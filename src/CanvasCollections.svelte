@@ -346,9 +346,6 @@
             // set up auto refresh of canvasDetails
             refreshCanvasDetails = setInterval(() => {
               const millis = Date.now() - lastCanvasRefresh;
-              /*console.log(
-                ` -- seconds elapshed since last refresh: ${millis / 1000}`
-              ); */
               lastCanvasRefresh = Date.now();
               canvasDetails.refreshCanvasDetails(gotCanvasDetails);
               // make sure the current collection's representation is refreshed
@@ -618,6 +615,48 @@
     removeModuleConfiguration($collectionsStore["MODULES"]);
   }
 
+  function checkBeforeUnload(event: BeforeUnloadEvent) {
+    const editOn : boolean = editingOnHandler.getEditingOnStatus() === EDITING_ON_STATUS.YOU_EDITING;
+    const needToSave : boolean = $configStore["needToSaveCollections"];
+
+    if ( editOn || needToSave ) { // any more checks required?
+      // save if necessary
+      if (
+        EXIT_SAVE &&
+        needToSave &&
+        $configStore["editMode"]
+      ) {
+        collectionsDetails.saveCollections(
+          $collectionsStore,
+          $configStore["editingOn"],
+          $configStore["editMode"],
+          $configStore["needToSaveCollections"],
+          completeSaveCollections
+        );
+      }
+
+      // release editingOn lock, if necessary
+      if ( editOn) {
+        //editingOnHandler.turnEditOff(() => { });
+        editingOnHandler.turnEditOff(setUpEditingOff);
+      }
+
+      let message = "<p>Additional tidy up required before leaving, because</p><ol>";
+      if ( editOn ) {
+        message += "<li>You have edit on.</li>";
+      }
+      if ( needToSave ) {
+        message += "<li>You have unsaved changes.</li>";
+      }
+      message += "</ol><p>An attempt has been made to tidy up, but...</p>"
+
+      toastAlert( message, "warning" );
+      event.preventDefault();
+      event.returnValue = "";
+      return "";
+    } 
+  }
+
   /**
    * @function onDestroy
    * @description Tidy up before leaving
@@ -627,30 +666,7 @@
    * - release editingOn lock
    */
   onDestroy(() => {
-    console.log("---------------- onDestroy")
-    // save if necessary
-    if (
-      EXIT_SAVE &&
-      $configStore["needToSaveCollections"] &&
-      //      $configStore["editingOn"] === EDITING_ON_STATUS.YOU_EDITING
-      $configStore["editMode"]
-    ) {
-      collectionsDetails.saveCollections(
-        $collectionsStore,
-        $configStore["editingOn"],
-        $configStore["editMode"],
-        $configStore["needToSaveCollections"],
-        completeSaveCollections
-      );
-    }
-
-    // release editingOn lock
-    if (
-      editingOnHandler.getEditingOnStatus() === EDITING_ON_STATUS.YOU_EDITING
-    ) {
-      console.log("------ turn off editing")
-      editingOnHandler.turnEditOff(() => {});
-    }
+    // Advise user they should save/turn edit off
 
     // clear some intervals
     if (saveInterval) {
@@ -932,6 +948,8 @@
       <p>Hit the <em>Edit</em> button to turn editing mode on.</p>
       `;
 </script>
+
+<svelte:window on:beforeunload={checkBeforeUnload} />
 
 {#if editMode && modulesPage && canvasDataLoaded && !importedCollections}
   <div class="cc-switch-container">

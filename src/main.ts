@@ -29,7 +29,6 @@ import { checkContext } from "./lib/CanvasSetup";
 const context = checkContext();
 let app = null;
 
-alert("fred")
 // Only do this on the modules page
 if (context['modulesPage']) {
   // insert the app as the first content of div.right-of-crumbs
@@ -54,10 +53,9 @@ if (context['modulesPage']) {
     props: context,
   });
 
-  // make sure we tidy up
   addEventListener('beforeunload', (event) => {
-    app.$destroy();
-  })
+    app.$destroy(event);
+  })  
 } 
 
 export default app;

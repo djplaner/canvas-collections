@@ -20,7 +20,7 @@
  */
 
 // Kludge 
-let BASE_API_URL="";
+let BASE_API_URL = "";
 
 /**
  * @function checkContext
@@ -164,7 +164,7 @@ export async function requestCourseObject(courseId: number, csrfToken: string) {
     return data;
     //			this.courseObject = data;
     /*			this.generateSTRM();
-			this.requestModuleInformation(); */
+      this.requestModuleInformation(); */
   }
 }
 
@@ -177,12 +177,12 @@ export const wf_fetchData = async (reqUrl) => {
   const url = reqUrl;
   try {
     const res = await fetch(url);
-/*    if (res.status === 404)
-      // Endpoint not found
-      return null;
-    if (res.status === 401)
-      // User not authorized
-      return null; */
+    /*    if (res.status === 404)
+          // Endpoint not found
+          return null;
+        if (res.status === 401)
+          // User not authorized
+          return null; */
     const body = await res.json();
     const msg = {
       status: res.status,
@@ -206,13 +206,17 @@ export const wf_deleteData = async (reqUrl, csrf) => {
         Accept: "application/json",
         "X-CSRF-Token": csrf,
       },
+      keepalive: true
     });
-    if (res.status === 404)
+    if (res.status === 404) {
       // Endpoint not found
       return null;
-    if (res.status === 401)
+    }
+    if (res.status === 401) {
+
       // User not authorized
       return null;
+    }
     const json = await res.json();
     return json;
   } catch (e) {
@@ -372,13 +376,13 @@ export function getPageName(
   callBack: Function
 ) {
 
-  if (pageName === undefined ) {
+  if (pageName === undefined) {
     console.trace()
     alert("getPageName: pageName is undefined")
     return
   }
 
-  if (pageName!=="") {
+  if (pageName !== "") {
     // only do this if we've a valid page name
     String.prototype.slugify = function (separator = "-") {
       return this.toString()
@@ -395,7 +399,7 @@ export function getPageName(
     const url = `${BASE_API_URL}/courses/${courseId}/pages/${slugifiedPageName}`;
 
     wf_fetchData(url).then((msg) => {
-        callBack(pageName, msg.body);
+      callBack(pageName, msg.body);
     });
   }
 }
