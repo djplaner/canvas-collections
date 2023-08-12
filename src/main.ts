@@ -53,9 +53,6 @@ if (context['modulesPage']) {
     props: context,
   });
 
-  addEventListener('beforeunload', (event) => {
-    app.$destroy(event);
-  })  
 } 
 
 export default app;

@@ -2,7 +2,7 @@
 
 :confetti_ball: Version 1.1.0 - the first really usable version of Collections - is now available. See the [Collections site](https://djplaner.github.io/canvas-collections/) more for details  :confetti_ball:
 
-Canvas Collections helps improve course site designs for the [Canvas LMS](https://canvaslms.instructure.com/lp/lms/) by transforming the [Canvas Modules page](https://www.instructure.com/en-au/resources/blog/how-use-modules-build-courses-canvas).
+Canvas Collections helps improve course site designs for the [Canvas LMS](https://canvaslms.instructure.com/lp/lms/) by transforming the [Canvas Modules page](https://www.instructure.com/en-au/resources/blog/how-use-modules-build-courses-canvas). The following summarises the key features and provides links to more information.
 
 
 | Feature | Why? | How? | 

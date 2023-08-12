@@ -619,8 +619,7 @@
     const editOn : boolean = editingOnHandler.getEditingOnStatus() === EDITING_ON_STATUS.YOU_EDITING;
     const needToSave : boolean = $configStore["needToSaveCollections"];
 
-    if ( editOn || needToSave ) { // any more checks required?
-      // save if necessary
+    if ( editOn || ( $configStore["editMode"] && needToSave ) ) { 
       if (
         EXIT_SAVE &&
         needToSave &&
@@ -655,6 +654,7 @@
       event.returnValue = "";
       return "";
     } 
+    return undefined;
   }
 
   /**
