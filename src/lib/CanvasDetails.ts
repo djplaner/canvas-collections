@@ -189,9 +189,18 @@ export class CanvasDetails {
   }
   */
 
+  /**
+   * @function requestModuleInformation
+   * @descr Request all the module information for the course
+   * TODO 
+   * - To handle requirements will need check for student will need to 
+   *    add &student_id=<studentCanvasId>
+   */
+
   requestModuleInformation() {
     wf_fetchData(
-      `${this.baseApiUrl}/courses/${this.config.courseId}/modules?include=content_details&per_page=500`
+      `${this.baseApiUrl}/courses/${this.config.courseId}/modules?include=content_details`
+      //`${this.baseApiUrl}/courses/${this.config.courseId}/modules?include=items&per_page=500&student_id=23854443`
     ).then((msg) => {
       if (msg.status === 200) {
         this.courseModules = msg.body;

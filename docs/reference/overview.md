@@ -2,7 +2,6 @@
 
 References provide short descriptions of specific aspects of Collections.
 
-
 === "Lifecycle"
 
     Information about the lifecycle of using Collections as experienced by the user.

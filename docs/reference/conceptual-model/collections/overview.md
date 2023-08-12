@@ -1,6 +1,13 @@
-# Collections 
+# collections 
 
-Collections are the key feature of Canvas Collections. They support organising Canvas modules into design and context specific groups of modules - a [feature long requested](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383) by the Canvas Community.
+!!! tip "The difference between <span style="background-color:black;color:white">C</span>ollections and <span style="background-color:black;color:white;">c</span>ollections"
+
+    The use of upper or lower case _C_ distinguishes between two different concepts:
+
+	1. **C**ollections - refers to _Canvas Collections_, the entire tool.
+	2. **c**ollections - you use the tool (Collections) to create _collections_ and allocate different Canvas modules to belong to different _collections_.
+
+collections are the key feature of Canvas Collections. They support organising Canvas modules into design and context specific groups of modules - a [feature long requested](https://community.canvaslms.com/t5/Idea-Conversations/Modules-within-Modules/idc-p/461383) by the Canvas Community.
 
 The figure below is an example of a typical Collections configuration dialog. The following table provides a description of the major components of the dialog and a pointer to more information.
 

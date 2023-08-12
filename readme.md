@@ -2,39 +2,28 @@
 
 :confetti_ball: Version 1.1.0 - the first really usable version of Collections - is now available. See the [Collections site](https://djplaner.github.io/canvas-collections/) more for details  :confetti_ball:
 
-## Why?
+Canvas Collections helps improve course site designs for the [Canvas LMS](https://canvaslms.instructure.com/lp/lms/) by transforming the [Canvas Modules page](https://www.instructure.com/en-au/resources/blog/how-use-modules-build-courses-canvas).
 
-Frustrated by the limitations of the [Canvas LMS' modules](https://www.instructure.com/en-au/canvas/resources/all/how-to-use-modules-to-build-courses-in-canvas)? Wanting to achieve more than a long list of modules with no design of context specific information?
 
-For example, look at the standard Canvas modules page on the left. This course was designed with three driving questions. Can you tell what those questions are from the modules page?
+| Feature | Why? | How? | 
+| --- | --- | --- | 
+| Structure | Move beyond the ["..design nightmare (of)...one big list"](https://community.canvaslms.com/t5/Idea-Conversations/More-editing-functions/idc-p/475281/highlight/true#M53223) | Organise modules into [different collections](https://djplaner.github.io/canvas-collections/getting-started/101/concepts/#collections). Navigate between different collections only seeing relevant modules. |
+| Visuals | Move beyond visuals reminiscent of ["a chain of folders circa Windows 95"](https://community.canvaslms.com/t5/Canvas-Question-Forum/Visual-based-Module-Outline-PLEASE/m-p/395779/highlight/true#M140332) | Select a different [representation](https://djplaner.github.io/canvas-collections/getting-started/101/concepts/#representations) for each collection. Change at any time. Develop new purpose-built representations. |
+| Context | Add more context to modules (e.g. ["connective text"](https://community.canvaslms.com/t5/Canvas-Question-Forum/Is-there-a-way-to-add-connective-text-not-quot-text-headers-quot/m-p/510878), ["instructions or a greeting"](https://community.canvaslms.com/t5/Canvas-Ideas/Modules-Add-Images-to-Modules/idc-p/372263/highlight/true#M9258) etc) | Add [(meta-)data](https://djplaner.github.io/canvas-collections/getting-started/101/concepts/#context-objects-through-metadata) to each module. Add an [include page](https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/existing-collections/#include-page) to each collection. |
+
+
+## For example
+
+Examine the standard Canvas modules page on the left. This course was designed with three driving questions. Can you tell what those questions are from the modules page?
 
 Try with the image on the right. It shows the same modules page with Collections installed.
 
-See the [Collection site] for more.  
+See the [Canvas Collections documentation site](https://djplaner.github.io/canvas-collections/) for more.  
 
 | Vanilla Canvas | Canvas Collections |
 | -------------- | ------------------ |
 | [View full-size image](docs/assets/vanillaModules.gif) | [View full-size image](docs/assets/withCanvasCollections.gif) |
 | ![Vanilla Canvas Course Site](docs/assets/vanillaModules.gif) | ![Same site with Canvas Collections](docs/assets/withCanvasCollections.gif) |
-
-## How?
-
-Canvas Collections adds three three new features to Canvas Modules:
-
-1. **Collections** - group modules together based on your design needs.
-2. **Representations** - select different visual designs for each collection.
-3. **Objects** - add more information to transform vanilla Canvas modules into context and design specific objects (e.g. theme, chapter, person etc).
-
-## How can you use Canvas Collections?
-
-You will need [to install Collections](https://djplaner.github.io/canvas-collections/getting-started/install/types-pre-requisites/). You can do this as [an individual](https://djplaner.github.io/canvas-collections/getting-started/install/individual/) or as [an institution](https://djplaner.github.io/canvas-collections/getting-started/install/institution/)
-
-## Need to know more?
-
-Want to learn more about Canvas Collections? What else can you do? How do you try it out?
-
-See the [Canvas Collections site](https://djplaner.github.io/canvas-collections/)
-
 
 # For the developers
 

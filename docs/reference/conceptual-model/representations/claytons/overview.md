@@ -1,22 +1,33 @@
 # "Claytons" Collections
 
-> _add info about css_ 
-
 ## Why and what?
 
 Canvas Collections is able to modify the default Canvas modules view to provide a more useful and engaging experience for students and teachers. There are two ways Canvas Collections can make this modification:
 
-=== "'Live' Canvas Collections"
+### 'Live' Canvas Collections
 
-    The standard "live" version of Canvas Collections requires that you have installed the Collections code - either [individually](../../../../getting-started/install/individual.md) or [institutionally](../../../../getting-started/install/institutional.md). This code runs and updated the Canvas modules view as you are watching (i.e. live). 
+The standard "live" version of Canvas Collections requires that you have installed the Collections code - either [individually](../../../../getting-started/install/individual.md) or [institutionally](../../../../getting-started/install/institutional.md). This code runs and updated the Canvas modules view as you are watching (i.e. live). 
 
-    If you or your students are unable to install the Collections code, then you can use the "Claytons" Collections to create a similar experience.
+If you or your students are unable to install the Collections code, then you can use the "Claytons" Collections to create a similar experience.
 
-=== "'Claytons' Canvas Collections"
+### 'Claytons' Canvas Collections
 
-    "Claytons" Collections is the Collections you have when you're not having Collections (a play on [a marketing campaign for a drink](https://en.wikipedia.org/wiki/Claytons)). It's a way for one person to install and use 'live' Collections to create normal Canvas pages that contains the Collections visual representation. As a Canvas page, this can be viewed without the Collections code.
+"Claytons" Collections is the Collections you have when you're not having Collections (a play on [a marketing campaign for a drink](https://en.wikipedia.org/wiki/Claytons)). It's a way for one person to install and use 'live' Collections to create normal Canvas pages that contains the Collections visual representation. As a Canvas page, this can be viewed without the Collections code.
 
-    It is a way of semi-automating common advice from the Canvas community to manually create pages to workaround the limitations of Canvas' module view. Some examples of that advice, include: [create full navigation using pages](http://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/), [create an inviting course home page](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236), and [home sweet home pages without tables](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Home-Sweet-Homepages-without-Tables/ba-p/275079).
+It is a way of semi-automating common advice from the Canvas community to manually create pages to workaround the limitations of Canvas' module view. Some examples of that advice, include: [create full navigation using pages](http://lisahistory.net/wordpress/2020/06/working-against-canvas-three-tips/), [create an inviting course home page](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236), and [home sweet home pages without tables](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Home-Sweet-Homepages-without-Tables/ba-p/275079).
+
+!!! note "Some 'Claytons' representations require external CSS"
+
+    The Canvas Rich Content Editor (RCE) places limitations on the CSS/HTML that can be used in a Canvas page. These limitations constrain what can be achieved visually. Either directly or via Claytons.
+
+    A solution to this is to use external CSS files. There are two common ways to achieve this
+
+    1. Canvas Theme Editor.
+    2. Use of an external tool (e.g. Design Plus from CIDI Labs)
+
+    Both require Canvas admin access.
+
+
 
 ## How does it work? 
 
