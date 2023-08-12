@@ -148,13 +148,12 @@ nav:
       - Fix common problems:
         - Failed to turn editing on: reference/problems/failed-to-turn-editing-on.md
       - Development:
+        - Overview: reference/development/development-overview.md
+        - Local development: reference/development/local-development/overview.md
+        - Develop a representation: reference/development/representations/representation-development.md
+        - Configuration Page: reference/development/config-format.md
         - Component Structure: reference/development/component-structure.md
         - Data Structures: reference/development/data-structures.md
-        - Configuration Page: reference/development/config-format.md
-        - Local development: 
-          - Overview: reference/development/local-development/overview.md
-        - Representations:
-          - Develop a representation: reference/development/representations/representation-development.md
   - 'Community': 
      - Collections Community: community/collections-community.md
   - 'About':
