@@ -34,18 +34,17 @@ The card component can help transform the vanilla Canvas module into a [design a
 
 ## Progress ring
 
-Canvas module [requirements](https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-add-requirements-to-a-module/ta-p/1131) provide a way to specify what students must complete before a module can be marked as complete. The _GriffithCards_ representation provides a progress ring as a visualisation of the requirements a student has completed for a module.
+Canvas module [requirements](https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-add-requirements-to-a-module/ta-p/1131) are used to track what module items a student has completed. To complete the module students must complete all the requirements.
 
-The following animated image demonstrates 
+_GriffithCards_ can add a progress ring to each card representing a module. The progress ring provides a visual representation of the percentage of a module's requirements a student has completed. Fro example, the following animated image demonstrates 
 
 - the visual design of the GriffithCards progress ring.
 - the presence of a tooltip that allows students to hover over the progress ring to see a summary of # of requirements completed and the total number to be completed.
 - how the progress ring is updated when a student completes a requirement.
 
-
 !!! note "Use _student view_ to see the progress ring"
 
-    Teacher or designer views will not show the progress ring.
+    Teacher or designer views will not show the progress ring, unless _student view_ is used.
 
 
 <figure markdown>
