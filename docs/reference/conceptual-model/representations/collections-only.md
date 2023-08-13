@@ -19,7 +19,7 @@
 
 # Collections Only
 
-The following animated image shows the above course configured with Canvas Collections so that its 13 modules are organised into three collections: _Why?_, _What?_, and _How?_. 
+The following animated image shows the [same vanilla Canvas course](overview.md#vanilla-canvas) configured with Canvas Collections so that its 13 modules are organised into three collections: _Why?_, _What?_, and _How?_. 
 
 In this example, each collection is using the _Collections Only_ representation. This is the bare minimum Collections' representation, which modifies the Canvas modules page to include:
 

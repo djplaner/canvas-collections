@@ -111,23 +111,25 @@
   const HELP = {
     TITLE: {
       tooltip: `<p>Will automatically use the names of modules allocated to this collection.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#collection",
+      url: "https://djplaner.github.io/canvas-collections/reference/representations/assessment-table/#title",
     },
     DESCRIPTION: {
       tooltip: `<p>The Canvas Collections' description you added for the relevant module.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#collection",
+      url: "https://djplaner.github.io/canvas-collections/reference/representations/assessment-table/#description",
     },
     WEIGHTING: {
-      tooltip: `<p>Title will contain the names of modules.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#collection",
+      tooltip: `<p>Specified by the module's metadata variable <strong>weighting</strong>.</p>
+      <p>If no module has a weighting, this column will not be displayed.</p>
+      `,
+      url: "https://djplaner.github.io/canvas-collections/reference/representations/assessment-table/#weighting-and-learning-outcomes",
     },
     DUE_DATE: {
-      tooltip: `<p>Title will contain the names of modules.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#collection",
+      tooltip: `<p>Specified using the module's Canvas Collection date (range).</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/representations/assessment-table/#due-date",
     },
     LEARNING_OUTCOMES: {
-      tooltip: `<p>Title will contain the names of modules.</p>`,
-      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#collection",
+      tooltip: `<p>Specified by the module's metadata variable <strong>learning outcomes</strong>.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/representations/assessment-table/#weighting-and-learning-outcomes",
     },
   };
 </script>
@@ -308,10 +310,10 @@
             ><span class="cc-table-header-text">Description</span>
             {#if $configStore["editMode"]}
             <sl-tooltip>
-              <div slot="content">{@html HELP.TITLE.tooltip}</div>
+              <div slot="content">{@html HELP.DESCRIPTION.tooltip}</div>
               <a
                 id="cc-about-basic-module-collection"
-                href={HELP.TITLE.url}
+                href={HELP.DESCRIPTION.url}
                 target="_blank"
                 rel="noreferrer"
                 class="cc-module-link"
@@ -330,10 +332,10 @@
               ><span class="cc-table-header-text">Weighting</span>
               {#if $configStore["editMode"]}
               <sl-tooltip>
-                <div slot="content">{@html HELP.TITLE.tooltip}</div>
+                <div slot="content">{@html HELP.WEIGHTING.tooltip}</div>
                 <a
                   id="cc-about-basic-module-collection"
-                  href={HELP.TITLE.url}
+                  href={HELP.WEIGHTING.url}
                   target="_blank"
                   rel="noreferrer"
                   class="cc-module-link"
@@ -352,10 +354,10 @@
             ><span class="cc-table-header-text">Due Date</span>
             {#if $configStore["editMode"]}
             <sl-tooltip>
-              <div slot="content">{@html HELP.TITLE.tooltip}</div>
+              <div slot="content">{@html HELP.DUE_DATE.tooltip}</div>
               <a
                 id="cc-about-basic-module-collection"
-                href={HELP.TITLE.url}
+                href={HELP.DUE_DATE.url}
                 target="_blank"
                 rel="noreferrer"
                 class="cc-module-link"
@@ -375,10 +377,10 @@
               ><span class="cc-table-header-text">Learning Outcomes</span>
               {#if $configStore["editMode"]}
               <sl-tooltip>
-                <div slot="content">{@html HELP.TITLE.tooltip}</div>
+                <div slot="content">{@html HELP.LEARNING_OUTCOMES.tooltip}</div>
                 <a
                   id="cc-about-basic-module-collection"
-                  href={HELP.TITLE.url}
+                  href={HELP.LEARNING_OUTCOMES.url}
                   target="_blank"
                   rel="noreferrer"
                   class="cc-module-link"
@@ -710,4 +712,10 @@
     font-size: x-small;
     text-align: center;
   }
+
+  sl-tooltip {
+    text-align: left;
+    white-space: normal;
+  }
 </style>
+

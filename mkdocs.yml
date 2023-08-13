@@ -135,6 +135,9 @@ nav:
         - Representations: 
           - Overview: reference/conceptual-model/representations/overview.md
           - Collections Only: reference/conceptual-model/representations/collections-only.md
+          - Griffith Cards: reference/conceptual-model/representations/griffith-cards.md
+          - Horizontal Cards: reference/conceptual-model/representations/horizontal-cards.md
+          - Assessment Table: reference/conceptual-model/representations/assessment-table.md
         - Objects (Modules):
           - Objects: reference/conceptual-model/objects/overview.md
           - General: reference/conceptual-model/objects/general.md
