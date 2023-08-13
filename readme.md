@@ -18,7 +18,7 @@ Examine the standard Canvas modules page on the left. This course was designed w
 
 Try with the image on the right. It shows the same modules page with Collections installed.
 
-See the [Canvas Collections documentation site](https://djplaner.github.io/canvas-collections/) for more.  
+See the [Canvas Collections documentation site](https://djplaner.github.io/canvas-collections/) for more, including [how to install Canvas Collections](https://djplaner.github.io/canvas-collections/getting-started/install/is-it-installed/)
 
 | Vanilla Canvas | Canvas Collections |
 | -------------- | ------------------ |
