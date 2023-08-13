@@ -68,4 +68,7 @@ The intent being to provide students with additional important information about
 | `learning outcomes` | 1, 2, 3 |
 | `weighting` | 10% |
 
-
+<figure markdown>
+<figcaption>Sample <em>AssessmentTable</em> show meta data values for first module</figcaption>
+[![Sample AssessmentTable show meta data values](pics/assessmentTableMetaData.png)](pics/assessmentTableMetaData.png)
+</figure>
