@@ -1,6 +1,6 @@
-# Latest Version **1.1.0**
+# Latest Version **1.2.0**
 
-Version **1.1.0** of Canvas Collections is ready for use. While it should work on any Canvas instance, there are some features (e.g. dates) that are specific to Griffith University (to be fixed soon).
+Version **1.2.0** of Canvas Collections is ready for use. While it should work on any Canvas instance, there are some features (e.g. dates) that are specific to Griffith University (to be fixed soon).
 
 It has been tested in both [individual and institutional modes](../getting-started/install/how-to-install.md). 
 

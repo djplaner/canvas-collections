@@ -58,13 +58,16 @@ See the [Objects reference page](../../reference/conceptual-model/objects/overvi
 	
 ## Claytons (or static) Collections
 
-All the previous examples on this page are for _live_ Collections. i.e. the Collections code [is installed](../install/how-to-install.md) and is actively modifying how you are seeing your Canvas site's module page.  This may not always be possible.
+All the previous examples on this page are for _live_ Collections. i.e. the Collections code [is installed](../install/how-to-install.md) and is actively modifying how you are seeing your Canvas site's module page.  Not everyone can install the Collections code.
 
 _Claytons_ Collections provides the ability to use the Collections representations on a static Canvas page. Using Claytons collections does **not** require the Collections code to be installed.
 	
-_Claytons_ Collections can be used to follow Canvas community best practice to [create an inviting course home page](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236). A home page that can emulate the features of Collections, without requiring Collections.
+_Claytons_ Collections can be used to follow Canvas community best practice to [create an inviting course home page](https://community.canvaslms.com/t5/Canvas-Instructional-Designer/Creating-an-inviting-course-home-page/ba-p/267236). A home page that can emulate the features of Collections, without requiring Collections. The animated image is a demonstration.
+
 
 See the ["Claytons" Collections reference page](../../reference/conceptual-model/representations/claytons/overview.md) for more.
 
-
-<div class="div-iframe"> <iframe width="560" height="315" src="https://www.youtube.com/embed/d_ZBTpKdylQ" title="YouTube video player" frameborder="0" class="responsive-iframe" allowfullscreen></iframe> </div> 
+<figure markdown>
+<figcaption>Using Claytons Collections to create a visual home page</figcaption>
+<sl-animated-image src="../../../reference/conceptual-model/representations/claytons/pics/animatedFullClaytons.gif" alt="Using Claytons Collections to create a visual home page" />
+</figure>
