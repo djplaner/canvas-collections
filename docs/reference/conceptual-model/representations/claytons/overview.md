@@ -96,7 +96,10 @@ The process shown, includes:
 The next animated image demonstrates the use of Full Claytons using the other two navigation bar options.
 
 
-![](pics/animatedFullClaytons.gif)
+<figure markdown>
+<figcaption>Creating a visual home page using full Claytons</figcaption>
+<sl-animated-image src="../pics/animatedFullClaytons.gif" alt="Creating a visual home page using full Claytons" />
+</figure>
 
 #### Navigation bar options
 
