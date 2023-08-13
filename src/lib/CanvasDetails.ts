@@ -131,9 +131,9 @@ export class CanvasDetails {
    */
 
   requestModulesCompletion() {
-    const studentId = '23854443';
-    //if (this.isStudent) {
-    if (true) {
+    const studentId = ENV["current_user_id"];
+    console.log(ENV);
+    if (this.isStudent) {
       wf_fetchData(
         `${this.baseApiUrl}/courses/${this.config.courseId}/modules?include=items&per_page=500&student_id=${studentId}`
       ).then((msg) => {
@@ -201,8 +201,6 @@ export class CanvasDetails {
         }
       });
     }
-
-
   }
 
 }

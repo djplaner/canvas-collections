@@ -24,22 +24,22 @@
    */
 
   import { collectionsStore, modulesStore, configStore } from "../../stores";
-  import { getModuleUrl, deLabelModuleName, isUnPublishedUnallocated} from "./representationSupport";
+  import {
+    getModuleUrl,
+    deLabelModuleName,
+    isUnPublishedUnallocated,
+  } from "./representationSupport";
   import BannerIframe from "./GriffithCards/BannerIframe.svelte";
   import BannerColour from "./GriffithCards/BannerColour.svelte";
   import BannerImage from "./GriffithCards/BannerImage.svelte";
   import DateWidget from "./GriffithCards/DateWidget.svelte";
 
-  //  import "@shoelace-style/shoelace/dist/components/card/card.js";
   import { getRepresentationModules } from "./representationSupport";
+    import AssessmentTable from "./AssessmentTable.svelte";
 
   export let collection: string;
   //  export let calendar: any;
   export let claytons: boolean = false;
-
-  // early test (kludge) for shoelace cards
-  // uncomment the shoelace import above
-  const shoelace = false;
 
   const BANNER_TRANSLATION = {
     image: BannerImage,
@@ -99,7 +99,43 @@
     }
   }
 
-    /**
+  /**
+   * @function calcCompletionPercent
+   * @param module {object}
+   * @description Generate a percentage of completion for a module from 
+   * - module["completion_summary"].completed_count
+   * - module["completion_summary"].completion_count 
+  */
+
+  function calcCompletionPercent(module) {
+    if (module["completion_summary"]) {
+      const completed = module["completion_summary"].completed_count;
+      const total = module["completion_summary"].completion_count;
+      if (total > 0) {
+        return Math.round((completed / total) * 100);
+      }
+    }
+    return 0;
+  }
+
+  /**
+   * @function calcCompletionText
+   * @param module {object}
+   * @description Generate some HTML summarising the completion status of a module
+  */
+
+  function calcCompletionText(module) {
+    if (module["completion_summary"]) {
+      const completed = module["completion_summary"].completed_count;
+      const total = module["completion_summary"].completion_count;
+      if (total > 0) {
+        return `<p>Completed ${completed} of ${total}</p>`;
+      }
+    }
+    return "";
+  }
+
+  /**
    * @function isUnPublishedUnallocated
    * @param moduleId - of the current module
    * @returns true if the module is unpublished or unallocated & if that information
@@ -110,7 +146,7 @@
    * - only staff (editMode) should see unpublished/unallocated messages
    * - students (!editMode) should not see unpublished/unallocated messages
    */
-/*  function isUnPublishedUnallocated(moduleId) {
+  /*  function isUnPublishedUnallocated(moduleId) {
     if (!$configStore["editMode"]) {
       return false;
     }
@@ -124,8 +160,6 @@
     return $collectionsStore["MODULES"][moduleId].collection !== collection;
   } */
 
-
-
   // HELP tooltips
 
   const HELP = {
@@ -137,47 +171,7 @@
   };
 </script>
 
-{#if shoelace}
-  <div class="cc-card-interface cc-representation">
-    {#each modules as theModule}
-      <sl-card class="shoelace-card-overview">
-        <img
-          slot="image"
-          src={$collectionsStore["MODULES"][theModule.id].image}
-          alt="A kitten sits patiently between a terracotta pot and decorative grasses."
-        />
-
-        <strong>{theModule.name}</strong><br />
-        This kitten is as cute as he is playful. Bring him home today!<br />
-        <small>6 weeks old</small>
-
-        {#if $collectionsStore["MODULES"][theModule.id].engage && !$collectionsStore["MODULES"][theModule.id].fyi}
-          <div slot="footer">
-            <sl-button href={getModuleUrl(theModule.id)} variant="primary" pill
-              >{$collectionsStore["MODULES"][theModule.id]
-                .engageText}</sl-button
-            >
-          </div>
-        {/if}
-      </sl-card>
-    {/each}
-    <style>
-      .shoelace-card-overview {
-        /*        max-width: 300px; */
-      }
-
-      .shoelace-card-overview small {
-        color: var(--sl-color-neutral-500);
-      }
-
-      .shoelace-card-overview [slot="footer"] {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-    </style>
-  </div>
-{:else if claytons}
+{#if claytons}
   <!-- <div class="claytons-card-interface claytons-representation">-->
   <!-- <div style="flex-wrap: wrap; display:flex; margin-top: 0.5em"> -->
   <div
@@ -199,7 +193,9 @@
             <div
               class="claytons-card-banner-container"
               data-moduleid={theModule.id}
-              style="position:relative; {computeCardBackgroundColour(theModule.id)}"
+              style="position:relative; {computeCardBackgroundColour(
+                theModule.id
+              )}"
             >
               {#if !$collectionsStore["MODULES"][theModule.id].fyi}
                 <a
@@ -429,7 +425,19 @@
                   </div>
                 </div>
               {/if}
-              <div class="cc-progress" />
+              {#if theModule.hasOwnProperty("completion_summary") && 
+                   (theModule["completion_summary"].completion_count > 0)}
+                <div class="cc-progress">
+                  <sl-tooltip>
+                    <div slot="content">
+                      {@html calcCompletionText(theModule)}
+                    </div>
+                  <sl-progress-ring value="{calcCompletionPercent(theModule)}" class="progress-ring-values">
+                    {calcCompletionPercent(theModule)}%
+                  </sl-progress-ring>
+                  </sl-tooltip>
+                </div>
+              {/if}
             </div>
           </div>
         </div>
@@ -571,7 +579,19 @@
     position: absolute;
     bottom: 0;
     left: 0;
-    padding: 0.5em;
+    padding-left: 0.5rem;
+    padding-bottom: 0.25rem;
+    max-width: 25%;
+  }
+
+  sl-progress-ring {
+    --size: 4rem;
+    --track-width: 0.25rem;
+    --indicator-width: 0.5rem;
+  }
+
+  sl-progress-ring::part(label) {
+    font-size: 0.9rem;
   }
 
   .cc-card-title {
@@ -585,6 +605,7 @@
   }
 
   .cc-card-footer {
+    margin-top: 0.5rem;
     height: 4rem;
     position: relative;
   }
@@ -708,7 +729,7 @@
     position: absolute;
     bottom: 0;
     background: #ccc;
-    color:black;
+    color: black;
     width: 100%;
     padding: 0.25rem;
     font-size: 0.8rem;
