@@ -34,7 +34,3 @@ To choose the _representation_ for the new collection, select the desired repres
 <figcaption>Adding a new collection</figcaption>
 <sl-animated-image src="../pics/animatedAddNewCollection.gif" alt="Adding a new collection" />
 </figure>
-
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>

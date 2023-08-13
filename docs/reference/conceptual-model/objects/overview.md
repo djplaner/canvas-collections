@@ -22,7 +22,3 @@ The _Module Configuration_ area is divided into a number of tabs. The following 
 <figcaption>Finding the module configuration areas</figcaption>
 <sl-animated-image src="../../../../configure/images/moduleConfiguration.gif" alt="Finding the module configuration area" />
 </figure>
-
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>

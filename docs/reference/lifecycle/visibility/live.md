@@ -51,6 +51,4 @@ Who is able to see and use Collections in its live form depends on two elements:
      	 alt="Demonstration of changing the visibility setting"></sl-animated-image>
      </figure>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>
 

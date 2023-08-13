@@ -647,13 +647,16 @@
       if ( needToSave ) {
         message += "<li>You have unsaved changes.</li>";
       }
-      message += "</ol><p>An attempt has been made to tidy up, but...</p>"
+      message += "</ol><p>An attempt has been made to tidy up (save changes, turn edit off), but...</p>"
 
       toastAlert( message, "warning" );
+
+      // generate a popup warning message
       event.preventDefault();
       event.returnValue = "";
       return "";
     } 
+    // all good, we can continue onto Destroy
     return undefined;
   }
 

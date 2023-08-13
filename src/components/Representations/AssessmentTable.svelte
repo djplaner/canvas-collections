@@ -106,6 +106,30 @@
     });
     return moduleData;
   }
+
+  /** Define the tooltip text and URLS*/
+  const HELP = {
+    TITLE: {
+      tooltip: `<p>Will automatically use the names of modules allocated to this collection.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#collection",
+    },
+    DESCRIPTION: {
+      tooltip: `<p>The Canvas Collections' description you added for the relevant module.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#collection",
+    },
+    WEIGHTING: {
+      tooltip: `<p>Title will contain the names of modules.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#collection",
+    },
+    DUE_DATE: {
+      tooltip: `<p>Title will contain the names of modules.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#collection",
+    },
+    LEARNING_OUTCOMES: {
+      tooltip: `<p>Title will contain the names of modules.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/general/#collection",
+    },
+  };
 </script>
 
 {#if claytons}
@@ -121,8 +145,8 @@
             style="background-color: #c02123;"
             class="cc-title-col"
           >
-            <span style="color: #ffffff;">Title</span></th
-          >
+            <span style="color: #ffffff;">Title</span>
+          </th>
           <th
             role="columnheader"
             scope="col"
@@ -262,31 +286,118 @@
       <thead>
         <tr class="cc-title-col">
           <th role="columnheader" scope="col"
-            ><span class="cc-table-header-text">Title</span></th
-          >
+            ><span class="cc-table-header-text">Title</span>
+            {#if $configStore["editMode"]}
+              <sl-tooltip>
+                <div slot="content">{@html HELP.TITLE.tooltip}</div>
+                <a
+                  id="cc-about-basic-module-collection"
+                  href={HELP.TITLE.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="cc-module-link"
+                >
+                  <i
+                    class="cc-table-header-icon icon-question cc-module-icon"
+                  />
+                </a>
+              </sl-tooltip>
+            {/if}
+          </th>
           <th role="columnheader" class="cc-description-col" scope="col"
-            ><span class="cc-table-header-text">Description</span></th
-          >
+            ><span class="cc-table-header-text">Description</span>
+            {#if $configStore["editMode"]}
+            <sl-tooltip>
+              <div slot="content">{@html HELP.TITLE.tooltip}</div>
+              <a
+                id="cc-about-basic-module-collection"
+                href={HELP.TITLE.url}
+                target="_blank"
+                rel="noreferrer"
+                class="cc-module-link"
+              >
+                <i
+                  class="cc-table-header-icon icon-question cc-module-icon"
+                />
+              </a>
+            </sl-tooltip>
+          {/if}
+
+            </th>
           {#if numWeighting > 0}
             <!-- && !$configStore["editMode"]} -->
             <th role="columnheader" class="cc-weighting-col" scope="col"
-              ><span class="cc-table-header-text">Weighting</span></th
+              ><span class="cc-table-header-text">Weighting</span>
+              {#if $configStore["editMode"]}
+              <sl-tooltip>
+                <div slot="content">{@html HELP.TITLE.tooltip}</div>
+                <a
+                  id="cc-about-basic-module-collection"
+                  href={HELP.TITLE.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="cc-module-link"
+                >
+                  <i
+                    class="cc-table-header-icon icon-question cc-module-icon"
+                  />
+                </a>
+              </sl-tooltip>
+            {/if}
+
+              </th
             >
           {/if}
           <th role="columnheader" scope="col" class="cc-due-date-col"
-            ><span class="cc-table-header-text">Due Date</span></th
+            ><span class="cc-table-header-text">Due Date</span>
+            {#if $configStore["editMode"]}
+            <sl-tooltip>
+              <div slot="content">{@html HELP.TITLE.tooltip}</div>
+              <a
+                id="cc-about-basic-module-collection"
+                href={HELP.TITLE.url}
+                target="_blank"
+                rel="noreferrer"
+                class="cc-module-link"
+              >
+                <i
+                  class="cc-table-header-icon icon-question cc-module-icon"
+                />
+              </a>
+            </sl-tooltip>
+          {/if}
+
+            </th
           >
           {#if numLearningOutcomes > 0}
             <!--&& !$configStore["editMode"]} -->
             <th role="columnheader" scope="col" class="cc-learning-outcomes-col"
-              ><span class="cc-table-header-text">Learning Outcomes</span></th
+              ><span class="cc-table-header-text">Learning Outcomes</span>
+              {#if $configStore["editMode"]}
+              <sl-tooltip>
+                <div slot="content">{@html HELP.TITLE.tooltip}</div>
+                <a
+                  id="cc-about-basic-module-collection"
+                  href={HELP.TITLE.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="cc-module-link"
+                >
+                  <i
+                    class="cc-table-header-icon icon-question cc-module-icon"
+                  />
+                </a>
+              </sl-tooltip>
+            {/if}
+
+              </th
             >
           {/if}
         </tr>
       </thead>
       <tbody>
         {#each modules as module}
-          <tr >
+          <tr>
             <td role="cell">
               <span class="cc-responsive-table__heading" aria-hidden="true"
                 >Title</span
@@ -395,7 +506,7 @@
     border-spacing: 0;
   }
 
-/*  .cc-assessment-container caption {
+  /*  .cc-assessment-container caption {
     font-size: 0.5em;
     font-weight: 700;
     text-align: left;
@@ -522,6 +633,11 @@
     margin-left: 0.5rem;
   }
 
+  .cc-table-header-icon {
+    color: #fff;
+    background-color: #c02123;
+  }
+
   .cc-table-cell-text {
     margin: 0;
     font-size: 0.8rem;
@@ -536,7 +652,7 @@
     margin-top: 0.5rem !important;
   }
 
-/*  .cc-assessment-table-fyi-text {
+  /*  .cc-assessment-table-fyi-text {
     width: 100%;
     padding: 0.25rem;
     font-size: x-small;

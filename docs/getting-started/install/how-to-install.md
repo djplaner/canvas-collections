@@ -10,7 +10,3 @@ Depending on your need and access, you must decided between two ways to install 
 | **How is it installed?** | <p>You install the Canvas Collections [userscript](https://en.wikipedia.org/wiki/Userscript) into your browser.</p> | <p>An institution's Canvas administrator installs it into Canvas using [the Theme Editor](https://community.canvaslms.com/t5/Video-Guide/Theme-Editor-Admins/ta-p/383021)</p> |
 | **How to do it** | <sl-button variant="success" size="small" href="../individual/">Install "individual" Collections</sl-button> | <sl-button variant="success" size="small" href="../institutional/">Install "institutional" Collections</sl-button>
 
-
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>

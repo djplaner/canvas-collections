@@ -12,9 +12,6 @@ The _dates tab_ is one of four tabs that form the [_module configuration area_](
 
 ## Properties
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>
-
 As shown above the _dates tab_ consists of four main components summarised in the following table.
 
 | Components | Description |

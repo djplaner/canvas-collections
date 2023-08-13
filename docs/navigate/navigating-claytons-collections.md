@@ -53,8 +53,3 @@ One way to return to the _Claytons_ page would be to hit the browser back button
 <sl-animated-image src="../images/navigateModulesClaytons.gif" alt="Navigate with Claytons collections" />
 </figure>
 
-
-
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>

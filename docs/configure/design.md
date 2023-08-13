@@ -99,8 +99,3 @@ Which representation is best will depend on your design intent and context. The 
 <figcaption>Example changing a collection's representation</figcaption>
 <sl-animated-image src="../images/changingRepresentations.gif" alt="Example changing a collection's representation">
 </figure>
-
-
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>

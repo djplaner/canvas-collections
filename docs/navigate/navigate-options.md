@@ -34,6 +34,3 @@ _Claytons_ Collections emulates _Live_ Collections by generating static HTML ont
 </figure>
 
 
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"></script>
