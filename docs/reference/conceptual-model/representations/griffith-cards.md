@@ -18,7 +18,7 @@
 -->
 
 
-### GriffithCards
+# GriffithCards
 
 The following animated image shows the [same vanilla Canvas course](overview.md#vanilla-canvas) with the same collections as the previous example. However, this time the _GriffithCards_ representation is being used. This representation generates a card for each [object (aka Module)](../objects/overview.md) that belongs to the collection. It mirrors the widely used [card UI design pattern](https://www.nngroup.com/articles/cards-component/). 
 
@@ -29,4 +29,26 @@ The card component can help transform the vanilla Canvas module into a [design a
 <figure markdown>
 <figcaption>Collections using the Griffith Cards representation</figcaption>
 <sl-animated-image src="../pics/animatedGriffithCards.gif" alt="Collections using the Griffith Cards representation" />
+</figure>
+
+
+## Progress ring
+
+Canvas module [requirements](https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-add-requirements-to-a-module/ta-p/1131) provide a way to specify what students must complete before a module can be marked as complete. The _GriffithCards_ representation provides a progress ring as a visualisation of the requirements a student has completed for a module.
+
+The following animated image demonstrates 
+
+- the visual design of the GriffithCards progress ring.
+- the presence of a tooltip that allows students to hover over the progress ring to see a summary of # of requirements completed and the total number to be completed.
+- how the progress ring is updated when a student completes a requirement.
+
+
+!!! note "Use _student view_ to see the progress ring"
+
+    Teacher or designer views will not show the progress ring.
+
+
+<figure markdown>
+<figcaption>Example of GriffithCards' progress ring for tracking student completion</figcaption>
+<sl-animated-image src="../pics/progressGriffithCards.gif" alt="Example of GriffithCards' progress ring for tracking student completion" />
 </figure>
