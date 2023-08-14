@@ -6,16 +6,19 @@ Laurillard (2012) argues
 
 > Teachers...need custom-built digital tools to help them with their ever more complex working environment...it could make the critical difference to changing what they are able to do with their students. (p. 222)
 
-Canvas Collections is a direct response to that need. Part of an on-going exploration into the questions of: 
+Canvas Collections is a direct response to that need. It is also part of an on-going exploration into related questions.
 
-1. Why has higher education been unable to provide the necessary "custom-built digital tools"? (Or even, just effective digital tools?) 
-2. How might we do a better job at providing "custom-built digital tools"?
+!!! question "Why, what and how?"
 
-More specifically, recent work on Canvas Collections has been focused on the value and nature of [usable short arc design tools that scale](#usable-short-arc-design-tools-that-scale)
+	1. Why has higher education been unable to provide the necessary "custom-built digital tools"? (Or even, just effective digital tools?) 
+	2. How might we do a better job at providing "custom-built digital tools"?
+	3. What might/should those "tools" be?
 
 ### Usable short arc design tools that scale
 
-Perhaps higher education's failure arises due to an absence of short arc design tools that scale? Perhaps the [design principles for Contextually Appropriate Scaffolding Assemblages (CASA) (Jones, 2019)](https://djon.es/blog/2019/08/08/exploring-knowledge-reuse-in-design-for-digital-learning-tweaks-h5p-constructive-templates-and-casa/#initial-design-principles-adr-stage-4) might fruitfully inform the implementation of such tools?
+Recent work on Canvas Collections has been exploring answers to those questions that focus on the value and nature of **usable short arc design tools that scale**, including if the [design principles for Contextually Appropriate Scaffolding Assemblages (CASA) (Jones, 2019)](https://djon.es/blog/2019/08/08/exploring-knowledge-reuse-in-design-for-digital-learning-tweaks-h5p-constructive-templates-and-casa/#initial-design-principles-adr-stage-4) might fruitfully inform the implementation of such tools?
+
+The following tabs introduce some of the relevant thinking.
 
 === "Short arc design tools"
 

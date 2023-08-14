@@ -17,6 +17,17 @@
 
 }
 
+.tabbed-content {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  border-left: 1px solid var(--md-default-fg-color--lightest);
+  border-right: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.tabbed-block {
+  font-size: 0.75rem;
+}
+
 figure {
   /*  border-style: solid;
   border-width: 1px;
