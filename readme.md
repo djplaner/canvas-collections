@@ -29,7 +29,10 @@ This course was designed using three driving questions. Can you tell what those 
 
 The right-hand image above demonstrates live (aka dynamic) Canvas Collections. i.e. Canvas Collections is dynamically modifying the Canvas modules page as you interact with it. Live Collections only works if the Collections code is installed (typically by an institution) into Canvas (see ['How do I install Canvas Collections?](#how-do-i-install-canvas-collections)).
 
-Canvas Collections can be used in ["Claytons" Collections mode](https://djplaner.github.io/canvas-collections/reference/conceptual-model/representations/claytons/overview/). 
+Canvas Collections can be used in ["Claytons" Collections mode](https://djplaner.github.io/canvas-collections/reference/conceptual-model/representations/claytons/overview/). i.e. Canvas Collections is used to modify a Canvas page with a static representation of the Collections interface. That page can be used to navigate to modules as a visual landing page. The following animated image provides an example.
+
+![](https://djplaner.github.io/canvas-collections/getting-started/101/interface/navigation/images/animatedClaytonsNav.gif)
+
 
 ## How do I install Canvas Collections?
 

@@ -26,12 +26,13 @@ See the [Navigating _Live_ Collections](../../../navigate/navigating-live-collec
 
 ## Navigating Claytons Collections
 
-[](not-there.md)
+Claytons Collections creates a static representation of the Collections navigation interface element in one or more Canvas pages. These static representations can be used to navigate to specific Canvas modules without the Canvas Collections code.
 
-- doesn't occur on the modules page - occurce in Canvas pages
-
-- Can have navigation bar or no or just be representations -- maybe show examples
+The following animated image demonstrates navigating Claytons Collections configured for the sample course. In this example, the course home page is using [a "full claytons" approach](../../../reference/conceptual-model/collections/full-claytons.md). Such an approach emulates a normal live Collections interface.
 
 See the [Navigating _Claytons_ Collections](../../../navigate/navigating-claytons-collections.md) page for more detail.
 
-_Do up a video/screenshot for navigating Claytons_
+<figure markdown>
+<figcaption>Animated example of navigating Claytons Collections</figcaption>
+<sl-animated-image src="../images/animatedClaytonsNav.gif" alt="Animated example of navigating Claytons Collections" />
+</figure>
