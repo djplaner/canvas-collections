@@ -112,8 +112,11 @@ export class editingOnController {
         // hence the finalCallBack will actually be to turn edit on again
         alert("stale edit lock");
         // TODO delete the page and then start the turnEditOn process again
-        this.staleLock = true;
-        this.turnEditOff(this.finishStaleEditLock)
+        // MAYBE we just need to set no editing so the return will create a new page
+        this.editingOnStatus === EDITING_ON_STATUS.NO_ONE_EDITING;
+
+      //  this.staleLock = true;
+       // this.turnEditOff(this.finishStaleEditLock)
       } else {
         // - parse the body content and set editingDetails
         this.editingDetails = JSON.parse(msg.body);
@@ -142,13 +145,11 @@ export class editingOnController {
 
     if ( editStatus = EDITING_ON_STATUS.NO_ONE_EDITING ) {
       // turn edit on
-      this.turnEditOn(this.finishCallback);
+      //this.turnEditOn(this.finishCallback);
+      this.createEditingOnPage()
     } else {
       alert("Can't turn edit on - weren't able to turn edit off");
     }
-
-
-
   }
 
   /**
@@ -346,10 +347,9 @@ export class editingOnController {
     this.updateEditingDetails(pageName, msg);
 
     if ( this.staleLock) {
-      this.staleLock = false;
+      //this.staleLock = false;
       alert(`turning off stale lock about to turnEditOn`)
-      this.turnEditOn(this.finishCallback)
-
+      this.editingOnStatus === EDITING_ON_STATUS.NO_ONE_EDITING;
     } else {
       this.finishCallback(this.editingOnStatus, this.editingDetails);
     }
