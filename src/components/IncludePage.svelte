@@ -39,6 +39,8 @@
   let pageName: string = "";
   let pageContent: string = "";
 
+  let pageUrl : string = undefined;
+
   // reactively update the page as the collection's includePage changes
   $: {
     if (
@@ -50,7 +52,7 @@
     ) {
       pageName = $collectionsStore["COLLECTIONS"][collectionName].includePage;
       if (pageName !== "") {
-        getPageName( pageName, $configStore["courseId"], addIncludePage);
+        getPageName(pageName, $configStore["courseId"], addIncludePage);
       } else {
         pageContent = "";
       }
@@ -67,15 +69,50 @@
   function addIncludePage(pageName, pageObject) {
     if (pageObject) {
       pageContent = pageObject.body || "";
+      pageUrl = pageObject.html_url || undefined;
     } else {
       pageContent = "";
     }
   }
+
+  const HELP = {
+    includePage: {
+      tooltip: `<p>Edit the collection's include page to change this content. </p>
+          `,
+      url: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/collections/existing-collections/#include-page",
+    },
+  };
 </script>
 
 <div class="cc-include-page" id="cc-include-page">
+  {#if $configStore["editMode"]}
+    <div class="cc-include-help">
+      <sl-tooltip>
+        <div slot="content">{@html HELP.includePage.tooltip}</div>
+        {#if pageUrl!==undefined}
+          <a href="{pageUrl}" target="_blank" rel="noreferrer">Include page</a>
+        {/if}
+        <a target="_blank" rel="noreferrer" href={HELP.includePage.url}
+          ><i class="icon-question cc-module-icon" /></a
+        >
+      </sl-tooltip>
+    </div>
+  {/if}
   {@html pageContent}
 </div>
 
 <style>
+  .cc-include-page {
+    position: relative;
+  }
+
+  .cc-include-help {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #eee ;
+    padding: 0.2rem;
+    margin: 0.2rem;
+    font-size: 0.8rem;
+  }
 </style>
