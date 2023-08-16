@@ -48,7 +48,7 @@
     EDITING_ON_PAGE_NAME_SLUG,
   } from "./lib/editingOnController";
 
-  import { toastAlert } from "./lib/ui";
+  import { ccConfirm, toastAlert } from "./lib/ui";
 
   import "@shoelace-style/shoelace/dist/themes/light.css";
 
@@ -73,6 +73,7 @@
   const TIME_BETWEEN_SAVES: number = 10000; // save collections every 10 seconds
   const TIME_BETWEEN_CANVAS_REFRESH: number = 60000; // check for any changes in Canvas modules every 60 seconds
   // check how many saves happened every X (12 - 2 minutes) saves
+  // if none - time to turn off edit (prompt)
   // Also every 2 * canvas refreshes
   const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 12;
   // to turn/on/off interval based saving and refreshing
@@ -125,12 +126,15 @@
 
   let checked: boolean = false;
 
+  let timeLockObtained: Date = undefined;
+
   // set up editOn controller, need current Canvas user id
   const CURRENT_USER_ID: number = parseInt(ENV["current_user_id"]);
   let editingOnHandler = new editingOnController(
     courseId,
     CURRENT_USER_ID,
     csrfToken
+    //TIME_BETWEEN_NO_SAVE_CHECKS
   );
 
   // Initialise some global configuration settings
@@ -372,6 +376,7 @@
       saveIntervalOn = true;
       // only if we're in editMode and auto save is on
       saveInterval = setInterval(() => {
+//        checkEditLockTimeOut();
         if ($configStore["needToSaveCollections"] && $configStore["editMode"]) {
           collectionsDetails.saveCollections(
             $collectionsStore,
@@ -382,6 +387,32 @@
           );
         }
       }, TIME_BETWEEN_SAVES);
+    }
+  }
+
+  /**
+   * @function checkEditLockTimeOut
+   * @description Checks if
+   *
+   */
+
+  function checkEditLockTimeOut() {
+    if (timeLockObtained !== undefined) {
+      // have an edit lock, check for a stale lock
+      // A stale lock
+      const now = new Date();
+      const diff = now.getTime() - timeLockObtained.getTime();
+      if (diff > TIME_BETWEEN_NO_SAVE_CHECKS * 10) {
+        // yes, so release it
+        toastAlert(
+          `<p>Canvas Collections has released your apparently <strong>stale</strong> edit lock.</p>
+              <p>It has been more than ${
+                TIME_BETWEEN_NO_SAVE_CHECKS / 1000
+              } seconds since you last saved.</p>`,
+          "warning"
+        );
+        editingOnHandler.turnEditOff(setUpEditingOff);
+      }
     }
   }
 
@@ -617,15 +648,12 @@
   }
 
   function checkBeforeUnload(event: BeforeUnloadEvent) {
-    const editOn : boolean = editingOnHandler.getEditingOnStatus() === EDITING_ON_STATUS.YOU_EDITING;
-    const needToSave : boolean = $configStore["needToSaveCollections"];
+    const editOn: boolean =
+      editingOnHandler.getEditingOnStatus() === EDITING_ON_STATUS.YOU_EDITING;
+    const needToSave: boolean = $configStore["needToSaveCollections"];
 
-    if ( editOn || ( $configStore["editMode"] && needToSave ) ) { 
-      if (
-        EXIT_SAVE &&
-        needToSave &&
-        $configStore["editMode"]
-      ) {
+    if (editOn || ($configStore["editMode"] && needToSave)) {
+      if (EXIT_SAVE && needToSave && $configStore["editMode"]) {
         collectionsDetails.saveCollections(
           $collectionsStore,
           $configStore["editingOn"],
@@ -636,27 +664,29 @@
       }
 
       // release editingOn lock, if necessary
-      if ( editOn) {
+      if (editOn) {
         //editingOnHandler.turnEditOff(() => { });
         editingOnHandler.turnEditOff(setUpEditingOff);
       }
 
-      let message = "<p>Additional tidy up required before leaving, because</p><ol>";
-      if ( editOn ) {
+      let message =
+        "<p>Additional tidy up required before leaving, because</p><ol>";
+      if (editOn) {
         message += "<li>You have edit on.</li>";
       }
-      if ( needToSave ) {
+      if (needToSave) {
         message += "<li>You have unsaved changes.</li>";
       }
-      message += "</ol><p>An attempt has been made to tidy up (save changes, turn edit off), but...</p>"
+      message +=
+        "</ol><p>An attempt has been made to tidy up (save changes, turn edit off), but...</p>";
 
-      toastAlert( message, "warning" );
+      toastAlert(message, "warning");
 
       // generate a popup warning message
       event.preventDefault();
       event.returnValue = "";
       return "";
-    } 
+    }
     // all good, we can continue onto Destroy
     return undefined;
   }
@@ -784,6 +814,7 @@
       return;
     }
 
+    timeLockObtained = new Date();
     // first step in turning edit on is to refresh the CollectionsDetails
     // on completion will call turnEditingOn
     collectionsDataLoaded = false;
@@ -877,6 +908,7 @@
       return;
     } else {
       // any other option means that this session turned editing off
+      timeLockObtained = undefined;
       $configStore["editingOn"] = null;
       showConfig = false;
       removeModuleConfiguration($collectionsStore["MODULES"]);
@@ -896,6 +928,11 @@
   function setNumSavesInterval() {
     numSavesInterval = setInterval(() => {
       if (numSaves === 0) {
+        // ask if we should  turn off editing due to lack of activity
+        toastAlert(
+          "<p>Turning editing off due to lack of activity.</p>",
+          "warning"
+        );
         editingOnHandler.turnEditOff(setUpEditingOff);
       }
       numSaves = 0;
