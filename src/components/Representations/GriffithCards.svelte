@@ -328,7 +328,11 @@
         on:click|once={cardClick}
         on:keydown|once={cardClick}
       >
-        <div id="cc_module_{theModule.id}" class="cc-card">
+        <div id="cc_module_{theModule.id}" 
+           class={$collectionsStore["MODULES"][theModule.id].fyi 
+             ? "cc-fyi-card"
+             : "cc-card"}
+             >
           <div class="cc-card-flex">
             <div
               class="cc-card-banner-container"
@@ -487,9 +491,9 @@
   .cc-clickable-card:hover {
     cursor: pointer;
     opacity: 0.8;
-  }
+  } 
 
-  .cc-card {
+  .cc-card,.cc-fyi-card {
     box-shadow: 0 10px 15px -3px rgb(0 0 0/ 0.1);
     background-color: #fff;
     border-radius: 1em;
@@ -511,7 +515,7 @@
   .cc-card:hover {
     background-color: #f5f5f5;
     box-shadow: none;
-  }
+  } 
 
   .cc-card-content-height {
     height: 12rem;
@@ -529,9 +533,9 @@
     flex-direction: column;
   }
 
-  .cc-card-content:hover {
+/*  .cc-card-content:hover {
     cursor: pointer;
-  }
+  } */
 
   .cc-card-description {
     font-size: 0.75rem;
