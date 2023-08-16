@@ -22,8 +22,10 @@
 CSS file designed to improve Claytons design. 
 
 The Canvas RCE is configured to remove some inline styles (e.g. object-fit used
-for banner images for cards). CIDI Labs - if installed - allows a course to define
+for banner images for cards). CIDI Labs DesignPlus - if installed - allows a course to define
 custom CSS that it will inject.  This file is designed to be used with CIDI Labs.
+
+It should be easily adapted to inclusion via the Canvas Theme Editor
 
 To use 
 - Place this file in a folder name "css" in the course Files area 

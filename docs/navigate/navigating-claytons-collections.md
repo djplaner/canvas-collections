@@ -35,21 +35,10 @@ _Claytons_ Collections provides almost all the same navigation elements as _Live
 
 ## How do you switch between collections?
 
-In _Claytons_ Collections, switching between collections is also done with the navigation bar.  However, as it provides none of the smarts of the _Live_ version.
-
-<figure markdown>
-<figcaption>Switching between collections with _Claytons_ Collections</figcaption>
-<sl-animated-image src="../images/switchCollectionsClaytons.gif" alt="Switching between collections with Claytons collections" />
-</figure>
+In _Claytons_ Collections, switching between collections is also done with the navigation bar.  However, as the Collections code is not running it will not remember the last collection you viewed.
 
 ## How do you navigate to a module
 
 Navigating to a module from _Claytons_ Collections involves clicking on one of the module representations. This will navigate to the Modules view with the chosen module immediately visible.
 
 One way to return to the _Claytons_ page would be to hit the browser back button.
-
-<figure markdown>
-<figcaption>Navigate modules with _Claytons_ Collections</figcaption>
-<sl-animated-image src="../images/navigateModulesClaytons.gif" alt="Navigate with Claytons collections" />
-</figure>
-
