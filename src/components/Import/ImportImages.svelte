@@ -29,7 +29,7 @@
 
   export let imagesCompleteStatus = 0;
   export let currentCourseId;
-  export let importCourseId;
+  export let importCourseId; // not currently used
   export let collectionsDetails;
 
   let imageDataGenerated = false;

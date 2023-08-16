@@ -118,7 +118,7 @@ export class editingOnController {
         alert("stale edit lock");
         // TODO delete the page and then start the turnEditOn process again
         // MAYBE we just need to set no editing so the return will create a new page
-        this.editingOnStatus === EDITING_ON_STATUS.NO_ONE_EDITING;
+        this.editingOnStatus = EDITING_ON_STATUS.NO_ONE_EDITING;
 
       } else {
         // - parse the body content and set editingDetails
@@ -329,13 +329,7 @@ export class editingOnController {
   private finalCheckForEditOnOff(pageName: string, msg: any) {
     this.updateEditingDetails(pageName, msg);
 
-    if ( this.staleLock) {
-      //this.staleLock = false;
-      alert(`turning off stale lock about to turnEditOn`)
-      this.editingOnStatus === EDITING_ON_STATUS.NO_ONE_EDITING;
-    } else {
-      this.finishCallback(this.editingOnStatus, this.editingDetails);
-    }
+    this.finishCallback(this.editingOnStatus, this.editingDetails);
   }
 
   /**

@@ -17,8 +17,9 @@
   import { createEventDispatcher } from "svelte";
 
   export let collectionName: string;
-  export let includePageExists: boolean = true;
-  export let outputPageExists: boolean = true;
+  // TODO add exist checks
+  //export let includePageExists: boolean = true;
+  //export let outputPageExists: boolean = true;
   //  export let pageNamesCollections: any;
   export let order: Number;
   export let numCollections: Number;
@@ -786,23 +787,6 @@
     grid-column: 2/ 3;
   }
 
-  .cc-collection-form-reverse {
-    display: grid;
-    grid-template-columns: 1fr 8em;
-    grid-gap: 1em;
-    padding: 0.25em;
-    align-items: center;
-  }
-
-  .cc-collection-label-reverse {
-    grid-column: 2/3;
-    text-align: left;
-  }
-
-  .cc-collection-input-reverse {
-    grid-column: 1/2;
-  }
-
   .cc-collection-double {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -826,24 +810,6 @@
     text-align: left;
   }
 
-  .cc-collection-two-line-error {
-    grid-column: 1/3;
-    grid-row: 3/4;
-    text-align: center;
-    background-color: red;
-    font-size: x-small;
-    color: white;
-  }
-
-  .cc-collection-two-line-warning {
-    grid-column: 1/3;
-    grid-row: 3/4;
-    text-align: center;
-    background-color: yellow;
-    font-size: x-small;
-    color: black;
-  }
-
   .cc-collection-two-line-header {
     grid-column: 1/2;
     text-align: left;
@@ -856,11 +822,6 @@
     padding-top: 0em;
     padding-bottom: 0em;
   }
-
-  /*  .cc-collection-input > input[type="checkbox"] {
-    width: auto;
-    margin-left: 1em;
-  } */
 
   sl-tooltip {
     text-align: left;

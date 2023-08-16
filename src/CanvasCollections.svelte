@@ -76,6 +76,8 @@
   // if none - time to turn off edit (prompt)
   // Also every 2 * canvas refreshes
   const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 12;
+  // A stale edit lock is 10 times the no save checks
+  const STALE_EDIT_LOCK_TIMEOUT : number = 10 * TIME_BETWEEN_NO_SAVE_CHECKS;
   // to turn/on/off interval based saving and refreshing
   // set these to false
   const AUTO_SAVE_BASE: boolean = true; // regularly check to save collections
@@ -133,8 +135,8 @@
   let editingOnHandler = new editingOnController(
     courseId,
     CURRENT_USER_ID,
-    csrfToken
-    //TIME_BETWEEN_NO_SAVE_CHECKS
+    csrfToken,
+    //STALE_EDIT_LOCK_TIMEOUT
   );
 
   // Initialise some global configuration settings
@@ -222,6 +224,7 @@
   // Update ccOn when visibility/editmode change
   $: {
     if (allDataLoaded && !importedCollections) {
+      // TODO VISIBILITY may not be there???
       $configStore["ccOn"] = isCollectionsOn(
         $configStore["editMode"],
         $collectionsStore["VISIBILITY"]
@@ -376,44 +379,55 @@
       saveIntervalOn = true;
       // only if we're in editMode and auto save is on
       saveInterval = setInterval(() => {
-//        checkEditLockTimeOut();
-        if ($configStore["needToSaveCollections"] && $configStore["editMode"]) {
-          collectionsDetails.saveCollections(
-            $collectionsStore,
-            $configStore["editingOn"],
-            $configStore["editMode"],
-            $configStore["needToSaveCollections"],
-            completeSaveCollections
-          );
+        if (!isStaleEditLock()) {
+          if (
+            $configStore["needToSaveCollections"] &&
+            $configStore["editMode"]
+          ) {
+            collectionsDetails.saveCollections(
+              $collectionsStore,
+              $configStore["editingOn"],
+              $configStore["editMode"],
+              $configStore["needToSaveCollections"],
+              completeSaveCollections
+            );
+          }
         }
       }, TIME_BETWEEN_SAVES);
     }
   }
 
   /**
-   * @function checkEditLockTimeOut
-   * @description Checks if
-   *
+   * @function isStaleEditLock
+   * @returns {boolean} - true if the edit lock is stale
+   * @description check for editLock that has exceeded time out
+   * - if yes, start process of turning edit off and return true
+   * - otherwise return false
    */
 
-  function checkEditLockTimeOut() {
-    if (timeLockObtained !== undefined) {
+  function isStaleEditLock() {
+    if (timeLockObtained !== undefined && $configStore["editingOn"] !== null) {
       // have an edit lock, check for a stale lock
       // A stale lock
       const now = new Date();
       const diff = now.getTime() - timeLockObtained.getTime();
-      if (diff > TIME_BETWEEN_NO_SAVE_CHECKS * 10) {
+      if (diff > STALE_EDIT_LOCK_TIMEOUT) {
+        // immediately prevent any further editing here
+        $configStore["editingOn"] = null;
+
         // yes, so release it
         toastAlert(
           `<p>Canvas Collections has released your apparently <strong>stale</strong> edit lock.</p>
               <p>It has been more than ${
-                TIME_BETWEEN_NO_SAVE_CHECKS / 1000
+                STALE_EDIT_LOCK_TIMEOUT / 1000
               } seconds since you last saved.</p>`,
           "warning"
         );
         editingOnHandler.turnEditOff(setUpEditingOff);
+        return true;
       }
     }
+    return false;
   }
 
   /**
@@ -927,7 +941,9 @@
    */
   function setNumSavesInterval() {
     numSavesInterval = setInterval(() => {
-      if (numSaves === 0) {
+      if (numSaves === 0 && $configStore["editingOn"] !== null) {
+        $configStore["editingOn"] = null;
+
         // ask if we should  turn off editing due to lack of activity
         toastAlert(
           "<p>Turning editing off due to lack of activity.</p>",
@@ -937,6 +953,25 @@
       }
       numSaves = 0;
     }, TIME_BETWEEN_NO_SAVE_CHECKS);
+  }
+
+  /**
+   * @function startSaveCollections
+   * @description When visitor clicks on save button
+   * - check if we've a stale edit lock - handle that if necessary
+   * - otherwise start the save process
+   */
+
+  function startSaveCollections() {
+    if (!isStaleEditLock()) {
+      collectionsDetails.saveCollections(
+        $collectionsStore,
+        $configStore["editingOn"],
+        $configStore["editMode"],
+        $configStore["needToSaveCollections"],
+        completeSaveCollections
+      );
+    }
   }
 
   let HELP = {
@@ -1068,13 +1103,7 @@
             : "cc-save-button"}
           id="cc-save-button"
           disabled={!$configStore["needToSaveCollections"]}
-          on:click={collectionsDetails.saveCollections(
-            $collectionsStore,
-            $configStore["editingOn"],
-            $configStore["editMode"],
-            $configStore["needToSaveCollections"],
-            completeSaveCollections
-          )}>Save</button
+          on:click={startSaveCollections}>Save</button
         >
       </div>
     {/if}

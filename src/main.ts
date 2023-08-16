@@ -49,7 +49,7 @@ if (context['modulesPage']) {
 
   app = new CanvasCollections({
     target: div,
-    id: "canvas-collections",
+    //id: "canvas-collections",
     props: context,
   });
 
