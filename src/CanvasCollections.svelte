@@ -77,7 +77,7 @@
   // Also every 2 * canvas refreshes
   const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 12;
   // A stale edit lock is 10 times the no save checks
-  const STALE_EDIT_LOCK_TIMEOUT : number = 10 * TIME_BETWEEN_NO_SAVE_CHECKS;
+  const STALE_EDIT_LOCK_TIMEOUT: number = 10 * TIME_BETWEEN_NO_SAVE_CHECKS;
   // to turn/on/off interval based saving and refreshing
   // set these to false
   const AUTO_SAVE_BASE: boolean = true; // regularly check to save collections
@@ -135,7 +135,7 @@
   let editingOnHandler = new editingOnController(
     courseId,
     CURRENT_USER_ID,
-    csrfToken,
+    csrfToken
     //STALE_EDIT_LOCK_TIMEOUT
   );
 
@@ -379,19 +379,15 @@
       saveIntervalOn = true;
       // only if we're in editMode and auto save is on
       saveInterval = setInterval(() => {
-        if (!isStaleEditLock()) {
-          if (
-            $configStore["needToSaveCollections"] &&
-            $configStore["editMode"]
-          ) {
-            collectionsDetails.saveCollections(
+        if ($configStore["needToSaveCollections"] && $configStore["editMode"]) {
+          startSaveCollections();
+          /*            collectionsDetails.saveCollections(
               $collectionsStore,
               $configStore["editingOn"],
               $configStore["editMode"],
               $configStore["needToSaveCollections"],
               completeSaveCollections
-            );
-          }
+            ); */
         }
       }, TIME_BETWEEN_SAVES);
     }
@@ -412,6 +408,7 @@
       const now = new Date();
       const diff = now.getTime() - timeLockObtained.getTime();
       if (diff > STALE_EDIT_LOCK_TIMEOUT) {
+      //if (diff > 1000) {
         // immediately prevent any further editing here
         $configStore["editingOn"] = null;
 
@@ -668,13 +665,14 @@
 
     if (editOn || ($configStore["editMode"] && needToSave)) {
       if (EXIT_SAVE && needToSave && $configStore["editMode"]) {
-        collectionsDetails.saveCollections(
+        startSaveCollections();
+        /*        collectionsDetails.saveCollections(
           $collectionsStore,
           $configStore["editingOn"],
           $configStore["editMode"],
           $configStore["needToSaveCollections"],
           completeSaveCollections
-        );
+        ); */
       }
 
       // release editingOn lock, if necessary
@@ -964,6 +962,7 @@
 
   function startSaveCollections() {
     if (!isStaleEditLock()) {
+      alert("start save is saving");
       collectionsDetails.saveCollections(
         $collectionsStore,
         $configStore["editingOn"],
@@ -971,6 +970,8 @@
         $configStore["needToSaveCollections"],
         completeSaveCollections
       );
+    } else {
+      alert("start save is NOT saving");
     }
   }
 
