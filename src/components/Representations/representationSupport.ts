@@ -52,28 +52,6 @@ export function getCollectionCanvasModules(
     canvasModuleIds[module.id] = module;
   });
 
-
-  //**** Get the sequential order for the modules */
-  // -- construct array of collections module information for the current collection
-  let collectionModulesArray = [];
-  for (const moduleId in collectionsModules) {
-    // include a module for this collection, if
-    // - it's been allocated to the collection OR
-    // - we're in unallocated mode and it's not allocated to any collection
-    if (
-      collectionsModules[moduleId].collection === collection ||
-      (unallocated &&
-        (collectionsModules[moduleId].collection === null ||
-          collectionsModules[moduleId].collection === ""))
-    ) {
-      collectionModulesArray.push(collectionsModules[moduleId]);
-    }
-  }
-
-  if (!checkSequentialModuleOrder(collectionModulesArray)) {
-    updateSequentialModuleOrder(collectionModulesArray, canvasModules);
-  }
-
   // At this stage, the collectionsModules array has the "correct" moduleOrder
   // create a dict keyed on moduleOrder of collections with ids in collectionModuleIds
 
@@ -139,23 +117,6 @@ export function getCollectionCanvasModules(
   }
 
   return modules;
-}
-
-/**
- * @function checkSequentialModuleOrder
- * @param modules array of collections information about modules that belong to a collection
- * @returns same array of modules but sorted into order 
- */
-
-function checkSequentialModuleOrder(modules) {
-  const moduleOrder = modules
-    .map((module) => module.moduleOrder)
-    .sort((a, b) => a - b);
-
-  return moduleOrder.every(
-    (order, i) =>
-      i === moduleOrder.length - 1 || order === moduleOrder[i + 1] - 1
-  );
 }
 
 /**
