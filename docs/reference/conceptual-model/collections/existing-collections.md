@@ -86,12 +86,23 @@ The _Existing collection_ element provides a _Add unallocated_ checkbox to indic
 
 ### Include page
 
-Each collection can have a Canvas page defined as its _include page_. The contents of an _include page_ will be inserted before or after that current collection's representation.
+Each collection can have a Canvas page defined as its _include page_. The contents of an _include page_ will be inserted before or after that current collection's representation. 
+
+You specify the _include page_ by providing the name of a page. Collections will attempt to retrieve exactly the name given.
+
+!!! warning "No _include page_ if the _include page_ name isn't found"
+
+    The title of a Canvas page (what you see in the Canvas RCE) doesn't always match the page name used by Canvas ([for example](https://community.canvaslms.com/t5/Canvas-Question-Forum/Renaming-Duplicated-Pages/td-p/544327#:~:text=Any%20time%20you%20make%20a,after%20the%20page%20name.))
+
+    If Collections is unable to find the name it will display an error message for staff, but nothing to students.
 
 The _Existing collection_ element provides 
 
 - an _Include page_ textbox in which you enter the title of the Canvas page; and,
 - an _After_ checkbox which you use to indicate if you want the _include page_ contents to appear after the representation
+
+
+
 
 <figure markdown>
 <figcaption>Using the "include page" feature</figcaption>

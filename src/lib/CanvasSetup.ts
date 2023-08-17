@@ -21,6 +21,7 @@
 
 // Kludge 
 let BASE_API_URL = "";
+let BASE_URL = "";
 
 /**
  * @function checkContext
@@ -49,6 +50,7 @@ export function checkContext(): object {
   // - set 
   context["baseApiUrl"] = `${url.protocol}//${url.hostname}/api/v1/`;
   BASE_API_URL = context["baseApiUrl"];
+  BASE_URL = `${url.protocol}//${url.hostname}/`;
 
   // check if there's a cc-collection-\d+ in the hash
   // this is the case for internal navigation within collections
@@ -383,23 +385,31 @@ export function getPageName(
   }
 
   if (pageName !== "") {
-    // only do this if we've a valid page name
-    String.prototype.slugify = function (separator = "-") {
-      return this.toString()
-        .normalize("NFD") // split an accented letter in the base letter and the acent
-        .replace(/[\u0300-\u036f]/g, "") // remove all previously split accents
-        .toLowerCase()
-        .trim()
-        .replace("@", "at")
-        .replace(/[^a-z0-9 ]/g, "") // remove all chars not letters, numbers and spaces (to be replaced)
-        .replace(/\s+/g, separator);
-    };
-    const slugifiedPageName = pageName.slugify();
-
-    const url = `${BASE_API_URL}/courses/${courseId}/pages/${slugifiedPageName}`;
+    const url = getUrlFromPage(pageName, courseId)
 
     wf_fetchData(url).then((msg) => {
       callBack(pageName, msg.body);
     });
+  }
+}
+
+export function getUrlFromPage(pageName, courseId, api = true) {
+  // only do this if we've a valid page name
+  String.prototype.slugify = function (separator = "-") {
+    return this.toString()
+      .normalize("NFD") // split an accented letter in the base letter and the acent
+      .replace(/[\u0300-\u036f]/g, "") // remove all previously split accents
+      .toLowerCase()
+      .trim()
+      .replace("@", "at")
+      .replace(/[^a-z0-9 ]/g, "") // remove all chars not letters, numbers and spaces (to be replaced)
+      .replace(/\s+/g, separator);
+  };
+  const slugifiedPageName = pageName.slugify();
+
+  if (api) {
+    return `${BASE_API_URL}/courses/${courseId}/pages/${slugifiedPageName}`;
+  } else {
+    return `${BASE_URL}/courses/${courseId}/pages/${slugifiedPageName}`;
   }
 }
