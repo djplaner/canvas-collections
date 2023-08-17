@@ -407,8 +407,8 @@
       // A stale lock
       const now = new Date();
       const diff = now.getTime() - timeLockObtained.getTime();
-      if (diff > STALE_EDIT_LOCK_TIMEOUT) {
-      //if (diff > 1000) {
+      //if (diff > STALE_EDIT_LOCK_TIMEOUT) {
+      if (diff > 10000) {
         // immediately prevent any further editing here
         $configStore["editingOn"] = null;
 
