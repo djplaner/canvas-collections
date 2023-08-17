@@ -326,12 +326,12 @@ export class updatePageController {
         this.tasks[0].collection
       ].hasOwnProperty("includePage") &&
       this.collectionsStore["COLLECTIONS"][this.tasks[0].collection][
-        "includePage"
+      "includePage"
       ] !== ""
     ) {
       let includePageName =
         this.collectionsStore["COLLECTIONS"][this.tasks[0].collection][
-          "includePage"
+        "includePage"
         ];
       // get the include page content
       // a chain that eventually starts getOutputPage
@@ -390,9 +390,8 @@ export class updatePageController {
 
     for (let task of this.completedTasks) {
       if (task.error) {
-        summary += `<li> ${task.collection} - ${
-          task.outputPageUrl
-        } - errors - ${task.errors.join("\n     ")} </li>`;
+        summary += `<li> ${task.collection} - ${task.outputPageUrl
+          } - errors - ${task.errors.join("\n     ")} </li>`;
       } else if (task.completed) {
         if (task.hasOwnProperty("collection")) {
           summary += `<li> <em>${task.collection}</em> - 
@@ -446,18 +445,17 @@ export class updatePageController {
       },
     });
 
-    if (!response.ok) {
-      // TODO if in edit mode, display some error
-      return;
-    }
-
-    const newPageObject = await response.json();
-
     // save the include page content for this task for latter use in the pipeline
-    this.tasks[0].includePageContent = `
+    if (!response.ok) {
+      // If we couldn't get the include page, just continue with empty content
+      this.tasks[0].includePageContent = "";
+    } else {
+      const newPageObject = await response.json();
+      this.tasks[0].includePageContent = `
 		<div id="cc-${this.tasks[0].collection}-includePage" class="cc-includePage">
 		  ${newPageObject.body}
 		</div>`;
+    }
 
     this.getOutputPage();
   }
@@ -723,9 +721,9 @@ export class updatePageController {
     // remove any .cc-includePage
     // don't need this as the includePage stuff should be within the collection div
     /*const includePages = doc.getElementsByClassName('cc-includePage');
-		for (let i=0; i<includePages.length; i++) {
-			includePages[i].remove();
-		} */
+    for (let i=0; i<includePages.length; i++) {
+      includePages[i].remove();
+    } */
 
     // remove the nav bar stuff if we're none navOption
     if (this.navOption === 1) {
