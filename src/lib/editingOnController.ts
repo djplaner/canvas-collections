@@ -76,7 +76,7 @@ export class editingOnController {
     this.courseId = courseId;
     this.canvasUserId = userId;
     this.csrfToken = csrf;
-    this.timeForStaleLock = 10 ;//timeForStaleLock;
+    this.timeForStaleLock = timeForStaleLock;
 
     this.browserSessionId = uuidv4();
 

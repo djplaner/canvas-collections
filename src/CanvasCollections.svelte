@@ -135,8 +135,8 @@
   let editingOnHandler = new editingOnController(
     courseId,
     CURRENT_USER_ID,
-    csrfToken
-    //STALE_EDIT_LOCK_TIMEOUT
+    csrfToken,
+    STALE_EDIT_LOCK_TIMEOUT
   );
 
   // Initialise some global configuration settings
