@@ -124,9 +124,9 @@ export class editingOnController {
         this.editingOnStatus = EDITING_ON_STATUS.NO_ONE_EDITING;
 
       } else { */
-        // - parse the body content and set editingDetails
-        this.editingDetails = JSON.parse(msg.body);
-        this.setEditingOnStatus();
+      // - parse the body content and set editingDetails
+      this.editingDetails = JSON.parse(msg.body);
+      this.setEditingOnStatus();
       //}
     } else {
       // page doesn't exist - set editingDetails to null
@@ -219,9 +219,8 @@ export class editingOnController {
    */
   public turnEditOn(finishCallback: Function) {
     this.finishCallback = finishCallback;
-    console.log(`------- starting turnEditOn - sessionId ${this.browserSessionId}`)
 
-    // get latest editing Details
+    // get latest editing Details, if any
     getPageName(
       EDITING_ON_PAGE_NAME,
       `${this.courseId}`,
@@ -245,29 +244,14 @@ export class editingOnController {
     // change based on what we got back, all error handling in there
     this.updateEditingDetails(pageName, msg);
 
-    if ( this.staleEditLock(msg) ) {
-      console.log(`canWeTurnEditOn - stale lock status ${this.editingOnStatus}`)
-      // if not YOU_EDITING then we should remove the stale edit lock
-      if (this.editingOnStatus!== EDITING_ON_STATUS.YOU_EDITING) {
-        // maybe we just want the user and explain what they can do??
-        console.log(" .   ---- figure out how to delete the page and then start turnEditOn again")
-        // do we just create the editingOnPage again
-        this.createEditingOnPage()
-      } else {
-        // it's us so we want to update the page, do we just do the createEditingOnPage
-        // THIS appears to work
-        console.log(" .   ---- need to re-create the page so we're able to go again")
-        this.createEditingOnPage()
-      }
-      // if YOU_EDITING we need to refresh the edit lock
+    if (this.staleEditLock(msg)) {
+      // a stale lock should just be recreated for the current user
+      this.createEditingOnPage()
     } else if (this.editingOnStatus === EDITING_ON_STATUS.NO_ONE_EDITING) {
-      // no-one is editing, so go ahead and create the page
+      // Not a stale lock and no-one is editing, so go ahead and create the page
       this.createEditingOnPage();
     } else {
-      // we can't edit because either
-      // - I'm editing here
-      // - I'm editing elsewhere
-      // - someone else is editing
+      // we can't edit because, finish up and show the error
       this.finishCallback(this.editingOnStatus, this.editingDetails);
     }
   }
@@ -356,50 +340,40 @@ export class editingOnController {
    * - delete the page, but only if it contains our details
    */
   public turnEditOff(finishCallback: Function) {
-    console.log(`------- starting turnEditOff - sessionId ${this.browserSessionId}`)
     this.finishCallback = finishCallback;
 
-    // check it's still our page
     getPageName(EDITING_ON_PAGE_NAME, `${this.courseId}`, this.canWeTurnEditOff.bind(this));
-
-    console.log(" .   1 called getPageName - going home")
 
     return;
   }
 
+  /**
+   * @method canWeTurnEditOff
+   * @param pageName 
+   * @param msg 
+   * @description Based on the current content of the edit lock page, figure out if we can
+   * - iff a stale edit lock, delete it, regardless of who owns it
+   * - otherwise if we own the lock, delete the page
+   */
   private canWeTurnEditOff(pageName, msg) {
     let callUrl = `/api/v1/courses/${this.courseId}/pages/${EDITING_ON_PAGE_NAME_SLUG}`;
-
-    console.log(" .   2 canWeTurnEditOff")
 
     // check the resule
     this.updateEditingDetails(pageName, msg);
 
-    console.log( ` .   3 canWeTurnEditOff - editingOnStatus ${this.editingOnStatus}`)
-
     if (this.staleEditLock(msg)) {
-      console.log(`canWeTurnEditOff - stale lock status ${this.editingOnStatus}`)
-      // if it's us editing - we can just keep on going
-      // if it's someone else we need to remove it
-      // Not sure if this can ever happen
-      if ( this.editingOnStatus!== EDITING_ON_STATUS.YOU_EDITING) {
-        console.log(" .  Someone else's stale lock - we can delete the page")
+//      if (this.editingOnStatus !== EDITING_ON_STATUS.YOU_EDITING) {
         wf_deleteData(callUrl, this.csrfToken).then((data) => {
-          console.log(" .   5 canWeTurnEditOff - page deleted")
           this.checkDeletion(data);
         });
-      }
+ //     }
     } else if (this.editingOnStatus === EDITING_ON_STATUS.YOU_EDITING) {
       // we are editing, delete the edit page
-      console.log(" .   4 canWeTurnEditOff - deleting page")
       wf_deleteData(callUrl, this.csrfToken).then((data) => {
-        console.log(" .   5 canWeTurnEditOff - page deleted")
         this.checkDeletion(data);
       });
-      console.log(" .   4b canWeTurnEditOff - page delete called")
     } else {
-      console.log(" .   4c canWeTurnEditOff - page not deleted")
-     this.finishCallback(this.editingOnStatus, this.editingDetails);
+      this.finishCallback(this.editingOnStatus, this.editingDetails);
     }
   }
 

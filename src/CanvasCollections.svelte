@@ -407,8 +407,7 @@
       // A stale lock
       const now = new Date();
       const diff = now.getTime() - timeLockObtained.getTime();
-      //if (diff > STALE_EDIT_LOCK_TIMEOUT) {
-      if (diff > 10000) {
+      if (diff > STALE_EDIT_LOCK_TIMEOUT) {
         // immediately prevent any further editing here
         //$configStore["editingOn"] = null;
 
@@ -796,8 +795,15 @@
   function showEditStatusWarnings(editStatus: EDITING_ON_STATUS) {
     if (editStatus === EDITING_ON_STATUS.YOU_EDITING_ELSEWHERE) {
       toastAlert(
-        `<p>Failed to turn editing on</p>
-          <p>You are already editing Collections for this course in another browser (or browser tab).</p>`,
+        `<div>Failed to turn editing on
+          <sl-tooltip> <div slot="content">${HELP.FAILED_EDIT_ON.tooltip}</div>
+            <a target="_blank" rel="noreferrer" href="${HELP.FAILED_EDIT_ON.url}">
+              ❓
+            </a>
+        </sl-tooltip>
+          </div>
+  <p>You are already editing Collections for this course in another browser (or browser tab).</p>
+          `,
         "danger"
       );
     } else if (editStatus === EDITING_ON_STATUS.SOMEONE_ELSE_EDITING) {
@@ -976,7 +982,6 @@
 
   function startSaveCollections() {
     if (!isStaleEditLock()) {
-      alert("start save is saving");
       collectionsDetails.saveCollections(
         $collectionsStore,
         $configStore["editingOn"],
@@ -984,9 +989,7 @@
         $configStore["needToSaveCollections"],
         completeSaveCollections
       );
-    } else {
-      alert("start save is NOT saving");
-    }
+    } 
   }
 
   let HELP = {
@@ -998,6 +1001,10 @@
       <p>Click this button to turn editing on. Only if no-one else (including you in another
         browser window) is already editing this course's Collections configuration.</p>
       `,
+    },
+    FAILED_EDIT_ON : {
+      tooltip: `<p>Learn more about why and what can be done.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/problems/failed-to-turn-editing-on/",
     },
     editOff: {
       tooltip: `<p>Editing Collections is <strong>on</strong>.</p>
