@@ -70,18 +70,27 @@
   import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
   setBasePath("../node_modules/@shoelace-style/shoelace/dist/");
 
-  const TIME_BETWEEN_SAVES: number = 10000; // save collections every 10 seconds
-  const TIME_BETWEEN_CANVAS_REFRESH: number = 60000; // check for any changes in Canvas modules every 60 seconds
-  // check how many saves happened every X (12 - 2 minutes) saves
-  // if none - time to turn off edit (prompt)
-  // Also every 2 * canvas refreshes
-  const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 4;
-  // A stale edit lock is 10 times the no save checks
+  // Define misc constants for interval timing
+  // - how often to check if config needs saving (in milliseconds)
+  const TIME_BETWEEN_SAVES: number = 10000;  // 10000 === 10 seconds
+  // - how often to check for changes to Canvas modules data
+  const TIME_BETWEEN_CANVAS_REFRESH: number = 60000; // 60 seconds
+  // - how often to check for inactivity (no changes)
+  // - used to turn edit off
+  const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 6;
+  // - Define time for a stale edit lock 
+  //   (arises when a computer is suspended with edit on)
   const STALE_EDIT_LOCK_TIMEOUT: number = 2 * TIME_BETWEEN_NO_SAVE_CHECKS;
-  // to turn/on/off interval based saving and refreshing
-  // set these to false
-  const AUTO_SAVE_BASE: boolean = true; // regularly check to save collections
-  const EXIT_SAVE_BASE: boolean = true; // check to save collections before leaving
+
+  // Define if to turn intervals on in the first place
+  // - the save checks only run if editMode is true (teaching staff, designers)
+  //   as they are the only ones who can make changes
+  // - modules check run for everyone
+  // - check for a need to save
+  const AUTO_SAVE_BASE: boolean = true; 
+  // - check for need to save before exit
+  const EXIT_SAVE_BASE: boolean = true; 
+  // - check for changes to Canvas modules data
   let AUTO_REFRESH: boolean = true; // regularly update Canvas course modules information
   // refresh has no base, as it should run when students using
   // change these based on being in student view
@@ -90,19 +99,20 @@
 
   // Properties set by main.ts
   export let courseId: number;
-  export let editMode: boolean;
+  export let editMode: boolean; // true iff user can see "student view" button
   export let csrfToken: string;
-  export let modulesPage: boolean;
+  export let modulesPage: boolean; // are we on the modules page
   export let baseApiUrl: string;
 
   onMount(async () => {
-    // Start the process of getting via Canvas API
+    // Start the process of getting info via Canvas API
     // - CanvasDetails - Canvas module info
     // - CollectionsDetails - content of the Collections configuration page
     // - Will end up respectively using callBacks gotCanvasDetails & gotCollectionDetails
     //   at the tail end of information retrieval
     // - Both will call checkAllDataLoaded, when it detects both finished, if will
     //   start everything else up
+    // Will not proceed until both sets of data are successful
     if (modulesPage) {
       canvasDetails = new CanvasDetails(gotCanvasDetails, {
         courseId: courseId,
@@ -128,6 +138,7 @@
 
   let checked: boolean = false;
 
+  // store when user obtained an edit lock - to check for stale locks
   let timeLockObtained: Date = undefined;
 
   // set up editOn controller, need current Canvas user id

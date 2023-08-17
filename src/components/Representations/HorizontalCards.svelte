@@ -235,16 +235,6 @@
               </div>
             {/if}
           {/if}
-          {#if isUnPublishedUnallocated(theModule.id, collection)}
-            <div class="cc-card-published">
-              {#if !$collectionsStore["MODULES"][theModule.id].published}
-                Unpublished.
-              {/if}
-              {#if $configStore["editMode"] && $collectionsStore["MODULES"][theModule.id].collection !== collection}
-                No collection allocated.
-              {/if}
-            </div>
-          {/if}
 
           {@html $collectionsStore["MODULES"][theModule.id].description}
 

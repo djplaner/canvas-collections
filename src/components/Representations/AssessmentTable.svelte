@@ -221,6 +221,19 @@
                   {@html $collectionsStore["MODULES"][module.id].description}
                 </p>
               </div>
+              {#if $collectionsStore["MODULES"][module.id].fyi}
+              {#if $collectionsStore["MODULES"][module.id].fyiText !== "" || $configStore["editMode"]}
+                <div class="cc-card-fyi" style="background:rgba(0,0,0,0.75);color:white;font-size:x-small;text-align:center;">
+                  <span class="cc-fyi-text">
+                    {#if $collectionsStore["MODULES"][module.id].fyiText}
+                      {@html $collectionsStore["MODULES"][module.id].fyiText}
+                    {:else}
+                      (<em>FYI, no FYI text</em>
+                    {/if}
+                  </span>
+                </div>
+              {/if}
+            {/if}
             </td>
             {#if numWeighting > 0}
               <td

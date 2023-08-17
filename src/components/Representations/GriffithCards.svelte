@@ -49,6 +49,9 @@
 
   // calculate the moduleIds belonging to collection
   let modules = generateModulesData();
+  console.log(`----------- GriffithCards collection ${collection} claytons ${claytons} `)
+  console.log(modules);
+  console.log("----------- GriffithCards")
   let tmpCollection = collection;
 
   $: {
