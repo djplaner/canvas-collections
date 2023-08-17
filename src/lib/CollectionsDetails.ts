@@ -1048,7 +1048,7 @@ export class CollectionsDetails {
     // loop through the canvas modules
     for (let i = 0; i < canvasModules.length; i++) {
       const module = canvasModules[i];
-      let collectionsModule = collectionsModules[module.id];
+      let collectionsModule = collectionsModules[module['id']];
 
       // loop through all the collections
       for (const collectionName in collections) {

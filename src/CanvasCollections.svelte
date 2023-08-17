@@ -48,7 +48,7 @@
     EDITING_ON_PAGE_NAME_SLUG,
   } from "./lib/editingOnController";
 
-  import { toastAlert } from "./lib/ui";
+  import { ccConfirm, toastAlert } from "./lib/ui";
 
   import "@shoelace-style/shoelace/dist/themes/light.css";
 
@@ -73,8 +73,11 @@
   const TIME_BETWEEN_SAVES: number = 10000; // save collections every 10 seconds
   const TIME_BETWEEN_CANVAS_REFRESH: number = 60000; // check for any changes in Canvas modules every 60 seconds
   // check how many saves happened every X (12 - 2 minutes) saves
+  // if none - time to turn off edit (prompt)
   // Also every 2 * canvas refreshes
   const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 12;
+  // A stale edit lock is 10 times the no save checks
+  const STALE_EDIT_LOCK_TIMEOUT: number = 10 * TIME_BETWEEN_NO_SAVE_CHECKS;
   // to turn/on/off interval based saving and refreshing
   // set these to false
   const AUTO_SAVE_BASE: boolean = true; // regularly check to save collections
@@ -125,12 +128,15 @@
 
   let checked: boolean = false;
 
+  let timeLockObtained: Date = undefined;
+
   // set up editOn controller, need current Canvas user id
   const CURRENT_USER_ID: number = parseInt(ENV["current_user_id"]);
   let editingOnHandler = new editingOnController(
     courseId,
     CURRENT_USER_ID,
-    csrfToken
+    csrfToken,
+    STALE_EDIT_LOCK_TIMEOUT
   );
 
   // Initialise some global configuration settings
@@ -218,6 +224,7 @@
   // Update ccOn when visibility/editmode change
   $: {
     if (allDataLoaded && !importedCollections) {
+      // TODO VISIBILITY may not be there???
       $configStore["ccOn"] = isCollectionsOn(
         $configStore["editMode"],
         $collectionsStore["VISIBILITY"]
@@ -373,16 +380,54 @@
       // only if we're in editMode and auto save is on
       saveInterval = setInterval(() => {
         if ($configStore["needToSaveCollections"] && $configStore["editMode"]) {
-          collectionsDetails.saveCollections(
-            $collectionsStore,
-            $configStore["editingOn"],
-            $configStore["editMode"],
-            $configStore["needToSaveCollections"],
-            completeSaveCollections
-          );
+          startSaveCollections();
+          /*            collectionsDetails.saveCollections(
+              $collectionsStore,
+              $configStore["editingOn"],
+              $configStore["editMode"],
+              $configStore["needToSaveCollections"],
+              completeSaveCollections
+            ); */
         }
       }, TIME_BETWEEN_SAVES);
     }
+  }
+
+  /**
+   * @function isStaleEditLock
+   * @returns {boolean} - true if the edit lock is stale
+   * @description check for editLock that has exceeded time out
+   * - if yes, start process of turning edit off and return true
+   * - otherwise return false
+   */
+
+  function isStaleEditLock() {
+    if (timeLockObtained !== undefined && $configStore["editingOn"] !== null) {
+      // have an edit lock, check for a stale lock
+      // A stale lock
+      const now = new Date();
+      const diff = now.getTime() - timeLockObtained.getTime();
+      if (diff > STALE_EDIT_LOCK_TIMEOUT) {
+        // immediately prevent any further editing here
+        //$configStore["editingOn"] = null;
+
+        //editingOnHandler.turnEditOff(setUpEditingOff);
+        // assumption here is we don't need to actually turn edit off
+        // A stale lock will be removed by other people when they start editing
+        turnOffEditingInterface() 
+
+        // yes, so release it
+        toastAlert(
+          `<p>Canvas Collections has released your apparently <strong>stale</strong> edit lock.</p>
+              <p>It has been more than ${
+                STALE_EDIT_LOCK_TIMEOUT / 1000
+              } seconds since you last saved.</p>`,
+          "warning"
+        );
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -617,46 +662,46 @@
   }
 
   function checkBeforeUnload(event: BeforeUnloadEvent) {
-    const editOn : boolean = editingOnHandler.getEditingOnStatus() === EDITING_ON_STATUS.YOU_EDITING;
-    const needToSave : boolean = $configStore["needToSaveCollections"];
+    const editOn: boolean =
+      editingOnHandler.getEditingOnStatus() === EDITING_ON_STATUS.YOU_EDITING;
+    const needToSave: boolean = $configStore["needToSaveCollections"];
 
-    if ( editOn || ( $configStore["editMode"] && needToSave ) ) { 
-      if (
-        EXIT_SAVE &&
-        needToSave &&
-        $configStore["editMode"]
-      ) {
-        collectionsDetails.saveCollections(
+    if (editOn || ($configStore["editMode"] && needToSave)) {
+      if (EXIT_SAVE && needToSave && $configStore["editMode"]) {
+        startSaveCollections();
+        /*        collectionsDetails.saveCollections(
           $collectionsStore,
           $configStore["editingOn"],
           $configStore["editMode"],
           $configStore["needToSaveCollections"],
           completeSaveCollections
-        );
+        ); */
       }
 
       // release editingOn lock, if necessary
-      if ( editOn) {
+      if (editOn) {
         //editingOnHandler.turnEditOff(() => { });
         editingOnHandler.turnEditOff(setUpEditingOff);
       }
 
-      let message = "<p>Additional tidy up required before leaving, because</p><ol>";
-      if ( editOn ) {
+      let message =
+        "<p>Additional tidy up required before leaving, because</p><ol>";
+      if (editOn) {
         message += "<li>You have edit on.</li>";
       }
-      if ( needToSave ) {
+      if (needToSave) {
         message += "<li>You have unsaved changes.</li>";
       }
-      message += "</ol><p>An attempt has been made to tidy up (save changes, turn edit off), but...</p>"
+      message +=
+        "</ol><p>An attempt has been made to tidy up (save changes, turn edit off), but...</p>";
 
-      toastAlert( message, "warning" );
+      toastAlert(message, "warning");
 
       // generate a popup warning message
       event.preventDefault();
       event.returnValue = "";
       return "";
-    } 
+    }
     // all good, we can continue onto Destroy
     return undefined;
   }
@@ -750,19 +795,36 @@
   function showEditStatusWarnings(editStatus: EDITING_ON_STATUS) {
     if (editStatus === EDITING_ON_STATUS.YOU_EDITING_ELSEWHERE) {
       toastAlert(
-        `<p>Failed to turn editing on</p>
-          <p>You are already editing Collections for this course in another browser (or browser tab).</p>`,
+        `<div>Failed to turn editing on
+          <sl-tooltip> <div slot="content">${HELP.FAILED_EDIT_ON.tooltip}</div>
+            <a target="_blank" rel="noreferrer" href="${HELP.FAILED_EDIT_ON.url}">
+              ❓
+            </a>
+        </sl-tooltip>
+          </div>
+  <p>You are already editing Collections for this course in another browser (or browser tab).</p>
+          `,
         "danger"
       );
     } else if (editStatus === EDITING_ON_STATUS.SOMEONE_ELSE_EDITING) {
       toastAlert(
-        `<p>Failed to turn editing on</p>
+        `<div>Failed to turn editing on
+          <sl-tooltip> <div slot="content">${HELP.FAILED_EDIT_ON.tooltip}</div>
+            <a target="_blank" rel="noreferrer" href="${HELP.FAILED_EDIT_ON.url}">
+              ❓
+            </a>
+        </sl-tooltip>
         <p>Someone else is editing Collections</p>`,
         "danger"
       );
     } else if (editStatus === EDITING_ON_STATUS.NO_ONE_EDITING) {
       toastAlert(
-        `<p>Failed to turn editing on</p>
+        `<div>Failed to turn editing on
+          <sl-tooltip> <div slot="content">${HELP.FAILED_EDIT_ON.tooltip}</div>
+            <a target="_blank" rel="noreferrer" href="${HELP.FAILED_EDIT_ON.url}">
+              ❓
+            </a>
+        </sl-tooltip>
         <p>Unknown reason - but apparently no-one else is editing.</p>`,
         "danger"
       );
@@ -784,6 +846,7 @@
       return;
     }
 
+    timeLockObtained = new Date();
     // first step in turning edit on is to refresh the CollectionsDetails
     // on completion will call turnEditingOn
     collectionsDataLoaded = false;
@@ -877,14 +940,25 @@
       return;
     } else {
       // any other option means that this session turned editing off
-      $configStore["editingOn"] = null;
-      showConfig = false;
-      removeModuleConfiguration($collectionsStore["MODULES"]);
-      clearInterval(numSavesInterval);
-      // turn off save interval
-      saveIntervalOn = true;
-      clearInterval(saveInterval);
+      turnOffEditingInterface();
     }
+  }
+
+  /**
+   * @function turnOffEditingInterface
+   * @description time to update the Collections interface and intervals to
+   * indicate the editing is now off
+   */
+
+  function turnOffEditingInterface() {
+    timeLockObtained = undefined;
+    $configStore["editingOn"] = null;
+    showConfig = false;
+    removeModuleConfiguration($collectionsStore["MODULES"]);
+    clearInterval(numSavesInterval);
+    // turn off save interval
+    saveIntervalOn = true;
+    clearInterval(saveInterval);
   }
 
   /**
@@ -895,11 +969,37 @@
    */
   function setNumSavesInterval() {
     numSavesInterval = setInterval(() => {
-      if (numSaves === 0) {
+      if (numSaves === 0 && $configStore["editingOn"] !== null) {
+        $configStore["editingOn"] = null;
+
+        // ask if we should  turn off editing due to lack of activity
+        toastAlert(
+          "<p>Turning editing off due to lack of activity.</p>",
+          "warning"
+        );
         editingOnHandler.turnEditOff(setUpEditingOff);
       }
       numSaves = 0;
     }, TIME_BETWEEN_NO_SAVE_CHECKS);
+  }
+
+  /**
+   * @function startSaveCollections
+   * @description When visitor clicks on save button
+   * - check if we've a stale edit lock - handle that if necessary
+   * - otherwise start the save process
+   */
+
+  function startSaveCollections() {
+    if (!isStaleEditLock()) {
+      collectionsDetails.saveCollections(
+        $collectionsStore,
+        $configStore["editingOn"],
+        $configStore["editMode"],
+        $configStore["needToSaveCollections"],
+        completeSaveCollections
+      );
+    } 
   }
 
   let HELP = {
@@ -911,6 +1011,10 @@
       <p>Click this button to turn editing on. Only if no-one else (including you in another
         browser window) is already editing this course's Collections configuration.</p>
       `,
+    },
+    FAILED_EDIT_ON : {
+      tooltip: `<p>Learn more about why and what can be done.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/problems/failed-to-turn-editing-on/",
     },
     editOff: {
       tooltip: `<p>Editing Collections is <strong>on</strong>.</p>
@@ -1031,13 +1135,7 @@
             : "cc-save-button"}
           id="cc-save-button"
           disabled={!$configStore["needToSaveCollections"]}
-          on:click={collectionsDetails.saveCollections(
-            $collectionsStore,
-            $configStore["editingOn"],
-            $configStore["editMode"],
-            $configStore["needToSaveCollections"],
-            completeSaveCollections
-          )}>Save</button
+          on:click={startSaveCollections}>Save</button
         >
       </div>
     {/if}

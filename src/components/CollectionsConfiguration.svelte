@@ -196,10 +196,6 @@
 </div>
 
 <style>
-  .cc-box-header {
-    padding-left: 0.5em;
-  }
-
   .cc-box-body {
     width: 35em;
     padding-left: 0.5em;
@@ -217,11 +213,6 @@
     height: 100%;
   }
 
-  #cc-config-body p {
-    font-size: 0.9em;
-    /*font-weight: bold; */
-  }
-
   .cc-header p {
     font-size: 1.1em;
     font-weight: bold;
@@ -233,16 +224,6 @@
     grid-gap: 1em;
     padding-bottom: 0.25em;
     align-items: center;
-  }
-
-  .cc-collection-label {
-    grid-column: 1/ 2;
-    text-align: right;
-  }
-
-  .cc-collection-input {
-    grid-column: 2/ 3;
-    font-size: 0.8rem;
   }
 
   select {

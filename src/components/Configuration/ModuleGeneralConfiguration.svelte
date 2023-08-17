@@ -378,17 +378,6 @@
     padding: 0.5rem;
   }
 
-  .cc-module-config-detail {
-    padding: 0.5rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-    gap: 0px 1em;
-    grid-auto-flow: row;
-    grid-template-areas: ". .";
-    height: 100%;
-  }
-
   .cc-module-form {
     display: grid;
     grid-template-columns: 8em 1fr;
@@ -410,8 +399,6 @@
     width: 90%;
   }
 
-  .cc-module-row {
-  }
   .cc-module-row:after {
     content: "";
     display: table;

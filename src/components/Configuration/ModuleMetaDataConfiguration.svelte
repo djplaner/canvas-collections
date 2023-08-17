@@ -126,6 +126,29 @@
   }
 
   /**
+   * @function sortMetaDataEntries
+   * @description Create an array of { "name": <metadataName>, "value": <metadataValue> }
+   * for each of the current module's metadata entries - sorted on alphabetically order 
+   * on <metaDataName>
+   */
+  function sortMetaDataEntries() {
+    let metaData = [];
+    // generated sorted list of metadata names
+    const sortedMetaDataNames = Object.keys(
+      $collectionsStore["MODULES"][moduleId].metadata
+    ).sort();
+    // populate metaData array with name/value pairs in sorted order
+    sortedMetaDataNames.forEach((name) => {
+      metaData.push({
+        name: name,
+        value: $collectionsStore["MODULES"][moduleId].metadata[name],
+      });
+    });
+
+    return metaData;
+  }
+
+  /**
    * @function sanitize
    * @param {string} value - the value to be sanitised
    * @param {boolean} allowHtml - whether to allow HTML or not
@@ -346,7 +369,7 @@
         >
       </tr>
 
-      {#each Object.entries($collectionsStore["MODULES"][moduleId].metadata) as [key, value]}
+      {#each sortMetaDataEntries() as {name: key, value: value} }
         <tr>
           <td>
             <input

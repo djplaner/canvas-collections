@@ -61,17 +61,22 @@ export class editingOnController {
   private finishCallback: Function = null;
   private csrfToken: string = null;
 
-  // indicates if we're in a stale edit lock situation
-  private staleLock : boolean = false;
+  // specif time period before a stale lock is assumed (ms)
+  private timeForStaleLock: number = 10;
 
   /**
    * @constructor
+   * @param courseId - Canvas course id
+   * @param userId - Canvas user id
+   * @param csrf - Canvas csrf token
+   * @param timeForStaleLock - time in milli-seconds before a lock is considered stale
    * @description Read the EDITING_ON_PAGE_NAME page and if it exists, set the editingDetails property
    */
-  public constructor(courseId: number, userId: number, csrf: string) {
+  public constructor(courseId: number, userId: number, csrf: string, timeForStaleLock: number = 10) {
     this.courseId = courseId;
     this.canvasUserId = userId;
     this.csrfToken = csrf;
+    this.timeForStaleLock = timeForStaleLock;
 
     this.browserSessionId = uuidv4();
 
@@ -106,19 +111,23 @@ export class editingOnController {
   private updateEditingDetails(pageName, msg) {
     if (msg.hasOwnProperty("body") && msg.body.length > 0) {
       // page exists   
+      /* stale lock check should be done in the calling function -
+        as they have differing requirements
       if (this.staleEditLock(msg)) {
         /// we've tried to turn edit on, but the lock is stale
+        // If it's someone else editing
         // - need to delete the page and then try again to turn edit on
         // hence the finalCallBack will actually be to turn edit on again
         alert("stale edit lock");
         // TODO delete the page and then start the turnEditOn process again
-        this.staleLock = true;
-        this.turnEditOff(this.finishStaleEditLock)
-      } else {
-        // - parse the body content and set editingDetails
-        this.editingDetails = JSON.parse(msg.body);
-        this.setEditingOnStatus();
-      }
+        // MAYBE we just need to set no editing so the return will create a new page
+        this.editingOnStatus = EDITING_ON_STATUS.NO_ONE_EDITING;
+
+      } else { */
+      // - parse the body content and set editingDetails
+      this.editingDetails = JSON.parse(msg.body);
+      this.setEditingOnStatus();
+      //}
     } else {
       // page doesn't exist - set editingDetails to null
       this.editingOnStatus = EDITING_ON_STATUS.NO_ONE_EDITING;
@@ -127,28 +136,6 @@ export class editingOnController {
         browserSessionId: null,
       };
     }
-  }
-
-  /**
-   * @function finishStaleEditLock
-   * @param status - the status of attempt to turnEditOff
-   * @description callback after attempt to turnEditOff
-   * - if successful, try to turnEditOn again
-   * - TODO do we need to check for an endless loop?
-   */
-
-  private finishStaleEditLock(editStatus: EDITING_ON_STATUS, editDetails: object) {
-    alert(`EditStats ${editStatus} EditDetails ${editDetails}`);
-
-    if ( editStatus = EDITING_ON_STATUS.NO_ONE_EDITING ) {
-      // turn edit on
-      this.turnEditOn(this.finishCallback);
-    } else {
-      alert("Can't turn edit on - weren't able to turn edit off");
-    }
-
-
-
   }
 
   /**
@@ -164,9 +151,7 @@ export class editingOnController {
     let now = new Date();
     let updated_at = new Date(msg.updated_at);
     let diff = (now.getTime() - updated_at.getTime()) / 1000;
-    // TODO replace this with TIME_BETWEEN_NO_SAVE_CHECKS
-    // should probably also only do this if no changes need to be saved (prob shouldn't happen?)
-    return diff > 10;
+    return diff > this.timeForStaleLock;
   }
 
   /**
@@ -235,16 +220,16 @@ export class editingOnController {
   public turnEditOn(finishCallback: Function) {
     this.finishCallback = finishCallback;
 
-    // get latest editing Details
+    // get latest editing Details, if any
     getPageName(
       EDITING_ON_PAGE_NAME,
       `${this.courseId}`,
-      this.checkEditingDetails.bind(this)
+      this.canWeTurnEditOn.bind(this)
     );
   }
 
   /**
-   * @method checkEditingDetails
+   * @method canWeTurnEditOn
    * @param pageName - name of page that was read
    * @param msg - outcome of reading the page the body of the Canvas API
    * @description First check in the process of turning editing on - get the latest setting
@@ -253,20 +238,20 @@ export class editingOnController {
    * - if no-end editing (no file or msg.body is empty)
    *      - create the page with our details (writeEditingDetails)
    */
-  private checkEditingDetails(pageName, msg) {
+  private canWeTurnEditOn(pageName, msg) {
     // TODO check for stale edit lock
 
     // change based on what we got back, all error handling in there
     this.updateEditingDetails(pageName, msg);
 
-    if (this.editingOnStatus === EDITING_ON_STATUS.NO_ONE_EDITING) {
-      // no-one is editing, so go ahead and create the page
+    if (this.staleEditLock(msg)) {
+      // a stale lock should just be recreated for the current user
+      this.createEditingOnPage()
+    } else if (this.editingOnStatus === EDITING_ON_STATUS.NO_ONE_EDITING) {
+      // Not a stale lock and no-one is editing, so go ahead and create the page
       this.createEditingOnPage();
     } else {
-      // we can't edit because either
-      // - I'm editing here
-      // - I'm editing elsewhere
-      // - someone else is editing
+      // we can't edit because, finish up and show the error
       this.finishCallback(this.editingOnStatus, this.editingDetails);
     }
   }
@@ -345,31 +330,53 @@ export class editingOnController {
   private finalCheckForEditOnOff(pageName: string, msg: any) {
     this.updateEditingDetails(pageName, msg);
 
-    if ( this.staleLock) {
-      this.staleLock = false;
-      alert(`turning off stale lock about to turnEditOn`)
-      this.turnEditOn(this.finishCallback)
-
-    } else {
-      this.finishCallback(this.editingOnStatus, this.editingDetails);
-    }
+    this.finishCallback(this.editingOnStatus, this.editingDetails);
   }
 
   /**
    * @method turnEditOff
    * @param finishCallback - callback to call when editing is turned off
    * @description Attempt to turn Collections editing off for the current user
-   * - delete the page
+   * - delete the page, but only if it contains our details
    */
   public turnEditOff(finishCallback: Function) {
     this.finishCallback = finishCallback;
-    let callUrl = `/api/v1/courses/${this.courseId}/pages/${EDITING_ON_PAGE_NAME_SLUG}`;
 
-    wf_deleteData(callUrl, this.csrfToken).then((data) => {
-      this.checkDeletion(data);
-    });
+    getPageName(EDITING_ON_PAGE_NAME, `${this.courseId}`, this.canWeTurnEditOff.bind(this));
+
     return;
   }
+
+  /**
+   * @method canWeTurnEditOff
+   * @param pageName 
+   * @param msg 
+   * @description Based on the current content of the edit lock page, figure out if we can
+   * - iff a stale edit lock, delete it, regardless of who owns it
+   * - otherwise if we own the lock, delete the page
+   */
+  private canWeTurnEditOff(pageName, msg) {
+    let callUrl = `/api/v1/courses/${this.courseId}/pages/${EDITING_ON_PAGE_NAME_SLUG}`;
+
+    // check the resule
+    this.updateEditingDetails(pageName, msg);
+
+    if (this.staleEditLock(msg)) {
+//      if (this.editingOnStatus !== EDITING_ON_STATUS.YOU_EDITING) {
+        wf_deleteData(callUrl, this.csrfToken).then((data) => {
+          this.checkDeletion(data);
+        });
+ //     }
+    } else if (this.editingOnStatus === EDITING_ON_STATUS.YOU_EDITING) {
+      // we are editing, delete the edit page
+      wf_deleteData(callUrl, this.csrfToken).then((data) => {
+        this.checkDeletion(data);
+      });
+    } else {
+      this.finishCallback(this.editingOnStatus, this.editingDetails);
+    }
+  }
+
 
   /**
    * @method checkDeletion
