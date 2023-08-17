@@ -77,7 +77,7 @@
   // Also every 2 * canvas refreshes
   const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 12;
   // A stale edit lock is 10 times the no save checks
-  const STALE_EDIT_LOCK_TIMEOUT: number = 10 * TIME_BETWEEN_NO_SAVE_CHECKS;
+  const STALE_EDIT_LOCK_TIMEOUT: number = 1000; // * TIME_BETWEEN_NO_SAVE_CHECKS;
   // to turn/on/off interval based saving and refreshing
   // set these to false
   const AUTO_SAVE_BASE: boolean = true; // regularly check to save collections
@@ -410,7 +410,12 @@
       //if (diff > STALE_EDIT_LOCK_TIMEOUT) {
       if (diff > 10000) {
         // immediately prevent any further editing here
-        $configStore["editingOn"] = null;
+        //$configStore["editingOn"] = null;
+
+        //editingOnHandler.turnEditOff(setUpEditingOff);
+        // assumption here is we don't need to actually turn edit off
+        // A stale lock will be removed by other people when they start editing
+        turnOffEditingInterface() 
 
         // yes, so release it
         toastAlert(
@@ -420,7 +425,6 @@
               } seconds since you last saved.</p>`,
           "warning"
         );
-        editingOnHandler.turnEditOff(setUpEditingOff);
         return true;
       }
     }
@@ -920,15 +924,25 @@
       return;
     } else {
       // any other option means that this session turned editing off
-      timeLockObtained = undefined;
-      $configStore["editingOn"] = null;
-      showConfig = false;
-      removeModuleConfiguration($collectionsStore["MODULES"]);
-      clearInterval(numSavesInterval);
-      // turn off save interval
-      saveIntervalOn = true;
-      clearInterval(saveInterval);
+      turnOffEditingInterface();
     }
+  }
+
+  /**
+   * @function turnOffEditingInterface
+   * @description time to update the Collections interface and intervals to
+   * indicate the editing is now off
+   */
+
+  function turnOffEditingInterface() {
+    timeLockObtained = undefined;
+    $configStore["editingOn"] = null;
+    showConfig = false;
+    removeModuleConfiguration($collectionsStore["MODULES"]);
+    clearInterval(numSavesInterval);
+    // turn off save interval
+    saveIntervalOn = true;
+    clearInterval(saveInterval);
   }
 
   /**
