@@ -808,13 +808,23 @@
       );
     } else if (editStatus === EDITING_ON_STATUS.SOMEONE_ELSE_EDITING) {
       toastAlert(
-        `<p>Failed to turn editing on</p>
+        `<div>Failed to turn editing on
+          <sl-tooltip> <div slot="content">${HELP.FAILED_EDIT_ON.tooltip}</div>
+            <a target="_blank" rel="noreferrer" href="${HELP.FAILED_EDIT_ON.url}">
+              ❓
+            </a>
+        </sl-tooltip>
         <p>Someone else is editing Collections</p>`,
         "danger"
       );
     } else if (editStatus === EDITING_ON_STATUS.NO_ONE_EDITING) {
       toastAlert(
-        `<p>Failed to turn editing on</p>
+        `<div>Failed to turn editing on
+          <sl-tooltip> <div slot="content">${HELP.FAILED_EDIT_ON.tooltip}</div>
+            <a target="_blank" rel="noreferrer" href="${HELP.FAILED_EDIT_ON.url}">
+              ❓
+            </a>
+        </sl-tooltip>
         <p>Unknown reason - but apparently no-one else is editing.</p>`,
         "danger"
       );
