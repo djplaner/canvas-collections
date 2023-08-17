@@ -56,27 +56,10 @@
     activeCollectionName = clickedCollectionName;
   }
 
-  /**
-   * @function toggleMenu
-   * @description toggle the cc-nav-menu (on small screens)
-   */
-  function toggleMenu() {
-    let navList = document.getElementById("cc-nav-list-element");
-
-    if ( navList.style.display === "block" ) {
-      navList.style.display = "none";
-    } else {
-      navList.style.display = "block";
-    }
-  }
-
 </script>
 
 <div class="cc-nav">
   <ul id="cc-nav-list-element" class="cc-nav-list">
-    <li class="cc-nav-menu">
-      <a href="javscript:void(0);" on:click={toggleMenu}> ☰ </a>
-    </li>
     {#each collectionNames as collectionName, i}
       {#if !($collectionsStore["COLLECTIONS"][collectionName].hide && !$configStore["editMode"])}
         <li class="cc-nav-collection {activeCollection[collectionName]}">
@@ -95,60 +78,6 @@
 </div>
 
 <style>
-  @media (max-width: 1000px) {
-    .cc-nav-list {
-      text-align: justify;
-      justify-items: stretch;
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background-color: #eee;
-      width: 100%;
-      /*    display: table;
-    table-layout: fixed; */
-    }
-
-    .cc-nav-collection {
-      display: none !important;
-    }
-    .cc-nav-menu {
-      display: block !important;
-    }
-
-    .cc-nav {
-      width: 20%;
-    }
-  }
-
-  @media (min-width: 1000px) {
-    .cc-nav-list {
-      display: grid;
-      text-align: justify;
-      justify-items: stretch;
-      grid-gap: 0.1rem;
-      grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background-color: #eee;
-      width: 100%;
-      /*    display: table;
-    table-layout: fixed; */
-    }
-
-    .cc-nav-collection {
-      display: block;
-    }
-    .cc-nav-menu {
-      display: none !important;
-    }
-    .cc-nav {
-      width: 100%;
-    }
-  }
-
   .cc-content {
     clear: both;
   }
@@ -178,6 +107,23 @@
     display: block;
     width: 100%;
   }
+
+  .cc-nav-list {
+      display: grid;
+      text-align: justify;
+      justify-items: stretch;
+      grid-gap: 0.1rem;
+      grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #eee;
+      width: 100%;
+      /*    display: table;
+    table-layout: fixed; */
+    }
+
 
   .cc-nav ul li {
     display: block;
