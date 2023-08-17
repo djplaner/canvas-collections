@@ -132,7 +132,6 @@ export class CanvasDetails {
 
   requestModulesCompletion() {
     const studentId = ENV["current_user_id"];
-    console.log(ENV);
     if (this.isStudent) {
       wf_fetchData(
         `${this.baseApiUrl}/courses/${this.config.courseId}/modules?include=items&per_page=500&student_id=${studentId}`
