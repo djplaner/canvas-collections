@@ -75,9 +75,9 @@
   // check how many saves happened every X (12 - 2 minutes) saves
   // if none - time to turn off edit (prompt)
   // Also every 2 * canvas refreshes
-  const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 12;
+  const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 4;
   // A stale edit lock is 10 times the no save checks
-  const STALE_EDIT_LOCK_TIMEOUT: number = 10 * TIME_BETWEEN_NO_SAVE_CHECKS;
+  const STALE_EDIT_LOCK_TIMEOUT: number = 2 * TIME_BETWEEN_NO_SAVE_CHECKS;
   // to turn/on/off interval based saving and refreshing
   // set these to false
   const AUTO_SAVE_BASE: boolean = true; // regularly check to save collections
