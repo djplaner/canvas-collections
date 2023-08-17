@@ -77,7 +77,7 @@
   // Also every 2 * canvas refreshes
   const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 12;
   // A stale edit lock is 10 times the no save checks
-  const STALE_EDIT_LOCK_TIMEOUT: number = 1000; // * TIME_BETWEEN_NO_SAVE_CHECKS;
+  const STALE_EDIT_LOCK_TIMEOUT: number = 10 * TIME_BETWEEN_NO_SAVE_CHECKS;
   // to turn/on/off interval based saving and refreshing
   // set these to false
   const AUTO_SAVE_BASE: boolean = true; // regularly check to save collections
