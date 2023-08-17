@@ -28,7 +28,7 @@
  * https://shoelace.style/components/alert
  */
 
-export function toastAlert(message, status = "primary", duration = null) {
+export function toastAlert(message, variant = "primary", duration = null) {
   const iconMapping = {
     primary: "info-circle",
     success: "check2-circle",
@@ -37,20 +37,18 @@ export function toastAlert(message, status = "primary", duration = null) {
     danger: "exclamation-octagon",
   };
   // create a shoelace style sl-alert element
-  const alert = document.createElement("sl-alert");
-  // set variant duration closable attributes
-  alert.setAttribute("variant", status);
-  //alert.setAttribute("duration", "5000");
-  alert.setAttribute("closable", "true");
-  if (duration) {
-    alert.setAttribute("duration", duration);
-  }
-  alert.innerHTML = `
-    <sl-icon slot="icon" name="${iconMapping[status]}"></sl-icon>
+  const alert = Object.assign(document.createElement("sl-alert"), {
+    variant,
+    closable: true,
+    innerHTML: `
+    <sl-icon slot="icon" name="${iconMapping[variant]}"></sl-icon>
     ${message}
-    `;
+    `
+  });
 
-  alert.toast();
+  document.body.append(alert);
+  return alert.toast();
+  // alert.toast();
 }
 
 /**

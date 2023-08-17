@@ -106,7 +106,7 @@
               ><i class="icon-question cc-module-icon" /></a
             >
           </sl-tooltip>
-          Following error reported trying to retrieve <a href="{pageUrl}">the include page (<em>{pageName}</em>)</a>.
+          Following error reported trying to retrieve <a target="_blank" href="{pageUrl}">the include page (<em>{pageName}</em>)</a>.
         </p>
         <p class="cc-error-message">{pageErrorMessage}</p>
       </div>
