@@ -34,11 +34,16 @@ export function getCollectionCanvasModules(
 ) {
   let modules = [];
 
-  // collection store is not the Canvas modules (collections modules)
+  // - get local copies of the relevant Svelte stores
   const cStore = get(collectionsStore);
   const figStore = get(configStore);
+
+  // is this a staff viewing modules?
   const editMode = figStore["editMode"];
+  // hash of objects (keyed on moduleId) with current Collections information about modules
   const collectionsModules = cStore["MODULES"];
+
+  // array of objects containing current Canvas module information
   const canvasModules = get(modulesStore);
   // construct a dictionary canvasModuleIds: key is module id from canvasModules
   // elements and values are the module details from canvasModules
@@ -47,33 +52,38 @@ export function getCollectionCanvasModules(
     canvasModuleIds[module.id] = module;
   });
 
-  // get a list of module ids in the chosen collection
-  // if unallocated, including modules that don't belong to this collection
-  let collectionModules = [];
+
+  //**** Get the sequential order for the modules */
+  // -- construct array of collections module information for the current collection
+  let collectionModulesArray = [];
   for (const moduleId in collectionsModules) {
+    // include a module for this collection, if
+    // - it's been allocated to the collection OR
+    // - we're in unallocated mode and it's not allocated to any collection
     if (
       collectionsModules[moduleId].collection === collection ||
       (unallocated &&
         (collectionsModules[moduleId].collection === null ||
           collectionsModules[moduleId].collection === ""))
     ) {
-      collectionModules.push(collectionsModules[moduleId]);
+      collectionModulesArray.push(collectionsModules[moduleId]);
     }
   }
 
-  if (!checkSequentialModuleOrder(collectionModules)) {
-    updateSequentialModuleOrder(collectionModules, canvasModules);
+  if (!checkSequentialModuleOrder(collectionModulesArray)) {
+    updateSequentialModuleOrder(collectionModulesArray, canvasModules);
   }
 
   // At this stage, the collectionsModules array has the "correct" moduleOrder
-
   // create a dict keyed on moduleOrder of collections with ids in collectionModuleIds
 
   let orderedModuleIds = {};
-
   // iterate over the collectionsModules dictionary (keyed on module id)
   // TODO
   // - Claytons - does it include unpublished modules?
+  //   - Yes it should
+
+  // Loop through all the modules for this current collection
   for (const moduleId in collectionsModules) {
     if (
       collectionsModules[moduleId].collection === collection ||
@@ -81,12 +91,36 @@ export function getCollectionCanvasModules(
         (collectionsModules[moduleId].collection === null ||
           collectionsModules[moduleId].collection === ""))
     ) {
-      // only do this if we're not in Claytons mode and the module is published
-      if (!(claytons && !canvasModuleIds[moduleId].published)) {
-        orderedModuleIds[collectionsModules[moduleId].moduleOrder] = moduleId;
+      // We have a module that is in this collection, but should we add it? yes, iff
+      // - staff view 
+      //   - Claytons - generating for the students
+      //     - claytons && fyi - Claytons mode and FYI card - always added
+      //     - claytons && published 
+      //   - normal - everything
+      // - student view
+      //   - published || fyi
+
+      if (editMode) {
+        // staff view
+        if (claytons) {
+          if (collectionsModules[moduleId].fyi || collectionsModules[moduleId].published) {
+            orderedModuleIds[collectionsModules[moduleId].moduleOrder] = moduleId;
+          }
+        } else {
+          orderedModuleIds[collectionsModules[moduleId].moduleOrder] = moduleId;
+        }
+      } else {
+        // student view
+        if (collectionsModules[moduleId].published ) {
+          orderedModuleIds[collectionsModules[moduleId].moduleOrder] = moduleId;
+        } else if (collectionsModules[moduleId].fyi){
+          orderedModuleIds[collectionsModules[moduleId].moduleOrder] = moduleId;
+        }
       }
     }
   }
+
+  // At this stage we have the right the right number, including unpublished
 
   // Now populate the modules array with the details of the modules
   // preferably the Canvas module details, but students won't have this
@@ -106,6 +140,12 @@ export function getCollectionCanvasModules(
 
   return modules;
 }
+
+/**
+ * @function checkSequentialModuleOrder
+ * @param modules array of collections information about modules that belong to a collection
+ * @returns same array of modules but sorted into order 
+ */
 
 function checkSequentialModuleOrder(modules) {
   const moduleOrder = modules
@@ -317,11 +357,11 @@ export function generateModuleDate(module) {
 function generateDateString(date: object, dateShow: object): string {
   let dateStr = "";
 
-  const order = [ "time", "day", "date", "month"];
+  const order = ["time", "day", "date", "month"];
 
   // loop through each order and add date component if dateShow
-  order.forEach( (component) => {
-    if (dateShow[component] && date[component]!=="") {
+  order.forEach((component) => {
+    if (dateShow[component] && date[component] !== "") {
       dateStr += ` ${date[component]}`
     }
   })
@@ -337,7 +377,7 @@ function generateDateString(date: object, dateShow: object): string {
  * Kludge because of bad data structure design and laziness. The dateShow
  * components for the to date don't match date string
  */
-function generateDateToString( date: object, dateShow: object) : string {
+function generateDateToString(date: object, dateShow: object): string {
   let dateStr = "";
 
   const compontents = {
@@ -345,7 +385,7 @@ function generateDateToString( date: object, dateShow: object) : string {
   };
 
   for (const component in compontents) {
-    if (dateShow[component] && date[compontents[component]]!=="") {
+    if (dateShow[component] && date[compontents[component]] !== "") {
       dateStr += ` ${date[compontents[component]]}`
     }
   }
@@ -360,11 +400,11 @@ function generateDateToString( date: object, dateShow: object) : string {
 export function isNotEmptyDate(date: object): boolean {
   return (
     date.hasOwnProperty("calendarDate") && date["calendarDate"] !== ""
-/*    (date.hasOwnProperty("week") && date["week"] !== "") ||
-    (date.hasOwnProperty("month") && date["month"] !== "") ||
-    (date.hasOwnProperty("date") && date["date"] !== "") ||
-    (date.hasOwnProperty("day") && date["day"] !== "") ||
-    (date.hasOwnProperty("time") && date["time"] !== "") */
+    /*    (date.hasOwnProperty("week") && date["week"] !== "") ||
+        (date.hasOwnProperty("month") && date["month"] !== "") ||
+        (date.hasOwnProperty("date") && date["date"] !== "") ||
+        (date.hasOwnProperty("day") && date["day"] !== "") ||
+        (date.hasOwnProperty("time") && date["time"] !== "") */
   );
 }
 
@@ -501,34 +541,34 @@ export function getModuleUrl(moduleId: Number) {
   return docUrl.toString();
 }
 
-  /**
-   * @function isUnPublishedUnallocated
-   * @param moduleId - of the current module
-   * @param collection - name of the current collection
-   * @returns true if the module is unpublished or unallocated & if that information
-   * should be shown.  In particular, is used to figure out if to show a small
-   * message on a card about unpublished/unallocated
-   *
-   * Conditions include
-   * - only staff (editMode) should see unpublished/unallocated messages
-   * - students (!editMode) should not see unpublished/unallocated messages
-   */
-  export function isUnPublishedUnallocated(moduleId, collection) {
-    const config = get(configStore);
-    const collectionStore = get(collectionsStore);
+/**
+ * @function isUnPublishedUnallocated
+ * @param moduleId - of the current module
+ * @param collection - name of the current collection
+ * @returns true if the module is unpublished or unallocated & if that information
+ * should be shown.  In particular, is used to figure out if to show a small
+ * message on a card about unpublished/unallocated
+ *
+ * Conditions include
+ * - only staff (editMode) should see unpublished/unallocated messages
+ * - students (!editMode) should not see unpublished/unallocated messages
+ */
+export function isUnPublishedUnallocated(moduleId, collection) {
+  const config = get(configStore);
+  const collectionStore = get(collectionsStore);
 
-    if (!config["editMode"]) {
-      return false;
-    }
-
-    // is it unpublished
-    if (!collectionStore["MODULES"][moduleId].published) {
-      return true;
-    }
-
-    // is it unallocated
-    return collectionStore["MODULES"][moduleId].collection !== collection;
+  if (!config["editMode"]) {
+    return false;
   }
+
+  // is it unpublished
+  if (!collectionStore["MODULES"][moduleId].published) {
+    return true;
+  }
+
+  // is it unallocated
+  return collectionStore["MODULES"][moduleId].collection !== collection;
+}
 
 
 /**
