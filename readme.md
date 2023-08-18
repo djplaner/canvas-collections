@@ -31,7 +31,7 @@ The right-hand image above demonstrates live (aka dynamic) Canvas Collections. i
 
 Canvas Collections can be used in ["Claytons" Collections mode](https://djplaner.github.io/canvas-collections/reference/conceptual-model/representations/claytons/overview/). i.e. Canvas Collections is used to modify a Canvas page with a static representation of the Collections interface. That page can be used to navigate to modules as a visual landing page. The following animated image provides an example.
 
-<div style="text-align:center"><img src="docs/assets/withCanvasCollections.gif" alt="Animated example of navigating from a Canvas page with a Claytons Collections representation to the relevant Canvas modules" width="50%" /></div>
+<div style="text-align:center"><img src="docs/assets/claytonsCollections.gif" alt="Animated example of navigating from a Canvas page with a Claytons Collections representation to the relevant Canvas modules" width="50%" /></div>
 
 
 ## How do I install Canvas Collections?
