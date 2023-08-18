@@ -150,7 +150,7 @@ export class editingOnController {
     // does this need to do any other checks on what's in the msg
     let now = new Date();
     let updated_at = new Date(msg.updated_at);
-    let diff = (now.getTime() - updated_at.getTime()) / 1000;
+    let diff = (now.getTime() - updated_at.getTime()) ;
     return diff > this.timeForStaleLock;
   }
 
