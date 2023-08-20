@@ -4,9 +4,9 @@ Canvas Collections helps improve course site designs for the [Canvas LMS](https:
 
 ## What can it do?
 
-Collections allows you to add more structure, visuals, and context to your Canvas Modules page. This table provides more detail.
+Collections allows you to add more structure, visuals, and context to your Canvas Modules page. 
 
-| Feature | Why? | How? | 
+| Add what? | Why? | How? | 
 | --- | --- | --- | 
 | [Structure](https://djplaner.github.io/canvas-collections/#structure) | Move beyond the ["..design nightmare (of)...one big list"](https://community.canvaslms.com/t5/Idea-Conversations/More-editing-functions/idc-p/475281/highlight/true#M53223) | Organise modules into [different collections](https://djplaner.github.io/canvas-collections/getting-started/101/concepts/#collections). Navigate between different collections only seeing relevant modules. |
 | [Visuals](https://djplaner.github.io/canvas-collections/#visuals) | Move beyond visuals reminiscent of ["a chain of folders circa Windows 95"](https://community.canvaslms.com/t5/Canvas-Question-Forum/Visual-based-Module-Outline-PLEASE/m-p/395779/highlight/true#M140332) | Select a different [representation](https://djplaner.github.io/canvas-collections/getting-started/101/concepts/#representations) for each collection. Change at any time. Develop new purpose-built representations. |
