@@ -109,7 +109,7 @@ export class editingOnController {
    */
 
   private updateEditingDetails(pageName, msg) {
-    if (msg.hasOwnProperty("body") && msg.body.length > 0) {
+    if (msg!==null && msg.hasOwnProperty("body") && msg.body.length > 0) {
       // page exists   
       /* stale lock check should be done in the calling function -
         as they have differing requirements
