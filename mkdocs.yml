@@ -60,8 +60,11 @@ markdown_extensions:
 
 extra:
   social:
-    - icon: fontawesome/brands/twitter
-      link: https://twitter.com/djplaner
+    - icon: fontawesome/brands/mastodon
+      link: https://indieweb.social/@djplaner
+    - icon: fontawesome/brands/github
+      link: https://github.com/djplaner
+
 
 nav:
   - Home: index.md
