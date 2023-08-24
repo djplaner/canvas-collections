@@ -23,6 +23,8 @@
    *
    */
 
+   import * as AdaptiveCards from "adaptivecards";
+
   import { collectionsStore, modulesStore, configStore } from "../../stores";
   import {
     getModuleUrl,
@@ -46,6 +48,38 @@
     colour: BannerColour,
     iframe: BannerIframe,
   };
+
+  let card = {
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "Image",
+            "url": "http://adaptivecards.io/content/adaptive-card-50.png"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Hello **Adaptive Cards!**"
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "Learn more",
+            "url": "http://adaptivecards.io"
+        },
+        {
+            "type": "Action.OpenUrl",
+            "title": "GitHub",
+            "url": "http://github.com/Microsoft/AdaptiveCards"
+        }
+    ]
+};
+  let adaptiveCard = new AdaptiveCards.AdaptiveCard();
+  adaptiveCard.parse(card);
+  let renderedCard = adaptiveCard.render();
+  // appended rendered card to #canvas-collections-representation
+  document.getElementById("canvas-collections-representation").appendChild(renderedCard);
 
   // calculate the moduleIds belonging to collection
   let modules = generateModulesData();
@@ -170,6 +204,7 @@
     },
   };
 </script>
+
 
 {#if claytons}
   <!-- <div class="claytons-card-interface claytons-representation">-->

@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@shoelace-style/shoelace": "^2.5.2",
+    "adaptivecards": "^3.0.1",
     "cl-editor": "^2.3.0",
     "sanitize-html": "^2.8.1",
     "uuid": "^9.0.0"
