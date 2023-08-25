@@ -77,10 +77,12 @@
   const TIME_BETWEEN_CANVAS_REFRESH: number = 60000; // 60 seconds
   // - how often to check for inactivity (no changes)
   // - used to turn edit off
-  const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 6;
+  const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 60;
   // - Define time for a stale edit lock 
   //   (arises when a computer is suspended with edit on)
   const STALE_EDIT_LOCK_TIMEOUT: number = 2 * TIME_BETWEEN_NO_SAVE_CHECKS;
+
+  console.log(`Time between save checkes in minutes is ${TIME_BETWEEN_NO_SAVE_CHECKS / (1000*60)}`)
 
   // Define if to turn intervals on in the first place
   // - the save checks only run if editMode is true (teaching staff, designers)
