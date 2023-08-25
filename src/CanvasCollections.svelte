@@ -82,8 +82,6 @@
   //   (arises when a computer is suspended with edit on)
   const STALE_EDIT_LOCK_TIMEOUT: number = 2 * TIME_BETWEEN_NO_SAVE_CHECKS;
 
-  console.log(`Time between save checkes in minutes is ${TIME_BETWEEN_NO_SAVE_CHECKS / (1000*60)}`)
-
   // Define if to turn intervals on in the first place
   // - the save checks only run if editMode is true (teaching staff, designers)
   //   as they are the only ones who can make changes
