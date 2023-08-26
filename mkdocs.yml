@@ -167,6 +167,8 @@ nav:
      - Related work: about/related-work.md
      - Rationale: about/rationale.md
      - 'Latest Version': about/latest-version.md
+  - Limitations:
+    - Limitations/limitations.md
 #  - ⚰️ Features & Use: 
 #    - Overview: features.md
 #    - Collections: features/collections.md
