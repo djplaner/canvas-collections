@@ -21,19 +21,13 @@
 
 !!! Abstract "The main limitations of Canvas Collections"
 
-    1. Collections is essentially not usable on the Canvas mobile apps (teacher or student) - not fully tested. [see more](#canvas-mobile-apps---essentially-not-usable)
+    1. Collections is not usable on the Canvas mobile apps (teacher or student). [see more](#canvas-mobile-apps---essentially-not-usable)
     2. The Collections source code must be installed and active when visitors are using a web browser in order to configure Collections and navigate using "live" Collections [see more](#collections-installed-and-active---live-collections)
-    3. Claytons (static) Collections can be used to navigate without the Collections source code, but some representations will require the ability to integrate additional CSS. [see more](#claytons-collections---no-code-but-some-css-may-be-required)
+    3. Claytons (static) Collections can be used to navigate without the Collections source code (but has to be configured with the code), but some representations will require additional CSS. [see more](#claytons-collections---no-code-but-some-css-may-be-required)
 
-## Canvas mobile apps - essentially not usable
+## Canvas mobile apps - not usable
 
-The Canvas mobile apps do [not (at least easily) support custom JavaScript/CSS](https://community.canvaslms.com/t5/Canvas-Mobile-Forum/iOS-app-and-Canvas/m-p/465811/highlight/true#M350). Meaning the Canvas apps do not allow you to configure Collections or navigate using live Collections.
-
-Navigation with Claytons Collections does work somewhat in Canvas mobile apps, but the experience is not good due to the constrained space and the lack of support for external CSS. The following images illustrate perhaps the best case with Claytons Collections.
-
-| Claytons Collections (tabs) | Claytons Collections (cards) |
-| --- | --- |
-| <figure markdown><figcaption>Top of a Claytons Collections home page showing compressed tabs - Canvas mobile app</figcaption>![Claytons Collections (tabs)](./images/mobileApp-menu-claytons.jpeg){:width="75%" style="text-align:center"} </figure> | <figure markdown><figcaption>Claytons Collections home page cards - Canvas mobile app</figcaption>![Claytons Collections (cards)](./images/mobileApp-cards-claytons.jpeg){:width="75%"}</figure> |
+Canvas Collections is custom JavaScript/CSS that modifies the Canvas modules _web_ page and helps with navigation to Canvas modules (on the Canvas modules _web_ page). The Canvas mobile apps do not use Canvas _web_ pages and do [not (at least easily) support custom JavaScript/CSS](https://community.canvaslms.com/t5/Canvas-Mobile-Forum/iOS-app-and-Canvas/m-p/465811/highlight/true#M350). 
 
 
 ## Collections installed and active - live Collections

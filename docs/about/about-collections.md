@@ -21,11 +21,11 @@
 
 ## Why?
 
-The immediate spark for Canvas Collections arose from [Griffith University's](https://www.griffith.edu.au) decision to migrate the institutional Learning Management System (LMS) from Blackboard Learn to Canvas. Very quickly we became aware of the long-known limitations of Canvas' modules functionality. In particular, it became apparent that Canvas modules represented a significant step down in both the structural and visual capabilities used by Griffith courses. 
+The immediate spark for Canvas Collections arose from [Griffith University's](https://www.griffith.edu.au) decision to migrate from Blackboard Learn to Canvas. We became aware of the long-known limitations of Canvas' modules functionality. Canvas modules represented a significant step down in both the structural and visual capabilities used by Griffith courses. 
 
-The step down was particularly large due to the increasingly widespread adoption of [the Card Interface tweak](https://djplaner.github.io/Card-Interface-Tweak/) in Blackboard. The image below is an example of the visual design enabled by the Card Interface. At last count, the Card Interface had been used by 250+ Griffith courses and had been adopted elsewhere. For more, see [these reflections on the Card Interface](https://djon.es/blog/2021/03/12/reflecting-on-the-spread-of-the-card-interface-for-blackboard-learn/)
+The step down was particularly large due to the widespread adoption of [the Card Interface tweak](https://djplaner.github.io/Card-Interface-Tweak/) in Blackboard (e.g. image below). At last count, the Card Interface had been used by 250+ Griffith courses and had been adopted elsewhere. For more, see [these reflections on the Card Interface](https://djon.es/blog/2021/03/12/reflecting-on-the-spread-of-the-card-interface-for-blackboard-learn/)
 
-A solution to Canvas' limitations was required.
+A solution to Canvas' limitations was required. Canvas Collections is the result.
 
 ![Simple Card Interface enabled user interface for a Blackboard course. It shows course cards each with highly visual banner images related to the topics of the connected modules. Each card also includes a relevant description and title. Some include dates associated with modules](https://djplaner.github.io/Card-Interface-Tweak/images/after.png)
 

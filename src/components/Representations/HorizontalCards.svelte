@@ -97,7 +97,7 @@
           >
           <h3 class="cc-card-title svelte-1bswwix" data-moduleid="1">
             {#if !$collectionsStore["MODULES"][theModule.id].fyi}
-              <a href="http://canvas.docker/courses/1/modules#module_1"
+              <a href={getModuleUrl(theModule.id)}
                 >{deLabelModuleName(
                   $collectionsStore["MODULES"][theModule.id]
                 )}</a
@@ -207,7 +207,7 @@
           >
           <h3 class="cc-card-title svelte-1bswwix" data-moduleid="1">
             {#if !$collectionsStore["MODULES"][theModule.id].fyi}
-              <a href="http://canvas.docker/courses/1/modules#module_1"
+              <a href={getModuleUrl(theModule.id)}
                 >{deLabelModuleName(
                   $collectionsStore["MODULES"][theModule.id]
                 )}</a
