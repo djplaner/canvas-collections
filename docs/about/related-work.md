@@ -7,7 +7,7 @@ Canvas Collections seeks to address long-term limitations in Canvas. Limitations
 | [Collections](#collections) | Group or filter a Canvas modules |
 | [Representations](#representations) | Modify the visual appearance of Canvas modules |
 | [Objects](#objects-and-meta-data) | Add additional information about modules |
-| [Navigation](#navigation) | Improve navigation within the contents of Canvas modules |
+| [Navigation](#module-navigation) | Improve navigation within the contents of Canvas modules |
 | [Other Canvas work](#other-canvas-work) | Other related work from within the Canvas community |
 | [Earlier work](#earlier-work) | Earlier work from outside the Canvas community |
 
