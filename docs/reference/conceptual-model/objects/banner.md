@@ -59,6 +59,12 @@ Images are specified by two pieces of metadata:
 
 Specifies the location (Universal Resource Locator - URL) for an image to display in the banner. The URL can be to an image stored in Canvas files, or to an image stored on another web site. The only constraint is that all visitors to the course site are able to access the image.
 
+!!! note "Using an image in your course's files area"
+
+    Rather than rely on external images, you can [use an image in your course's files area](./url-canvas-files-image.md) by generating a URL. 
+
+    Note: The [Canvas Collections course copy process](../lifecyle/course-copy/overview.md) will update these URLs if you copy content to a new Canvas course site.
+
 !!! warning "Use of the placeholder image"
 
     If the _image_ banner type is chosen and no _image url_ is specified, a placeholder image is used. 
