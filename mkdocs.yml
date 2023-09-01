@@ -59,6 +59,9 @@ markdown_extensions:
 #      custom_checkbox: true
 
 extra:
+  analytics:
+    provider: google 
+    property: G-3J456JCJGP 
   social:
     - icon: fontawesome/brands/mastodon
       link: https://indieweb.social/@djplaner
