@@ -39,6 +39,7 @@
     }
     return imageSize;
   }
+
 </script>
 
 {#if $collectionsStore["MODULES"][moduleId].image && claytons}
@@ -48,10 +49,8 @@
     )}"
     src={$collectionsStore["MODULES"][moduleId].image}
     data-moduleid="${moduleId}"
-    alt="Card image for the module named: '{$collectionsStore['MODULES'][
-      moduleId
-    ].name.replace(/(["'])/g, '\\$1')}
-	'"
+    alt={ $collectionsStore["MODULES"][moduleId].altText || "Card image for the module named: " +
+            $collectionsStore['MODULES'][ moduleId ].name.replace(/([\"\'])/g, '\\$1')}
   />
 {:else if $collectionsStore["MODULES"][moduleId].image && !claytons}
   <img
@@ -61,19 +60,16 @@
     style="height:10rem;width:100%"
     src={$collectionsStore["MODULES"][moduleId].image}
     data-moduleid="${moduleId}"
-    alt="Card image for the module named: '{$collectionsStore['MODULES'][
-      moduleId
-    ].name.replace(/(["'])/g, '\\$1')}
-	'"
+    alt={ $collectionsStore["MODULES"][moduleId].altText || "Card image for the module named: " +
+            $collectionsStore['MODULES'][ moduleId ].name.replace(/([\"\'])/g, '\\$1')}
   />
 {:else}
   <img
     class="cc-card-image"
     src="https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png"
     data-moduleid={moduleId}
-    alt="Card image for the module named: '{$collectionsStore['MODULES'][
-      moduleId
-    ].name.replace(/(["'])/g, '\\$1')}'"
+    alt={ $collectionsStore["MODULES"][moduleId].altText || "Card image for the module named: " +
+            $collectionsStore['MODULES'][ moduleId ].name.replace(/([\"\'])/g, '\\$1')}
   />
 {/if}
 
