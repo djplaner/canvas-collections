@@ -80,6 +80,42 @@
   }
 
   /**
+   * @function updateAltText
+   * @description Called when user changes the alt text value
+   * - sanitize the alt text (remove all HTML)
+   * - if any change,
+   *   - display an alert with the before and after text
+   *   - remove the offending text
+   * - set the needToSaveCollections flag
+   */
+
+  function updateAltText() {
+    const altText = document.getElementById(
+      `cc-module-config-${moduleId}-image-alt-text`
+    ) as HTMLInputElement;
+
+    // sanitize the alt text (remove all HTML)
+    const altTextValue = altText.value;
+    let sanitisedValue = sanitize(altTextValue, true);
+
+    if (altTextValue !== sanitisedValue) {
+      // convert altTextValue to xmp but wrap at 40 characters
+      let displayAltTextValue = encodeHTML(altTextValue);
+      let displaySanitisedValue = encodeHTML(sanitisedValue);
+
+      toastAlert(
+        `<p>The alt text you provided has been sanitised to remove HTML etc (for security). Changed from <p>
+          <blockquote>${displayAltTextValue}</blockquote>
+          <p>to the following</p>
+          <blockquote>${displaySanitisedValue}</blockquote>.`
+      );
+    }
+    altText.value = sanitisedValue;
+    $collectionsStore["MODULES"][moduleId].altText = sanitisedValue;
+    $configStore["needToSaveCollections"] = true;
+  }
+
+  /**
    * @function updateIframe
    * @description Called when user changes the iframe value
    * - sanity check the html allowing iframe tags only
@@ -148,10 +184,11 @@ Do you wish to proceed?`
   /**
    * @function sanitize
    * @param {string} value - the value to be sanitised
+   * @param {boolean} noHtml - if true, remove all HTML
    * @returns {string} - the sanitised value
    * @description Remove anything from the HTML that isn't <iframe>.*</iframe>
    */
-  function sanitize(value: string): string {
+  function sanitize(value: string, noHtml: boolean = false): string {
     let allowedTags = ["iframe"];
     // sanitizeHtml.defaults.allowedTags;
     let allowedAttributes = {};
@@ -159,6 +196,11 @@ Do you wish to proceed?`
     allowedAttributes = {
       iframe: ["src", "frameborder", "allowfullscreen", "allow", "title"],
     };
+
+    if (noHtml) {
+      allowedTags = [];
+      allowedAttributes = {};
+    }
 
     return sanitizeHtml(value, {
       allowedTags: allowedTags,
@@ -187,6 +229,11 @@ Do you wish to proceed?`
     moduleImageUrl: {
       tooltip: "Provide the URL for an image to associate with this module.",
       href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/banner/#image-url",
+    },
+    moduleImageAltText: {
+      tooltip:
+        "Provide descriptive alternative text to aid visually impaired visitors, plus other advantages ",
+      href: "https://djplaner.github.io/canvas-collections/reference/conceptual-model/objects/banner/#image-alternative-text",
     },
     moduleImageBackgroundColour: {
       tooltip:
@@ -294,6 +341,35 @@ Do you wish to proceed?`
     <div class="cc-module-form">
       <span class="cc-module-label">
         <label
+          for="cc-module-config-collection-representation-{moduleId}-alt-text"
+        >
+          Alt Text
+        </label>
+        <sl-tooltip id="cc-about-module-image-url">
+          <div slot="content">{@html HELP.moduleImageAltText.tooltip}</div>
+          <a
+            target="_blank"
+            href={HELP.moduleImageAltText.href}
+            rel="noreferrer"><i class="icon-question cc-module-icon" /></a
+          >
+        </sl-tooltip>
+      </span>
+      <span class="cc-module-input">
+        <textarea
+          placeholder="Alt text for image (all HTML tags will be removed)"
+          class="cc-module-config-input"
+          on:keydown|stopPropagation
+          on:change={() => ($configStore["needToSaveCollections"] = true)}
+          type="text"
+          id="cc-module-config-{moduleId}-image-alt-text"
+          on:focusout={updateAltText}
+          value={$collectionsStore["MODULES"][moduleId].altText || ""}
+        />
+      </span>
+    </div>
+    <div class="cc-module-form">
+      <span class="cc-module-label">
+        <label
           for="cc-module-config-collection-representation-{moduleId}-image-backgroundColour"
         >
           Background Colour
@@ -320,15 +396,15 @@ Do you wish to proceed?`
           on:change={() => ($configStore["needToSaveCollections"] = true)}
         />
         {#if $collectionsStore["MODULES"][moduleId].imageBackgroundColour}
-            {#if $collectionsStore["MODULES"][moduleId].bannerColour !== ""}
-              <span
-                class="cc-banner-colour"
-                style="background: {$collectionsStore['MODULES'][moduleId]
-                  .bannerColour}">&nbsp;&nbsp;</span
-              >
-            {:else}
-              <span class="cc-banner-colour">No colour set</span>
-            {/if}
+          {#if $collectionsStore["MODULES"][moduleId].bannerColour !== ""}
+            <span
+              class="cc-banner-colour"
+              style="background: {$collectionsStore['MODULES'][moduleId]
+                .bannerColour}">&nbsp;&nbsp;</span
+            >
+          {:else}
+            <span class="cc-banner-colour">No colour set</span>
+          {/if}
         {/if}
       </span>
     </div>

@@ -94,6 +94,21 @@ _Image scale_ is used to inform the browser how to scale your image to fit the a
   <sl-animated-image src="../pics/animatedImageScale.gif" alt="Experimenting with image scale values" />
 </figure>
 
+##### Image Alt(ernative) Text
+
+Every image on a website - including banner images - should have an alternative text description. "Alt text" serves a number of purposes, including being used by screen readers.
+
+For more background on the importance of alt text and how to write good alt text, see [this article](https://webaim.org/techniques/alttext/)
+
+!!! info "Only text is allowed in the alt text field"
+
+    The alt text field does not allow you to use HTML. Any HTML will be removed.
+
+<figure markdown>
+<figcaption>Adding the alt text for an image</figcaption>
+![Collections' module configuration element open to the banner tab showing a filled in alt text textarea](pics/altText.png)
+</figure>
+
 
 ##### (Image) Background Colour
 
@@ -113,7 +128,7 @@ The _iframe_ banner type allows you to embed another web page into the banner se
 
     Collections will perform some checks on the iframe code, including attempting to ensure the iframe will fit within the banner section. 
     
-    You will be given a choice to check the modifications before proceedig.
+    You will be given a choice to check the modifications before proceeding.
 
 <figure markdown>
 <figcaption>Using the iframe banner type to embed a YouTube video</figcaption>
