@@ -26,7 +26,7 @@
  * - getEditingOnStatus - get the status of editing on  TODO maybe make this private
  */
 
-import { getPageName, wf_deleteData, wf_postData } from "./CanvasSetup";
+import { getPageName, getPageTitle, wf_deleteData, wf_postData } from "./CanvasSetup";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -221,7 +221,7 @@ export class editingOnController {
     this.finishCallback = finishCallback;
 
     // get latest editing Details, if any
-    getPageName(
+    getPageTitle(
       EDITING_ON_PAGE_NAME,
       `${this.courseId}`,
       this.canWeTurnEditOn.bind(this)

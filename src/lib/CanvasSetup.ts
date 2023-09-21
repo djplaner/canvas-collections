@@ -365,7 +365,9 @@ export function removeModuleConfiguration(modules: any) {
  * @param {String} pageName - name of the page
  * @param {String} courseId - id of the course
  * @param {Function} callBack - function to call when the page name is found (or not)
- * @description Given the visible name of a page (e.g. "Canvas Collections Configuration")
+ * @description Given a page title this will slugify (badly) the title into a name
+ * and look specifically for a page with that name. Meaning its quite picky
+ * 
  * - Slugify the name (e.g. "canvas-collections-configuration")
  * - use the Canvas API to get the page Object
  * - return the pageName and the results (positive or not) to the callBack function
@@ -393,6 +395,14 @@ export function getPageName(
   }
 }
 
+/**
+ * @function getUrlFromPage
+ * @param {String} pageName 
+ * @param {String} courseId 
+ * @param {boolean} api - should we inclue the API url
+ * @returns (API) url for page request
+ */
+
 export function getUrlFromPage(pageName, courseId, api = true) {
   // only do this if we've a valid page name
   String.prototype.slugify = function (separator = "-") {
@@ -413,3 +423,38 @@ export function getUrlFromPage(pageName, courseId, api = true) {
     return `${BASE_URL}/courses/${courseId}/pages/${slugifiedPageName}`;
   }
 }
+
+/**
+ * @function getPageTitle 
+ * @param {String} pageTitle - title of the page
+ * @param {String} courseId - id of the course
+ * @param {Function} callBack - function to call when an appropriate page is found (or not)
+ * @description Given the title of a page
+ * - get a list of all pages that match that title
+ * - FOR NOW whittle that down to the last one 
+ *   TODO perhaps pass back all that were found so the call back can decide what to do
+ */
+
+export function getPageTitle(
+  pageTitle: string,
+  courseId: string,
+  callBack: Function
+) {
+
+  if (pageTitle === undefined) {
+    console.error("getPageTitle: pageName is undefined")
+    return
+  }
+
+  if (pageTitle !== "") {
+    // base encode pageTitle
+    const encodedPageTitle = encodeURIComponent(pageTitle);
+    const url = `${BASE_API_URL}/courses/${courseId}/pages/?sort=updated_at&order=desc&search_term=${encodedPageTitle}`;
+
+    wf_fetchData(url).then((msg) => {
+      callBack(pageTitle, msg.body);
+    });
+  }
+}
+
+
