@@ -68,7 +68,6 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/djplaner
 
-
 nav:
   - Home: index.md
   - Get started: #getting-started.md
