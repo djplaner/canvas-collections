@@ -1,6 +1,6 @@
 {
   "name": "canvas-collections",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Modify Canvas LMS' modules view to support collections of modules and alternate representations",
   "author": "David Jones",
   "homepage": "https://github.com/djplaner/canvas-collections#readme",
