@@ -449,7 +449,7 @@ export function getPageTitle(
   if (pageTitle !== "") {
     // base encode pageTitle
     const encodedPageTitle = encodeURIComponent(pageTitle);
-    const url = `${BASE_API_URL}/courses/${courseId}/pages/?sort=updated_at&order=desc&search_term=${encodedPageTitle}`;
+    const url = `${BASE_API_URL}/courses/${courseId}/pages/?sort=updated_at&order=desc&include[]=body&search_term=${encodedPageTitle}`;
 
     wf_fetchData(url).then((msg) => {
       callBack(pageTitle, msg.body);
