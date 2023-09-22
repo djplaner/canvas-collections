@@ -26,7 +26,7 @@
  * - getEditingOnStatus - get the status of editing on  TODO maybe make this private
  */
 
-import { getPageName, wf_deleteData, wf_postData } from "./CanvasSetup";
+import { getPageName, getPageTitle, wf_deleteData, wf_postData } from "./CanvasSetup";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -56,6 +56,7 @@ export class editingOnController {
   private courseId: number = null;
   private canvasUserId: number = null;
   private browserSessionId: string = null;
+  private lockPageSlug: string = null;
 
   // used at end of turnEditOn
   private finishCallback: Function = null;
@@ -109,7 +110,7 @@ export class editingOnController {
    */
 
   private updateEditingDetails(pageName, msg) {
-    if (msg!==null && msg.hasOwnProperty("body") && msg.body.length > 0) {
+    if ( msg!==undefined && msg!==null && msg.hasOwnProperty("body") && msg.body.length > 0) {
       // page exists   
       /* stale lock check should be done in the calling function -
         as they have differing requirements
@@ -221,7 +222,7 @@ export class editingOnController {
     this.finishCallback = finishCallback;
 
     // get latest editing Details, if any
-    getPageName(
+    getPageTitle(
       EDITING_ON_PAGE_NAME,
       `${this.courseId}`,
       this.canWeTurnEditOn.bind(this)
@@ -231,20 +232,25 @@ export class editingOnController {
   /**
    * @method canWeTurnEditOn
    * @param pageName - name of page that was read
-   * @param msg - outcome of reading the page the body of the Canvas API
+   * @param pageObjects - array of pageObjects retrieved when trying to find the lock file
    * @description First check in the process of turning editing on - get the latest setting
    * - if someone else is editing (msg.body contains details not out own)
    *      - call the finishCallback with their details
    * - if no-end editing (no file or msg.body is empty)
    *      - create the page with our details (writeEditingDetails)
    */
-  private canWeTurnEditOn(pageName, msg) {
-    // TODO check for stale edit lock
+  private canWeTurnEditOn(pageName, pageObjects) {
+    // TODO process the pageObjects
+    // - there are either 0 pageObjects or =>1
+    const pageObject = pageObjects[0];
+    if (pageObject!==undefined ) {
+      this.lockPageSlug = pageObject.url;
+    }
 
     // change based on what we got back, all error handling in there
-    this.updateEditingDetails(pageName, msg);
+    this.updateEditingDetails(pageName, pageObject);
 
-    if (this.staleEditLock(msg)) {
+    if (pageObject!==undefined && this.staleEditLock(pageObject)) {
       // a stale lock should just be recreated for the current user
       this.createEditingOnPage()
     } else if (this.editingOnStatus === EDITING_ON_STATUS.NO_ONE_EDITING) {
@@ -297,9 +303,14 @@ export class editingOnController {
     // editing status will be set based on the created page
     this.updateEditingDetails(EDITING_ON_PAGE_NAME, data);
 
+    // edit lock page was created, update this.lockPageSlug
+    if (data!==undefined) {
+      this.lockPageSlug = data.url;
+    }
+
     // if we're editing, do a last double check and get the details in the file
     if (this.editingOnStatus === EDITING_ON_STATUS.YOU_EDITING) {
-      getPageName(
+      getPageTitle(
         EDITING_ON_PAGE_NAME,
         `${this.courseId}`,
         this.finalCheckForEditOnOff.bind(this)
@@ -314,7 +325,7 @@ export class editingOnController {
   /**
    * @method finalCheckForEditOnOff
    * @param pageName - name of page that was read
-   * @param msg - the response from the Canvas API for reading the page
+   * @param pageObjects - possible array of page objects from Canvas API for lock edit page
    * @description Callback as the final stage of turning editing on/off
    * - it appears we've successfully created the 'edit' page with our details
    *    (or assume we deleted it)
@@ -327,8 +338,11 @@ export class editingOnController {
    * - either way set the details and ask the App's callback to figure out
    *   what to do with the information
    */
-  private finalCheckForEditOnOff(pageName: string, msg: any) {
-    this.updateEditingDetails(pageName, msg);
+  private finalCheckForEditOnOff(pageName: string, pageObjects: any) {
+    // get the first pageObject
+    const pageObject = pageObjects[0];
+
+    this.updateEditingDetails(pageName, pageObject);
 
     this.finishCallback(this.editingOnStatus, this.editingDetails);
   }
@@ -342,7 +356,8 @@ export class editingOnController {
   public turnEditOff(finishCallback: Function) {
     this.finishCallback = finishCallback;
 
-    getPageName(EDITING_ON_PAGE_NAME, `${this.courseId}`, this.canWeTurnEditOff.bind(this));
+    //getPageName(EDITING_ON_PAGE_NAME, `${this.courseId}`, this.canWeTurnEditOff.bind(this));
+    getPageTitle(EDITING_ON_PAGE_NAME, `${this.courseId}`, this.canWeTurnEditOff.bind(this));
 
     return;
   }
@@ -350,18 +365,24 @@ export class editingOnController {
   /**
    * @method canWeTurnEditOff
    * @param pageName 
-   * @param msg 
+   * @param pageObjects - potential array of page objects
    * @description Based on the current content of the edit lock page, figure out if we can
    * - iff a stale edit lock, delete it, regardless of who owns it
    * - otherwise if we own the lock, delete the page
    */
-  private canWeTurnEditOff(pageName, msg) {
+  private canWeTurnEditOff(pageName, pageObjects) {
     let callUrl = `/api/v1/courses/${this.courseId}/pages/${EDITING_ON_PAGE_NAME_SLUG}`;
+    const pageObject = pageObjects[0];
+
+    if ( this.lockPageSlug!==null ) {
+      callUrl = `/api/v1/courses/${this.courseId}/pages/${this.lockPageSlug}`;
+    }
+
 
     // check the resule
-    this.updateEditingDetails(pageName, msg);
+    this.updateEditingDetails(pageName, pageObject);
 
-    if (this.staleEditLock(msg)) {
+    if (this.staleEditLock(pageObject)) {
 //      if (this.editingOnStatus !== EDITING_ON_STATUS.YOU_EDITING) {
         wf_deleteData(callUrl, this.csrfToken).then((data) => {
           this.checkDeletion(data);
