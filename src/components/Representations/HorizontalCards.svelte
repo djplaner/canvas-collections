@@ -51,11 +51,34 @@
     iframe: BannerIframe,
   };
 
-  const modules = getRepresentationModules(
+  let modules = generateModulesData();
+
+/*  const modules = getRepresentationModules(
     collection,
     claytons,
     $collectionsStore["COLLECTIONS"][collection]["unallocated"]
-  );
+  ); */
+
+  $: {
+    if (collection === $configStore["currentCollection"]) {
+      //modules = generateModulesData();
+      const changed = $configStore["currentCollectionChanged"];
+      if (changed) {
+        $configStore["currentCollectionChanged"] = false;
+      }
+      modules = generateModulesData();
+    }
+  }
+
+  function generateModulesData() {
+    return getRepresentationModules(
+      collection,
+      claytons,
+      $collectionsStore["COLLECTIONS"][collection]["unallocated"]
+    );
+  }
+
+
 </script>
 
 {#if $configStore["editMode"] && modules.length === 0}
