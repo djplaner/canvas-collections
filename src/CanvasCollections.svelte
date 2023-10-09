@@ -786,7 +786,7 @@
       if ($configStore["needToSaveCollections"]) {
         collectionsDetails.saveCollections(
           $collectionsStore,
-          $configStore["editingOn"].getEditingOnStatus(),
+          editingOnHandler.getEditingOnStatus(),
           $configStore["editMode"],
           $configStore["needToSaveCollections"],
           completeSaveCollections
