@@ -8,7 +8,7 @@ site_description: >-
 
 theme:
   name: material
-#  logo: assets/squareLogo-cropped.png
+  #  logo: assets/squareLogo-cropped.png
   logo: assets/collections-logo.jpg
   palette:
     - scheme: collections
@@ -24,7 +24,7 @@ theme:
     - navigation.tabs
     - navigation.instant
     - navigation.footer
-#    - navigation.tracking
+    #    - navigation.tracking
     - navigation.tabs.sticky
     - navigation.sections
     - content.tabs.link
@@ -36,9 +36,8 @@ plugins:
   - social:
       cards: !ENV [CARDS, false]
 
-extra_css: 
-  - stylesheets/extra.css 
-
+extra_css:
+  - stylesheets/extra.css
 
 markdown_extensions:
   - admonition
@@ -48,20 +47,20 @@ markdown_extensions:
       anchor_linenums: true
   - pymdownx.superfences
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji 
+      emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - def_list
   - md_in_html
   - tables
   - pymdownx.tabbed:
-      alternate_style: true 
+      alternate_style: true
 #  - pymdownx.tasklist:
 #      custom_checkbox: true
 
 extra:
   analytics:
-    provider: google 
-    property: G-3J456JCJGP 
+    provider: google
+    property: G-3J456JCJGP
   social:
     - icon: fontawesome/brands/mastodon
       link: https://indieweb.social/@djplaner
@@ -71,107 +70,107 @@ extra:
 nav:
   - Home: index.md
   - Get started: #getting-started.md
-    - How to start?: getting-started/how-to-start.md
-    - 1. Collections 101: 
-      - Overview: getting-started/101/overview.md
-      - Concepts: getting-started/101/concepts.md
-      - Navigate: getting-started/101/interface/navigation.md
-      - Configure: getting-started/101/interface/configuration.md
-#      - Why, what, how?: getting-started/101/why-what-how.md
-    - 2. Install: 
-      - Is it installed?: getting-started/install/is-it-installed.md
-      - How to install?: getting-started/install/how-to-install.md
-      - Individual: getting-started/install/individual.md
-      - Institutional: getting-started/install/institutional.md
+      - How to start?: getting-started/how-to-start.md
+      - 1. Collections 101:
+          - Overview: getting-started/101/overview.md
+          - Concepts: getting-started/101/concepts.md
+          - Navigate: getting-started/101/interface/navigation.md
+          - Configure: getting-started/101/interface/configuration.md
+      #      - Why, what, how?: getting-started/101/why-what-how.md
+      - 2. Install:
+          - Is it installed?: getting-started/install/is-it-installed.md
+          - How to install?: getting-started/install/how-to-install.md
+          - Individual: getting-started/install/individual.md
+          - Institutional: getting-started/install/institutional.md
   - Configure:
-    - Configure Collections: configure/overview.md
-    - Before & after: configure/before-and-after.md
-    - Steps:
-       - 1. Design: configure/design.md
-       - 2. Configure collections: configure/configure-collections.md
-       - 3. Configure Modules: configure/configure-modules.md
-       - 4. Configure Representations: configure/configure-representations.md
-    - Claytons:
-       - Configure "Claytons": configure/set-up-claytons.md
-  - 'Navigate': 
+      - Configure Collections: configure/overview.md
+      - Before & after: configure/before-and-after.md
+      - Steps:
+          - 1. Design: configure/design.md
+          - 2. Configure collections: configure/configure-collections.md
+          - 3. Configure Modules: configure/configure-modules.md
+          - 4. Configure Representations: configure/configure-representations.md
+      - Claytons:
+          - Configure "Claytons": configure/set-up-claytons.md
+  - "Navigate":
       - Navigation Options: navigate/navigate-options.md
       - "Live Collections": navigate/navigating-live-collections.md
       - "Claytons Collections": navigate/navigating-claytons-collections.md
-#    - Add Collections to a course:
-#      - Overview: how-tos/new/overview.md
-#    - Update Collections:
-#      - 🚧 Coming soon: how-tos/changes/overview.md
-#      - Add a collection: how-tos/changes/add-a-collection.md
-#      - Delete a collection: how-tos/changes/delete-a-collection.md
-#      - Add a module: how-tos/changes/add-a-module.md
-#    - Copy Collections:
-#      - 🚧 Course copy process: how-tos/course-copy/process.md
-#    - ⚗️ Advanced:
-#      - Multi-collection, one page Claytons: how-tos/advanced/multi-collection-one-page.md
-#      - Fix Claytons Card CSS: how-tos/advanced/fix-claytons-card-css.md
-  - Reference: 
+  #    - Add Collections to a course:
+  #      - Overview: how-tos/new/overview.md
+  #    - Update Collections:
+  #      - 🚧 Coming soon: how-tos/changes/overview.md
+  #      - Add a collection: how-tos/changes/add-a-collection.md
+  #      - Delete a collection: how-tos/changes/delete-a-collection.md
+  #      - Add a module: how-tos/changes/add-a-module.md
+  #    - Copy Collections:
+  #      - 🚧 Course copy process: how-tos/course-copy/process.md
+  #    - ⚗️ Advanced:
+  #      - Multi-collection, one page Claytons: how-tos/advanced/multi-collection-one-page.md
+  #      - Fix Claytons Card CSS: how-tos/advanced/fix-claytons-card-css.md
+  - Reference:
       - Overview: reference/overview.md
       - Lifecycle:
-        - Visibility: 
-          - Overview: reference/lifecycle/visibility/overview.md
-          - Live Collections: reference/lifecycle/visibility/live.md
-          - Claytons Collections: reference/lifecycle/visibility/claytons.md
-        - Student view: reference/lifecycle/student-view.md  # show both claytons and live
-        - Staff view:
-          - Overview: reference/lifecycle/staff-view.md
-          - Navigating: reference/lifecycle/navigating.md
-          - Editing: 
-            - Overview: reference/lifecycle/editing/editing.md
-            - Edit Life Cycle: reference/lifecycle/editing/lifecycle.md
-            - Configure Collections: reference/lifecycle/editing/collections.md
-            - Configure Modules: reference/lifecycle/editing/modules.md
-        - Course copy: 
-            - Importing Collections: reference/lifecycle/course-copy/overview.md
-            - How does import work: reference/lifecycle/course-copy/how-does-import-work.md
-            - Import reference: reference/lifecycle/course-copy/import.md
+          - Visibility:
+              - Overview: reference/lifecycle/visibility/overview.md
+              - Live Collections: reference/lifecycle/visibility/live.md
+              - Claytons Collections: reference/lifecycle/visibility/claytons.md
+          - Student view: reference/lifecycle/student-view.md # show both claytons and live
+          - Staff view:
+              - Overview: reference/lifecycle/staff-view.md
+              - Navigating: reference/lifecycle/navigating.md
+              - Editing:
+                  - Overview: reference/lifecycle/editing/editing.md
+                  - Edit Life Cycle: reference/lifecycle/editing/lifecycle.md
+                  - Configure Collections: reference/lifecycle/editing/collections.md
+                  - Configure Modules: reference/lifecycle/editing/modules.md
+          - Course copy:
+              - Importing Collections: reference/lifecycle/course-copy/overview.md
+              - How does import work: reference/lifecycle/course-copy/how-does-import-work.md
+              - Import reference: reference/lifecycle/course-copy/import.md
       - Conceptual model:
-        - Collections' Conceptual Model: reference/conceptual-model/overview.md
-        - collections: 
-          - Overview: reference/conceptual-model/collections/overview.md
-#          - 🚧 Live: reference/conceptual-model/collections/live.md
-#          - Visibility: reference/lifecycle/visibility/overview.md
-          - Existing collections: reference/conceptual-model/collections/existing-collections.md
-          - Add a new collection: reference/conceptual-model/collections/add-a-new-collection.md
-        - Representations: 
-          - Overview: reference/conceptual-model/representations/overview.md
-          - Collections Only: reference/conceptual-model/representations/collections-only.md
-          - Griffith Cards: reference/conceptual-model/representations/griffith-cards.md
-          - Horizontal Cards: reference/conceptual-model/representations/horizontal-cards.md
-          - Assessment Table: reference/conceptual-model/representations/assessment-table.md
-        - Objects (Modules):
-          - Objects: reference/conceptual-model/objects/overview.md
-          - General: reference/conceptual-model/objects/general.md
-          - Dates: reference/conceptual-model/objects/dates.md
-          - Banner: reference/conceptual-model/objects/banner.md
-          - Metadata: reference/conceptual-model/objects/metadata.md
-        - Claytons:
-          - Claytons: reference/conceptual-model/representations/claytons/overview.md
-          - Update single collection: reference/conceptual-model/collections/update-single-collection.md
-          - Full Claytons: reference/conceptual-model/collections/full-claytons.md
+          - Collections' Conceptual Model: reference/conceptual-model/overview.md
+          - collections:
+              - Overview: reference/conceptual-model/collections/overview.md
+              #          - 🚧 Live: reference/conceptual-model/collections/live.md
+              #          - Visibility: reference/lifecycle/visibility/overview.md
+              - Existing collections: reference/conceptual-model/collections/existing-collections.md
+              - Add a new collection: reference/conceptual-model/collections/add-a-new-collection.md
+          - Representations:
+              - Overview: reference/conceptual-model/representations/overview.md
+              - Collections Only: reference/conceptual-model/representations/collections-only.md
+              - Griffith Cards: reference/conceptual-model/representations/griffith-cards.md
+              - Horizontal Cards: reference/conceptual-model/representations/horizontal-cards.md
+              - Assessment Table: reference/conceptual-model/representations/assessment-table.md
+          - Objects (Modules):
+              - Objects: reference/conceptual-model/objects/overview.md
+              - General: reference/conceptual-model/objects/general.md
+              - Dates: reference/conceptual-model/objects/dates.md
+              - Banner: reference/conceptual-model/objects/banner.md
+              - Metadata: reference/conceptual-model/objects/metadata.md
+          - Claytons:
+              - Claytons: reference/conceptual-model/representations/claytons/overview.md
+              - Update single collection: reference/conceptual-model/collections/update-single-collection.md
+              - Full Claytons: reference/conceptual-model/collections/full-claytons.md
       - Fix common problems:
-        - Failed to turn editing on: reference/problems/failed-to-turn-editing-on.md
+          - Failed to turn editing on: reference/problems/failed-to-turn-editing-on.md
       - Development:
-        - Overview: reference/development/development-overview.md
-        - Local development: reference/development/local-development/overview.md
-        - Develop a representation: reference/development/representations/representation-development.md
-        - Configuration Page: reference/development/config-format.md
-        - Component Structure: reference/development/component-structure.md
-        - Data Structures: reference/development/data-structures.md
-  - 'Community': 
-     - Collections Community: community/collections-community.md
-  - 'About':
-     - About Collections: about/about-collections.md
-     - Related work: about/related-work.md
-     - Rationale: about/rationale.md
-     - 'Latest Version': about/latest-version.md
+          - Overview: reference/development/development-overview.md
+          - Local development: reference/development/local-development/overview.md
+          - Develop a representation: reference/development/representations/representation-development.md
+          - Configuration Page: reference/development/config-format.md
+          - Component Structure: reference/development/component-structure.md
+          - Data Structures: reference/development/data-structures.md
+  - "Community":
+      - Collections Community: community/collections-community.md
+  - "About":
+      - About Collections: about/about-collections.md
+      - Related work: about/related-work.md
+      - Rationale: about/rationale.md
+      - "Latest Version": about/latest-version.md
   - Limitations:
-    - Limitations/limitations.md
-#  - ⚰️ Features & Use: 
+      - Limitations/limitations.md
+#  - ⚰️ Features & Use:
 #    - Overview: features.md
 #    - Collections: features/collections.md
 #    - Representations: features/representations.md
