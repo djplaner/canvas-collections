@@ -180,7 +180,9 @@
     }
   }
 
+  // TODO - this needs to use getPageTitle (or one of the existing calls to it)
   let collectionsConfigUrl = `/courses/${$configStore["courseId"]}/pages/canvas-collections-configuration`;
+//  $configStore["configurationPageUrl"] = collectionsConfigUrl;
 
   let noCollections = true;
 
@@ -304,7 +306,7 @@
         importedCollections = true;
         /*        toastAlert(
           `<p>Collection's 
-          <a href="/courses/${courseId}}/pages/canvas-collections-configuration" target="_blank" rel="noreferrer">
+          <a href="/courses/${courseId}}/pages/" target="_blank" rel="noreferrer">
             configuration page</a> has been imported from
           another course.</p>
           <p>The next step will be to review and update the information for this course.</p>`,
@@ -539,7 +541,8 @@
     if (status) {
       toastAlert(
         `<p>The import of Collection's 
-        <a href="/courses/${courseId}/pages/canvas-collections-configuration" target="_blank" rel="noreferrer">
+        <a target="_blank" rel="noreferrer" 
+        href="/courses/${courseId}/pages/canvas-collections-configuration"> 
           configuration</a> has been successful.</p>`,
         "success"
       );
@@ -628,10 +631,11 @@
    */
   function completeInitialiseConfigPage(status: boolean) {
     if (status) {
+      //href="/courses/${courseId}/pages/canvas-collections-configuration">
       toastAlert(
         `<p>Canvas Collections is now on.</p>
         <p>A new <a target="_blank" rel="noreferrer" 
-      href="/courses/${courseId}/pages/canvas-collections-configuration">
+          href="/courses/${courseId}/pages/canvas-collections-configuration">
       Canvas Collections Configuration page</a> created. It will be used to store
       Collections data. </p>
       <p>The page needs to be published before students can see Collections.

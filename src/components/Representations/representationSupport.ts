@@ -440,7 +440,8 @@ export function modifyCanvasModulesList(collection, showUnallocated) {
     // add module configuration if Canvas edit mode is on and
     // the user has editingOn permission for Collections
     if (editMode && config["editingOn"] !== null) {
-      addModuleConfiguration(moduleId, config);
+      //addModuleConfiguration(moduleId, config);
+      addModuleConfiguration(moduleId);
     }
     // make each current collection moduleId is visible
     const module = document.getElementById(`context_module_${moduleId}`);

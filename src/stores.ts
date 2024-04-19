@@ -51,6 +51,8 @@ export const configStore = writable({
     ccOn: false,       // older way to check if collection is on
     studyPeriod: null, // calculated by CanvasDetails
     baseApiUrl: "",    // base URL for Canvas API (CanvasSetup)
+/*    configurationPageUrl: "", // URL for the configuration page
+    configurationPageSlug: "", // slug version of the configuration page e.g. canvas-collections-configration-5 */
 })
 
 // List of available representations

@@ -7,3 +7,4 @@ Desktop.ini
 dist/shoelace
 bin
 lib
+.cache

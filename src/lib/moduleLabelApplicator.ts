@@ -42,6 +42,7 @@ import { getCollectionCanvasModules } from "../components/Representations/repres
 export class moduleLabelApplicator {
   private collectionName: string;
   private newNames: any[];
+  private parentController: any;
 
   private configStore: object;
   private collectionsStore: object;
@@ -202,7 +203,7 @@ export class moduleLabelApplicator {
     if (collectionName === null) {
       let values = Object.values(mergedDetails);
       // sort the objects in the values array by their "position" numeric attribute
-      values.sort((a, b) => a.position - b.position);
+      values.sort((a : any, b: any) => a.position - b.position);
       // if no collectionName, convert hash of dicts mergedDetails into an array of dicts
       return values;
     }
