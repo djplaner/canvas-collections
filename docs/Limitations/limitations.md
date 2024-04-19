@@ -48,7 +48,18 @@ Adding the required HTML/CSS is difficult if not impossible for mobile app users
 
 ## Problems if you delete and re-create the Collections configuration page
 
-Canvas Collections stores all its configuration information in a single Canvas page in the host course. That page must be called "Canvas Collections Configuration" and have the url _https://<your_canvas_instance>/courses/<course_id>/pages/canvas-collections-configuration_. If Collections cannot access this page, it will not work.
+Canvas Collections stores all its configuration data in a Canvas page in the host course site. That page must be called "Canvas Collections Configuration" and have the url<br />
+&nbsp;<br />
+&nbsp;&nbsp;https://**your_canvas_instance**/courses/**course_id**/pages/canvas-collections-configuration
+ <br />
+If Collections cannot access this page, it will not work.
+
+If you delete or rename the Collections configuration page, you may see problems with Collections. The following provides
+
+- an [explanation of the cause](#cause---change-to-how-page-titles-and-page-urls-operate), and 
+- details of a [suggested solution](#solution---undelete-the-original-collections-configuration-page).
+
+### Cause - change to how page titles and page URLs operate
 
 In September, 2013 Instructure introduced changes to [how page titles and URLs operate](https://community.canvaslms.com/t5/Canvas-Releases/Canvas-Release-Notes-2023-09-16/ta-p/577167#toc-hId-1051913398). Changes which mean the page title [may not match the page URL](https://community.canvaslms.com/t5/Canvas-Question-Forum/Page-URL-doesn-t-match-page-title/m-p/590189). For example, you may see a page titled "Canvas Collections Configuration" in your course, but if you examine the URL it will look something like _https://<your_canvas_instance>/courses/<course_id>/pages/canvas-collections-configuration**-5**_.
 
@@ -77,9 +88,9 @@ In September, 2013 Instructure introduced changes to [how page titles and URLs o
 
 ### Solution -  undelete the original Collections configuration page
 
-The solution to this problem is to use Canvas' [recover deleted course content functionality](https://teacherscollege.screenstepslive.com/a/1471900-recover-deleted-course-content-in-canvas) to undelete the original Collections configuration page. This will restore the page with the correct URL and enable you to use Collection's configuration functionality.
+The solution to this problem is to use Canvas' [recover deleted course content functionality](https://teacherscollege.screenstepslive.com/a/1471900-recover-deleted-course-content-in-canvas) to undelete the original Collections configuration page. This will restore the page with the correct URL. Following this Collections should work using whatever configuration information was contained in the original page.
 
-As shown in the following figure, there may be multiple _Canvas Collections Configuration_ pages to choose from. Choose the one created first.
+The following figure shows the part of a course site's Canvas "undelete" page. The focus being on any pages with the page title _Canvas Collections Configuration_. As shown, there may be more than one. You should restore the page that was created first.
 
 <figure markdown>
 <figcaption>Multiple Collections configuration pages to be restored</figcaption>
