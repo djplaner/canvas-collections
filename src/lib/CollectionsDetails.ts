@@ -34,6 +34,7 @@
  *   - save the config page
  */
 
+import { getPageTitle } from "./CanvasSetup";
 import { wf_fetchData, wf_postData } from "./CanvasSetup";
 import sanitizeHtml from "sanitize-html";
 import { configStore } from "../stores";
@@ -43,17 +44,19 @@ import { EDITING_ON_STATUS } from "./editingOnController";
 
 export class CollectionsDetails {
   // parsed collections JSON
-  public collections: object;
-  private editMode: boolean;
+  public collections: object
+  private editMode: boolean
 
   // settings arising from collections
   // - is collections turned on for this course?
-  public ccOn: boolean;
-  public ccPublished: boolean;
+  public ccOn: boolean
+  public ccPublished: boolean
+  // save the slug for the actual configuration file being used
+  public pageUrl: string
 
   //-------- private data members
   // Canvas API response to requesting Canvas Collections Configuration page
-  private collectionsPageResponse: object;
+  private collectionsPageResponse: any;
 
   // configuration information about the canvas course
   private config: object;
@@ -100,17 +103,60 @@ export class CollectionsDetails {
    *
    */
 
-  requestCollectionsPage() {
-    const theUrl = `${this.baseApiUrl}courses/${this.config["courseId"]}/pages/canvas-collections-configuration`
-    wf_fetchData(theUrl).then((msg) => {
-      if (msg.status === 200) {
-        this.collectionsPageResponse = msg.body;
-        this.parseCollectionsPage();
-      } else {
-        this.finishedCallBack("noCollectionsConfig");
-      }
-    });
-  }
+   requestCollectionsPage() {
+      const theUrl = `${this.baseApiUrl}courses/${this.config["courseId"]}/pages/canvas-collections-configuration`
+      wf_fetchData(theUrl).then((msg) => {
+        if (msg.status === 200) {
+          this.collectionsPageResponse = msg.body;
+          this.parseCollectionsPage();
+        } else {
+          this.finishedCallBack("noCollectionsConfig");
+        }
+      });
+    } 
+
+  /**
+   * @method requestCollectionsPage
+   * @description New implementation to request the Collections Configuration page using
+   * getPageTitle. Since the old style using a page slug doesn't work due to changes in Canvas handling
+   * of page titles/slugs. getPageTitle always gets the most recent version of the page
+   * Work is completed by completeCollectionsRequest
+   */
+
+/*  requestCollectionsPage() {
+    const status: boolean = false
+    getPageTitle(
+      "Canvas Collections Configuration",
+      this['config']['courseId'],
+      this.completeCollectionsRequest.bind(this),
+      status,
+    )
+  } */
+
+  /**
+   * @method  completeCollectionsRequest
+   * @param {string} pageTitle - the title of the page retrieved
+   * @param { any } msgBody - Canvas API response from getting all pages matching page title.
+   * - if there are no pages, call finishedCallBack with "noCollectionsConfig"
+   * - otherse call parseCollectionsPage
+   */
+
+/*  completeCollectionsRequest(pageTitle: string, response: any) {
+    if (response.status !== 200 || response.body.length === 0) {
+      this.finishedCallBack("noCollectionsConfig")
+    } else {
+      console.log("completeCollectionsRequest")
+      console.log(response)
+      //    const responseBody = response.body[0]
+      this.collectionsPageResponse = response.body[0]
+      this.pageUrl = this.collectionsPageResponse.html_url
+      this.configStore["configurationPageUrl"] = this.pageUrl;
+      // extract the last part of the URL to get the page slug
+      const parts = this.collectionsPageResponse.url.split("/")
+      this.configStore["configurationPageSlug"] = parts[parts.length - 1]
+      this.parseCollectionsPage()
+    }
+  } */
 
   /**
    * @function checkCollectionsConfigCreated
@@ -742,6 +788,7 @@ export class CollectionsDetails {
   ) {
     if (editingOn === EDITING_ON_STATUS.YOU_EDITING && editMode && needToSave) {
       let callUrl = `${this.baseApiUrl}courses/${this["config"]["courseId"]}/pages/canvas-collections-configuration`;
+      //let callUrl = `${this.baseApiUrl}courses/${this["config"]["courseId"]}/pages/${this.configStore.configurationPageSlug}`;
 
       const content = this.generateConfigPageContent(collectionsStore);
 
@@ -971,7 +1018,7 @@ export class CollectionsDetails {
    *   Collections represents them correctly
    * - remove modules from collection if the Canvas no canvas module with that id
    */
-  addCanvasModuleData(canvasModules: [], editMode) {
+  addCanvasModuleData(canvasModules: any[], editMode) {
     let collectionsModules = this["collections"]["MODULES"];
 
     // setting published this way will work in editMode
@@ -1003,7 +1050,7 @@ export class CollectionsDetails {
     // - if in !editMode set canvas published to true if canvas module exists
     // - otherwise if canvas module doesn't exist, remove that entry from collections
 
-    const canvasModuleIds = canvasModules.map((module) => module["id"]);
+    const canvasModuleIds: any[] = canvasModules.map((module) => module["id"]);
     let changeMade = false;
     for (const moduleId in collectionsModules) {
       if (!editMode) {
@@ -1030,7 +1077,7 @@ export class CollectionsDetails {
    * This function will update the moduleOrder property for each module in the collection,
    * this will only be done in editMode
    */
-  updateModuleOrder(canvasModules: []) {
+  updateModuleOrder(canvasModules: any[]) {
     // canvasModules are in order of appearance
     // collections modules are keyed on canvas module id
     let collectionsModules = this["collections"]["MODULES"];

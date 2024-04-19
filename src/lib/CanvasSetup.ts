@@ -426,9 +426,10 @@ export function getUrlFromPage(pageName, courseId, api = true) {
 
 /**
  * @function getPageTitle 
- * @param {String} pageTitle - title of the page
- * @param {String} courseId - id of the course
+ * @param {string} pageTitle - title of the page
+ * @param {string} courseId - id of the course
  * @param {Function} callBack - function to call when an appropriate page is found (or not)
+ * @param {boolean} msgBody - should the body of the message be passed to the callback (default true)
  * @description Given the title of a page
  * - get a list of all pages that match that title
  * - FOR NOW whittle that down to the last one 
@@ -438,7 +439,8 @@ export function getUrlFromPage(pageName, courseId, api = true) {
 export function getPageTitle(
   pageTitle: string,
   courseId: string,
-  callBack: Function
+  callBack: Function,
+  msgBody: boolean = true,
 ) {
 
   if (pageTitle === undefined) {
@@ -452,7 +454,11 @@ export function getPageTitle(
     const url = `${BASE_API_URL}/courses/${courseId}/pages/?sort=updated_at&order=desc&include[]=body&search_term=${encodedPageTitle}`;
 
     wf_fetchData(url).then((msg) => {
-      callBack(pageTitle, msg.body);
+      if (msgBody) {
+        callBack(pageTitle, msg.body);
+      } else {
+        callBack(pageTitle, msg);
+      }
     });
   }
 }

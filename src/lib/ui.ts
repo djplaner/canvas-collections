@@ -37,7 +37,7 @@ export function toastAlert(message, variant = "primary", duration = null) {
     danger: "exclamation-octagon",
   };
   // create a shoelace style sl-alert element
-  const alert = Object.assign(document.createElement("sl-alert"), {
+  const alert : any = Object.assign(document.createElement("sl-alert"), {
     variant,
     closable: true,
     innerHTML: `
@@ -68,8 +68,8 @@ export const ccConfirm = (message) => {
       </sl-dialog>    
     `;
 
-    const dialog = div.querySelector("sl-dialog");
-    const cancel = div.querySelector("sl-button");
+    const dialog : any = div.querySelector("sl-dialog");
+    const cancel : any = div.querySelector("sl-button");
     const ok = cancel.nextElementSibling;
 
     document.body.appendChild(dialog);
