@@ -42,6 +42,8 @@ import { get } from "svelte/store";
 
 import { EDITING_ON_STATUS } from "./editingOnController";
 
+const SLUG = "canvas-collections-configuration";
+
 export class CollectionsDetails {
   // parsed collections JSON
   public collections: object
@@ -104,7 +106,7 @@ export class CollectionsDetails {
    */
 
    requestCollectionsPage() {
-      const theUrl = `${this.baseApiUrl}courses/${this.config["courseId"]}/pages/canvas-collections-configuration`
+      const theUrl = `${this.baseApiUrl}courses/${this.config["courseId"]}/pages/${SLUG}`
       wf_fetchData(theUrl).then((msg) => {
         if (msg.status === 200) {
           this.collectionsPageResponse = msg.body;
@@ -114,59 +116,6 @@ export class CollectionsDetails {
         }
       });
     } 
-
-  /**
-   * @method requestCollectionsPage
-   * @description New implementation to request the Collections Configuration page using
-   * getPageTitle. Since the old style using a page slug doesn't work due to changes in Canvas handling
-   * of page titles/slugs. getPageTitle always gets the most recent version of the page
-   * Work is completed by completeCollectionsRequest
-   */
-
-/*  requestCollectionsPage() {
-    const status: boolean = false
-    getPageTitle(
-      "Canvas Collections Configuration",
-      this['config']['courseId'],
-      this.completeCollectionsRequest.bind(this),
-      status,
-    )
-  } */
-
-  /**
-   * @method  completeCollectionsRequest
-   * @param {string} pageTitle - the title of the page retrieved
-   * @param { any } msgBody - Canvas API response from getting all pages matching page title.
-   * - if there are no pages, call finishedCallBack with "noCollectionsConfig"
-   * - otherse call parseCollectionsPage
-   */
-
-/*  completeCollectionsRequest(pageTitle: string, response: any) {
-    if (response.status !== 200 || response.body.length === 0) {
-      this.finishedCallBack("noCollectionsConfig")
-    } else {
-      console.log("completeCollectionsRequest")
-      console.log(response)
-      //    const responseBody = response.body[0]
-      this.collectionsPageResponse = response.body[0]
-      this.pageUrl = this.collectionsPageResponse.html_url
-      this.configStore["configurationPageUrl"] = this.pageUrl;
-      // extract the last part of the URL to get the page slug
-      const parts = this.collectionsPageResponse.url.split("/")
-      this.configStore["configurationPageSlug"] = parts[parts.length - 1]
-      this.parseCollectionsPage()
-    }
-  } */
-
-  /**
-   * @function checkCollectionsConfigCreated
-   */
-
-  checkCollectionsConfigCreated() {
-    console.log("--------------------");
-    console.log("tried to create ")
-
-  }
 
   /**
    * @function parseCollectionsPage
@@ -787,7 +736,7 @@ export class CollectionsDetails {
     callBack: Function
   ) {
     if (editingOn === EDITING_ON_STATUS.YOU_EDITING && editMode && needToSave) {
-      let callUrl = `${this.baseApiUrl}courses/${this["config"]["courseId"]}/pages/canvas-collections-configuration`;
+      let callUrl = `${this.baseApiUrl}courses/${this["config"]["courseId"]}/pages/${SLUG}`;
       //let callUrl = `${this.baseApiUrl}courses/${this["config"]["courseId"]}/pages/${this.configStore.configurationPageSlug}`;
 
       const content = this.generateConfigPageContent(collectionsStore);
@@ -809,13 +758,33 @@ export class CollectionsDetails {
         this["config"]["csrfToken"],
         method
       ).then((data) => {
-        callBack(data !== null);
+        // check that we've saved to the proper config
+        this.checkConfigPage(data, callBack);
+//        callBack(data !== null);
       });
     }
   }
 
   /**
-   * @function generateConfigPageContent
+   * @method checkConfigPage
+   * @param {Object} data - response from the save attempt
+   * @param {Function} callBack - function to call with result
+   * @description data.html_url should point to the `canvas-collections-configuration` slug and not
+   * one of the latter "-X" versions. Check this. If ok call the Callback with true. Otherwise display
+   * an alert
+   */
+
+  checkConfigPage(data: any, callBack: Function) {
+    let url = new URL(data.html_url);
+    let path = url.pathname;
+    let parts = path.split("/");
+    let slug = parts[parts.length - 1];
+
+    callBack(slug === SLUG, slug)
+  }
+
+  /**
+   * @method generateConfigPageContent
    * @param {Object} collectionsStore latest detail from collections in memory
    * @returns {string} HTML content for the Canvas Collections Configuration page
    * @description Using the latest copy of collections passed in

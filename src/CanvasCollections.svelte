@@ -42,6 +42,7 @@
     calculateActualNum,
   } from "./lib/CollectionsDetails";
 
+  import { CanvasEnvironment } from "./lib/CanvasEnvironment";
   import {
     editingOnController,
     EDITING_ON_STATUS,
@@ -70,15 +71,16 @@
   import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
   setBasePath("../node_modules/@shoelace-style/shoelace/dist/");
 
+  const CC_VERSION = "1.3";
   // Define misc constants for interval timing
   // - how often to check if config needs saving (in milliseconds)
-  const TIME_BETWEEN_SAVES: number = 10000;  // 10000 === 10 seconds
+  const TIME_BETWEEN_SAVES: number = 10000; // 10000 === 10 seconds
   // - how often to check for changes to Canvas modules data
   const TIME_BETWEEN_CANVAS_REFRESH: number = 60000; // 60 seconds
   // - how often to check for inactivity (no changes)
   // - used to turn edit off
-  const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 60;
-  // - Define time for a stale edit lock 
+  const TIME_BETWEEN_NO_SAVE_CHECKS: number = TIME_BETWEEN_SAVES * 10;
+  // - Define time for a stale edit lock
   //   (arises when a computer is suspended with edit on)
   const STALE_EDIT_LOCK_TIMEOUT: number = 2 * TIME_BETWEEN_NO_SAVE_CHECKS;
 
@@ -87,9 +89,9 @@
   //   as they are the only ones who can make changes
   // - modules check run for everyone
   // - check for a need to save
-  const AUTO_SAVE_BASE: boolean = true; 
+  const AUTO_SAVE_BASE: boolean = true;
   // - check for need to save before exit
-  const EXIT_SAVE_BASE: boolean = true; 
+  const EXIT_SAVE_BASE: boolean = true;
   // - check for changes to Canvas modules data
   let AUTO_REFRESH: boolean = true; // regularly update Canvas course modules information
   // refresh has no base, as it should run when students using
@@ -142,7 +144,9 @@
   let timeLockObtained: Date = undefined;
 
   // set up editOn controller, need current Canvas user id
-  const CURRENT_USER_ID: number = parseInt(ENV["current_user_id"]);
+  const canvasEnv = new CanvasEnvironment();
+  //const CURRENT_USER_ID: number = parseInt(ENV["current_user_id"]);
+  const CURRENT_USER_ID : number = parseInt(canvasEnv.userId)
   let editingOnHandler = new editingOnController(
     courseId,
     CURRENT_USER_ID,
@@ -182,7 +186,7 @@
 
   // TODO - this needs to use getPageTitle (or one of the existing calls to it)
   let collectionsConfigUrl = `/courses/${$configStore["courseId"]}/pages/canvas-collections-configuration`;
-//  $configStore["configurationPageUrl"] = collectionsConfigUrl;
+  //  $configStore["configurationPageUrl"] = collectionsConfigUrl;
 
   let noCollections = true;
 
@@ -427,7 +431,7 @@
         //editingOnHandler.turnEditOff(setUpEditingOff);
         // assumption here is we don't need to actually turn edit off
         // A stale lock will be removed by other people when they start editing
-        turnOffEditingInterface() 
+        turnOffEditingInterface();
 
         // yes, so release it
         toastAlert(
@@ -609,14 +613,18 @@
     // set up an empty collections configuration
     collectionsDetails.initialiseCollectionsConfig();
     // we now have collections
-    noCollections = false;
+    // TODO we don't know that
+    //noCollections = false;
     // and we can do the set up again
-    gotCollectionsDetails("");
+    // EXPERIMENT 
+    // - move this to complete initialiseConfigPage
+    // - after we've successfully saved the new config
+    //gotCollectionsDetails("");
 
     collectionsDetails.saveCollections(
       $collectionsStore,
       //$configStore["editingOn"],
-      EDITING_ON_STATUS.YOU_EDITING,
+      EDITING_ON_STATUS.YOU_EDITING, // hard code editing on, as you are apparently creating the config
       true,
       true,
       completeInitialiseConfigPage
@@ -629,8 +637,10 @@
    * @description Called after an attempt to save the new config page
    * Inform the user of the outcome
    */
-  function completeInitialiseConfigPage(status: boolean) {
+  function completeInitialiseConfigPage(status: boolean, slug : string = "") {
     if (status) {
+      gotCollectionsDetails("");
+      noCollections = false
       //href="/courses/${courseId}/pages/canvas-collections-configuration">
       toastAlert(
         `<p>Canvas Collections is now on.</p>
@@ -643,8 +653,21 @@
         "success"
       );
     } else {
+      // TODO need to do other tidying up
+      // do we need this??
+      noCollections = true
+      $configStore["ccOn"] = false
+      // set #cc-switch to off
+      const cSwitch : any = document.getElementById("cc-switch");
+      if (cSwitch) {
+        cSwitch.checked = false;
+      }
       toastAlert(
-        `<p>Failed to create new Canvas Collections Configuration page</p>`,
+        `<p>Failed to create new Canvas Collections Configuration page.</p>
+        <p>Apparently due to a previously deleted Collections configuration.</p>
+        <p>Due to how Canvas handles page deletion, 
+          <a href="${HELP.previouslyDeleted.url}" target="_blank">
+          manual intervention</a> is required.</p>`,
         "danger"
       );
     }
@@ -888,12 +911,21 @@
         noBodyInConfig: "No body found in Collections configuration page",
         unauthorised: "Not authorised to open configuration page",
       };
-      // oops that didn't work
-      toastAlert(
-        `<p>Failed to update Collections configuration</p>
+      if (reasons !== "noCollectionsConfig") {
+        // oops that didn't work
+        toastAlert(
+          `<p>Failed to update Collections configuration</p>
         <p>Reason: <em>${reasons[status]}</em> </p>`,
-        "danger"
-      );
+          "danger"
+        );
+      } else {
+        // Can't find the collections configuration page
+        // TODO needs to go back to the original collections switch problem
+        // -- perhaps even with a special broken switch
+        toastAlert(
+          `Error: Unable to find collections configuration page`
+        )
+      }
       return;
     }
 
@@ -1014,7 +1046,7 @@
         $configStore["needToSaveCollections"],
         completeSaveCollections
       );
-    } 
+    }
   }
 
   let HELP = {
@@ -1027,7 +1059,7 @@
         browser window) is already editing this course's Collections configuration.</p>
       `,
     },
-    FAILED_EDIT_ON : {
+    FAILED_EDIT_ON: {
       tooltip: `<p>Learn more about why and what can be done.</p>`,
       url: "https://djplaner.github.io/canvas-collections/reference/problems/failed-to-turn-editing-on/",
     },
@@ -1065,6 +1097,10 @@
           <p>Any Claytons Collections will be visible, if the relevant pages are published.</p>`,
       url: "https://djplaner.github.io/canvas-collections/reference/lifecycle/visibility/live/",
     },
+    previouslyDeleted: {
+      tooltip: `<p>Due to how Canvas handles page deletion, Collections requires your manual intervention to work in a course with a previously deleted Collections configuration page. Click for more details.</p>`,
+      url: "https://djplaner.github.io/canvas-collections/reference/problems/previously-deleted-configuration-page/",
+    }
   };
   HELP.ABOUT["notEditingTooltip"] = `${HELP.ABOUT.tooltip}
       <p>Editing mode is <strong>off</strong>. You can see Collections, but not change it.</p>
@@ -1117,12 +1153,12 @@
           </sl-tooltip>
         {/if}
       {/if}
-      <small>Collections</small>
+      <small>Collections <span style="font-size:0.5rem">({CC_VERSION})</span></small>
     </div>
 
     {#if noCollections}
       <label class="cc-switch" for="cc-switch">
-        <sl-switch id="cc-switch" on:sl-change={initialiseCollections} />
+          <sl-switch id="cc-switch" on:sl-change={initialiseCollections} />
       </label>
     {/if}
     {#if $configStore["editingOn"] === null && !noCollections}

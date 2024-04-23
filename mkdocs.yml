@@ -153,6 +153,7 @@ nav:
               - Update single collection: reference/conceptual-model/collections/update-single-collection.md
               - Full Claytons: reference/conceptual-model/collections/full-claytons.md
       - Fix common problems:
+          - Previously deleted configuration page: reference/problems/previously-deleted-configuration-page.md
           - Failed to turn editing on: reference/problems/failed-to-turn-editing-on.md
       - Development:
           - Overview: reference/development/development-overview.md

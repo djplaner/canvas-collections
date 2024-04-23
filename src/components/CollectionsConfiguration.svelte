@@ -34,7 +34,6 @@
   import FullClaytons from "./Configuration/FullClaytons.svelte";
 
   const visibilityOptions = ["no-one", "students", "teachers", "all"];
-  const CC_VERSION = "1.2.5";
 
   /**
    * Declare and populate variables to track whether includePage and outputPage
@@ -155,7 +154,6 @@
 <div class="cc-header-grid">
   <div class="cc-header cc-collections-label">
     <p>Configure Canvas Collections
-      <span class="cc-version">{CC_VERSION}</span>
     </p>
   </div>
   <div class="cc-collections-input">
