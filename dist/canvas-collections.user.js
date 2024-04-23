@@ -2,7 +2,7 @@
 // @name        canvas-collections
 // @description Modify Canvas LMS' modules view to support collections of modules and alternate representations
 // @namespace   https://djon.es/
-// @version     1.2.5
+// @version     1.3.0
 // @homepage    https://github.com/djplaner/canvas-collections#readme
 // @author      David Jones
 // @updateURL   https://github.com/djplaner/canvas-collections/raw/main/dist/canvas-collections.user.js
