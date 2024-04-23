@@ -24,6 +24,7 @@
     1. Collections is not usable on the Canvas mobile apps (teacher or student). [see more](#canvas-mobile-apps---essentially-not-usable)
     2. The Collections source code must be installed and active when visitors are using a web browser in order to configure Collections and navigate using "live" Collections [see more](#collections-installed-and-active---live-collections)
     3. Claytons (static) Collections can be used to navigate without the Collections source code (but has to be configured with the code), but some representations will require additional CSS. [see more](#claytons-collections---no-code-but-some-css-may-be-required)
+    4. Using Collections with sandbox courses may be problematic due to issues when the Collections' configuration page is deleted. [see more](#problems-if-you-delete-and-re-create-the-collections-configuration-page)
 
 ## Cannot be used via Canvas mobile apps, only via web browsers
 
@@ -48,5 +49,12 @@ Adding the required HTML/CSS is difficult if not impossible for mobile app users
 
 ## Problems if you delete and re-create the Collections configuration page
 
-In September, 2013 Instructure introduced changes to [how page titles and URLs operate](https://community.canvaslms.com/t5/Canvas-Releases/Canvas-Release-Notes-2023-09-16/ta-p/577167#toc-hId-1051913398). It always remembers pages, even after they are deleted. This can cause the Collections [previously deleted configuration page problem](../reference/problems/previously-deleted-configuration-page.md) (for which there is a solution).
+In September, 2013 Instructure introduced changes to [how page titles and URLs operate](https://community.canvaslms.com/t5/Canvas-Releases/Canvas-Release-Notes-2023-09-16/ta-p/577167#toc-hId-1051913398). It always remembers pages, even after they are deleted. This can cause the Collections [previously deleted configuration page problem](../reference/problems/previously-deleted-configuration-page.md), including a potential (but not universal) solution.
+
+!!! warning "Raises issues with 'sandbox' course sites"
+
+    This problem makes sandbox course sites - where you test new course sites by deleting all content and then copying in new content - potentially problematic.
+
+    A kludge solution would be to avoid deleting the Canvas Collections configuration page. 
+
 
